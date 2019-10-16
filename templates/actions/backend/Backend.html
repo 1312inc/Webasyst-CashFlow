@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{$wa->appName()} &mdash; {$wa->accountName()}</title>
+    {$wa->css()}
+    <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/cash.css?v{$wa->version()}">
+    <script type="text/javascript" src="{$wa_url}wa-content/js/jquery/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-wa/wa.core.js?v{$wa->version(true)}"></script>
+    <script type="text/javascript" src="{$wa_app_static_url}js/cash.js?v{$wa->version()}"></script>
+
+    {$projects = [
+            [ 'Pocket Lists', 'https://pocketlists.com/favicon.ico', '180K' ],
+            [ 'YesterdayMe', 'http://www.yesterdayme.com/favicon.ico', '-41K' ],
+            [ 'Магазин', 'https://www.shop-script.ru/favicon.ico', '31K' ],
+            [ 'Бар «1312»', 'https://1312.io/favicon.ico', '0' ]
+        ]}
+
+    {$categories = [
+            [ 'Зарплаты' ],
+            [ 'Налоги' ],
+            [ 'Офис' ],
+            [ 'Реклама и маркетинг' ]
+        ]}
+
+
+</head>
+<body>
+    <div id="wa">
+        {$wa->header()}
+        <div id="wa-app">
+            <div class="sidebar left200px">
+                <div class="block">
+
+                    <ul class="menu-v with-icons">
+                        <li class="bottom-padded selected">
+                            <a href="#" class="bold">
+                                <span class="count">170K</span>
+                                [`All projects`]
+                            </a>
+                        </li>
+                        {foreach $projects as $p}
+                            <li>
+                                 <a href="#"><span class="count">{$p[2]}</span><i class="icon16" style="background-image: url('{$p[1]}'); background-size: 16px 16px;"></i>{$p[0]}</a>
+                            </li>
+                        {/foreach}
+                        <li class="small">
+                             <a href="#"><i class="icon10 add"></i> [`New project`]</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="block">
+                    <h5 class="heading top-padded">
+                        <a href="#" class="count"><i class="icon16 add"></i></a>
+                        <!-- [`Categories`] -->
+                        Статьи
+                    </h5>
+                    <ul class="menu-v">
+                        {foreach $categories as $c}
+                        <li>
+                             <label><input type="checkbox" checked="checked"> {$c[0]}</label>
+                        </li>
+                        {/foreach}
+                    </ul>
+                    <hr>
+                    <ul class="menu-v with-icons">
+                         <li>
+                             <a href="#"><i class="icon16 upload"></i>[`Import`]</a>
+                         </li>
+                         <li>
+                             <a href="#"><i class="icon16" style="background-image: url(/wa-apps/shop/img/shop.png); background-size: 16px 16px;"></i>[`Shop-Script`]</a>
+                         </li>
+                         <li>
+                             <a href="#"><i class="icon16 settings"></i>[`Settings`]</a>
+                         </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="content left200px">
+                <div id="content">
+                    <div class="block">
+                        <h1>
+                            [`Cash`]: 170 129 RUB
+                            <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandatetime}</span>
+                        </h1>
+                        <p>(chart here)</p>
+                        <p>(add income / add expense / + quick add templates here) / (table / calendar) / period</p>
+                        <table class="zebra">
+                            <tr>
+                                <td>date</td>
+                                <td>account</td>
+                                <td>description</td>
+                                <td>amount</td>
+                                <td>smth else</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
