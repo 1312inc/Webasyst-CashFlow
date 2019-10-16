@@ -23,6 +23,13 @@
             [ 'Реклама и маркетинг' ]
         ]}
 
+    {$templates = [
+            [ 'Поступление на ИП', 'income', '' ],
+            [ 'Аренда офиса', 'expense', '' ],
+            [ 'Хостинг', 'expense', '' ],
+            [ 'Закуп в офис', 'expense', '' ]
+        ]}
+
 
 </head>
 <body>
@@ -50,9 +57,9 @@
                     </ul>
                 </div>
                 <div class="block">
-                    <h5 class="heading top-padded">
+                    <!-- <h5 class="heading top-padded">
                         <a href="#" class="count"><i class="icon16 add"></i></a>
-                        <!-- [`Categories`] -->
+                        <!- [`Categories`] --
                         Статьи
                     </h5>
                     <ul class="menu-v">
@@ -61,7 +68,20 @@
                              <label><input type="checkbox" checked="checked"> {$c[0]}</label>
                         </li>
                         {/foreach}
+                    </ul> -->
+
+                    <h5 class="heading top-padded">
+                        <a href="#" class="count"><i class="icon16 add"></i></a>
+                        [`Templates`]
+                    </h5>
+                    <ul class="menu-v">
+                        {foreach $templates as $t}
+                        <li>
+                             <label><a href="#"><i class="icon16 {if $t[1] == 'income'}add{else}delete{/if}"></i> {$t[0]}</a>
+                        </li>
+                        {/foreach}
                     </ul>
+
                     <hr>
                     <ul class="menu-v with-icons">
                          <li>
@@ -79,12 +99,34 @@
             <div class="content left200px">
                 <div id="content">
                     <div class="block">
+
+                        <div class="float-right block half-padded">
+                            <select>
+                                <option>[`+/- 1 month`]</option>
+                                <option selected>[`+/- 3 months`]</option>
+                                <option>[`+/- 6 months`]</option>
+                                <option>[`+/- 12 months`]</option>
+                                <option>[`Custom range...`]</option>
+                            </select>
+                        </div>
                         <h1>
                             [`Cash`]: 170 129 RUB
                             <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandatetime}</span>
                         </h1>
-                        <p>(chart here)</p>
-                        <p>(add income / add expense / + quick add templates here) / (table / calendar) / period</p>
+                        <div class="c-chart">(chart here)</div>
+
+                        <div class="float-right">
+                            <ul class="menu-h">
+                                <li class="selected"><a href="#" class="inline-link"><b><i>[`List`]</i></b></a></li>
+                                <li><a href="#" class="inline-link"><b><i>[`Calendar`]</i></b></a></li>
+                            </ul>
+                        </div>
+                        <ul class="menu-h">
+                            <li><a href="#" class="inline-link"><i class="icon16 add"></i><b><i><strong>[`Add income`]</strong></i></b></a></li>
+                            <li><a href="#" class="inline-link"><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li>
+                            <li><a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a></li>
+                        </ul>
+
                         <table class="zebra">
                             <tr>
                                 <td>date</td>
@@ -94,6 +136,7 @@
                                 <td>smth else</td>
                             </tr>
                         </table>
+                        
                     </div>
                 </div>
             </div>
