@@ -17,6 +17,7 @@
         ]}
 
     {$categories = [
+            [ 'Закупки' ],
             [ 'Зарплаты' ],
             [ 'Налоги' ],
             [ 'Офис' ],
@@ -40,12 +41,15 @@
                 <div class="block">
 
                     <ul class="menu-v with-icons">
+                        {if 1 || PROJECT_COUNT > 1}
                         <li class="bottom-padded selected">
                             <a href="#" class="bold">
                                 <span class="count">170K</span>
                                 [`All projects`]
                             </a>
                         </li>
+                        {/if}
+
                         {foreach $projects as $p}
                             <li>
                                  <a href="#"><span class="count">{$p[2]}</span><i class="icon16" style="background-image: url('{$p[1]}'); background-size: 16px 16px;"></i>{$p[0]}</a>
@@ -57,20 +61,20 @@
                     </ul>
                 </div>
                 <div class="block">
-                    <!-- <h5 class="heading top-padded">
+                    <h5 class="heading top-padded">
                         <a href="#" class="count"><i class="icon16 add"></i></a>
-                        <!- [`Categories`] --
+                        <!-- [`Categories`] -->
                         Статьи
                     </h5>
-                    <ul class="menu-v">
+                    <ul class="menu-v collapsible">
                         {foreach $categories as $c}
                         <li>
-                             <label><input type="checkbox" checked="checked"> {$c[0]}</label>
+                             <a href="#">{$c[0]}</a>
                         </li>
                         {/foreach}
-                    </ul> -->
+                    </ul>
 
-                    <h5 class="heading top-padded">
+                    <!-- <h5 class="heading top-padded">
                         <a href="#" class="count"><i class="icon16 add"></i></a>
                         [`Templates`]
                     </h5>
@@ -80,15 +84,22 @@
                              <label><a href="#"><i class="icon16 {if $t[1] == 'income'}add{else}delete{/if}"></i> {$t[0]}</a>
                         </li>
                         {/foreach}
-                    </ul>
+                    </ul> -->
 
                     <hr>
                     <ul class="menu-v with-icons">
+                        <!-- plugin hook -->
+                        <li>
+                            <a href="#"><i class="icon16 c-table"></i>[`Cash flow`]</a>
+                        </li>
+                        <!-- <li>
+                            <a href="#"><i class="icon16 calendar"></i>[`Calendar`]</a>
+                        </li> -->
+                        <!-- <li>
+                            <a href="#"><i class="icon16 contact"></i>[`Customers`]</a>
+                        </li> -->
                          <li>
                              <a href="#"><i class="icon16 upload"></i>[`Import`]</a>
-                         </li>
-                         <li>
-                             <a href="#"><i class="icon16" style="background-image: url(/wa-apps/shop/img/shop.png); background-size: 16px 16px;"></i>[`Shop-Script`]</a>
                          </li>
                          <li>
                              <a href="#"><i class="icon16 settings"></i>[`Settings`]</a>
@@ -101,11 +112,13 @@
                     <div class="block">
 
                         <div class="float-right block half-padded">
+                            [`Forecast`]:
                             <select>
-                                <option>[`+/- 1 month`]</option>
-                                <option selected>[`+/- 3 months`]</option>
-                                <option>[`+/- 6 months`]</option>
-                                <option>[`+/- 12 months`]</option>
+                                <option>[`Off`]</option>
+                                <option>[`+1 month`]</option>
+                                <option selected>[`+3 months`]</option>
+                                <option>[`+6 months`]</option>
+                                <option>[`+12 months`]</option>
                                 <option>[`Custom range...`]</option>
                             </select>
                         </div>
@@ -115,28 +128,53 @@
                         </h1>
                         <div class="c-chart">(chart here)</div>
 
-                        <div class="float-right">
+                        <!-- <div class="float-right">
                             <ul class="menu-h">
                                 <li class="selected"><a href="#" class="inline-link"><b><i>[`List`]</i></b></a></li>
                                 <li><a href="#" class="inline-link"><b><i>[`Calendar`]</i></b></a></li>
                             </ul>
-                        </div>
-                        <ul class="menu-h">
-                            <li><a href="#" class="inline-link"><i class="icon16 add"></i><b><i><strong>[`Add income`]</strong></i></b></a></li>
-                            <li><a href="#" class="inline-link"><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li>
-                            <li><a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a></li>
-                        </ul>
+                        </div> -->
 
-                        <table class="zebra">
+                        <div class="c-operations">
+                            <div class="float-right">
+                                <!-- [`Forecast`]:
+                                <select>
+                                    <option>[`+1 month`]</option>
+                                    <option selected>[`+3 months`]</option>
+                                    <option>[`+6 months`]</option>
+                                    <option>[`+12 months`]</option>
+                                    <option>[`Custom range...`]</option>
+                                </select> -->
+                                <ul class="menu-h">
+                                    <li><a href="#" class="inline-link gray"><b><i>[`All categories`]</i></b><i class="icon10 darr"></i></a></li>
+                                </ul>
+                            </div>
+                            <ul class="menu-h">
+                                <li><a href="#" class="inline-link"><i class="icon16 add"></i><b><i><strong>[`Add income`]</strong></i></b></a></li>
+                                <li><a href="#" class="inline-link"><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li>
+                                <li><a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a></li>
+                            </ul>
+                        </div>
+
+                        <table class="zebra c-transactions">
                             <tr>
-                                <td>date</td>
-                                <td>account</td>
-                                <td>description</td>
-                                <td>amount</td>
-                                <td>smth else</td>
+                                <th>[`Date`]</th>
+                                <th>[`Project`]</th>
+                                <th>[`Summary`]</th>
+                                <th>[`Amount`]</th>
+                                <th></th>
                             </tr>
+                            {for $i=1 to 10}
+                                <tr>
+                                    <td>{date('Y-m-d')|wa_date:humandate}</td>
+                                    <td>PL</td>
+                                    <td>description</td>
+                                    <td>100500</td>
+                                    <td>smth else</td>
+                                </tr>
+                            {/for}
                         </table>
-                        
+
                     </div>
                 </div>
             </div>

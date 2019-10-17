@@ -1,4 +1,16 @@
 /* Cash app
 ----------- */
 
+.icon16.c-table { background-image: url('../img/icon16-table.png'); background-size: 16px 16px; }
+
 .c-chart { padding: 150px; background: #f8f8f8; color: #aaa; text-align: center; }
+
+.c-operations { padding: 10px 0; }
+
+.icon16.c-table { background-image: url('../img/icon16-table.png'); background-size: 16px 16px; }
+
+@media
+(-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+    .icon16.c-table { background-image: url('../img/icon16-table@2x.png'); background-size: 16px 16px; }
+}
