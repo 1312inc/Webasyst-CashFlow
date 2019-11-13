@@ -2,10 +2,19 @@
 ----------- */
 
 .icon16.c-table { background-image: url('../img/icon16-table.png'); background-size: 16px 16px; }
+i.icon16.color { width: 12px; height: 12px; border: none; }
+ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 
-.c-chart { padding: 150px; background: #f8f8f8; color: #aaa; text-align: center; }
+.c-chart { margin-top: 10px; padding: 170px; background: #f8f8f8 url('../img/_sample_chart_please_delete_me.png') no-repeat; background-size: 100% 100%; color: #aaa; text-align: center; }
 
 .c-operations { padding: 10px 0; }
+.c-operations .c-planned { color: #aaa; }
+
+.c-positive { color: green; }
+.c-positive.highlighted { background: #dfd; }
+.c-negative { color: red; }
+.c-negative.highlighted { background: #fdd; }
+
 
 .icon16.c-table { background-image: url('../img/icon16-table.png'); background-size: 16px 16px; }
 

@@ -9,19 +9,30 @@
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-wa/wa.core.js?v{$wa->version(true)}"></script>
     <script type="text/javascript" src="{$wa_app_static_url}js/cash.js?v{$wa->version()}"></script>
 
-    {$projects = [
-            [ 'Pocket Lists', 'https://pocketlists.com/favicon.ico', '180K' ],
-            [ 'YesterdayMe', 'http://www.yesterdayme.com/favicon.ico', '-41K' ],
-            [ 'Магазин', 'https://www.shop-script.ru/favicon.ico', '31K' ],
-            [ 'Бар «1312»', 'https://1312.io/favicon.ico', '0' ]
+    {$accounts = [
+            [ 'Pocket Lists', 'https://pocketlists.com/favicon.ico', '180K ₽' ],
+            [ 'YesterdayMe', 'http://www.yesterdayme.com/favicon.ico', '-41K ₽' ],
+            [ 'Магазин', 'https://www.shop-script.ru/favicon.ico', '31K ₽' ],
+            [ 'Бар «1312»', 'https://1312.io/favicon.ico', '$100' ]
         ]}
 
-    {$categories = [
-            [ 'Закупки' ],
+    {$categories_income = [
+            [ 'Продажи', '#17ae4f' ],
+            [ 'Левак', '#26b7a3' ],
+            [ 'Нам вернули долг' ],
+            [ 'Проценты по вкладам' ],
+            [ 'Взяли в долг', '#ccc' ],
+            [ 'Ангельские инвестиции, о спасибо, боже, за этот подарок', '#ccc' ]
+        ]}
+    {$categories_expense = [
+            [ 'Закупки', '#c54b58' ],
             [ 'Зарплаты' ],
             [ 'Налоги' ],
             [ 'Офис' ],
-            [ 'Реклама и маркетинг' ]
+            [ 'Реклама и маркетинг' ],
+            [ 'Возврат долга' ],
+            [ 'Комиссии банков' ],
+            [ 'Дивиденды: полный вывод баблосов из бизнеса', '#ccc' ]
         ]}
 
     {$templates = [
@@ -44,47 +55,58 @@
                         {if 1 || PROJECT_COUNT > 1}
                         <li class="bottom-padded selected">
                             <a href="#" class="bold">
-                                <span class="count">170K</span>
-                                [`All projects`]
+                                <!-- <span class="count">170K</span> -->
+                                [`All accounts`]
                             </a>
                         </li>
                         {/if}
 
-                        {foreach $projects as $p}
+                        {foreach $accounts as $a}
                             <li>
-                                 <a href="#"><span class="count">{$p[2]}</span><i class="icon16" style="background-image: url('{$p[1]}'); background-size: 16px 16px;"></i>{$p[0]}</a>
+                                 <a href="#/account/N"><span class="count">{$a[2]}</span><i class="icon16" style="background-image: url('{$a[1]}'); background-size: 16px 16px;"></i>{$a[0]}</a>
                             </li>
                         {/foreach}
                         <li class="small">
-                             <a href="#"><i class="icon10 add"></i> [`New project`]</a>
+                             <a href="#"><i class="icon10 add"></i> [`New account`]</a>
                         </li>
                     </ul>
                 </div>
                 <div class="block">
                     <h5 class="heading top-padded">
-                        <a href="#" class="count"><i class="icon16 add"></i></a>
-                        <!-- [`Categories`] -->
-                        Статьи
+                        <!-- <a href="#" class="count"><i class="icon16 add"></i></a> -->
+                        [`Income`]
                     </h5>
-                    <ul class="menu-v collapsible">
-                        {foreach $categories as $c}
+                    <ul class="menu-v with-icons">
+                        {foreach $categories_income as $c}
                         <li>
-                             <a href="#">{$c[0]}</a>
+                             <a href="#/income/N"><i class="icon16 color" style="background: {$c[1]|default:'#47ce6f'};"></i>{$c[0]}</a>
                         </li>
                         {/foreach}
                     </ul>
-
-                    <!-- <h5 class="heading top-padded">
-                        <a href="#" class="count"><i class="icon16 add"></i></a>
-                        [`Templates`]
+                </div>
+                <div class="block">
+                    <h5 class="heading top-padded">
+                        <!-- <a href="#" class="count"><i class="icon16 add"></i></a> -->
+                        [`Expenses`]
                     </h5>
-                    <ul class="menu-v">
-                        {foreach $templates as $t}
+                    <ul class="menu-v with-icons">
+                        {foreach $categories_expense as $c}
                         <li>
-                             <label><a href="#"><i class="icon16 {if $t[1] == 'income'}add{else}delete{/if}"></i> {$t[0]}</a>
+                             <a href="#/expense/N"><i class="icon16 color" style="background: {$c[1]|default:'#f56b68'};"></i>{$c[0]}</a>
                         </li>
                         {/foreach}
-                    </ul> -->
+                    </ul>
+                </div>
+                <div class="block">
+                    <h5 class="heading top-padded">
+                        <!-- <a href="#" class="count"><i class="icon16 add"></i></a> -->
+                        [`Other`]
+                    </h5>
+                    <ul class="menu-v with-icons">
+                        <li>
+                             <a href="#/transfers/"><i class="icon16 color" style="background: #8bd5ff;"></i>[`Transfers`]</a>
+                        </li>
+                    </ul>
 
                     <hr>
                     <ul class="menu-v with-icons">
@@ -101,7 +123,7 @@
                          <li>
                              <a href="#"><i class="icon16 upload"></i>[`Import`]</a>
                          </li>
-                         <li>
+                         <li class="top-padded">
                              <a href="#"><i class="icon16 settings"></i>[`Settings`]</a>
                          </li>
                     </ul>
@@ -110,23 +132,29 @@
             <div class="content left200px">
                 <div id="content">
                     <div class="block">
-
+                        <h1>
+                            [`All accounts`]
+                        </h1>
                         <div class="float-right block half-padded">
                             [`Forecast`]:
                             <select>
                                 <option>[`Off`]</option>
-                                <option>[`+1 month`]</option>
-                                <option selected>[`+3 months`]</option>
-                                <option>[`+6 months`]</option>
-                                <option>[`+12 months`]</option>
-                                <option>[`Custom range...`]</option>
+                                <option>[`1 month`]</option>
+                                <option selected>[`3 months`]</option>
+                                <option>[`6 months`]</option>
+                                <option>[`12 months`]</option>
                             </select>
+                            <strong class="c-negative highlighted">-37 920 ₽</strong>
+                            <strong class="c-positive highlighted">$100</strong>
+                            <span class="hint">{date('Y-m-d H:i:s', $smarty.now + 86400*90)|wa_date:humandate}</span>
                         </div>
-                        <h1>
-                            [`Cash`]: 170 129 RUB
-                            <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandatetime}</span>
-                        </h1>
-                        <div class="c-chart">(chart here)</div>
+                        <div class="block half-padded" style="padding-left: 0;">
+                            [`Cash on hand`]:
+                            <strong class="c-positive highlighted large">170 129 ₽</strong>
+                            <strong class="c-positive highlighted large">100 $</strong>
+                            <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandate}</span>
+                        </div>
+                        <div class="c-chart"></div>
 
                         <!-- <div class="float-right">
                             <ul class="menu-h">
@@ -136,40 +164,87 @@
                         </div> -->
 
                         <div class="c-operations">
-                            <div class="float-right">
-                                <!-- [`Forecast`]:
+                            <div class="float-right block half-padded">
+                                [`Forecast`]:
                                 <select>
-                                    <option>[`+1 month`]</option>
-                                    <option selected>[`+3 months`]</option>
-                                    <option>[`+6 months`]</option>
-                                    <option>[`+12 months`]</option>
-                                    <option>[`Custom range...`]</option>
-                                </select> -->
-                                <ul class="menu-h">
-                                    <li><a href="#" class="inline-link gray"><b><i>[`All categories`]</i></b><i class="icon10 darr"></i></a></li>
-                                </ul>
+                                    <option>[`Off`]</option>
+                                    <option>[`1 month`]</option>
+                                    <option selected>[`3 months`]</option>
+                                    <option>[`6 months`]</option>
+                                    <option>[`12 months`]</option>
+                                </select>
+                                <strong class="c-negative highlighted">-37 920 ₽</strong>
+                                <strong class="c-positive highlighted">$100</strong>
+                                <span class="hint">{date('Y-m-d H:i:s', $smarty.now + 86400*90)|wa_date:humandate}</span>
                             </div>
-                            <ul class="menu-h">
-                                <li><a href="#" class="inline-link"><i class="icon16 add"></i><b><i><strong>[`Add income`]</strong></i></b></a></li>
-                                <li><a href="#" class="inline-link"><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li>
-                                <li><a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a></li>
+                            <h5 class="heading">
+                                [`Planned`]
+                            </h5>
+                            <ul class="menu-h dropdown">
+                                <li><a href="#" class="inline-link"><i class="icon16 add"></i><b><i><strong>[`Add transaction`]</strong></i></b></a></li>
+                                <!-- <li><a href="#" class="inline-link"><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li> -->
+
+                                <!--
+
+                                    TRANSACTION TEMPLATES: some day
+
+                                <li>
+                                    <a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a>
+                                    <ul class="menu-v">
+                                        <li><a href="#"><i class="icon16 color"></i>Аренда офиса</a></li>
+                                        <li><a href="#"><i class="icon16 color"></i>Оплата хостинга</a></li>
+                                        <li><a href="#"><i class="icon16 color"></i>Подписка на сторонние сервисы</a></li>
+                                        <li><a href="#"><i class="icon16 color"></i>Комиссия банка</a></li>
+                                        <li class="bordered-top"><a href="#" class="gray"><i class="icon16 settings"></i>[`Manage templates`]</a></li>
+                                    </ul>
+                                </li> -->
+
                             </ul>
+                            <table class="zebra c-transactions">
+                                <!-- <tr>
+                                    <th>[`Date`]</th>
+                                    <th>[`Account`]</th>
+                                    <th>[`Category`]</th>
+                                    <th>[`Summary`]</th>
+                                    <th>[`Amount`]</th>
+                                    <th>[`Balance`]</th>
+                                    <th></th>
+                                </tr> -->
+                                {for $i=1 to 3}
+                                    <tr class="c-planned">
+                                        <td>{date('Y-m-d', $smarty.now + 86400*30*$i)|wa_date:humandate}</td>
+                                        <td>PL</td>
+                                        <td><i class="icon16 color" style="background: #f56b68;"></i>Офис</td>
+                                        <td>Аренда офиса</td>
+                                        <td><span>&minus;32 024 ₽</span></td>
+                                        <td><span>100 500 ₽</span></td>
+                                        <td>smth else</td>
+                                    </tr>
+                                {/for}
+                            </table>
                         </div>
 
+                        <h5 class="heading">
+                            [`Completed`]
+                        </h5>
                         <table class="zebra c-transactions">
-                            <tr>
+                            <!-- <tr>
                                 <th>[`Date`]</th>
-                                <th>[`Project`]</th>
+                                <th>[`Account`]</th>
+                                <th>[`Category`]</th>
                                 <th>[`Summary`]</th>
                                 <th>[`Amount`]</th>
+                                <th>[`Balance`]</th>
                                 <th></th>
-                            </tr>
-                            {for $i=1 to 10}
+                            </tr> -->
+                            {for $i=1 to 12}
                                 <tr>
-                                    <td>{date('Y-m-d')|wa_date:humandate}</td>
+                                    <td>{date('Y-m-d', $smarty.now - 86400*30*$i)|wa_date:humandate}</td>
                                     <td>PL</td>
-                                    <td>description</td>
-                                    <td>100500</td>
+                                    <td><i class="icon16 color" style="background: #f56b68;"></i>Офис</td>
+                                    <td>Аренда офиса</td>
+                                    <td><span>&minus;32 024 ₽</span></td>
+                                    <td><span>100 500 ₽</span></td>
                                     <td>smth else</td>
                                 </tr>
                             {/for}
