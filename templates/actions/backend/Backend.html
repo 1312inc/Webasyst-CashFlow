@@ -22,7 +22,7 @@
             [ 'Нам вернули долг' ],
             [ 'Проценты по вкладам' ],
             [ 'Взяли в долг', '#ccc' ],
-            [ 'Ангельские инвестиции, о спасибо, боже, за этот подарок', '#ccc' ]
+            [ 'Ангельские инвестиции, о спасибо, боже, за этот подарок свыше', '#ccc' ]
         ]}
     {$categories_expense = [
             [ 'Закупки', '#c54b58' ],
@@ -136,53 +136,58 @@
                             [`All accounts`]
                         </h1>
                         <div class="float-right block half-padded">
-                            [`Forecast`]:
-                            <select>
-                                <option>[`Off`]</option>
-                                <option>[`1 month`]</option>
-                                <option selected>[`3 months`]</option>
-                                <option>[`6 months`]</option>
-                                <option>[`12 months`]</option>
-                            </select>
-                            <strong class="c-negative highlighted">-37 920 ₽</strong>
-                            <strong class="c-positive highlighted">$100</strong>
-                            <span class="hint">{date('Y-m-d H:i:s', $smarty.now + 86400*90)|wa_date:humandate}</span>
+                            <ul class="menu-h dropdown">
+                                <li>
+                                    <a href="#" class="inline-link"><b><i>[`Last 365 days`]</i></b> <i class="icon10 darr"></i></a>
+                                    <ul class="menu-v">
+                                        <li><a href="#">[`Last 30 days`]</a></li>
+                                        <li><a href="#">[`Last 90 days`]</a></li>
+                                        <li><a href="#">[`Last 365 days`]</a></li>
+                                        <li><a href="#">[`All time`]</a></li>
+                                        <li class="bordered-top"><a href="#">[`Custom range...`]</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    [`Forecast`]: <a href="#" class="inline-link nowrap" style="display: inline;"><b><i>[`3 months`]</i></b> <i class="icon10 darr"></i></a>
+                                    <ul class="menu-v">
+                                        <li><a href="#">[`Off`]</a></li>
+                                        <li><a href="#">[`1 month`]</a></li>
+                                        <li><a href="#">[`3 months`]</a></li>
+                                        <li><a href="#">[`6 months`]</a></li>
+                                        <li><a href="#">[`12 months`]</a></li>
+                                    </ul>
+                                </li>
+
+                            </ul>
+
                         </div>
                         <div class="block half-padded" style="padding-left: 0;">
-                            [`Cash on hand`]:
+                            [`Cash on hand today`]:
                             <strong class="c-positive highlighted large">170 129 ₽</strong>
+                            +
                             <strong class="c-positive highlighted large">100 $</strong>
                             <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandate}</span>
                         </div>
                         <div class="c-chart"></div>
 
                         <!-- <div class="float-right">
-                            <ul class="menu-h">
-                                <li class="selected"><a href="#" class="inline-link"><b><i>[`List`]</i></b></a></li>
-                                <li><a href="#" class="inline-link"><b><i>[`Calendar`]</i></b></a></li>
-                            </ul>
+
                         </div> -->
 
-                        <div class="c-operations">
-                            <div class="float-right block half-padded">
-                                [`Forecast`]:
-                                <select>
-                                    <option>[`Off`]</option>
-                                    <option>[`1 month`]</option>
-                                    <option selected>[`3 months`]</option>
-                                    <option>[`6 months`]</option>
-                                    <option>[`12 months`]</option>
-                                </select>
-                                <strong class="c-negative highlighted">-37 920 ₽</strong>
-                                <strong class="c-positive highlighted">$100</strong>
-                                <span class="hint">{date('Y-m-d H:i:s', $smarty.now + 86400*90)|wa_date:humandate}</span>
+                        <div class="c-transactions">
+                            <div class="float-right">
+                                {sprintf('[`Cash on hand on %s`]', date('Y-m-d H:i:s', $smarty.now + 86400*90)|wa_date:humandate)}:
+
+                                <strong class="c-negative highlighted large">-37 920 ₽</strong>
+                                +
+                                <strong class="c-positive highlighted large">$100</strong>
+
                             </div>
-                            <h5 class="heading">
-                                [`Planned`]
-                            </h5>
+
                             <ul class="menu-h dropdown">
-                                <li><a href="#" class="inline-link"><i class="icon16 add"></i><b><i><strong>[`Add transaction`]</strong></i></b></a></li>
-                                <!-- <li><a href="#" class="inline-link"><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li> -->
+                                <li><a href="#" class="inline-link"><i class="icon16 add"></i><b><i><strong>[`Add income`]</strong></i></b></a></li>
+                                <li><a href="#" class="inline-link"><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li>
+                                <li><a href="#" class="inline-link"><i class="icon16 move"></i><b><i><strong>[`Transfer`]</strong></i></b></a></li>
 
                                 <!--
 
@@ -200,7 +205,7 @@
                                 </li> -->
 
                             </ul>
-                            <table class="zebra c-transactions">
+                            <table class="zebra">
                                 <!-- <tr>
                                     <th>[`Date`]</th>
                                     <th>[`Account`]</th>
@@ -212,7 +217,7 @@
                                 </tr> -->
                                 {for $i=1 to 3}
                                     <tr class="c-planned">
-                                        <td>{date('Y-m-d', $smarty.now + 86400*30*$i)|wa_date:humandate}</td>
+                                        <td>{date('Y-m-d', $smarty.now + (3 - $i) * 86400*30)|wa_date:humandate}</td>
                                         <td>PL</td>
                                         <td><i class="icon16 color" style="background: #f56b68;"></i>Офис</td>
                                         <td>Аренда офиса</td>
@@ -221,33 +226,17 @@
                                         <td>smth else</td>
                                     </tr>
                                 {/for}
-                            </table>
-                        </div>
-
-                        <h5 class="heading">
-                            [`Completed`]
-                        </h5>
-                        <table class="zebra c-transactions">
-                            <!-- <tr>
-                                <th>[`Date`]</th>
-                                <th>[`Account`]</th>
-                                <th>[`Category`]</th>
-                                <th>[`Summary`]</th>
-                                <th>[`Amount`]</th>
-                                <th>[`Balance`]</th>
-                                <th></th>
-                            </tr> -->
-                            {for $i=1 to 12}
-                                <tr>
-                                    <td>{date('Y-m-d', $smarty.now - 86400*30*$i)|wa_date:humandate}</td>
-                                    <td>PL</td>
-                                    <td><i class="icon16 color" style="background: #f56b68;"></i>Офис</td>
-                                    <td>Аренда офиса</td>
-                                    <td><span>&minus;32 024 ₽</span></td>
-                                    <td><span>100 500 ₽</span></td>
-                                    <td>smth else</td>
-                                </tr>
-                            {/for}
+                                {for $i=1 to 12}
+                                    <tr>
+                                        <td>{date('Y-m-d', $smarty.now - 86400*30*$i)|wa_date:humandate}</td>
+                                        <td>PL</td>
+                                        <td><i class="icon16 color" style="background: #f56b68;"></i>Офис</td>
+                                        <td>Аренда офиса</td>
+                                        <td><span>&minus;32 024 ₽</span></td>
+                                        <td><span>100 500 ₽</span></td>
+                                        <td>smth else</td>
+                                    </tr>
+                                {/for}
                         </table>
 
                     </div>
