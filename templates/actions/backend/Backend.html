@@ -161,27 +161,15 @@
                             </ul>
 
                         </div>
-                        <ul class="menu-h dropdown">
-                            <li><a href="#" class="inline-link"><i class="icon16 add"></i><b><i><strong>[`Add income`]</strong></i></b></a></li>
-                            <li><a href="#" class="inline-link"><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li>
-                            <li><a href="#" class="inline-link"><i class="icon16 move"></i><b><i><strong>[`Transfer`]</strong></i></b></a></li>
 
-                            <!--
+                        <div class="block half-padded" style="padding-left: 0;">
+                            [`Cash on hand today`]:
+                            <strong class="c-positive highlighted large">170 129 ₽</strong>
+                            +
+                            <strong class="c-positive highlighted large">100 $</strong>
+                            <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandate}</span>
+                        </div>
 
-                                TRANSACTION TEMPLATES: some day
-
-                            <li>
-                                <a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a>
-                                <ul class="menu-v">
-                                    <li><a href="#"><i class="icon16 color"></i>Аренда офиса</a></li>
-                                    <li><a href="#"><i class="icon16 color"></i>Оплата хостинга</a></li>
-                                    <li><a href="#"><i class="icon16 color"></i>Подписка на сторонние сервисы</a></li>
-                                    <li><a href="#"><i class="icon16 color"></i>Комиссия банка</a></li>
-                                    <li class="bordered-top"><a href="#" class="gray"><i class="icon16 settings"></i>[`Manage templates`]</a></li>
-                                </ul>
-                            </li> -->
-
-                        </ul>
                         <div class="c-chart"></div>
 
                         <!-- <div class="float-right">
@@ -198,13 +186,28 @@
 
                             </div>
 
-                            <div class="block half-padded" style="padding-left: 0;">
-                                [`Cash on hand today`]:
-                                <strong class="c-positive highlighted large">170 129 ₽</strong>
-                                +
-                                <strong class="c-positive highlighted large">100 $</strong>
-                                <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandate}</span>
-                            </div>
+                            <ul class="menu-h dropdown">
+                                <li><a href="#" class="inline-link"><i class="icon16 add"></i><b><i><strong>[`Add income`]</strong></i></b></a></li>
+                                <li><a href="#" class="inline-link"><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li>
+                                <li><a href="#" class="inline-link"><i class="icon16 move"></i><b><i><strong>[`Transfer`]</strong></i></b></a></li>
+
+                                <!--
+
+                                    TRANSACTION TEMPLATES: some day
+
+                                <li>
+                                    <a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a>
+                                    <ul class="menu-v">
+                                        <li><a href="#"><i class="icon16 color"></i>Аренда офиса</a></li>
+                                        <li><a href="#"><i class="icon16 color"></i>Оплата хостинга</a></li>
+                                        <li><a href="#"><i class="icon16 color"></i>Подписка на сторонние сервисы</a></li>
+                                        <li><a href="#"><i class="icon16 color"></i>Комиссия банка</a></li>
+                                        <li class="bordered-top"><a href="#" class="gray"><i class="icon16 settings"></i>[`Manage templates`]</a></li>
+                                    </ul>
+                                </li> -->
+
+                            </ul>
+
                             <table class="zebra">
                                 <!-- <tr>
                                     <th>[`Date`]</th>
