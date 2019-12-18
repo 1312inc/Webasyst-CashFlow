@@ -1,0 +1,126 @@
+{$accounts = [
+[ 'Pocket Lists', 'https://pocketlists.com/favicon.ico', '180K ₽' ],
+[ 'YesterdayMe', 'http://www.yesterdayme.com/favicon.ico', '-41K ₽' ],
+[ 'Магазин', 'https://www.shop-script.ru/favicon.ico', '31K ₽' ],
+[ 'Бар «1312»', 'https://1312.io/favicon.ico', '$100' ]
+]}
+
+{$categories_income = [
+[ 'Продажи', '#17ae4f' ],
+[ 'Левак', '#26b7a3' ],
+[ 'Нам вернули долг' ],
+[ 'Проценты по вкладам' ],
+[ 'Взяли в долг', '#ccc' ],
+[ 'Ангельские инвестиции, о спасибо, боже, за этот подарок свыше', '#ccc' ]
+]}
+{$categories_expense = [
+[ 'Закупки', '#c54b58' ],
+[ 'Зарплаты' ],
+[ 'Налоги' ],
+[ 'Офис' ],
+[ 'Реклама и маркетинг' ],
+[ 'Возврат долга' ],
+[ 'Комиссии банков' ],
+[ 'Дивиденды: полный вывод баблосов из бизнеса', '#ccc' ]
+]}
+
+{$templates = [
+[ 'Поступление на ИП', 'income', '' ],
+[ 'Аренда офиса', 'expense', '' ],
+[ 'Хостинг', 'expense', '' ],
+[ 'Закуп в офис', 'expense', '' ]
+]}
+
+<div class="sidebar left200px">
+    <div class="block">
+
+        <ul class="menu-v with-icons">
+            {if 1 || IS_APP_ADMIN && ACCOUNT_COUNT > 1}
+                <li class="bottom-padded selected">
+                    <a href="#" class="bold">
+                        <!-- <span class="count">170K</span> -->
+                        [`All accounts`]
+                    </a>
+                </li>
+            {/if}
+
+            {foreach $accounts as $a}
+                <li>
+                    <a href="#/account/N"><span class="count">{$a[2]}</span><i class="icon16" style="background-image: url('{$a[1]}'); background-size: 16px 16px;"></i>{$a[0]}</a>
+                </li>
+            {/foreach}
+
+            {if 1 || IS_APP_ADMIN}
+                <li class="small">
+                    <a href="#"><i class="icon10 add"></i> [`New account`]</a>
+                </li>
+            {/if}
+        </ul>
+    </div>
+    {if count($categories_income)}
+        <div class="block">
+            <h5 class="heading top-padded">
+                <!-- <a href="#" class="count"><i class="icon16 add"></i></a> -->
+                [`Income`]
+            </h5>
+            <ul class="menu-v with-icons">
+                {foreach $categories_income as $c}
+                    <li>
+                        <a href="#/income/N"><i class="icon16 color" style="background: {$c[1]|default:'#47ce6f'};"></i>{$c[0]}</a>
+                    </li>
+                {/foreach}
+            </ul>
+        </div>
+    {/if}
+    {if count($categories_expense)}
+        <div class="block">
+            <h5 class="heading top-padded">
+                <!-- <a href="#" class="count"><i class="icon16 add"></i></a> -->
+                [`Expenses`]
+            </h5>
+            <ul class="menu-v with-icons">
+                {foreach $categories_expense as $c}
+                    <li>
+                        <a href="#/expense/N"><i class="icon16 color" style="background: {$c[1]|default:'#f56b68'};"></i>{$c[0]}</a>
+                    </li>
+                {/foreach}
+            </ul>
+        </div>
+    {/if}
+    <div class="block">
+        {if 1 || IS_APP_ADMIN || MADE_AT_LEAST_ONE_TRANSFER_IN_THE_PAST}
+            <h5 class="heading top-padded">
+                <!-- <a href="#" class="count"><i class="icon16 add"></i></a> -->
+                [`Other`]
+            </h5>
+            <ul class="menu-v with-icons">
+                <li>
+                    <a href="#/transfers/"><i class="icon16 color" style="background: #8bd5ff;"></i>[`Transfers`]</a>
+                </li>
+            </ul>
+        {/if}
+
+        {if 1 || IS_APP_ADMIN}
+            <hr>
+            <ul class="menu-v with-icons">
+                <!-- plugin hook -->
+                <li>
+                    <a href="#"><i class="icon16 c-table"></i>[`Cash flow`]</a>
+                </li>
+                <!-- <li>
+                    <a href="#"><i class="icon16 calendar"></i>[`Calendar`]</a>
+                </li> -->
+                <!-- <li>
+                    <a href="#"><i class="icon16 contact"></i>[`Customers`]</a>
+                </li> -->
+                <li>
+                    <a href="#"><i class="icon16 upload"></i>[`Import`]</a>
+                </li>
+                <li class="top-padded">
+                    <a href="#"><i class="icon16 settings"></i>[`Settings`]</a>
+                </li>
+            </ul>
+        {/if}
+
+    </div>
+</div>

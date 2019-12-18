@@ -1,0 +1,52 @@
+<?php
+return array(
+    'cash_account' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'name' => array('varchar', 64, 'null' => 0),
+        'description' => array('text'),
+        'icon' => array('varchar', 255),
+        'currency' => array('varchar', 3, 'null' => 0),
+        'current_balance' => array('decimal', "18,4", 'default' => '0.0000'),
+        'customer_contact_id' => array('int', 11),
+        'is_archived' => array('tinyint', 4, 'default' => '0'),
+        'sort' => array('smallint', 6),
+        'create_datetime' => array('datetime', 'null' => 0),
+        'update_datetime' => array('datetime'),
+        ':keys' => array(
+            'PRIMARY' => 'id',
+        ),
+    ),
+    'cash_category' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'slug' => array('varchar', 64, 'null' => 0),
+        'name' => array('varchar', 64, 'null' => 0),
+        'type' => array('enum', "'income','expense','transfer'"),
+        'color' => array('varchar', 7),
+        'sort' => array('smallint', 6),
+        'create_datetime' => array('datetime', 'null' => 0),
+        'update_datetime' => array('datetime'),
+        ':keys' => array(
+            'PRIMARY' => 'id',
+        ),
+    ),
+    'cash_transaction' => array(
+        'id' => array('bigint', 20, 'null' => 0, 'autoincrement' => 1),
+        'date' => array('date', 'null' => 0),
+        'datetime' => array('datetime', 'null' => 0),
+        'account_id' => array('int', 11, 'null' => 0),
+        'category_id' => array('int', 11),
+        'amount' => array('decimal', "18,4", 'default' => '0.0000'),
+        'description' => array('text'),
+        'repeating_id' => array('int', 11),
+        'create_contact_id' => array('int', 11, 'null' => 0),
+        'create_datetime' => array('datetime', 'null' => 0),
+        'update_datetime' => array('datetime'),
+        ':keys' => array(
+            'PRIMARY' => 'id',
+            'cash_transaction_category_id_index' => 'category_id',
+            'cash_transaction_datetime_create_contact_id_index' => array('datetime', 'create_contact_id'),
+            'cash_transaction_repeating_id_index' => 'repeating_id',
+            'cash_transaction_cash_account_id_fk' => 'account_id',
+        ),
+    ),
+);
