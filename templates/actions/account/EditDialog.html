@@ -1,0 +1,25 @@
+<section>
+    <div class="dialog-content">
+        <div>
+            <input type="hidden" name="acccount[id]" value="{$account->id}"/>
+            <h1>{$account->name|escape}</h1>
+
+            <div class="fields form">
+                <div class="field-group">
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Account name`]
+                        </div>
+                        <div class="value">
+                            <input type="text" class="bold" name="account[name]" placeholder="[`Account name`]" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-buttons">
+        <input type="submit" value="[`Save`]" class="button green"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
+    </div>
+</section>

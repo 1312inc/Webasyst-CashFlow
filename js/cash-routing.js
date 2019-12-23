@@ -154,6 +154,16 @@
                 $.cash.$content.html(html);
             });
         },
+        settingsAction: function () {
+            $.get('?module=settings', function (html) {
+                $.cash.$content.html(html);
+            });
+        },
+        importAction: function () {
+            $.get('?module=import', function (html) {
+                $.cash.$content.html(html);
+            });
+        },
         oldAction: function (id) {
             var that = this;
             $.get('?module=backend&action=source', function (html) {
@@ -167,7 +177,7 @@
                 var value = $.isArray(hash) ? hash.join('/') : '';
                 $.storage.set('/cash/hash/' + this.options.user_id, value);
             }
-            this.options.self.highlightSidebar();
+            $.cash.highlightSidebar();
         },
     };
-}());
+}(jQuery));

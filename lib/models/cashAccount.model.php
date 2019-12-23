@@ -14,7 +14,8 @@ class cashAccountModel extends cashModel
     {
         return $this
             ->select('*')
-            ->where('is_archived = 0 and ')
+            ->where('is_archived = 0')
+            ->order('sort ASC, id DESC')
             ->fetchAll();
     }
 }
