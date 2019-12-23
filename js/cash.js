@@ -29,7 +29,7 @@
                 $li = self.$sidebar.find('a[href^="' + href + '"]').first().closest('li');
                 $li.addClass('selected');
             } else {
-                var hash = self.routing.getHash(),
+                var hash = $.cash_routing.getHash(),
                     $a = self.$sidebar.find('a[href="' + hash + '"]');
 
                 if (hash) {
@@ -70,8 +70,6 @@
             self.$wa = $('#wa-app');
             self.$content = $('#cash-content');
             self.$sidebar = $('#cash-left-sidebar');
-
-            $.cash_routing.init(self.options.routingOptions);
         }
     }
 }(jQuery));

@@ -63,6 +63,16 @@ class cashTransaction extends cashAbstractEntity
     private $updateDatetime;
 
     /**
+     * @var cashCategory|null
+     */
+    protected $category;
+
+    /**
+     * @var cashAccount
+     */
+    protected $account;
+
+    /**
      * @return int
      */
     public function getId()
@@ -290,5 +300,52 @@ class cashTransaction extends cashAbstractEntity
         $this->updateCreateUpdateDatetime();
 
         return true;
+    }
+
+    /**
+     * @return cashCategory|null
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param cashCategory|null $category
+     *
+     * @return cashTransaction
+     */
+    public function setCategory(cashCategory $category = null)
+    {
+        if ($category) {
+            $this->category = $category;
+            $this->categoryId = $category->getId();
+        } else {
+            $this->category = null;
+            $this->categoryId = null;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return cashAccount
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param cashAccount $account
+     *
+     * @return cashTransaction
+     */
+    public function setAccount(cashAccount $account)
+    {
+        $this->account = $account;
+        $this->accountId = $account->getId();
+
+        return $this;
     }
 }

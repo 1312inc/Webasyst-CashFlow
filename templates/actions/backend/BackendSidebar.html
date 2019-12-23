@@ -1,10 +1,3 @@
-{$accounts = [
-[ 'Pocket Lists', 'https://pocketlists.com/favicon.ico', '180K ₽' ],
-[ 'YesterdayMe', 'http://www.yesterdayme.com/favicon.ico', '-41K ₽' ],
-[ 'Магазин', 'https://www.shop-script.ru/favicon.ico', '31K ₽' ],
-[ 'Бар «1312»', 'https://1312.io/favicon.ico', '$100' ]
-]}
-
 {$categories_income = [
 [ 'Продажи', '#17ae4f' ],
 [ 'Левак', '#26b7a3' ],
@@ -44,15 +37,16 @@
                 </li>
             {/if}
 
+            {** @var cashAccountDto $a **}
             {foreach $accounts as $a}
                 <li>
-                    <a href="#/account/N"><span class="count">{$a[2]}</span><i class="icon16" style="background-image: url('{$a[1]}'); background-size: 16px 16px;"></i>{$a[0]}</a>
+                    <a href="#/account/{$a->id}"><span class="count">0 ₽</span><i class="icon16" style="background-image: url('{$a->icon}'); background-size: 16px 16px;"></i>{$a->name|escape}</a>
                 </li>
             {/foreach}
 
             {if 1 || IS_APP_ADMIN}
                 <li class="small">
-                    <a href="#"><i class="icon10 add"></i> [`New account`]</a>
+                    <a href="#" data-cash-action="add-account"><i class="icon10 add"></i> [`New account`]</a>
                 </li>
             {/if}
         </ul>
@@ -114,10 +108,10 @@
                     <a href="#"><i class="icon16 contact"></i>[`Customers`]</a>
                 </li> -->
                 <li>
-                    <a href="#"><i class="icon16 upload"></i>[`Import`]</a>
+                    <a href="#/import/"><i class="icon16 upload"></i>[`Import`]</a>
                 </li>
                 <li class="top-padded">
-                    <a href="#"><i class="icon16 settings"></i>[`Settings`]</a>
+                    <a href="#/settings/"><i class="icon16 settings"></i>[`Settings`]</a>
                 </li>
             </ul>
         {/if}

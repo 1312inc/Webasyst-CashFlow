@@ -13,6 +13,9 @@ class cashBackendSidebarAction extends cashViewAction
      */
     public function runAction($params = null)
     {
+        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActive();
+        $accountDtos = cashAccountDto::createFromEntities($accounts);
+
         /**
          * UI in main sidebar
          *
@@ -27,6 +30,7 @@ class cashBackendSidebarAction extends cashViewAction
 
         $this->view->assign(
             [
+                'accounts' => $accountDtos,
                 'backend_sidebar' => $eventResult,
             ]
         );
