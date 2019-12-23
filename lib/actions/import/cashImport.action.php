@@ -3,9 +3,14 @@
 /**
  * Class cashImportAction
  */
-class cashImportAction extends waViewAction
+class cashImportAction extends cashViewAction
 {
-    public function execute()
+    /**
+     * @param null|array $params
+     *
+     * @return mixed
+     */
+    public function runAction($params = null)
     {
         $message = 'Hello import!';
         $this->view->assign('message', $message);

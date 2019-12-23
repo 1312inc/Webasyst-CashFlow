@@ -164,7 +164,12 @@
                 $.cash.$content.html(html);
             });
         },
-        oldAction: function (id) {
+        accountAction: function (id) {
+            $.get('?module=account&id=' + id, function (html) {
+                $.cash.$content.html(html);
+            });
+        },
+        sourceAction: function (id) {
             var that = this;
             $.get('?module=backend&action=source', function (html) {
                 $.cash.$content.html(html);

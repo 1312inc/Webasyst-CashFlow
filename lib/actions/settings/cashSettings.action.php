@@ -3,9 +3,14 @@
 /**
  * Class cashSettingsAction
  */
-class cashSettingsAction extends waViewAction
+class cashSettingsAction extends cashViewAction
 {
-    public function execute()
+    /**
+     * @param null|array $params
+     *
+     * @return mixed
+     */
+    public function runAction($params = null)
     {
         $message = 'Hello settings!';
         $this->view->assign('message', $message);

@@ -1,22 +1,3 @@
-{$categories_income = [
-[ 'Продажи', '#17ae4f' ],
-[ 'Левак', '#26b7a3' ],
-[ 'Нам вернули долг' ],
-[ 'Проценты по вкладам' ],
-[ 'Взяли в долг', '#ccc' ],
-[ 'Ангельские инвестиции, о спасибо, боже, за этот подарок свыше', '#ccc' ]
-]}
-{$categories_expense = [
-[ 'Закупки', '#c54b58' ],
-[ 'Зарплаты' ],
-[ 'Налоги' ],
-[ 'Офис' ],
-[ 'Реклама и маркетинг' ],
-[ 'Возврат долга' ],
-[ 'Комиссии банков' ],
-[ 'Дивиденды: полный вывод баблосов из бизнеса', '#ccc' ]
-]}
-
 {$templates = [
 [ 'Поступление на ИП', 'income', '' ],
 [ 'Аренда офиса', 'expense', '' ],
@@ -37,10 +18,10 @@
                 </li>
             {/if}
 
-            {** @var cashAccountDto $a **}
-            {foreach $accounts as $a}
+            {** @var cashAccountDto $account **}
+            {foreach $accounts as $account}
                 <li>
-                    <a href="#/account/{$a->id}"><span class="count">0 ₽</span><i class="icon16" style="background-image: url('{$a->icon}'); background-size: 16px 16px;"></i>{$a->name|escape}</a>
+                    <a href="#/account/{$account->id}"><span class="count">0 ₽</span><i class="icon16" style="background-image: url('{$account->icon}'); background-size: 16px 16px;"></i>{$account->name|escape}</a>
                 </li>
             {/foreach}
 
@@ -51,31 +32,33 @@
             {/if}
         </ul>
     </div>
-    {if count($categories_income)}
+    {if count($incomes)}
         <div class="block">
             <h5 class="heading top-padded">
                 <!-- <a href="#" class="count"><i class="icon16 add"></i></a> -->
                 [`Income`]
             </h5>
             <ul class="menu-v with-icons">
-                {foreach $categories_income as $c}
+                {** @var cashCategoryDto $income **}
+                {foreach $incomes as $income}
                     <li>
-                        <a href="#/income/N"><i class="icon16 color" style="background: {$c[1]|default:'#47ce6f'};"></i>{$c[0]}</a>
+                        <a href="#/income/{$income->slug}"><i class="icon16 color" style="background: {$income->color|default:'#47ce6f'};"></i>{$income->name|escape}</a>
                     </li>
                 {/foreach}
             </ul>
         </div>
     {/if}
-    {if count($categories_expense)}
+    {if count($expenses)}
         <div class="block">
             <h5 class="heading top-padded">
                 <!-- <a href="#" class="count"><i class="icon16 add"></i></a> -->
                 [`Expenses`]
             </h5>
             <ul class="menu-v with-icons">
-                {foreach $categories_expense as $c}
+                {** @var cashCategoryDto $expense **}
+                {foreach $expenses as $expense}
                     <li>
-                        <a href="#/expense/N"><i class="icon16 color" style="background: {$c[1]|default:'#f56b68'};"></i>{$c[0]}</a>
+                        <a href="#/expense/{$expense->slug}"><i class="icon16 color" style="background: {$expense->color|default:'#f56b68'};"></i>{$expense->name|escape}</a>
                     </li>
                 {/foreach}
             </ul>
@@ -99,7 +82,7 @@
             <ul class="menu-v with-icons">
                 <!-- plugin hook -->
                 <li>
-                    <a href="#"><i class="icon16 c-table"></i>[`Cash flow`]</a>
+                    <a href="#/cashflow/"><i class="icon16 c-table"></i>[`Cash flow`]</a>
                 </li>
                 <!-- <li>
                     <a href="#"><i class="icon16 calendar"></i>[`Calendar`]</a>

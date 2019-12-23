@@ -61,7 +61,7 @@ class cashAbstractDto implements cashFromEntityCreatableInterface, JsonSerializa
     public static function createFromArray($dto, array $data)
     {
         foreach (get_object_vars($dto) as $name => $value) {
-            if (array_key_exists($name, $data)) {
+            if (isset($name, $data)) {
                 $dto->{$name} = $data[$name];
             }
         }

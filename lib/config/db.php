@@ -27,6 +27,7 @@ return array(
         'update_datetime' => array('datetime'),
         ':keys' => array(
             'PRIMARY' => 'id',
+            'cash_category_slug_uindex' => array('slug', 'unique' => 1),
         ),
     ),
     'cash_transaction' => array(

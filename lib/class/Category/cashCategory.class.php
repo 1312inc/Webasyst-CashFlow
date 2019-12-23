@@ -218,6 +218,10 @@ class cashCategory extends cashAbstractEntity
     {
         $this->updateCreateUpdateDatetime();
 
+        if (empty($this->slug)) {
+            $this->slug = waLocale::transliterate($this->name);
+        }
+
         return true;
     }
 }
