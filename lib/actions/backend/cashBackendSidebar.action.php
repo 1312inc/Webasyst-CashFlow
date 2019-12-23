@@ -16,6 +16,12 @@ class cashBackendSidebarAction extends cashViewAction
         $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActive();
         $accountDtos = cashAccountDto::createFromEntities($accounts);
 
+        $incomes = cash()->getEntityRepository(cashCategory::class)->findAllByType(cashCategory::TYPE_INCOME);
+        $incomeDtos = cashCategoryDto::createFromEntities($incomes);
+
+        $expenses = cash()->getEntityRepository(cashCategory::class)->findAllByType(cashCategory::TYPE_EXPENSE);
+        $expenseDtos = cashCategoryDto::createFromEntities($expenses);
+
         /**
          * UI in main sidebar
          *
@@ -31,6 +37,8 @@ class cashBackendSidebarAction extends cashViewAction
         $this->view->assign(
             [
                 'accounts' => $accountDtos,
+                'incomes' => $incomeDtos,
+                'expenses' => $expenseDtos,
                 'backend_sidebar' => $eventResult,
             ]
         );

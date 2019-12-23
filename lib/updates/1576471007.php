@@ -1,7 +1,7 @@
 <?php
 
 $m = new waModel();
-$db = require wa()->getConfig()->getConfigPath('db.php', true, 'cash');
+$db = require wa('cash')->getConfig()->getAppConfigPath('db');
 
 $innodb = 0;
 foreach ($db as $table => $info) {

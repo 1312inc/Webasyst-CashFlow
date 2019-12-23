@@ -212,7 +212,7 @@ class cashConfig extends waAppConfig
      */
     public function getUtf8mb4ColumnsPath()
     {
-        return wa()->getConfig()->getConfigPath('utf8mb4.php', true, static::APP_ID);
+        return wa('cash')->getConfig()->getAppConfigPath('utf8mb4');
     }
 
     public function explainLogs($logs)
