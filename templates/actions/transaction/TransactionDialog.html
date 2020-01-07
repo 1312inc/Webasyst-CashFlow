@@ -1,0 +1,96 @@
+{** @var cashTransactionDto $transaction **}
+{** @var cashAccountDto[] $accounts **}
+{** @var cashCategoryDto[] $categories **}
+<section>
+    <div class="dialog-content">
+        <div data-cash-wrapper="transaction-add-dialog">
+            <input type="hidden" name="transaction[id]" value="{$transaction->id|default:0}"/>
+
+            <h1>add {$categoryType}</h1>
+            <div class="fields form">
+                <div class="field-group">
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Transaction amount`]
+                        </div>
+                        <div class="value">
+                            <input type="text"
+                                   class="large bold"
+                                   name="transaction[amount]"
+                                   value="{$transaction->amount}"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Transaction description`]
+                        </div>
+                        <div class="value">
+                            <textarea name="transaction[description]"
+                                      cols="30"
+                                      rows="10"
+                            >{$transaction->description|escape}</textarea>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Transaction datetime`]
+                        </div>
+                        <div class="value">
+                            <input type="text"
+                                   class="large bold"
+                                   name="transaction[datetime]"
+                                   value="{$transaction->datetime}"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Transaction account`]
+                        </div>
+                        <div class="value">
+                            <select name="transaction[account_id]">
+                                {foreach $accounts as $account}
+                                    <option value="{$account->id}" {if $account->id == $transaction->account->id}selected{/if}>
+                                        {$account->name|escape}
+                                    </option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Transaction category`]
+                        </div>
+                        <div class="value">
+                            <select name="transaction[category_id]">
+                                <option value="0">[`No category`]</option>
+                                {foreach $categories as $category}
+                                    <option value="{$category->id}" {if $category->id == $transaction->category->id}selected{/if}>
+                                        {$category->name|escape}
+                                    </option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- plugin hook: 'backend_transaction_dialog' -->
+                {* @event backend_transaction_dialog.%plugin_id% *}
+                {if !empty($backend_transaction_dialog)}{foreach $backend_transaction_dialog as $_}{ifset($_)}{/foreach}{/if}
+
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-buttons">
+        {if $transaction->id}
+            <div class="block half-padded float-right">
+                <ul class="menu-h">
+                    <li>
+                        <a href="#" data-cash-action="delete-transaction" data-cash-transaction-id="{$transaction->id}"><i class="icon16 delete"></i> [`Delete transaction`]</a>
+                    </li>
+                </ul>
+            </div>
+        {/if}
+        <input type="submit" value="[`Save`]" class="button green"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
+    </div>
+</section>

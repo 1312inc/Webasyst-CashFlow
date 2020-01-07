@@ -150,7 +150,7 @@
             this.dispatch();
         },
         defaultAction: function () {
-            $.get('?module=backend', function (html) {
+            $.get('?module=account', function (html) {
                 $.cash.$content.html(html);
             });
         },

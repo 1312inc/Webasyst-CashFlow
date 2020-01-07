@@ -1,13 +1,16 @@
+{** @var cashAccountDto $account **}
 <div class="content left200px">
     <div id="content">
         <div class="block">
             <h1>
-                [`All accounts`]
+                {$account->name|escape}
             </h1>
             <div class="float-right">
                 <ul class="menu-h dropdown">
                     <li>
-                        [`Chart`]: <a href="#" class="inline-link nowrap" style="display: inline;"><b><i>[`Last 365 days`]</i></b> <i class="icon10 darr"></i></a>
+                        [`Chart`]: <a href="#" class="inline-link nowrap"
+                                      style="display: inline;"><b><i>[`Last 365 days`]</i></b> <i
+                                    class="icon10 darr"></i></a>
                         <ul class="menu-v">
                             <li><a href="#">{sprintf('[`Last %d days`]',  30)}</a></li>
                             <li><a href="#">{sprintf('[`Last %d days`]',  90)}</a></li>
@@ -19,7 +22,8 @@
                         </ul>
                     </li>
                     <li>
-                        [`Forecast`]: <a href="#" class="inline-link nowrap" style="display: inline;"><b><i>[`3 months`]</i></b> <i class="icon10 darr"></i></a>
+                        [`Forecast`]: <a href="#" class="inline-link nowrap"
+                                         style="display: inline;"><b><i>[`3 months`]</i></b> <i class="icon10 darr"></i></a>
                         <ul class="menu-v">
                             <li><a href="#">[`None`]</a></li>
                             <li><a href="#">[`1 month`]</a></li>
@@ -42,13 +46,16 @@
 
             <div class="block half-padded" style="padding-left: 0;">
                 [`Cash on hand today`]:
-                <strong class="c-positive highlighted large">170 129 ₽</strong>
-                +
-                <strong class="c-positive highlighted large">100 $</strong>
+                {foreach $onHands as $onHand}
+                    <strong class="c-positive highlighted large">{$onHand->stat->summaryShorten} {$onHand->currency->getSign()}</strong>
+                    {if !$onHand@last}+{/if}
+                    {foreachelse}
+                    <strong class="c-positive highlighted large">0</strong>
+                {/foreach}
                 <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandate}</span>
             </div>
 
-            <div class="c-chart"></div>
+            <div class="c-chart" id="cash-chart"></div>
 
             <!-- <div class="float-right">
 
@@ -56,20 +63,32 @@
 
             <div class="c-transactions">
                 {if 1 || FORECAST_IS_SHOWN}
-                <div class="float-right">
-                    {sprintf('[`Cash on hand on %s`]', date('Y-m-d H:i:s', $smarty.now + 86400*90)|wa_date:humandate)}:
+                    <div class="float-right">
+                        {sprintf('[`Cash on hand on %s`]', date('Y-m-d H:i:s', $smarty.now + 86400*90)|wa_date:humandate)}:
 
-                    <strong class="c-negative highlighted large">-37 920 ₽</strong>
-                    +
-                    <strong class="c-positive highlighted large">$100</strong>
+                        <strong class="c-negative highlighted large">-37 920 ₽</strong>
+                        +
+                        <strong class="c-positive highlighted large">$100</strong>
 
-                </div>
+                    </div>
                 {/if}
 
                 <ul class="menu-h dropdown">
-                    <li><a href="#" class="inline-link"><i class="icon16 add"></i><b><i><strong>[`Add income`]</strong></i></b></a></li>
-                    <li><a href="#" class="inline-link"><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li>
-                    <li><a href="#" class="inline-link"><i class="icon16 move"></i><b><i><strong>[`Transfer`]</strong></i></b></a></li>
+                    <li><a href="#"
+                           class="inline-link"
+                           data-cash-action="add-transaction"
+                           data-cash-category-type="{cashCategory::TYPE_INCOME}"
+                        ><i class="icon16 add"></i><b><i><strong>[`Add income`]</strong></i></b></a></li>
+                    <li><a href="#"
+                           class="inline-link"
+                           data-cash-action="add-transaction"
+                           data-cash-category-type="{cashCategory::TYPE_EXPENSE}"
+                        ><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li>
+                    <li><a href="#"
+                           class="inline-link"
+                           data-cash-action="add-transaction"
+                           data-cash-category-type="{cashCategory::TYPE_TRANSFER}"
+                        ><i class="icon16 move"></i><b><i><strong>[`Transfer`]</strong></i></b></a></li>
 
 
                     <!--
@@ -88,8 +107,7 @@
                     </li> -->
 
                 </ul>
-
-                <table class="zebra">
+                <table class="zebra" id="cash-transaction-list">
                     <!-- <tr>
                         <th>[`Date`]</th>
                         <th>[`Account`]</th>
@@ -99,42 +117,123 @@
                         <th>[`Balance`]</th>
                         <th></th>
                     </tr> -->
-                    <tr class="white">
-                        <td colspan="7">
-                            <h5 class="heading">[`Upcoming`]</h5>
-                        </td>
-                    </tr>
-                    {for $i=1 to 3}
-                        <tr class="c-planned">
-                            <td>{date('Y-m-d', $smarty.now + (3 - $i) * 86400*30)|wa_date:humandate}</td>
-                            <td>PL</td>
-                            <td><i class="icon16 color" style="background: #f56b68;"></i>Офис</td>
-                            <td>Аренда офиса</td>
-                            <td><span>&minus;32 024 ₽</span></td>
-                            <td><span>100 500 ₽</span></td>
-                            <td>smth else</td>
-                        </tr>
-                    {/for}
-                    <tr class="white">
-                        <td colspan="7">
-                            <h5 class="heading">[`Completed`]</h5>
-                        </td>
-                    </tr>
-                    {for $i=1 to 12}
-                        <tr>
-                            <td>{date('Y-m-d', $smarty.now - 86400*30*$i)|wa_date:humandate}</td>
-                            <td>PL</td>
-                            <td><i class="icon16 color" style="background: #f56b68;"></i>Офис</td>
-                            <td>Аренда офиса</td>
-                            <td><span>&minus;32 024 ₽</span></td>
-                            <td><span>100 500 ₽</span></td>
-                            <td>smth else</td>
-                        </tr>
-                    {/for}
-            </table>
-            <br>
+                </table>
+                <br>
+            </div>
             <p class="align-center gray">{sprintf('[`Total income: <b>%s</b> / Total expense: <b>%s</b>`]', '100500 ₽ + $1295', '9204 ₽ + $921')}</p>
 
         </div>
     </div>
 </div>
+<script>
+    'use strict';
+    (function () {
+        var transactionDialog = function(transactionId,  accountId, categoryType) {
+            $('#cash-transaction-dialog').waDialog({
+                'height': '250px',
+                'width': '600px',
+                'url': '?module=transaction&action=dialog&transaction_id=' + transactionId + '&category_type=' + categoryType + '&account_id=' + accountId,
+                onLoad: function () {
+                    var d = this,
+                        $dialogWrapper = $(d);
+
+                    $dialogWrapper
+                        .on('click', '[data-cash-action="delete-transaction"]', function (e) {
+                            e.preventDefault();
+
+                            $.post('?module=transaction&action=delete', $dialogWrapper.find('form').serialize(), function (r) {
+                                if (r.status === 'ok') {
+                                    $dialogWrapper.trigger('close');
+                                    // window.location.hash = '#/';
+                                    // $.status.routing.redispatch();
+                                    $.cash.reloadSidebar();
+                                }
+                            });
+                        })
+                    ;
+
+                    setTimeout(function () {
+                        $dialogWrapper.find('[name="transaction[amount]"]').trigger('focus');
+                    }, 13.12);
+                },
+                onSubmit: function (d) {
+                    d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
+                    $.post('?module=transaction&action=save', d.find('form').serialize(), function (r) {
+                        $.cash.$loading.remove();
+                        if (r.status === 'ok') {
+                            d.trigger('close');
+                            // if (!pocketId) {
+                            // window.location.hash = '#/project/' + r.data.id;
+                            // }
+                            $.cash_routing.redispatch();
+                            $.cash.reloadSidebar();
+                        } else {
+
+                        }
+                    }, 'json');
+                    return false;
+                }
+            });
+        };
+
+        var AccountPage = (function () {
+            var accountId = parseInt('{$account->id}'),
+                startDate = '{$startDate}',
+                endDate = '{$endDate}',
+                $transactionList = $('#cash-transaction-list');
+
+            function loadTransactions() {
+                $.get('?module=transaction&action=list', {
+                    'startDate': startDate,
+                    'endDate': endDate,
+                    'account_id': accountId
+                }, function (html) {
+                    $transactionList.html(html);
+                })
+            }
+
+            function loadGraphData() {
+                $.get('?module=transaction&action=graphData', {
+                    'startDate': startDate,
+                    'endDate': endDate,
+                    'account_id': accountId
+                }, function (r) {
+                    if (r.status === 'ok') {
+                        console.log(r.data);
+
+                        var chart = c3.generate({
+                            bindto: '#cash-chart',
+                            data: r.data.graphData,
+                            axis: {
+                                x: {
+                                    // type: 'category',
+                                    type: 'timeseries'
+                                    // tick: {
+                                    //     count: 30,
+                                    //     format: '%Y-%m-%d'
+                                    // }
+                                }
+                            },
+                            // bar: {
+                            //     width: {
+                            //         ratio: 0.1
+                            //     }
+                            // },
+                            line: {
+                                connectNull: true
+                            }
+                        });
+                    }
+                })
+            }
+
+            loadTransactions();
+            loadGraphData();
+
+            $('[data-cash-action="add-transaction"]').on('click', function (e) {
+                e.preventDefault();
+                transactionDialog(0, accountId, $(this).data('cash-category-type'))
+            })
+        })();
+    })();
+</script>

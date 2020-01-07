@@ -86,7 +86,7 @@ class cashConfig extends waAppConfig
     public function getEventDispatcher()
     {
         if ($this->eventDispatcher === null) {
-            $this->eventDispatcher = new cashListenerProvider();
+            $this->eventDispatcher = new kmwaEventDispatcher(new cashListenerProvider());
         }
 
         return $this->eventDispatcher;
@@ -140,6 +140,7 @@ class cashConfig extends waAppConfig
     /**
      * @param string $entity
      *
+     * @return cashAccountModel|cashTransactionModel|cashCategoryModel
      * @throws waException
      */
     public function getModel($entity = false)

@@ -224,4 +224,28 @@ class cashCategory extends cashAbstractEntity
 
         return true;
     }
+
+    /**
+     * @return bool
+     */
+    public function isExpense()
+    {
+        return $this->type === self::TYPE_EXPENSE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIncome()
+    {
+        return $this->type === self::TYPE_INCOME;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTransfer()
+    {
+        return $this->type === self::TYPE_TRANSFER;
+    }
 }

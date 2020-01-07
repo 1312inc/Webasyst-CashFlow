@@ -61,10 +61,22 @@ class cashAccountDto extends cashAbstractDto
     public $updateDatetime = '';
 
     /**
-     * cashAccountDto constructor.
+     * @var cashStatAccountDto|null
      */
-    public function __construct()
+    public $stat;
+
+    /**
+     * cashAccountDto constructor.
+     *
+     * @param array $data
+     */
+    public function __construct(array $data = [])
     {
-        $this->name = _w('New account');
+        if ($data) {
+            $this->initializeWithArray($data);
+            $this->currency = cashCurrencyVO::fromWaCurrency($data['currency']);
+        } else {
+            $this->name = _w('New account');
+        }
     }
 }
