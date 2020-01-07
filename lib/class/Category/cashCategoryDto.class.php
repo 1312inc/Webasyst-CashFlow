@@ -40,9 +40,15 @@ class cashCategoryDto extends cashAbstractDto
 
     /**
      * cashCategoryDto constructor.
+     *
+     * @param array $data
      */
-    public function __construct()
+    public function __construct(array $data = [])
     {
-        $this->name = _w('New category');
+        if ($data) {
+            $this->initializeWithArray($data);
+        } else {
+            $this->name = _w('New category');
+        }
     }
 }

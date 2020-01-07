@@ -1,0 +1,45 @@
+{** @var int|null $account **}
+{** @var cashTransactionDto $t **}
+{if $upcoming}
+<tr class="white">
+    <td colspan="7">
+        <h5 class="heading">[`Upcoming`]</h5>
+    </td>
+</tr>
+{/if}
+{foreach $upcoming as $t}
+    <tr class="c-planned">
+        <td>{$t->datetime|wa_date:humandate}</td>
+        <td>{$t->account->name|escape}</td>
+        <td>
+            {if $t->category}
+            <i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}
+            {/if}
+        </td>
+        <td>{$t->description|escape}</td>
+        <td><span>{$t->amountShorten} {$t->currency->getSign()}</span></td>
+        <td><span>{if $account}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
+        <td>smth else</td>
+    </tr>
+{/foreach}
+{if $completed}
+<tr class="white">
+    <td colspan="7">
+        <h5 class="heading">[`Completed`]</h5>
+    </td>
+</tr>
+{/if}
+{foreach $completed as $t}
+    <tr>
+        <td>{$t->datetime|wa_date:humandate}</td>
+        <td>{$t->account->name|escape}</td>
+        <td>{if $t->category}
+            <i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}
+            {/if}
+        </td>
+        <td>{$t->description|escape}</td>
+        <td><span>{$t->amountShorten} {$t->currency->getSign()}</span></td>
+        <td><span>{if $account}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
+        <td>smth else</td>
+    </tr>
+{/foreach}

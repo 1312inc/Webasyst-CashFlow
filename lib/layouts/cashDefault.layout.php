@@ -11,6 +11,6 @@ class cashDefaultLayout extends waLayout
     public function execute()
     {
         $this->executeAction('sidebar', new cashBackendSidebarAction());
-        $this->executeAction('content', new cashAccountAction());
+        $this->view->assign('content', '<i class="icon16 loading"></i>');
     }
 }

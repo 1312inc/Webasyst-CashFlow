@@ -25,12 +25,12 @@ class cashTransaction extends cashAbstractEntity
     /**
      * @var int
      */
-    private $accountId;
+    private $account_id;
 
     /**
      * @var int|null
      */
-    private $categoryId;
+    private $category_id;
 
     /**
      * @var float
@@ -45,22 +45,22 @@ class cashTransaction extends cashAbstractEntity
     /**
      * @var int|null
      */
-    private $repeatingId;
+    private $repeating_id;
 
     /**
      * @var int
      */
-    private $createContactId;
+    private $create_contact_id;
 
     /**
      * @var string
      */
-    private $createDatetime;
+    private $create_datetime;
 
     /**
      * @var string|null
      */
-    private $updateDatetime;
+    private $update_datetime;
 
     /**
      * @var cashCategory|null
@@ -137,7 +137,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function getAccountId()
     {
-        return $this->accountId;
+        return $this->account_id;
     }
 
     /**
@@ -147,7 +147,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function setAccountId($accountId)
     {
-        $this->accountId = $accountId;
+        $this->account_id = $accountId;
 
         return $this;
     }
@@ -157,7 +157,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function getCategoryId()
     {
-        return $this->categoryId;
+        return $this->category_id;
     }
 
     /**
@@ -167,7 +167,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function setCategoryId($categoryId)
     {
-        $this->categoryId = $categoryId;
+        $this->category_id = $categoryId;
 
         return $this;
     }
@@ -217,7 +217,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function getRepeatingId()
     {
-        return $this->repeatingId;
+        return $this->repeating_id;
     }
 
     /**
@@ -227,7 +227,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function setRepeatingId($repeatingId)
     {
-        $this->repeatingId = $repeatingId;
+        $this->repeating_id = $repeatingId;
 
         return $this;
     }
@@ -237,7 +237,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function getCreateContactId()
     {
-        return $this->createContactId;
+        return $this->create_contact_id;
     }
 
     /**
@@ -247,7 +247,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function setCreateContactId($createContactId)
     {
-        $this->createContactId = $createContactId;
+        $this->create_contact_id = $createContactId;
 
         return $this;
     }
@@ -257,7 +257,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function getCreateDatetime()
     {
-        return $this->createDatetime;
+        return $this->create_datetime;
     }
 
     /**
@@ -267,7 +267,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function setCreateDatetime($createDatetime)
     {
-        $this->createDatetime = $createDatetime;
+        $this->create_datetime = $createDatetime;
 
         return $this;
     }
@@ -277,7 +277,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function getUpdateDatetime()
     {
-        return $this->updateDatetime;
+        return $this->update_datetime;
     }
 
     /**
@@ -287,7 +287,7 @@ class cashTransaction extends cashAbstractEntity
      */
     public function setUpdateDatetime($updateDatetime)
     {
-        $this->updateDatetime = $updateDatetime;
+        $this->update_datetime = $updateDatetime;
 
         return $this;
     }
@@ -298,6 +298,8 @@ class cashTransaction extends cashAbstractEntity
     public function beforeSave()
     {
         $this->updateCreateUpdateDatetime();
+
+        $this->setDate(date('Y-m-d', strtotime($this->datetime)));
 
         return true;
     }
@@ -319,10 +321,10 @@ class cashTransaction extends cashAbstractEntity
     {
         if ($category) {
             $this->category = $category;
-            $this->categoryId = $category->getId();
+            $this->category_id = $category->getId();
         } else {
             $this->category = null;
-            $this->categoryId = null;
+            $this->category_id = null;
         }
 
         return $this;
@@ -344,7 +346,7 @@ class cashTransaction extends cashAbstractEntity
     public function setAccount(cashAccount $account)
     {
         $this->account = $account;
-        $this->accountId = $account->getId();
+        $this->account_id = $account->getId();
 
         return $this;
     }

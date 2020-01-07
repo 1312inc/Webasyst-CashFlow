@@ -48,6 +48,7 @@ class kmwaHydrator implements kmwaHydratorInterface
                 $method = $this->getMethod($object, $methodPrefix, $toExtractField, $reflection);
                 if ($method) {
                     $result[$toExtractField] = $method->invoke($object);
+                    break;
                 }
             }
         }

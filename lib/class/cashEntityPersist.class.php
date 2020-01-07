@@ -22,8 +22,8 @@ class cashEntityPersist
             return false;
         }
 
-        $model = stts()->getModel(get_class($entity));
-        $data = stts()->getHydrator()->extract($entity, $fields, $model->getMetadata());
+        $model = cash()->getModel(get_class($entity));
+        $data = cash()->getHydrator()->extract($entity, $fields, $model->getMetadata());
 
         /**
          * Before every entity insert
@@ -35,14 +35,14 @@ class cashEntityPersist
          * @return array Entity data to merge and insert
          */
         $event = new cashEvent(cashEventStorage::ENTITY_INSERT_BEFORE, $entity, ['data' => $data]);
-        $eventResult = stts()->waDispatchEvent($event);
+        $eventResult = cash()->waDispatchEvent($event);
         foreach ($eventResult as $plugin => $responseData) {
             if (!empty($responseData) && is_array($responseData)) {
                 $data = array_merge($data, $responseData);
             }
         }
 
-        stts()->getEventDispatcher()->dispatch($event);
+        cash()->getEventDispatcher()->dispatch($event);
 
         unset($data['id']);
 
@@ -63,7 +63,7 @@ class cashEntityPersist
              * @return void
              */
             $event = new cashEvent(cashEventStorage::ENTITY_INSERT_AFTER, $entity);
-            stts()->getEventDispatcher()->dispatch($event);
+            cash()->getEventDispatcher()->dispatch($event);
 
             return true;
         }
@@ -90,16 +90,16 @@ class cashEntityPersist
              * @return bool If false - entity delete will be canceled
              */
             $event = new cashEvent(cashEventStorage::ENTITY_DELETE_BEFORE, $entity);
-            $eventResult = stts()->waDispatchEvent($event);
+            $eventResult = cash()->waDispatchEvent($event);
             foreach ($eventResult as $plugin => $responseData) {
                 if ($responseData === false) {
                     return false;
                 }
             }
 
-            stts()->getEventDispatcher()->dispatch($event);
+            cash()->getEventDispatcher()->dispatch($event);
 
-            $model = stts()->getModel(get_class($entity));
+            $model = cash()->getModel(get_class($entity));
             $deleted = $model->deleteById($entity->getId());
 
             /**
@@ -112,7 +112,7 @@ class cashEntityPersist
              * @return void
              */
             $event = new cashEvent(cashEventStorage::ENTITY_DELETE_AFTER, $entity);
-            stts()->waDispatchEvent($event);
+            cash()->waDispatchEvent($event);
 
             return $deleted;
         }
@@ -134,8 +134,8 @@ class cashEntityPersist
                 return false;
             }
 
-            $model = stts()->getModel(get_class($entity));
-            $data = stts()->getHydrator()->extract(
+            $model = cash()->getModel(get_class($entity));
+            $data = cash()->getHydrator()->extract(
                 $entity,
                 $fields,
                 $model->getMetadata()
@@ -151,14 +151,14 @@ class cashEntityPersist
              * @return array Entity data to merge and update
              */
             $event = new cashEvent(cashEventStorage::ENTITY_UPDATE_BEFORE, $entity, ['data' => $data]);
-            $eventResult = stts()->waDispatchEvent($event);
+            $eventResult = cash()->waDispatchEvent($event);
             foreach ($eventResult as $plugin => $responseData) {
                 if (!empty($responseData) && is_array($responseData)) {
                     $data = array_merge($data, $responseData);
                 }
             }
 
-            stts()->getEventDispatcher()->dispatch($event);
+            cash()->getEventDispatcher()->dispatch($event);
 
             unset($data['id']);
 
@@ -175,7 +175,7 @@ class cashEntityPersist
                  * @return void
                  */
                 $event = new cashEvent(cashEventStorage::ENTITY_UPDATE_AFTER, $entity, ['data' => $data]);
-                stts()->waDispatchEvent($event);
+                cash()->waDispatchEvent($event);
             }
 
             return $updated;

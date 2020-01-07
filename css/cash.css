@@ -5,7 +5,7 @@
 i.icon16.color { width: 12px; height: 12px; border: none; }
 ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 
-.c-chart { margin-top: 10px; padding: 170px; background: #f8f8f8 url('../img/_sample_chart_please_delete_me.png') no-repeat; background-size: 100% 100%; color: #aaa; text-align: center; }
+/*.c-chart { margin-top: 10px; padding: 170px; background: #f8f8f8 url('../img/_sample_chart_please_delete_me.png') no-repeat; background-size: 100% 100%; color: #aaa; text-align: center; }*/
 
 .c-transactions { padding: 10px 0; }
 .c-transactions table { margin-top: 10px; }

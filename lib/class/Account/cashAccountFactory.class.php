@@ -14,4 +14,13 @@ class cashAccountFactory extends cashBaseFactory
         return (new cashAccount)
             ->setCreateDatetime(date('Y-m-d H:i:s'));
     }
+
+    /**
+     * @return cashAccount
+     */
+    public function createAllAccount()
+    {
+        return (new cashAccount())
+            ->setName(_w('All accounts'));
+    }
 }
