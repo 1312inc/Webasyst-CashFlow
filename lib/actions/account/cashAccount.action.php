@@ -43,7 +43,10 @@ class cashAccountAction extends cashViewAction
         $calcService = new cashCalculationService();
 
         // cash on hand today
-        $onHands = $calcService->getOnHandOnDate(new DateTime(), $account);
+        $onHandsToday = $calcService->getOnHandOnDate(new DateTime(), $account);
+
+        // cash on hand end day
+        $onHandsEndday = $calcService->getOnHandOnDate($endDate, $account);
 
         // total income
         // total expense
@@ -51,7 +54,8 @@ class cashAccountAction extends cashViewAction
         $this->view->assign(
             [
                 'account' => $accountDto,
-                'onHands' => $onHands,
+                'onHandsToday' => $onHandsToday,
+                'onHandsEndday' => $onHandsEndday,
                 'startDate' => $startDate->format('Y-m-d'),
                 'endDate' => $endDate->format('Y-m-d'),
             ]

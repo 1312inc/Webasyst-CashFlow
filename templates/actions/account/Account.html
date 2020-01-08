@@ -46,7 +46,7 @@
 
             <div class="block half-padded" style="padding-left: 0;">
                 [`Cash on hand today`]:
-                {foreach $onHands as $onHand}
+                {foreach $onHandsToday as $onHand}
                     <strong class="c-positive highlighted large">{$onHand->stat->summaryShorten} {$onHand->currency->getSign()}</strong>
                     {if !$onHand@last}+{/if}
                     {foreachelse}
@@ -64,12 +64,14 @@
             <div class="c-transactions">
                 {if 1 || FORECAST_IS_SHOWN}
                     <div class="float-right">
-                        {sprintf('[`Cash on hand on %s`]', date('Y-m-d H:i:s', $smarty.now + 86400*90)|wa_date:humandate)}:
+                        {sprintf('[`Cash on hand on %s`]', $endDate|wa_date:humandate)}:
 
-                        <strong class="c-negative highlighted large">-37 920 ₽</strong>
-                        +
-                        <strong class="c-positive highlighted large">$100</strong>
-
+                        {foreach $onHandsEndday as $onHand}
+                            <strong class="c-positive highlighted large">{$onHand->stat->summaryShorten} {$onHand->currency->getSign()}</strong>
+                            {if !$onHand@last}+{/if}
+                            {foreachelse}
+                            <strong class="c-positive highlighted large">0</strong>
+                        {/foreach}
                     </div>
                 {/if}
 
