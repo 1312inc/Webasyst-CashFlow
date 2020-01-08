@@ -1,4 +1,6 @@
 {** @var cashAccountDto $account **}
+{** @var cashGraphPeriodVO $selectedChartPeriod **}
+{** @var cashGraphPeriodVO $selectedForecastPeriod **}
 <div class="content left200px">
     <div id="content">
         <div class="block">
@@ -6,30 +8,32 @@
                 {$account->name|escape}
             </h1>
             <div class="float-right">
-                <ul class="menu-h dropdown">
+                <ul class="menu-h dropdown" data-cash-chart-dates>
                     <li>
                         [`Chart`]: <a href="#" class="inline-link nowrap"
-                                      style="display: inline;"><b><i>[`Last 365 days`]</i></b> <i
+                                      style="display: inline;"><b><i>{$selectedChartPeriod->getName()}</i></b> <i
                                     class="icon10 darr"></i></a>
                         <ul class="menu-v">
-                            <li><a href="#">{sprintf('[`Last %d days`]',  30)}</a></li>
-                            <li><a href="#">{sprintf('[`Last %d days`]',  90)}</a></li>
-                            <li><a href="#">{sprintf('[`Last %d days`]', 180)}</a></li>
-                            <li><a href="#">{sprintf('[`Last %d days`]', 365)}</a></li>
-                            <li><a href="#">[`Last 3 years`]</a></li>
-                            <li><a href="#">[`All time`]</a></li>
+                            {foreach cashGraphService::getChartPeriods() as $period}
+                            <li><a href="#"
+                                   data-cash-forecast-period-value="{$period->getValue()}"
+                                   data-cash-forecast-period-period="{$period->getPeriod()}"
+                                >{$period->getName()}</a></li>
                             <!-- TODO <li class="bordered-top"><a href="#">[`Select dates...`]</a></li> -->
+                            {/foreach}
                         </ul>
                     </li>
                     <li>
                         [`Forecast`]: <a href="#" class="inline-link nowrap"
-                                         style="display: inline;"><b><i>[`3 months`]</i></b> <i class="icon10 darr"></i></a>
+                                         style="display: inline;"><b><i>{$selectedForecastPeriod->getName()}</i></b> <i class="icon10 darr"></i></a>
                         <ul class="menu-v">
-                            <li><a href="#">[`None`]</a></li>
-                            <li><a href="#">[`1 month`]</a></li>
-                            <li><a href="#">[`3 months`]</a></li>
-                            <li><a href="#">[`6 months`]</a></li>
-                            <li><a href="#">[`12 months`]</a></li>
+                            {foreach cashGraphService::getForecastPeriods() as $period}
+                            <li><a href="#"
+                                   data-cash-forecast-period-value="{$period->getValue()}"
+                                   data-cash-forecast-period-period="{$period->getPeriod()}"
+                                >{$period->getName()}</a></li>
+                                <!-- TODO <li class="bordered-top"><a href="#">[`Select dates...`]</a></li> -->
+                            {/foreach}
                         </ul>
                     </li>
                     <li>
