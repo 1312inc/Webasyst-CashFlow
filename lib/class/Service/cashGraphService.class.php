@@ -9,6 +9,51 @@ class cashGraphService
     const GROUP_BY_MONTH = 2;
 
     /**
+     * @return array
+     */
+    public static function getChartPeriods()
+    {
+        return [
+            new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -30),
+            new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -90),
+            new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -180),
+            new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -365),
+            new cashGraphPeriodVO(cashGraphPeriodVO::YEARS_PERIOD, -3),
+            new cashGraphPeriodVO(cashGraphPeriodVO::ALL_TIME_PERIOD),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getForecastPeriods()
+    {
+        return [
+            new cashGraphPeriodVO(cashGraphPeriodVO::NONE_PERIOD),
+            new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 1),
+            new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 3),
+            new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 6),
+            new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 12),
+        ];
+    }
+
+    /**
+     * @return cashGraphPeriodVO
+     */
+    public static function getDefaultChartPeriod()
+    {
+        return new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -90);
+    }
+
+    /**
+     * @return cashGraphPeriodVO
+     */
+    public static function getDefaultForecastPeriod()
+    {
+        return new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 1);
+    }
+
+    /**
      * @param cashGraphColumnsDataDto $graphData
      *
      * @throws waException

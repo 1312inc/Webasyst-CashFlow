@@ -16,20 +16,23 @@ class cashAccountAction extends cashViewAction
     public function runAction($params = null)
     {
         $id = waRequest::get('id', 0, waRequest::TYPE_INT);
-        $startDate = new DateTime(
-            waRequest::request(
-                'startDate',
-                date('Y-m-d', strtotime('-90 days')),
-                waRequest::TYPE_STRING_TRIM
-            )
-        );
-        $endDate = new DateTime(
-            waRequest::request(
-                'startDate',
-                date('Y-m-d', strtotime('+90 days')),
-                waRequest::TYPE_STRING_TRIM
-            )
-        );
+        $periodChart = waRequest::get('period_chart', [], waRequest::TYPE_ARRAY);
+        $periodForecast = waRequest::get('period_forecast', [], waRequest::TYPE_ARRAY);
+
+        if (!$periodChart) {
+            $periodChart = cashGraphService::getDefaultChartPeriod();
+        } else {
+            $periodChart = new cashGraphPeriodVO($periodChart['period'], $periodChart['value']);
+        }
+
+        if (!$periodForecast) {
+            $periodForecast = cashGraphService::getDefaultForecastPeriod();
+        } else {
+            $periodForecast = new cashGraphPeriodVO($periodForecast['period'], $periodForecast['value']);
+        }
+
+        $startDate = $periodChart->getDate();
+        $endDate = $periodForecast->getDate();
 
         if ($id) {
             $account = cash()->getEntityRepository(cashAccount::class)->findById($id);
@@ -58,6 +61,8 @@ class cashAccountAction extends cashViewAction
                 'onHandsEndday' => $onHandsEndday,
                 'startDate' => $startDate->format('Y-m-d'),
                 'endDate' => $endDate->format('Y-m-d'),
+                'selectedChartPeriod' => $periodChart,
+                'selectedForecastPeriod' => $periodForecast,
             ]
         );
     }
