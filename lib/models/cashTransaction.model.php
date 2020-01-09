@@ -21,12 +21,16 @@ class cashTransactionModel extends cashModel
         if ($accounts) {
             $whereAccountSql = ' and ct.account_id in (i:account_ids)';
         }
+        $whereAccountSql2 = '';
+        if ($accounts) {
+            $whereAccountSql2 = ' and ct2.account_id in (i:account_ids)';
+        }
 
         $sql = <<<SQL
 select ct.*,
        (@balance := @balance + ct.amount) as balance
 from cash_transaction ct
-join (select @balance := (select sum(ct.amount) from cash_transaction ct where ct.date < s:startDate {$whereAccountSql})) b
+join (select @balance := (select sum(ct2.amount) from cash_transaction ct2 where ct2.date < s:startDate {$whereAccountSql2})) b
 join cash_account ca on ct.account_id = ca.id
 left join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
@@ -64,6 +68,33 @@ order by ct.date
 SQL;
 
         return $this->querySummaryByDateBoundsAndAccount($sql, $startDate, $endDate, $accounts);
+    }
+
+    /**
+     * @param       $startDate
+     * @param       $endDate
+     * @param array $accounts
+     *
+     * @return array
+     */
+    public function getDateBounds($startDate, $endDate, array $accounts = [])
+    {
+        $accountsSql = $accounts ? ' and ct.account_id in (i:account_ids)' : '';
+
+        $sql = <<<SQL
+select min(ct.date) startDate, max(ct.date) endDate
+from cash_transaction ct
+         join cash_account ca on ct.account_id = ca.id
+where ct.date between s:startDate and s:endDate {$accountsSql}
+SQL;
+        $data = $this
+            ->query(
+                $sql,
+                ['startDate' => $startDate, 'endDate' => $endDate, 'account_ids' => $accounts]
+            )
+            ->fetchAssoc();
+
+        return $data;
     }
 
     /**

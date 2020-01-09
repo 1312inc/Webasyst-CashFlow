@@ -16,10 +16,7 @@
                                     class="icon10 darr"></i></a>
                         <ul class="menu-v">
                             {foreach cashGraphService::getChartPeriods() as $period}
-                            <li><a href="#"
-                                   data-cash-forecast-period-value="{$period->getValue()}"
-                                   data-cash-forecast-period-period="{$period->getPeriod()}"
-                                >{$period->getName()}</a></li>
+                            <li><a href="#" data-cash-start-date="{$period->getDate()->format('Y-m-d')}">{$period->getName()}</a></li>
                             {/foreach}
                             <!-- TODO <li class="bordered-top"><a href="#">[`Select dates...`]</a></li> -->
                         </ul>
@@ -29,10 +26,7 @@
                                          style="display: inline;"><b><i>{$selectedForecastPeriod->getName()}</i></b> <i class="icon10 darr"></i></a>
                         <ul class="menu-v">
                             {foreach cashGraphService::getForecastPeriods() as $period}
-                            <li><a href="#"
-                                   data-cash-forecast-period-value="{$period->getValue()}"
-                                   data-cash-forecast-period-period="{$period->getPeriod()}"
-                                >{$period->getName()}</a></li>
+                            <li><a href="#" data-cash-end-date="{$period->getDate()->format('Y-m-d')}">{$period->getName()}</a></li>
                             {/foreach}
                             <!-- TODO <li class="bordered-top"><a href="#">[`Select dates...`]</a></li> -->
                         </ul>
@@ -184,7 +178,8 @@
         };
 
         var TransactionPage = (function () {
-            var accountId = parseInt('{$account->id}'),
+            var filterId = parseInt('{$account->id}'),
+                filterType = 'account',
                 startDate = '{$startDate}',
                 endDate = '{$endDate}',
                 $transactionList = $('#cash-transaction-list');
@@ -193,7 +188,7 @@
                 $.get('?module=transaction&action=list', {
                     'startDate': startDate,
                     'endDate': endDate,
-                    'account_id': accountId
+                    'account_id': filterId
                 }, function (html) {
                     $transactionList.html(html);
                 })
@@ -203,7 +198,7 @@
                 $.get('?module=transaction&action=graphData', {
                     'startDate': startDate,
                     'endDate': endDate,
-                    'account_id': accountId
+                    'account_id': filterId
                 }, function (r) {
                     if (r.status === 'ok') {
                         console.log(r.data);
@@ -239,14 +234,26 @@
 
             $('[data-cash-action="add-transaction"]').on('click', function (e) {
                 e.preventDefault();
-                transactionDialog(0, accountId, $(this).data('cash-category-type'))
+                transactionDialog(0, filterId, $(this).data('cash-category-type'))
             });
 
-            $('[data-cash-chart-dates]').on('click', 'a', function (e) {
+            $('[data-cash-start-date]').on('click', function (e) {
                 e.preventDefault();
 
+                var $this = $(this),
+                    date = $this.data('cash-start-date');
 
-            })
+                window.location.hash = ['#', filterType, filterId, date, endDate].join('/');
+            });
+
+            $('[data-cash-end-date]').on('click', function (e) {
+                e.preventDefault();
+
+                var $this = $(this),
+                    date = $this.data('cash-end-date');
+
+                window.location.hash = ['#', filterType, filterId, startDate, date].join('/');
+            });
         })();
     })();
 </script>
