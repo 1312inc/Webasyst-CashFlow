@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class cashAccountAction
+ * Class cashTransactionPageAction
  */
-class cashAccountAction extends cashViewAction
+class cashTransactionPageAction extends cashViewAction
 {
     /**
      * @param null|array $params
@@ -16,23 +16,26 @@ class cashAccountAction extends cashViewAction
     public function runAction($params = null)
     {
         $id = waRequest::get('id', 0, waRequest::TYPE_INT);
-        $periodChart = waRequest::get('period_chart', [], waRequest::TYPE_ARRAY);
-        $periodForecast = waRequest::get('period_forecast', [], waRequest::TYPE_ARRAY);
+        $startDate = waRequest::get('start_date', [], waRequest::TYPE_STRING_TRIM);
+        $endDate = waRequest::get('end_date', [], waRequest::TYPE_STRING_TRIM);
 
-        if (!$periodChart) {
-            $periodChart = cashGraphService::getDefaultChartPeriod();
+        $graphService = new cashGraphService();
+
+        if (!$startDate) {
+            $periodChart = $graphService->getDefaultChartPeriod();
+            $startDate = $periodChart->getDate();
         } else {
-            $periodChart = new cashGraphPeriodVO($periodChart['period'], $periodChart['value']);
+            $startDate = new DateTime($startDate);
+            $periodChart  =$graphService->getChartPeriodByDate($startDate);
         }
 
-        if (!$periodForecast) {
-            $periodForecast = cashGraphService::getDefaultForecastPeriod();
+        if (!$endDate) {
+            $periodForecast = $graphService->getDefaultForecastPeriod();
+            $endDate = $periodChart->getDate();
         } else {
-            $periodForecast = new cashGraphPeriodVO($periodForecast['period'], $periodForecast['value']);
+            $endDate = new DateTime($endDate);
+            $periodForecast  =$graphService->getForecastPeriodByDate($endDate);
         }
-
-        $startDate = $periodChart->getDate();
-        $endDate = $periodForecast->getDate();
 
         if ($id) {
             $account = cash()->getEntityRepository(cashAccount::class)->findById($id);

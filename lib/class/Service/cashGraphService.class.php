@@ -40,7 +40,7 @@ class cashGraphService
     /**
      * @return cashGraphPeriodVO
      */
-    public static function getDefaultChartPeriod()
+    public function getDefaultChartPeriod()
     {
         return new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -90);
     }
@@ -48,9 +48,46 @@ class cashGraphService
     /**
      * @return cashGraphPeriodVO
      */
-    public static function getDefaultForecastPeriod()
+    public function getDefaultForecastPeriod()
     {
         return new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 1);
+    }
+
+    /**
+     * @param DateTimeInterface $dateTime
+     *
+     * @return cashGraphPeriodVO
+     * @throws Exception
+     */
+    public function getChartPeriodByDate(DateTimeInterface $dateTime)
+    {
+        $periods = array_reverse(self::getChartPeriods());
+        $periods[] = new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, 0);
+        for ($i = 1, $iMax = count($periods) - 1; $i < $iMax; $i++) {
+            if ($dateTime >= $periods[$i]->getDate() && $dateTime < $periods[$i + 1]->getDate()) {
+                return $periods[$i];
+            }
+        }
+
+        return reset($periods);
+    }
+
+    /**
+     * @param DateTimeInterface $dateTime
+     *
+     * @return cashGraphPeriodVO
+     * @throws Exception
+     */
+    public function getForecastPeriodByDate(DateTimeInterface $dateTime)
+    {
+        $periods = self::getForecastPeriods();
+        for ($i = 1, $iMax = count($periods); $i < $iMax; $i++) {
+            if ($dateTime < $periods[$i]->getDate()) {
+                return $periods[$i];
+            }
+        }
+
+        return end($periods);
     }
 
     /**

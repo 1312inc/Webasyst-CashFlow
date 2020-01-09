@@ -1,4 +1,5 @@
 {** @var cashAccountDto $account **}
+{** @var cashCategoryDto $category **}
 {** @var cashGraphPeriodVO $selectedChartPeriod **}
 {** @var cashGraphPeriodVO $selectedForecastPeriod **}
 <div class="content left200px">
@@ -19,8 +20,8 @@
                                    data-cash-forecast-period-value="{$period->getValue()}"
                                    data-cash-forecast-period-period="{$period->getPeriod()}"
                                 >{$period->getName()}</a></li>
-                            <!-- TODO <li class="bordered-top"><a href="#">[`Select dates...`]</a></li> -->
                             {/foreach}
+                            <!-- TODO <li class="bordered-top"><a href="#">[`Select dates...`]</a></li> -->
                         </ul>
                     </li>
                     <li>
@@ -32,8 +33,8 @@
                                    data-cash-forecast-period-value="{$period->getValue()}"
                                    data-cash-forecast-period-period="{$period->getPeriod()}"
                                 >{$period->getName()}</a></li>
-                                <!-- TODO <li class="bordered-top"><a href="#">[`Select dates...`]</a></li> -->
                             {/foreach}
+                            <!-- TODO <li class="bordered-top"><a href="#">[`Select dates...`]</a></li> -->
                         </ul>
                     </li>
                     <li>
@@ -239,6 +240,12 @@
             $('[data-cash-action="add-transaction"]').on('click', function (e) {
                 e.preventDefault();
                 transactionDialog(0, accountId, $(this).data('cash-category-type'))
+            });
+
+            $('[data-cash-chart-dates]').on('click', 'a', function (e) {
+                e.preventDefault();
+
+
             })
         })();
     })();
