@@ -150,9 +150,7 @@
             this.dispatch();
         },
         defaultAction: function () {
-            $.get('?module=account', function (html) {
-                $.cash.$content.html(html);
-            });
+            this.accountAction(0);
         },
         settingsAction: function () {
             $.get('?module=settings', function (html) {
@@ -165,6 +163,8 @@
             });
         },
         accountAction: function (id, start_date, end_date) {
+            start_date = start_date || '';
+            end_date = end_date || '';
             $.get('?module=transaction&action=page&filter=account&id=' + id + '&start_date=' + start_date + '&end_date=' + end_date, function (html) {
                 $.cash.$content.html(html);
             });

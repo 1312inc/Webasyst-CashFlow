@@ -31,7 +31,7 @@ class cashTransactionPageAction extends cashViewAction
 
         if (!$endDate) {
             $periodForecast = $graphService->getDefaultForecastPeriod();
-            $endDate = $periodChart->getDate();
+            $endDate = $periodForecast->getDate();
         } else {
             $endDate = new DateTime($endDate);
             $periodForecast  =$graphService->getForecastPeriodByDate($endDate);
