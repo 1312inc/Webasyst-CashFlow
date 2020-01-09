@@ -164,8 +164,13 @@
                 $.cash.$content.html(html);
             });
         },
-        accountAction: function (id) {
-            $.get('?module=account&id=' + id, function (html) {
+        accountAction: function (id, start_date, end_date) {
+            $.get('?module=transaction&action=page&filter=account&id=' + id + '&start_date=' + start_date + '&end_date=' + end_date, function (html) {
+                $.cash.$content.html(html);
+            });
+        },
+        categoryAction: function (id, start_date, end_date) {
+            $.get('?module=transaction&action=page&filter=category&id=' + id + '&start_date=' + start_date + '&end_date=' + end_date, function (html) {
                 $.cash.$content.html(html);
             });
         },
