@@ -112,13 +112,22 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             $columns[] = array_values(array_merge([$name], $data));
         }
 
+        $regions = [];
+        foreach ($this->lines as $lineId => $lineData) {
+            $regions[$lineId] = [['start' => $this->currentDate, 'style' => 'dashed']];
+        }
+
+        $colors = [];
+
         $data = [
             'x' => 'dates',
             'columns' => $columns,
             'line' => ['connectNull' => true],
-            'bar' => ['width'=> ['ratio' => 0.2]],
+            'bar' => ['width' => ['ratio' => 0.2]],
             'types' => $this->types,
             'groups' => array_values($this->groups),
+            'regions' => $regions,
+            'colors' => $colors,
         ];
 
         return $data;

@@ -2,6 +2,7 @@
 {** @var cashCategoryDto $category **}
 {** @var cashGraphPeriodVO $selectedChartPeriod **}
 {** @var cashGraphPeriodVO $selectedForecastPeriod **}
+{** @var string $currentDate **}
 <div class="content left200px">
     <div id="content">
         <div class="block">
@@ -126,6 +127,11 @@
         </div>
     </div>
 </div>
+<style>
+    .c3-region.regionFuture {
+        opacity: 90%;
+    }
+</style>
 <script>
     'use strict';
     (function () {
@@ -182,6 +188,7 @@
                 filterType = 'account',
                 startDate = '{$startDate}',
                 endDate = '{$endDate}',
+                currentDate = '{$currentDate}',
                 $transactionList = $('#cash-transaction-list');
 
             function loadTransactions() {
@@ -209,18 +216,25 @@
                             axis: {
                                 x: {
                                     // type: 'category',
-                                    type: 'timeseries'
-                                    // tick: {
-                                    //     count: 30,
-                                    //     format: '%Y-%m-%d'
-                                    // }
+                                    type: 'timeseries',
+                                    tick: {
+                                        count: 30,
+                                        format: '%Y-%m-%d'
+                                    }
+                                },
+                            },
+                            grid: {
+                                y: {
+                                    lines: [
+                                        { value: 0 }
+                                    ]
+                                },
+                                x: {
+                                    lines: [
+                                        { value: currentDate, text: 'Future' }
+                                    ]
                                 }
                             },
-                            // bar: {
-                            //     width: {
-                            //         ratio: 0.1
-                            //     }
-                            // },
                             line: {
                                 connectNull: true
                             }
