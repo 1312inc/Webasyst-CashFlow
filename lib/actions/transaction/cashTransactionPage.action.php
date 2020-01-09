@@ -37,6 +37,8 @@ class cashTransactionPageAction extends cashViewAction
             $periodForecast  =$graphService->getForecastPeriodByDate($endDate);
         }
 
+        $today = new DateTime();
+
         if ($id) {
             $account = cash()->getEntityRepository(cashAccount::class)->findById($id);
             kmwaAssert::instance($account, cashAccount::class);
@@ -49,7 +51,7 @@ class cashTransactionPageAction extends cashViewAction
         $calcService = new cashCalculationService();
 
         // cash on hand today
-        $onHandsToday = $calcService->getOnHandOnDate(new DateTime(), $account);
+        $onHandsToday = $calcService->getOnHandOnDate($today, $account);
 
         // cash on hand end day
         $onHandsEndday = $calcService->getOnHandOnDate($endDate, $account);
@@ -64,6 +66,7 @@ class cashTransactionPageAction extends cashViewAction
                 'onHandsEndday' => $onHandsEndday,
                 'startDate' => $startDate->format('Y-m-d'),
                 'endDate' => $endDate->format('Y-m-d'),
+                'currentDate' => $today->format('Y-m-d'),
                 'selectedChartPeriod' => $periodChart,
                 'selectedForecastPeriod' => $periodForecast,
             ]

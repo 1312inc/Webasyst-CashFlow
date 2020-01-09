@@ -30,7 +30,7 @@ class cashTransactionModel extends cashModel
 select ct.*,
        (@balance := @balance + ct.amount) as balance
 from cash_transaction ct
-join (select @balance := (select sum(ct2.amount) from cash_transaction ct2 where ct2.date < s:startDate {$whereAccountSql2})) b
+join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.date < s:startDate {$whereAccountSql2})) b
 join cash_account ca on ct.account_id = ca.id
 left join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
@@ -59,7 +59,7 @@ select ca.currency,
        concat(ca.currency,'_',ifnull(ct.category_id,0)) hash,
        ct.date,
        ct.category_id,
-       sum(ct.amount) summary
+       ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id
 where ct.date between s:startDate and s:endDate %s
@@ -111,7 +111,7 @@ select ca.currency,
        concat(ca.currency,'_',ifnull(ct.category_id,0)) hash,
        concat(YEAR(ct.date), '-', MONTH(ct.date)) date,
        ct.category_id,
-       sum(ct.amount) summary
+       ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id
 where ct.date between s:startDate and s:endDate %s
@@ -134,7 +134,7 @@ SQL;
         $sql = <<<SQL
 select ct.date,
        ca.id category_id,
-       sum(ct.amount) summary
+       ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id
 where ct.date between s:startDate and s:endDate %s
@@ -185,7 +185,7 @@ SQL;
         $sql = <<<SQL
 select concat(YEAR(ct.date), '-', MONTH(ct.date)) date,
        ca.id category_id,
-       sum(ct.amount) summary
+       ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id
 where ct.date between s:startDate and s:endDate %s
