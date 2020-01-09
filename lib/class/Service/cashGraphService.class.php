@@ -63,9 +63,9 @@ class cashGraphService
     {
         $periods = array_reverse(self::getChartPeriods());
         $periods[] = new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, 0);
-        for ($i = 1, $iMax = count($periods) - 1; $i < $iMax; $i++) {
-            if ($dateTime >= $periods[$i]->getDate() && $dateTime < $periods[$i + 1]->getDate()) {
-                return $periods[$i];
+        for ($i = 0, $iMax = count($periods) - 1; $i < $iMax; $i++) {
+            if ($dateTime > $periods[$i]->getDate() && $dateTime <= $periods[$i + 1]->getDate()) {
+                return $periods[$i + 1];
             }
         }
 
@@ -88,6 +88,37 @@ class cashGraphService
         }
 
         return end($periods);
+    }
+
+    /**
+     * @param DateTime $startDate
+     * @param DateTime $endDate
+     * @param array    $accounts
+     *
+     * @return cashGraphColumnsDataDto
+     * @throws waException
+     */
+    public function createDto(DateTime $startDate, DateTime $endDate, array $accounts)
+    {
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
+
+        $dateBounds = $model->getDateBounds(
+            $startDate->format('Y-m-d 00:00:00'),
+            $endDate->format('Y-m-d 23:59:59'),
+            $accounts
+        );
+
+        if (!empty($dateBounds['startDate'])) {
+            $startDate = new DateTime($dateBounds['startDate']);
+        }
+
+        if (!empty($dateBounds['endDate'])) {
+            $endDate = new DateTime($dateBounds['endDate']);
+        }
+
+        return new cashGraphColumnsDataDto($startDate, $endDate, $accounts);
+
     }
 
     /**

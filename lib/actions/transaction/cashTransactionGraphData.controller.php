@@ -34,7 +34,7 @@ class cashTransactionGraphDataController extends cashJsonController
         }
 
         $graphService = new cashGraphService();
-        $graphData = new cashGraphColumnsDataDto($startDate, $endDate, $accountIds);
+        $graphData = $graphService->createDto($startDate, $endDate, $accountIds);
         $graphService->fillColumnCategoriesDataForAccounts($graphData);
         $graphService->fillBalanceDataForAccounts($graphData);
 

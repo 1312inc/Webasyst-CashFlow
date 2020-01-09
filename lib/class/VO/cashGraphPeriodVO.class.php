@@ -24,25 +24,37 @@ class cashGraphPeriodVO
     /**
      * @var string
      */
+    private $type;
+
+    /**
+     * @var string
+     */
     private $period;
+
+    /**
+     * @var string
+     */
+    private $id;
 
     /**
      * cashGraphPeriodVO constructor.
      *
-     * @param string $period
+     * @param string $type
      * @param int    $value
      */
-    public function __construct($period, $value = null)
+    public function __construct($type, $value = null)
     {
-        switch ($period) {
+        switch ($type) {
             case self::NONE_PERIOD:
                 $this->name = _w('None');
                 $value = 0;
+                $this->period = self::DAYS_PERIOD;
                 break;
 
             case self::ALL_TIME_PERIOD:
                 $this->name = _w('All time');
                 $value = -100;
+                $this->period = self::YEARS_PERIOD;
                 break;
 
             default:
@@ -50,12 +62,13 @@ class cashGraphPeriodVO
                 if ($value < 0) {
                     $last = _w('Last ');
                 }
+                $this->period = $type;
 
-                $this->name = $last.sprintf_wp('%d %s', abs($value), $period);
+                $this->name = $last.sprintf_wp('%d %s', abs($value), $type);
         }
 
         $this->value = $value;
-        $this->period = $period;
+        $this->id = $this->period.'|'.$this->value;
     }
 
     /**
@@ -97,5 +110,13 @@ class cashGraphPeriodVO
     public function getPeriod()
     {
         return $this->period;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }
