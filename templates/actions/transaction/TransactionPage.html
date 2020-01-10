@@ -145,11 +145,15 @@
 <script>
     'use strict';
     (function () {
-        var transactionDialog = function(transactionId,  accountId, categoryType) {
+        var transactionDialog = function(transactionId, filterType, filterId, categoryType) {
+            filterType = filterType || '';
+            filterId = filterId || 0;
+            categoryType = categoryType || '';
+
             $('#cash-transaction-dialog').waDialog({
                 'height': '250px',
                 'width': '600px',
-                'url': '?module=transaction&action=dialog&transaction_id=' + transactionId + '&category_type=' + categoryType + '&account_id=' + accountId,
+                'url': '?module=transaction&action=dialog&transaction_id=' + transactionId + '&category_type=' + categoryType + '&filter_id=' + filterId + '&filter_type=' + filterType,
                 onLoad: function () {
                     var d = this,
                         $dialogWrapper = $(d);
@@ -157,15 +161,18 @@
                     $dialogWrapper
                         .on('click', '[data-cash-action="delete-transaction"]', function (e) {
                             e.preventDefault();
-
-                            $.post('?module=transaction&action=delete', $dialogWrapper.find('form').serialize(), function (r) {
-                                if (r.status === 'ok') {
-                                    $dialogWrapper.trigger('close');
-                                    // window.location.hash = '#/';
-                                    // $.status.routing.redispatch();
-                                    $.cash.reloadSidebar();
+                            var id = $dialogWrapper.find('form input[name="transaction[id]"]').val();
+                            $.post(
+                                '?module=transaction&action=delete',
+                                { id: id },
+                                function (r) {
+                                    if (r.status === 'ok') {
+                                        $dialogWrapper.trigger('close');
+                                        $.cash_routing.redispatch();
+                                        $.cash.reloadSidebar();
+                                    }
                                 }
-                            });
+                            );
                         })
                     ;
 
@@ -258,7 +265,13 @@
 
             $('[data-cash-action="add-transaction"]').on('click', function (e) {
                 e.preventDefault();
-                transactionDialog(0, filterId, $(this).data('cash-category-type'))
+                transactionDialog(0, filterType, filterId, $(this).data('cash-category-type'))
+            });
+
+            $('#cash-transaction-list').on('click', '[data-cash-transaction-id]', function (e) {
+                e.preventDefault();
+
+                transactionDialog($(this).data('cash-transaction-id'), filterType, filterId, '')
             });
 
             $('[data-cash-start-date]').on('click', function (e) {

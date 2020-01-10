@@ -24,6 +24,15 @@ class cashCategoryRepository extends cashBaseRepository
      * @return cashCategory[]
      * @throws waException
      */
+    public function findAllActive()
+    {
+        return $this->generateWithData($this->getModel()->getAllActive(), true);
+    }
+
+    /**
+     * @return cashCategory[]
+     * @throws waException
+     */
     public function findAllIncome()
     {
         return $this->findAllByType(cashCategory::TYPE_INCOME);

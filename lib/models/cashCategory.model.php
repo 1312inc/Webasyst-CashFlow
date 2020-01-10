@@ -62,6 +62,17 @@ class cashCategoryModel extends cashModel
     }
 
     /**
+     * @return array
+     */
+    public function getAllActive()
+    {
+        return $this
+            ->select('*')
+            ->order('sort ASC, id DESC')
+            ->fetchAll();
+    }
+
+    /**
      * @param string $slug
      *
      * @return string
