@@ -44,12 +44,12 @@ class cashCategory extends cashAbstractEntity
     /**
      * @var string
      */
-    private $createDatetime;
+    private $create_datetime;
 
     /**
      * @var string|null
      */
-    private $updateDatetime;
+    private $update_datetime;
 
     /**
      * @return int
@@ -176,7 +176,7 @@ class cashCategory extends cashAbstractEntity
      */
     public function getCreateDatetime()
     {
-        return $this->createDatetime;
+        return $this->create_datetime;
     }
 
     /**
@@ -186,7 +186,7 @@ class cashCategory extends cashAbstractEntity
      */
     public function setCreateDatetime($createDatetime)
     {
-        $this->createDatetime = $createDatetime;
+        $this->create_datetime = $createDatetime;
 
         return $this;
     }
@@ -196,7 +196,7 @@ class cashCategory extends cashAbstractEntity
      */
     public function getUpdateDatetime()
     {
-        return $this->updateDatetime;
+        return $this->update_datetime;
     }
 
     /**
@@ -206,7 +206,7 @@ class cashCategory extends cashAbstractEntity
      */
     public function setUpdateDatetime($updateDatetime)
     {
-        $this->updateDatetime = $updateDatetime;
+        $this->update_datetime = $updateDatetime;
 
         return $this;
     }

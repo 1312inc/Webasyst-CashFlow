@@ -35,7 +35,7 @@ class cashTransactionSaver
                 /** @var cashCategory $category */
                 $category = cash()->getEntityRepository(cashCategory::class)->findById($data['category_id']);
                 kmwaAssert::instance($category, cashCategory::class);
-                if ($category->isExpense()) {
+                if ($category->isExpense() && $data['amount'] > 0) {
                     $data['amount'] = -$data['amount'];
                 }
             }

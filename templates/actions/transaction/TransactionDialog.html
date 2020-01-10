@@ -17,7 +17,7 @@
                             <input type="text"
                                    class="large bold"
                                    name="transaction[amount]"
-                                   value="{$transaction->amount}"/>
+                                   value="{$transaction->amount|abs}"/>
                         </div>
                     </div>
                     <div class="field">

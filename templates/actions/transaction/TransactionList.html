@@ -8,8 +8,8 @@
 </tr>
 {/if}
 {foreach $upcoming as $t}
-    <tr class="c-planned">
-        <td>{$t->datetime|wa_date:humandate}</td>
+    <tr class="c-planned" data-cash-transaction-id="{$t->id}">
+        <td>{$t->datetime|wa_datetime:humandatetime:$serverTimezone}</td>
         <td>{$t->account->name|escape}</td>
         <td>
             {if $t->category}
@@ -30,8 +30,8 @@
 </tr>
 {/if}
 {foreach $completed as $t}
-    <tr>
-        <td>{$t->datetime|wa_date:humandate}</td>
+    <tr data-cash-transaction-id="{$t->id}">
+        <td>{$t->datetime|wa_datetime:humandatetime:$serverTimezone}</td>
         <td>{$t->account->name|escape}</td>
         <td>{if $t->category}
             <i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}

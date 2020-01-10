@@ -81,6 +81,10 @@ class cashGraphService
     public function getForecastPeriodByDate(DateTimeInterface $dateTime)
     {
         $periods = self::getForecastPeriods();
+        if ($periods[0]->getDate()->diff(new DateTime())->d === 0) {
+            return $periods[0];
+        }
+
         for ($i = 1, $iMax = count($periods); $i < $iMax; $i++) {
             if ($dateTime < $periods[$i]->getDate()) {
                 return $periods[$i];

@@ -24,6 +24,7 @@ abstract class cashViewAction extends kmwaWaViewAction
         return [
             'cash' => cash(),
             'isAdmin' => (int)wa()->getUser()->isAdmin(cashConfig::APP_ID),
+            'serverTimezone' => date_default_timezone_get(),
         ];
     }
 }

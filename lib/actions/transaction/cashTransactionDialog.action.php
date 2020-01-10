@@ -17,7 +17,7 @@ class cashTransactionDialogAction extends cashViewAction
     {
         $transactionId = waRequest::get('transaction_id', 0, waRequest::TYPE_INT);
         $categoryType = waRequest::get('category_type', cashCategory::TYPE_INCOME, waRequest::TYPE_STRING_TRIM);
-        $accountId = waRequest::get('account_id', 0, waRequest::TYPE_INT);
+        $filterId = waRequest::get('filter_id', 0, waRequest::TYPE_INT);
 
         /** @var cashTransaction $transaction */
         if ($transactionId) {
@@ -25,7 +25,7 @@ class cashTransactionDialogAction extends cashViewAction
             kmwaAssert::instance($transaction, cashTransaction::class);
         } else {
             $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
-            $transaction->setAccountId($accountId);
+            $transaction->setAccountId($filterId);
         }
 
         $transactionDto = (new cashTransactionDtoAssembler())->createFromEntity($transaction);
@@ -33,10 +33,18 @@ class cashTransactionDialogAction extends cashViewAction
             cashAccountDto::class,
             cash()->getEntityRepository(cashAccount::class)->findAll()
         );
-        $categoryDtos = cashDtoFromEntityFactory::fromEntities(
-            cashCategoryDto::class,
-            cash()->getEntityRepository(cashCategory::class)->findAllByType($categoryType)
-        );
+
+        if ($categoryType) {
+            $categoryDtos = cashDtoFromEntityFactory::fromEntities(
+                cashCategoryDto::class,
+                cash()->getEntityRepository(cashCategory::class)->findAllByType($categoryType)
+            );
+        } else {
+            $categoryDtos = cashDtoFromEntityFactory::fromEntities(
+                cashCategoryDto::class,
+                cash()->getEntityRepository(cashCategory::class)->findAllActive()
+            );
+        }
 
         /**
          * UI in transaction dialog
