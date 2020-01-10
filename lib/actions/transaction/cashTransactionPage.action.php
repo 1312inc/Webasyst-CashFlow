@@ -52,9 +52,12 @@ class cashTransactionPageAction extends cashViewAction
 
         // cash on hand today
         $onHandsToday = $calcService->getOnHandOnDate($today, $account);
-
         // cash on hand end day
         $onHandsEndday = $calcService->getOnHandOnDate($endDate, $account);
+
+        // total on hand
+        $farFarFuture = (new DateTime())->modify('+100 years');
+        $onHandsTotal = $calcService->getOnHandOnDate($farFarFuture, $account);
 
         // total income
         // total expense
@@ -64,6 +67,7 @@ class cashTransactionPageAction extends cashViewAction
                 'account' => $accountDto,
                 'onHandsToday' => $onHandsToday,
                 'onHandsEndday' => $onHandsEndday,
+                'onHandsTotal' => $onHandsTotal,
                 'startDate' => $startDate->format('Y-m-d'),
                 'endDate' => $endDate->format('Y-m-d'),
                 'currentDate' => $today->format('Y-m-d'),
