@@ -122,7 +122,17 @@
                 </table>
                 <br>
             </div>
-            <p class="align-center gray">{sprintf('[`Total income: <b>%s</b> / Total expense: <b>%s</b>`]', '100500 ₽ + $1295', '9204 ₽ + $921')}</p>
+
+            <p class="align-center gray">
+                Total income: <b>
+                {foreach $onHandsToday as $onHand}
+                    {$onHand->stat->incomeShorten} {$onHand->currency->getSign()}{if !$onHand@last} +{/if}
+                {/foreach} </b> /
+                Total expense: <b>
+                {foreach $onHandsToday as $onHand}
+                    {$onHand->stat->expenseShorten} {$onHand->currency->getSign()}{if !$onHand@last} +{/if}
+                {/foreach} </b>
+            </p>
 
         </div>
     </div>

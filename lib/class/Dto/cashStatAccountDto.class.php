@@ -52,7 +52,7 @@ class cashStatAccountDto
     {
         $this->accountId = $accountId;
         $this->income = (float)$income;
-        $this->expense = (float)$expense;
+        $this->expense = (float)abs($expense);
         $this->summary = (float)$summary;
         $this->incomeShorten = cashShorteningService::money($this->income);
         $this->expenseShorten = cashShorteningService::money($this->expense);
