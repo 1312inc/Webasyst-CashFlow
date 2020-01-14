@@ -11,17 +11,17 @@ class cashStatOnHandDto
     public $currency;
 
     /**
-     * @var cashStatAccountDto
+     * @var cashStatOnDateDto
      */
     public $stat;
 
     /**
      * cashStatOnHandDto constructor.
      *
-     * @param cashCurrencyVO     $currency
-     * @param cashStatAccountDto $stat
+     * @param cashCurrencyVO    $currency
+     * @param cashStatOnDateDto $stat
      */
-    public function __construct(cashCurrencyVO $currency, cashStatAccountDto $stat)
+    public function __construct(cashCurrencyVO $currency, cashStatOnDateDto $stat)
     {
         $this->currency = $currency;
         $this->stat = $stat;

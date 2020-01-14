@@ -36,9 +36,9 @@ class cashGraphColumnsDataDto extends cashAbstractDto
     public $currentDate;
 
     /**
-     * @var array
+     * @var cashTransactionPageFilterDto
      */
-    public $accountIds;
+    public $filterDto;
 
     /**
      * @var DateTime
@@ -53,28 +53,41 @@ class cashGraphColumnsDataDto extends cashAbstractDto
     /**
      * cashGraphColumnsDataDto constructor.
      *
-     * @param DateTime $startDate
-     * @param DateTime $endDate
-     * @param array    $accounts
+     * @param DateTime                     $startDate
+     * @param DateTime                     $endDate
+     * @param cashTransactionPageFilterDto $filterDto
      *
      * @throws waException
      */
-    public function __construct(DateTime $startDate, DateTime $endDate, array $accounts)
+    public function __construct(DateTime $startDate, DateTime $endDate, cashTransactionPageFilterDto $filterDto)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->filterDto = $filterDto;
 
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
-        $existingCategories = $model->getCategoriesAndCurrenciesHash(
-            $startDate->format('Y-m-d 00:00:00'),
-            $endDate->format('Y-m-d 23:59:59'),
-            $accounts
-        );
+        switch ($this->filterDto->type) {
+            case cashTransactionPageFilterDto::FILTER_ACCOUNT:
+                $existingCategories = $model->getCategoriesAndCurrenciesHashByAccount(
+                    $startDate->format('Y-m-d 00:00:00'),
+                    $endDate->format('Y-m-d 23:59:59'),
+                    $this->filterDto->id
+                );
+                break;
 
-        $this->accountIds = $accounts;
-        if ($accounts === []) {
-            $accounts = ['All accounts'];
+            case cashTransactionPageFilterDto::FILTER_CATEGORY:
+                $existingCategories = $model->getCategoriesAndCurrenciesHashByCategory(
+                    $startDate->format('Y-m-d 00:00:00'),
+                    $endDate->format('Y-m-d 23:59:59'),
+                    $this->filterDto->id
+                );
+                break;
+        }
+
+        $accounts = [];
+        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
+            $accounts =  empty($this->filterDto->id) ? ['All accounts'] : [$this->filterDto->id];
         }
 
         $this->currentDate = date('Y-m-d');
@@ -113,8 +126,10 @@ class cashGraphColumnsDataDto extends cashAbstractDto
         }
 
         $regions = [];
-        foreach ($this->lines as $lineId => $lineData) {
-            $regions[$lineId] = [['start' => $this->currentDate, 'style' => 'dashed']];
+        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
+            foreach ($this->lines as $lineId => $lineData) {
+                $regions[$lineId] = [['start' => $this->currentDate, 'style' => 'dashed']];
+            }
         }
 
         $colors = [];

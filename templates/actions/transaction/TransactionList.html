@@ -1,5 +1,5 @@
-{** @var int|null $account **}
 {** @var cashTransactionDto $t **}
+{** @var cashTransactionPageFilterDto $filter **}
 {if $upcoming}
 <tr class="white">
     <td colspan="7">
@@ -18,7 +18,7 @@
         </td>
         <td>{$t->description|escape}</td>
         <td><span>{$t->amountShorten} {$t->currency->getSign()}</span></td>
-        <td><span>{if $account}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
+        <td><span>{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
         <td>smth else</td>
     </tr>
 {/foreach}
@@ -39,7 +39,7 @@
         </td>
         <td>{$t->description|escape}</td>
         <td><span>{$t->amountShorten} {$t->currency->getSign()}</span></td>
-        <td><span>{if $account}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
+        <td><span>{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
         <td>smth else</td>
     </tr>
 {/foreach}

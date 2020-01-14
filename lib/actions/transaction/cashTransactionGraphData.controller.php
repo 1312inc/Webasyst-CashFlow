@@ -3,43 +3,68 @@
 /**
  * Class cashTransactionGraphDataController
  */
-class cashTransactionGraphDataController extends cashJsonController
+class cashTransactionGraphDataController extends cashTransactionPageAction
 {
     /**
-     * @throws waException
+     * @var array
+     */
+    private $errors = [];
+
+    /**
+     * @var array
+     */
+    private $response = [];
+
+    /**
      * @throws Exception
      */
-    public function execute()
+    public function runAction($params = null)
     {
-        $accountId = waRequest::request('account_id', 0, waRequest::TYPE_INT);
-        $startDate = new DateTime(
-            waRequest::request(
-                'startDate',
-                date('Y-m-d', strtotime('-90 days')),
-                waRequest::TYPE_STRING_TRIM
-            )
-        );
-        $endDate = new DateTime(
-            waRequest::request(
-                'endDate',
-                date('Y-m-d', strtotime('+90 days')),
-                waRequest::TYPE_STRING_TRIM
-            )
-        );
+        try {
+            $graphService = new cashGraphService();
+            $graphData = $graphService->createDto(
+                $this->startDate,
+                $this->endDate,
+                $this->filterDto
+            );
 
-        if (empty($accountId)) {
-            $accountIds = [];
-        } else {
-            $accountIds = [$accountId];
+            switch ($this->filterDto->type) {
+                case cashTransactionPageFilterDto::FILTER_ACCOUNT:
+                    $graphService->fillColumnCategoriesDataForAccounts($graphData);
+                    $graphService->fillBalanceDataForAccounts($graphData);
+                    break;
+
+                case cashTransactionPageFilterDto::FILTER_CATEGORY:
+                    $graphService->fillColumnCategoriesDataForCategories($graphData);
+//                    $graphService->fillBalanceDataForCategories($graphData);
+                    break;
+            }
+
+            $this->response = [
+                'graphData' => $graphData,
+            ];
+        } catch (Exception $exception) {
+            $this->errors[] = $exception->getMessage();
         }
 
-        $graphService = new cashGraphService();
-        $graphData = $graphService->createDto($startDate, $endDate, $accountIds);
-        $graphService->fillColumnCategoriesDataForAccounts($graphData);
-        $graphService->fillBalanceDataForAccounts($graphData);
+        $this->display();
+    }
 
-        $this->response = [
-            'graphData' => $graphData,
-        ];
+    /**
+     * @param bool $clear_assign
+     *
+     * @return string|void
+     */
+    public function display($clear_assign = true)
+    {
+        if (waRequest::isXMLHttpRequest()) {
+            $this->getResponse()->addHeader('Content-Type', 'application/json');
+        }
+        $this->getResponse()->sendHeaders();
+        if (!$this->errors) {
+            echo waUtils::jsonEncode(['status' => 'ok', 'data' => $this->response]);
+        } else {
+            echo waUtils::jsonEncode(['status' => 'fail', 'errors' => $this->errors]);
+        }
     }
 }

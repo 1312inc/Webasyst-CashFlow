@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class statusWalogDialogAction
+ * Class cashAccountDialogAction
  */
-class cashAccountEditDialogAction extends statusViewAction
+class cashAccountDialogAction extends cashViewAction
 {
     /**
      * @param null $params
@@ -22,8 +22,16 @@ class cashAccountEditDialogAction extends statusViewAction
             kmwaAssert::instance($account, cashAccount::class);
         }
 
+        $currencies = [];
+        foreach (waCurrency::getAll('all') as $currency) {
+            $currencies[$currency['code']] = cashCurrencyVO::fromWaCurrency($currency['code']);
+        }
+
         $this->view->assign(
-            ['account' => cashAccountDto::createFromEntity($account)]
+            [
+                'account' => cashDtoFromEntityFactory::fromEntity(cashAccountDto::class, $account),
+                'currencies' => $currencies,
+            ]
         );
     }
 }

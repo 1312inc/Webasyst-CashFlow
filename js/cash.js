@@ -70,6 +70,65 @@
             self.$wa = $('#wa-app');
             self.$content = $('#cash-content');
             self.$sidebar = $('#cash-left-sidebar');
+
+            self.handlers();
+        },
+        handlers: function () {
+            var self = this;
+
+            self.$sidebar.on('click', '[data-cash-action="account-dialog"]', function (e) {
+                e.preventDefault();
+                var $this = $(this),
+                    accountId = $this.data('cash-account-id');
+
+                $('#cash-transaction-dialog').waDialog({
+                    'height': '250px',
+                    'width': '600px',
+                    'url': '?module=account&action=dialog&account_id=' + accountId,
+                    onLoad: function () {
+                        var d = this,
+                            $dialogWrapper = $(d);
+
+                        $dialogWrapper
+                            .on('click', '[data-cash-action="delete-account"]', function (e) {
+                                e.preventDefault();
+                                var id = $dialogWrapper.find('form input[name="account[id]"]').val();
+                                $.post(
+                                    '?module=account&action=delete',
+                                    { id: id },
+                                    function (r) {
+                                        if (r.status === 'ok') {
+                                            $dialogWrapper.trigger('close');
+                                            $.cash_routing.dispatch('#/account/0');
+                                            $.cash.reloadSidebar();
+                                        }
+                                    }
+                                );
+                            })
+                        ;
+
+                        setTimeout(function () {
+                            $dialogWrapper.find('[name="account[name]"]').trigger('focus');
+                        }, 13.12);
+                    },
+                    onSubmit: function (d) {
+                        d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
+                        $.post('?module=account&action=save', d.find('form').serialize(), function (r) {
+                            $.cash.$loading.remove();
+                            if (r.status === 'ok') {
+                                d.trigger('close');
+                                // if (!pocketId) {
+                                window.location.hash = '#/account/' + r.data.id;
+                                // }
+                                $.cash.reloadSidebar();
+                            } else {
+
+                            }
+                        }, 'json');
+                        return false;
+                    }
+                });
+            })
         }
     }
 }(jQuery));

@@ -55,4 +55,15 @@ class cashCategoryRepository extends cashBaseRepository
     {
         return $this->findAllByType(cashCategory::TYPE_TRANSFER);
     }
+
+    /**
+     * @param string $slug
+     *
+     * @return cashCategory
+     * @throws waException
+     */
+    public function findBySlug($slug)
+    {
+        return $this->findByFields('slug', $slug);
+    }
 }

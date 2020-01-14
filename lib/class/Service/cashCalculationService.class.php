@@ -9,7 +9,7 @@ final class cashCalculationService
      * @param DateTime      $endDate
      * @param DateTime|null $startDate
      *
-     * @return cashStatAccountDto[]
+     * @return cashStatOnDateDto[]
      * @throws waException
      * @todo: cache?
      */
@@ -23,9 +23,8 @@ final class cashCalculationService
 
         $dtos = [];
         foreach ($data as $datum) {
-            /** @var cashStatAccountDto $dto */
-            $dtos[$datum['id']] = new cashStatAccountDto(
-                $datum['id'],
+            /** @var cashStatOnDateDto $dto */
+            $dtos[$datum['id']] = new cashStatOnDateDto(
                 $datum['income'],
                 $datum['expense'],
                 $datum['summary']
@@ -36,23 +35,34 @@ final class cashCalculationService
     }
 
     /**
-     * @param DateTime         $onDate
-     * @param cashAccount|null $account
+     * @param DateTime                                    $onDate
+     * @param cashAccount|cashCategory|cashAbstractEntity $entity
      *
-     * @return cashStatAccountDto[]
+     * @return cashStatOnDateDto[]
      * @throws waException
+     * @throws kmwaLogicException
      */
-    public function getOnHandOnDate(DateTime $onDate, cashAccount $account)
+    public function getOnHandOnDate(DateTime $onDate, cashAbstractEntity $entity)
     {
         /** @var cashAccountModel $model */
         $model = cash()->getModel(cashAccount::class);
-
-        $accounts = [];
-        if ($account->getId()) {
-            $accounts[] = $account->getId();
+        $filterIds = [];
+        if ($entity->getId()) {
+            $filterIds[] = $entity->getId();
         }
 
-        $data = $model->getStatDataForAccounts('1970-01-01 00:00:00', $onDate->format('Y-m-d H:i:s'), $accounts);
+        switch (true) {
+            case $entity instanceOf cashAccount:
+                $data = $model->getStatDataForAccounts('1970-01-01 00:00:00', $onDate->format('Y-m-d H:i:s'), $filterIds);
+                break;
+
+            case $entity instanceOf cashCategory:
+                $data = $model->getStatDataForCategories('1970-01-01 00:00:00', $onDate->format('Y-m-d H:i:s'), $filterIds);
+                break;
+
+            default:
+                throw new kmwaLogicException('Wrong filter entity');
+        }
 
         $summaryData = [];
         foreach ($data as $datum) {
@@ -74,8 +84,7 @@ final class cashCalculationService
             if ($summaryDatum['summary'] > 0) {
                 $summary[$currency] = new cashStatOnHandDto(
                     cashCurrencyVO::fromWaCurrency($currency),
-                    new cashStatAccountDto(
-                        0,
+                    new cashStatOnDateDto(
                         $summaryDatum['income'],
                         $summaryDatum['expense'],
                         $summaryDatum['summary']

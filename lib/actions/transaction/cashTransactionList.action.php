@@ -3,42 +3,63 @@
 /**
  * Class cashTransactionListAction
  */
-class cashTransactionListAction extends cashViewAction
+class cashTransactionListAction extends cashTransactionPageAction
 {
     /**
      * @throws waException
      */
     public function runAction($params = null)
     {
-        $account = waRequest::request('account_id', 0, waRequest::TYPE_INT);
-        $startDate = new DateTime(
-            waRequest::request(
-                'startDate',
-                date('Y-m-d', strtotime('-90 days')),
-                waRequest::TYPE_STRING_TRIM
-            )
-        );
-        $endDate = new DateTime(
-            waRequest::request(
-                'endDate',
-                date('Y-m-d', strtotime('+90 days')),
-                waRequest::TYPE_STRING_TRIM
-            )
-        );
+        $dtoAssembler = new cashTransactionDtoAssembler();
+        $tomorrow = new DateTime('tomorrow');
+        $upcoming = $completed = [];
 
-        if (empty($account)) {
-            $accountIds = [];
-        } else {
-            $accountIds = [$account];
+        switch ($this->filterDto->type) {
+            case cashTransactionPageFilterDto::FILTER_ACCOUNT:
+                $upcoming = array_reverse(
+                    $dtoAssembler->findByDatesAndAccount(
+                        $tomorrow,
+                        $this->endDate,
+                        $this->filterDto->id
+                    ),
+                    true
+                );
+                $completed = array_reverse(
+                    $dtoAssembler->findByDatesAndAccount(
+                        $this->startDate,
+                        $this->today,
+                        $this->filterDto->id
+                    ),
+                    true
+                );
+                break;
+
+            case cashTransactionPageFilterDto::FILTER_CATEGORY:
+                $upcoming = array_reverse(
+                    $dtoAssembler->findByDatesAndCategory(
+                        $tomorrow,
+                        $this->endDate,
+                        $this->filterDto->id
+                    ),
+                    true
+                );
+                $completed = array_reverse(
+                    $dtoAssembler->findByDatesAndCategory(
+                        $this->startDate,
+                        $this->today,
+                        $this->filterDto->id
+                    ),
+                    true
+                );
+                break;
         }
 
-        $dtoAssembler = new cashTransactionDtoAssembler();
-
-        $today = new DateTime('today');
-        $tomorrow = new DateTime('tomorrow');
-        $upcoming = array_reverse($dtoAssembler->findByDatesAndAccount($tomorrow, $endDate, $accountIds), true);
-        $completed = array_reverse($dtoAssembler->findByDatesAndAccount($startDate, $today, $accountIds), true);
-
-        $this->view->assign(compact('upcoming', 'completed', 'account'));
+        $this->view->assign(
+            [
+                'upcoming' => $upcoming,
+                'completed' => $completed,
+                'filter' => $this->filterDto,
+            ]
+        );
     }
 }

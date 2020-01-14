@@ -3,13 +3,8 @@
 /**
  * Class cashTransactionSaver
  */
-class cashTransactionSaver
+class cashTransactionSaver extends cashEntitySaver
 {
-    /**
-     * @var string
-     */
-    private $error = '';
-
     /**
      * @param array $data
      *
@@ -23,7 +18,7 @@ class cashTransactionSaver
 
         try {
             /** @var cashTransaction $transaction */
-            if ($data['id']) {
+            if (!empty($data['id'])) {
                 $transaction = cash()->getEntityRepository(cashTransaction::class)->findById($data['id']);
                 kmwaAssert::instance($transaction, cashTransaction::class);
                 unset($data['id']);
@@ -71,13 +66,5 @@ class cashTransactionSaver
         }
 
         return true;
-    }
-
-    /**
-     * @return string
-     */
-    public function getError()
-    {
-        return $this->error;
     }
 }

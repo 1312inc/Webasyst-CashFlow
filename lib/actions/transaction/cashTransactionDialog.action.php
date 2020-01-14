@@ -17,7 +17,10 @@ class cashTransactionDialogAction extends cashViewAction
     {
         $transactionId = waRequest::get('transaction_id', 0, waRequest::TYPE_INT);
         $categoryType = waRequest::get('category_type', cashCategory::TYPE_INCOME, waRequest::TYPE_STRING_TRIM);
-        $filterId = waRequest::get('filter_id', 0, waRequest::TYPE_INT);
+        $filterType = waRequest::get('filter_type', cashCategory::TYPE_INCOME, waRequest::TYPE_STRING_TRIM);
+        $filterId = waRequest::get('filter_id', '', waRequest::TYPE_STRING_TRIM);
+
+        $filterDto = new cashTransactionPageFilterDto($filterType, $filterId);
 
         /** @var cashTransaction $transaction */
         if ($transactionId) {
@@ -25,7 +28,11 @@ class cashTransactionDialogAction extends cashViewAction
             kmwaAssert::instance($transaction, cashTransaction::class);
         } else {
             $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
-            $transaction->setAccountId($filterId);
+            if ($filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
+                $transaction->setAccountId($filterDto->id);
+            } else {
+                $transaction->setCategoryId($filterDto->id);
+            }
         }
 
         $transactionDto = (new cashTransactionDtoAssembler())->createFromEntity($transaction);
@@ -62,6 +69,7 @@ class cashTransactionDialogAction extends cashViewAction
                 'accounts' => $accountDtos,
                 'categories' => $categoryDtos,
                 'categoryType' => $categoryType,
+                'filter' => $filterDto,
 
                 'backend_transaction_dialog' => $eventResult,
             ]
