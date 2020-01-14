@@ -50,7 +50,7 @@ class cashConfig extends waAppConfig
     public function getCache($type = 'default')
     {
         if ($this->cache === null) {
-            $this->cache = parent::getCache($type) ?: new waCache(new kmwaWaCacheAdapter(['type' => 'file']), 'status');
+            $this->cache = parent::getCache($type) ?: new waCache(new kmwaWaCacheAdapter(['type' => 'file']), 'cash');
         }
 
         return $this->cache;

@@ -21,7 +21,6 @@ class cashAccountFactory extends cashBaseFactory
     public function createAllAccount()
     {
         return (new cashAccount())
-            ->setId(0)
             ->setName(_w('All accounts'));
     }
 }

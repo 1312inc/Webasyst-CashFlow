@@ -27,7 +27,7 @@
 
             {if 1 || IS_APP_ADMIN}
                 <li class="small">
-                    <a href="#" data-cash-action="add-account"><i class="icon10 add"></i> [`New account`]</a>
+                    <a href="#" data-cash-action="account-dialog" data-cash-account-id="0"><i class="icon10 add"></i> [`New account`]</a>
                 </li>
             {/if}
         </ul>
@@ -42,7 +42,7 @@
                 {** @var cashCategoryDto $income **}
                 {foreach $incomes as $income}
                     <li>
-                        <a href="#/income/{$income->slug}"><i class="icon16 color" style="background: {$income->color|default:'#47ce6f'};"></i>{$income->name|escape}</a>
+                        <a href="#/category/{$income->slug}"><i class="icon16 color" style="background: {$income->color|default:'#47ce6f'};"></i>{$income->name|escape}</a>
                     </li>
                 {/foreach}
             </ul>
@@ -58,7 +58,7 @@
                 {** @var cashCategoryDto $expense **}
                 {foreach $expenses as $expense}
                     <li>
-                        <a href="#/expense/{$expense->slug}"><i class="icon16 color" style="background: {$expense->color|default:'#f56b68'};"></i>{$expense->name|escape}</a>
+                        <a href="#/category/{$expense->slug}"><i class="icon16 color" style="background: {$expense->color|default:'#f56b68'};"></i>{$expense->name|escape}</a>
                     </li>
                 {/foreach}
             </ul>

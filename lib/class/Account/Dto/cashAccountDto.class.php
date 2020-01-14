@@ -61,7 +61,7 @@ class cashAccountDto extends cashAbstractDto
     public $updateDatetime = '';
 
     /**
-     * @var cashStatAccountDto|null
+     * @var cashStatOnDateDto|null
      */
     public $stat;
 

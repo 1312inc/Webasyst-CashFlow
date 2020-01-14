@@ -64,7 +64,7 @@ class cashGraphService
         $periods = array_reverse(self::getChartPeriods());
         $periods[] = new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, 0);
         for ($i = 0, $iMax = count($periods) - 1; $i < $iMax; $i++) {
-            if ($dateTime > $periods[$i]->getDate() && $dateTime <= $periods[$i + 1]->getDate()) {
+            if ($dateTime >= $periods[$i]->getDate() && $dateTime < $periods[$i + 1]->getDate()) {
                 return $periods[$i + 1];
             }
         }
@@ -81,7 +81,7 @@ class cashGraphService
     public function getForecastPeriodByDate(DateTimeInterface $dateTime)
     {
         $periods = self::getForecastPeriods();
-        if ($periods[0]->getDate()->diff(new DateTime())->d === 0) {
+        if ($periods[0]->getDate()->diff($dateTime)->d === 0) {
             return $periods[0];
         }
 
@@ -95,34 +95,44 @@ class cashGraphService
     }
 
     /**
-     * @param DateTime $startDate
-     * @param DateTime $endDate
-     * @param array    $accounts
+     * @param DateTime                     $startDate
+     * @param DateTime                     $endDate
+     * @param cashTransactionPageFilterDto $filterDto
      *
      * @return cashGraphColumnsDataDto
      * @throws waException
      */
-    public function createDto(DateTime $startDate, DateTime $endDate, array $accounts)
+    public function createDto(DateTime $startDate, DateTime $endDate, cashTransactionPageFilterDto $filterDto)
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
 
-        $dateBounds = $model->getDateBounds(
-            $startDate->format('Y-m-d 00:00:00'),
-            $endDate->format('Y-m-d 23:59:59'),
-            $accounts
-        );
+        switch ($filterDto->type) {
+            case cashTransactionPageFilterDto::FILTER_ACCOUNT:
+                $dateBounds = $model->getDateBoundsByAccounts(
+                    $startDate->format('Y-m-d 00:00:00'),
+                    $endDate->format('Y-m-d 23:59:59'),
+                    $filterDto->id
+                );
+                break;
+            case cashTransactionPageFilterDto::FILTER_CATEGORY:
+                $dateBounds = $model->getDateBoundsByCategories(
+                    $startDate->format('Y-m-d 00:00:00'),
+                    $endDate->format('Y-m-d 23:59:59'),
+                    $filterDto->id
+                );
+                break;
+        }
 
         if (!empty($dateBounds['startDate'])) {
-            $startDate = new DateTime($dateBounds['startDate']);
+            $startDate = (new DateTime($dateBounds['startDate']))->modify('-1 day');
         }
 
         if (!empty($dateBounds['endDate'])) {
-            $endDate = new DateTime($dateBounds['endDate']);
+            $endDate = (new DateTime($dateBounds['endDate']))->modify('+1 day');
         }
 
-        return new cashGraphColumnsDataDto($startDate, $endDate, $accounts);
-
+        return new cashGraphColumnsDataDto($startDate, $endDate, $filterDto);
     }
 
     /**
@@ -141,7 +151,7 @@ class cashGraphService
                 $data = $model->getSummaryByDateBoundsAndAccountGroupByDay(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
-                    $graphData->accountIds
+                    $graphData->filterDto->id
                 );
                 break;
 
@@ -149,7 +159,7 @@ class cashGraphService
                 $data = $model->getSummaryByDateBoundsAndAccountGroupByMonth(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
-                    $graphData->accountIds
+                    $graphData->filterDto->id
                 );
                 break;
         }
@@ -166,7 +176,53 @@ class cashGraphService
                     $graphData->groups[$dateDatum['currency']][] = $dateDatum['hash'];
                 }
 
-                $graphData->columns[$dateDatum['hash']][$date] = (float)$dateDatum['summary'];
+                $graphData->columns[$dateDatum['hash']][$date] = (float)abs($dateDatum['summary']);
+            }
+        }
+    }
+
+    /**
+     * @param cashGraphColumnsDataDto $graphData
+     *
+     * @throws waException
+     */
+    public function fillColumnCategoriesDataForCategories(cashGraphColumnsDataDto $graphData)
+    {
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
+
+        $data = [];
+        switch ($this->determineGroup($graphData->startDate, $graphData->endDate)) {
+            case self::GROUP_BY_DAY:
+                $data = $model->getSummaryByDateBoundsAndCategoryGroupByDay(
+                    $graphData->startDate->format('Y-m-d 00:00:00'),
+                    $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->id
+                );
+                break;
+
+            case self::GROUP_BY_MONTH:
+                $data = $model->getSummaryByDateBoundsAndCategoryGroupByMonth(
+                    $graphData->startDate->format('Y-m-d 00:00:00'),
+                    $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->id
+                );
+                break;
+        }
+
+        foreach ($data as $date => $dateData) {
+            foreach ($dateData as $dateDatum) {
+                // grouping by currency
+                $graphData->groups[$dateDatum['currency']] = ifset(
+                    $graphData->groups[$dateDatum['currency']],
+                    []
+                );
+
+                if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']])) {
+                    $graphData->groups[$dateDatum['currency']][] = $dateDatum['hash'];
+                }
+
+                $graphData->columns[$dateDatum['hash']][$date] = (float)abs($dateDatum['summary']);
             }
         }
     }
@@ -187,7 +243,7 @@ class cashGraphService
                 $data = $model->getBalanceByDateBoundsAndAccountGroupByDay(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
-                    $graphData->accountIds
+                    $graphData->filterDto->id
                 );
                 break;
 
@@ -195,18 +251,21 @@ class cashGraphService
                 $data = $model->getBalanceByDateBoundsAndAccountGroupByMonth(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
-                    $graphData->accountIds
+                    $graphData->filterDto->id
                 );
                 break;
         }
 
-        /** @var cashAccountModel $accountModel */
-        $accountModel = cash()->getModel(cashAccount::class);
-        $initialBalance = $accountModel->getStatDataForAccounts(
-            '1970-01-01 00:00:00',
-            $graphData->startDate->format('Y-m-d 23:59:59'),
-            $graphData->accountIds
-        );
+        $initialBalance = 0;
+        if ($graphData->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
+            /** @var cashAccountModel $accountModel */
+            $accountModel = cash()->getModel(cashAccount::class);
+            $initialBalance = $accountModel->getStatDataForAccounts(
+                '1970-01-01 00:00:00',
+                $graphData->startDate->format('Y-m-d 23:59:59'),
+                $graphData->filterDto->id
+            );
+        }
 
         foreach ($graphData->dates as $date) {
             if (!isset($data[$date])) {
@@ -215,10 +274,59 @@ class cashGraphService
 
             foreach ($data[$date] as $datum) {
                 $accountId = $datum['category_id'];
-                if (!$graphData->accountIds) {
+                if (!$graphData->filterDto->id) {
                     $accountId = 'All accounts';
                 }
                 $graphData->lines[$accountId][$date] += ((float)$datum['summary'] + (float)$initialBalance[$datum['category_id']]['summary']);
+            }
+        }
+    }
+
+    /**
+     * @param cashGraphColumnsDataDto $graphData
+     *
+     * @throws waException
+     */
+    public function fillBalanceDataForCategories(cashGraphColumnsDataDto $graphData)
+    {
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
+
+        $data = [];
+        switch ($this->determineGroup($graphData->startDate, $graphData->endDate)) {
+            case self::GROUP_BY_DAY:
+                $data = $model->getBalanceByDateBoundsAndAccountGroupByDay(
+                    $graphData->startDate->format('Y-m-d 00:00:00'),
+                    $graphData->endDate->format('Y-m-d 23:59:59'),
+                    [$graphData->filterDto->id]
+                );
+                break;
+
+            case self::GROUP_BY_MONTH:
+                $data = $model->getBalanceByDateBoundsAndAccountGroupByMonth(
+                    $graphData->startDate->format('Y-m-d 00:00:00'),
+                    $graphData->endDate->format('Y-m-d 23:59:59'),
+                    [$graphData->filterDto->id]
+                );
+                break;
+        }
+
+        /** @var cashAccountModel $accountModel */
+        $accountModel = cash()->getModel(cashAccount::class);
+        $initialBalance = $accountModel->getStatDataForCategories(
+            '1970-01-01 00:00:00',
+            $graphData->startDate->format('Y-m-d 23:59:59'),
+            [$graphData->filterDto->id]
+        );
+
+        foreach ($graphData->dates as $date) {
+            if (!isset($data[$date])) {
+                continue;
+            }
+
+            foreach ($data[$date] as $datum) {
+                $categoryId = $datum['category_id'];
+                $graphData->lines[$categoryId][$date] += ((float)$datum['summary'] + (float)$initialBalance[$datum['category_id']]['summary']);
             }
         }
     }
@@ -239,7 +347,7 @@ class cashGraphService
 //                'summary' => $datum['summary'],
 //            ];
 //
-//            $accountColumn = new cashStatAccountDto($datum['account_id'], $datum['income'], $datum['expense'], $datum['summary']);
+//            $accountColumn = new cashStatOnDateDto($datum['account_id'], $datum['income'], $datum['expense'], $datum['summary']);
 //        }
 //    }
 

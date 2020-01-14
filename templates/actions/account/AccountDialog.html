@@ -14,6 +14,18 @@
                             <input type="text" class="bold" name="account[name]" placeholder="[`Account name`]" />
                         </div>
                     </div>
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Currency`]
+                        </div>
+                        <div class="value">
+                            <select name="account[currency]">
+                            {foreach $currencies as $currency}
+                                <option value="{$currency->getCode()}" {if $account->currency->getCode() == $currency->getCode()}selected{/if}>{$currency->getTitle()} {$currency->getSign()}</option>
+                            {/foreach}
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

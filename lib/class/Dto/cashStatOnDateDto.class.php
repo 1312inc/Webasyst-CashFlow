@@ -1,15 +1,10 @@
 <?php
 
 /**
- * Class cashStatAccountDto
+ * Class cashStatOnDateDto
  */
-class cashStatAccountDto
+class cashStatOnDateDto
 {
-    /**
-     * @var int
-     */
-    public $accountId;
-
     /**
      * @var float
      */
@@ -43,14 +38,12 @@ class cashStatAccountDto
     /**
      * cashAccountStatDto constructor.
      *
-     * @param int   $accountId
      * @param float $income
      * @param float $expense
      * @param float $summary
      */
-    public function __construct($accountId, $income, $expense, $summary)
+    public function __construct($income, $expense, $summary)
     {
-        $this->accountId = $accountId;
         $this->income = (float)$income;
         $this->expense = (float)abs($expense);
         $this->summary = (float)$summary;

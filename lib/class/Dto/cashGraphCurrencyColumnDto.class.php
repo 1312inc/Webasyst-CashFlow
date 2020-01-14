@@ -11,7 +11,7 @@ class cashGraphCurrencyColumnDto extends cashAbstractDto
     public $currency;
 
     /**
-     * @var cashStatAccountDto[]
+     * @var cashStatOnDateDto[]
      */
     public $accountStats;
 

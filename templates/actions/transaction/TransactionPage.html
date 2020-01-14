@@ -1,4 +1,4 @@
-{** @var cashAccountDto $account **}
+{** @var cashTransactionPageFilterDto $filter **}
 {** @var cashCategoryDto $category **}
 {** @var cashGraphPeriodVO $selectedChartPeriod **}
 {** @var cashGraphPeriodVO $selectedForecastPeriod **}
@@ -7,7 +7,7 @@
     <div id="content">
         <div class="block">
             <h1>
-                {$account->name|escape}
+                {$filter->name|escape}
             </h1>
             <div class="float-right">
                 <ul class="menu-h dropdown" data-cash-chart-dates>
@@ -125,11 +125,11 @@
 
             <p class="align-center gray">
                 Total income: <b>
-                {foreach $onHandsToday as $onHand}
+                {foreach $onHandsTotal as $onHand}
                     {$onHand->stat->incomeShorten} {$onHand->currency->getSign()}{if !$onHand@last} +{/if}
                 {/foreach} </b> /
                 Total expense: <b>
-                {foreach $onHandsToday as $onHand}
+                {foreach $onHandsTotal as $onHand}
                     {$onHand->stat->expenseShorten} {$onHand->currency->getSign()}{if !$onHand@last} +{/if}
                 {/foreach} </b>
             </p>
@@ -201,8 +201,8 @@
         };
 
         var TransactionPage = (function () {
-            var filterId = parseInt('{$account->id}'),
-                filterType = 'account',
+            var filterId = '{$filter->identifier}',
+                filterType = '{$filter->type}',
                 startDate = '{$startDate}',
                 endDate = '{$endDate}',
                 currentDate = '{$currentDate}',
@@ -210,9 +210,10 @@
 
             function loadTransactions() {
                 $.get('?module=transaction&action=list', {
-                    'startDate': startDate,
-                    'endDate': endDate,
-                    'account_id': filterId
+                    'start_date': startDate,
+                    'end_date': endDate,
+                    'id': filterId,
+                    'filter': filterType
                 }, function (html) {
                     $transactionList.html(html);
                 })
@@ -220,9 +221,10 @@
 
             function loadGraphData() {
                 $.get('?module=transaction&action=graphData', {
-                    'startDate': startDate,
-                    'endDate': endDate,
-                    'account_id': filterId
+                    'start_date': startDate,
+                    'end_date': endDate,
+                    'id': filterId,
+                    'filter': filterType
                 }, function (r) {
                     if (r.status === 'ok') {
                         console.log(r.data);

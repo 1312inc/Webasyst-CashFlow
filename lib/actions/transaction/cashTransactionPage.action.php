@@ -6,73 +6,109 @@
 class cashTransactionPageAction extends cashViewAction
 {
     /**
-     * @param null|array $params
+     * @var string
+     */
+    protected $startDate;
+
+    /**
+     * @var string
+     */
+    protected $endDate;
+
+    /**
+     * @var cashGraphPeriodVO
+     */
+    protected $periodChart;
+
+    /**
+     * @var cashGraphPeriodVO
+     */
+    protected $periodForecast;
+
+    /**
+     * @var cashGraphService
+     */
+    protected $graphService;
+
+    /**
+     * @var cashTransactionPageFilterDto
+     */
+    protected $filterDto;
+
+    /**
+     * @var DateTime
+     */
+    protected $today;
+
+    /**
+     * cashTransactionPageAction constructor.
      *
-     * @return mixed
-     * @throws kmwaAssertException
+     * @param null $params
+     *
+     * @throws Exception
+     */
+    public function __construct($params = null)
+    {
+        parent::__construct($params);
+
+        $id = waRequest::get('id', 0, waRequest::TYPE_STRING_TRIM);
+        $filterType = waRequest::get('filter', '', waRequest::TYPE_STRING_TRIM);
+
+        $this->graphService = new cashGraphService();
+        $this->filterDto = new cashTransactionPageFilterDto($filterType, $id);
+
+        $startDate = waRequest::get('start_date', [], waRequest::TYPE_STRING_TRIM);
+        $endDate = waRequest::get('end_date', [], waRequest::TYPE_STRING_TRIM);
+        if (!$startDate) {
+            $this->periodChart = $this->graphService->getDefaultChartPeriod();
+            $this->startDate = $this->periodChart->getDate();
+        } else {
+            $this->startDate = new DateTime($startDate);
+            $this->periodChart = $this->graphService->getChartPeriodByDate($this->startDate);
+        }
+        if (!$endDate) {
+            $this->periodForecast = $this->graphService->getDefaultForecastPeriod();
+            $this->endDate = $this->periodForecast->getDate();
+        } else {
+            $this->endDate = new DateTime($endDate);
+            $this->periodForecast = $this->graphService->getForecastPeriodByDate($this->endDate);
+        }
+
+        $this->today = new DateTime();
+    }
+
+    /**
+     * @param null $params
+     *
+     * @return mixed|void
+     * @throws kmwaLogicException
      * @throws kmwaNotFoundException
      * @throws waException
      */
     public function runAction($params = null)
     {
-        $id = waRequest::get('id', 0, waRequest::TYPE_INT);
-        $startDate = waRequest::get('start_date', [], waRequest::TYPE_STRING_TRIM);
-        $endDate = waRequest::get('end_date', [], waRequest::TYPE_STRING_TRIM);
-
-        $graphService = new cashGraphService();
-
-        if (!$startDate) {
-            $periodChart = $graphService->getDefaultChartPeriod();
-            $startDate = $periodChart->getDate();
-        } else {
-            $startDate = new DateTime($startDate);
-            $periodChart  =$graphService->getChartPeriodByDate($startDate);
-        }
-
-        if (!$endDate) {
-            $periodForecast = $graphService->getDefaultForecastPeriod();
-            $endDate = $periodForecast->getDate();
-        } else {
-            $endDate = new DateTime($endDate);
-            $periodForecast  =$graphService->getForecastPeriodByDate($endDate);
-        }
-
-        $today = new DateTime();
-
-        if ($id) {
-            $account = cash()->getEntityRepository(cashAccount::class)->findById($id);
-            kmwaAssert::instance($account, cashAccount::class);
-        } else {
-            $account = cash()->getEntityFactory(cashAccount::class)->createAllAccount();
-        }
-
-        $accountDto = cashDtoFromEntityFactory::fromEntity(cashAccountDto::class, $account);
-
         $calcService = new cashCalculationService();
 
         // cash on hand today
-        $onHandsToday = $calcService->getOnHandOnDate($today, $account);
+        $onHandsToday = $calcService->getOnHandOnDate($this->today, $this->filterDto->entity);
         // cash on hand end day
-        $onHandsEndday = $calcService->getOnHandOnDate($endDate, $account);
+        $onHandsEndday = $calcService->getOnHandOnDate($this->endDate, $this->filterDto->entity);
 
         // total on hand
         $farFarFuture = (new DateTime())->modify('+100 years');
-        $onHandsTotal = $calcService->getOnHandOnDate($farFarFuture, $account);
-
-        // total income
-        // total expense
+        $onHandsTotal = $calcService->getOnHandOnDate($farFarFuture, new cashAccount());
 
         $this->view->assign(
             [
-                'account' => $accountDto,
+                'filter' => $this->filterDto,
                 'onHandsToday' => $onHandsToday,
                 'onHandsEndday' => $onHandsEndday,
                 'onHandsTotal' => $onHandsTotal,
-                'startDate' => $startDate->format('Y-m-d'),
-                'endDate' => $endDate->format('Y-m-d'),
-                'currentDate' => $today->format('Y-m-d'),
-                'selectedChartPeriod' => $periodChart,
-                'selectedForecastPeriod' => $periodForecast,
+                'startDate' => $this->startDate->format('Y-m-d'),
+                'endDate' => $this->endDate->format('Y-m-d'),
+                'currentDate' => $this->today->format('Y-m-d'),
+                'selectedChartPeriod' => $this->periodChart,
+                'selectedForecastPeriod' => $this->periodForecast,
             ]
         );
     }
