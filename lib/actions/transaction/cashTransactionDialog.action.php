@@ -41,23 +41,39 @@ class cashTransactionDialogAction extends cashViewAction
             cash()->getEntityRepository(cashAccount::class)->findAll()
         );
 
+        /** @var cashCategoryRepository $categoryRep */
+        $categoryRep = cash()->getEntityRepository(cashCategory::class);
+        $categoryDtosIncome = [];
         if ($categoryType) {
-            $categoryDtos = cashDtoFromEntityFactory::fromEntities(
-                cashCategoryDto::class,
-                cash()->getEntityRepository(cashCategory::class)->findAllByType($categoryType)
-            );
+            if ($categoryType === cashCategory::TYPE_TRANSFER) {
+                $categoryDtos = cashDtoFromEntityFactory::fromEntities(
+                    cashCategoryDto::class,
+                    $categoryRep->findAllByType(cashCategory::TYPE_EXPENSE)
+                );
+                $categoryDtosIncome = cashDtoFromEntityFactory::fromEntities(
+                    cashCategoryDto::class,
+                    $categoryRep->findAllByType(cashCategory::TYPE_INCOME)
+                );
+            } else {
+                $categoryDtos = cashDtoFromEntityFactory::fromEntities(
+                    cashCategoryDto::class,
+                    $categoryRep->findAllByType($categoryType)
+                );
+            }
         } else {
             $categoryDtos = cashDtoFromEntityFactory::fromEntities(
                 cashCategoryDto::class,
-                cash()->getEntityRepository(cashCategory::class)->findAllActive()
+                $categoryRep->findAllActive()
             );
         }
 
         /**
          * UI in transaction dialog
+         *
          * @event backend_transaction_dialog
          *
          * @param cashEvent $event Event object with cashTransaction object (new or existing)
+         *
          * @return string HTML output
          */
         $event = new cashEvent(cashEventStorage::WA_BACKEND_TRANSACTION_DIALOG, $transaction);
@@ -68,6 +84,7 @@ class cashTransactionDialogAction extends cashViewAction
                 'transaction' => $transactionDto,
                 'accounts' => $accountDtos,
                 'categories' => $categoryDtos,
+                'categoriesIncome' => $categoryDtosIncome,
                 'categoryType' => $categoryType,
                 'filter' => $filterDto,
 

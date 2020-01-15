@@ -332,9 +332,14 @@ class cashTransaction extends cashAbstractEntity
 
     /**
      * @return cashAccount
+     * @throws waException
      */
     public function getAccount()
     {
+        if ($this->account === null) {
+            $this->account = cash()->getEntityRepository(cashAccount::class)->findById($this->account_id);
+        }
+
         return $this->account;
     }
 

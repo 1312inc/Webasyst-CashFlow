@@ -12,9 +12,10 @@ class cashTransactionSaveController extends cashJsonController
     public function execute()
     {
         $data = waRequest::post('transaction', [], waRequest::TYPE_ARRAY);
+        $transfer = waRequest::post('transfer', [], waRequest::TYPE_ARRAY);
 
         $saver = new cashTransactionSaver();
-        $transaction = $saver->save($data);
+        $transaction = $saver->save($data, ['transfer' => $transfer]);
         if ($transaction) {
             $transactionDto = (new cashTransactionDtoAssembler())->createFromEntity($transaction);
             $this->response = $transactionDto;
