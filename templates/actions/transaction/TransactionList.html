@@ -18,7 +18,7 @@
         </td>
         <td>{$t->description|escape}</td>
         <td><span>{$t->amountShorten} {$t->currency->getSign()}</span></td>
-        <td><span>{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
+        <td><span>{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
         <td>smth else</td>
     </tr>
 {/foreach}
@@ -39,7 +39,7 @@
         </td>
         <td>{$t->description|escape}</td>
         <td><span>{$t->amountShorten} {$t->currency->getSign()}</span></td>
-        <td><span>{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
+        <td><span>{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
         <td>smth else</td>
     </tr>
 {/foreach}

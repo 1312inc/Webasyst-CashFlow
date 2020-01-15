@@ -181,6 +181,9 @@
                     }, 13.12);
                 },
                 onSubmit: function (d) {
+                    var $errormsg = d.find('.errormsg');
+
+                    $errormsg.hide();
                     d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
                     $.post('?module=transaction&action=save', d.find('form').serialize(), function (r) {
                         $.cash.$loading.remove();
@@ -192,7 +195,9 @@
                             $.cash_routing.redispatch();
                             $.cash.reloadSidebar();
                         } else {
-
+                            $errormsg
+                                .show()
+                                .text(r.errors.join('<br>'));
                         }
                     }, 'json');
                     return false;

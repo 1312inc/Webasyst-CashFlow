@@ -1,6 +1,8 @@
 {** @var cashTransactionDto $transaction **}
 {** @var cashAccountDto[] $accounts **}
 {** @var cashCategoryDto[] $categories **}
+{** @var cashCategoryDto[] $categoriesIncome **}
+{** @var cashTransactionPageFilterDto $filter **}
 <section>
     <div class="dialog-content">
         <div data-cash-wrapper="transaction-add-dialog">
@@ -50,12 +52,28 @@
                             <select name="transaction[account_id]">
                                 {foreach $accounts as $account}
                                     <option value="{$account->id}" {if $account->id == $transaction->account->id}selected{/if}>
-                                        {$account->name|escape}
+                                        {$account->name|escape} ({$account->currency->getSign()|escape})
                                     </option>
                                 {/foreach}
                             </select>
                         </div>
                     </div>
+                    {if $categoryType == cashCategory::TYPE_TRANSFER}
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Transaction account to transfer`]
+                        </div>
+                        <div class="value">
+                            <select name="transfer[account_id]">
+                                {foreach $accounts as $account}
+                                    <option value="{$account->id}">
+                                        {$account->name|escape} ({$account->currency->getSign()|escape})
+                                    </option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    {/if}
                     <div class="field">
                         <div class="name nowrap">
                             [`Transaction category`]
@@ -71,6 +89,24 @@
                             </select>
                         </div>
                     </div>
+
+                    {if $categoryType == cashCategory::TYPE_TRANSFER}
+                        <div class="field">
+                            <div class="name nowrap">
+                                [`Transaction category to transfer`]
+                            </div>
+                            <div class="value">
+                                <select name="transfer[category_id]">
+                                    <option value="0">[`No category`]</option>
+                                    {foreach $categoriesIncome as $category}
+                                        <option value="{$category->id}" {if $category->id == $transaction->category->id}selected{/if}>
+                                            {$category->name|escape}
+                                        </option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                    {/if}
                 </div>
 
                 <!-- plugin hook: 'backend_transaction_dialog' -->
@@ -92,5 +128,6 @@
             </div>
         {/if}
         <input type="submit" value="[`Save`]" class="button green"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
+        <div class="errormsg" style="display: none"></div>
     </div>
 </section>

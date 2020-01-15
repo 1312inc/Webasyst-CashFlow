@@ -14,6 +14,7 @@ class kmwaNotImplementedException extends Exception
      */
     public function __construct($message = '', $code = 500, $previous = null)
     {
-        parent::__construct(_w('Not implemented for now'), $code, $previous);
+        $message = $message ?: _w('Not implemented for now');
+        parent::__construct($message, $code, $previous);
     }
 }

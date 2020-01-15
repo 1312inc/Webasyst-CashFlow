@@ -7,14 +7,20 @@ class cashTransactionSaver extends cashEntitySaver
 {
     /**
      * @param array $data
+     * @param array $params
      *
      * @return bool|cashTransaction
+     * @throws waException
      */
-    public function save(array $data)
+    public function save(array $data, array $params = [])
     {
         if (!$this->validate($data)) {
             return false;
         }
+
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
+        $model->startTransaction();
 
         try {
             /** @var cashTransaction $transaction */
@@ -33,13 +39,26 @@ class cashTransactionSaver extends cashEntitySaver
                 if ($category->isExpense() && $data['amount'] > 0) {
                     $data['amount'] = -$data['amount'];
                 }
+            } else {
+                unset($data['category_id']);
             }
 
             cash()->getHydrator()->hydrate($transaction, $data);
+
+            if (!empty($params['transfer'])) {
+                $this->transfer($transaction, $params['transfer']);
+                if ($transaction->getAmount() > 0) {
+                    $transaction->setAmount(-$transaction->getAmount());
+                }
+            }
             cash()->getEntityPersister()->save($transaction);
+
+            $model->commit();
 
             return $transaction;
         } catch (Exception $ex) {
+            $model->rollback();
+
             $this->error = $ex->getMessage();
         }
 
@@ -66,5 +85,46 @@ class cashTransactionSaver extends cashEntitySaver
         }
 
         return true;
+    }
+
+    /**
+     * @param cashTransaction $transaction
+     * @param array           $transferData
+     *
+     * @return cashTransaction
+     * @throws kmwaAssertException
+     * @throws kmwaLogicException
+     * @throws kmwaNotImplementedException
+     * @throws waException
+     */
+    private function transfer(cashTransaction $transaction, array $transferData)
+    {
+        $amount = abs($transaction->getAmount());
+
+        $secondTransaction = clone $transaction;
+        $secondTransaction
+            ->setId(null)
+            ->setAmount($amount);
+
+        if (!empty($transferData['category_id'])) {
+            $secondTransaction->setCategoryId($transferData['category_id']);
+        }
+        if (empty($transferData['account_id'])) {
+            throw new kmwaLogicException('No account for transfer to');
+        }
+
+        $secondTransaction->setAccountId($transferData['account_id']);
+
+        /** @var cashAccount $account */
+        $account = cash()->getEntityRepository(cashAccount::class)->findById($transferData['account_id']);
+        kmwaAssert::instance($account, cashAccount::class);
+
+        if ($transaction->getAccount()->getCurrency() !== $account->getCurrency()) {
+            throw new kmwaNotImplementedException('No exchange logic');
+        }
+
+        cash()->getEntityPersister()->save($secondTransaction);
+
+        return $secondTransaction;
     }
 }
