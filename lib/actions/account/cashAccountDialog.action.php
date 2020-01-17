@@ -14,11 +14,11 @@ class cashAccountDialogAction extends cashViewAction
      */
     public function runAction($params = null)
     {
-        $account = waRequest::post('account', [], waRequest::TYPE_ARRAY);
-        if (empty($account['id'])) {
-            $account = cash()->getEntityFactory(cashAccount::class)->createNewWithData($account);
+        $id = waRequest::get('account_id', 0, waRequest::TYPE_INT);
+        if (empty($id)) {
+            $account = cash()->getEntityFactory(cashAccount::class)->createNew();
         } else {
-            $account = cash()->getEntityRepository(cashAccount::class)->findById((int)$account['id']);
+            $account = cash()->getEntityRepository(cashAccount::class)->findById($id);
             kmwaAssert::instance($account, cashAccount::class);
         }
 

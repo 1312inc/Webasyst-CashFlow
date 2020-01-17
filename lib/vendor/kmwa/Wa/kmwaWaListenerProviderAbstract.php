@@ -19,12 +19,15 @@ abstract class kmwaWaListenerProviderAbstract implements kmwaListenerProviderInt
 
     /**
      * kmwaListenerProviderInterface constructor.
+     *
+     * @param waCache $cache
+     * @param array   $plugins
      */
-    public function __construct()
+    public function __construct(waCache $cache, array $plugins = [])
     {
         if (!is_array($this->handlers)) {
-            $this->getAllHandlers();
-            stts()->getCache()->set(
+            $this->getAllHandlers($plugins);
+            $cache->set(
                 $this->getAppName().'_event_handlers',
                 $this->handlers,
                 static::EVENT_HANDLERS_TTL
@@ -63,13 +66,15 @@ abstract class kmwaWaListenerProviderAbstract implements kmwaListenerProviderInt
         }
     }
 
-    protected function getAllHandlers()
+    /**
+     * @param array $plugins
+     */
+    protected function getAllHandlers(array $plugins)
     {
         $this->addHandlersToEvent(
             wa()->getAppPath(sprintf('lib/config/%s_events.php', $this->getAppName()), $this->getAppName())
         );
 
-        $plugins = stts()->getPlugins();
         foreach ($plugins as $pluginId => $plugin) {
             $this->addHandlersToEvent(
                 wa()->getAppPath(

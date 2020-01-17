@@ -66,7 +66,7 @@ class cashRightConfig extends waRightConfig
 
         $items = [];
         /** @var cashUser $user */
-//        foreach (stts()->getEntityRepository(cashUser::class)->findAll() as $user) {
+//        foreach (cash()->getEntityRepository(cashUser::class)->findAll() as $user) {
 //            if ($user->getContact()->getId() == $this->userId) {
 //                continue;
 //            }
@@ -83,7 +83,7 @@ class cashRightConfig extends waRightConfig
 //
 //        $items = [];
 //        /** @var cashUser $user */
-//        foreach (stts()->getEntityRepository(cashProject::class)->findAll() as $project) {
+//        foreach (cash()->getEntityRepository(cashProject::class)->findAll() as $project) {
 //            $items[$project->getId()] = $project->getName();
 //        }
 //

@@ -11,9 +11,10 @@
                             [`Account name`]
                         </div>
                         <div class="value">
-                            <input type="text" class="bold" name="account[name]" placeholder="[`Account name`]" />
+                            <input type="text" class="bold" name="account[name]" placeholder="[`Account name`]" value="{$account->name}"/>
                         </div>
                     </div>
+
                     <div class="field">
                         <div class="name nowrap">
                             [`Currency`]
@@ -26,6 +27,22 @@
                             </select>
                         </div>
                     </div>
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Icon`]
+                        </div>
+                        <div class="value no-shift" id="cash-account-icon">
+                            <input type="hidden" name="account[icon]" value="{$account->icon}"/>
+                            {foreach cashIconStorage::getIcons() as $icon}
+                            <a href="#"
+                               {if $account->icon == $icon}class="selected"{/if}
+                               data-cash-account-icon="{$icon}">
+                                <i class="icon16 {$icon}"></i>
+                            </a>
+                            {/foreach}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -33,5 +50,6 @@
 
     <div class="dialog-buttons">
         <input type="submit" value="[`Save`]" class="button green"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
+        <div class="errormsg" style="display: none"></div>
     </div>
 </section>
