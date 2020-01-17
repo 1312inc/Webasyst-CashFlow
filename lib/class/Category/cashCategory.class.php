@@ -108,6 +108,10 @@ class cashCategory extends cashAbstractEntity
     {
         $this->name = $name;
 
+        if (empty($this->slug)) {
+            $this->slug = waLocale::transliterate($this->name);
+        }
+
         return $this;
     }
 
@@ -217,10 +221,6 @@ class cashCategory extends cashAbstractEntity
     public function beforeSave()
     {
         $this->updateCreateUpdateDatetime();
-
-        if (empty($this->slug)) {
-            $this->slug = waLocale::transliterate($this->name);
-        }
 
         return true;
     }

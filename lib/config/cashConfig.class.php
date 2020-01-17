@@ -86,7 +86,8 @@ class cashConfig extends waAppConfig
     public function getEventDispatcher()
     {
         if ($this->eventDispatcher === null) {
-            $this->eventDispatcher = new kmwaEventDispatcher(new cashListenerProvider());
+            $provider = new cashListenerProvider($this->getCache(), $this->getPlugins());
+            $this->eventDispatcher = new kmwaEventDispatcher($provider);
         }
 
         return $this->eventDispatcher;
@@ -247,7 +248,7 @@ class cashConfig extends waAppConfig
 
     private function registerGlobal()
     {
-        if (!function_exists('stts')) {
+        if (!function_exists('cash')) {
             /**
              * @return cashConfig|SystemConfig|waAppConfig
              */

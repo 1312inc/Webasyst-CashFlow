@@ -41,9 +41,9 @@
             <ul class="menu-v with-icons">
                 {** @var cashCategoryDto $income **}
                 {foreach $incomes as $income}
-                    <li>
-                        <a href="#/category/{$income->slug}"><i class="icon16 color" style="background: {$income->color|default:'#47ce6f'};"></i>{$income->name|escape}</a>
-                    </li>
+                <li>
+                    <a href="#/category/{$income->slug}"><i class="icon16 color" style="background: {$income->color|default:'#47ce6f'};"></i>{$income->name|escape}</a>
+                </li>
                 {/foreach}
             </ul>
         </div>
@@ -57,9 +57,9 @@
             <ul class="menu-v with-icons">
                 {** @var cashCategoryDto $expense **}
                 {foreach $expenses as $expense}
-                    <li>
-                        <a href="#/category/{$expense->slug}"><i class="icon16 color" style="background: {$expense->color|default:'#f56b68'};"></i>{$expense->name|escape}</a>
-                    </li>
+                <li>
+                    <a href="#/category/{$expense->slug}"><i class="icon16 color" style="background: {$expense->color|default:'#f56b68'};"></i>{$expense->name|escape}</a>
+                </li>
                 {/foreach}
             </ul>
         </div>

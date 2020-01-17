@@ -76,7 +76,7 @@
         handlers: function () {
             var self = this;
 
-            self.$sidebar.on('click', '[data-cash-action="account-dialog"]', function (e) {
+            self.$wa.on('click', '[data-cash-action="account-dialog"]', function (e) {
                 e.preventDefault();
                 var $this = $(this),
                     accountId = $this.data('cash-account-id');
@@ -107,22 +107,108 @@
                             })
                         ;
 
+                        $dialogWrapper.on('click', '[data-cash-account-icon]', function (e) {
+                            e.preventDefault();
+                            var $this = $(this);
+
+                            $this.addClass('selected')
+                                .siblings().removeClass('selected');
+
+                            $dialogWrapper.find('[name="account[icon]"]').val($this.data('cash-account-icon'));
+                        });
+
                         setTimeout(function () {
                             $dialogWrapper.find('[name="account[name]"]').trigger('focus');
                         }, 13.12);
                     },
                     onSubmit: function (d) {
+                        var $errorMsg = d.find('.errormsg');
+
+                        $errorMsg.hide();
                         d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
                         $.post('?module=account&action=save', d.find('form').serialize(), function (r) {
                             $.cash.$loading.remove();
                             if (r.status === 'ok') {
                                 d.trigger('close');
-                                // if (!pocketId) {
-                                window.location.hash = '#/account/' + r.data.id;
-                                // }
-                                $.cash.reloadSidebar();
+                                var newHash = '#/account/' + r.data.id;
+                                if (window.location.hash === newHash) {
+                                    $.cash_routing.redispatch();
+                                } else {
+                                    window.location.hash = newHash;
+                                }
+                                setTimeout($.cash.reloadSidebar, 1312)
                             } else {
+                                $errorMsg.text(r.errors.join('<br>')).show();
+                            }
+                        }, 'json');
+                        return false;
+                    }
+                });
+            })
+            self.$wa.on('click', '[data-cash-action="category-dialog"]', function (e) {
+                e.preventDefault();
+                var $this = $(this),
+                    categoryId = $this.data('cash-category-id');
 
+                $('#cash-transaction-dialog').waDialog({
+                    'height': '250px',
+                    'width': '600px',
+                    'url': '?module=category&action=dialog&category_id=' + categoryId,
+                    onLoad: function () {
+                        var d = this,
+                            $dialogWrapper = $(d);
+
+                        $dialogWrapper
+                            .on('click', '[data-cash-action="delete-category"]', function (e) {
+                                e.preventDefault();
+                                var id = $dialogWrapper.find('form input[name="category[id]"]').val();
+                                $.post(
+                                    '?module=category&action=delete',
+                                    { id: id },
+                                    function (r) {
+                                        if (r.status === 'ok') {
+                                            $dialogWrapper.trigger('close');
+                                            $.cash_routing.dispatch('#/account/0');
+                                            $.cash.reloadSidebar();
+                                        }
+                                    }
+                                );
+                            })
+                        ;
+
+                        $dialogWrapper.on('click', '[data-cash-category-color]', function (e) {
+                            e.preventDefault();
+                            var $this = $(this);
+
+                            $this.addClass('selected')
+                                .siblings().removeClass('selected');
+
+                            $dialogWrapper.find('[name="category[color]"]').val($this.data('cash-category-color'));
+                        });
+
+                        setTimeout(function () {
+                            $dialogWrapper.find('[name="category[name]"]').trigger('focus');
+                        }, 13.12);
+                    },
+                    onSubmit: function (d) {
+                        var $errorMsg = d.find('.errormsg');
+
+                        $errorMsg.hide();
+                        d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
+                        $.post('?module=category&action=save', d.find('form').serialize(), function (r) {
+                            $.cash.$loading.remove();
+                            if (r.status === 'ok') {
+
+                                d.trigger('close');
+                                var newHash = '#/category/' + r.data.slug;
+                                if (window.location.hash === newHash) {
+                                    $.cash_routing.redispatch();
+                                } else {
+                                    window.location.hash = newHash;
+                                }
+                                setTimeout($.cash.reloadSidebar, 1312);
+                            } else {
+                                $errorMsg.text(r.errors.join('<br>')).show();
                             }
                         }, 'json');
                         return false;

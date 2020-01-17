@@ -1,0 +1,57 @@
+{** @var cashCategoryDto $category **}
+<section>
+    <div class="dialog-content">
+        <div>
+            <input type="hidden" name="category[id]" value="{$category->id}"/>
+            <h1>{$category->name|escape}</h1>
+
+            <div class="fields form">
+                <div class="field-group">
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Category name`]
+                        </div>
+                        <div class="value">
+                            <input type="text" class="bold" name="category[name]" placeholder="[`Category name`]" value="{$category->name}"/>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Category type`]
+                        </div>
+                        <div class="value">
+                            <select name="category[type]">
+                                <option value="{cashCategory::TYPE_INCOME}" {if $category->type === cashCategory::TYPE_INCOME}selected{/if}>[`Income`]</option>
+                                <option value="{cashCategory::TYPE_EXPENSE}" {if $category->type === cashCategory::TYPE_EXPENSE}selected{/if}>[`Expense`]</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Color`]
+                        </div>
+                        <div class="value no-shift" id="cash-category-color">
+                            <input type="hidden" name="category[color]" value="{$category->color}"/>
+                            {foreach cashColorStorage::getColorsByType($category->type) as $color}
+                                <a href="#"
+                                   {if $category->color == $color}class="selected"{/if}
+                                   data-cash-category-color="{$color}">
+                                    <i class="icon16 color" style="background-color: {$color}"></i>
+                                </a>
+                            {/foreach}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-buttons">
+        <input type="submit" value="[`Save`]" class="button green"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
+        <div class="errormsg" style="display: none"></div>
+    </div>
+</section>
