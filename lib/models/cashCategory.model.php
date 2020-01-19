@@ -29,7 +29,7 @@ class cashCategoryModel extends cashModel
         return $this
             ->select('*')
             ->order('sort ASC, id DESC')
-            ->fetchAll();
+            ->fetchAll('id');
     }
 
     /**

@@ -1,7 +1,7 @@
 <section>
     <div class="dialog-content">
         <div>
-            <input type="hidden" name="acccount[id]" value="{$account->id}"/>
+            <input type="hidden" name="account[id]" value="{$account->id}"/>
             <h1>{$account->name|escape}</h1>
 
             <div class="fields form">
@@ -41,6 +41,10 @@
                                 <i class="icon16 {$icon}"></i>
                             </a>
                             {/foreach}
+                            <br>
+                            <span class="small">Или введите адрес изображения (изображение будет автоматически уменьшено до 16х16 пикселей):</span>
+                            <br>
+                            <input type="text" name="account[icon_link]" value="{$account->iconLink}"/>
                         </div>
                     </div>
                 </div>
