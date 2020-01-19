@@ -174,6 +174,10 @@ class cashGraphService
 
                 if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']])) {
                     $graphData->groups[$dateDatum['currency']][] = $dateDatum['hash'];
+                    $graphData->categories[$dateDatum['hash']] = [
+                        'id' => $dateDatum['category_id'],
+                        'currency' => $dateDatum['currency'],
+                    ];
                 }
 
                 $graphData->columns[$dateDatum['hash']][$date] = (float)abs($dateDatum['summary']);
@@ -275,7 +279,8 @@ class cashGraphService
             foreach ($data[$date] as $datum) {
                 $accountId = $datum['category_id'];
                 if (!$graphData->filterDto->id) {
-                    $accountId = 'All accounts';
+//                    $accountId = 'All accounts';
+                    continue;
                 }
                 $graphData->lines[$accountId][$date] += ((float)$datum['summary'] + (float)$initialBalance[$datum['category_id']]['summary']);
             }

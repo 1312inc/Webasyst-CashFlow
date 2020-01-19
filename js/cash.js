@@ -61,7 +61,8 @@
             var self = this;
 
             $.get('?module=backend&action=sidebar', function (html) {
-                self.$sidebar.html(html);
+                $.cash.$sidebar.html(html);
+                $.cash.highlightSidebar();
             })
         },
         init: function (o) {
@@ -115,6 +116,7 @@
                                 .siblings().removeClass('selected');
 
                             $dialogWrapper.find('[name="account[icon]"]').val($this.data('cash-account-icon'));
+                            $dialogWrapper.find('[name="account[icon_link]"]').val('');
                         });
 
                         setTimeout(function () {
@@ -144,7 +146,7 @@
                         return false;
                     }
                 });
-            })
+            });
             self.$wa.on('click', '[data-cash-action="category-dialog"]', function (e) {
                 e.preventDefault();
                 var $this = $(this),

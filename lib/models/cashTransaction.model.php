@@ -106,7 +106,7 @@ SQL;
 select ca.currency,
        concat(ca.currency,'_',ifnull(ct.category_id,0)) hash,
        ct.date,
-       ct.category_id,
+       ct.category_id category_id,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
@@ -228,7 +228,7 @@ SQL;
 select ca.currency,
        concat(ca.currency,'_',ifnull(ct.category_id,0)) hash,
        concat(YEAR(ct.date), '-', MONTH(ct.date)) date,
-       ct.category_id,
+       ct.category_id category_id,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0

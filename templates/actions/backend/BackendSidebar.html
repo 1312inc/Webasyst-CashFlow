@@ -21,7 +21,13 @@
             {** @var cashAccountDto $account **}
             {foreach $accounts as $account}
                 <li>
-                    <a href="#/account/{$account->id}"><span class="count">{$account->stat->summaryShorten} {$account->currency->getSign()}</span><i class="icon16" style="background-image: url('{$account->icon}'); background-size: 16px 16px;"></i>{$account->name|escape}</a>
+                    <a href="#/account/{$account->id}">
+                        <span class="count">{$account->stat->summaryShorten} {$account->currency->getSign()}</span>
+                        <i class="icon16 {$account->icon}"
+                           {if $account->iconLink}style="background-image: url('{$account->iconLink}'); background-size: 16px 16px;"{/if}
+                        ></i>
+                        {$account->name|escape}
+                    </a>
                 </li>
             {/foreach}
 

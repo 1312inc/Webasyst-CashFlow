@@ -28,6 +28,11 @@ class cashAccountDto extends cashAbstractDto
     /**
      * @var string
      */
+    public $iconLink = '';
+
+    /**
+     * @var string
+     */
     public $currency;
 
     /**
@@ -75,6 +80,9 @@ class cashAccountDto extends cashAbstractDto
         if ($data) {
             $this->initializeWithArray($data);
             $this->currency = cashCurrencyVO::fromWaCurrency($data['currency']);
+            if (strpos($data['icon'], 'http') !== false) {
+                $this->iconLink = $this->icon;
+            }
         } else {
             $this->name = _w('New account');
         }

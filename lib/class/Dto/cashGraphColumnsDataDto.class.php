@@ -5,6 +5,8 @@
  */
 class cashGraphColumnsDataDto extends cashAbstractDto
 {
+    const ALL_ACCOUNTS_GRAPH_NAME = 'All accounts';
+
     /**
      * @var array
      */
@@ -51,6 +53,11 @@ class cashGraphColumnsDataDto extends cashAbstractDto
     public $endDate;
 
     /**
+     * @var array
+     */
+    public $categories = [];
+
+    /**
      * cashGraphColumnsDataDto constructor.
      *
      * @param DateTime                     $startDate
@@ -86,8 +93,10 @@ class cashGraphColumnsDataDto extends cashAbstractDto
         }
 
         $accounts = [];
-        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
-            $accounts =  empty($this->filterDto->id) ? ['All accounts'] : [$this->filterDto->id];
+//        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
+//            $accounts =  empty($this->filterDto->id) ? ['All accounts'] : [$this->filterDto->id];
+        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT && !empty($this->filterDto->id)) {
+            $accounts = [$this->filterDto->id];
         }
 
         $this->currentDate = date('Y-m-d');
@@ -125,14 +134,31 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             $columns[] = array_values(array_merge([$name], $data));
         }
 
-        $regions = [];
-        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
-            foreach ($this->lines as $lineId => $lineData) {
-                $regions[$lineId] = [['start' => $this->currentDate, 'style' => 'dashed']];
+        $colors = $names = $regions =  [];
+
+        $categories = cash()->getModel(cashCategory::class)->getAllActive();
+        foreach ($this->categories as $hash => $category) {
+            if ($category['id'] && isset($categories[$category['id']])) {
+                $names[$hash] = sprintf('%s, %s', $categories[$category['id']]['name'], $category['currency']);
+                $colors[$hash] = $categories[$category['id']]['color'];
+            }
+            else {
+                $names[$hash] = sprintf('%s, %s', _w('No category'), $category['currency']);
+                $colors[$hash] = cashColorStorage::DEFAULT_NO_CATEGORY_GRAPH_COLOR;
             }
         }
 
-        $colors = [];
+        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
+            foreach ($this->lines as $lineId => $lineData) {
+                $regions[$lineId] = [['start' => $this->currentDate, 'style' => 'dashed']];
+
+//                if ($lineId !== self::ALL_ACCOUNTS_GRAPH_NAME) {
+                $account = cash()->getModel(cashAccount::class)->getById($lineId);
+                $names[$lineId] = $account['name'];
+                $colors[$lineId] = cashColorStorage::DEFAULT_ACCOUNT_GRAPH_COLOR;
+//                }
+            }
+        }
 
         $data = [
             'x' => 'dates',
@@ -143,6 +169,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             'groups' => array_values($this->groups),
             'regions' => $regions,
             'colors' => $colors,
+            'names' => $names,
         ];
 
         return $data;
