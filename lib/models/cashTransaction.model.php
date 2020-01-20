@@ -333,6 +333,36 @@ SQL;
     /**
      * @param string   $startDate
      * @param string   $endDate
+     * @param int|null $accounts
+     *
+     * @return array
+     */
+    public function getExistingAccountsBetweenDates($startDate, $endDate)
+    {
+        $sql = <<<SQL
+select ct.account_id
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+where ct.date between s:startDate and s:endDate
+group by ct.account_id
+SQL;
+
+        $data = $this
+            ->query(
+                $sql,
+                [
+                    'startDate' => $startDate,
+                    'endDate' => $endDate,
+                ]
+            )
+            ->fetchAll();
+
+        return array_column($data, 'account_id');
+    }
+
+    /**
+     * @param string   $startDate
+     * @param string   $endDate
      * @param int|null $categories
      *
      * @return array

@@ -30,7 +30,7 @@ class cashAccountSaver extends cashEntitySaver
                 throw new kmwaNotImplementedException(_w('You can not change currency for existing account yet'));
             }
 
-            if (!empty($data['icon_link']) && preg_match('~https?://.+\..{2,20}~', $data['icon_link'])) {
+            if (!empty($data['icon_link']) && preg_match('~https?://.{2,225}\..{2,20}~', $data['icon_link'])) {
                 $data['icon'] = $data['icon_link'];
                 unset($data['icon_link']);
             }
