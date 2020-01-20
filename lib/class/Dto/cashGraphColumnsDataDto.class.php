@@ -6,6 +6,7 @@
 class cashGraphColumnsDataDto extends cashAbstractDto
 {
     const ALL_ACCOUNTS_GRAPH_NAME = 'All accounts';
+    const ALL_ACCOUNTS = -1;
 
     /**
      * @var array
@@ -81,6 +82,14 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                     $endDate->format('Y-m-d 23:59:59'),
                     $this->filterDto->id
                 );
+                if (empty($this->filterDto->id)) {
+                    $accounts = $model->getExistingAccountsBetweenDates(
+                        $startDate->format('Y-m-d 00:00:00'),
+                        $endDate->format('Y-m-d 23:59:59')
+                    );
+                } else {
+                    $accounts = [$this->filterDto->id];
+                }
                 break;
 
             case cashTransactionPageFilterDto::FILTER_CATEGORY:
@@ -89,15 +98,15 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                     $endDate->format('Y-m-d 23:59:59'),
                     $this->filterDto->id
                 );
+                $accounts = [];
                 break;
         }
 
-        $accounts = [];
 //        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
 //            $accounts =  empty($this->filterDto->id) ? ['All accounts'] : [$this->filterDto->id];
-        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT && !empty($this->filterDto->id)) {
-            $accounts = [$this->filterDto->id];
-        }
+//        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT && !empty($this->filterDto->id)) {
+//            $accounts = [$this->filterDto->id];
+//        }
 
         $this->currentDate = date('Y-m-d');
         $iterateDate = clone $startDate;
@@ -154,7 +163,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
 
 //                if ($lineId !== self::ALL_ACCOUNTS_GRAPH_NAME) {
                 $account = cash()->getModel(cashAccount::class)->getById($lineId);
-                $names[$lineId] = $account['name'];
+                $names[$lineId] = sprintf('%s (%s)', $account['name'], $account['currency']);
                 $colors[$lineId] = cashColorStorage::DEFAULT_ACCOUNT_GRAPH_COLOR;
 //                }
             }
