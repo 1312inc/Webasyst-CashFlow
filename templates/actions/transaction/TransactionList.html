@@ -2,44 +2,43 @@
 {** @var cashTransactionPageFilterDto $filter **}
 {if $upcoming}
 <tr class="white">
-    <td colspan="7">
+    <td colspan="6">
         <h5 class="heading">[`Upcoming`]</h5>
     </td>
 </tr>
 {/if}
 {foreach $upcoming as $t}
     <tr class="c-planned" data-cash-transaction-id="{$t->id}">
-        <td>{$t->datetime|wa_datetime:humandatetime:$serverTimezone}</td>
-        <td>{$t->account->name|escape}</td>
+        <td><span class="nowrap">{$t->datetime|wa_datetime:humandatetime:$serverTimezone}</span></td>
+        <td><div>{$t->account->name|escape}</div><i class="shortener"></i></td>
         <td>
-            {if $t->category}
-            <i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}
-            {/if}
+            <div>
+                {if $t->category}<i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}{/if}
+            </div><i class="shortener"></i>
         </td>
         <td>{$t->description|escape}</td>
-        <td><span>{$t->amountShorten} {$t->currency->getSign()}</span></td>
-        <td><span>{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
-        <td>smth else</td>
+        <td class="align-right"><strong class="nowrap">{$t->amountShorten} {$t->currency->getSign()}</strong></td>
+        <td><span class="nowrap">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
     </tr>
 {/foreach}
 {if $completed}
 <tr class="white">
-    <td colspan="7">
+    <td colspan="6">
         <h5 class="heading">[`Completed`]</h5>
     </td>
 </tr>
 {/if}
 {foreach $completed as $t}
     <tr data-cash-transaction-id="{$t->id}">
-        <td>{$t->datetime|wa_datetime:humandatetime:$serverTimezone}</td>
-        <td>{$t->account->name|escape}</td>
-        <td>{if $t->category}
-            <i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}
-            {/if}
+        <td><span class="nowrap">{$t->datetime|wa_datetime:humandatetime:$serverTimezone}</span></td>
+        <td><div>{$t->account->name|escape}</div><i class="shortener"></i></td>
+        <td>
+            <div>
+                {if $t->category}<i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}{/if}
+            </div><i class="shortener"></i>
         </td>
         <td>{$t->description|escape}</td>
-        <td><span>{$t->amountShorten} {$t->currency->getSign()}</span></td>
-        <td><span>{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
-        <td>smth else</td>
+        <td class="align-right"><strong class="nowrap">{$t->amountShorten} {$t->currency->getSign()}</strong></td>
+        <td><span class="nowrap">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{$t->balanceShorten} {$t->currency->getSign()}{/if}</span></td>
     </tr>
 {/foreach}
