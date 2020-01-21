@@ -3,7 +3,7 @@
 /**
  * Class cashGraphPeriodVO
  */
-class cashGraphPeriodVO
+class cashGraphPeriodVO implements JsonSerializable
 {
     const NONE_PERIOD     = 'none';
     const ALL_TIME_PERIOD = 'all_time';
@@ -69,6 +69,7 @@ class cashGraphPeriodVO
 
         $this->value = $value;
         $this->id = $this->period.'|'.$this->value;
+        $this->type = $type;
     }
 
     /**
@@ -118,5 +119,16 @@ class cashGraphPeriodVO
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'type' => $this->type,
+            'value' => $this->value,
+        ];
     }
 }

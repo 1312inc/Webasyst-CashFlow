@@ -3,7 +3,7 @@
 /**
  * Class self
  */
-class cashTransactionPageFilterDto
+class cashTransactionPageFilterDto implements JsonSerializable
 {
     const FILTER_ACCOUNT  = 'account';
     const FILTER_CATEGORY = 'category';
@@ -82,5 +82,16 @@ class cashTransactionPageFilterDto
         $this->identifier = $identifier;
         $this->name = $this->entity->getName();
         $this->id = $this->entity->getId();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'filter_type' => $this->type,
+            'identifier' => $this->identifier,
+        ];
     }
 }

@@ -8,6 +8,9 @@ class cashGraphService
     const GROUP_BY_DAY   = 1;
     const GROUP_BY_MONTH = 2;
 
+    const DEFAULT_CHART_PERIOD_NAME = 'default_chart_period';
+    const DEFAULT_FORECAST_PERIOD_NAME = 'default_forecast_period';
+
     /**
      * @return array
      */
@@ -42,6 +45,13 @@ class cashGraphService
      */
     public function getDefaultChartPeriod()
     {
+        $stored = wa()->getUser()->getSettings(cashConfig::APP_ID, self::DEFAULT_CHART_PERIOD_NAME);
+        if ($stored) {
+            $stored = json_decode($stored, true);
+
+            return new cashGraphPeriodVO($stored['type'], $stored['value']);
+        }
+
         return new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -90);
     }
 
@@ -50,7 +60,30 @@ class cashGraphService
      */
     public function getDefaultForecastPeriod()
     {
+        $stored = wa()->getUser()->getSettings(cashConfig::APP_ID, self::DEFAULT_FORECAST_PERIOD_NAME);
+        if ($stored) {
+            $stored = json_decode($stored, true);
+
+            return new cashGraphPeriodVO($stored['type'], $stored['value']);
+        }
+
         return new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 1);
+    }
+
+    /**
+     * @param cashGraphPeriodVO $periodVO
+     */
+    public function saveForecastPeriodVo(cashGraphPeriodVO $periodVO)
+    {
+        wa()->getUser()->setSettings(cashConfig::APP_ID, self::DEFAULT_FORECAST_PERIOD_NAME, json_encode($periodVO));
+    }
+
+    /**
+     * @param cashGraphPeriodVO $periodVO
+     */
+    public function saveChartPeriodVo(cashGraphPeriodVO $periodVO)
+    {
+        wa()->getUser()->setSettings(cashConfig::APP_ID, self::DEFAULT_CHART_PERIOD_NAME, json_encode($periodVO));
     }
 
     /**
