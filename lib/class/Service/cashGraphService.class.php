@@ -230,6 +230,10 @@ class cashGraphService
 
                 if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']])) {
                     $graphData->groups[$dateDatum['currency']][] = $dateDatum['hash'];
+                    $graphData->categories[$dateDatum['hash']] = [
+                        'id' => $dateDatum['category_id'],
+                        'currency' => $dateDatum['currency'],
+                    ];
                 }
 
                 $graphData->columns[$dateDatum['hash']][$date] = (float)abs($dateDatum['summary']);
