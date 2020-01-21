@@ -132,21 +132,21 @@ class cashGraphService
             $endDate = (new DateTime($dateBounds['endDate']))->modify('+1 day');
         }
 
-        return new cashGraphColumnsDataDto($startDate, $endDate, $filterDto);
+        return new cashGraphColumnsDataDto($startDate, $endDate, $filterDto, $this->determineGroup($startDate));
     }
 
     /**
      * @param cashGraphColumnsDataDto $graphData
      *
      * @throws waException
+     * @throws kmwaLogicException
      */
     public function fillColumnCategoriesDataForAccounts(cashGraphColumnsDataDto $graphData)
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
 
-        $data = [];
-        switch ($this->determineGroup($graphData->startDate, $graphData->endDate)) {
+        switch ($graphData->grouping) {
             case self::GROUP_BY_DAY:
                 $data = $model->getSummaryByDateBoundsAndAccountGroupByDay(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
@@ -162,6 +162,9 @@ class cashGraphService
                     $graphData->filterDto->id
                 );
                 break;
+
+            default:
+                throw new kmwaLogicException('No graph grouping');
         }
 
         foreach ($data as $date => $dateData) {
@@ -189,14 +192,14 @@ class cashGraphService
      * @param cashGraphColumnsDataDto $graphData
      *
      * @throws waException
+     * @throws kmwaLogicException
      */
     public function fillColumnCategoriesDataForCategories(cashGraphColumnsDataDto $graphData)
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
 
-        $data = [];
-        switch ($this->determineGroup($graphData->startDate, $graphData->endDate)) {
+        switch ($graphData->grouping) {
             case self::GROUP_BY_DAY:
                 $data = $model->getSummaryByDateBoundsAndCategoryGroupByDay(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
@@ -212,6 +215,9 @@ class cashGraphService
                     $graphData->filterDto->id
                 );
                 break;
+
+            default:
+                throw new kmwaLogicException('No graph grouping');
         }
 
         foreach ($data as $date => $dateData) {
@@ -235,14 +241,14 @@ class cashGraphService
      * @param cashGraphColumnsDataDto $graphData
      *
      * @throws waException
+     * @throws kmwaLogicException
      */
     public function fillBalanceDataForAccounts(cashGraphColumnsDataDto $graphData)
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
 
-        $data = [];
-        switch ($this->determineGroup($graphData->startDate, $graphData->endDate)) {
+        switch ($graphData->grouping) {
             case self::GROUP_BY_DAY:
                 $data = $model->getBalanceByDateBoundsAndAccountGroupByDay(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
@@ -258,6 +264,9 @@ class cashGraphService
                     $graphData->filterDto->id
                 );
                 break;
+
+            default:
+                throw new kmwaLogicException('No graph grouping');
         }
 
         $initialBalance = 0;
@@ -271,8 +280,16 @@ class cashGraphService
             );
         }
 
+        $firstDot = true;
         foreach ($graphData->dates as $date) {
             if (!isset($data[$date])) {
+                if ($firstDot) {
+                    foreach ($graphData->accounts as $accountId) {
+                        $graphData->lines[$accountId][$date] += (float)$initialBalance[$accountId]['summary'];
+                    }
+                    $firstDot = false;
+                }
+
                 continue;
             }
 
@@ -295,14 +312,14 @@ class cashGraphService
      * @param cashGraphColumnsDataDto $graphData
      *
      * @throws waException
+     * @throws kmwaLogicException
      */
     public function fillBalanceDataForCategories(cashGraphColumnsDataDto $graphData)
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
 
-        $data = [];
-        switch ($this->determineGroup($graphData->startDate, $graphData->endDate)) {
+        switch ($graphData->grouping) {
             case self::GROUP_BY_DAY:
                 $data = $model->getBalanceByDateBoundsAndAccountGroupByDay(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
@@ -318,6 +335,9 @@ class cashGraphService
                     [$graphData->filterDto->id]
                 );
                 break;
+
+            default:
+                throw new kmwaLogicException('No graph grouping');
         }
 
         /** @var cashAccountModel $accountModel */
@@ -332,7 +352,6 @@ class cashGraphService
             if (!isset($data[$date])) {
                 continue;
             }
-
 
             foreach ($data[$date] as $datum) {
                 $categoryId = $datum['category_id'];
@@ -362,14 +381,18 @@ class cashGraphService
 //    }
 
     /**
-     * @param DateTime $startDate
-     * @param DateTime $endDate
+     * @param DateTimeInterface $startDate
+     * @param DateTimeInterface|null $endDate
      *
      * @return int
+     * @throws Exception
      */
-    private function determineGroup(DateTime $startDate, DateTime $endDate)
+    private function determineGroup(DateTimeInterface $startDate, DateTimeInterface $endDate = null)
     {
-        if ($endDate->diff($startDate)->d > 90) {
+        if (!$endDate) {
+            $endDate = new DateTime();
+        }
+        if ($startDate->diff($endDate)->days > 90) {
             return self::GROUP_BY_MONTH;
         }
 
