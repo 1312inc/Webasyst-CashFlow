@@ -2,7 +2,7 @@
     <div class="dialog-content">
         <div>
             <input type="hidden" name="account[id]" value="{$account->id}"/>
-            <h1>{$account->name|escape}</h1>
+            <h1>{$account->name|default:'[`New account`]'|escape}</h1>
 
             <div class="fields form">
                 <div class="field-group">
@@ -11,7 +11,7 @@
                             [`Account name`]
                         </div>
                         <div class="value">
-                            <input type="text" class="bold" name="account[name]" placeholder="[`Account name`]" value="{$account->name}"/>
+                            <input type="text" class="bold large" name="account[name]" placeholder="[`Account name`]" value="{$account->name}"/>
                         </div>
                     </div>
 
@@ -19,10 +19,10 @@
                         <div class="name nowrap">
                             [`Currency`]
                         </div>
-                        <div class="value">
+                        <div class="value no-shift">
                             <select name="account[currency]">
                             {foreach $currencies as $currency}
-                                <option value="{$currency->getCode()}" {if $account->currency->getCode() == $currency->getCode()}selected{/if}>{$currency->getTitle()} {$currency->getSign()}</option>
+                                <option value="{$currency->getCode()}" {if $account->currency->getCode() == $currency->getCode()}selected{/if}>{$currency->getCode()} - {$currency->getTitle()} ({$currency->getSign()})</option>
                             {/foreach}
                             </select>
                         </div>
@@ -34,17 +34,18 @@
                         </div>
                         <div class="value no-shift" id="cash-account-icon">
                             <input type="hidden" name="account[icon]" value="{$account->icon}"/>
-                            {foreach cashIconStorage::getIcons() as $icon}
-                            <a href="#"
-                               {if $account->icon == $icon}class="selected"{/if}
-                               data-cash-account-icon="{$icon}">
-                                <i class="icon16 {$icon}"></i>
-                            </a>
-                            {/foreach}
+                            <div class="c-account-icon-list">
+                                {foreach cashIconStorage::getIcons() as $icon}
+                                <a href="#"
+                                   {if $account->icon == $icon}class="selected"{/if}
+                                   data-cash-account-icon="{$icon}">
+                                    <i class="icon16 {$icon}"></i>
+                                </a>
+                                {/foreach}
+                            </div>
+                            <span class="small">[`Or enter any icon image URL (an image will be scaled to 16x16 pixels in size):`]</span>
                             <br>
-                            <span class="small">Или введите адрес изображения (изображение будет автоматически уменьшено до 16х16 пикселей):</span>
-                            <br>
-                            <input type="text" name="account[icon_link]" value="{$account->iconLink}"/>
+                            <input type="text" name="account[icon_link]" value="{$account->iconLink}" style="width: 80%; margin-top: 8px;" placeholder="https://" />
                         </div>
                     </div>
                 </div>

@@ -6,28 +6,28 @@
 <div class="content left200px">
     <div id="content">
         <div class="block">
-            <h1>
+            <h1{if $filter->id} class="float-left"{/if}>
                 {$filter->name|escape}
             </h1>
             {if $filter->id}
-            <div class="block half-padded" style="margin-left: 1.5rem;">
-                <ul class="menu-h">
-                    <li>
-                        {if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT}
-                        <a href="#"
-                           class="gray"
-                           data-cash-action="account-dialog" data-cash-account-id="{$filter->id}"
-                        ><i class="icon16 settings"></i>[`Account settings`]</a>
-                        {/if}
-                        {if $filter->type == cashTransactionPageFilterDto::FILTER_CATEGORY}
-                        <a href="#"
-                           class="gray"
-                           data-cash-action="category-dialog" data-cash-category-id="{$filter->id}"
-                        ><i class="icon16 settings"></i>[`Category settings`]</a>
-                        {/if}
-                    </li>
-                </ul>
-            </div>
+                <div class="block half-padded" style="position: relative; left: 1rem;">
+                    <ul class="menu-h">
+                        <li>
+                            {if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT}
+                            <a href="#"
+                               class="gray"
+                               data-cash-action="account-dialog" data-cash-account-id="{$filter->id}"
+                            ><i class="icon16 settings"></i>[`Account settings`]</a>
+                            {/if}
+                            {if $filter->type == cashTransactionPageFilterDto::FILTER_CATEGORY}
+                            <a href="#"
+                               class="gray"
+                               data-cash-action="category-dialog" data-cash-category-id="{$filter->id}"
+                            ><i class="icon16 settings"></i>[`Category settings`]</a>
+                            {/if}
+                        </li>
+                    </ul>
+                </div>
             {/if}
             <div class="float-right">
                 <ul class="menu-h dropdown" data-cash-chart-dates>
@@ -129,7 +129,7 @@
                     </li> -->
 
                 </ul>
-                <table class="zebra" id="cash-transaction-list">
+                <table class="zebra single-lined" id="cash-transaction-list">
                     <!-- <tr>
                         <th>[`Date`]</th>
                         <th>[`Account`]</th>
@@ -171,8 +171,8 @@
             categoryType = categoryType || '';
 
             $('#cash-transaction-dialog').waDialog({
-                'height': '250px',
-                'width': '600px',
+                'height': '350px',
+                'width': '650px',
                 'url': '?module=transaction&action=dialog&transaction_id=' + transactionId + '&category_type=' + categoryType + '&filter_id=' + filterId + '&filter_type=' + filterType,
                 onLoad: function () {
                     var d = this,

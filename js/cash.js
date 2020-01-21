@@ -83,7 +83,7 @@
                     accountId = $this.data('cash-account-id');
 
                 $('#cash-transaction-dialog').waDialog({
-                    'height': '250px',
+                    'height': '400px',
                     'width': '600px',
                     'url': '?module=account&action=dialog&account_id=' + accountId,
                     onLoad: function () {
@@ -153,7 +153,7 @@
                     categoryId = $this.data('cash-category-id');
 
                 $('#cash-transaction-dialog').waDialog({
-                    'height': '250px',
+                    'height': '300px',
                     'width': '600px',
                     'url': '?module=category&action=dialog&category_id=' + categoryId,
                     onLoad: function () {
