@@ -177,11 +177,16 @@
             filterType = filterType || '';
             filterId = filterId || 0;
             categoryType = categoryType || '';
+            var action = 'dialog';
+            if (categoryType) {
+                var actionCategory = categoryType;
+                action += (actionCategory.charAt(0).toUpperCase() + actionCategory.slice(1));
+            }
 
             $('#cash-transaction-dialog').waDialog({
                 'height': '250px',
                 'width': '600px',
-                'url': '?module=transaction&action=dialog&transaction_id=' + transactionId + '&category_type=' + categoryType + '&filter_id=' + filterId + '&filter_type=' + filterType,
+                'url': '?module=transaction&action=' + action + '&transaction_id=' + transactionId + '&category_type=' + categoryType + '&filter_id=' + filterId + '&filter_type=' + filterType,
                 onLoad: function () {
                     var d = this,
                         $dialogWrapper = $(d);
