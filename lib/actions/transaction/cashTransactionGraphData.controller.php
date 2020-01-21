@@ -40,9 +40,7 @@ class cashTransactionGraphDataController extends cashTransactionPageAction
                     break;
             }
 
-            $this->response = [
-                'graphData' => $graphData,
-            ];
+            $this->response = $graphData;
         } catch (Exception $exception) {
             $this->errors[] = $exception->getMessage();
         }
