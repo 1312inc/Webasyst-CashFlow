@@ -21,6 +21,9 @@ ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 .c-account-icon-list a { display: inline-block; padding: 7px; }
 .c-account-icon-list a.selected { background-color: #eee; }
 
+.c-category-color a i.icon16.color { border: 3px solid #fff; }
+.c-category-color a.selected i.icon16.color { border-color: #000; }
+
 .c-import-progress { padding-left: 20px; color: #aaa; }
 .c-import-progress li.completed { color: #000; }
 .c-import-progress li.current { font-weight: bold; color: #000; }
