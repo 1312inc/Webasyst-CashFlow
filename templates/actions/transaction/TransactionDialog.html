@@ -3,10 +3,12 @@
 {** @var cashCategoryDto[] $categories **}
 {** @var cashCategoryDto[] $categoriesIncome **}
 {** @var cashTransactionPageFilterDto $filter **}
+{** @var string $categoryType **}
 <section>
     <div class="dialog-content">
         <div data-cash-wrapper="transaction-add-dialog">
             <input type="hidden" name="transaction[id]" value="{$transaction->id|default:0}"/>
+            <input type="hidden" name="transaction[category_type]" value="{$categoryType}"/>
 
             <h1>
                 {if $categoryType == 'income'}
@@ -31,7 +33,9 @@
                                    style="width: 130px !important; min-width: 0;"
                                    {if $transaction->amount|abs}value="{$transaction->amount|abs}"{/if} />
                             <strong data-cash-transaction-account-currency>
+                                {if $filter->type === cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}
                                 {$accounts[$transaction->account->id]->currency->getSign()|escape}
+                                {/if}
                             </strong>
                         </div>
                     </div>
