@@ -5,8 +5,8 @@
  */
 final class cashColorStorage
 {
-    const DEFAULT_NO_CATEGORY_GRAPH_COLOR = '#00ffff';
-    const DEFAULT_ACCOUNT_GRAPH_COLOR     = '#0000ff';
+    const DEFAULT_NO_CATEGORY_GRAPH_COLOR = '#dddddd';
+    const DEFAULT_ACCOUNT_GRAPH_COLOR     = '#ffd700';
 
     /**
      * @return array
@@ -14,8 +14,14 @@ final class cashColorStorage
     public static function getExpenseColors()
     {
         return [
-            '#aa0000',
-            '#cc0000',
+            '#751208',
+            '#9c2100',
+            '#bb2800',
+            '#cd3a00',
+            '#e55c00',
+            '#f17827',
+            '#ff893b',
+            '#ffb164'
         ];
     }
 
@@ -25,8 +31,13 @@ final class cashColorStorage
     public static function getIncomeColors()
     {
         return [
-            '#00aa00',
-            '#00cc00',
+            '#175601',
+            '#006a07',
+            '#009442',
+            '#07b856',
+            '#19cf6a',
+            '#2fe681',
+            '#64ffa9',
         ];
     }
 

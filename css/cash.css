@@ -9,12 +9,20 @@ ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 
 .c-transactions { padding: 10px 0; }
 .c-transactions table { margin-top: 10px; }
-.c-transactions table .c-planned { color: #aaa; }
+.c-transactions table .c-planned { color: #aaa; font-style: italic; }
+.c-transactions table i.color { margin-top: 3px; margin-right: 6px; }
 
 .c-positive { color: green; }
 .c-positive.highlighted { background: #dfd; }
 .c-negative { color: red; }
 .c-negative.highlighted { background: #fdd; }
+
+.c-account-icon-list { margin: -10px -10px 15px; width: 95%; }
+.c-account-icon-list a { display: inline-block; padding: 7px; }
+.c-account-icon-list a.selected { background-color: #eee; }
+
+.c-category-color a i.icon16.color { border: 3px solid #fff; }
+.c-category-color a.selected i.icon16.color { border-color: #000; }
 
 .c-import-progress { padding-left: 20px; color: #aaa; }
 .c-import-progress li.completed { color: #000; }
