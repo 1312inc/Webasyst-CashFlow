@@ -9,7 +9,7 @@
 {/if}
 {foreach $upcoming as $t}
     <tr class="c-planned" data-cash-transaction-id="{$t->id}">
-        <td><span class="nowrap">{$t->datetime|wa_datetime:humandatetime:$serverTimezone}</span></td>
+        <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
         <td><div>{$t->account->name|escape}</div><i class="shortener"></i></td>
         <td>
             <div>
@@ -30,7 +30,7 @@
 {/if}
 {foreach $completed as $t}
     <tr data-cash-transaction-id="{$t->id}">
-        <td><span class="nowrap">{$t->datetime|wa_datetime:humandatetime:$serverTimezone}</span></td>
+        <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
         <td><div>{$t->account->name|escape}</div><i class="shortener"></i></td>
         <td>
             <div>

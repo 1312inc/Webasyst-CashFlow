@@ -35,7 +35,7 @@ join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 left join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
       {$whereAccountSql}
-order by `datetime`
+order by ct.date, ct.id
 SQL;
 
         $query = $this->query(
@@ -78,7 +78,7 @@ join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
       {$whereAccountSql}
-order by `datetime`
+order by ct.date, ct.id
 SQL;
 
         $query = $this->query(
