@@ -81,7 +81,7 @@ final class cashCalculationService
 
         $summary = [];
         foreach ($summaryData as $currency => $summaryDatum) {
-            if ($summaryDatum['summary'] > 0) {
+            if ($summaryDatum['summary'] != 0) {
                 $summary[$currency] = new cashStatOnHandDto(
                     cashCurrencyVO::fromWaCurrency($currency),
                     new cashStatOnDateDto(
