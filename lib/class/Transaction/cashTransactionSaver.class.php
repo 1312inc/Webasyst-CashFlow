@@ -40,7 +40,10 @@ class cashTransactionSaver extends cashEntitySaver
                     $data['amount'] = -$data['amount'];
                 }
             } else {
-                unset($data['category_id']);
+                if (isset($data['category_type']) && $data['category_type'] === cashCategory::TYPE_EXPENSE && $data['amount'] > 0) {
+                    $data['amount'] = -$data['amount'];
+                }
+                unset($data['category_id'], $data['category_type']);
             }
 
             cash()->getHydrator()->hydrate($transaction, $data);
