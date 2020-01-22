@@ -317,15 +317,15 @@ class cashGraphService
             );
         }
 
-        $firstDot = true;
+//        $firstDot = true;
         foreach ($graphData->dates as $date) {
             if (!isset($data[$date])) {
-                if ($firstDot) {
+//                if ($firstDot) {
                     foreach ($graphData->accounts as $accountId) {
                         $graphData->lines[$accountId][$date] += (float)$initialBalance[$accountId]['summary'];
                     }
-                    $firstDot = false;
-                }
+//                    $firstDot = false;
+//                }
 
                 continue;
             }
