@@ -207,7 +207,37 @@
                                 }
                             );
                         })
+                        .on('change', '[name="transaction[account_id]"]', function (e) {
+                            $dialogWrapper
+                                .find('[data-cash-transaction-account-currency]')
+                                    .text($(this).find(':selected').data('cash-account-currency-sign'))
+                        })
+                        .on('change', '[name="transaction[category_id]"]', function (e) {
+                            $dialogWrapper
+                                .find('[data-cash-transaction-category]')
+                                    .css('background', $(this).find(':selected').data('cash-category-color'))
+                        })
                     ;
+
+                    var initDatepicker = function () {
+                        var datepicker_options = {
+                            changeMonth: true,
+                            changeYear: true,
+                            shortYearCutoff: 2,
+                            dateShowWeek: false,
+                            showOtherMonths: true,
+                            selectOtherMonths: true,
+                            stepMonths: 1,
+                            numberOfMonths: 1,
+                            gotoCurrent: true,
+                            constrainInput: false,
+                            dateFormat: "yy-mm-dd",
+                        };
+
+                        $dialogWrapper.find('[name="transaction[date]"]').datepicker(datepicker_options);
+                    };
+
+                    initDatepicker();
 
                     setTimeout(function () {
                         $dialogWrapper.find('[name="transaction[amount]"]').trigger('focus');

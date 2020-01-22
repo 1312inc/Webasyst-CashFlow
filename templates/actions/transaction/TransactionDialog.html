@@ -29,8 +29,10 @@
                                    name="transaction[amount]"
                                    placeholder="0"
                                    style="width: 130px !important; min-width: 0;"
-                                   {if $transaction->amount|abs}alue="{$transaction->amount|abs}"{/if} />
-                            <strong>$</strong>
+                                   {if $transaction->amount|abs}value="{$transaction->amount|abs}"{/if} />
+                            <strong data-cash-transaction-account-currency>
+                                {$accounts[$transaction->account->id]->currency->getSign()|escape}
+                            </strong>
                         </div>
                     </div>
                     <div class="field">
@@ -40,7 +42,9 @@
                         <div class="value no-shift">
                             <select name="transaction[account_id]">
                                 {foreach $accounts as $account}
-                                    <option value="{$account->id}" {if $account->id == $transaction->account->id}selected{/if}>
+                                    <option value="{$account->id}"
+                                            {if $account->id == $transaction->account->id}selected{/if}
+                                            data-cash-account-currency-sign="{$account->currency->getSign()|escape}">
                                         {$account->currency->getCode()|escape} - {$account->name|escape} ({$account->currency->getSign()|escape})
                                     </option>
                                 {/foreach}
@@ -52,11 +56,13 @@
                             [`Category`]
                         </div>
                         <div class="value no-shift">
-                            <i class="icon16 color" style="background: gold;"></i>
+                            <i class="icon16 color" data-cash-transaction-category style="background: none;"></i>
                             <select name="transaction[category_id]">
                                 <option value="0">[`No category`]</option>
                                 {foreach $categories as $category}
-                                    <option value="{$category->id}" {if $category->id == $transaction->category->id}selected{/if}>
+                                    <option value="{$category->id}"
+                                            {if $category->id == $transaction->category->id}selected{/if}
+                                            data-cash-category-color="{$category->color}">
                                         {$category->name|escape}
                                     </option>
                                 {/foreach}
@@ -80,8 +86,8 @@
                         </div>
                         <div class="value">
                             <input type="text"
-                                   name="transaction[datetime]"
-                                   value="{$transaction->datetime}"/>
+                                   name="transaction[date]"
+                                   value="{$transaction->date}"/>
                             <i class="icon16 calendar"></i>
                         </div>
                     </div>

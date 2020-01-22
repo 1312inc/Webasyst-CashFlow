@@ -299,7 +299,7 @@ class cashTransaction extends cashAbstractEntity
     {
         $this->updateCreateUpdateDatetime();
 
-        $this->setDate(date('Y-m-d', strtotime($this->datetime)));
+        $this->setDatetime(date('Y-m-d H:i:s', strtotime($this->date)));
 
         return true;
     }
