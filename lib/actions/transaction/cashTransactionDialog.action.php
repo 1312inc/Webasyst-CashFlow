@@ -12,6 +12,7 @@ class cashTransactionDialogAction extends cashViewAction
      * @throws waException
      * @throws kmwaLogicException
      * @throws kmwaAssertException
+     * @throws kmwaNotFoundException
      */
     public function runAction($params = null)
     {
@@ -26,6 +27,7 @@ class cashTransactionDialogAction extends cashViewAction
         if ($transactionId) {
             $transaction = cash()->getEntityRepository(cashTransaction::class)->findById($transactionId);
             kmwaAssert::instance($transaction, cashTransaction::class);
+            $categoryType = $transaction->getCategory()->getType();
         } else {
             $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
             if ($filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
@@ -48,11 +50,11 @@ class cashTransactionDialogAction extends cashViewAction
             if ($categoryType === cashCategory::TYPE_TRANSFER) {
                 $categoryDtos = cashDtoFromEntityFactory::fromEntities(
                     cashCategoryDto::class,
-                    $categoryRep->findAllByType(cashCategory::TYPE_EXPENSE)
+                    $categoryRep->findAllExpense()
                 );
                 $categoryDtosIncome = cashDtoFromEntityFactory::fromEntities(
                     cashCategoryDto::class,
-                    $categoryRep->findAllByType(cashCategory::TYPE_INCOME)
+                    $categoryRep->findAllIncome()
                 );
             } else {
                 $categoryDtos = cashDtoFromEntityFactory::fromEntities(

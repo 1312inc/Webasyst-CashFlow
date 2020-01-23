@@ -305,10 +305,17 @@ class cashTransaction extends cashAbstractEntity
     }
 
     /**
-     * @return cashCategory|null
+     * @return cashCategory
      */
     public function getCategory()
     {
+        if ($this->category === null) {
+            $this->category = cash()->getEntityRepository(cashCategory::class)->findById($this->category_id);
+            if (!$this->category instanceof cashCategory) {
+                $this->category = cash()->getEntityFactory(cashCategory::class)->createNewNoCategory();
+            }
+        }
+
         return $this->category;
     }
 
