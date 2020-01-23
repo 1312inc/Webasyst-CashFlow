@@ -11,12 +11,16 @@
             <input type="hidden" name="transaction[category_type]" value="{$categoryType}"/>
 
             <h1>
+                {if $transaction->id}
+                    [`Edit transaction`]
+                {else}
                 {if $categoryType == 'income'}
                     [`New income`]
                 {elseif $categoryType == 'expense'}
                     [`New expense`]
                 {else}
                     [`New transfer`]
+                {/if}
                 {/if}
             </h1>
             <div class="fields form">
@@ -62,7 +66,7 @@
                         <div class="value no-shift">
                             <i class="icon16 color" data-cash-transaction-category style="background: none;"></i>
                             <select name="transaction[category_id]">
-                                <option value="0">[`No category`]</option>
+                                <option value="0" data-cash-category-color="{cashColorStorage::DEFAULT_NO_CATEGORY_GRAPH_COLOR}">[`No category`]</option>
                                 {foreach $categories as $category}
                                     <option value="{$category->id}"
                                             {if $category->id == $transaction->category->id}selected{/if}
