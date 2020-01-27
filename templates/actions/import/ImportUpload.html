@@ -1,0 +1,13 @@
+{if $errors}
+    {$errors|print_r}
+{else}
+    {foreach $responses as $fileType => $eventResponses}
+        <!-- {$fileType} -->
+        {foreach $eventResponses as $appResponses}
+            {foreach $appResponses as $appName => $responseHtml}
+                <!-- {$appName} -->
+                {$responseHtml}
+            {/foreach}
+        {/foreach}
+    {/foreach}
+{/if}
