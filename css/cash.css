@@ -5,23 +5,30 @@
 i.icon16.color { width: 12px; height: 12px; border: none; }
 ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 
-/*.c-chart { margin-top: 10px; padding: 170px; background: #f8f8f8 url('../img/_sample_chart_please_delete_me.png') no-repeat; background-size: 100% 100%; color: #aaa; text-align: center; }*/
+.c-chart { clear: right; }
 
 .c-transactions { padding: 10px 0; }
+.c-transactions .c-table-header { min-height: 2rem; }
+.c-transactions .c-actions-menu .c-bulk-action { display: none; }
+.c-transactions .c-actions-menu.fixed { position:  fixed; top: 0; background: white; display: block; width: 100%; padding: 12px 0; box-shadow: 0 15px 10px -10px #eee; }
+.c-transactions .c-action-add-income { background: #dec; border-radius: 2px; }
+.c-transactions .c-action-add-expense { background: #fdd; border-radius: 2px; }
 .c-transactions table { margin-top: 10px; }
 .c-transactions table .c-planned { color: #aaa; font-style: italic; }
-.c-transactions table i.color { margin-top: 3px; margin-right: 6px; }
+.c-transactions table i.color { margin-top: 2px; margin-right: 6px; }
+/* .c-transactions table h5.heading { margin: 1rem 0 0.5rem; } */
+.c-transactions table tr.c-table-divider { border-bottom: 1px solid #ddd; }
+.c-transactions table tr.c-table-divider td { padding-top: 1.5rem; padding-bottom: 0.5rem; }
 
-.c-positive { color: green; }
-.c-positive.highlighted { background: #dfd; }
-.c-negative { color: red; }
-.c-negative.highlighted { background: #fdd; }
+.c-balance { color: brown; background: gold; padding: 1px 4px; border-radius: 2px; }
+/* .c-balance.highlighted {  } */
+.c-balance.c-negative { background: orangered; color: white; }
 
 .c-account-icon-list { margin: -10px -10px 15px; width: 95%; }
 .c-account-icon-list a { display: inline-block; padding: 7px; }
 .c-account-icon-list a.selected { background-color: #eee; }
 
-.c-category-color a i.icon16.color { border: 3px solid #fff; }
+.c-category-color a i.icon16.color { width: 14px; height: 14px; border: 3px solid #fff; margin-right: 0; }
 .c-category-color a.selected i.icon16.color { border-color: #000; }
 
 .c-import-progress { padding-left: 20px; color: #aaa; }

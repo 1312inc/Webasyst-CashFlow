@@ -2,14 +2,20 @@
 {** @var cashTransactionPageFilterDto $filter **}
 <section>
 {if $upcoming}
-<tr class="white">
+<tr class="white c-table-divider">
+    <td class="min-width"><input type="checkbox"></td>
     <td colspan="6">
-        <h5 class="heading">[`Upcoming`]</h5>
+        <h5 class="heading">
+            [`Upcoming`]
+            <span class="hint">[`100500 months`]</span>
+        </h5>
+
     </td>
 </tr>
 {/if}
 {foreach $upcoming as $t}
     <tr class="c-planned" data-cash-transaction-id="{$t->id}">
+        <td class="min-width"><input type="checkbox"></td>
         <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
         <td>
             <span class="nowrap">
@@ -27,14 +33,19 @@
     </tr>
 {/foreach}
 {if $completed}
-<tr class="white">
+<tr class="white c-table-divider">
+    <td class="min-width"><input type="checkbox"></td>
     <td colspan="6">
-        <h5 class="heading">[`Completed`]</h5>
+        <h5 class="heading">
+            [`Completed`]
+            <span class="hint">[`Last 3 years`]</span>
+        </h5>
     </td>
 </tr>
 {/if}
 {foreach $completed as $t}
     <tr data-cash-transaction-id="{$t->id}">
+        <td class="min-width"><input type="checkbox"></td>
         <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
         <td>
             <span class="nowrap">

@@ -70,10 +70,10 @@
             <div class="block half-padded" style="padding-left: 0;">
                 [`Cash on hand today`]:
                 {foreach $onHandsToday as $onHand}
-                    <strong class="c-positive highlighted large">{$onHand->stat->summaryShorten} {$onHand->currency->getSign()}</strong>
+                    <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{$onHand->stat->summaryShorten} {$onHand->currency->getSign()}</strong>
                     {if !$onHand@last}+{/if}
                     {foreachelse}
-                    <strong class="c-positive highlighted large">0</strong>
+                    <strong class="c-balance large">0</strong>
                 {/foreach}
                 <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandate}</span>
             </div>
@@ -86,57 +86,64 @@
             </div> -->
 
             <div class="c-transactions">
-                {if 1 || FORECAST_IS_SHOWN}
-                    <div class="float-right">
-                        {sprintf('[`Cash on hand on %s`]', $endDate|wa_date:humandate)}:
 
-                        {foreach $onHandsEndday as $onHand}
-                            <strong class="c-positive highlighted large">{$onHand->stat->summaryShorten} {$onHand->currency->getSign()}</strong>
-                            {if !$onHand@last}+{/if}
-                            {foreachelse}
-                            <strong class="c-positive highlighted large">0</strong>
-                        {/foreach}
-                    </div>
-                {/if}
+                <div class="c-table-header">
+                    {if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && (1 || FORECAST_IS_SHOWN)}
+                        <div class="float-right">
+                            {sprintf('[`Cash on hand in %s`]', '100500 months')}:
 
-                <ul class="menu-h dropdown">
-                    {if ($filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT) || ($filter->type == cashTransactionPageFilterDto::FILTER_CATEGORY && $filter->entity->isIncome())}
-                    <li><a href="#"
-                           class="inline-link"
-                           data-cash-action="add-transaction"
-                           data-cash-category-type="{cashCategory::TYPE_INCOME}"
-                        ><i class="icon16 add"></i><b><i><strong>[`Add income`]</strong></i></b></a></li>
+                            {foreach $onHandsEndday as $onHand}
+                                <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{$onHand->stat->summaryShorten} {$onHand->currency->getSign()}</strong>
+                                {if !$onHand@last}+{/if}
+                                {foreachelse}
+                                <strong class="c-balance large">0</strong>
+                            {/foreach}
+                            <span class="hint">{$endDate|wa_date:humandate}</span>
+                        </div>
                     {/if}
-                    {if ($filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT) || ($filter->type == cashTransactionPageFilterDto::FILTER_CATEGORY && $filter->entity->isExpense())}
-                    <li><a href="#"
-                           class="inline-link"
-                           data-cash-action="add-transaction"
-                           data-cash-category-type="{cashCategory::TYPE_EXPENSE}"
-                        ><i class="icon16 delete"></i><b><i><strong>[`Add expense`]</strong></i></b></a></li>
-                    {/if}
-                    <li><a href="#"
-                           class="inline-link"
-                           data-cash-action="add-transaction"
-                           data-cash-category-type="{cashCategory::TYPE_TRANSFER}"
-                        ><i class="icon16 move"></i><b><i><strong>[`Transfer`]</strong></i></b></a></li>
 
+                    <ul class="menu-h dropdown c-actions-menu">
+                        {if ($filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT) || ($filter->type == cashTransactionPageFilterDto::FILTER_CATEGORY && $filter->entity->isIncome())}
+                        <li><a href="#"
+                               class="c-action-add-income"
+                               data-cash-action="add-transaction"
+                               data-cash-category-type="{cashCategory::TYPE_INCOME}"
+                            ><i class="icon16 add"></i><strong>[`Add income`]</strong></a></li>
+                        {/if}
+                        {if ($filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT) || ($filter->type == cashTransactionPageFilterDto::FILTER_CATEGORY && $filter->entity->isExpense())}
+                        <li><a href="#"
+                               class="c-action-add-expense"
+                               data-cash-action="add-transaction"
+                               data-cash-category-type="{cashCategory::TYPE_EXPENSE}"
+                            ><i class="icon16 delete"></i><strong>[`Add expense`]</strong></a></li>
+                        {/if}
+                        <li><a href="#"
+                               class="c-action-add-transfer"
+                               data-cash-action="add-transaction"
+                               data-cash-category-type="{cashCategory::TYPE_TRANSFER}"
+                            ><i class="icon16 move"></i><strong>[`Transfer`]</strong></a></li>
 
-                    <!--
+                        <!--
 
-                        TRANSACTION TEMPLATES: some day
+                            TRANSACTION TEMPLATES: some day
 
-                    <li>
-                        <a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a>
-                        <ul class="menu-v">
-                            <li><a href="#"><i class="icon16 color"></i>Аренда офиса</a></li>
-                            <li><a href="#"><i class="icon16 color"></i>Оплата хостинга</a></li>
-                            <li><a href="#"><i class="icon16 color"></i>Подписка на сторонние сервисы</a></li>
-                            <li><a href="#"><i class="icon16 color"></i>Комиссия банка</a></li>
-                            <li class="bordered-top"><a href="#" class="gray"><i class="icon16 settings"></i>[`Manage templates`]</a></li>
-                        </ul>
-                    </li> -->
+                        <li>
+                            <a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a>
+                            <ul class="menu-v">
+                                <li><a href="#"><i class="icon16 color"></i>Аренда офиса</a></li>
+                                <li><a href="#"><i class="icon16 color"></i>Оплата хостинга</a></li>
+                                <li><a href="#"><i class="icon16 color"></i>Подписка на сторонние сервисы</a></li>
+                                <li><a href="#"><i class="icon16 color"></i>Комиссия банка</a></li>
+                                <li class="bordered-top"><a href="#" class="gray"><i class="icon16 settings"></i>[`Manage templates`]</a></li>
+                            </ul>
+                        </li> -->
 
-                </ul>
+                        <li class="c-bulk-action"><a href="#"><i class="icon16 move"></i>[`Move`] <strong class="hint">(N)</strong></a></li>
+                        <li class="c-bulk-action"><a href="#"><i class="icon16 delete"></i>[`Delete`] <strong class="hint">(N)</strong></a></li>
+
+                    </ul>
+                </div>
+
                 <table class="zebra single-lined" id="cash-transaction-list">
                     <!-- <tr>
                         <th>[`Date`]</th>
