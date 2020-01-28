@@ -19,6 +19,7 @@ ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 /* .c-transactions table h5.heading { margin: 1rem 0 0.5rem; } */
 .c-transactions table tr.c-table-divider { border-bottom: 1px solid #ddd; }
 .c-transactions table tr.c-table-divider td { padding-top: 1.5rem; padding-bottom: 0.5rem; }
+.c-transactions table span { cursor: pointer; }
 
 .c-balance { color: brown; background: gold; padding: 1px 4px; border-radius: 2px; }
 /* .c-balance.highlighted {  } */
@@ -28,7 +29,8 @@ ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 .c-account-icon-list a { display: inline-block; padding: 7px; }
 .c-account-icon-list a.selected { background-color: #eee; }
 
-.c-category-color a i.icon16.color { width: 14px; height: 14px; border: 3px solid #fff; margin-right: 0; }
+.c-category-color { width: 250px; margin-top: -3px; }
+.c-category-color a i.icon16.color { width: 18px; height: 18px; border: 3px solid #fff; margin-right: 0; margin-bottom: 0.5rem; }
 .c-category-color a.selected i.icon16.color { border-color: #000; }
 
 .c-import-progress { padding-left: 20px; color: #aaa; }
