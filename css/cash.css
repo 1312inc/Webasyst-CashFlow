@@ -20,6 +20,9 @@ ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 .c-transactions table tr.c-table-divider { border-bottom: 1px solid #ddd; }
 .c-transactions table tr.c-table-divider td { padding-top: 1.5rem; padding-bottom: 0.5rem; }
 .c-transactions table span { cursor: pointer; }
+.c-transactions .c-totals p { font-size: 0.9rem; margin-top: 1rem; }
+.c-transactions .c-totals .c-category-total { display: inline-block; margin: 0 0.5rem; }
+.c-transactions .c-totals .c-category-total i.color { margin-top: 3px; margin-right: 3px; }
 
 .c-balance { color: brown; background: gold; padding: 1px 4px; border-radius: 2px; }
 /* .c-balance.highlighted {  } */
