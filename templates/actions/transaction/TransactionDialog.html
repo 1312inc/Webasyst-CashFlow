@@ -30,6 +30,7 @@
                             [`Amount`]
                         </div>
                         <div class="value">
+                            {if $categoryType == 'expense'}<strong>&minus;</strong>{/if}
                             <input type="text"
                                    class="large bold numerical"
                                    name="transaction[amount]"
@@ -85,6 +86,7 @@
                             <textarea name="transaction[description]"
                                       cols="30"
                                       rows="10"
+                                      placeholder="[`Optional`]"
                             >{$transaction->description|escape}</textarea>
                         </div>
                     </div>
@@ -97,8 +99,118 @@
                                    name="transaction[date]"
                                    value="{$transaction->date}"/>
                             <i class="icon16 calendar"></i>
+                            <span class="hint">[`Any date in the past or in the future`]</span>
                         </div>
                     </div>
+
+                    {if 1 || NEW_TRANSACTION}
+                        <div class="field">
+                            <div class="name nowrap">
+                                [`Repeat`]
+                            </div>
+                            <div class="value no-shift">
+                                <select>
+                                    <option>[`None`]</option>
+                                    <option>[`Every day`]</option>
+                                    <option>[`Every week`]</option>
+                                    <option>[`Every month`]</option>
+                                    <option>[`Every year`]</option>
+                                    <option>[`Custom...`]</option>
+                                </select>
+                                <!--
+
+                                    /// if 'Custom...' is selected ///
+
+                                [`Every`]
+                                <input type="text" class="numerical short" value="1">
+                                <select>
+                                    <option>[`day`]</option>
+                                    <option>[`week`]</option>
+                                    <option>[`month`]</option>
+                                    <option>[`year`]</option>
+                                </select>
+
+                                -->
+                            </div>
+                        </div>
+                        <div class="field" style="opacity: 0.54321 {* /// if 'Repeat' != 'None' /// *}">
+                            <div class="name nowrap">
+                                [`End repeat`]
+                            </div>
+                            <div class="value no-shift">
+                                <select>
+                                    <option>[`Never`]</option>
+                                    <option>[`After`]</option>
+                                    <option>[`On date`]</option>
+                                </select>
+                                <!-- /// if 'After' is selected /// <input type="text" class="numerical short" value="12"> [`occurencies`] -->
+                                <!-- /// if 'On date' is selected /// <input type="text" > <i class="icon16 calendar"></i> -->
+                            </div>
+                        </div>
+
+                    {else if 1 || THIS_IS_A_REPEATING_TRANSACTION_AND_THERE_ARE_AT_LEAST_ONE_OCCURENCE_IN_THE_FUTURE}
+
+                        {* editing existing transaction *}
+                        <div class="field">
+                            <div class="value no-shift">
+                                <label>
+                                    <input type="checkbox" />
+                                    [`Apply this change to all future repeating transations`]
+                                    {if 1 || END_REPEAT != NEVER}
+                                        (5)
+                                    {/if}
+                                </label>
+                                <span class="hint"></span>
+                            </div>
+                        </div>
+
+                        <!-- /// same 'Repeat' & 'End repeat' fields once again (just as for the new transaction) /// -->
+
+                        <div class="field">
+                            <div class="name nowrap">
+                                [`Repeat`]
+                            </div>
+                            <div class="value no-shift">
+                                <select>
+                                    <option>[`None`]</option>
+                                    <option>[`Every day`]</option>
+                                    <option>[`Every week`]</option>
+                                    <option>[`Every month`]</option>
+                                    <option>[`Every year`]</option>
+                                    <option>[`Custom...`]</option>
+                                </select>
+                                <!--
+
+                                    /// if 'Custom...' is selected ///
+
+                                [`Every`]
+                                <input type="text" class="numerical short" value="1">
+                                <select>
+                                    <option>[`day`]</option>
+                                    <option>[`week`]</option>
+                                    <option>[`month`]</option>
+                                    <option>[`year`]</option>
+                                </select>
+
+                                -->
+                            </div>
+                        </div>
+                        <div class="field" style="opacity: 0.54321 {* /// if 'Repeat' != 'None' /// *}">
+                            <div class="name nowrap">
+                                [`End repeat`]
+                            </div>
+                            <div class="value no-shift">
+                                <select>
+                                    <option>[`Never`]</option>
+                                    <option>[`After`]</option>
+                                    <option>[`On date`]</option>
+                                </select>
+                                <!-- /// if 'After' is selected /// <input type="text" class="numerical short" value="12"> [`occurencies`] -->
+                                <!-- /// if 'On date' is selected /// <input type="text" > <i class="icon16 calendar"></i> -->
+                            </div>
+                        </div>
+
+                    {/if}
                     {if $categoryType == cashCategory::TYPE_TRANSFER}
                     <div class="field">
                         <div class="name nowrap">
