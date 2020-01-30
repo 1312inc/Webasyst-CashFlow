@@ -46,6 +46,10 @@ table.c-import-conditions  { margin-bottom: 0; }
 table.c-import-conditions td { padding: 5px; }
 table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1px; color: #888; }
 
+.c-settings-columns { display: flex; margin-top: -10px; }
+.c-settings-columns .c-column { flex: 0 1 200px; padding-right: 50px; padding-left: 16px; }
+.c-settings-columns .c-ousted-sort-icon { position: relative; left: -20px; }
+
 .icon16.c-table { background-image: url('../img/icon16-table.png'); background-size: 16px 16px; }
 
 @media
