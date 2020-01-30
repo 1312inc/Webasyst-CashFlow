@@ -12,6 +12,10 @@ class cashCashBackend_importFile_uploadedHandler extends waEventHandler
      */
     public function execute(&$event)
     {
-       return new cashImportResponseCsv();
+        $csvImport = cashImportCsv::createNew($event->getSavePath().$event->getFile()->name, $event->getParams());
+
+        $response = $csvImport->process();
+
+        return $response;
     }
 }

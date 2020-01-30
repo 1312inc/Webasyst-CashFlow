@@ -17,8 +17,9 @@
                 </div>
                 <div class="value no-shift">
                     <select name="upload[encoding]">
-                        <option>UTF-8</option>
-                        <option>...copy from Shop-Script...</option>
+                        {foreach cashImportCsv::getEncodings() as $encoding}
+                        <option>{$encoding}</option>
+                        {/foreach}
                     </select>
                 </div>
             </div>
@@ -28,9 +29,9 @@
                 </div>
                 <div class="value no-shift">
                     <select name="upload[delimiter]">
-                        <option>[`Semicolon (;)`]</option>
-                        <option>[`Comma (,)`]</option>
-                        <option>[`Tab`]</option>
+                        {foreach cashImportCsv::getDelimiters() as $name => $value}
+                        <option value="{$value}">{$name}</option>
+                        {/foreach}
                     </select>
                 </div>
             </div>

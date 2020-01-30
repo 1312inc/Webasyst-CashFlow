@@ -12,7 +12,5 @@ class cashImportAction extends cashViewAction
      */
     public function runAction($params = null)
     {
-        $message = 'Hello import!';
-        $this->view->assign('message', $message);
     }
 }
