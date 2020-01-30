@@ -19,7 +19,7 @@ class cashImportUploadAction extends cashViewAction
         $files = waRequest::file('upload');
 
         $importService = new cashImportService();
-        $responses = $importService->uploadFile($files);
+        $responses = $importService->uploadFile($files, waRequest::request('upload', [], waRequest::TYPE_ARRAY));
 
         $this->view->assign(
             [

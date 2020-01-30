@@ -12,10 +12,11 @@ class cashImportService
 
     /**
      * @param waRequestFileIterator $files
+     * @param array                 $settings
      *
      * @return cashImportFileUploadedEventResponseInterface[]
      */
-    public function uploadFile(waRequestFileIterator $files)
+    public function uploadFile(waRequestFileIterator $files, array $settings = [])
     {
         $responses = [];
 
@@ -24,7 +25,7 @@ class cashImportService
                 $this->errors[] = $file->error;
             } else {
                 try {
-                    $f = $this->save($file);
+                    $f = $this->save($file, $settings);
                     if ($f) {
                         foreach ($f as $eventResponse) {
                             if (!$eventResponse instanceof cashImportFileUploadedEventResponseInterface) {
@@ -48,7 +49,6 @@ class cashImportService
 
         return $responses;
     }
-
 
     /**
      * @param waRequestFile $file
@@ -83,10 +83,11 @@ class cashImportService
 
     /**
      * @param waRequestFile $file
+     * @param array         $settings
      *
      * @return array|bool
      */
-    public function save(waRequestFile $file)
+    public function save(waRequestFile $file, array $settings)
     {
         if (!$this->validFile($file)) {
             return false;
@@ -108,7 +109,7 @@ class cashImportService
 
                     $this->errors = [];
 
-                    $event = (new cashImportFileUploadedEvent())
+                    $event = (new cashImportFileUploadedEvent('', null, $settings))
                         ->setFile($file)
                         ->setSavePath($savePath);
 

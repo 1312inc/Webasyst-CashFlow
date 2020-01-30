@@ -43,6 +43,26 @@ class cashConfig extends waAppConfig
     private $eventDispatcher;
 
     /**
+     * @var cashLogger
+     */
+    private $logger;
+
+    public function __construct($environment, $root_path, $application = null, $locale = null)
+    {
+        parent::__construct($environment, $root_path, $application, $locale);
+
+        $this->logger = new cashLogger();
+    }
+
+    /**
+     * @return cashLogger
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
      * @param string $type
      *
      * @return waCache
@@ -50,7 +70,7 @@ class cashConfig extends waAppConfig
     public function getCache($type = 'default')
     {
         if ($this->cache === null) {
-            $this->cache = parent::getCache($type) ?: new waCache(new kmwaWaCacheAdapter(['type' => 'file']), 'cash');
+            $this->cache = parent::getCache($type) ?: new waCache(new waFileCacheAdapter(['type' => 'file']), 'cash');
         }
 
         return $this->cache;
