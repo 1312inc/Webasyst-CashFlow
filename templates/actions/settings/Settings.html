@@ -1,1 +1,206 @@
-{$message}
+<div class="content left200px">
+    <div id="content">
+
+        <div class="shadowed blank">
+
+            <div class="block double-padded">
+
+                <h1>[`Settings`]</h1>
+
+                {$categories_income = [
+                        [ 'Продажи', '#17ae4f' ],
+                        [ 'Левак', '#26b7a3' ],
+                        [ 'Нам вернули долг' ],
+                        [ 'Проценты по вкладам' ],
+                        [ 'Взяли в долг', '#ccc' ],
+                        [ 'Ангельские инвестиции, о спасибо, боже, за этот подарок свыше', '#ccc' ]
+                    ]}
+                {$categories_expense = [
+                        [ 'Закупки', '#c54b58' ],
+                        [ 'Зарплаты' ],
+                        [ 'Налоги' ],
+                        [ 'Офис' ],
+                        [ 'Реклама и маркетинг' ],
+                        [ 'Возврат долга' ],
+                        [ 'Комиссии банков' ],
+                        [ 'Дивиденды: полный вывод баблосов из бизнеса', '#ccc' ]
+                    ]}
+
+                <div class="fields form">
+                    <div class="field">
+                        <div class="name">[`Categories`]</div>
+                        <div class="value no-shift">
+                            <div class="c-settings-columns">
+                                <div class="c-column">
+                                    <ul class="menu-v with-icons">
+                                        {foreach $categories_income as $c}
+                                        <li>
+                                             <a href="#/income/N"><i class="icon16 sort c-ousted-sort-icon"></i><i class="icon16 color" style="background: {$c[1]|default:'#47ce6f'};"></i>{$c[0]}</a>
+                                        </li>
+                                        {/foreach}
+                                        <li class="small top-padded"><a href="#"><i class="icon10 add"></i>[`New income category`]</a></li>
+                                    </ul>
+                                </div>
+                                <div class="c-column">
+                                    <ul class="menu-v with-icons">
+                                        {foreach $categories_expense as $c}
+                                        <li>
+                                             <a href="#/income/N"><i class="icon16 sort c-ousted-sort-icon"></i><i class="icon16 color" style="background: {$c[1]|default:'#f56b68'};"></i>{$c[0]}</a>
+                                        </li>
+                                        {/foreach}
+                                        <li class="small top-padded"><a href="#"><i class="icon10 add"></i>[`New expense category`]</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {if $wa->shop}
+                    <h2>Shop-Script</h2>
+                    <div class="fields-group">
+                        <div class="field">
+                            <div class="name">[`Enabled`]</div>
+                            <div class="value no-shift">
+                                <input type="checkbox" checked />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">[`Account`]</div>
+                            <div class="value no-shift">
+                                <select>
+                                    <option>Account 1 (RUB)</option>
+                                    <option>Account 2 (USD)</option>
+                                    <option>Account 3 (EUR)</option>
+                                    <option>[`Configure by storefront...`]</option>
+                                </select>
+                                <!--
+
+                                    /// configure by storefront ///
+
+                                <table class="zebra" style="width: auto; margin: 0.5rem 0;">
+                                    <tr>
+                                        <td>mydomain.ru/*</td>
+                                        <td>&rarr;</td>
+                                        <td>
+                                            <select>
+                                                <option>Account 1 (RUB)</option>
+                                                <option>Account 2 (USD)</option>
+                                                <option>Account 3 (EUR)</option>
+                                                <option>[`Don't import this storefront`]</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>mydomain.ru/vip/*</td>
+                                        <td>&rarr;</td>
+                                        <td>
+                                            <select>
+                                                <option>Account 1 (RUB)</option>
+                                                <option>Account 2 (USD)</option>
+                                                <option>Account 3 (EUR)</option>
+                                                <option>[`Don't import this storefront`]</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>mydomain.eu/*</td>
+                                        <td>&rarr;</td>
+                                        <td>
+                                            <select>
+                                                <option>Account 1 (RUB)</option>
+                                                <option>Account 2 (USD)</option>
+                                                <option selected>Account 3 (EUR)</option>
+                                                <option>[`Don't import this storefront`]</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </table> -->
+
+                                <p class="hint">{sprintf('[`In case of different currencies for orders and the account, an order amount will be converted to the selected account currency accroding to the conversion rate defined <a href="%s">in Shop-Script settings</a>.`]', $wa_backend_url|cat:'shop/?action=settings#/currencies/')}</p>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="name">
+                                [`Categories`]
+                            </div>
+
+                            <div class="value no-shift">
+                                [`Paid orders`] &rarr;
+                                <i class="icon16 color" style="background: green;"></i>
+                                <select>
+                                    {foreach $categories_income as $c}<option>{$c[0]}</option>{/foreach}
+                                </select>
+                            </div>
+
+                            <div class="value no-shift">
+                                [`Refunds`] &rarr;
+                                <i class="icon16 color" style="background: orangered;"></i>
+                                <select>
+                                    {foreach $categories_expense as $c}<option>{$c[0]}</option>{/foreach}
+                                </select>
+                            </div>
+
+                        </div>
+
+                        {*
+                            /// v2 maybe? ///
+
+                            <div class="field">
+                                <div class="name">
+                                    [`Product purchases`]
+                                </div>
+                                <div class="value no-shift">
+                                    <label><input type="checkbox" checked> [`Import automatically from Shop-Script when product purchase price is defined`]</label>
+                                    <br><br>
+                                    [`Product purchases`] &rarr;
+                                    <i class="icon16 color" style="background: orange;"></i>
+                                    <select>
+                                        {foreach $categories_expense as $c}<option>{$c[0]}</option>{/foreach}
+                                    </select>
+                                    <p class="hint">[`Useful if you have 'purchase price' field defined for most products in Shop-Script and you don't wish to manually add product purchase transations in the Cash app. Enabling the setting will automatically add expense transactions based on purchase price of the ordered products.`]</p>
+                                </div>
+                            </div>
+                        *}
+
+                        <div class="field">
+                            <div class="name">
+                                [`Forecasted sales`]
+                            </div>
+
+                            <div class="value no-shift">
+                                <label><input type="checkbox" checked> [`Enable average forecasted sales (recommended)`]</label>
+                                <p class="hint">{sprintf('[`<b>Works like magic!</b> Average daily sales (≈N/day based on last month data) will be automatically added as upcoming transactions for better budget planning. When a new order is paid on a certain day, forecasted sales for this day will be cleared automatically and replaced with the real sales data.`]')}</p>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="name">
+                                [`Order log`]
+                            </div>
+                            <div class="value no-shift">
+                                <label><input type="checkbox" checked> [`Record logged transactions in Shop-Script order log`]</label>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="value submit">
+                                <input type="submit" class="button green" value="[`Save`]" />
+                                <hr>
+                                <p>👆 [`All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, use <a href="%s">this re-import tool</a>.`]</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    {/if}
+
+                </div>
+
+                <div class="clear-both"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
