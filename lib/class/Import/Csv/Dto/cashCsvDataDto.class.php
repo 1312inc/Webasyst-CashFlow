@@ -5,7 +5,7 @@
  */
 class cashCsvDataDto
 {
-    public $headers = [];
-
     public $data = [];
+
+    public $rows = 0;
 }

@@ -3,10 +3,10 @@
 /**
  * Class cashImportResponseCsv
  */
-class cashImportResponseCsv implements cashImportFileUploadedEventResponseInterface
+final class cashImportResponseCsv implements cashImportFileUploadedEventResponseInterface
 {
     /**
-     * @var cashCsvDataDto
+     * @var cashCsvImportInfoDto
      */
     private $csvInfoDto;
 
@@ -56,22 +56,22 @@ class cashImportResponseCsv implements cashImportFileUploadedEventResponseInterf
     }
 
     /**
-     * @return cashCsvDataDto
-     */
-    public function getImportInfo()
-    {
-        return $this->csvInfoDto;
-    }
-
-    /**
      * @param cashCsvImportInfoDto $info
      *
      * @return cashImportResponseCsv
      */
-    public function setImportInfo(cashCsvImportInfoDto $info)
+    public function setCsvInfoDto(cashCsvImportInfoDto $info)
     {
         $this->csvInfoDto = $info;
 
         return $this;
+    }
+
+    /**
+     * @return cashCsvImportInfoDto
+     */
+    public function getCsvInfoDto()
+    {
+        return $this->csvInfoDto;
     }
 }

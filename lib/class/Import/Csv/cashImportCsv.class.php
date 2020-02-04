@@ -3,16 +3,18 @@
 /**
  * Class cashImportCsv
  */
-class cashImportCsv
+final class cashImportCsv
 {
-    const DEFAULT_ENCODING  = 'utf-8';
-    const DEFAULT_DELIMITER = ';';
+    const DEFAULT_ENCODING       = 'utf-8';
+    const DEFAULT_DELIMITER      = ';';
     const MAX_UNIQUENESS_DIVIDER = 3;
-    const MAX_UNIQUENESS_LIMIT = 200;
-    const FIRST_ROWS = 100;
+    const MAX_UNIQUENESS_LIMIT   = 200;
+    const FIRST_ROWS             = 100;
+    const MAX_ROWS_TO_READ       = 100500;
+    const ROWS_TO_READ           = 10;
 
     /**
-     * @var cashImportFileUploadedEventResponseInterface
+     * @var cashImportResponseCsv
      */
     protected $response;
 
@@ -40,6 +42,11 @@ class cashImportCsv
      * @var cashCsvImportInfoDto
      */
     private $csvInfoDto;
+
+    /**
+     * @var cashCsvImportSettings
+     */
+    private $settings;
 
     /**
      * cashImportCsv constructor.
@@ -92,9 +99,11 @@ class cashImportCsv
     }
 
     /**
+     * @param int $firstRows
+     *
      * @return cashImportResponseCsv
      */
-    public function process()
+    public function collectInfo($firstRows = self::FIRST_ROWS)
     {
         $response = new cashImportResponseCsv();
         $row = 0;
@@ -107,6 +116,7 @@ class cashImportCsv
         try {
             while (($data = fgetcsv($handle, 0, $this->delimiter)) !== false) {
                 $row++;
+
                 if (!$this->notEmptyArray($data)) {
                     continue;
                 }
@@ -133,7 +143,7 @@ class cashImportCsv
                         }
                     }
                 }
-                if ($row > 1 && $row < self::FIRST_ROWS) {
+                if ($row > 1 && $row < $firstRows) {
                     $this->csvInfoDto->firstRows[] = $data;
                 }
             }
@@ -151,7 +161,54 @@ class cashImportCsv
         }
         cash()->getCache()->set(self::getCacheKeyForUser(), $this->csvInfoDto);
 
-        $response->setImportInfo($this->csvInfoDto);
+        $response->setCsvInfoDto($this->csvInfoDto);
+
+        return $response;
+    }
+
+    /**
+     * @param array $headers
+     * @param int   $startRow
+     * @param int   $rowsToRead
+     *
+     * @return cashCsvDataDto
+     */
+    public function process(array $headers, $startRow = 0, $rowsToRead = self::ROWS_TO_READ)
+    {
+        $response = new cashCsvDataDto();
+        $handle = fopen($this->path, 'rb');
+        if ($handle === false) {
+            return $response;
+        }
+
+        try {
+            while (($data = fgetcsv($handle, 0, $this->delimiter)) !== false) {
+                $response->rows++;
+
+                if ($startRow === 0 && $response->rows === 1) {
+                    continue;
+                }
+                if ($response->rows > $startRow + $rowsToRead) {
+                    break;
+                }
+                if ($response->rows < $startRow) {
+                    continue;
+                }
+                if (!$this->notEmptyArray($data)) {
+                    continue;
+                }
+
+                $response->data[] = array_combine($headers, $this->encodeArray($data));
+            }
+        } catch (Exception $ex) {
+            $this->error = _w('Error on csv processing');
+            cash()->getLogger()->error(
+                sprintf('Error on csv processing: %d - %d', $startRow, ($startRow + $rowsToRead)),
+                $ex
+            );
+        } finally {
+            fclose($handle);
+        }
 
         return $response;
     }
@@ -239,7 +296,6 @@ class cashImportCsv
             || $this->getCsvInfoDto()->totalRows < self::MAX_UNIQUENESS_LIMIT;
     }
 
-
     /**
      * @return cashCsvImportInfoDto
      */
@@ -249,11 +305,61 @@ class cashImportCsv
     }
 
     /**
+     * @param array                       $data
+     * @param cashCsvImportProcessInfoDto $infoDto
+     *
+     * @throws waException
+     */
+    public function save(array $data, cashCsvImportProcessInfoDto $infoDto)
+    {
+        $model = cash()->getModel();
+        $model->startTransaction();
+        try {
+            /** @var cashTransaction $transaction */
+            $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
+
+            $transaction
+                ->setAmount($this->getAmount($data))
+                ->setDescription($this->getDescription($data))
+                ->setDate($this->getDate($data))
+                ->setAccountId($this->getAccount($data, $infoDto))
+                ->setCategoryId(
+                    $this->getCategory(
+                        $data,
+                        $infoDto,
+                        $transaction->getAmount() < 0 ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME
+                    )
+                )
+            ;
+
+            cash()->getEntityPersister()->save($transaction);
+
+            $model->commit();
+        } catch (Exception $ex) {
+            $model->rollback();
+            $this->error = $ex->getMessage();
+            cash()->getLogger()->error('Error on transaction import save', $ex);
+        }
+    }
+
+    /**
+     * @param cashCsvImportSettings $settings
+     *
+     * @return cashImportCsv
+     */
+    public function setSettings(cashCsvImportSettings $settings)
+    {
+        $this->settings = $settings;
+
+        return $this;
+    }
+
+    /**
      * @param array $a
      *
      * @return mixed
      */
-    protected function encodeArray($a)
+    private function encodeArray($a)
     {
         if ($this->encoding && is_array($a)) {
             foreach ($a as &$v) {
@@ -269,7 +375,7 @@ class cashImportCsv
      *
      * @return bool
      */
-    protected function notEmptyArray(array $a)
+    private function notEmptyArray(array $a)
     {
         if (!$a) {
             return false;
@@ -285,5 +391,138 @@ class cashImportCsv
         }
 
         return $t;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return float
+     * @throws kmwaLogicException
+     */
+    private function getAmount(array $data)
+    {
+        $amount = 0;
+        switch ($this->settings->getAmountType()) {
+            case cashCsvImportSettings::TYPE_SINGLE:
+                $amount = (float)$data[$this->settings->getAmount()];
+                break;
+
+            case cashCsvImportSettings::TYPE_MULTI:
+                if (!empty($data[$this->settings->getIncome()])) {
+                    $amount = abs((float)$data[$this->settings->getIncome()]);
+                } elseif (!empty($data[$this->settings->getExpense()])) {
+                    $amount = -abs((float)$data[$this->settings->getExpense()]);
+                }
+                break;
+        }
+
+        if (empty($amount)) {
+            throw new kmwaLogicException('No amount in imported data');
+        }
+
+        return $amount;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return string|null
+     */
+    private function getDescription(array $data)
+    {
+        $description = null;
+        if (!empty($data[$this->settings->getDescription()])) {
+            $description = trim($data[$this->settings->getDescription()]);
+        }
+
+        return $description;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return string
+     * @throws kmwaLogicException
+     */
+    private function getDate(array $data)
+    {
+        try {
+            $date = new DateTime($data[$this->settings->getDatetime()]);
+
+            return $date->format('Y-m-d H:i:s');
+        } catch (Exception $exception) {
+            cash()->getLogger()->error($exception->getMessage(), $exception);
+            throw new kmwaLogicException('No date in imported data');
+        }
+    }
+
+    /**
+     * @param array                       $data
+     * @param cashCsvImportProcessInfoDto $infoDto
+     *
+     * @return int
+     * @throws kmwaLogicException
+     */
+    private function getAccount(array $data, cashCsvImportProcessInfoDto $infoDto)
+    {
+        $accountId = 0;
+        $accountHeader = $this->settings->getAccount();
+
+        switch ($this->settings->getAccountType()) {
+            case cashCsvImportSettings::TYPE_SINGLE:
+                if (isset($infoDto->accounts[$accountHeader])) {
+                    $accountId = $infoDto->accounts[$accountHeader]->id;
+                }
+                break;
+
+            case cashCsvImportSettings::TYPE_MULTI:
+                $accountMap = $this->settings->getAccountMap();
+                if (isset($data[$accountHeader])) {
+                    $accountId = $accountMap[$data[$accountHeader]];
+                }
+//                if (isset($accountMap[$accountHeader]) && isset($infoDto->accounts[$accountMap[$accountHeader]])) {
+//                    $accountId = $infoDto->accounts[$accountMap[$accountHeader]]->id;
+//                }
+//                break;
+        }
+
+        if (empty($accountId)) {
+            throw new kmwaLogicException('No account in imported data');
+        }
+
+        return $accountId;
+    }
+
+    /**
+     * @param array                       $data
+     * @param cashCsvImportProcessInfoDto $infoDto
+     * @param string                      $type
+     *
+     * @return int|null
+     */
+    private function getCategory(array $data, cashCsvImportProcessInfoDto $infoDto, $type = cashCategory::TYPE_INCOME)
+    {
+        $categoryId = null;
+
+        switch ($this->settings->getCategoryType()) {
+            case cashCsvImportSettings::TYPE_SINGLE:
+                if ($type === cashCategory::TYPE_INCOME) {
+                    $_catId = $this->settings->getCategoryIncome();
+                } else {
+                    $_catId = $this->settings->getCategoryExpense();
+                }
+                $categoryId = isset($infoDto->categories[$_catId]) ? $infoDto->categories[$_catId]->id : null;
+                break;
+
+            case cashCsvImportSettings::TYPE_MULTI:
+                $categoryMap = $this->settings->getCategoryMap();
+                if (isset($data[$this->settings->getCategory()])) {
+                    $categoryId = $categoryMap[$data[$this->settings->getCategory()]];
+                }
+
+                break;
+        }
+
+        return $categoryId;
     }
 }
