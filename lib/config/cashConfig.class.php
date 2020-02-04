@@ -301,6 +301,7 @@ class cashConfig extends waAppConfig
                 'kmwaLogicException',
                 'kmwaNotFoundException',
                 'kmwaNotImplementedException',
+                'kmwaRuntimeException',
             ],
             'lib/vendor/kmwa/Hydrator' => [
                 'kmwaHydratableInterface',

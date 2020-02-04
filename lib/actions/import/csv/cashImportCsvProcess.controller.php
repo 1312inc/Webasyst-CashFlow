@@ -2,16 +2,89 @@
 
 /**
  * Class cashImportCsvProcessController
+ *
+ * @todo move process to service
  */
 class cashImportCsvProcessController extends waLongActionController
 {
+    /**
+     * @var cashImportCsv
+     */
+    private $currentImport;
+
+    /**
+     * @var cashCsvImportProcessInfoDto
+     */
+    private $info;
+
+    /**
+     * @var cashCsvImportInfoDto
+     */
+    private $csvInfo;
+
+    /**
+     * @var cashCsvImportSettings
+     */
+    private $settings;
+
+    public function execute()
+    {
+        try {
+            parent::execute();
+        } catch (Exception $ex) {
+            cash()->getLogger()->error($ex->getMessage(), $ex);
+            $this->getResponse()->addHeader('Content-type', 'application/json');
+            echo json_encode(['error' => $ex->getMessage()]);
+            exit;
+        }
+    }
+
+    /**
+     * @return bool
+     * @throws kmwaLogicException
+     * @throws kmwaRuntimeException
+     */
+    protected function preInit()
+    {
+        $settings = waRequest::post('import', [], waRequest::TYPE_ARRAY);
+        if (empty($settings)) {
+            throw new kmwaRuntimeException('No settings fo import');
+        }
+
+        if (!is_array($settings)) {
+            throw new kmwaRuntimeException('No settings fo import');
+        }
+
+        $this->currentImport = cashImportCsv::createCurrent();
+        $this->settings = new cashCsvImportSettings($settings);
+        if (!$this->settings->isValid()) {
+            throw new kmwaRuntimeException($this->settings->getError());
+        }
+
+        return true;
+    }
+
     /**
      * @inheritDoc
      */
     protected function init()
     {
-        $settings = waRequest::post('import', [], waRequest::TYPE_ARRAY);
-        $this->data['settings'] = $settings;
+        $this->csvInfo = $this->currentImport->getCsvInfoDto();
+        $this->info = new cashCsvImportProcessInfoDto($this->processId);
+        $this->info->totalRows = $this->csvInfo->totalRows;
+
+        $this->info->accounts = cashDtoFromEntityFactory::fromEntities(
+            cashAccountDto::class,
+            cash()->getEntityRepository(cashAccount::class)->findAllActive()
+        );
+        $this->info->categories = cashDtoFromEntityFactory::fromEntities(
+            cashCategoryDto::class,
+            cash()->getEntityRepository(cashCategory::class)->findAllActive()
+        );
+
+        $this->data['info'] = $this->info;
+        $this->data['csv_info'] = $this->csvInfo;
+        $this->data['settings'] = $this->settings;
     }
 
     /**
@@ -19,7 +92,7 @@ class cashImportCsvProcessController extends waLongActionController
      */
     protected function isDone()
     {
-        // TODO: Implement isDone() method.
+        return $this->info->done;
     }
 
     /**
@@ -27,15 +100,22 @@ class cashImportCsvProcessController extends waLongActionController
      */
     protected function step()
     {
-        // TODO: Implement step() method.
+        $response = $this->currentImport->process($this->csvInfo->headers, $this->info->passedRows, $this->info->chunk);
+        foreach ($response->data as $datum) {
+            $this->currentImport->save($datum, $this->info);
+        }
+        $this->info->passedRows = $response->rows;
+        $this->info->done = $this->info->passedRows >= $this->info->totalRows;
+
+        return !$this->info->done;
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function finish($filename)
+    protected function restore()
     {
-        // TODO: Implement finish() method.
+        $this->info = $this->data['info'];
+        $this->csvInfo = $this->data['csv_info'];
+        $this->currentImport = cashImportCsv::createCurrent();
+        $this->currentImport->setSettings($this->data['settings']);
     }
 
     /**
@@ -43,6 +123,14 @@ class cashImportCsvProcessController extends waLongActionController
      */
     protected function info()
     {
-        // TODO: Implement info() method.
+        echo json_encode($this->data['info']);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function finish($filename)
+    {
+        $this->info();
     }
 }
