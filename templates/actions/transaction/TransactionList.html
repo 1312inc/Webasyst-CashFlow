@@ -1,5 +1,7 @@
 {** @var cashTransactionDto $t **}
 {** @var cashTransactionPageFilterDto $filter **}
+{** @var cashGraphPeriodVO $selectedChartPeriod **}
+{** @var cashGraphPeriodVO $selectedForecastPeriod **}
 <section>
 {if $upcoming}
     <tr class="white c-table-divider c-planned">
@@ -7,7 +9,7 @@
         <td colspan="7">
             <h5 class="heading">
                 [`Upcoming`]
-                <span class="hint">[`100500 months`]</span>
+                <span class="hint">{$selectedForecastPeriod->getName()}</span>
             </h5>
 
         </td>
@@ -40,7 +42,7 @@
                 <span class="c-category-total"><i class="icon16 color" style="background-color: #9800FF;"></i>Зарплаты <strong class="nowrap" style="color: #9800FF;">&minus;20000 ₽</strong></span>
                 <span class="c-category-total"><i class="icon16 color" style="background-color: #0098FF;"></i>Хостинг <strong class="nowrap" style="color: #0098FF;">&minus;5000 ₽</strong></span>
             {/capture}
-            <p>{sprintf('[`Total for the next %s (until %s):<br> %s`]', '100500 months', '50 апреля 2024', $smarty.capture._category_totals)}</p>
+            <p>{sprintf('[`Total for the next %s (until %s):<br> %s`]', {$selectedForecastPeriod->getName()}, {$selectedForecastPeriod->getDateAsString()|wa_date:humandate}, $smarty.capture._category_totals)}</p>
         </td>
     </tr>
 
@@ -51,7 +53,7 @@
         <td colspan="7">
             <h5 class="heading">
                 [`Completed`]
-                <span class="hint">[`Last 3 years`]</span>
+                <span class="hint">{$selectedChartPeriod->getName()}</span>
             </h5>
         </td>
     </tr>

@@ -59,6 +59,8 @@ class cashTransactionListAction extends cashTransactionPageAction
                 'upcoming' => $upcoming,
                 'completed' => $completed,
                 'filter' => $this->filterDto,
+                'selectedChartPeriod' => $this->periodChart,
+                'selectedForecastPeriod' => $this->periodForecast,
             ]
         );
     }

@@ -90,7 +90,7 @@
                 <div class="c-table-header">
                     {if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && (1 || FORECAST_IS_SHOWN)}
                         <div class="float-right">
-                            {sprintf('[`Cash on hand in %s`]', '100500 months')}:
+                            {sprintf('[`Cash on hand in %s`]', {$selectedForecastPeriod->getName()})}:
 
                             {foreach $onHandsEndday as $onHand}
                                 <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{$onHand->stat->summaryShorten} {$onHand->currency->getSign()}</strong>
