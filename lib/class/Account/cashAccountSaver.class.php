@@ -26,10 +26,6 @@ class cashAccountSaver extends cashEntitySaver
                 $account = cash()->getEntityFactory(cashAccount::class)->createNew();
             }
 
-            if (!empty($data['currency']) && $account->getId() && $data['currency'] !== $account->getCurrency()) {
-                throw new kmwaNotImplementedException(_w('You can not change currency for existing account yet'));
-            }
-
             if (!empty($data['icon_link']) && preg_match('~https?://.{2,225}\..{2,20}~', $data['icon_link'])) {
                 $data['icon'] = $data['icon_link'];
                 unset($data['icon_link']);
