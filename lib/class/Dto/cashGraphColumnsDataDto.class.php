@@ -203,7 +203,16 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             ],
             'grid' => [
                 'y' => ['lines' => [['value' => 0]]],
-                'x' => ['lines' => [['value' => $this->currentDate, 'text' => _w('Future')]]],
+                'x' => [
+                    'lines' => [
+                        [
+                            'value' => $this->grouping === cashGraphService::GROUP_BY_DAY
+                                ? $this->currentDate
+                                : date('Y-n', strtotime($this->currentDate)),
+                            'text' => _w('Future'),
+                        ],
+                    ],
+                ],
             ],
             'line' => ['connectNull' => true],
         ];
