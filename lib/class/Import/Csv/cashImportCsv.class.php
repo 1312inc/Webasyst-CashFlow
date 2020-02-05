@@ -309,36 +309,57 @@ final class cashImportCsv
      * @param cashCsvImportProcessInfoDto $infoDto
      *
      * @throws waException
+     * @throws kmwaLogicException
      */
     public function save(array $data, cashCsvImportProcessInfoDto $infoDto)
     {
-        $model = cash()->getModel();
-        $model->startTransaction();
-        try {
-            /** @var cashTransaction $transaction */
-            $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
 
-            $transaction
-                ->setAmount($this->getAmount($data))
-                ->setDescription($this->getDescription($data))
-                ->setDate($this->getDate($data))
-                ->setAccountId($this->getAccount($data, $infoDto))
-                ->setCategoryId(
-                    $this->getCategory(
-                        $data,
-                        $infoDto,
-                        $transaction->getAmount() < 0 ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME
-                    )
+        /** @var cashTransaction $transaction */
+        $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
+
+        $transaction
+            ->setAmount($this->getAmount($data))
+            ->setDescription($this->getDescription($data))
+            ->setDate($this->getDate($data))
+            ->setAccountId($this->getAccount($data, $infoDto))
+            ->setCategoryId(
+                $this->getCategory(
+                    $data,
+                    $infoDto,
+                    $transaction->getAmount() < 0 ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME
                 )
-            ;
+            )
+        ;
 
-            cash()->getEntityPersister()->save($transaction);
+        $alreadyExists = false;
 
-            $model->commit();
-        } catch (Exception $ex) {
-            $model->rollback();
-            $this->error = $ex->getMessage();
-            cash()->getLogger()->error('Error on transaction import save', $ex);
+        if ($this->settings->isSkipDuplicates()) {
+            $alreadyExists = $model->countByField(
+                [
+                    'account_id' => $transaction->getAccountId(),
+                    'category_id' => $transaction->getCategoryId(),
+                    'date' => $transaction->getDate(),
+                    'amount' => $transaction->getAmount(),
+                ]
+            );
+        }
+
+        if (!$alreadyExists) {
+            $model->startTransaction();
+            try {
+                cash()->getEntityPersister()->save($transaction);
+                $model->commit();
+                $infoDto->ok++;
+            } catch (Exception $ex) {
+                $model->rollback();
+                $infoDto->fail++;
+                $this->error = $ex->getMessage();
+                cash()->getLogger()->error('Error on transaction import save', $ex);
+            }
+        } else {
+            $infoDto->fail++;
         }
     }
 
