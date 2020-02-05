@@ -93,6 +93,11 @@
                         $dialogWrapper
                             .on('click', '[data-cash-action="delete-account"]', function (e) {
                                 e.preventDefault();
+
+                                if(!confirm($_('This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
+                                    return;
+                                }
+
                                 var id = $dialogWrapper.find('form input[name="account[id]"]').val();
                                 $.post(
                                     '?module=account&action=delete',
