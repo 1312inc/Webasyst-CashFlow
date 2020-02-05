@@ -20,26 +20,41 @@ abstract class kmwaWaViewAction extends waViewAction
     abstract protected function getDefaultViewVars();
 
     /**
-     * @param null $params
+     * @param bool $clear_assign
+     *
+     * @return string|void
      */
-    public function execute($params = null)
+    public function display($clear_assign = true)
     {
         try {
-            foreach ($this->getDefaultViewVars() as $key => $value) {
-                $this->view->smarty->assignGlobal($key, $value);
-            }
-
-            $this->runAction($params);
+            return parent::display($clear_assign);
         } catch (Exception $ex) {
             $this->view->assign(
                 'error',
                 [
-                    'code'    => $ex->getCode(),
+                    'code' => $ex->getCode(),
                     'message' => $ex->getMessage(),
                 ]
             );
 
-            $this->setTemplate(wa()->getAppPath('templates/include/error.html'));
+            $result = $this->view->fetch(wa()->getAppPath('templates/include/error.html'));
+            if ($clear_assign) {
+                $this->view->clearAllAssign();
+            }
+
+            return $result;
         }
+    }
+
+    /**
+     * @param null $params
+     */
+    public function execute($params = null)
+    {
+        foreach ($this->getDefaultViewVars() as $key => $value) {
+            $this->view->smarty->assignGlobal($key, $value);
+        }
+
+        $this->runAction($params);
     }
 }

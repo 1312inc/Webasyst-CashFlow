@@ -16,7 +16,8 @@ class cashBackendLocAction extends cashViewAction
 
         // Application locale strings
         $translates = [
-            'The transaction will be permanently deleted. Are you sure?'
+            'The transaction will be permanently deleted. Are you sure?',
+            'This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?',
         ];
         foreach ($translates as $s) {
             $strings[$s] = _w($s);

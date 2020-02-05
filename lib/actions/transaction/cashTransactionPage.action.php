@@ -41,15 +41,13 @@ class cashTransactionPageAction extends cashViewAction
     protected $today;
 
     /**
-     * cashTransactionPageAction constructor.
-     *
-     * @param null $params
-     *
-     * @throws Exception
+     * @throws kmwaLogicException
+     * @throws kmwaNotFoundException
+     * @throws waException
      */
-    public function __construct($params = null)
+    public function preExecute()
     {
-        parent::__construct($params);
+        parent::preExecute();
 
         $id = waRequest::get('id', 0, waRequest::TYPE_STRING_TRIM);
         $filterType = waRequest::get('filter', '', waRequest::TYPE_STRING_TRIM);

@@ -35,17 +35,17 @@ class cashAccount extends cashAbstractEntity
     /**
      * @var float
      */
-    private $currentBalance = 0.0;
+    private $current_balance = 0.0;
 
     /**
      * @var int
      */
-    private $customerContactId;
+    private $customer_contact_id;
 
     /**
      * @var int
      */
-    private $isArchived;
+    private $is_archived;
 
     /**
      * @var int
@@ -167,7 +167,7 @@ class cashAccount extends cashAbstractEntity
      */
     public function getCurrentBalance()
     {
-        return $this->currentBalance;
+        return $this->current_balance;
     }
 
     /**
@@ -177,7 +177,7 @@ class cashAccount extends cashAbstractEntity
      */
     public function setCurrentBalance($currentBalance)
     {
-        $this->currentBalance = $currentBalance;
+        $this->current_balance = $currentBalance;
 
         return $this;
     }
@@ -187,7 +187,7 @@ class cashAccount extends cashAbstractEntity
      */
     public function getCustomerContactId()
     {
-        return $this->customerContactId;
+        return $this->customer_contact_id;
     }
 
     /**
@@ -197,7 +197,7 @@ class cashAccount extends cashAbstractEntity
      */
     public function setCustomerContactId($customerContactId)
     {
-        $this->customerContactId = $customerContactId;
+        $this->customer_contact_id = $customerContactId;
 
         return $this;
     }
@@ -207,7 +207,7 @@ class cashAccount extends cashAbstractEntity
      */
     public function getIsArchived()
     {
-        return $this->isArchived;
+        return $this->is_archived;
     }
 
     /**
@@ -217,7 +217,7 @@ class cashAccount extends cashAbstractEntity
      */
     public function setIsArchived($isArchived)
     {
-        $this->isArchived = $isArchived;
+        $this->is_archived = $isArchived;
 
         return $this;
     }
