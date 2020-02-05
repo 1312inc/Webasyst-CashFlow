@@ -23,6 +23,10 @@ class cashCsvImportProcessInfoDto implements JsonSerializable
 
     public $error = '';
 
+    public $ok = 0;
+
+    public $fail = 0;
+
     /**
      * @var cashAccountDto[]
      */
@@ -56,7 +60,11 @@ class cashCsvImportProcessInfoDto implements JsonSerializable
             'processId' => $this->processId,
             'ready' => $this->done,
             'progress' => min(100, round($this->passedRows / $this->totalRows * 100)),
-            'error' => $this->error
+            'error' => $this->error,
+            'transactions' => [
+                'ok' => $this->ok,
+                'fail' => $this->fail,
+            ],
         ];
     }
 }

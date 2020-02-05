@@ -79,6 +79,11 @@ class cashCsvImportSettings
     private $error;
 
     /**
+     * @var bool
+     */
+    private $skipDuplicates = true;
+
+    /**
      * cashCsvImportSettingsDto constructor.
      *
      * @param array $request
@@ -107,6 +112,8 @@ class cashCsvImportSettings
             $this->categoryIncome = ifset($request['category']['single']['income']['column']);
             $this->categoryExpense = ifset($request['category']['single']['expense']['column']);
         }
+
+        $this->skipDuplicates = ifset($request['options']['skip_duplicates'], true);
     }
 
     /**
@@ -114,7 +121,7 @@ class cashCsvImportSettings
      */
     public function isValid()
     {
-        if (empty($this->amount)) {
+        if (empty($this->amount) && (empty($this->amountMap))) {
             $this->error = _w('No amount column');
             return false;
         }
@@ -263,5 +270,13 @@ class cashCsvImportSettings
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSkipDuplicates()
+    {
+        return $this->skipDuplicates;
     }
 }
