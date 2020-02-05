@@ -46,7 +46,9 @@ class cashAccountDialogAction extends cashViewAction
                 break;
         }
 
-        $account->setCurrency($selectedCurrency);
+        if (!$account->getId()) {
+            $account->setCurrency($selectedCurrency);
+        }
 
         $this->view->assign(
             [
