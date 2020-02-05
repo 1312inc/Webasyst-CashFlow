@@ -53,6 +53,15 @@
     </div>
 
     <div class="dialog-buttons">
+        {if $category->id}
+            <div class="float-right block half-padded">
+                <ul class="menu-h">
+                    <li>
+                        <a href="#"><i class="icon16 delete"></i>[`Delete category`]</a>
+                    </li>
+                </ul>
+            </div>
+        {/if}
         <input type="submit" value="[`Save`]" class="button green"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
         <div class="errormsg" style="display: none"></div>
     </div>

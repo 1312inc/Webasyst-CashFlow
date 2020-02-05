@@ -25,6 +25,11 @@
                                 <option value="{$currency->getCode()}" {if $account->currency->getCode() == $currency->getCode()}selected{/if}>{$currency->getCode()} - {$currency->getTitle()} ({$currency->getSign()})</option>
                             {/foreach}
                             </select>
+                            {if $account->id}
+                                <div class="hint" style="margin: 5px 0 15px;">
+                                    [`Changing currency will automatically convert all transactions to the new currency (no exchange rate will be applied).`]<br>
+                                </div>
+                            {/if}
                         </div>
                     </div>
 
@@ -54,6 +59,15 @@
     </div>
 
     <div class="dialog-buttons">
+        {if $account->id}
+            <div class="float-right block half-padded">
+                <ul class="menu-h">
+                    <li>
+                        <a href="#"><i class="icon16 delete"></i>[`Delete account`]</a>
+                    </li>
+                </ul>
+            </div>
+        {/if}
         <input type="submit" value="[`Save`]" class="button green"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
         <div class="errormsg" style="display: none"></div>
     </div>
