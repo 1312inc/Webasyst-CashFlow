@@ -90,6 +90,17 @@ class cashGraphPeriodVO implements JsonSerializable
     }
 
     /**
+     * @param DateTimeInterface|null $dateTime
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function getDateAsString(DateTimeInterface $dateTime = null)
+    {
+        return $this->getDate()->format('Y-m-d H:i:s');
+    }
+
+    /**
      * @return string
      */
     public function getName()
