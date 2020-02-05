@@ -100,12 +100,18 @@ class cashImportCsvProcessController extends waLongActionController
      */
     protected function step()
     {
+        $this->getStorage()->close();
         $response = $this->currentImport->process($this->csvInfo->headers, $this->info->passedRows, $this->info->chunk);
         foreach ($response->data as $datum) {
             $this->currentImport->save($datum, $this->info);
         }
         $this->info->passedRows = $response->rows;
         $this->info->done = $this->info->passedRows >= $this->info->totalRows;
+        $this->data['info'] = $this->info;
+
+        if ($this->remaining_exec_time < $this->max_exec_time/6) {
+            return false;
+        }
 
         return !$this->info->done;
     }
