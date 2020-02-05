@@ -279,6 +279,8 @@
             transactionCounts = {$info->totalRowsByColumn|json_encode},
             $form = $('#c-import-step-2 form');
 
+        $('#c-import-step-1').hide();
+
         var fetchColumnUniqueValues = function (name, callback) {
             $.get('?module=import&action=csvGetColumnUniqueValues', { column_name: name }, callback);
         };
