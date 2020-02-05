@@ -8,6 +8,10 @@
                 )}
             </p>
 
+            {if 0}
+                <p><i class="icon16 exclamation"></i> [`Looks like something was not properly recognized in the uploaded file. To try another encoding or a delimeter, please reload the page.`]</p>
+            {/if}
+
             <div class="c-parsed-rows">
                 <div class="c-parsed-rows-content">
                     <table class="zebra single-lined">
@@ -67,7 +71,7 @@
                                 data-cash-csv-import-conditions="account">
                             <option></option>
                             {foreach $info->headers as $header}
-                                <option{if $header == 'Валюта'} selected{/if}
+                                <option{if $header|strstr:'[`Currency`]'} selected{/if}
                                         value="{$header}">{$header|escape}</option>
                             {/foreach}
                         </select>
@@ -86,7 +90,7 @@
                     <select name="import[description]">
                         <option></option>
                         {foreach $info->headers as $header}
-                            <option value="{$header}">{$header|escape}</option>
+                            <option value="{$header}"{if $header|strstr:'[`Description`]'} selected{/if}>{$header|escape}</option>
                         {/foreach}
                     </select>
                     <i class="icon10 yes"></i>
@@ -101,7 +105,7 @@
                     <select name="import[datetime]">
                         <option></option>
                         {foreach $info->headers as $header}
-                            <option value="{$header}">{$header|escape}</option>
+                            <option value="{$header}"{if $header|strstr:'[`Date`]'} selected{/if}>{$header|escape}</option>
                         {/foreach}
                     </select>
                     <a href="#" class="inline-link hint"><b><i>DD.MM.YYYY</i></b></a> <i class="icon10 yes"></i>
@@ -120,7 +124,7 @@
                         <select name="import[amount][single][column]">
                             <option></option>
                             {foreach $info->headers as $header}
-                                <option value="{$header}">{$header|escape}</option>
+                                <option value="{$header}"{if $header|strstr:'[`Amount`]'} selected{/if}>{$header|escape}</option>
                             {/foreach}
                         </select>
                     </label>
@@ -138,7 +142,7 @@
                                     <select name="import[amount][multi][map][income]">
                                         <option></option>
                                         {foreach $info->headers as $header}
-                                            <option value="{$header}">{$header|escape}</option>
+                                            <option value="{$header}"{if $header|strstr:'[`Income`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
                                 </td>
@@ -147,7 +151,7 @@
                                     <select name="import[amount][multi][map][expense]">
                                         <option></option>
                                         {foreach $info->headers as $header}
-                                            <option value="{$header}">{$header|escape}</option>
+                                            <option value="{$header}"{if $header|strstr:'[`Expense`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
                                 </td>
