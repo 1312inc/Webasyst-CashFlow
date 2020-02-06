@@ -205,11 +205,11 @@ class cashGraphService
                 // grouping by currency
                 $graphData->groups[$dateDatum['currency']] = ifset(
                     $graphData->groups[$dateDatum['currency']],
-                    []
+                    ['credit' => [], 'debit' => []]
                 );
 
-                if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']])) {
-                    $graphData->groups[$dateDatum['currency']][] = $dateDatum['hash'];
+                if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']][$dateDatum['cd']])) {
+                    $graphData->groups[$dateDatum['currency']][$dateDatum['cd']][] = $dateDatum['hash'];
                     $graphData->categories[$dateDatum['hash']] = [
                         'id' => $dateDatum['category_id'],
                         'currency' => $dateDatum['currency'],
@@ -258,11 +258,14 @@ class cashGraphService
                 // grouping by currency
                 $graphData->groups[$dateDatum['currency']] = ifset(
                     $graphData->groups[$dateDatum['currency']],
-                    []
+                    [
+                        'credit' => [],
+                        'debit' => [],
+                    ]
                 );
 
-                if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']])) {
-                    $graphData->groups[$dateDatum['currency']][] = $dateDatum['hash'];
+                if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']][$dateDatum['cd']])) {
+                    $graphData->groups[$dateDatum['currency']][$dateDatum['cd']][] = $dateDatum['hash'];
                     $graphData->categories[$dateDatum['hash']] = [
                         'id' => $dateDatum['category_id'],
                         'currency' => $dateDatum['currency'],
