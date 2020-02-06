@@ -33,7 +33,10 @@
     <script>
         'use strict';
         $(function() {
-            $.cash.init();
+            $.cash.init({
+                isAdmin: {$isAdmin},
+                userId: {$userId}
+            });
             $.cash_routing.init();
         });
     </script>

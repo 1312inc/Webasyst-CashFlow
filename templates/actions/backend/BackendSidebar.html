@@ -8,7 +8,7 @@
 <div class="sidebar left200px">
     <div class="block">
 
-        <ul class="menu-v with-icons">
+        <ul class="menu-v with-icons" id="c-accounts-sidebar" data-sortable-type="account">
             {if count($accounts) > 1}
                 <li class="bottom-padded selected">
                     <a href="#" class="bold">
@@ -20,7 +20,7 @@
 
             {** @var cashAccountDto $account **}
             {foreach $accounts as $account}
-                <li>
+                <li data-id="{$account->id}">
                     <a href="#/account/{$account->id}">
                         <span class="count">{$account->stat->summaryShorten} {$account->currency->getSign()}</span>
                         <i class="icon16 {$account->icon}"
@@ -43,10 +43,10 @@
                 <!-- <a href="#" class="count"><i class="icon16 add"></i></a> -->
                 [`Income`]
             </h5>
-            <ul class="menu-v with-icons">
+            <ul class="menu-v with-icons" id="c-income-sidebar" data-sortable-type="category">
                 {** @var cashCategoryDto $income **}
                 {foreach $incomes as $income}
-                <li>
+                <li data-id="{$income->id}">
                     <a href="#/category/{$income->slug}"><i class="icon16 color" style="background: {$income->color|default:'#47ce6f'};"></i>{$income->name|escape}</a>
                 </li>
                 {/foreach}
@@ -59,10 +59,10 @@
                 <!-- <a href="#" class="count"><i class="icon16 add"></i></a> -->
                 [`Expenses`]
             </h5>
-            <ul class="menu-v with-icons">
+            <ul class="menu-v with-icons" id="c-expense-sidebar" data-sortable-type="category">
                 {** @var cashCategoryDto $expense **}
                 {foreach $expenses as $expense}
-                <li>
+                <li data-id="{$expense->id}">
                     <a href="#/category/{$expense->slug}"><i class="icon16 color" style="background: {$expense->color|default:'#f56b68'};"></i>{$expense->name|escape}</a>
                 </li>
                 {/foreach}
