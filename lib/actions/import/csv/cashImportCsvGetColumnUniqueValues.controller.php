@@ -17,7 +17,7 @@ class cashImportCsvGetColumnUniqueValuesController extends cashJsonController
             $this->response = $csvImport->getColumnUniqueValues($columnName);
 
             if (!$csvImport->canBeColumnWithUniqueValues(count($this->response))) {
-                $this->errors[] = _w('This column has too many unique values');
+                $this->errors[] = _w('This column has too many unique values') . ' (' . count($this->response) . ')';
             }
 
             if (empty($this->response)) {
