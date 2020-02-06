@@ -63,4 +63,34 @@ class cashAccountSaver extends cashEntitySaver
 
         return true;
     }
+
+    /**
+     * @param array $order
+     *
+     * @return bool
+     */
+    public function sort(array $order)
+    {
+        try {
+            $accounts = cash()->getModel(cashAccount::class)
+                ->select('*')
+                ->where('id in (i:ids)', ['ids' => $order])
+                ->fetchAll('id');
+            $i = 0;
+            foreach ($order as $accountId) {
+                if (!isset($accounts[$accountId])) {
+                    continue;
+                }
+
+                $accounts[$accountId]['sort'] = $i++;
+                $this->save($accounts[$accountId]);
+            }
+
+            return true;
+        } catch (Exception $exception) {
+            $this->error = $exception->getMessage();
+        }
+
+        return false;
+    }
 }

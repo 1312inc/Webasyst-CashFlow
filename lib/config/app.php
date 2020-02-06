@@ -8,5 +8,7 @@ return array (
   ),
   'version' => '1.0.0',
   'vendor' => '1021997',
-  'plugins' => false,
+    'rights'         => true,
+  'plugins' => true,
+    'sash_color'     => '#58a8f8',
 );

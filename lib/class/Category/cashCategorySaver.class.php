@@ -66,4 +66,34 @@ class cashCategorySaver extends cashEntitySaver
 
         return true;
     }
+
+    /**
+     * @param array $order
+     *
+     * @return bool
+     */
+    public function sort(array $order)
+    {
+        try {
+            $categories = cash()->getModel(cashCategory::class)
+                ->select('*')
+                ->where('id in (i:ids)', ['ids' => $order])
+                ->fetchAll('id');
+            $i = 0;
+            foreach ($order as $categoryId) {
+                if (!isset($categories[$categoryId])) {
+                    continue;
+                }
+
+                $categories[$categoryId]['sort'] = $i++;
+                $this->save($categories[$categoryId]);
+            }
+
+            return true;
+        } catch (Exception $exception) {
+            $this->error = $exception->getMessage();
+        }
+
+        return false;
+    }
 }

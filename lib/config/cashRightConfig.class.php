@@ -5,12 +5,11 @@
  */
 class cashRightConfig extends waRightConfig
 {
-    const ADD_TRANSACTION_ONLY = 1;
-    const FULL_ACCESS          = 2;
-    const CAN_ACCESS_ACCOUNT   = 'can_access_account';
+    const CAN_ACCESS_ACCOUNT = 'can_access_account';
 
-    const RIGHT_CAN    = 1;
-    const RIGHT_CANNOT = 0;
+    const RIGHT_FULL_ACCESS          = 99;
+    const RIGHT_ADD_TRANSACTION_ONLY = 1;
+    const RIGHT_NONE                 = 0;
 
     /**
      * @var int
@@ -58,41 +57,26 @@ class cashRightConfig extends waRightConfig
      */
     public function init()
     {
+        $items = [];
+        /** @var cashAccount $account */
+        foreach (cash()->getEntityRepository(cashAccount::class)->findAll() as $account) {
+            $items[$account->getId()] = $account->getName();
+        }
+
         $this->addItem(
             self::CAN_ACCESS_ACCOUNT,
-            _w('Accounts'),
-            'always_enabled'
+            _w('Can access account'),
+            'selectlist',
+            [
+                'items' => $items,
+                'position' => 'right',
+                'options' => [
+                    self::RIGHT_NONE => _w('No access'),
+                    self::RIGHT_ADD_TRANSACTION_ONLY => _w('Add transactions only'),
+                    self::RIGHT_FULL_ACCESS => _w('Full access'),
+                ],
+            ]
         );
-
-        $items = [];
-        /** @var cashUser $user */
-//        foreach (cash()->getEntityRepository(cashUser::class)->findAll() as $user) {
-//            if ($user->getContact()->getId() == $this->userId) {
-//                continue;
-//            }
-//
-//            $items[$user->getContactId()] = $user->getContact()->getName();
-//        }
-//
-//        $this->addItem(
-//            self::CAN_SEE_TEAMMATES,
-//            _w('Can see teammates'),
-//            'list',
-//            ['items' => $items, 'hint1' => 'all_checkbox']
-//        );
-//
-//        $items = [];
-//        /** @var cashUser $user */
-//        foreach (cash()->getEntityRepository(cashProject::class)->findAll() as $project) {
-//            $items[$project->getId()] = $project->getName();
-//        }
-//
-//        $this->addItem(
-//            self::CAN_SEE_CONTRIBUTE_TO_PROJECTS,
-//            _w('Can see & contribute to projects'),
-//            'list',
-//            ['items' => $items, 'hint1' => 'all_checkbox']
-//        );
 
         /**
          * @event rights.config
@@ -112,8 +96,28 @@ class cashRightConfig extends waRightConfig
     public function getDefaultRights($contact_id)
     {
         return [
-            self::CAN_ACCESS_ACCOUNT => self::RIGHT_CANNOT,
+            self::CAN_ACCESS_ACCOUNT => self::RIGHT_NONE,
         ];
+    }
+
+    /**
+     * @param int      $right
+     * @param int|null $userId
+     *
+     * @return bool
+     * @throws waException
+     */
+    public function userCan($right, $userId = null)
+    {
+        if (!$userId) {
+            $userId = wa()->getUser()->getId();
+        }
+
+        if ($this->isAdmin($userId)) {
+            return true;
+        }
+
+        return in_array($this->accesses[$userId][$right]);
     }
 
     /**
@@ -125,7 +129,7 @@ class cashRightConfig extends waRightConfig
     }
 
     /**
-     * @param int|cashUser|null $user
+     * @param int|null $user
      *
      * @return bool
      * @throws waException
@@ -145,7 +149,7 @@ class cashRightConfig extends waRightConfig
     }
 
     /**
-     * @param int|cashUser|null $user
+     * @param int|null $user
      *
      * @return bool
      * @throws waException
@@ -155,9 +159,6 @@ class cashRightConfig extends waRightConfig
         if ($user === null) {
             $user = wa()->getUser()->getId();
         }
-//        if ($user instanceof cashUser) {
-//            $user = $user->getContactId();
-//        }
 
         $this->loadRightsForContactId($user);
 

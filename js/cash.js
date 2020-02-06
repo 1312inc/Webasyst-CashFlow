@@ -73,6 +73,9 @@
             self.$sidebar = $('#cash-left-sidebar');
 
             self.handlers();
+            if (self.options.isAdmin) {
+                self.sortable();
+            }
         },
         handlers: function () {
             var self = this;
@@ -222,6 +225,56 @@
                     }
                 });
             })
+        },
+        sortable: function () {
+            var self = this;
+
+            self.$sidebar.find('[data-sortable-type]').sortable({
+                item: 'li[data-id]',
+                distance: 5,
+                placeholder: 'pl-list-placeholder',
+                opacity: 0.75,
+                appendTo: 'body',
+                tolerance: 'pointer',
+                classes: {
+                    'ui-sortable-helper': 'shadowed'
+                },
+                start: function (e, ui) {
+                    ui.placeholder.height(ui.helper.outerHeight());
+                },
+                stop: function (event, ui) {
+                    var $wrapper = ui.item.closest('[data-sortable-type]'),
+                        type = $wrapper.data('sortable-type');
+
+                    var getIds = function () {
+                        var data = [];
+                        $wrapper.find('li').each(function (i) {
+                            var $this = $(this);
+                            // color = $this.attr('class').match(/pl-(.*)/);
+                            data.push($this.data('id'));
+                        });
+                        return data;
+                    };
+
+                    var updateSort = function () {
+                        $.post(
+                            '?module='+type+'&action=sort',
+                            {
+                                data: getIds()
+                            },
+                            function (r) {
+                                if (r.status === 'ok') {
+                                } else {
+                                    alert(r.errors);
+                                }
+                            },
+                            'json'
+                        );
+                    };
+
+                    updateSort();
+                }
+            });
         }
     }
 }(jQuery));
