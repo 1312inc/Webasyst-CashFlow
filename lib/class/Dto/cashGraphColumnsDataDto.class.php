@@ -191,7 +191,15 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 'line' => ['connectNull' => true],
                 'bar' => ['width' => ['ratio' => 0.2]],
                 'types' => $this->types,
-                'groups' => array_values($this->groups),
+                'groups' => array_filter(
+                    array_reduce(
+                        $this->groups,
+                        function ($groups, $items) {
+                            return array_merge($groups, array_values($items));
+                        },
+                        []
+                    )
+                ),
                 'regions' => $regions,
                 'colors' => $colors,
                 'names' => $names,

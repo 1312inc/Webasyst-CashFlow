@@ -105,13 +105,14 @@ SQL;
         $sql = <<<SQL
 select ca.currency,
        concat(ca.currency,'_',ifnull(ct.category_id,0)) hash,
+       if(ct.amount < 0, 'credit', 'debit') cd,
        ct.date,
        ct.category_id category_id,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate %s
-group by ct.date, ca.currency, ct.category_id
+group by ct.date, ca.currency, ct.category_id, if(ct.amount < 0, 'credit', 'debit')
 order by ct.date
 SQL;
 
@@ -135,13 +136,14 @@ SQL;
         $sql = <<<SQL
 select ca.currency,
        concat(ca.currency,'_',ifnull(ct.category_id,0)) hash,
+       if(ct.amount < 0, 'credit', 'debit') cd,
        ct.date,
        ct.category_id,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate %s
-group by ct.date, ca.currency, ct.category_id
+group by ct.date, ca.currency, ct.category_id, if(ct.amount < 0, 'credit', 'debit')
 order by ct.date
 SQL;
 
@@ -228,12 +230,13 @@ SQL;
 select ca.currency,
        concat(ca.currency,'_',ifnull(ct.category_id,0)) hash,
        concat(YEAR(ct.date), '-', MONTH(ct.date)) date,
+       if(ct.amount < 0, 'credit', 'debit') cd,
        ct.category_id category_id,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate %s
-group by YEAR(ct.date), MONTH(ct.date), ca.currency, ct.category_id
+group by YEAR(ct.date), MONTH(ct.date), ca.currency, ct.category_id, if(ct.amount < 0, 'credit', 'debit')
 order by YEAR(ct.date), MONTH(ct.date)
 SQL;
 
@@ -253,12 +256,13 @@ SQL;
 select ca.currency,
        concat(ca.currency,'_',ifnull(ct.category_id,0)) hash,
        concat(YEAR(ct.date), '-', MONTH(ct.date)) date,
+       if(ct.amount < 0, 'credit', 'debit') cd,
        ct.category_id,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate %s
-group by YEAR(ct.date), MONTH(ct.date), ca.currency, ct.category_id
+group by YEAR(ct.date), MONTH(ct.date), ca.currency, ct.category_id, if(ct.amount < 0, 'credit', 'debit')
 order by YEAR(ct.date), MONTH(ct.date)
 SQL;
 
