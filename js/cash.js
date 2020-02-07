@@ -63,7 +63,8 @@
             $.get('?module=backend&action=sidebar', function (html) {
                 $.cash.$sidebar.html(html);
                 $.cash.highlightSidebar();
-            })
+                $.cash.sortable();
+            });
         },
         init: function (o) {
             var self = this;
@@ -73,9 +74,7 @@
             self.$sidebar = $('#cash-left-sidebar');
 
             self.handlers();
-            if (self.options.isAdmin) {
-                self.sortable();
-            }
+            self.sortable();
         },
         handlers: function () {
             var self = this;
@@ -228,9 +227,12 @@
         },
         sortable: function () {
             var self = this;
+            if (!self.options.isAdmin) {
+                return;
+            }
 
             self.$sidebar.find('[data-sortable-type]').sortable({
-                item: 'li[data-id]',
+                item: '[data-id]',
                 distance: 5,
                 placeholder: 'pl-list-placeholder',
                 opacity: 0.75,

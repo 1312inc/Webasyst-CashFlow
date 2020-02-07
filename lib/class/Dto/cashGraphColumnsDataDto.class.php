@@ -229,6 +229,18 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             $data['axis']['x']['tick'] = ['count' => 30, 'format' => '%Y-%m-%d'];
         }
 
+        if ($this->lines) {
+            $data['data']['axes'] = [];
+            foreach ($this->types as $name => $type) {
+                if ($type === 'bar') {
+                    $data['data']['axes'][$name] = 'y';
+                } else {
+                    $data['data']['axes'][$name] = 'y2';
+                    $data['axis']['y2'] = ['show' => true];
+                }
+            }
+        }
+
         return $data;
     }
 }
