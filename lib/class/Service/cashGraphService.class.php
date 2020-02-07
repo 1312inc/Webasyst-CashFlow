@@ -161,10 +161,6 @@ class cashGraphService
             $startDate = (new DateTime($dateBounds['startDate']))->modify('-1 day');
         }
 
-        if (!empty($dateBounds['endDate'])) {
-            $endDate = (new DateTime($dateBounds['endDate']))->modify('+1 day');
-        }
-
         return new cashGraphColumnsDataDto($startDate, $endDate, $filterDto, $this->determineGroup($startDate));
     }
 

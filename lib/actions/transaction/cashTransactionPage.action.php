@@ -6,12 +6,12 @@
 class cashTransactionPageAction extends cashViewAction
 {
     /**
-     * @var string
+     * @var DateTime
      */
     protected $startDate;
 
     /**
-     * @var string
+     * @var DateTime
      */
     protected $endDate;
 
@@ -44,6 +44,7 @@ class cashTransactionPageAction extends cashViewAction
      * @throws kmwaLogicException
      * @throws kmwaNotFoundException
      * @throws waException
+     * @throws kmwaForbiddenException
      */
     public function preExecute()
     {
