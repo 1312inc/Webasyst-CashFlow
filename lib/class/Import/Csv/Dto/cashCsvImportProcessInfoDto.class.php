@@ -38,13 +38,20 @@ class cashCsvImportProcessInfoDto implements JsonSerializable
     public $categories = [];
 
     /**
+     * @var int
+     */
+    public $importId;
+
+    /**
      * cashCsvImportProcessInfoDto constructor.
      *
-     * @param $processId
+     * @param string $processId
+     * @param int    $importId
      */
-    public function __construct($processId)
+    public function __construct($processId, $importId)
     {
         $this->processId = $processId;
+        $this->importId = $importId;
     }
 
     /**
@@ -65,6 +72,7 @@ class cashCsvImportProcessInfoDto implements JsonSerializable
                 'ok' => $this->ok,
                 'fail' => $this->fail,
             ],
+            'import_id' => $this->importId,
         ];
     }
 }

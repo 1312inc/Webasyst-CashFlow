@@ -53,14 +53,9 @@ class cashTransaction extends cashAbstractEntity
     private $create_contact_id;
 
     /**
-     * @var string
+     * @var int|null
      */
-    private $create_datetime;
-
-    /**
-     * @var string|null
-     */
-    private $update_datetime;
+    private $import_id;
 
     /**
      * @var cashCategory|null
@@ -253,46 +248,6 @@ class cashTransaction extends cashAbstractEntity
     }
 
     /**
-     * @return string
-     */
-    public function getCreateDatetime()
-    {
-        return $this->create_datetime;
-    }
-
-    /**
-     * @param string $createDatetime
-     *
-     * @return cashTransaction
-     */
-    public function setCreateDatetime($createDatetime)
-    {
-        $this->create_datetime = $createDatetime;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getUpdateDatetime()
-    {
-        return $this->update_datetime;
-    }
-
-    /**
-     * @param string|null $updateDatetime
-     *
-     * @return cashTransaction
-     */
-    public function setUpdateDatetime($updateDatetime)
-    {
-        $this->update_datetime = $updateDatetime;
-
-        return $this;
-    }
-
-    /**
      * @return bool
      */
     public function beforeSave()
@@ -359,6 +314,26 @@ class cashTransaction extends cashAbstractEntity
     {
         $this->account = $account;
         $this->account_id = $account->getId();
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getImportId()
+    {
+        return $this->import_id;
+    }
+
+    /**
+     * @param int $importId
+     *
+     * @return cashTransaction
+     */
+    public function setImportId($importId)
+    {
+        $this->import_id = $importId;
 
         return $this;
     }

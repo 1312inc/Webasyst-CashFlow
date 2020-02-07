@@ -3,7 +3,7 @@
 /**
  * Class cashCsvImportSettings
  */
-class cashCsvImportSettings
+class cashCsvImportSettings implements JsonSerializable
 {
     const TYPE_SINGLE = 1;
     const TYPE_MULTI  = 2;
@@ -278,5 +278,13 @@ class cashCsvImportSettings
     public function isSkipDuplicates()
     {
         return $this->skipDuplicates;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 }

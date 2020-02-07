@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class cashCheckinFactory
+ * Class cashAccountFactory
  */
 class cashAccountFactory extends cashBaseFactory
 {

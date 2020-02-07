@@ -30,6 +30,17 @@ return array(
             'cash_category_slug_uindex' => array('slug', 'unique' => 1),
         ),
     ),
+    'cash_import' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'filename' => array('varchar', 255),
+        'settings' => array('text'),
+        'params' => array('text'),
+        'create_datetime' => array('datetime', 'null' => 0),
+        'update_datetime' => array('datetime'),
+        ':keys' => array(
+            'PRIMARY' => 'id',
+        ),
+    ),
     'cash_transaction' => array(
         'id' => array('bigint', 20, 'null' => 0, 'autoincrement' => 1),
         'date' => array('date', 'null' => 0),
@@ -42,6 +53,7 @@ return array(
         'create_contact_id' => array('int', 11, 'null' => 0),
         'create_datetime' => array('datetime', 'null' => 0),
         'update_datetime' => array('datetime'),
+        'import_id' => array('varchar', 100),
         ':keys' => array(
             'PRIMARY' => 'id',
             'cash_transaction_category_id_index' => 'category_id',
