@@ -333,6 +333,16 @@ final class cashImportCsv
             )
         ;
 
+        $selectedCategory = $transaction->getCategoryId();
+        if ($selectedCategory) {
+            $amount = abs($transaction->getAmount());
+            if ($infoDto->categories[$selectedCategory]->type === cashCategory::TYPE_EXPENSE) {
+                $transaction->setAmount(-$amount);
+            } else {
+                $transaction->setAmount($amount);
+            }
+        }
+
         $alreadyExists = false;
 
         if ($this->settings->isSkipDuplicates()) {
