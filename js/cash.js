@@ -66,6 +66,16 @@
                 $.cash.sortable();
             });
         },
+        throttle: function(fn, wait) {
+            var time = Date.now(),
+                wait = wait || 300;
+            return function() {
+                if ((time + wait - Date.now()) < 0) {
+                    fn();
+                    time = Date.now();
+                }
+            }
+        },
         init: function (o) {
             var self = this;
             self.options = $.extend({}, self.defaults, o);
@@ -75,6 +85,15 @@
 
             self.handlers();
             self.sortable();
+
+            $.fn.isInViewport = function() {
+                var elementTop = $(this).offset().top,
+                    elementBottom = elementTop + $(this).outerHeight(),
+                    viewportTop = $(window).scrollTop(),
+                    viewportBottom = viewportTop + $(window).height();
+
+                return elementBottom > viewportTop && elementTop < viewportBottom;
+            };
         },
         handlers: function () {
             var self = this;
