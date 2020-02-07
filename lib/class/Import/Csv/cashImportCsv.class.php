@@ -7,7 +7,7 @@ final class cashImportCsv
 {
     const DEFAULT_ENCODING       = 'utf-8';
     const DEFAULT_DELIMITER      = ';';
-    const MAX_UNIQUENESS_DIVIDER = 3;
+    const MAX_UNIQUENESS_DIVIDER = 4;
     const MAX_UNIQUENESS_LIMIT   = 200;
     const FIRST_ROWS             = 100;
     const MAX_ROWS_TO_READ       = 100500;
@@ -292,8 +292,8 @@ final class cashImportCsv
      */
     public function canBeColumnWithUniqueValues($count)
     {
-        return (int)$count < $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_LIMIT
-            || $this->getCsvInfoDto()->totalRows < self::MAX_UNIQUENESS_LIMIT;
+        return (int)$count <= $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER
+            || ((int)$count > $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER && $this->getCsvInfoDto()->totalRows < self::MAX_UNIQUENESS_LIMIT);
     }
 
     /**
