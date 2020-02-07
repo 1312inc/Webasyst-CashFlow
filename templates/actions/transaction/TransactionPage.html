@@ -310,8 +310,6 @@
                     'filter': filterType
                 }, function (r) {
                     if (r.status === 'ok') {
-                        console.log(r.data);
-
                         var chart = c3.generate({
                             bindto: '#cash-chart',
                             data: r.data.data,
