@@ -45,7 +45,7 @@ class cashAccount extends cashAbstractEntity
     /**
      * @var int
      */
-    private $is_archived;
+    private $is_archived = 0;
 
     /**
      * @var int
