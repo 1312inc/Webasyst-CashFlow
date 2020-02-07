@@ -232,7 +232,7 @@
             }
 
             self.$sidebar.find('[data-sortable-type]').sortable({
-                item: '[data-id]',
+                items: '[data-id]',
                 distance: 5,
                 placeholder: 'pl-list-placeholder',
                 opacity: 0.75,
