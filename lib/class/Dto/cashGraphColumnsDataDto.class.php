@@ -210,19 +210,22 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             ],
             'grid' => [
                 'y' => ['lines' => [['value' => 0]]],
-                'x' => [
-                    'lines' => [
-                        [
-                            'value' => $this->grouping === cashGraphService::GROUP_BY_DAY
-                                ? $this->currentDate
-                                : date('Y-n', strtotime($this->currentDate)),
-                            'text' => _w('Future'),
-                        ],
-                    ],
-                ],
             ],
             'line' => ['connectNull' => true],
         ];
+
+        if ($this->endDate > $this->currentDate) {
+            $data['grid']['x'] = [
+                'lines' => [
+                    [
+                        'value' => $this->grouping === cashGraphService::GROUP_BY_DAY
+                            ? $this->currentDate
+                            : date('Y-n', strtotime($this->currentDate)),
+                        'text' => _w('Future'),
+                    ],
+                ],
+            ];
+        }
 
         if ($this->grouping === cashGraphService::GROUP_BY_DAY) {
             $data['axis']['x']['tick'] = ['count' => 30, 'format' => '%Y-%m-%d'];
