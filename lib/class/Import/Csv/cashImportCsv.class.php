@@ -331,6 +331,7 @@ final class cashImportCsv
                     $transaction->getAmount() < 0 ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME
                 )
             )
+            ->setImportId($infoDto->importId)
         ;
 
         $selectedCategory = $transaction->getCategoryId();

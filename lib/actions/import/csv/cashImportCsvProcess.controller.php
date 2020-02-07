@@ -27,6 +27,11 @@ class cashImportCsvProcessController extends waLongActionController
      */
     private $settings;
 
+    /**
+     * @var int
+     */
+    private $importId;
+
     public function execute()
     {
         try {
@@ -43,6 +48,7 @@ class cashImportCsvProcessController extends waLongActionController
      * @return bool
      * @throws kmwaLogicException
      * @throws kmwaRuntimeException
+     * @throws waException
      */
     protected function preInit()
     {
@@ -61,6 +67,13 @@ class cashImportCsvProcessController extends waLongActionController
             throw new kmwaRuntimeException($this->settings->getError());
         }
 
+        $import = cash()->getEntityFactory(cashImport::class)->createNewWithData([
+            'settings' => json_encode($this->settings, JSON_UNESCAPED_UNICODE),
+            'filename' => (new SplFileInfo($this->currentImport->getCsvInfoDto()->path))->getFilename(),
+        ]);
+        cash()->getEntityPersister()->save($import);
+        $this->importId = $import->getId();
+
         return true;
     }
 
@@ -70,7 +83,7 @@ class cashImportCsvProcessController extends waLongActionController
     protected function init()
     {
         $this->csvInfo = $this->currentImport->getCsvInfoDto();
-        $this->info = new cashCsvImportProcessInfoDto($this->processId);
+        $this->info = new cashCsvImportProcessInfoDto($this->processId, $this->importId);
         $this->info->totalRows = $this->csvInfo->totalRows;
 
         $this->info->accounts = cashDtoFromEntityFactory::fromEntities(
@@ -100,7 +113,6 @@ class cashImportCsvProcessController extends waLongActionController
      */
     protected function step()
     {
-        $this->getStorage()->close();
         $response = $this->currentImport->process($this->csvInfo->headers, $this->info->passedRows, $this->info->chunk);
         foreach ($response->data as $datum) {
             $this->currentImport->save($datum, $this->info);

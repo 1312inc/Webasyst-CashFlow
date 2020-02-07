@@ -42,16 +42,6 @@ class cashCategory extends cashAbstractEntity
     private $sort;
 
     /**
-     * @var string
-     */
-    private $create_datetime;
-
-    /**
-     * @var string|null
-     */
-    private $update_datetime;
-
-    /**
      * @return int
      */
     public function getId()
@@ -171,46 +161,6 @@ class cashCategory extends cashAbstractEntity
     public function setSort($sort)
     {
         $this->sort = $sort;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreateDatetime()
-    {
-        return $this->create_datetime;
-    }
-
-    /**
-     * @param string $createDatetime
-     *
-     * @return cashCategory
-     */
-    public function setCreateDatetime($createDatetime)
-    {
-        $this->create_datetime = $createDatetime;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getUpdateDatetime()
-    {
-        return $this->update_datetime;
-    }
-
-    /**
-     * @param string|null $updateDatetime
-     *
-     * @return cashCategory
-     */
-    public function setUpdateDatetime($updateDatetime)
-    {
-        $this->update_datetime = $updateDatetime;
 
         return $this;
     }
