@@ -87,4 +87,18 @@ class cashAccountDto extends cashAbstractDto
             $this->name = _w('New account');
         }
     }
+
+    /**
+     * @param cashAccount $account
+     *
+     * @return static
+     */
+    public static function fromEntity(cashAccount $account)
+    {
+        /** @var static $dto */
+        $dto = cashDtoFromEntityFactory::fromEntity(__CLASS__, $account);
+        $dto->currency = cashCurrencyVO::fromWaCurrency($account->getCurrency());
+
+        return $dto;
+    }
 }

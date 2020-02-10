@@ -13,6 +13,7 @@ class cashTransactionListAction extends cashTransactionPageAction
         $dtoAssembler = new cashTransactionDtoAssembler();
         $tomorrow = new DateTime('tomorrow');
         $upcoming = $completed = [];
+        $calcService = new cashCalculationService();
 
         switch ($this->filterDto->type) {
             case cashTransactionPageFilterDto::FILTER_ACCOUNT:
@@ -54,6 +55,9 @@ class cashTransactionListAction extends cashTransactionPageAction
                 break;
         }
 
+        $upcomingOnDate = $calcService->getOnHandDetailedCategories($tomorrow, $this->endDate, $this->filterDto->entity);
+        $completedOnDate = $calcService->getOnHandDetailedCategories($this->startDate, $this->today, $this->filterDto->entity);
+
         $this->view->assign(
             [
                 'upcoming' => $upcoming,
@@ -61,6 +65,8 @@ class cashTransactionListAction extends cashTransactionPageAction
                 'filter' => $this->filterDto,
                 'selectedChartPeriod' => $this->periodChart,
                 'selectedForecastPeriod' => $this->periodForecast,
+                'upcomingOnDate' => $upcomingOnDate,
+                'completedOnDate' => $completedOnDate,
             ]
         );
     }

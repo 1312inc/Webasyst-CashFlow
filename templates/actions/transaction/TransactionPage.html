@@ -158,17 +158,6 @@
                 <br>
             </div>
 
-            <p class="align-center gray">
-                Total income: <b>
-                {foreach $onHandsTotal as $onHand}
-                    {$onHand->stat->incomeShorten} {$onHand->currency->getSign()}{if !$onHand@last} +{/if}
-                {/foreach} </b> /
-                Total expense: <b>
-                {foreach $onHandsTotal as $onHand}
-                    {$onHand->stat->expenseShorten} {$onHand->currency->getSign()}{if !$onHand@last} +{/if}
-                {/foreach} </b>
-            </p>
-
         </div>
     </div>
 </div>

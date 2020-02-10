@@ -2,6 +2,8 @@
 {** @var cashTransactionPageFilterDto $filter **}
 {** @var cashGraphPeriodVO $selectedChartPeriod **}
 {** @var cashGraphPeriodVO $selectedForecastPeriod **}
+{** @var cashStatCategoryDetailedDto $completedOnDate **}
+{** @var cashStatCategoryDetailedDto $upcomingOnDate **}
 <section>
 {if $upcoming}
     <tr class="white c-table-divider c-planned">
@@ -35,16 +37,21 @@
         </tr>
     {/foreach}
 
+    {if $upcomingOnDate}
     <tr class="white c-planned c-totals">
         <td colspan="7" class="align-center">
-            {capture "_category_totals"}
-                <span class="c-category-total"><i class="icon16 color" style="background-color: #FF9800;"></i>Продажи <strong class="nowrap" style="color: #FF9800;">9900 ₽</strong> + <strong class="nowrap" style="color: #FF9800;">100 $</strong></span>
-                <span class="c-category-total"><i class="icon16 color" style="background-color: #9800FF;"></i>Зарплаты <strong class="nowrap" style="color: #9800FF;">&minus;20000 ₽</strong></span>
-                <span class="c-category-total"><i class="icon16 color" style="background-color: #0098FF;"></i>Хостинг <strong class="nowrap" style="color: #0098FF;">&minus;5000 ₽</strong></span>
-            {/capture}
-            <p>{sprintf('[`Total for the next %s (until %s):<br> %s`]', {$selectedForecastPeriod->getName()}, {$selectedForecastPeriod->getDateAsString()|wa_date:humandate}, $smarty.capture._category_totals)}</p>
+            <p>{sprintf('[`Total for the next %s (until %s):`]', {$selectedForecastPeriod->getName()}, {$selectedForecastPeriod->getDateAsString()|wa_date:humandate})}</p>
+            {foreach $upcomingOnDate as $onDateStat}
+            <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
+                {foreach $onDateStat->stat as $statOnDate}
+                <strong class="nowrap" style="color: {$onDateStat->category->color};">{$statOnDate->stat->summaryShorten} {$statOnDate->currency->getSign()}</strong>
+                {if !$statOnDate@last}+{/if}
+                {/foreach}
+            </span>
+            {/foreach}
         </td>
     </tr>
+    {/if}
 
 {/if}
 {if $completed}
@@ -77,14 +84,20 @@
             <td><span class="nowrap">{$t->account->name|escape}</span></td>
         </tr>
     {/foreach}
+
+    {if $completedOnDate}
     <tr class="white c-totals">
         <td colspan="7" class="align-center">
-            {capture "_category_totals"}
-                <span class="c-category-total"><i class="icon16 color" style="background-color: #FF9800;"></i>Продажи <strong class="nowrap" style="color: #FF9800;">9900 ₽</strong> + <strong class="nowrap" style="color: #FF9800;">100 $</strong></span>
-                <span class="c-category-total"><i class="icon16 color" style="background-color: #9800FF;"></i>Зарплаты <strong class="nowrap" style="color: #9800FF;">&minus;20000 ₽</strong></span>
-                <span class="c-category-total"><i class="icon16 color" style="background-color: #0098FF;"></i>Хостинг <strong class="nowrap" style="color: #0098FF;">&minus;5000 ₽</strong></span>
-            {/capture}
-            <p>{sprintf('[`Total for the selected period (%s):<br> %s`]', 'Last 50 years', $smarty.capture._category_totals)}</p>
+            <p>{sprintf('[`Total for the selected period (%s):`]', {$selectedChartPeriod->getName()})}</p>
+            {foreach $completedOnDate as $onDateStat}
+            <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
+                {foreach $onDateStat->stat as $statOnDate}
+                <strong class="nowrap" style="color: {$onDateStat->category->color};">{$statOnDate->stat->summaryShorten} {$statOnDate->currency->getSign()}</strong>
+                {if !$statOnDate@last}+{/if}
+                {/foreach}
+            </span>
+            {/foreach}
         </td>
     </tr>
+    {/if}
 </section>

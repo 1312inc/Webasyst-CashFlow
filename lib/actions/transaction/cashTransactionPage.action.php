@@ -101,15 +101,15 @@ class cashTransactionPageAction extends cashViewAction
         $onHandsEndday = $calcService->getOnHandOnDate($this->endDate, $this->filterDto->entity);
 
         // total on hand
-        $farFarFuture = (new DateTime())->modify('+100 years');
-        $onHandsTotal = $calcService->getOnHandOnDate($farFarFuture, new cashAccount());
+//        $farFarFuture = (new DateTime())->modify('+100 years');
+//        $onHandsTotal = $calcService->getOnHandOnDate($farFarFuture, new cashAccount());
 
         $this->view->assign(
             [
                 'filter' => $this->filterDto,
                 'onHandsToday' => $onHandsToday,
                 'onHandsEndday' => $onHandsEndday,
-                'onHandsTotal' => $onHandsTotal,
+//                'onHandsTotal' => $onHandsTotal,
                 'startDate' => $this->startDate->format('Y-m-d'),
                 'endDate' => $this->endDate->format('Y-m-d'),
                 'currentDate' => $this->today->format('Y-m-d'),

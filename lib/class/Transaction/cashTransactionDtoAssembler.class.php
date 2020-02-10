@@ -20,8 +20,7 @@ class cashTransactionDtoAssembler
 
         $accountDtos = [];
         foreach (cash()->getEntityRepository(cashAccount::class)->findAllActive() as $a) {
-            $accountDtos[$a->getId()] = cashDtoFromEntityFactory::fromEntity(cashAccountDto::class, $a);
-            $accountDtos[$a->getId()]->currency = cashCurrencyVO::fromWaCurrency($a->getCurrency());
+            $accountDtos[$a->getId()] = cashAccountDto::fromEntity($a);
         }
 
         $data = $model->getByDateBoundsAndAccount(

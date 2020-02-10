@@ -37,13 +37,18 @@ final class cashCalculationService
     /**
      * @param DateTime                                    $onDate
      * @param cashAccount|cashCategory|cashAbstractEntity $entity
+     * @param DateTime|null                               $startDate
      *
      * @return cashStatOnDateDto[]
-     * @throws waException
      * @throws kmwaLogicException
+     * @throws waException
      */
-    public function getOnHandOnDate(DateTime $onDate, cashAbstractEntity $entity)
+    public function getOnHandOnDate(DateTime $onDate, cashAbstractEntity $entity, DateTime $startDate = null)
     {
+        if (!$startDate instanceof DateTime) {
+            $startDate = new DateTime('1970-01-01 00:00:00');
+        }
+
         /** @var cashAccountModel $model */
         $model = cash()->getModel(cashAccount::class);
         $filterIds = [];
@@ -53,11 +58,19 @@ final class cashCalculationService
 
         switch (true) {
             case $entity instanceOf cashAccount:
-                $data = $model->getStatDataForAccounts('1970-01-01 00:00:00', $onDate->format('Y-m-d H:i:s'), $filterIds);
+                $data = $model->getStatDataForAccounts(
+                    $startDate->format('Y-m-d H:i:s'),
+                    $onDate->format('Y-m-d H:i:s'),
+                    $filterIds
+                );
                 break;
 
             case $entity instanceOf cashCategory:
-                $data = $model->getStatDataForCategories('1970-01-01 00:00:00', $onDate->format('Y-m-d H:i:s'), $filterIds);
+                $data = $model->getStatDataForCategories(
+                    $startDate->format('Y-m-d H:i:s'),
+                    $onDate->format('Y-m-d H:i:s'),
+                    $filterIds
+                );
                 break;
 
             default:
@@ -91,6 +104,51 @@ final class cashCalculationService
                     )
                 );
             }
+        }
+
+        return $summary;
+    }
+
+    public function getOnHandDetailedCategories(DateTime $startDate, DateTime $endDate, cashAbstractEntity $entity)
+    {
+        /** @var cashAccountModel $model */
+        $model = cash()->getModel(cashAccount::class);
+        $filterIds = [];
+        if ($entity->getId()) {
+            $filterIds[] = $entity->getId();
+        }
+
+        $filterType = 'account';
+        if ($entity instanceOf cashCategory) {
+            $filterType = 'category';
+        }
+
+        $data = $model->getStatDetailedCategoryData(
+            $startDate->format('Y-m-d H:i:s'),
+            $endDate->format('Y-m-d H:i:s'),
+            $filterType,
+            $filterIds
+        );
+
+        $summary = [];
+        foreach ($data as $datum) {
+            if (!isset($summary[$datum['id']])) {
+                if (!$datum['id']) {
+                    $datum['name'] = _w('No category');
+                    $datum['color'] = cashColorStorage::DEFAULT_NO_CATEGORY_GRAPH_COLOR;
+                }
+                $category = new cashCategoryDto($datum);
+                $summary[$datum['id']] = new cashStatCategoryDetailedDto($category);
+            }
+
+            $summary[$datum['id']]->stat[] = new cashStatOnHandDto(
+                cashCurrencyVO::fromWaCurrency($datum['currency']),
+                new cashStatOnDateDto(
+                    $datum['income'],
+                    $datum['expense'],
+                    $datum['summary']
+                )
+            );
         }
 
         return $summary;
