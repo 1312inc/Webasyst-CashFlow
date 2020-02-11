@@ -131,7 +131,7 @@ class cashCsvImportSettings implements JsonSerializable
             return false;
         }
 
-        if ($this->accountType == self::TYPE_MULTI && empty($this->account)) {
+        if ($this->accountType == self::TYPE_MULTI && (empty($this->accountMap) || empty($this->account))) {
             $this->error = _w('No account column');
             return false;
         }
