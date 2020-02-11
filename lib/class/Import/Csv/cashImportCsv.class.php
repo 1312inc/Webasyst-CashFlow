@@ -309,7 +309,6 @@ final class cashImportCsv
      * @param cashCsvImportProcessInfoDto $infoDto
      *
      * @throws waException
-     * @throws kmwaLogicException
      */
     public function save(array $data, cashCsvImportProcessInfoDto $infoDto)
     {
@@ -319,29 +318,35 @@ final class cashImportCsv
         /** @var cashTransaction $transaction */
         $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
 
-        $transaction
-            ->setAmount($this->getAmount($data))
-            ->setDescription($this->getDescription($data))
-            ->setDate($this->getDate($data))
-            ->setAccountId($this->getAccount($data, $infoDto))
-            ->setCategoryId(
-                $this->getCategory(
-                    $data,
-                    $infoDto,
-                    $transaction->getAmount() < 0 ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME
+        try {
+            $transaction
+                ->setAmount($this->getAmount($data))
+                ->setDescription($this->getDescription($data))
+                ->setDate($this->getDate($data))
+                ->setAccountId($this->getAccount($data, $infoDto))
+                ->setCategoryId(
+                    $this->getCategory(
+                        $data,
+                        $infoDto,
+                        $transaction->getAmount() < 0 ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME
+                    )
                 )
-            )
-            ->setImportId($infoDto->importId)
-        ;
+                ->setImportId($infoDto->importId);
 
-        $selectedCategory = $transaction->getCategoryId();
-        if ($selectedCategory) {
-            $amount = abs($transaction->getAmount());
-            if ($infoDto->categories[$selectedCategory]->type === cashCategory::TYPE_EXPENSE) {
-                $transaction->setAmount(-$amount);
-            } else {
-                $transaction->setAmount($amount);
+            $selectedCategory = $transaction->getCategoryId();
+            if ($selectedCategory) {
+                $amount = abs($transaction->getAmount());
+                if ($infoDto->categories[$selectedCategory]->type === cashCategory::TYPE_EXPENSE) {
+                    $transaction->setAmount(-$amount);
+                } else {
+                    $transaction->setAmount($amount);
+                }
             }
+        } catch (Exception $ex) {
+            $infoDto->fail++;
+            cash()->getLogger()->error('Error on transaction import create transaction', $ex);
+
+            return;
         }
 
         $alreadyExists = false;
@@ -436,14 +441,14 @@ final class cashImportCsv
         $amount = 0;
         switch ($this->settings->getAmountType()) {
             case cashCsvImportSettings::TYPE_SINGLE:
-                $amount = (float)$data[$this->settings->getAmount()];
+                $amount = $this->toFloat($data[$this->settings->getAmount()]);
                 break;
 
             case cashCsvImportSettings::TYPE_MULTI:
                 if (!empty($data[$this->settings->getIncome()])) {
-                    $amount = abs((float)$data[$this->settings->getIncome()]);
+                    $amount = abs($this->toFloat($data[$this->settings->getIncome()]));
                 } elseif (!empty($data[$this->settings->getExpense()])) {
-                    $amount = -abs((float)$data[$this->settings->getExpense()]);
+                    $amount = -abs($this->toFloat($data[$this->settings->getExpense()]));
                 }
                 break;
         }
@@ -509,7 +514,7 @@ final class cashImportCsv
 
             case cashCsvImportSettings::TYPE_MULTI:
                 $accountMap = $this->settings->getAccountMap();
-                if (isset($data[$accountHeader])) {
+                if (isset($data[$accountHeader], $accountMap[$data[$accountHeader]])) {
                     $accountId = $accountMap[$data[$accountHeader]];
                 }
 //                if (isset($accountMap[$accountHeader]) && isset($infoDto->accounts[$accountMap[$accountHeader]])) {
@@ -548,13 +553,24 @@ final class cashImportCsv
 
             case cashCsvImportSettings::TYPE_MULTI:
                 $categoryMap = $this->settings->getCategoryMap();
-                if (isset($data[$this->settings->getCategory()])) {
-                    $categoryId = $categoryMap[$data[$this->settings->getCategory()]];
+                $category = $this->settings->getCategory();
+                if (isset($data[$category], $categoryMap[$data[$category]])) {
+                    $categoryId = $categoryMap[$data[$category]];
                 }
 
                 break;
         }
 
         return $categoryId;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return float
+     */
+    private function toFloat($value)
+    {
+        return (float)str_replace(',','.',$value);
     }
 }
