@@ -57,8 +57,11 @@
                     <li>
                         <a href="#" class="inline-link gray"><b><i>[`Export`]</i></b><i class="icon10 darr"></i></a>
                         <ul class="menu-v">
-                            <li><a href="#"><i class="icon16 c-table"></i>[`CSV`]</a></li>
-                            <!-- possible plugin hook here -->
+                            <!-- plugin hook: 'backend_transactions_export' -->
+                            {* @event backend_transactions_export.%plugin_id% *}
+                            {if !empty($backend_transactions_export)}
+                                <li>{foreach $backend_transactions_export as $_}{ifset($_)}{/foreach}</li>
+                            {/if}
                         </ul>
                     </li>
 

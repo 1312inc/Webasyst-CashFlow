@@ -15,4 +15,5 @@ final class cashEventStorage
     const WA_BACKEND_SIDEBAR            = 'backend_sidebar';
     const WA_BACKEND_TRANSACTION_DIALOG = 'backend_transaction_dialog';
     const WA_BACKEND_IMPORT_FILE_UPLOADED = 'backend_import.file_uploaded';
+    const WA_BACKEND_TRANSACTIONS_EXPORT = 'backend_transactions_export';
 }

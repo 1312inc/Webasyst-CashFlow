@@ -104,6 +104,16 @@ class cashTransactionPageAction extends cashViewAction
 //        $farFarFuture = (new DateTime())->modify('+100 years');
 //        $onHandsTotal = $calcService->getOnHandOnDate($farFarFuture, new cashAccount());
 
+        /**
+         * UI in transactions page export dropdown menu
+         * @event backend_transactions_export
+         *
+         * @param cashExportEvent $event Event object with cashTransactionPageFilterDto as object
+         * @return string HTML output
+         */
+        $event = new cashExportEvent($this->filterDto, $this->startDate, $this->endDate);
+        $eventResult = cash()->waDispatchEvent($event);
+
         $this->view->assign(
             [
                 'filter' => $this->filterDto,
@@ -115,6 +125,7 @@ class cashTransactionPageAction extends cashViewAction
                 'currentDate' => $this->today->format('Y-m-d'),
                 'selectedChartPeriod' => $this->periodChart,
                 'selectedForecastPeriod' => $this->periodForecast,
+                'backend_transactions_export' => $eventResult
             ]
         );
     }
