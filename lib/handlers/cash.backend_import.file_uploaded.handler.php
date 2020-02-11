@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class cashBackend_importFile_uploadedHandler
+ * Class cashCashBackend_importFile_uploadedHandler
  */
 class cashCashBackend_importFile_uploadedHandler extends waEventHandler
 {

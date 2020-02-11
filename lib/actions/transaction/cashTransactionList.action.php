@@ -7,56 +7,42 @@ class cashTransactionListAction extends cashTransactionPageAction
 {
     /**
      * @throws waException
+     * @throws kmwaRuntimeException
      */
     public function runAction($params = null)
     {
-        $dtoAssembler = new cashTransactionDtoAssembler();
+        /** @var cashTransactionRepository $repository */
+        $repository = cash()->getEntityRepository(cashTransaction::class);
         $tomorrow = new DateTime('tomorrow');
-        $upcoming = $completed = [];
         $calcService = new cashCalculationService();
 
-        switch ($this->filterDto->type) {
-            case cashTransactionPageFilterDto::FILTER_ACCOUNT:
-                $upcoming = array_reverse(
-                    $dtoAssembler->findByDatesAndAccount(
-                        $tomorrow,
-                        $this->endDate,
-                        $this->filterDto->id
-                    ),
-                    true
-                );
-                $completed = array_reverse(
-                    $dtoAssembler->findByDatesAndAccount(
-                        $this->startDate,
-                        $this->today,
-                        $this->filterDto->id
-                    ),
-                    true
-                );
-                break;
+        $upcoming = array_reverse(
+            $repository->findByDates(
+                $tomorrow,
+                $this->endDate,
+                $this->filterDto
+            ),
+            true
+        );
+        $completed = array_reverse(
+            $repository->findByDates(
+                $this->startDate,
+                $this->today,
+                $this->filterDto
+            ),
+            true
+        );
 
-            case cashTransactionPageFilterDto::FILTER_CATEGORY:
-                $upcoming = array_reverse(
-                    $dtoAssembler->findByDatesAndCategory(
-                        $tomorrow,
-                        $this->endDate,
-                        $this->filterDto->id
-                    ),
-                    true
-                );
-                $completed = array_reverse(
-                    $dtoAssembler->findByDatesAndCategory(
-                        $this->startDate,
-                        $this->today,
-                        $this->filterDto->id
-                    ),
-                    true
-                );
-                break;
-        }
-
-        $upcomingOnDate = $calcService->getOnHandDetailedCategories($tomorrow, $this->endDate, $this->filterDto->entity);
-        $completedOnDate = $calcService->getOnHandDetailedCategories($this->startDate, $this->today, $this->filterDto->entity);
+        $upcomingOnDate = $calcService->getOnHandDetailedCategories(
+            $tomorrow,
+            $this->endDate,
+            $this->filterDto->entity
+        );
+        $completedOnDate = $calcService->getOnHandDetailedCategories(
+            $this->startDate,
+            $this->today,
+            $this->filterDto->entity
+        );
 
         $this->view->assign(
             [
