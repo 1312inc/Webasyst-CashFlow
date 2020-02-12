@@ -37,7 +37,7 @@ class cashExportCsvAction extends cashViewAction
         );
 
         $service = new cashExportCsv();
-        $importedFilepath = $service->process($filename, $data);
+        $importedFilepath = $service->process($filename, array_reverse($data, true));
         waFiles::readFile($importedFilepath, $filename);
     }
 }
