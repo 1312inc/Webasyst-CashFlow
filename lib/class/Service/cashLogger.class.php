@@ -6,15 +6,16 @@
 class cashLogger
 {
     /**
-     * @param $message
+     * @param        $message
+     * @param string $file
      */
-    public function debug($message)
+    public function debug($message, $file = 'debug')
     {
         if (waSystemConfig::isDebug()) {
             if (is_string($message)) {
-                $this->log($message, 'debug');
+                $this->log($message, $file);
             } else {
-                $this->log($message, 'debug');
+                $this->log($message, $file);
             }
         }
     }
@@ -37,15 +38,16 @@ class cashLogger
     /**
      * @param string         $message
      * @param Exception|null $exception
+     * @param string         $file
      */
-    public function error($message, Exception $exception = null)
+    public function error($message, Exception $exception = null, $file = 'error')
     {
-        $this->log($message, 'error');
+        $this->log($message, $file);
         if ($exception instanceof Exception) {
             if ($message !== $exception->getMessage()) {
-                $this->log($exception->getMessage(), 'error');
+                $this->log($exception->getMessage(), $file);
             }
-            $this->log($exception->getTraceAsString(), 'error');
+            $this->log($exception->getTraceAsString(), $file);
         }
     }
 }

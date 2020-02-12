@@ -198,7 +198,7 @@ final class cashImportCsv
                     continue;
                 }
 
-                $response->data[] = array_combine($headers, $this->encodeArray($data));
+                $response->data[$response->rows] = array_combine($headers, $this->encodeArray($data));
             }
         } catch (Exception $ex) {
             $this->error = _w('Error on csv processing');
@@ -308,6 +308,7 @@ final class cashImportCsv
      * @param array                       $data
      * @param cashCsvImportProcessInfoDto $infoDto
      *
+     * @return bool
      * @throws waException
      */
     public function save(array $data, cashCsvImportProcessInfoDto $infoDto)
@@ -319,6 +320,8 @@ final class cashImportCsv
         $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
 
         try {
+            cash()->getLogger()->debug($data, 'import');
+
             $transaction
                 ->setAmount($this->getAmount($data))
                 ->setDescription($this->getDescription($data))
@@ -342,11 +345,13 @@ final class cashImportCsv
                     $transaction->setAmount($amount);
                 }
             }
+
+            cash()->getLogger()->debug($transaction, 'import');
         } catch (Exception $ex) {
             $infoDto->fail++;
-            cash()->getLogger()->error('Error on transaction import create transaction', $ex);
+            $this->error = sprintf('Error on transaction import create transaction: %s', $ex->getMessage());
 
-            return;
+            return false;
         }
 
         $alreadyExists = false;
@@ -368,15 +373,19 @@ final class cashImportCsv
                 cash()->getEntityPersister()->save($transaction);
                 $model->commit();
                 $infoDto->ok++;
+
+                return true;
             } catch (Exception $ex) {
                 $model->rollback();
                 $infoDto->fail++;
-                $this->error = $ex->getMessage();
-                cash()->getLogger()->error('Error on transaction import save', $ex);
+                $this->error = sprintf('Error on transaction import save: %s', $ex->getMessage());
             }
         } else {
             $infoDto->fail++;
+            $this->error = 'Transaction already exists';
         }
+
+        return false;
     }
 
     /**

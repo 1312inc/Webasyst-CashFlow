@@ -3,7 +3,7 @@
 /**
  * Class cashAbstractEntity
  */
-abstract class cashAbstractEntity implements kmwaHydratableInterface,cashEntityWithIdInterface
+abstract class cashAbstractEntity implements kmwaHydratableInterface, cashEntityWithIdInterface
 {
     /**
      * @var array
