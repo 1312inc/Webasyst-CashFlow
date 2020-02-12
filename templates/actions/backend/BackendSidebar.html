@@ -82,6 +82,37 @@
             </ul>
         {/if}
 
+        {if 1 || IS_APP_ADMIN || MADE_AT_LEAST_ONE_TRANSFER_IN_THE_PAST}
+            <br>
+            <h5 class="heading top-padded">
+                <a href="#" class="count"><i class="icon16 broom-bw" title="[`Clear import history`]"></i></a>
+                [`Import history`]
+            </h5>
+            <ul class="menu-v with-icons">
+                <li>
+                    <a href="#/transfers/">
+                        <span class="count">302</span>
+                        <i class="icon16 userpic20" style="background-image: url('/wa-content/img/userpic20.jpg');"></i>alfa - jur.csv
+                        <br><span class="hint">Today 12:24</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/transfers/">
+                        <span class="count">886</span>
+                        <i class="icon16 userpic20" style="background-image: url('/wa-content/img/userpic20.jpg');"></i>tinkoff - jur.csv
+                        <br><span class="hint">Yesterday 23:12</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/transfers/">
+                        <span class="count">24</span>
+                        <i class="icon16 userpic20" style="background-image: url('/wa-content/img/userpic20.jpg');"></i>pl2e.csv
+                        <br><span class="hint">Feb 2, 2020</span>
+                    </a>
+                </li>
+            </ul>
+        {/if}
+
         {if 1 || IS_APP_ADMIN}
             <hr>
             <ul class="menu-v with-icons">
