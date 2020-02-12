@@ -206,7 +206,6 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             ],
             'axis' => [
                 'x' => ['type' => $this->grouping === cashGraphService::GROUP_BY_DAY ? 'timeseries' : 'category'],
-                'y' => ['center' => 0, 'padding' => ['bottom' => 0]],
             ],
             'grid' => [
                 'y' => ['lines' => [['value' => 0]]],
@@ -237,27 +236,35 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 if ($type === 'bar') {
                     $data['data']['axes'][$name] = 'y';
                 } else {
+                    $data['grid']['y'] = [
+                        'lines' => [
+                            [
+                                'value' => 0,
+                                'axis' => 'y2',
+                                'position' => 'start',
+                                'text' => _w('Account balance zero'),
+                            ],
+                        ],
+                    ];
                     $data['data']['axes'][$name] = 'y2';
                     $data['axis']['y2'] = [
                         'show' => true,
-                        'center' => 0,
-                        'padding' => ['bottom' => 0],
+//                        'center' => 0,
+//                        'padding' => ['bottom' => 0],
                     ];
                 }
             }
 
-            if (isset($data['axis']['y2'])) {
-                $extremum = ['min' => 0, 'max' => 0];
-                foreach ($this->lines as $lineData) {
-                    $extremum['min'] = min($extremum['min'], min(array_filter($lineData)));
-                    $extremum['max'] = max($extremum['max'], max(array_filter($lineData)));
-                }
-                $data['axis']['y2']['center'] = $extremum['max'];
-//                $data['axis']['y']['min'] =
-//                $data['axis']['y2']['min'] = $extremum['min'] * 1.1;
-//                $data['axis']['y']['max'] =
-//                $data['axis']['y2']['max'] = $extremum['max'] * 1.1;
-            }
+//            if (isset($data['axis']['y2'])) {
+//                $extremum = ['min' => 0, 'max' => 0];
+//                foreach ($this->lines as $lineData) {
+//                    $extremum['min'] = min($extremum['min'], min(array_filter($lineData)));
+//                    $extremum['max'] = max($extremum['max'], max(array_filter($lineData)));
+//                }
+////                $data['axis']['y2']['center'] = 250;
+////                $data['axis']['y']['min'] =
+//                $data['axis']['y2']['min'] = $extremum['min'];// - 250;
+//            }
         }
 
         return $data;

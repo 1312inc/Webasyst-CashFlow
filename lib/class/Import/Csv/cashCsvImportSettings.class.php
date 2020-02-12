@@ -121,7 +121,7 @@ class cashCsvImportSettings implements JsonSerializable
      */
     public function isValid()
     {
-        if (empty($this->amount) && (empty($this->amountMap))) {
+        if (empty($this->amount) && (empty(array_filter($this->amountMap)))) {
             $this->error = _w('No amount column');
             return false;
         }
