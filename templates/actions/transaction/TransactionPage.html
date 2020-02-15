@@ -191,7 +191,7 @@
                         $dialogWrapper = $(d);
 
                     $dialogWrapper
-                        .on('click', '[data-cash-action="delete-transaction"]', function (e) {
+                        .on('click.cash', '[data-cash-action="delete-transaction"]', function (e) {
                             e.preventDefault();
 
                             if(!confirm($_('The transaction will be permanently deleted. Are you sure?'))) {
@@ -211,20 +211,41 @@
                                 }
                             );
                         })
-                        .on('change', '[name="transaction[account_id]"]', function (e) {
+                        .on('change.cash', '[name="transaction[account_id]"]', function (e) {
                             $dialogWrapper
                                 .find('[data-cash-transaction-account-currency]')
                                     .text($(this).find(':selected').data('cash-account-currency-sign'))
                         })
-                        .on('change', '[name="transaction[category_id]"]', function (e) {
+                        .on('change.cash', '[name="transaction[category_id]"]', function (e) {
                             $dialogWrapper
                                 .find('[data-cash-transaction-category]')
                                     .css('background', $(this).find(':selected').data('cash-category-color'))
                         })
+                        .on('change.cash', '[name="repeating[interval]"]', function (e) {
+                            var $selected = $(this).find(':selected'),
+                                $customFrequency = $dialogWrapper.find('[data-cash-repeating-transaction-frequency-custom]');
+
+                            if ($selected.data('cash-repeating-transaction-frequency') == 'custom') {
+                                $customFrequency.show().find(':input').prop('disabled', false);
+                            } else {
+                                $customFrequency.hide().find(':input').prop('disabled', true);
+                            }
+                        })
+                        .on('change.cash', '[name="repeating[end][type]"]', function (e) {
+                            var $this = $(this),
+                                $selected = $this.find(':selected'),
+                                typeEnd = $selected.data('cash-repeating-transaction-end'),
+                                $repeatEnd = $dialogWrapper.find('[data-cash-repeating-transaction-end-' + typeEnd + ']');
+
+                            $this.siblings().hide();
+                            $repeatEnd.show();
+                        })
+                        .on('click.cash', '[name="repeating[apply_to_all_in_future]"]', function (e) {
+                            $dialogWrapper.find('[data-cash-repeating-settings]').toggle();
+                        })
                     ;
 
-                    $dialogWrapper.find('[name="transaction[account_id]"]').trigger('change');
-                    $dialogWrapper.find('[name="transaction[category_id]"]').trigger('change');
+                    $dialogWrapper.find('select').trigger('change.cash');
 
                     var initDatepicker = function () {
                         var datepicker_options = {
@@ -242,6 +263,7 @@
                         };
 
                         $dialogWrapper.find('[name="transaction[date]"]').datepicker(datepicker_options);
+                        $dialogWrapper.find('[name="repeating[end][ondate]"]').datepicker(datepicker_options);
                     };
 
                     initDatepicker();
@@ -316,18 +338,18 @@
             loadTransactions();
             loadGraphData();
 
-            $('[data-cash-action="add-transaction"]').on('click', function (e) {
+            $('[data-cash-action="add-transaction"]').on('click.cash', function (e) {
                 e.preventDefault();
                 transactionDialog(0, filterType, filterId, $(this).data('cash-category-type'))
             });
 
-            $('#cash-transaction-list').on('click', '[data-cash-transaction-id]', function (e) {
+            $('#cash-transaction-list').on('click.cash', '[data-cash-transaction-id]', function (e) {
                 e.preventDefault();
 
                 transactionDialog($(this).data('cash-transaction-id'), filterType, filterId, '')
             });
 
-            $('[data-cash-start-date]').on('click', function (e) {
+            $('[data-cash-start-date]').on('click.cash', function (e) {
                 e.preventDefault();
 
                 var $this = $(this),
@@ -336,7 +358,7 @@
                 window.location.hash = ['#', filterType, filterId, date, endDate].join('/');
             });
 
-            $('[data-cash-end-date]').on('click', function (e) {
+            $('[data-cash-end-date]').on('click.cash', function (e) {
                 e.preventDefault();
 
                 var $this = $(this),

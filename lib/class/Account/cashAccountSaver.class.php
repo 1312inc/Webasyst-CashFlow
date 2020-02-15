@@ -10,7 +10,7 @@ class cashAccountSaver extends cashEntitySaver
      *
      * @return bool|cashAccount
      */
-    public function save(array $data)
+    public function saveFromArray(array $data)
     {
         if (!$this->validate($data)) {
             return false;
@@ -83,7 +83,7 @@ class cashAccountSaver extends cashEntitySaver
                 }
 
                 $accounts[$accountId]['sort'] = $i++;
-                $this->save($accounts[$accountId]);
+                $this->saveFromArray($accounts[$accountId]);
             }
 
             return true;

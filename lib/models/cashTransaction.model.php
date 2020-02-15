@@ -425,6 +425,20 @@ SQL;
     }
 
     /**
+     * @param int    $repeatingId
+     * @param string $date
+     *
+     * @return int
+     */
+    public function countRepeatingTransactionsFromDate($repeatingId, $date)
+    {
+        return (int)$this->select('count(id)')->where(
+            'repeating_id = i:id and date > s:date',
+            ['id' => $repeatingId, 'date' => $date]
+        )->fetchField();
+    }
+
+    /**
      * @param string $sql
      * @param string $startDate
      * @param string $endDate

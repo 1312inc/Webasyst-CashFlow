@@ -10,7 +10,7 @@ class cashCategorySaver extends cashEntitySaver
      *
      * @return bool|cashCategory
      */
-    public function save(array $data)
+    public function saveFromArray(array $data)
     {
         if (!$this->validate($data)) {
             return false;
@@ -86,7 +86,7 @@ class cashCategorySaver extends cashEntitySaver
                 }
 
                 $categories[$categoryId]['sort'] = $i++;
-                $this->save($categories[$categoryId]);
+                $this->saveFromArray($categories[$categoryId]);
             }
 
             return true;

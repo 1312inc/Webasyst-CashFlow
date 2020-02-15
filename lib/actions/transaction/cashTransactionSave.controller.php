@@ -13,9 +13,15 @@ class cashTransactionSaveController extends cashJsonController
     {
         $data = waRequest::post('transaction', [], waRequest::TYPE_ARRAY);
         $transfer = waRequest::post('transfer', [], waRequest::TYPE_ARRAY);
+        $repeating = waRequest::post('repeating', [], waRequest::TYPE_ARRAY);
 
         $saver = new cashTransactionSaver();
-        $transaction = $saver->save($data, ['transfer' => $transfer]);
+        $transaction = $saver->saveFromArray($data, ['transfer' => $transfer]);
+        if ($repeating) {
+            $repeatingTransaction = (new cashRepeatingTransactionSaver())->saveFromTransaction($transaction, $repeating);
+            (new cashTransactionRepeater())->repeat($repeatingTransaction);
+        }
+
         if ($transaction) {
             $transactionDto = (new cashTransactionDtoAssembler())->createFromEntity($transaction);
             $this->response = $transactionDto;

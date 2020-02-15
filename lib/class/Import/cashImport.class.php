@@ -6,6 +6,7 @@
 class cashImport extends cashAbstractEntity
 {
     use cashEntityBeforeSaveTrait;
+    use cashEntityJsonTransformerTrait;
 
     /**
      * @var int
@@ -139,26 +140,17 @@ class cashImport extends cashAbstractEntity
 
     public function beforeExtract(array &$fields)
     {
-        if (is_array($this->errors)) {
-            $this->errors = empty($this->errors) ? null : json_encode($this->errors, JSON_UNESCAPED_UNICODE);
-        }
+        $this->fromJson(['errors']);
     }
 
     public function afterExtract(array &$fields)
     {
-        if (!is_array($this->errors)) {
-            $this->errors = empty($this->errors) ? [] : json_decode($this->errors, true);
-        }
+        $this->toJson(['errors']);
     }
 
     public function afterHydrate($data = [])
     {
-        if (!empty($data['errors'])) {
-            $this->errors = json_decode($data['errors'], true);
-            if (!is_array($this->errors)) {
-                $this->errors = [];
-            }
-        }
+        $this->fromJson(['errors']);
     }
 
     /**

@@ -15,7 +15,7 @@ abstract class cashEntitySaver
      *
      * @return bool|cashAbstractEntity
      */
-    abstract public function save(array $data);
+    abstract public function saveFromArray(array $data);
 
     /**
      * @param array $data
