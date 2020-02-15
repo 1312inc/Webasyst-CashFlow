@@ -12,7 +12,7 @@ class cashTransactionSaver extends cashEntitySaver
      * @return bool|cashTransaction
      * @throws waException
      */
-    public function save(array $data, array $params = [])
+    public function saveFromArray(array $data, array $params = [])
     {
         if (!$this->validate($data)) {
             return false;
@@ -32,19 +32,7 @@ class cashTransactionSaver extends cashEntitySaver
                 $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
             }
 
-            if (!empty($data['category_id'])) {
-                /** @var cashCategory $category */
-                $category = cash()->getEntityRepository(cashCategory::class)->findById($data['category_id']);
-                kmwaAssert::instance($category, cashCategory::class);
-                if ($category->isExpense() && $data['amount'] > 0) {
-                    $data['amount'] = -$data['amount'];
-                }
-            } else {
-                if (isset($data['category_type']) && $data['category_type'] === cashCategory::TYPE_EXPENSE && $data['amount'] > 0) {
-                    $data['amount'] = -$data['amount'];
-                }
-                unset($data['category_id'], $data['category_type']);
-            }
+            $data = $this->addCategoryId($data);
 
             cash()->getHydrator()->hydrate($transaction, $data);
 
@@ -88,6 +76,32 @@ class cashTransactionSaver extends cashEntitySaver
         }
 
         return true;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     * @throws kmwaAssertException
+     * @throws waException
+     */
+    protected function addCategoryId(array $data)
+    {
+        if (!empty($data['category_id'])) {
+            /** @var cashCategory $category */
+            $category = cash()->getEntityRepository(cashCategory::class)->findById($data['category_id']);
+            kmwaAssert::instance($category, cashCategory::class);
+            if ($category->isExpense() && $data['amount'] > 0) {
+                $data['amount'] = -$data['amount'];
+            }
+        } else {
+            if (isset($data['category_type']) && $data['category_type'] === cashCategory::TYPE_EXPENSE && $data['amount'] > 0) {
+                $data['amount'] = -$data['amount'];
+            }
+            unset($data['category_id'], $data['category_type']);
+        }
+
+        return $data;
     }
 
     /**

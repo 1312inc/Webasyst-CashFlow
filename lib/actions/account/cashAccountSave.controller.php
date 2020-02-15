@@ -13,7 +13,7 @@ class cashAccountSaveController extends cashJsonController
         $data = waRequest::post('account', [], waRequest::TYPE_ARRAY);
 
         $saver = new cashAccountSaver();
-        $account = $saver->save($data);
+        $account = $saver->saveFromArray($data);
         if ($account) {
             $accountDto = cashDtoFromEntityFactory::fromEntity(cashAccountDto::class, $account);
             $this->response = $accountDto;

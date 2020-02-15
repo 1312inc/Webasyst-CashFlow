@@ -13,7 +13,7 @@ class cashCategorySaveController extends cashJsonController
         $data = waRequest::post('category', [], waRequest::TYPE_ARRAY);
 
         $saver = new cashCategorySaver();
-        $category = $saver->save($data);
+        $category = $saver->saveFromArray($data);
         if ($category) {
             $categoryDto = cashDtoFromEntityFactory::fromEntity(cashCategoryDto::class, $category);
             $this->response = $categoryDto;

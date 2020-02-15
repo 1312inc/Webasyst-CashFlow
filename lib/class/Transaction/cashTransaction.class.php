@@ -10,37 +10,37 @@ class cashTransaction extends cashAbstractEntity
     /**
      * @var int
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      */
-    private $date;
+    protected $date;
 
     /**
      * @var string
      */
-    private $datetime;
+    protected $datetime;
 
     /**
      * @var int
      */
-    private $account_id;
+    protected $account_id;
 
     /**
      * @var int|null
      */
-    private $category_id;
+    protected $category_id;
 
     /**
      * @var float
      */
-    private $amount = 0.0;
+    protected $amount = 0.0;
 
     /**
      * @var string
      */
-    private $description;
+    protected $description;
 
     /**
      * @var int|null
@@ -50,7 +50,7 @@ class cashTransaction extends cashAbstractEntity
     /**
      * @var int
      */
-    private $create_contact_id;
+    protected $create_contact_id;
 
     /**
      * @var int|null
@@ -66,6 +66,11 @@ class cashTransaction extends cashAbstractEntity
      * @var cashAccount
      */
     protected $account;
+
+    /**
+     * @var cashRepeatingTransaction
+     */
+    private $repeatingTransaction;
 
     /**
      * @return int
@@ -265,7 +270,9 @@ class cashTransaction extends cashAbstractEntity
     public function getCategory()
     {
         if ($this->category === null) {
-            $this->category = cash()->getEntityRepository(cashCategory::class)->findById($this->category_id);
+            if ($this->category_id) {
+                $this->category = cash()->getEntityRepository(cashCategory::class)->findById($this->category_id);
+            }
             if (!$this->category instanceof cashCategory) {
                 $this->category = cash()->getEntityFactory(cashCategory::class)->createNewNoCategory();
             }
@@ -334,6 +341,34 @@ class cashTransaction extends cashAbstractEntity
     public function setImportId($importId)
     {
         $this->import_id = $importId;
+
+        return $this;
+    }
+
+    /**
+     * @return cashRepeatingTransaction|null
+     * @throws waException
+     */
+    public function getRepeatingTransaction()
+    {
+        if ($this->repeatingTransaction === null && $this->repeating_id) {
+            $this->repeatingTransaction = cash()->getEntityRepository(cashRepeatingTransaction::class)->findById(
+                $this->repeating_id
+            );
+        }
+
+        return $this->repeatingTransaction;
+    }
+
+    /**
+     * @param cashRepeatingTransaction $repeatingTransaction
+     *
+     * @return cashTransaction
+     */
+    public function setRepeatingTransaction(cashRepeatingTransaction $repeatingTransaction)
+    {
+        $this->repeatingTransaction = $repeatingTransaction;
+        $this->repeating_id = $repeatingTransaction->getId();
 
         return $this;
     }
