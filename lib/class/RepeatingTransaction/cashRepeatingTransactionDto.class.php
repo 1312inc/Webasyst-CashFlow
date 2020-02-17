@@ -28,12 +28,12 @@ class cashRepeatingTransactionDto extends cashTransactionDto
     /**
      * @var int
      */
-    public $repeating_interval = cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY;
+    public $repeating_interval = cashRepeatingTransaction::INTERVAL_NONE;
 
     /**
      * @var string
      */
-    public $repeating_frequency = cashRepeatingTransaction::INTERVAL_DAY;
+    public $repeating_frequency = cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY;
 
     /**
      * @var array|string

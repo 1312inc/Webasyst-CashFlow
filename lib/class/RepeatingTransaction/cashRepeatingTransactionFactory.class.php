@@ -12,6 +12,4 @@ class cashRepeatingTransactionFactory extends cashBaseFactory
     {
         return (new cashRepeatingTransaction())->setCreateContactId(wa()->getUser()->getId());
     }
-
-
 }

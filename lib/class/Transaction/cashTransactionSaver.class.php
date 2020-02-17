@@ -6,13 +6,14 @@
 class cashTransactionSaver extends cashEntitySaver
 {
     /**
-     * @param array $data
-     * @param array $params
+     * @param cashTransaction $transaction
+     * @param array           $data
+     * @param array           $params
      *
      * @return bool|cashTransaction
      * @throws waException
      */
-    public function saveFromArray(array $data, array $params = [])
+    public function saveFromArray($transaction, array $data, array $params = [])
     {
         if (!$this->validate($data)) {
             return false;
@@ -23,15 +24,6 @@ class cashTransactionSaver extends cashEntitySaver
         $model->startTransaction();
 
         try {
-            /** @var cashTransaction $transaction */
-            if (!empty($data['id'])) {
-                $transaction = cash()->getEntityRepository(cashTransaction::class)->findById($data['id']);
-                kmwaAssert::instance($transaction, cashTransaction::class);
-                unset($data['id']);
-            } else {
-                $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
-            }
-
             $data = $this->addCategoryId($data);
 
             cash()->getHydrator()->hydrate($transaction, $data);

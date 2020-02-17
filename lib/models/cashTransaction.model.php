@@ -433,9 +433,23 @@ SQL;
     public function countRepeatingTransactionsFromDate($repeatingId, $date)
     {
         return (int)$this->select('count(id)')->where(
-            'repeating_id = i:id and date > s:date',
+            'repeating_id = i:id and date >= s:date',
             ['id' => $repeatingId, 'date' => $date]
         )->fetchField();
+    }
+
+    /**
+     * @param int    $repeatingId
+     * @param string $date
+     *
+     * @return bool|resource
+     */
+    public function deleteAllByRepeatingIdAfterDate($repeatingId, $date)
+    {
+        return $this->exec(
+            "delete from {$this->table} where repeating_id = i:id_old and date >= s:date",
+            ['id_old' => $repeatingId, 'date' => $date]
+        );
     }
 
     /**

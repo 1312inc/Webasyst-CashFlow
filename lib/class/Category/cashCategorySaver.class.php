@@ -6,28 +6,22 @@
 class cashCategorySaver extends cashEntitySaver
 {
     /**
-     * @param array $data
+     * @param cashCategory $category
+     * @param array        $data
+     * @param array        $params
      *
      * @return bool|cashCategory
      */
-    public function saveFromArray(array $data)
+    public function saveFromArray($category, array $data, array $params = [])
     {
         if (!$this->validate($data)) {
             return false;
         }
 
         try {
-            /** @var cashCategoryRepository $rep */
-            $rep = cash()->getEntityRepository(cashCategory::class);
             /** @var cashCategoryModel $model */
             $model = cash()->getModel(cashCategory::class);
 
-            /** @var cashCategory $category */
-            if (!empty($data['id'])) {
-                $category = $rep->findById($data['id']);
-            } else {
-                $category = cash()->getEntityFactory(cashCategory::class)->createNew();
-            }
             unset($data['id']);
             kmwaAssert::instance($category, cashCategory::class);
 
@@ -75,18 +69,23 @@ class cashCategorySaver extends cashEntitySaver
     public function sort(array $order)
     {
         try {
-            $categories = cash()->getModel(cashCategory::class)
-                ->select('*')
-                ->where('id in (i:ids)', ['ids' => $order])
-                ->fetchAll('id');
+            /** @var cashCategoryRepository $rep */
+            $rep = cash()->getEntityRepository(cashCategory::class);
+            /** @var cashCategory[] $categories */
+            $categories = $rep->findById(
+                cash()->getModel(cashCategory::class)
+                    ->select('*')
+                    ->where('id in (i:ids)', ['ids' => $order]),
+                'id'
+            );
             $i = 0;
             foreach ($order as $categoryId) {
                 if (!isset($categories[$categoryId])) {
                     continue;
                 }
 
-                $categories[$categoryId]['sort'] = $i++;
-                $this->saveFromArray($categories[$categoryId]);
+                $categories[$categoryId]->setSort($i++);
+                cash()->getEntityPersister()->save($categories[$categoryId]);
             }
 
             return true;

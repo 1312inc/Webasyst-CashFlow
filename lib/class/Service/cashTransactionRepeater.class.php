@@ -11,22 +11,27 @@ final class cashTransactionRepeater
     private $transactionSaver;
 
     /**
+     * @var cashTransactionFactory
+     */
+    private $transactionFactory;
+
+    /**
      * cashTransactionRepeater constructor.
      */
     public function __construct()
     {
         $this->transactionSaver = new cashTransactionSaver();
+        $this->transactionFactory = new cashTransactionFactory();
     }
 
     /**
      * @param cashRepeatingTransaction $transaction
-     * @param DateTime|null            $endDate
      *
      * @return bool|cashTransaction|null
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function repeat(cashRepeatingTransaction $transaction, DateTime $endDate = null)
+    public function repeat(cashRepeatingTransaction $transaction)
     {
         $data = cash()->getHydrator()->extract($transaction);
         $endSettings = $transaction->getRepeatingEndConditions();
@@ -79,7 +84,7 @@ final class cashTransactionRepeater
             sprintf('+%d %s', $transaction->getRepeatingFrequency(), $transaction->getRepeatingInterval())
         )->format('Y-m-d H:i:s');
 
-        return $this->transactionSaver->saveFromArray($data);
+        return $this->transactionSaver->saveFromArray($this->transactionFactory->createNew(), $data);
     }
 
     /**
