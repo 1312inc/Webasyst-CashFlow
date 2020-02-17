@@ -158,7 +158,7 @@
                                 {foreach cashRepeatingTransaction::getRepeatingEndTypes() as $type => $label}
                                     <option data-cash-repeating-transaction-end="{$type}"
                                             {if $repeatingTransaction->repeating_end_conditions.type == $type}selected{/if}
-                                            value="$type"
+                                            value="{$type}"
                                     >{$label}</option>
                                 {/foreach}
                             </select>

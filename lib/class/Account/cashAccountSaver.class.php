@@ -6,25 +6,20 @@
 class cashAccountSaver extends cashEntitySaver
 {
     /**
-     * @param array $data
+     * @param cashAccount $account
+     * @param array       $data
+     * @param array       $params
      *
-     * @return bool|cashAccount
+     * @return bool
      */
-    public function saveFromArray(array $data)
+    public function saveFromArray($account, array $data, array $params = [])
     {
         if (!$this->validate($data)) {
             return false;
         }
 
         try {
-            /** @var cashAccount $account */
-            if (!empty($data['id'])) {
-                $account = cash()->getEntityRepository(cashAccount::class)->findById($data['id']);
-                kmwaAssert::instance($account, cashAccount::class);
-                unset($data['id']);
-            } else {
-                $account = cash()->getEntityFactory(cashAccount::class)->createNew();
-            }
+            unset($data['id']);
 
             if (!empty($data['icon_link']) && preg_match('~https?://.{2,225}\..{2,20}~', $data['icon_link'])) {
                 $data['icon'] = $data['icon_link'];
@@ -34,7 +29,7 @@ class cashAccountSaver extends cashEntitySaver
             cash()->getHydrator()->hydrate($account, $data);
             cash()->getEntityPersister()->save($account);
 
-            return $account;
+            return true;
         } catch (Exception $ex) {
             $this->error = $ex->getMessage();
         }

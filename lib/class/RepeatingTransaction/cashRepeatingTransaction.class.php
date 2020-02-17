@@ -10,6 +10,7 @@ class cashRepeatingTransaction extends cashTransaction
 
     const DEFAULT_REPEATING_FREQUENCY = 1;
 
+    const INTERVAL_NONE   = 'none';
     const INTERVAL_DAY   = 'day';
     const INTERVAL_WEEK  = 'week';
     const INTERVAL_MONTH = 'month';
@@ -27,12 +28,12 @@ class cashRepeatingTransaction extends cashTransaction
     /**
      * @var int
      */
-    private $repeating_interval = self::DEFAULT_REPEATING_FREQUENCY;
+    private $repeating_interval = self::INTERVAL_NONE;
 
     /**
      * @var string
      */
-    private $repeating_frequency = self::INTERVAL_DAY;
+    private $repeating_frequency = self::DEFAULT_REPEATING_FREQUENCY;
 
     /**
      * @var array|string

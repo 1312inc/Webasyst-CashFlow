@@ -43,7 +43,7 @@ class cashTransactionDialogAction extends cashViewAction
             cash()->getEntityRepository(cashAccount::class)->findAll()
         );
         $repeatingTransactionDto = $transaction->getRepeatingTransaction() instanceof cashRepeatingTransaction
-            ? (new cashRepeatingTransactionDtoAssembler())->createFromEntity($transaction->getRepeatingTransaction())
+            ? (new cashRepeatingTransactionDtoAssembler())->createFromEntity($transaction->getRepeatingTransaction(), $transaction)
             : new cashRepeatingTransactionDto([]);
 
         /** @var cashCategoryRepository $categoryRep */

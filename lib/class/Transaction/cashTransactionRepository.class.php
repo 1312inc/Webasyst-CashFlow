@@ -64,4 +64,21 @@ class cashTransactionRepository extends cashBaseRepository
 
         return $dtos;
     }
+
+    /**
+     * @param int $repeatingId
+     * @param string $date
+     *
+     * @return cashTransaction[]
+     * @throws waException
+     */
+    public function findAllByRepeatingIdAndAfterDate($repeatingId, $date)
+    {
+        return $this->findByQuery(
+            $this->getModel()->select('*')->where(
+                'repeating_id = i:id_old and date >= s:date',
+                ['id_old' => $repeatingId, 'date' => $date]
+            )
+        );
+    }
 }

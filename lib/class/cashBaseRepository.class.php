@@ -5,7 +5,7 @@
  */
 class cashBaseRepository
 {
-    const DEFAULT_LIMIT = 30;
+    const DEFAULT_LIMIT  = 30;
     const DEFAULT_OFFSET = 0;
 
     protected $entity;
@@ -173,6 +173,20 @@ class cashBaseRepository
     }
 
     /**
+     * @param waDbQuery   $query
+     * @param null|string $key
+     * @param bool        $normalize
+     *
+     * @return array
+     */
+    public function findByQuery(waDbQuery $query, $key = null, $normalize = false)
+    {
+        $data = $query->fetchAll($key, $normalize);
+
+        return $this->generateWithData($data, true);
+    }
+
+    /**
      * @param array $data
      * @param bool  $all
      *
@@ -191,8 +205,8 @@ class cashBaseRepository
         $objects = [];
 
         $factory = cash()->getEntityFactory($this->entity);
-        foreach ($data as $datum) {
-            $objects[] = $factory->createNewWithData($datum);
+        foreach ($data as $key => $datum) {
+            $objects[$key] = $factory->createNewWithData($datum);
         }
 
         return !$all ? reset($objects) : $objects;
