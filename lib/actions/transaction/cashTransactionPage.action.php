@@ -77,6 +77,8 @@ class cashTransactionPageAction extends cashViewAction
         $this->graphService->saveForecastPeriodVo($this->periodForecast);
 
         $this->today = new DateTime();
+
+        $this->repeatNeverEndingTransactions();
     }
 
     /**
@@ -106,9 +108,11 @@ class cashTransactionPageAction extends cashViewAction
 
         /**
          * UI in transactions page export dropdown menu
+         *
          * @event backend_transactions_export
          *
          * @param cashExportEvent $event Event object with cashTransactionPageFilterDto as object
+         *
          * @return string HTML output
          */
         $event = new cashExportEvent($this->filterDto, $this->startDate, $this->endDate);
@@ -125,8 +129,38 @@ class cashTransactionPageAction extends cashViewAction
                 'currentDate' => $this->today->format('Y-m-d'),
                 'selectedChartPeriod' => $this->periodChart,
                 'selectedForecastPeriod' => $this->periodForecast,
-                'backend_transactions_export' => $eventResult
+                'backend_transactions_export' => $eventResult,
             ]
         );
+    }
+
+    /**
+     * @throws waException
+     */
+    private function repeatNeverEndingTransactions()
+    {
+        $trans = cash()->getEntityRepository(cashRepeatingTransaction::class)->findNeverEndingAfterDate($this->endDate);
+        /** @var cashTransactionRepository $transRep */
+        $transRep = cash()->getEntityRepository(cashTransaction::class);
+        $repeater = new cashTransactionRepeater();
+        foreach ($trans as $transaction) {
+            try {
+                cash()->getLogger()->debug(
+                    sprintf(
+                        'Trying to extend repeating transaction #%d starting from %s',
+                        $transaction->getId(),
+                        $transaction->getDataField('last_transaction_date')
+                    )
+                );
+                $lastT = $transRep->findLastByRepeatingId($transaction->getId());
+                $date = $lastT instanceof cashTransaction ? $lastT->getDate() : $transaction->getDataField('last_transaction_date');
+                $repeater->repeat($transaction, new DateTime($date));
+            } catch (Exception $ex) {
+                cash()->getLogger()->error(
+                    sprintf('Can`t extend repeating transaction #%d', $transaction->getId()),
+                    $ex
+                );
+            }
+        }
     }
 }

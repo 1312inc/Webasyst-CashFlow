@@ -81,4 +81,22 @@ class cashTransactionRepository extends cashBaseRepository
             )
         );
     }
+
+    /**
+     * @param $repeatingId
+     *
+     * @return cashTransaction
+     * @throws waException
+     */
+    public function findLastByRepeatingId($repeatingId)
+    {
+        return $this->findByQuery(
+            $this->getModel()
+                ->query(
+                    'select * from cash_transaction where repeating_id = i:repeating_id order by id desc limit 1',
+                    ['repeating_id' => $repeatingId]
+                ),
+            false
+        );
+    }
 }

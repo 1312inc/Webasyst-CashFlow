@@ -41,10 +41,14 @@ class cashRepeatingTransactionDto extends cashTransactionDto
     public $repeating_conditions = [];
 
     /**
+     * @var string
+     */
+    public $repeating_end_type = cashRepeatingTransaction::REPEATING_END_NEVER;
+
+    /**
      * @var array|string
      */
     public $repeating_end_conditions = [
-        'type' => cashRepeatingTransaction::REPEATING_END_NEVER,
         'after' => 0,
         'ondate' => '',
     ];

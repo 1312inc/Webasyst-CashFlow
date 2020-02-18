@@ -188,7 +188,7 @@ class cashConfig extends waAppConfig
     /**
      * @param string $entity
      *
-     * @return cashBaseRepository|cashAccountRepository|cashCategoryRepository|cashTransactionRepository
+     * @return cashBaseRepository|cashAccountRepository|cashCategoryRepository|cashTransactionRepository|cashRepeatingTransactionRepository
      * @throws waException
      */
     public function getEntityRepository($entity)
@@ -264,6 +264,19 @@ class cashConfig extends waAppConfig
         }
 
         return $this->rightConfig;
+    }
+
+    /**
+     * The method returns a counter to show in backend header near applications' icons.
+     * Three types of response are allowed.
+     * @return string|int - A prime number in the form of a int or string
+     * @return array - Array with keys 'count' - the value of the counter and 'url' - icon url
+     * @return array - An associative array in which the key is the object key from app.php, from the header_items.
+     *                 The value must be identical to the value described in one of the previous types of response.
+     */
+    public function onCount()
+    {
+        return null;
     }
 
     private function registerGlobal()

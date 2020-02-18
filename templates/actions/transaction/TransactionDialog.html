@@ -154,10 +154,10 @@
                             [`End repeat`]
                         </div>
                         <div class="value no-shift">
-                            <select name="repeating[end][type]">
+                            <select name="repeating[end_type]">
                                 {foreach cashRepeatingTransaction::getRepeatingEndTypes() as $type => $label}
                                     <option data-cash-repeating-transaction-end="{$type}"
-                                            {if $repeatingTransaction->repeating_end_conditions.type == $type}selected{/if}
+                                            {if $repeatingTransaction->repeating_end_type == $type}selected{/if}
                                             value="{$type}"
                                     >{$label}</option>
                                 {/foreach}
