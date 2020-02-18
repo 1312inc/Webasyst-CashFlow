@@ -173,17 +173,22 @@ class cashBaseRepository
     }
 
     /**
-     * @param waDbQuery   $query
-     * @param null|string $key
-     * @param bool        $normalize
+     * @param waDbQuery|waDbResult $query
+     * @param bool                 $all
+     * @param null|string          $key
+     * @param bool                 $normalize
      *
-     * @return array
+     * @return object[]|object
      */
-    public function findByQuery(waDbQuery $query, $key = null, $normalize = false)
+    public function findByQuery($query, $all = true, $key = null, $normalize = false)
     {
         $data = $query->fetchAll($key, $normalize);
 
-        return $this->generateWithData($data, true);
+        if (!$all) {
+            $data = reset($data);
+        }
+
+        return $this->generateWithData($data, $all);
     }
 
     /**

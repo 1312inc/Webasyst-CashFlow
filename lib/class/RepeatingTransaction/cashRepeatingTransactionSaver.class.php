@@ -37,17 +37,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         $model->startTransaction();
 
         try {
-            /** @var cashRepeatingTransaction $transaction */
-            if (!empty($data['id'])) {
-                $transaction = cash()->getEntityRepository(cashRepeatingTransaction::class)->findById($data['id']);
-                kmwaAssert::instance($transaction, cashRepeatingTransaction::class);
-                unset($data['id']);
-            } else {
-                $transaction = cash()->getEntityFactory(cashRepeatingTransaction::class)->createNew();
-            }
-
             $data = $this->addCategoryId($data);
-
             cash()->getHydrator()->hydrate($transaction, $data);
 
             $transaction
@@ -60,6 +50,11 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
                     !empty($repeatingSettings['interval'])
                         ? $repeatingSettings['interval']
                         : cashRepeatingTransaction::INTERVAL_DAY
+                )
+                ->setRepeatingEndType(
+                    !empty($repeatingSettings['end_type'])
+                        ? $repeatingSettings['end_type']
+                        : cashRepeatingTransaction::REPEATING_END_NEVER
                 )
                 ->setRepeatingEndConditions($repeatingSettings['end']);
 
@@ -93,29 +88,10 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashRepeatingTransaction::class);
         $model->startTransaction();
-
         try {
             /** @var cashRepeatingTransaction $repeatingT */
             $repeatingT = $this->repeatingTransactionFactory->createNew();
             $this->fill($repeatingT, $transaction, $repeatingSettings);
-            $repeatingT
-                ->setAccountId($transaction->getAccountId())
-                ->setCategoryId($transaction->getCategoryId())
-                ->setCreateContactId($transaction->getCreateContactId())
-                ->setAmount($transaction->getAmount())
-                ->setDescription($transaction->getDescription())
-                ->setDate($transaction->getDate())
-                ->setRepeatingFrequency(
-                    !empty($repeatingSettings['frequency'])
-                        ? $repeatingSettings['frequency']
-                        : cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY
-                )
-                ->setRepeatingInterval(
-                    !empty($repeatingSettings['interval'])
-                        ? $repeatingSettings['interval']
-                        : cashRepeatingTransaction::INTERVAL_DAY
-                )
-                ->setRepeatingEndConditions($repeatingSettings['end']);
 
             cash()->getEntityPersister()->save($repeatingT);
 
@@ -210,6 +186,11 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
                     ? $repeatingSettings['interval']
                     : cashRepeatingTransaction::INTERVAL_DAY
             )
+            ->setRepeatingEndType(
+                !empty($repeatingSettings['end_type'])
+                    ? $repeatingSettings['end_type']
+                    : cashRepeatingTransaction::REPEATING_END_NEVER
+            )
             ->setRepeatingEndConditions($repeatingSettings['end']);
     }
 
@@ -223,6 +204,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
     {
         return $transaction->getRepeatingEndConditions() != $transaction2->getRepeatingEndConditions()
             || $transaction->getRepeatingFrequency() != $transaction2->getRepeatingFrequency()
-            || $transaction->getRepeatingInterval() != $transaction2->getRepeatingInterval();
+            || $transaction->getRepeatingInterval() != $transaction2->getRepeatingInterval()
+            || $transaction->getRepeatingEndType() != $transaction2->getRepeatingEndType();
     }
 }

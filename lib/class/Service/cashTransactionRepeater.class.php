@@ -26,21 +26,22 @@ final class cashTransactionRepeater
 
     /**
      * @param cashRepeatingTransaction $transaction
+     * @param DateTime|null            $startDate
      *
      * @return bool|cashTransaction|null
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function repeat(cashRepeatingTransaction $transaction)
+    public function repeat(cashRepeatingTransaction $transaction, DateTime $startDate = null)
     {
         $data = cash()->getHydrator()->extract($transaction);
         $endSettings = $transaction->getRepeatingEndConditions();
         unset($data['id'], $data['create_datetime'], $data['create_datetime'], $data['update_datetime']);
         $data['repeating_id'] = $transaction->getId();
-        $startDate = new DateTime($transaction->getDate());
+        $startDate = $startDate ?: new DateTime($transaction->getDate());
         $t = null;
 
-        switch ($endSettings['type']) {
+        switch ($transaction->getRepeatingEndType()) {
             case cashRepeatingTransaction::REPEATING_END_ONDATE:
                 $endDate = new DateTime($endSettings['ondate']);
                 while ($startDate <= $endDate) {

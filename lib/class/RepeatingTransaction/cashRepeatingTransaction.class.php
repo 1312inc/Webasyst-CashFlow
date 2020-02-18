@@ -41,6 +41,11 @@ class cashRepeatingTransaction extends cashTransaction
     private $repeating_conditions = [];
 
     /**
+     * @var string
+     */
+    private $repeating_end_type = self::REPEATING_END_NEVER;
+
+    /**
      * @var array|string
      */
     private $repeating_end_conditions = [];
@@ -221,5 +226,25 @@ class cashRepeatingTransaction extends cashTransaction
             self::REPEATING_END_AFTER => _w('After'),
             self::REPEATING_END_ONDATE => _w('On date'),
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getRepeatingEndType()
+    {
+        return $this->repeating_end_type;
+    }
+
+    /**
+     * @param string $repeating_end_type
+     *
+     * @return cashRepeatingTransaction
+     */
+    public function setRepeatingEndType($repeating_end_type)
+    {
+        $this->repeating_end_type = $repeating_end_type;
+
+        return $this;
     }
 }
