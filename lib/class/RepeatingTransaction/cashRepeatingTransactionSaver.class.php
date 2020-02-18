@@ -133,28 +133,28 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         $model = cash()->getModel(cashTransaction::class);
         $model->startTransaction();
         try {
+            $repeatingT->setEnabled(0);
+            $persister->save($newRepeatingT);
+            $persister->save($repeatingT);
+
             if ($this->repeatingSettingsChanged($repeatingT, $newRepeatingT)) {
-                $persister->save($newRepeatingT);
                 $model->deleteAllByRepeatingIdAfterDate($repeatingT->getId(), $transaction->getDate());
-                $repeatingT->setEnabled(0);
-                $return = $newRepeatingT;
             } else {
                 $transactions = cash()->getEntityRepository(cashTransaction::class)->findAllByRepeatingIdAndAfterDate(
                     $repeatingT->getId(),
                     $transaction->getDate()
                 );
                 $data = $hydrator->extract($transaction);
+                $data['repeating_id'] = $newRepeatingT->getId();
                 unset($data['id'], $data['date'], $data['datetime'], $data['create_datetime']);
                 foreach ($transactions as $t) {
                     parent::saveFromArray($t, $data);
                 }
-                $return = $repeatingT;
             }
-            $persister->save($repeatingT);
 
             $model->commit();
 
-            return $return;
+            return $newRepeatingT;
         } catch (Exception $ex) {
             $model->rollback();
         }

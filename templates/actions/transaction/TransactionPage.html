@@ -221,17 +221,24 @@
                                 .find('[data-cash-transaction-category]')
                                     .css('background', $(this).find(':selected').data('cash-category-color'))
                         })
-                        .on('change.cash', '[name="repeating[interval]"]', function (e) {
+                        .on('change.cash', '[name="repeating[interval]"]:first', function (e) {
                             var $selected = $(this).find(':selected'),
-                                $customFrequency = $dialogWrapper.find('[data-cash-repeating-transaction-frequency-custom]');
+                                $customFrequency = $dialogWrapper.find('[data-cash-repeating-transaction-frequency-custom]'),
+                                interval = $selected.data('cash-repeating-transaction-interval');
 
-                            if ($selected.data('cash-repeating-transaction-frequency') == 'custom') {
+                            if (interval === 'custom') {
                                 $customFrequency.show().find(':input').prop('disabled', false);
                             } else {
                                 $customFrequency.hide().find(':input').prop('disabled', true);
                             }
+
+                            if (!$selected.val()) {
+                                $dialogWrapper.find('[name="repeating[end_type]"]').closest('.field').hide();
+                            } else {
+                                $dialogWrapper.find('[name="repeating[end_type]"]').closest('.field').show();
+                            }
                         })
-                        .on('change.cash', '[name="repeating[end][type]"]', function (e) {
+                        .on('change.cash', '[name="repeating[end_type]"]', function (e) {
                             var $this = $(this),
                                 $selected = $this.find(':selected'),
                                 typeEnd = $selected.data('cash-repeating-transaction-end'),

@@ -49,9 +49,9 @@ class cashTransactionSaveController extends cashJsonController
                     throw new kmwaRuntimeException('Error on repeating transaction save');
                 }
                 // изменились настройки повторения и вернулся новый объект повторяющейся транзакции
-                if ($savedRepeatingTransaction->getId() !== $repeatingTransaction->getId()) {
-                    $transactionRepeater->repeat($savedRepeatingTransaction);
-                }
+//                if ($savedRepeatingTransaction->getId() !== $repeatingTransaction->getId()) {
+//                    $transactionRepeater->repeat($savedRepeatingTransaction);
+//                }
             }
 
         }
