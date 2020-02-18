@@ -104,14 +104,14 @@
                         </div>
                     </div>
 
-                    {if $repeatingTransaction->id && ($repeatingTransaction->occurrences_in_future || $repeatingTransaction->repeating_end_conditions.type == cashRepeatingTransaction::REPEATING_END_NEVER)}
+                    {if $repeatingTransaction->id && ($repeatingTransaction->occurrences_in_future || $repeatingTransaction->repeating_end_type == cashRepeatingTransaction::REPEATING_END_NEVER)}
                     {* editing existing transaction *}
                     <div class="field">
                         <div class="value no-shift">
                             <label>
                                 <input type="checkbox" name="repeating[apply_to_all_in_future]"/>
                                 [`Apply this change to all future repeating transactions`]
-                                {if $repeatingTransaction->repeating_end_conditions.type != cashRepeatingTransaction::REPEATING_END_NEVER}
+                                {if $repeatingTransaction->repeating_end_type != cashRepeatingTransaction::REPEATING_END_NEVER}
                                     ({$repeatingTransaction->occurrences_in_future})
                                 {/if}
                             </label>
@@ -133,7 +133,7 @@
                                             {if $repeatingTransaction->repeating_interval == $interval}selected{/if}
                                     >{$label}</option>
                                 {/foreach}
-                                <option data-cash-repeating-transaction-frequency="custom">[`Custom...`]</option>
+                                <option data-cash-repeating-transaction-interval="custom">[`Custom...`]</option>
                             </select>
 
                             <div style="display: none" data-cash-repeating-transaction-frequency-custom>
@@ -149,7 +149,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="field" style="opacity: 0.54321 {* /// if 'Repeat' != 'None' /// *}">
+                    <div class="field" style="display: none">
                         <div class="name nowrap">
                             [`End repeat`]
                         </div>

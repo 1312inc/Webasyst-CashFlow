@@ -33,7 +33,9 @@ class cashTransactionDtoAssembler
     public function createFromEntity(cashTransaction $transaction)
     {
         /** @var cashAccountDto $accountDto */
-        $accountDto = cashDtoFromEntityFactory::fromEntity(cashAccountDto::class, $transaction->getAccount());
+        $accountDto = $transaction->getAccount()
+            ? cashDtoFromEntityFactory::fromEntity(cashAccountDto::class, $transaction->getAccount())
+            : new cashAccountDto();
         /** @var cashCategoryDto $categoryDto */
         $categoryDto = cashDtoFromEntityFactory::fromEntity(cashCategoryDto::class, $transaction->getCategory());
 
