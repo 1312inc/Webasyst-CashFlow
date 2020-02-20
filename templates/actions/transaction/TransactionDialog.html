@@ -125,8 +125,13 @@
                             [`Repeat`]
                         </div>
                         <div class="value no-shift">
-                            <input type="hidden" value="{$repeatingTransaction->repeating_frequency}" name="repeating[frequency]">
-                            <select name="repeating[interval]">
+                            <input type="hidden"
+                                    {if $repeatingTransaction->id}readonly{/if}
+                                   value="{$repeatingTransaction->repeating_frequency}"
+                                   name="repeating[frequency]">
+                            <select name="repeating[interval]"
+                                    {if $repeatingTransaction->id}readonly{/if}
+                            >
                                 <option value="">[`None`]</option>
                                 {foreach cashRepeatingTransaction::getRepeatingEveryIntervals() as $interval => $label}
                                     <option value="{$interval}"
@@ -138,8 +143,15 @@
 
                             <div style="display: none" data-cash-repeating-transaction-frequency-custom>
                             [`Every`]
-                            <input type="text" class="numerical short" value="{$repeatingTransaction->repeating_frequency}" name="repeating[frequency]">
-                                <select name="repeating[interval]">
+                                <input type="text"
+                                       class="numerical short"
+                                       {if $repeatingTransaction->id}readonly{/if}
+                                       value="{$repeatingTransaction->repeating_frequency}"
+                                       name="repeating[frequency]"
+                                >
+                                <select {if $repeatingTransaction->id}readonly{/if}
+                                        name="repeating[interval]"
+                                >
                                     {foreach cashRepeatingTransaction::getRepeatingIntervals() as $interval => $label}
                                         <option value="{$interval}"
                                                 {if $repeatingTransaction->repeating_interval == $interval}selected{/if}
@@ -154,20 +166,31 @@
                             [`End repeat`]
                         </div>
                         <div class="value no-shift">
-                            <select name="repeating[end_type]">
+                            <select {if $repeatingTransaction->id}readonly{/if}
+                                    name="repeating[end_type]"
+                            >
                                 {foreach cashRepeatingTransaction::getRepeatingEndTypes() as $type => $label}
-                                    <option data-cash-repeating-transaction-end="{$type}"
-                                            {if $repeatingTransaction->repeating_end_type == $type}selected{/if}
-                                            value="{$type}"
-                                    >{$label}</option>
+                                <option data-cash-repeating-transaction-end="{$type}"
+                                        {if $repeatingTransaction->repeating_end_type == $type}selected{/if}
+                                        value="{$type}"
+                                >{$label}</option>
                                 {/foreach}
                             </select>
                             <div style="display: none" data-cash-repeating-transaction-end-never></div>
                             <div style="display: none" data-cash-repeating-transaction-end-after>
-                                <input type="text" class="numerical short" value="{$repeatingTransaction->repeating_end_conditions.after}" name="repeating[end][after]"> [`occurrences`]
+                                <input type="text"
+                                       {if $repeatingTransaction->id}readonly{/if}
+                                       class="numerical short"
+                                       value="{$repeatingTransaction->repeating_end_conditions.after}"
+                                       name="repeating[end][after]"
+                                > [`occurrences`]
                             </div>
                             <div style="display: none" data-cash-repeating-transaction-end-ondate>
-                                <input type="text" name="repeating[end][ondate]" value="{$repeatingTransaction->repeating_end_conditions.ondate}"> <i class="icon16 calendar"></i>
+                                <input type="text"
+                                       name="repeating[end][ondate]"
+                                       {if $repeatingTransaction->id}readonly{/if}
+                                       value="{$repeatingTransaction->repeating_end_conditions.ondate}"
+                                > <i class="icon16 calendar"></i>
                             </div>
                         </div>
                     </div>
