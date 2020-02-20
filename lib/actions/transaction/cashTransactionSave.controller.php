@@ -53,7 +53,6 @@ class cashTransactionSaveController extends cashJsonController
 //                    $transactionRepeater->repeat($savedRepeatingTransaction);
 //                }
             }
-
         }
 
         $transactionDto = (new cashTransactionDtoAssembler())->createFromEntity($transaction);

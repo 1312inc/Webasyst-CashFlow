@@ -248,7 +248,7 @@
                             $repeatEnd.show();
                         })
                         .on('click.cash', '[name="repeating[apply_to_all_in_future]"]', function (e) {
-                            $dialogWrapper.find('[data-cash-repeating-settings]').toggle();
+                            // $dialogWrapper.find('[data-cash-repeating-settings]').toggle();
                             if ($(this).is(':checked')) {
                                 $dialogWrapper.find('[type="submit"]').text($_('Save all'));
                                 $dialogWrapper.find('[data-cash-action="delete-transaction"]').text($_('Delete transactions?'));

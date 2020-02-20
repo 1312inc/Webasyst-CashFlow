@@ -144,8 +144,8 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
                     $repeatingT->getId(),
                     $transaction->getDate()
                 );
-                $data = $hydrator->extract($transaction);
-                $data['repeating_id'] = $newRepeatingT->getId();
+                $transaction->setRepeatingTransaction($newRepeatingT);
+                $data = $hydrator->extract($transaction, array_keys($model->getMetadata()));
                 unset($data['id'], $data['date'], $data['datetime'], $data['create_datetime']);
                 foreach ($transactions as $t) {
                     parent::saveFromArray($t, $data);
@@ -176,22 +176,29 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
             ->setAmount($transaction->getAmount())
             ->setDescription($transaction->getDescription())
             ->setDate($transaction->getDate())
-            ->setRepeatingFrequency(
-                !empty($repeatingSettings['frequency'])
-                    ? $repeatingSettings['frequency']
-                    : cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY
-            )
-            ->setRepeatingInterval(
-                !empty($repeatingSettings['interval'])
-                    ? $repeatingSettings['interval']
-                    : cashRepeatingTransaction::INTERVAL_DAY
-            )
-            ->setRepeatingEndType(
-                !empty($repeatingSettings['end_type'])
-                    ? $repeatingSettings['end_type']
-                    : cashRepeatingTransaction::REPEATING_END_NEVER
-            )
-            ->setRepeatingEndConditions($repeatingSettings['end']);
+        ;
+
+        if (!empty($repeatingSettings['frequency'])) {
+            $repeatingT->setRepeatingFrequency($repeatingSettings['frequency']);
+        } elseif (empty($repeatingT->getRepeatingFrequency())) {
+            $repeatingT->setRepeatingFrequency(cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY);
+        }
+
+        if (!empty($repeatingSettings['interval'])) {
+            $repeatingT->setRepeatingInterval($repeatingSettings['interval']);
+        } elseif (empty($repeatingT->getRepeatingInterval())) {
+            $repeatingT->setRepeatingInterval(cashRepeatingTransaction::INTERVAL_DAY);
+        }
+
+        if (!empty($repeatingSettings['end_type'])) {
+            $repeatingT->setRepeatingEndType($repeatingSettings['end_type']);
+        } elseif (empty($repeatingT->getRepeatingEndType())) {
+            $repeatingT->setRepeatingEndType(cashRepeatingTransaction::REPEATING_END_NEVER);
+        }
+
+        if (!empty($repeatingSettings['end_type'])) {
+            $repeatingT->setRepeatingEndConditions($repeatingSettings['end']);
+        }
     }
 
     /**
