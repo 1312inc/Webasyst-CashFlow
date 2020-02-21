@@ -494,15 +494,18 @@ final class cashImportCsv
     {
         try {
             $date = cashDatetimeHelper::createDateTimeFromFormat(
-                $this->settings->getDateformat(),
-                $data[$this->settings->getDatetime()]
+                $data[$this->settings->getDatetime()],
+                $this->settings->getDateformat()
             );
 
-            return $date->format('Y-m-d H:i:s');
+            if ($date instanceof DateTime) {
+                return $date->format('Y-m-d H:i:s');
+            }
         } catch (Exception $exception) {
             cash()->getLogger()->error($exception->getMessage(), $exception);
-            throw new kmwaLogicException('No date in imported data');
         }
+
+        throw new kmwaLogicException('No date in imported data');
     }
 
     /**
