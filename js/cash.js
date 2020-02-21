@@ -94,6 +94,17 @@
 
                 return elementBottom > viewportTop && elementTop < viewportBottom;
             };
+
+            function scrollActions() {
+                var $this = $('.c-actions-menu');
+
+                if ($this.length) {
+                    var $w = $this.parent();
+                    $w.isInViewport() ? $this.removeClass('fixed') : $this.addClass('fixed');
+                }
+            }
+
+            window.addEventListener('scroll', $.cash.throttle(scrollActions, 131.2));
         },
         handlers: function () {
             var self = this;
