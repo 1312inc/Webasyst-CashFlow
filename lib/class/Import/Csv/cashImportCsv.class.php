@@ -493,7 +493,10 @@ final class cashImportCsv
     private function getDate(array $data)
     {
         try {
-            $date = new DateTime($data[$this->settings->getDatetime()]);
+            $date = cashDatetimeHelper::createDateTimeFromFormat(
+                $this->settings->getDateformat(),
+                $data[$this->settings->getDatetime()]
+            );
 
             return $date->format('Y-m-d H:i:s');
         } catch (Exception $exception) {

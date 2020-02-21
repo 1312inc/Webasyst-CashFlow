@@ -380,14 +380,6 @@
 
                 window.location.hash = ['#', filterType, filterId, startDate, date].join('/');
             });
-
-            function scrollActions() {
-                var $this = $('.c-actions-menu'),
-                    $w = $this.parent();
-                $w.isInViewport() ? $this.removeClass('fixed') : $this.addClass('fixed');
-            }
-
-            window.addEventListener('scroll', $.cash.throttle(scrollActions, 131.2));
         })();
     })();
 </script>

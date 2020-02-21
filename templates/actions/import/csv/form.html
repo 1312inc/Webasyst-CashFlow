@@ -108,7 +108,16 @@
                             <option value="{$header}"{if $header|strstr:'[`Date`]'} selected{/if}>{$header|escape}</option>
                         {/foreach}
                     </select>
-                    <a href="#" class="inline-link hint"><b><i>DD.MM.YYYY</i></b></a> <i class="icon10 yes"></i>
+                    <span data-cash-import-csv-date-format style="display:none;">
+                        <select name="import[dateformat]" id="">
+                            <option value="ai">[`Try to detect automatically`]</option>
+                            {foreach $dateFormats as $dateFormat}
+                            <option value="{$dateFormat}">{$dateFormat}</option>
+                            {/foreach}
+                            <option value="">[`Custom`]</option>
+                        </select>
+                        <span class="small"></span>
+                    </span>
                 </div>
             </div>
 
@@ -277,99 +286,143 @@
                 category: {$categories|json_encode}
             },
             transactionCounts = {$info->totalRowsByColumn|json_encode},
-            $form = $('#c-import-step-2 form');
-
-        $('#c-import-step-1').hide();
+            $form = $('#c-import-step-2 form'),
+            $dateFormatW = $form.find('[data-cash-import-csv-date-format]');
 
         var fetchColumnUniqueValues = function (name, callback) {
             $.get('?module=import&action=csvGetColumnUniqueValues', { column_name: name }, callback);
         };
-
-        $form.on('submit', function (e) {
-            e.preventDefault();
-            // debugger;
-
-            var $button = $form.find('[data-cash-csv-import-action="import"]'),
-                $progress = $('#c-import-step-3'),
-                $progressLoading = $progress.find('[data-cash-csv-import-progress-icon="loading"]'),
-                $progressSuccess = $progress.find('[data-cash-csv-import-progress-icon="success"]'),
-                $progressError = $progress.find('[data-cash-csv-import-progress-icon="error"]'),
-                $transactionStat = $progress.find('[data-cash-csv-import-progress-transactions]'),
-                $transactionErrors = $progress.find('[data-cash-csv-import-progress-errors]');
-
-            $button.prop('disabled', true);
-
-            var long = $.wa.kmLongAction();
-            long.start({
-                process_url: $form.attr('action'),
-                parallel: 2,
-                debug: true,
-                start: {
-                    data: $form.serialize(),
-                    onStart: function(r) {
-                        $progress.show();
-                        $progressLoading.show().siblings().hide();
-                    },
-                    onSuccess: function (r) {
-                        $progress.show().find('.progressbar-inner').css('width', '0%');
-                        $transactionStat.show();
-                    },
-                    onError: function (r) {
-                        $progressError.show().siblings().hide();
-                        $progressError.find('span').text(r.error);
-                        $button.prop('disabled', false);
-                        $transactionStat.hide();
-                    }
-                },
-                step: {
-                    onProgress: function(r) {
-                        $progress.find('.progressbar-inner').css('width', r.progress + '%');
-                        $transactionStat.show();
-                        $transactionStat.find('span').text(r.transactions.ok);
-                        $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
-                    },
-                    onReady: function (r) {
-                        $progressSuccess.show().siblings().hide();
-                        $progress.find('.progressbar-inner').css('width', r.progress + '%');
-                        $button.prop('disabled', false);
-                        $transactionStat.show();
-                        $transactionStat.find('span').text(r.transactions.ok);
-                        $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
-                    },
-                    onError: function (r) {
-                        $progressError.show().siblings().hide();
-                        $progressError.find('span').text(r.error);
-                        $button.prop('disabled', false);
-                    }
-                }
-            });
-        });
-
-        $('[data-cash-csv-import-action="fetch-column-data"]').on('change', function (e) {
-            var $this = $(this),
-                name = $this.find(':selected').text(),
-                scope = $this.data('cash-csv-import-conditions'),
-                dataScope = 'data-cash-csv-import-conditions-' + scope,
-                $wrapper = $('table[' + dataScope + ']'),
-                $template = $('script[' + dataScope + ']');
-
-            $wrapper.empty();
-
-            fetchColumnUniqueValues(name, function (r) {
+        var fetchColumnDatetimeValues = function (name, format, callback) {
+            var $status = $dateFormatW.find('span');
+            $status.hide().empty();
+            $.get('?module=import&action=csvGetColumnDatetimeValues', { column_name: name, dateformat: format }, function (r) {
+                $status.show();
                 if (r.status === 'ok') {
-                    $.each(r.data, function (index, columnValue) {
-                        $template.tmpl({
-                            columnValue: columnValue,
-                            sources: data[scope],
-                            scope: scope,
-                            transactions: transactionCounts[name][columnValue] + ' ' + $_('transactions')
-                        }).appendTo($wrapper);
-                    });
+                    $status.append('<i class="icon10 yes"></i>' + r.data.source + ' => ' + r.data.converted);
                 } else {
-                    alert(r.errors.join("\n"));
+                    $status.append('<i class="icon10 no"></i>' + r.errors.join("\n"));
                 }
             });
+        };
+
+        $form
+            .on('submit', function (e) {
+                e.preventDefault();
+                // debugger;
+
+                var $button = $form.find('[data-cash-csv-import-action="import"]'),
+                    $progress = $('#c-import-step-3'),
+                    $progressLoading = $progress.find('[data-cash-csv-import-progress-icon="loading"]'),
+                    $progressSuccess = $progress.find('[data-cash-csv-import-progress-icon="success"]'),
+                    $progressError = $progress.find('[data-cash-csv-import-progress-icon="error"]'),
+                    $transactionStat = $progress.find('[data-cash-csv-import-progress-transactions]'),
+                    $transactionErrors = $progress.find('[data-cash-csv-import-progress-errors]');
+
+                $button.prop('disabled', true);
+
+                var long = $.wa.kmLongAction();
+                long.start({
+                    process_url: $form.attr('action'),
+                    parallel: 2,
+                    debug: true,
+                    start: {
+                        data: $form.serialize(),
+                        onStart: function(r) {
+                            $progress.show();
+                            $progressLoading.show().siblings().hide();
+                        },
+                        onSuccess: function (r) {
+                            $progress.show().find('.progressbar-inner').css('width', '0%');
+                            $transactionStat.show();
+                        },
+                        onError: function (r) {
+                            $progressError.show().siblings().hide();
+                            $progressError.find('span').text(r.error);
+                            $button.prop('disabled', false);
+                            $transactionStat.hide();
+                        }
+                    },
+                    step: {
+                        onProgress: function(r) {
+                            $progress.find('.progressbar-inner').css('width', r.progress + '%');
+                            $transactionStat.show();
+                            $transactionStat.find('span').text(r.transactions.ok);
+                            $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
+                        },
+                        onReady: function (r) {
+                            $progressSuccess.show().siblings().hide();
+                            $progress.find('.progressbar-inner').css('width', r.progress + '%');
+                            $button.prop('disabled', false);
+                            $transactionStat.show();
+                            $transactionStat.find('span').text(r.transactions.ok);
+                            $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
+                        },
+                        onError: function (r) {
+                            $progressError.show().siblings().hide();
+                            $progressError.find('span').text(r.error);
+                            $button.prop('disabled', false);
+                        }
+                    }
+                });
+            })
+            .on('change.cash', '[data-cash-csv-import-action="fetch-column-data"]', function (e) {
+                var $this = $(this),
+                    name = $this.find(':selected').text(),
+                    scope = $this.data('cash-csv-import-conditions'),
+                    dataScope = 'data-cash-csv-import-conditions-' + scope,
+                    $wrapper = $('table[' + dataScope + ']'),
+                    $template = $('script[' + dataScope + ']');
+
+                $wrapper.empty();
+
+                fetchColumnUniqueValues(name, function (r) {
+                    if (r.status === 'ok') {
+                        $.each(r.data, function (index, columnValue) {
+                            $template.tmpl({
+                                columnValue: columnValue,
+                                sources: data[scope],
+                                scope: scope,
+                                transactions: transactionCounts[name][columnValue] + ' ' + $_('transactions')
+                            }).appendTo($wrapper);
+                        });
+                    } else {
+                        alert(r.errors.join("\n"));
+                    }
+                });
+            })
+            .on('change.cash', '[name="import[datetime]"]', function(e) {
+                var $this = $(this),
+                    $selected = $this.find(':selected');
+
+                if ($selected.val()) {
+                    $dateFormatW.show();
+                    fetchColumnDatetimeValues($selected.val(), $dateFormatW.find('select').val());
+                } else {
+                    $dateFormatW.hide();
+                }
         });
+
+        $dateFormatW.on('change.cash', 'select', function (e) {
+            var $this = $(this),
+                $selected = $this.find(':selected'),
+                value = $selected.val();
+
+            if (!value) {
+                var format = prompt($_('Enter format'));
+                if (format) {
+                    $selected
+                        .before('<option value="' + format + '" selected>' + format + '</option>')
+                        .removeAttr('selected');
+                    $this.trigger('change.cash');
+                }
+            } else {
+                fetchColumnDatetimeValues($form.find('[name="import[datetime]"]').val(), value);
+            }
+        });
+
+        $form.find('[name="import[datetime]"]').trigger('change.cash');
+        $('#c-import-step-1').hide();
+
     }(jQuery))
 </script>
 

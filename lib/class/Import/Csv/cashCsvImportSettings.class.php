@@ -84,6 +84,11 @@ class cashCsvImportSettings implements JsonSerializable
     private $skipDuplicates = true;
 
     /**
+     * @var string
+     */
+    private $dateformat = cashDatetimeHelper::DEFAULT_DATEFORMAT;
+
+    /**
      * cashCsvImportSettingsDto constructor.
      *
      * @param array $request
@@ -92,6 +97,7 @@ class cashCsvImportSettings implements JsonSerializable
     {
         $this->description = ifset($request['description']);
         $this->datetime = ifset($request['datetime']);
+        $this->dateformat = ifset($request['dateformat']);
 
         $this->accountType = ifset($request['account']['type'], self::TYPE_SINGLE);
         $this->accountMap = ifset($request['account']['multi']['map'], []);
@@ -286,5 +292,13 @@ class cashCsvImportSettings implements JsonSerializable
     public function jsonSerialize()
     {
         return get_object_vars($this);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateformat()
+    {
+        return $this->dateformat;
     }
 }
