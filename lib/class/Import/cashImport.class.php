@@ -140,12 +140,12 @@ class cashImport extends cashAbstractEntity
 
     public function beforeExtract(array &$fields)
     {
-        $this->fromJson(['errors']);
+        $this->toJson(['errors']);
     }
 
     public function afterExtract(array &$fields)
     {
-        $this->toJson(['errors']);
+        $this->fromJson(['errors']);
     }
 
     public function afterHydrate($data = [])
