@@ -5,7 +5,7 @@
  */
 class cashRepeatingTransaction extends cashTransaction
 {
-    use cashEntityBeforeSaveTrait;
+    use kmwaEntityDatetimeTrait;
     use cashEntityJsonTransformerTrait;
 
     const DEFAULT_REPEATING_FREQUENCY = 1;
