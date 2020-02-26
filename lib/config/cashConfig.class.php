@@ -294,56 +294,12 @@ class cashConfig extends waAppConfig
 
     protected function loadVendors()
     {
-        $customClasses = [
-            'lib/vendor/kmwa/Assert' => [
-                'kmwaAssert',
-                'kmwaAssertException',
-            ],
-            'lib/vendor/kmwa/Event' => [
-                'kmwaEvent',
-                'kmwaEventDispatcher',
-                'kmwaEventDispatcherInterface',
-                'kmwaEventInterface',
-                'kmwaListenerProviderInterface',
-                'kmwaListenerResponse',
-                'kmwaListenerResponseInterface',
-                'kmwaStoppableEventInterface',
-            ],
-            'lib/vendor/kmwa/Exception' => [
-                'kmwaForbiddenException',
-                'kmwaLogicException',
-                'kmwaNotFoundException',
-                'kmwaNotImplementedException',
-                'kmwaRuntimeException',
-            ],
-            'lib/vendor/kmwa/Hydrator' => [
-                'kmwaHydratableInterface',
-                'kmwaHydrator',
-                'kmwaHydratorInterface',
-            ],
-            'lib/vendor/kmwa/Wa/View' => [
-                'kmwaWaJsonActions',
-                'kmwaWaJsonController',
-                'kmwaWaViewAction',
-                'kmwaWaViewActions',
-                'kmwaWaViewTrait',
-            ],
-            'lib/vendor/kmwa/Wa' => [
-                'kmwaWaCacheAdapter',
-                'kmwaWaListenerProviderAbstract',
-            ],
-        ];
+        $kmwaLoaderClassPath = 'lib/vendor/kmwa/Wa/kmwaWaConfigHelper.php';
+        $appPath = wa()->getAppPath($kmwaLoaderClassPath, self::APP_ID);
 
-        foreach ($customClasses as $path => $classes) {
-            foreach ($classes as $class) {
-                $file = wa()->getAppPath(sprintf('%s/%s.php', $path, $class), self::APP_ID);
-                if (!class_exists($class, false) && file_exists($file)) {
-                    waAutoload::getInstance()->add(
-                        $class,
-                        sprintf('wa-apps/%s/%s/%s.php', self::APP_ID, $path, $class)
-                    );
-                }
-            }
+        if (!class_exists('kmwaWaConfigHelper', false) && file_exists($appPath)) {
+            require_once $appPath;
+            (new kmwaWaConfigHelper)->loadKmwaClasses(self::APP_ID);
         }
     }
 }

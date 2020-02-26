@@ -5,7 +5,7 @@
  */
 class cashCategory extends cashAbstractEntity
 {
-    use cashEntityBeforeSaveTrait;
+    use kmwaEntityDatetimeTrait;
 
     const TYPE_INCOME = 'income';
     const TYPE_EXPENSE = 'expense';

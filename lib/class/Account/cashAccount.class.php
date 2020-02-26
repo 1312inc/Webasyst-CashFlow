@@ -5,7 +5,7 @@
  */
 class cashAccount extends cashAbstractEntity
 {
-    use cashEntityBeforeSaveTrait;
+    use kmwaEntityDatetimeTrait;
 
     /**
      * @var int

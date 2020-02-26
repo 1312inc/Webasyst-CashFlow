@@ -5,7 +5,7 @@
  */
 class cashImport extends cashAbstractEntity
 {
-    use cashEntityBeforeSaveTrait;
+    use kmwaEntityDatetimeTrait;
     use cashEntityJsonTransformerTrait;
 
     /**

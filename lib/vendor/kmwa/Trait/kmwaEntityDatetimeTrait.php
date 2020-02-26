@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Trait cashEntityBeforeSaveTrait
+ * Trait kmwaEntityDatetimeTrait
  */
-trait cashEntityBeforeSaveTrait
+trait kmwaEntityDatetimeTrait
 {
     /**
      * @var string|DateTime
