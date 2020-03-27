@@ -33,7 +33,7 @@ class cashTransactionSaveController extends cashJsonController
             return;
         }
 
-        if ($repeating) {
+        if ($repeating && !empty($repeating['interval'])) {
             $repeatTransactionSaver = new cashRepeatingTransactionSaver();
             $transactionRepeater = new cashTransactionRepeater();
             if ($isNew) {
