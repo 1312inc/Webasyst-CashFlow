@@ -3,8 +3,8 @@
     <h1>[`Import`]</h1>
 
     <ol class="c-import-progress">
-        <li class="completed">[`Select a file.`]</li>
-        <li class="current">[`Preview & configure.`]</li>
+        <li class="current">[`Select a file.`]</li>
+        <li>[`Preview & configure.`]</li>
         <li>[`Import!`]</li>
     </ol>
 
@@ -61,16 +61,35 @@
     'use strict';
     (function () {
         var $w = $('#cash-import-page'),
+            $importProgress = $w.find('.c-import-progress'),
             $uploadForm = $('#cash-import-upload-form'),
             $uploadIframe = $('#cash-upload-file'),
-            $step2 = $('#c-import-step-2');
+            $step2 = $('#c-import-step-2'),
+            $loading = $('<i class="icon16 loading"></i>');
 
         $uploadForm.on('change', '[name="upload[file]"]', function () {
+            $uploadForm.append($loading);
             $uploadForm.trigger('submit');
 
             $uploadIframe.one('load', function () {
+                $loading.remove();
                 var html = $(this).contents().find('body').html();
                 $step2.html(html);
+
+                $w.trigger('stepChange.cash', 2);
+            });
+        });
+
+        $w.on('stepChange.cash', function (e, stepN) {
+            stepN--;
+            $importProgress.find('li').removeClass().each(function (index) {
+                if (index < stepN) {
+                    $(this).addClass('completed');
+                }
+
+                if (index == stepN) {
+                    $(this).addClass('current');
+                }
             });
         });
     }())

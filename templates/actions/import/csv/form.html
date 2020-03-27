@@ -320,6 +320,8 @@
 
                 $button.prop('disabled', true);
 
+                $('#cash-import-page').trigger('stepChange.cash', 3);
+
                 var long = $.wa.kmLongAction();
                 long.start({
                     process_url: $form.attr('action'),
