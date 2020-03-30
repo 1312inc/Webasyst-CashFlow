@@ -529,7 +529,7 @@ final class cashImportCsv
 
             case cashCsvImportSettings::TYPE_MULTI:
                 $accountMap = $this->settings->getAccountMap();
-                if (isset($data[$accountHeader], $accountMap[$data[$accountHeader]])) {
+                if (isset($data[$accountHeader], $accountMap[$data[$accountHeader]]) && $accountMap[$data[$accountHeader]] > 0) {
                     $accountId = $accountMap[$data[$accountHeader]];
                 }
 //                if (isset($accountMap[$accountHeader]) && isset($infoDto->accounts[$accountMap[$accountHeader]])) {
@@ -569,7 +569,7 @@ final class cashImportCsv
             case cashCsvImportSettings::TYPE_MULTI:
                 $categoryMap = $this->settings->getCategoryMap();
                 $category = $this->settings->getCategory();
-                if (isset($data[$category], $categoryMap[$data[$category]])) {
+                if (isset($data[$category], $categoryMap[$data[$category]]) && $categoryMap[$data[$category]] > 0) {
                     $categoryId = $categoryMap[$data[$category]];
                 }
 
