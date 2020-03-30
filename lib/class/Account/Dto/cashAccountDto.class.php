@@ -80,7 +80,7 @@ class cashAccountDto extends cashAbstractDto
         if ($data) {
             $this->initializeWithArray($data);
             $this->currency = cashCurrencyVO::fromWaCurrency($data['currency']);
-            if (strpos($data['icon'], 'http') !== false) {
+            if (isset($data['icon']) && strpos($data['icon'], 'http') !== false) {
                 $this->iconLink = $this->icon;
             }
         } else {

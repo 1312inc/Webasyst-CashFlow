@@ -214,7 +214,8 @@
                         <input type="radio" name="import[category][type]"
                                value="{cashCsvImportSettings::TYPE_MULTI}"/>
                         [`Set according to the value in the following column:`]
-                        <select name="import[category][multi][column]" data-cash-csv-import-action="fetch-column-data"
+                        <select name="import[category][multi][column]"
+                                data-cash-csv-import-action="fetch-column-data"
                                 data-cash-csv-import-conditions="category">
                             <option></option>
                             {foreach $info->headers as $header}
@@ -402,7 +403,40 @@
                 } else {
                     $dateFormatW.hide();
                 }
-        });
+            })
+            .on('change.cash', '[data-cash-csv-import-conditions-category] select', function(e) {
+                var $this = $(this),
+                    $selected = $this.find(':selected'),
+                    $w = $this.closest('[data-cash-csv-import-conditions-category]'),
+                    val = $selected.val(),
+                    newCatName = '',
+                    type = '';
+
+                if (val == -1) {
+                    newCatName = prompt($_('New income category: '));
+                    type = '{cashCategory::TYPE_INCOME}';
+                } else if (val == -2) {
+                    newCatName = prompt($_('New expense category: '));
+                    type = '{cashCategory::TYPE_EXPENSE}';
+                }
+
+                if (newCatName && type) {
+                    $this.prop('disabled', true);
+                    $.post('?module=category&action=save', {
+                        category: {
+                            type: type,
+                            name: newCatName
+                        }
+                    }, function (r) {
+                        $this.prop('disabled', false);
+                        if (r.status === 'ok') {
+                            $w.find('option[value="-1"]').before('<option value="' + r.data.id + '">' + r.data.name + '</option>');
+                            $this.find('option[value="' + r.data.id + '"]').attr('selected', 'selected');
+                        }
+                    }, 'json');
+                }
+            })
+        ;
 
         $dateFormatW.on('change.cash', 'select', function (e) {
             var $this = $(this),

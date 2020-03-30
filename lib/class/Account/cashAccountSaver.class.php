@@ -66,19 +66,20 @@ class cashAccountSaver extends cashEntitySaver
      */
     public function sort(array $order)
     {
+        /** @var cashAccountRepository $rep */
+        $rep = cash()->getEntityRepository(cashAccount::class);
         try {
-            $accounts = cash()->getModel(cashAccount::class)
-                ->select('*')
-                ->where('id in (i:ids)', ['ids' => $order])
-                ->fetchAll('id');
+            /** @var cashAccount[] $accounts */
+            $accounts = $rep->findById($order);
+            $order = array_combine($order, $order);
             $i = 0;
-            foreach ($order as $accountId) {
-                if (!isset($accounts[$accountId])) {
+            foreach ($accounts as $account) {
+                if (!isset($order[$account->getId()])) {
                     continue;
                 }
 
-                $accounts[$accountId]['sort'] = $i++;
-                $this->saveFromArray($accounts[$accountId]);
+                $account->setSort($i++);
+                cash()->getEntityPersister()->update($account);
             }
 
             return true;

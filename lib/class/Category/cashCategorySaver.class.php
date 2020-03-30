@@ -31,7 +31,7 @@ class cashCategorySaver extends cashEntitySaver
 
             if (empty($category->getColor())) {
                 $colors = cashColorStorage::getColorsByType($category->getType());
-                $category->setColor($colors(array_rand($colors)));
+                $category->setColor($colors[array_rand($colors)]);
             }
 
             cash()->getHydrator()->hydrate($category, $data);

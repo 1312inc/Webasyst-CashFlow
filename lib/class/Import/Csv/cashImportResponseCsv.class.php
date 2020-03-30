@@ -30,11 +30,15 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
         $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActive();
         /** @var cashAccountDto[] $accountDtos */
         $accountDtos = cashDtoFromEntityFactory::fromEntities(cashAccountDto::class, $accounts);
+        $accountDtos[0] = new cashAccountDto(['name' => _w('Skip'), 'id' => 0, 'currency' => 'RUB']);
 
         /** @var cashCategory[] $accounts */
         $categories = cash()->getEntityRepository(cashCategory::class)->findAllActive();
         /** @var cashCategoryDto[] $categorieDtos */
         $categoryDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $categories);
+        $categoryDtos[0] = new cashCategoryDto(['name' => _w('Skip'), 'id' => 0]);
+        $categoryDtos[] = new cashCategoryDto(['name' => _w('New income category'), 'id' => -1]);
+        $categoryDtos[] = new cashCategoryDto(['name' => _w('New expense category'), 'id' => -2]);
 
         $view->assign(
             [
