@@ -85,6 +85,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
         $this->endDate = $endDate;
         $this->filterDto = $filterDto;
         $this->grouping = $grouping;
+        $existingCategories = [];
 
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
@@ -103,6 +104,18 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 } else {
                     $this->accounts = [$this->filterDto->id];
                 }
+                break;
+
+            case cashTransactionPageFilterDto::FILTER_IMPORT:
+                $existingCategories = $model->getCategoriesAndCurrenciesHashByImport(
+                    $startDate->format('Y-m-d 00:00:00'),
+                    $endDate->format('Y-m-d 23:59:59'),
+                    $this->filterDto->id
+                );
+                $this->accounts = $model->getExistingAccountsBetweenDates(
+                    $startDate->format('Y-m-d 00:00:00'),
+                    $endDate->format('Y-m-d 23:59:59')
+                );
                 break;
 
             case cashTransactionPageFilterDto::FILTER_CATEGORY:
@@ -172,7 +185,11 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             }
         }
 
-        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
+        if (in_array(
+            $this->filterDto->type,
+            [cashTransactionPageFilterDto::FILTER_ACCOUNT, cashTransactionPageFilterDto::FILTER_IMPORT],
+            true
+        )) {
             foreach ($this->lines as $lineId => $lineData) {
                 $regions[$lineId] = [['start' => $this->currentDate, 'style' => 'dashed']];
 

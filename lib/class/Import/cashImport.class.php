@@ -49,6 +49,16 @@ class cashImport extends cashAbstractEntity
     private $errors = [];
 
     /**
+     * @var bool|int
+     */
+    private $is_archived = 0;
+
+    /**
+     * @var string
+     */
+    private $provider = cashImportCsv::PROVIDER_CSV;
+
+    /**
      * @return int
      */
     public function getId()
@@ -241,6 +251,46 @@ class cashImport extends cashAbstractEntity
     public function addError($error)
     {
         $this->errors[] = $error;
+
+        return $this;
+    }
+
+    /**
+     * @return bool|int
+     */
+    public function getIsArchived()
+    {
+        return $this->is_archived;
+    }
+
+    /**
+     * @param bool|int $is_archived
+     *
+     * @return cashImport
+     */
+    public function setIsArchived($is_archived)
+    {
+        $this->is_archived = $is_archived;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProvider()
+    {
+        return $this->provider;
+    }
+
+    /**
+     * @param string $provider
+     *
+     * @return cashImport
+     */
+    public function setProvider($provider)
+    {
+        $this->provider = $provider;
 
         return $this;
     }

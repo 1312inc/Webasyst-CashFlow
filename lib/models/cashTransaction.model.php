@@ -94,6 +94,40 @@ SQL;
     }
 
     /**
+     * @param string $startDate
+     * @param string $endDate
+     * @param int    $import
+     * @param bool   $returnResult
+     *
+     * @return waDbResultIterator|array
+     */
+    public function getByDateBoundsAndImport($startDate, $endDate, $import, $returnResult = false)
+    {
+        $sql = <<<SQL
+select ct.*,
+       (@balance := @balance + ct.amount) as balance
+from cash_transaction ct
+join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.date < s:startDate)) b
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+join cash_category cc on ct.category_id = cc.id
+where ct.date between s:startDate and s:endDate
+      and ct.import_id = i:import_id
+order by ct.date, ct.id
+SQL;
+
+        $query = $this->query(
+            $sql,
+            [
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'import_id' => $import,
+            ]
+        );
+
+        return $returnResult ? $query->fetchAll() : $query->getIterator();
+    }
+
+    /**
      * @param string   $startDate
      * @param string   $endDate
      * @param int|null $account
@@ -122,6 +156,42 @@ SQL;
             $endDate,
             $account ? [$account] : []
         );
+    }
+
+    /**
+     * @param string $startDate
+     * @param string $endDate
+     * @param int    $importId
+     *
+     * @return array
+     */
+    public function getSummaryByDateBoundsAndImportGroupByDay($startDate, $endDate, $importId)
+    {
+        $sql = <<<SQL
+select ca.currency,
+       concat(ca.currency,'_',ifnull(ct.category_id,0)) hash,
+       if(ct.amount < 0, 'credit', 'debit') cd,
+       ct.date,
+       ct.category_id category_id,
+       ifnull(sum(ct.amount), 0) summary
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+where ct.date between s:startDate and s:endDate
+    and ct.import_id = i:import_id
+group by ct.date, ca.currency, ct.category_id, if(ct.amount < 0, 'credit', 'debit')
+order by ct.date
+SQL;
+
+        return $this
+            ->query(
+                $sql,
+                [
+                    'startDate' => $startDate,
+                    'endDate' => $endDate,
+                    'import_id' => $importId,
+                ]
+            )
+            ->fetchAll('date', 2);
     }
 
     /**
@@ -303,6 +373,39 @@ SQL;
     }
 
     /**
+     * @param string $startDate
+     * @param string $endDate
+     * @param int    $importId
+     *
+     * @return array
+     */
+    public function getBalanceByDateBoundsAndImportGroupByDay($startDate, $endDate, $importId)
+    {
+        $sql = <<<SQL
+select ct.date,
+       ca.id category_id,
+       ifnull(sum(ct.amount), 0) summary
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+where ct.date between s:startDate and s:endDate
+    and ct.import_id = i:import_id
+group by ct.date, ca.id
+order by ct.date
+SQL;
+
+        return $this
+            ->query(
+                $sql,
+                [
+                    'startDate' => $startDate,
+                    'endDate' => $endDate,
+                    'import_id' => $importId,
+                ]
+            )
+            ->fetchAll('date', 2);
+    }
+
+    /**
      * @param string   $startDate
      * @param string   $endDate
      * @param int|null $accounts
@@ -327,6 +430,38 @@ SQL;
                     'startDate' => $startDate,
                     'endDate' => $endDate,
                     'account_ids' => $accounts ? [$accounts] : [],
+                ]
+            )
+            ->fetchAll();
+
+        return array_column($data, 'hash');
+    }
+
+    /**
+     * @param string $startDate
+     * @param string $endDate
+     * @param int    $importId
+     *
+     * @return array
+     */
+    public function getCategoriesAndCurrenciesHashByImport($startDate, $endDate, $importId)
+    {
+        $sql = <<<SQL
+select concat(ca.currency,'_',ifnull(ct.category_id,0)) hash
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+where ct.date between s:startDate and s:endDate
+    and ct.import_id = i:import_id
+group by concat(ca.currency,'_',ifnull(ct.category_id,0))
+SQL;
+
+        $data = $this
+            ->query(
+                $sql,
+                [
+                    'startDate' => $startDate,
+                    'endDate' => $endDate,
+                    'import_id' => $importId,
                 ]
             )
             ->fetchAll();

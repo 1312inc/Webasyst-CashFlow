@@ -41,6 +41,8 @@ return array(
         'errors' => array('mediumtext'),
         'create_datetime' => array('datetime', 'null' => 0),
         'update_datetime' => array('datetime'),
+        'is_archived' => array('tinyint', 1, 'default' => '0'),
+        'provider' => array('varchar', 50, 'default' => 'csv'),
         ':keys' => array(
             'PRIMARY' => 'id',
         ),

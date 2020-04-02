@@ -17,31 +17,25 @@ class cashTransactionListAction extends cashTransactionPageAction
         $calcService = new cashCalculationService();
 
         $upcoming = array_reverse(
-            $repository->findByDates(
-                $tomorrow,
-                $this->endDate,
-                $this->filterDto
-            ),
+            $repository->findByDates($tomorrow, $this->endDate, $this->filterDto),
             true
         );
         $completed = array_reverse(
-            $repository->findByDates(
-                $this->startDate,
-                $this->today,
-                $this->filterDto
-            ),
+            $repository->findByDates($this->startDate, $this->today, $this->filterDto),
             true
         );
 
         $upcomingOnDate = $calcService->getOnHandDetailedCategories(
             $tomorrow,
             $this->endDate,
-            $this->filterDto->entity
+            $this->filterDto->entity,
+            $this->filterDto->type
         );
         $completedOnDate = $calcService->getOnHandDetailedCategories(
             $this->startDate,
             $this->today,
-            $this->filterDto->entity
+            $this->filterDto->entity,
+            $this->filterDto->type
         );
 
         $this->view->assign(

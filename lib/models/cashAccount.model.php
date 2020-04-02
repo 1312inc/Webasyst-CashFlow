@@ -68,11 +68,27 @@ SQL;
      *
      * @return array
      */
-    public function getStatDetailedCategoryData($startDate, $endDate, $filterType = 'account', $filterIds = null)
-    {
+    public function getStatDetailedCategoryData(
+        $startDate,
+        $endDate,
+        $filterType = cashTransactionPageFilterDto::FILTER_ACCOUNT,
+        $filterIds = null
+    ) {
         $filterSql = '';
         if ($filterIds) {
-            $filterSql = ($filterType === 'account') ? ' and ca.id in (i:filter_ids)' : ' and cc.id in (i:filter_ids)';
+            switch ($filterType) {
+                case cashTransactionPageFilterDto::FILTER_ACCOUNT:
+                    $filterSql = ' and ca.id in (i:filter_ids)';
+                    break;
+
+                case cashTransactionPageFilterDto::FILTER_CATEGORY:
+                    $filterSql = ' and cc.id in (i:filter_ids)';
+                    break;
+
+                case cashTransactionPageFilterDto::FILTER_IMPORT:
+                    $filterSql = ' and ci.id in (i:filter_ids)';
+                    break;
+            }
         }
 
         $sql = <<<SQL
@@ -86,6 +102,7 @@ select cc.name,
 from cash_transaction ct
          join cash_account ca on ct.account_id = ca.id
          left join cash_category cc on ct.category_id = cc.id
+         left join cash_import ci on ct.import_id = ci.id
 where ct.date between s:startDate and s:endDate
       and ca.is_archived = 0
       {$filterSql}

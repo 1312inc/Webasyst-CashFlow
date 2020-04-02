@@ -16,7 +16,7 @@ class kmwaWaJsonController extends waJsonController
             $this->preExecute();
             $this->execute();
             $this->afterExecute();
-        } catch (waException $ex) {
+        } catch (Exception $ex) {
             $this->errors = $ex->getMessage();
         }
 

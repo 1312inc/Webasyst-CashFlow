@@ -7,6 +7,7 @@ class cashTransactionPageFilterDto implements JsonSerializable
 {
     const FILTER_ACCOUNT  = 'account';
     const FILTER_CATEGORY = 'category';
+    const FILTER_IMPORT = 'import';
 
     /**
      * @var string
@@ -29,7 +30,7 @@ class cashTransactionPageFilterDto implements JsonSerializable
     public $type = self::FILTER_ACCOUNT;
 
     /**
-     * @var cashAccount|cashCategory
+     * @var cashAccount|cashCategory|cashImport
      */
     public $entity;
 
@@ -51,28 +52,40 @@ class cashTransactionPageFilterDto implements JsonSerializable
             case self::FILTER_ACCOUNT:
                 if ($identifier) {
                     $this->entity = cash()->getEntityRepository(cashAccount::class)->findById($identifier);
-                    if (!$this->entity instanceof cashAccount) {
-                        throw new kmwaNotFoundException(_w('Account not found'));
-                    }
+                    kmwaAssert::instance($this->entity, cashCategory::class);
                 } else {
                     $this->entity = cash()->getEntityFactory(cashAccount::class)->createAllAccount();
                 }
+                $this->name = $this->entity->getName();
 
                 if ($this->entity->getIsArchived()) {
                     throw new kmwaNotFoundException(_w('Account not found'));
                 }
+
                 break;
 
             case self::FILTER_CATEGORY:
-                if ($identifier) {
-                    $this->entity = cash()->getEntityRepository(cashCategory::class)->findBySlug($identifier);
-                    if (!$this->entity instanceof cashCategory) {
-                        throw new kmwaNotFoundException(_w('Category not found'));
-                    }
-                } else {
+                if (!$identifier) {
                     throw new kmwaNotFoundException(_w('Category not found'));
-
                 }
+
+                $this->entity = cash()->getEntityRepository(cashCategory::class)->findBySlug($identifier);
+                kmwaAssert::instance($this->entity, cashCategory::class);
+
+                $this->name = $this->entity->getName();
+
+                break;
+
+            case self::FILTER_IMPORT:
+                if (!$identifier) {
+                    throw new kmwaNotFoundException(_w('Import not found'));
+                }
+
+                $this->entity = cash()->getEntityRepository(cashImport::class)->findById($identifier);
+                kmwaAssert::instance($this->entity, cashImport::class);
+
+                $this->name = sprintf_wp('Import #%s', $this->entity->getId());
+
                 break;
 
             default:
@@ -80,7 +93,6 @@ class cashTransactionPageFilterDto implements JsonSerializable
         }
 
         $this->identifier = $identifier;
-        $this->name = $this->entity->getName();
         $this->id = $this->entity->getId();
     }
 

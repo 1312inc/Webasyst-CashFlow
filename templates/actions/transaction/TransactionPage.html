@@ -319,45 +319,15 @@
                 currentDate = '{$currentDate}',
                 $transactionList = $('#cash-transaction-list');
 
-            function loadTransactions() {
-                $.get('?module=transaction&action=list', {
-                    'start_date': startDate,
-                    'end_date': endDate,
-                    'id': filterId,
-                    'filter': filterType
-                }, function (html) {
-                    $transactionList.html(html);
-                })
-            }
-
-            function loadGraphData() {
-                $.get('?module=transaction&action=graphData', {
-                    'start_date': startDate,
-                    'end_date': endDate,
-                    'id': filterId,
-                    'filter': filterType
-                }, function (r) {
-                    if (r.status === 'ok') {
-                        var chart = c3.generate({
-                            bindto: '#cash-chart',
-                            data: r.data.data,
-                            axis: r.data.axis,
-                            grid: r.data.grid,
-                            line: r.data.line
-                        });
-                    }
-                })
-            }
-
-            loadTransactions();
-            loadGraphData();
+            $.cash.loadTransactions(startDate, endDate, filterId, filterType, $transactionList);
+            $.cash.loadGraphData(startDate, endDate, filterId, filterType, '#cash-chart');
 
             $('[data-cash-action="add-transaction"]').on('click.cash', function (e) {
                 e.preventDefault();
                 transactionDialog(0, filterType, filterId, $(this).data('cash-category-type'))
             });
 
-            $('#cash-transaction-list').on('click.cash', '[data-cash-transaction-id]', function (e) {
+            $transactionList.on('click.cash', '[data-cash-transaction-id]', function (e) {
                 e.preventDefault();
 
                 transactionDialog($(this).data('cash-transaction-id'), filterType, filterId, '')
