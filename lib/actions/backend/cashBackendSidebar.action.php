@@ -22,6 +22,9 @@ class cashBackendSidebarAction extends cashViewAction
         $expenses = cash()->getEntityRepository(cashCategory::class)->findAllByType(cashCategory::TYPE_EXPENSE);
         $expenseDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $expenses);
 
+        $imports = cash()->getEntityRepository(cashImport::class)->findLastN(3);
+        $importDtos = cashDtoFromEntityFactory::fromEntities(cashImportDto::class, $imports);
+
         /**
          * UI in main sidebar
          *
@@ -39,6 +42,7 @@ class cashBackendSidebarAction extends cashViewAction
                 'accounts' => $accountDtos,
                 'incomes' => $incomeDtos,
                 'expenses' => $expenseDtos,
+                'imports' => $importDtos,
                 'backend_sidebar' => $eventResult,
             ]
         );

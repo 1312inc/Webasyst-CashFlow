@@ -1,0 +1,67 @@
+{** @var cashTransactionPageFilterDto $filter **}
+<div class="content left200px" id="cash-imports-page">
+    <h1{if $filter->id} class="float-left"{/if}>
+        {$filter->name|escape}
+    </h1>
+    <div class="block half-padded" style="position: relative; left: 1rem;">
+        <a href="?module=import&action=csvDownloadErrors&id={$filter->identifier}" target="_blank">эррорс</a>
+    </div>
+    <div class="block half-padded" style="position: relative; left: 1rem;">
+        <a href="#" data-csv-import-action="delete">delete</a>
+    </div>
+    <div class="c-chart" id="cash-chart"></div>
+
+    <div class="c-transactions">
+
+        <table class="zebra single-lined" id="cash-transaction-list">
+
+{*            {include*}
+{*                    file="./../transaction/TransactionList.html"*}
+{*                    upcoming=$upcoming*}
+{*                    completed=$completed*}
+{*                    filter=$filter*}
+{*                    completedOnDate=$completedOnDate*}
+{*                    upcomingOnDate=$upcomingOnDate*}
+{*            }*}
+
+        </table>
+        <br>
+    </div>
+
+</div>
+<style>
+    .c3-region.regionFuture {
+        opacity: 90%;
+    }
+</style>
+<script>
+    'use strict';
+    (function () {
+        var $w = $('#cash-imports-page'),
+            $transactionList = $('#cash-transaction-list'),
+            filterId = '{$filter->identifier}',
+            filterType = '{$filter->type}',
+            startDate = '{$startDate}',
+            endDate = '{$endDate}';
+
+        $.cash.loadTransactions(startDate, endDate, filterId, filterType, $transactionList);
+        $.cash.loadGraphData(startDate, endDate, filterId, filterType, '#cash-chart');
+
+        $w.on('click', '[data-csv-import-action="delete"]', function (e) {
+            e.preventDefault();
+
+            $.post(
+                '?module=import&action=csvDelete',
+                { id: filterId },
+                function (r) {
+                    if (r.status === 'ok') {
+                        window.location.hash = '#/';
+                    } else {
+                        $.cash.log(r.errors.join("\n"));
+                    }
+                },
+                'json'
+            );
+        });
+    }())
+</script>

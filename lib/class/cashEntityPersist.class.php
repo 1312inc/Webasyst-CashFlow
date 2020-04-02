@@ -158,8 +158,6 @@ class cashEntityPersist
                 }
             }
 
-            cash()->getEventDispatcher()->dispatch($event);
-
             unset($data['id']);
 
             $updated = $model->updateById($entity->getId(), $data);

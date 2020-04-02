@@ -22,6 +22,11 @@ class cashBackendLocAction extends cashViewAction
             'Save',
             'Delete transactions?',
             'Delete transaction?',
+            'Delete all imports?',
+            'New income category: ',
+            'New expense category: ',
+            'Enter format',
+            'transactions',
         ];
         foreach ($translates as $s) {
             $strings[$s] = _w($s);

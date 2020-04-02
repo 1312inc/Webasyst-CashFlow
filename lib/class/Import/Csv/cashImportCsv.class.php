@@ -5,6 +5,7 @@
  */
 final class cashImportCsv
 {
+    const PROVIDER_CSV = 'csv';
     const DEFAULT_ENCODING       = 'utf-8';
     const DEFAULT_DELIMITER      = ';';
     const MAX_UNIQUENESS_DIVIDER = 4;

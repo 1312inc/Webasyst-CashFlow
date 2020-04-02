@@ -73,6 +73,14 @@ final class cashCalculationService
                 );
                 break;
 
+            case $entity instanceOf cashImport:
+                $data = $model->getStatDataForCategories(
+                    $startDate->format('Y-m-d H:i:s'),
+                    $onDate->format('Y-m-d H:i:s'),
+                    $filterIds
+                );
+                break;
+
             default:
                 throw new kmwaLogicException('Wrong filter entity');
         }
@@ -109,18 +117,27 @@ final class cashCalculationService
         return $summary;
     }
 
-    public function getOnHandDetailedCategories(DateTime $startDate, DateTime $endDate, cashAbstractEntity $entity)
+    /**
+     * @param DateTime           $startDate
+     * @param DateTime           $endDate
+     * @param cashAbstractEntity $entity
+     * @param string             $filterType
+     *
+     * @return array
+     * @throws waException
+     */
+    public function getOnHandDetailedCategories(
+        DateTime $startDate,
+        DateTime $endDate,
+        cashAbstractEntity $entity,
+        $filterType = cashTransactionPageFilterDto::FILTER_ACCOUNT
+    )
     {
         /** @var cashAccountModel $model */
         $model = cash()->getModel(cashAccount::class);
         $filterIds = [];
         if ($entity->getId()) {
             $filterIds[] = $entity->getId();
-        }
-
-        $filterType = 'account';
-        if ($entity instanceOf cashCategory) {
-            $filterType = 'category';
         }
 
         $data = $model->getStatDetailedCategoryData(

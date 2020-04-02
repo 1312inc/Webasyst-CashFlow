@@ -148,6 +148,7 @@ class cashGraphService
                     $filterDto->id
                 );
                 break;
+
             case cashTransactionPageFilterDto::FILTER_CATEGORY:
                 $dateBounds = $model->getDateBoundsByCategories(
                     $startDate->format('Y-m-d 00:00:00'),
@@ -155,13 +156,25 @@ class cashGraphService
                     $filterDto->id
                 );
                 break;
+
+            case cashTransactionPageFilterDto::FILTER_IMPORT:
+                $dateBounds = [
+                    'startDate' => $startDate->format('Y-m-d'),
+                    'endDate' => $endDate->format('Y-m-d'),
+                ];
+                $grouping = self::GROUP_BY_DAY;
+                break;
         }
 
         if (!empty($dateBounds['startDate'])) {
             $startDate = (new DateTime($dateBounds['startDate']))->modify('-1 day');
         }
 
-        return new cashGraphColumnsDataDto($startDate, $endDate, $filterDto, $this->determineGroup($startDate));
+        if (!isset($grouping)) {
+            $grouping = $this->determineGroup($startDate);
+        }
+
+        return new cashGraphColumnsDataDto($startDate, $endDate, $filterDto, $grouping);
     }
 
     /**
@@ -196,25 +209,27 @@ class cashGraphService
                 throw new kmwaLogicException('No graph grouping');
         }
 
-        foreach ($data as $date => $dateData) {
-            foreach ($dateData as $dateDatum) {
-                // grouping by currency
-                $graphData->groups[$dateDatum['currency']] = ifset(
-                    $graphData->groups[$dateDatum['currency']],
-                    ['credit' => [], 'debit' => []]
-                );
+        $this->fillGraphColumnsWithData($graphData, $data);
+    }
 
-                if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']][$dateDatum['cd']])) {
-                    $graphData->groups[$dateDatum['currency']][$dateDatum['cd']][] = $dateDatum['hash'];
-                    $graphData->categories[$dateDatum['hash']] = [
-                        'id' => $dateDatum['category_id'],
-                        'currency' => $dateDatum['currency'],
-                    ];
-                }
+    /**
+     * @param cashGraphColumnsDataDto $graphData
+     *
+     * @throws waException
+     * @throws kmwaLogicException
+     */
+    public function fillColumnCategoriesDataForImport(cashGraphColumnsDataDto $graphData)
+    {
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
 
-                $graphData->columns[$dateDatum['hash']][$date] = (float)abs($dateDatum['summary']);
-            }
-        }
+        $data = $model->getSummaryByDateBoundsAndImportGroupByDay(
+            $graphData->startDate->format('Y-m-d 00:00:00'),
+            $graphData->endDate->format('Y-m-d 23:59:59'),
+            $graphData->filterDto->id
+        );
+
+        $this->fillGraphColumnsWithData($graphData, $data);
     }
 
     /**
@@ -249,28 +264,7 @@ class cashGraphService
                 throw new kmwaLogicException('No graph grouping');
         }
 
-        foreach ($data as $date => $dateData) {
-            foreach ($dateData as $dateDatum) {
-                // grouping by currency
-                $graphData->groups[$dateDatum['currency']] = ifset(
-                    $graphData->groups[$dateDatum['currency']],
-                    [
-                        'credit' => [],
-                        'debit' => [],
-                    ]
-                );
-
-                if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']][$dateDatum['cd']])) {
-                    $graphData->groups[$dateDatum['currency']][$dateDatum['cd']][] = $dateDatum['hash'];
-                    $graphData->categories[$dateDatum['hash']] = [
-                        'id' => $dateDatum['category_id'],
-                        'currency' => $dateDatum['currency'],
-                    ];
-                }
-
-                $graphData->columns[$dateDatum['hash']][$date] = (float)abs($dateDatum['summary']);
-            }
-        }
+        $this->fillGraphColumnsWithData($graphData, $data);
     }
 
     /**
@@ -396,6 +390,35 @@ class cashGraphService
         }
     }
 
+    /**
+     * @param cashGraphColumnsDataDto $graphData
+     *
+     * @throws waException
+     * @throws kmwaLogicException
+     */
+    public function fillBalanceDataForImport(cashGraphColumnsDataDto $graphData)
+    {
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
+
+        $data = $model->getBalanceByDateBoundsAndImportGroupByDay(
+            $graphData->startDate->format('Y-m-d 00:00:00'),
+            $graphData->endDate->format('Y-m-d 23:59:59'),
+            $graphData->filterDto->id
+        );
+
+        foreach ($graphData->dates as $date) {
+            if (!isset($data[$date])) {
+                continue;
+            }
+
+            foreach ($data[$date] as $datum) {
+                $categoryId = $datum['category_id'];
+                $graphData->lines[$categoryId][$date] += ((float)$datum['summary'] + 0);
+            }
+        }
+    }
+
 //    private function generateDtos(array $data)
 //    {
 //        foreach ($data as $datum) {
@@ -433,5 +456,32 @@ class cashGraphService
         }
 
         return self::GROUP_BY_DAY;
+    }
+
+    /**
+     * @param cashGraphColumnsDataDto $graphData
+     * @param array                   $data
+     */
+    private function fillGraphColumnsWithData(cashGraphColumnsDataDto $graphData, array $data)
+    {
+        foreach ($data as $date => $dateData) {
+            foreach ($dateData as $dateDatum) {
+                // grouping by currency
+                $graphData->groups[$dateDatum['currency']] = ifset(
+                    $graphData->groups[$dateDatum['currency']],
+                    ['credit' => [], 'debit' => []]
+                );
+
+                if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']][$dateDatum['cd']])) {
+                    $graphData->groups[$dateDatum['currency']][$dateDatum['cd']][] = $dateDatum['hash'];
+                    $graphData->categories[$dateDatum['hash']] = [
+                        'id' => $dateDatum['category_id'],
+                        'currency' => $dateDatum['currency'],
+                    ];
+                }
+
+                $graphData->columns[$dateDatum['hash']][$date] = (float)abs($dateDatum['summary']);
+            }
+        }
     }
 }

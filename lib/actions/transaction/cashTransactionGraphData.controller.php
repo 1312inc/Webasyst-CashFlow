@@ -38,6 +38,11 @@ class cashTransactionGraphDataController extends cashTransactionPageAction
                     $graphService->fillColumnCategoriesDataForCategories($graphData);
 //                    $graphService->fillBalanceDataForCategories($graphData);
                     break;
+
+                case cashTransactionPageFilterDto::FILTER_IMPORT:
+                    $graphService->fillColumnCategoriesDataForImport($graphData);
+                    $graphService->fillBalanceDataForImport($graphData);
+                    break;
             }
 
             $this->response = $graphData;

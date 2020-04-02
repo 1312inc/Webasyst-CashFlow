@@ -47,6 +47,15 @@ class cashTransactionRepository extends cashBaseRepository
 
                 break;
 
+            case cashTransactionPageFilterDto::FILTER_IMPORT:
+                $data = $model->getByDateBoundsAndImport(
+                    $startDate->format('Y-m-d 00:00:00'),
+                    $endDate->format('Y-m-d 23:59:59'),
+                    $filterDto->id
+                );
+
+                break;
+
             default:
                 throw new kmwaRuntimeException(_w('Wrong filter type'));
         }

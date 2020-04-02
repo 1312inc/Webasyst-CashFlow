@@ -1,4 +1,5 @@
-{** @var cashTransactionDto $t **}
+{** @var cashTransactionDto[] $upcoming **}
+{** @var cashTransactionDto[] $completed **}
 {** @var cashTransactionPageFilterDto $filter **}
 {** @var cashGraphPeriodVO $selectedChartPeriod **}
 {** @var cashGraphPeriodVO $selectedForecastPeriod **}
@@ -11,7 +12,7 @@
         <td colspan="7">
             <h5 class="heading">
                 [`Upcoming`]
-                <span class="hint">{$selectedForecastPeriod->getName()}</span>
+                {if $selectedForecastPeriod}<span class="hint">{$selectedForecastPeriod->getName()}</span>{/if}
             </h5>
 
         </td>
@@ -40,7 +41,7 @@
     {if $upcomingOnDate}
     <tr class="white c-planned c-totals">
         <td colspan="7" class="align-center">
-            <p>{sprintf('[`Total for the next %s (until %s):`]', {$selectedForecastPeriod->getName()}, {$selectedForecastPeriod->getDateAsString()|wa_date:humandate})}</p>
+            {if $selectedForecastPeriod}<p>{sprintf('[`Total for the next %s (until %s):`]', {$selectedForecastPeriod->getName()}, {$selectedForecastPeriod->getDateAsString()|wa_date:humandate})}</p>{/if}
             {foreach $upcomingOnDate as $onDateStat}
             <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
                 {foreach $onDateStat->stat as $statOnDate}
@@ -60,7 +61,7 @@
         <td colspan="7">
             <h5 class="heading">
                 [`Completed`]
-                <span class="hint">{$selectedChartPeriod->getName()}</span>
+                {if $selectedChartPeriod}<span class="hint">{$selectedChartPeriod->getName()}</span>{/if}
             </h5>
         </td>
     </tr>

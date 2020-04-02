@@ -15,11 +15,11 @@ class kmwaAssert
     {
         $type = gettype($object);
         if ($type !== 'object') {
-            throw new kmwaAssertException(sprintf('Expected %s. Got %s', $class, $type));
+            throw new kmwaAssertException(sprintf_wp('Expected %s. Got %s', $class, $type));
         }
 
         if (!$object instanceof $class) {
-            throw new kmwaAssertException(sprintf('Expected %s. Got %s', $class, get_class($object)));
+            throw new kmwaAssertException(sprintf_wp('Expected %s. Got %s', $class, get_class($object)));
         }
     }
 
@@ -32,7 +32,7 @@ class kmwaAssert
     public static function gt($variable, $value)
     {
         if ($variable <= $value) {
-            throw new kmwaAssertException(sprintf('Variable %s should be greater then %s', $variable, $value));
+            throw new kmwaAssertException(sprintf_wp('Variable %s should be greater then %s', $variable, $value));
         }
     }
 
@@ -45,7 +45,7 @@ class kmwaAssert
     public static function gte($variable, $value)
     {
         if ($variable < $value) {
-            throw new kmwaAssertException(sprintf('Variable %s should be greater or equal then %s', $variable, $value));
+            throw new kmwaAssertException(sprintf_wp('Variable %s should be greater or equal then %s', $variable, $value));
         }
     }
 }

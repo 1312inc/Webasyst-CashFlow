@@ -76,6 +76,9 @@
                 }
             }
         },
+        log: function(msg) {
+            console.log('[CASH]', msg);
+        },
         init: function (o) {
             var self = this;
             self.options = $.extend({}, self.defaults, o);
@@ -254,6 +257,25 @@
                     }
                 });
             })
+            self.$sidebar.on('click', '[data-cash-action="imports-delete"]', function (e) {
+                e.preventDefault();
+
+                if (!confirm($_('Delete all imports?'))) {
+                    return;
+                }
+
+                $.post(
+                    '?module=import&action=deleteAll',
+                    function (r) {
+                        if (r.status === 'ok') {
+                            self.reloadSidebar();
+                        } else {
+                            self.log(r.errors.join("\n"));
+                        }
+                    },
+                    'json'
+                );
+            })
         },
         sortable: function () {
             var self = this;
@@ -307,6 +329,34 @@
                     updateSort();
                 }
             });
+        },
+        loadTransactions: function (startDate, endDate, filterId, filterType, $htmlW) {
+            $.get('?module=transaction&action=list', {
+                'start_date': startDate,
+                'end_date': endDate,
+                'id': filterId,
+                'filter': filterType
+            }, function (html) {
+                $htmlW.html(html);
+            });
+        },
+        loadGraphData: function (startDate, endDate, filterId, filterType, bindToSelector) {
+            $.get('?module=transaction&action=graphData', {
+                'start_date': startDate,
+                'end_date': endDate,
+                'id': filterId,
+                'filter': filterType
+            }, function (r) {
+                if (r.status === 'ok') {
+                    var chart = c3.generate({
+                        bindto: bindToSelector,
+                        data: r.data.data,
+                        axis: r.data.axis,
+                        grid: r.data.grid,
+                        line: r.data.line
+                    });
+                }
+            })
         }
     }
 }(jQuery));

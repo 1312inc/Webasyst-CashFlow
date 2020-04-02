@@ -176,6 +176,11 @@
                 $.cash.$content.html(html);
             });
         },
+        importViewAction: function (provider ,id) {
+            $.get('?module=import&action=' + provider + 'View&id=' + id, function (html) {
+                $.cash.$content.html(html);
+            });
+        },
         sourceAction: function (id) {
             var that = this;
             $.get('?module=backend&action=source', function (html) {
