@@ -81,12 +81,14 @@ return array(
         'create_datetime' => array('datetime', 'null' => 0),
         'update_datetime' => array('datetime'),
         'import_id' => array('varchar', 100),
+        'is_archived' => array('tinyint', 1, 'default' => '0'),
         ':keys' => array(
             'PRIMARY' => 'id',
             'cash_transaction_category_id_index' => 'category_id',
             'cash_transaction_datetime_create_contact_id_index' => array('datetime', 'create_contact_id'),
             'cash_transaction_repeating_id_index' => 'repeating_id',
             'cash_transaction_cash_account_id_fk' => 'account_id',
+            'cash_transaction_is_archived_index' => 'is_archived',
         ),
     ),
 );

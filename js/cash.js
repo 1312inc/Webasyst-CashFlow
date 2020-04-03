@@ -203,6 +203,11 @@
                         $dialogWrapper
                             .on('click', '[data-cash-action="delete-category"]', function (e) {
                                 e.preventDefault();
+
+                                if(!confirm($_('This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
+                                    return;
+                                }
+
                                 var id = $dialogWrapper.find('form input[name="category[id]"]').val();
                                 $.post(
                                     '?module=category&action=delete',

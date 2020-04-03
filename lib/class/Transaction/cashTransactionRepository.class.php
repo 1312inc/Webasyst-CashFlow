@@ -85,7 +85,7 @@ class cashTransactionRepository extends cashBaseRepository
     {
         return $this->findByQuery(
             $this->getModel()->select('*')->where(
-                'repeating_id = i:id_old and date >= s:date',
+                'repeating_id = i:id_old and date >= s:date and is_archived = 0',
                 ['id_old' => $repeatingId, 'date' => $date]
             )
         );
@@ -102,7 +102,7 @@ class cashTransactionRepository extends cashBaseRepository
         return $this->findByQuery(
             $this->getModel()
                 ->query(
-                    'select * from cash_transaction where repeating_id = i:repeating_id order by id desc limit 1',
+                    'select * from cash_transaction where repeating_id = i:repeating_id and is_archived = 0 order by id desc limit 1',
                     ['repeating_id' => $repeatingId]
                 ),
             false

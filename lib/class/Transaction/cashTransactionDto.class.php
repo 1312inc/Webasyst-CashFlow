@@ -86,6 +86,11 @@ class cashTransactionDto extends cashAbstractDto
     public $planned;
 
     /**
+     * @var bool
+     */
+    public $is_archived;
+
+    /**
      * cashTransactionDto constructor.
      *
      * @param array                $data

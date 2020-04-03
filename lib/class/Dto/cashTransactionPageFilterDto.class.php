@@ -52,7 +52,7 @@ class cashTransactionPageFilterDto implements JsonSerializable
             case self::FILTER_ACCOUNT:
                 if ($identifier) {
                     $this->entity = cash()->getEntityRepository(cashAccount::class)->findById($identifier);
-                    kmwaAssert::instance($this->entity, cashCategory::class);
+                    kmwaAssert::instance($this->entity, cashAccount::class);
                 } else {
                     $this->entity = cash()->getEntityFactory(cashAccount::class)->createAllAccount();
                 }

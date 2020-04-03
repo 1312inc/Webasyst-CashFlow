@@ -58,6 +58,11 @@ class cashTransaction extends cashAbstractEntity
     private $import_id;
 
     /**
+     * @var bool|int
+     */
+    private $is_archived;
+
+    /**
      * @var cashCategory|null
      */
     protected $category;
@@ -341,6 +346,26 @@ class cashTransaction extends cashAbstractEntity
     public function setImportId($importId)
     {
         $this->import_id = $importId;
+
+        return $this;
+    }
+
+    /**
+     * @return bool|int
+     */
+    public function getIsArchived()
+    {
+        return $this->is_archived;
+    }
+
+    /**
+     * @param bool|int $is_archived
+     *
+     * @return cashTransaction
+     */
+    public function setIsArchived($is_archived)
+    {
+        $this->is_archived = $is_archived;
 
         return $this;
     }
