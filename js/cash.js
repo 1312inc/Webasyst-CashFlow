@@ -242,7 +242,7 @@
                             if (r.status === 'ok') {
 
                                 d.trigger('close');
-                                var newHash = '#/category/' + r.data.slug;
+                                var newHash = '#/category/' + r.data.id;
                                 if (window.location.hash === newHash) {
                                     $.cash_routing.redispatch();
                                 } else {

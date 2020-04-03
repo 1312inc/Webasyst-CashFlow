@@ -11,11 +11,6 @@ class cashCategoryDto extends cashAbstractDto
     /**
      * @var string
      */
-    public $slug;
-
-    /**
-     * @var string
-     */
     public $name;
 
     /**

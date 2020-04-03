@@ -19,11 +19,6 @@ class cashCategory extends cashAbstractEntity
     /**
      * @var string
      */
-    private $slug;
-
-    /**
-     * @var string
-     */
     private $name;
 
     /**
@@ -64,26 +59,6 @@ class cashCategory extends cashAbstractEntity
     /**
      * @return string
      */
-    public function getSlug()
-    {
-        return $this->slug;
-    }
-
-    /**
-     * @param string $slug
-     *
-     * @return cashCategory
-     */
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getName()
     {
         return $this->name;
@@ -97,10 +72,6 @@ class cashCategory extends cashAbstractEntity
     public function setName($name)
     {
         $this->name = $name;
-
-        if (empty($this->slug)) {
-            $this->slug = waLocale::transliterate($this->name);
-        }
 
         return $this;
     }
