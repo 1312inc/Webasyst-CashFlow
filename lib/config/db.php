@@ -18,7 +18,6 @@ return array(
     ),
     'cash_category' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
-        'slug' => array('varchar', 64, 'null' => 0),
         'name' => array('varchar', 64, 'null' => 0),
         'type' => array('enum', "'income','expense','transfer'"),
         'color' => array('varchar', 7),
@@ -27,7 +26,6 @@ return array(
         'update_datetime' => array('datetime'),
         ':keys' => array(
             'PRIMARY' => 'id',
-            'cash_category_slug_uindex' => array('slug', 'unique' => 1),
         ),
     ),
     'cash_import' => array(

@@ -69,7 +69,7 @@ class cashTransactionPageFilterDto implements JsonSerializable
                     throw new kmwaNotFoundException(_w('Category not found'));
                 }
 
-                $this->entity = cash()->getEntityRepository(cashCategory::class)->findBySlug($identifier);
+                $this->entity = cash()->getEntityRepository(cashCategory::class)->findById($identifier);
                 kmwaAssert::instance($this->entity, cashCategory::class);
 
                 $this->name = $this->entity->getName();

@@ -47,7 +47,7 @@
                 {** @var cashCategoryDto $income **}
                 {foreach $incomes as $income}
                 <li data-id="{$income->id}">
-                    <a href="#/category/{$income->slug}"><i class="icon16 color" style="background: {$income->color|default:'#47ce6f'};"></i>{$income->name|escape}</a>
+                    <a href="#/category/{$income->id}"><i class="icon16 color" style="background: {$income->color|default:'#47ce6f'};"></i>{$income->name|escape}</a>
                 </li>
                 {/foreach}
             </ul>
@@ -63,7 +63,7 @@
                 {** @var cashCategoryDto $expense **}
                 {foreach $expenses as $expense}
                 <li data-id="{$expense->id}">
-                    <a href="#/category/{$expense->slug}"><i class="icon16 color" style="background: {$expense->color|default:'#f56b68'};"></i>{$expense->name|escape}</a>
+                    <a href="#/category/{$expense->id}"><i class="icon16 color" style="background: {$expense->color|default:'#f56b68'};"></i>{$expense->name|escape}</a>
                 </li>
                 {/foreach}
             </ul>

@@ -25,10 +25,6 @@ class cashCategorySaver extends cashEntitySaver
             unset($data['id']);
             kmwaAssert::instance($category, cashCategory::class);
 
-            if (isset($data['slug'])) {
-                $data['slug'] = $model->getUniqueSlug($category->getSlug());
-            }
-
             if (empty($category->getColor())) {
                 $colors = cashColorStorage::getColorsByType($category->getType());
                 $category->setColor($colors[array_rand($colors)]);
