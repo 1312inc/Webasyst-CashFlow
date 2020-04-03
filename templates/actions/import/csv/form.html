@@ -187,10 +187,8 @@
                                     [`Income`]:
                                     <select name="import[category][single][income][column]">
                                         <option></option>
-                                        {foreach $categories as $category}
-                                            {if $category->type == cashCategory::TYPE_INCOME}
-                                            <option value="{$category->id}">{$category->name|escape}</option>
-                                            {/if}
+                                        {foreach $categoriesIncome as $category}
+                                        <option value="{$category->id}">{$category->name|escape}</option>
                                         {/foreach}
                                     </select>
                                 </td>
@@ -198,10 +196,8 @@
                                     [`Expenses`]:
                                     <select name="import[category][single][expense][column]">
                                         <option></option>
-                                        {foreach $categories as $category}
-                                            {if $category->type == cashCategory::TYPE_EXPENSE}
-                                            <option value="{$category->id}">{$category->name|escape}</option>
-                                            {/if}
+                                        {foreach $categoriesExpense as $category}
+                                        <option value="{$category->id}">{$category->name|escape}</option>
                                         {/foreach}
                                     </select>
                                 </td>
@@ -284,7 +280,10 @@
     (function ($) {
         var data = {
                 account: {$accounts|json_encode},
-                category: {$categories|json_encode}
+                category: {
+                    income: {$categoriesIncome|json_encode},
+                    expense: {$categoriesExpense|json_encode},
+                }
             },
             transactionCounts = {$info->totalRowsByColumn|json_encode},
             $form = $('#c-import-step-2 form'),
@@ -385,6 +384,10 @@
                                 columnValue: columnValue,
                                 sources: data[scope],
                                 scope: scope,
+                                translate: {
+                                    'Expense': $_('Expense'),
+                                    'Income': $_('Income')
+                                },
                                 transactions: transactionCounts[name][columnValue] + ' ' + $_('transactions')
                             }).appendTo($wrapper);
                         });
@@ -404,10 +407,9 @@
                     $dateFormatW.hide();
                 }
             })
-            .on('change.cash', '[data-cash-csv-import-conditions-category] select', function(e) {
+            .on('change.cash', '[data-cash-csv-import-conditions-category] select, [name="import[category][single][income][column]"], [name="import[category][single][expense][column]"]', function(e) {
                 var $this = $(this),
                     $selected = $this.find(':selected'),
-                    $w = $this.closest('[data-cash-csv-import-conditions-category]'),
                     val = $selected.val(),
                     newCatName = '',
                     type = '';
@@ -430,7 +432,20 @@
                     }, function (r) {
                         $this.prop('disabled', false);
                         if (r.status === 'ok') {
-                            $w.find('option[value="-1"]').before('<option value="' + r.data.id + '">' + r.data.name + '</option>');
+                            var $optgroup = $form.find('[data-cash-categories-optgroup="' + type + '"]'),
+                                $expenses = $form.find('[name="import[category][single][expense][column]"]'),
+                                $incomes = $form.find('[name="import[category][single][income][column]"]'),
+                                option = '<option value="' + r.data.id + '">' + r.data.name + '</option>';
+
+                            if ($optgroup.length) {
+                                $optgroup.find('option:first').after(option);
+                            }
+
+                            data.category[type].push(r.data);
+
+                            $expenses.find('option:nth(1)').after(option);
+                            $incomes.find('option:nth(1)').after(option);
+
                             $this.find('option[value="' + r.data.id + '"]').attr('selected', 'selected');
                         }
                     }, 'json');
@@ -462,20 +477,44 @@
     }(jQuery))
 </script>
 
-<script type="text/x-jquery-tmpl" data-cash-csv-import-conditions-account data-cash-csv-import-conditions-category>
+<script type="text/x-jquery-tmpl" data-cash-csv-import-conditions-category>
 {literal}
 <tr>
     <td><span class="c-condition">${columnValue}</span></td>
     <td>=></td>
     <td>
-        <select name="import[${scope}][multi][map][${columnValue}]">
-        {{each(id, name) sources}}
-            <option value="${id}">${name}</option>
-        {{/each}}
+        <select name="import[category}][multi][map][${columnValue}]">
+            <option value="0"></option>
+            <optgroup data-cash-categories-optgroup="income" label="${translate['Income']}">
+                {{each(id, name, type) sources.income}}
+                <option value="${id}">${name}</option>
+                {{/each}}
+            </optgroup>
+            <optgroup data-cash-categories-optgroup="expense" label="${translate['Expense']}">
+                {{each(id, name, type) sources.expense}}
+                <option value="${id}">${name}</option>
+                {{/each}}
+            </optgroup>
         </select>
     </td>
     <td class="hint">${transactions}</td>
 </tr>
 {/literal}
-
+</script>
+<script type="text/x-jquery-tmpl" data-cash-csv-import-conditions-account>
+{literal}
+<tr>
+    <td><span class="c-condition">${columnValue}</span></td>
+    <td>=></td>
+    <td>
+        <select name="import[account][multi][map][${columnValue}]">
+            <option value="0"></option>
+            {{each(id, name, type) sources}}
+            <option value="${id}">${name}</option>
+            {{/each}}
+        </select>
+    </td>
+    <td class="hint">${transactions}</td>
+</tr>
+{/literal}
 </script>
