@@ -19,6 +19,7 @@ select min(ct.date) min_date, max(ct.date) max_date
 from cash_transaction ct 
     join cash_import ci on ct.import_id = ci.id
 where ci.id = i:import_id
+    and ct.is_archived = 0
 SQL;
 
         $bounds = $this->query($sql, ['import_id' => $importId])->fetchAll();

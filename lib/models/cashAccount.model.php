@@ -46,7 +46,7 @@ from cash_account ca
            sum(if(ct.amount < 0, ct.amount, 0)) expense,
            sum(ct.amount)                       summary
     from cash_account ca
-             left join cash_transaction ct on ct.account_id = ca.id
+             left join cash_transaction ct on ct.account_id = ca.id and ct.is_archived = 0
              left join cash_category cc on ct.category_id = cc.id
     where ct.date between s:startDate and s:endDate
           and ca.is_archived = 0
@@ -105,6 +105,7 @@ from cash_transaction ct
          left join cash_import ci on ct.import_id = ci.id
 where ct.date between s:startDate and s:endDate
       and ca.is_archived = 0
+      and ct.is_archived = 0
       {$filterSql}
 group by ct.category_id, ca.currency
 SQL;
@@ -136,7 +137,7 @@ from cash_account ca
            sum(if(ct.amount < 0, ct.amount, 0)) expense,
            sum(ct.amount)                       summary
     from cash_account ca
-             left join cash_transaction ct on ct.account_id = ca.id
+             left join cash_transaction ct on ct.account_id = ca.id and ct.is_archived = 0
              join cash_category cc on ct.category_id = cc.id
     where ct.date between s:startDate and s:endDate
           and ca.is_archived = 0
@@ -147,6 +148,42 @@ SQL;
 
         return $this
             ->query($sql, ['startDate' => $startDate, 'endDate' => $endDate, 'categories' => $categories])
+            ->fetchAll('id');
+    }
+
+    /**
+     * @param string $startDate
+     * @param string $endDate
+     * @param int    $importId
+     *
+     * @return array
+     */
+    public function getStatDataForImport($startDate, $endDate, $importId)
+    {
+        $sql = <<<SQL
+select ca.id,
+       ca.currency,
+       ifnull(t.income, 0) income,
+       ifnull(t.expense, 0) expense,
+       ifnull(t.summary, 0) summary
+from cash_account ca
+         left join (
+    select ca.id                                id,
+           sum(if(ct.amount > 0, ct.amount, 0)) income,
+           sum(if(ct.amount < 0, ct.amount, 0)) expense,
+           sum(ct.amount)                       summary
+    from cash_account ca
+             left join cash_transaction ct on ct.account_id = ca.id and ct.is_archived = 0
+             join cash_import ci on ct.import_id = ci.id
+    where ct.date between s:startDate and s:endDate
+          and ca.is_archived = 0
+          and ct.import_id = i:import_id
+    group by ca.id
+) t on ca.id = t.id
+SQL;
+
+        return $this
+            ->query($sql, ['startDate' => $startDate, 'endDate' => $endDate, 'import_id' => $importId])
             ->fetchAll('id');
     }
 }

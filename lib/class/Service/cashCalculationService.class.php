@@ -74,10 +74,10 @@ final class cashCalculationService
                 break;
 
             case $entity instanceOf cashImport:
-                $data = $model->getStatDataForCategories(
+                $data = $model->getStatDataForImport(
                     $startDate->format('Y-m-d H:i:s'),
                     $onDate->format('Y-m-d H:i:s'),
-                    $filterIds
+                    $entity->getId()
                 );
                 break;
 

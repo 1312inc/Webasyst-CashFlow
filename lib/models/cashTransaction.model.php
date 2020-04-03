@@ -30,10 +30,11 @@ class cashTransactionModel extends cashModel
 select ct.*,
        (@balance := @balance + ct.amount) as balance
 from cash_transaction ct
-join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.date < s:startDate {$whereAccountSql2})) b
+join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 left join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
+      and ct.is_archived = 0
       {$whereAccountSql}
 order by ct.date, ct.id
 SQL;
@@ -73,10 +74,11 @@ SQL;
 select ct.*,
        (@balance := @balance + ct.amount) as balance
 from cash_transaction ct
-join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.date < s:startDate {$whereAccountSql2})) b
+join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
+      and ct.is_archived = 0
       {$whereAccountSql}
 order by ct.date, ct.id
 SQL;
@@ -107,11 +109,12 @@ SQL;
 select ct.*,
        (@balance := @balance + ct.amount) as balance
 from cash_transaction ct
-join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.date < s:startDate)) b
+join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate)) b
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
-      and ct.import_id = i:import_id
+    and ct.import_id = i:import_id
+    and ct.is_archived = 0
 order by ct.date, ct.id
 SQL;
 
@@ -146,6 +149,7 @@ select ca.currency,
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate %s
+    and ct.is_archived = 0
 group by ct.date, ca.currency, ct.category_id, if(ct.amount < 0, 'credit', 'debit')
 order by ct.date
 SQL;
@@ -178,6 +182,7 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
     and ct.import_id = i:import_id
+    and ct.is_archived = 0
 group by ct.date, ca.currency, ct.category_id, if(ct.amount < 0, 'credit', 'debit')
 order by ct.date
 SQL;
@@ -213,6 +218,7 @@ select ca.currency,
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate %s
+    and ct.is_archived = 0
 group by ct.date, ca.currency, ct.category_id, if(ct.amount < 0, 'credit', 'debit')
 order by ct.date
 SQL;
@@ -240,7 +246,9 @@ SQL;
 select min(ct.date) startDate, max(ct.date) endDate
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-where ct.date between s:startDate and s:endDate {$accountsSql}
+where ct.date between s:startDate and s:endDate 
+    {$accountsSql}
+    and ct.is_archived = 0
 SQL;
         $data = $this
             ->query(
@@ -271,7 +279,9 @@ SQL;
 select min(ct.date) startDate, max(ct.date) endDate
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-where ct.date between s:startDate and s:endDate {$categorySql}
+where ct.date between s:startDate and s:endDate 
+    {$categorySql}
+    and ct.is_archived = 0
 SQL;
         $data = $this
             ->query(
@@ -305,7 +315,9 @@ select ca.currency,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-where ct.date between s:startDate and s:endDate %s
+where ct.date between s:startDate and s:endDate 
+    %s
+    and ct.is_archived = 0
 group by YEAR(ct.date), MONTH(ct.date), ca.currency, ct.category_id, if(ct.amount < 0, 'credit', 'debit')
 order by YEAR(ct.date), MONTH(ct.date)
 SQL;
@@ -331,7 +343,9 @@ select ca.currency,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-where ct.date between s:startDate and s:endDate %s
+where ct.date between s:startDate and s:endDate 
+    %s
+    and ct.is_archived = 0
 group by YEAR(ct.date), MONTH(ct.date), ca.currency, ct.category_id, if(ct.amount < 0, 'credit', 'debit')
 order by YEAR(ct.date), MONTH(ct.date)
 SQL;
@@ -359,7 +373,9 @@ select ct.date,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-where ct.date between s:startDate and s:endDate %s
+where ct.date between s:startDate and s:endDate 
+    %s
+    and ct.is_archived = 0
 group by ct.date, ca.id
 order by ct.date
 SQL;
@@ -389,6 +405,7 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
     and ct.import_id = i:import_id
+    and ct.is_archived = 0
 group by ct.date, ca.id
 order by ct.date
 SQL;
@@ -419,7 +436,9 @@ SQL;
 select concat(ca.currency,'_',ifnull(ct.category_id,0)) hash
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-where ct.date between s:startDate and s:endDate {$accountsSql}
+where ct.date between s:startDate and s:endDate 
+    {$accountsSql}
+    and ct.is_archived = 0
 group by concat(ca.currency,'_',ifnull(ct.category_id,0))
 SQL;
 
@@ -452,6 +471,7 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
     and ct.import_id = i:import_id
+    and ct.is_archived = 0
 group by concat(ca.currency,'_',ifnull(ct.category_id,0))
 SQL;
 
@@ -483,6 +503,7 @@ select ct.account_id
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
+    and ct.is_archived = 0
 group by ct.account_id
 SQL;
 
@@ -513,7 +534,9 @@ SQL;
 select concat(ca.currency,'_',ifnull(ct.category_id,0)) hash
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-where ct.date between s:startDate and s:endDate {$categoriesSql}
+where ct.date between s:startDate and s:endDate 
+    {$categoriesSql}
+    and ct.is_archived = 0
 group by concat(ca.currency,'_',ifnull(ct.category_id,0))
 SQL;
 
@@ -546,7 +569,9 @@ select concat(YEAR(ct.date), '-', MONTH(ct.date)) date,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-where ct.date between s:startDate and s:endDate %s
+where ct.date between s:startDate and s:endDate 
+    %s
+    and ct.is_archived = 0
 group by YEAR(ct.date), MONTH(ct.date), ca.id
 order by YEAR(ct.date), MONTH(ct.date)
 SQL;
@@ -568,7 +593,7 @@ SQL;
     public function countRepeatingTransactionsFromDate($repeatingId, $date)
     {
         return (int)$this->select('count(id)')->where(
-            'repeating_id = i:id and date >= s:date',
+            'repeating_id = i:id and date >= s:date and is_archived = 0',
             ['id' => $repeatingId, 'date' => $date]
         )->fetchField();
     }
@@ -584,6 +609,20 @@ SQL;
         return $this->exec(
             "delete from {$this->table} where repeating_id = i:id_old and date >= s:date",
             ['id_old' => $repeatingId, 'date' => $date]
+        );
+    }
+
+    /**
+     * @param int $categoryId
+     *
+     * @return bool|waDbResultUpdate|null
+     */
+    public function archiveByCategoryId($categoryId)
+    {
+        return $this->updateByField(
+            'category_id',
+            $categoryId,
+            ['is_archived' => 1, 'update_datetime' => date('Y-m-d H:i:s')]
         );
     }
 
