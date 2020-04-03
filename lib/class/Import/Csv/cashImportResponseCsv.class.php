@@ -30,22 +30,36 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
         $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActive();
         /** @var cashAccountDto[] $accountDtos */
         $accountDtos = cashDtoFromEntityFactory::fromEntities(cashAccountDto::class, $accounts);
-        $accountDtos[0] = new cashAccountDto(['name' => _w('Skip'), 'id' => 0, 'currency' => 'RUB']);
 
-        /** @var cashCategory[] $accounts */
-        $categories = cash()->getEntityRepository(cashCategory::class)->findAllActive();
-        /** @var cashCategoryDto[] $categorieDtos */
-        $categoryDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $categories);
-        $categoryDtos[0] = new cashCategoryDto(['name' => _w('Skip'), 'id' => 0]);
-        $categoryDtos[] = new cashCategoryDto(['name' => _w('New income category'), 'id' => -1]);
-        $categoryDtos[] = new cashCategoryDto(['name' => _w('New expense category'), 'id' => -2]);
+        /** @var cashCategory[] $categoriesIncome */
+        $categoriesIncome = cash()->getEntityRepository(cashCategory::class)->findAllIncome();
+        /** @var cashCategoryDto[] $categoryIncomeDtos */
+        $categoryIncomeDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $categoriesIncome);
+        array_unshift(
+            $categoryIncomeDtos,
+            new cashCategoryDto(
+                ['name' => _w('New income category'), 'id' => -1, 'type' => cashCategory::TYPE_INCOME]
+            )
+        );
+
+        /** @var cashCategory[] $categoriesExpense */
+        $categoriesExpense = cash()->getEntityRepository(cashCategory::class)->findAllExpense();
+        /** @var cashCategoryDto[] $categoryExpenseDtos */
+        $categoryExpenseDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $categoriesExpense);
+        array_unshift(
+            $categoryExpenseDtos,
+            new cashCategoryDto(
+                ['name' => _w('New expense category'), 'id' => -2, 'type' => cashCategory::TYPE_EXPENSE]
+            )
+        );
 
         $view->assign(
             [
                 'dateFormats' => array_keys(cashDatetimeHelper::getDatetimeFormats()),
                 'info' => $this->csvInfoDto,
                 'accounts' => $accountDtos,
-                'categories' => $categoryDtos,
+                'categoriesIncome' => array_values($categoryIncomeDtos),
+                'categoriesExpense' => array_values($categoryExpenseDtos),
             ]
         );
 
