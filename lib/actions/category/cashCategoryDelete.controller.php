@@ -15,10 +15,11 @@ class cashCategoryDeleteController extends cashJsonController
         $category = cash()->getEntityRepository(cashCategory::class)->findById($this->getId());
         kmwaAssert::instance($category, cashCategory::class);
 
+        /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
         $model->startTransaction();
         try {
-            cash()->getModel(cashTransaction::class)->archiveByCategoryId($category->getId());
+            $model->archiveByCategoryId($category->getId());
             if (!cash()->getEntityPersister()->delete($category)) {
                 throw new kmwaRuntimeException(_w('Error while deleting category'));
             }

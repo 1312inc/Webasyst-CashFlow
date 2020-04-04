@@ -14,9 +14,21 @@ class cashAccountDeleteController extends cashJsonController
         $account = cash()->getEntityRepository(cashAccount::class)->findById($this->getId());
         kmwaAssert::instance($account, cashAccount::class);
 
-        $account->setIsArchived(true);
-        if (!cash()->getEntityPersister()->update($account)) {
-            $this->errors[] = _w('Error while updating account');
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
+        $model->startTransaction();
+        try {
+            $model->archiveByAccountId($account->getId());
+            $account->setIsArchived(true);
+            if (!cash()->getEntityPersister()->update($account)) {
+                throw new kmwaRuntimeException(_w('Error while updating account'));
+            }
+
+            $model->commit();
+        } catch (Exception $ex) {
+            $model->rollback();
+            $this->errors[] = $ex->getMessage();
         }
+
     }
 }
