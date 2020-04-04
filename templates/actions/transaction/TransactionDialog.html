@@ -245,12 +245,22 @@
             <div class="block half-padded float-right">
                 <ul class="menu-h">
                     <li>
-                        <a href="#" data-cash-action="delete-transaction" data-cash-transaction-id="{$transaction->id}"><i class="icon16 delete"></i> [`Delete transaction`]</a>
+                        <a href="#"
+                           data-cash-action="delete-transaction"
+                           data-cash-transaction-id="{$transaction->id}"
+                           data-cash-transaction-text="[`Delete transaction`]"
+                           data-cash-repeating-transaction-text="{sprintf('[`Delete %s transactions`]', $repeatingTransaction->occurrences_in_future)}"
+                        ><i class="icon16 delete"></i> <span>[`Delete transaction`]</span></a>
                     </li>
                 </ul>
             </div>
         {/if}
-        <input type="submit" value="[`Save`]" class="button green"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
+        <input type="submit"
+               value="[`Save 1 transaction`]"
+               class="button green"
+               data-cash-transaction-text="[`Save 1 transaction`]"
+               data-cash-repeating-transaction-text="{sprintf('[`Save %d transactions`]', $repeatingTransaction->occurrences_in_future)}"
+        /> [`or`] <a class="cancel" href="#">[`cancel`]</a>
         <div class="errormsg" style="display: none"></div>
     </div>
 </section>
