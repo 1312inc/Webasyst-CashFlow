@@ -107,6 +107,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
             $model->rollback();
 
             $this->error = $ex->getMessage();
+            cash()->getLogger()->error('Repeating transaction save error', $ex);
         }
 
         return false;
