@@ -17,13 +17,13 @@ class cashBackendLocAction extends cashViewAction
         // Application locale strings
         $translates = [
             'The transaction will be permanently deleted. Are you sure?',
-            'This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?',
-            'This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?',
+            'DANGER: This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?',
+            'DANGER: This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?',
             'Save all',
             'Save',
             'Delete transactions?',
             'Delete transaction?',
-            'Delete all imports?',
+            'Clear import history (don’t worry, imported transactions will not be affected)?',
             'New income category: ',
             'New expense category: ',
             'Enter format',
