@@ -60,7 +60,7 @@ class cashTransaction extends cashAbstractEntity
     /**
      * @var bool|int
      */
-    private $is_archived;
+    private $is_archived = 0;
 
     /**
      * @var cashCategory|null
