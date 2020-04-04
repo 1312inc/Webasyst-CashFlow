@@ -627,6 +627,20 @@ SQL;
     }
 
     /**
+     * @param int $accountId
+     *
+     * @return bool|waDbResultUpdate|null
+     */
+    public function archiveByAccountId($accountId)
+    {
+        return $this->updateByField(
+            'account_id',
+            $accountId,
+            ['is_archived' => 1, 'update_datetime' => date('Y-m-d H:i:s')]
+        );
+    }
+
+    /**
      * @param string $sql
      * @param string $startDate
      * @param string $endDate
