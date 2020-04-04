@@ -95,7 +95,7 @@
                     <a href="#/import/view/{$import->provider}/{$import->id}">
                         <span class="count">{$import->success}</span>
                         <i class="icon16 userpic20" style="background-image: url('{$import->contact->getPhoto(20)}');"></i>{$import->filename|escape}
-                        <br><span class="hint">{$import->create_datetime|wa_datetime:humandate}</span>
+                        <br><span class="hint">{$import->create_datetime|wa_datetime:humandatetime}</span>
                     </a>
                 </li>
                 {/foreach}

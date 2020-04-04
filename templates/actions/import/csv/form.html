@@ -3,7 +3,7 @@
     <form action="?module=import&action=csvProcess" method="post">
         <div class="c-import-preview" id="c-import-step-2">
             <p>{sprintf(
-                '[`We’ve recognized <b>%d transactions</b> in the uploaded CSV file:`]',
+                '[`We’ve recognized <b>%d rows</b> in the uploaded CSV file:`]',
                 $info->totalRows
                 )}
             </p>
@@ -44,7 +44,7 @@
         </div>
         <div class="fields form">
             <br>
-            <p>[`Configure how these transactions should be imported:`]</p>
+            <p>[`Configure how these rows should be imported as transactions:`]</p>
             <div class="field">
                 <div class="name">
                     [`Account & currency`]
@@ -386,7 +386,8 @@
                                 scope: scope,
                                 translate: {
                                     'Expense': $_('Expense'),
-                                    'Income': $_('Income')
+                                    'Income': $_('Income'),
+                                    'Skip rows with this value': $_('Skip rows with this value')
                                 },
                                 transactions: transactionCounts[name][columnValue] + ' ' + $_('transactions')
                             }).appendTo($wrapper);
@@ -484,7 +485,7 @@
     <td>=></td>
     <td>
         <select name="import[category}][multi][map][${columnValue}]">
-            <option value="0"></option>
+            <option value="0">${translate['Skip rows with this value']}</option>
             <optgroup data-cash-categories-optgroup="income" label="${translate['Income']}">
                 {{each(id, name, type) sources.income}}
                 <option value="${id}">${name}</option>
@@ -508,7 +509,7 @@
     <td>=></td>
     <td>
         <select name="import[account][multi][map][${columnValue}]">
-            <option value="0"></option>
+            <option value="0">${translate['Skip rows with this value']}</option>
             {{each(id, name, type) sources}}
             <option value="${id}">${name}</option>
             {{/each}}

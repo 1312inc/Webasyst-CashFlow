@@ -129,7 +129,7 @@
                             .on('click', '[data-cash-action="delete-account"]', function (e) {
                                 e.preventDefault();
 
-                                if(!confirm($_('This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
+                                if(!confirm($_('DANGER: This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
                                     return;
                                 }
 
@@ -204,7 +204,7 @@
                             .on('click', '[data-cash-action="delete-category"]', function (e) {
                                 e.preventDefault();
 
-                                if(!confirm($_('This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
+                                if(!confirm($_('DANGER: This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
                                     return;
                                 }
 
@@ -265,7 +265,7 @@
             self.$sidebar.on('click', '[data-cash-action="imports-delete"]', function (e) {
                 e.preventDefault();
 
-                if (!confirm($_('Delete all imports?'))) {
+                if (!confirm($_('Clear import history (don’t worry, imported transactions will not be affected)?'))) {
                     return;
                 }
 

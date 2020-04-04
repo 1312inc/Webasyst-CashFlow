@@ -17,11 +17,11 @@ class cashImportCsvGetColumnUniqueValuesController extends cashJsonController
             $this->response = $csvImport->getColumnUniqueValues($columnName);
 
             if (!$csvImport->canBeColumnWithUniqueValues(count($this->response))) {
-                $this->errors[] = _w('This column has too many unique values') . ' (' . count($this->response) . ')';
+                $this->errors[] = _w('This column has too many unique values, so that import conditions setup seems not applicable here') . ' (' . count($this->response) . ')';
             }
 
             if (empty($this->response)) {
-                $this->errors[] = _w('This column has no unique values');
+                $this->errors[] = _w('This column has no unique values, so that import conditions setup seems not applicable here');
             }
         } catch (Exception $exception) {
             $this->errors[] = $exception->getMessage();
