@@ -30,7 +30,7 @@ class cashImportCsvGetColumnDatetimeValuesController extends cashJsonController
                     $errorsCount++;
 
                     if ($errorsCount > 5) {
-                        $this->errors[] = _w('Some dates has wrong format');
+                        $this->errors[] = _w('Some dates might be in the wrong format');
 
                         return;
                     }
@@ -39,7 +39,7 @@ class cashImportCsvGetColumnDatetimeValuesController extends cashJsonController
 
             $converted = array_filter($converted);
             if (empty($converted)) {
-                $this->errors[] = sprintf_wp('No dates with selected format in column %s', $columnName);
+                $this->errors[] = sprintf_wp('The column %s contains no dates in the selected format', $columnName);
             } else {
                 $first = reset($converted);
                 $this->response = [
