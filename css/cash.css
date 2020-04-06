@@ -14,7 +14,7 @@ ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 .c-transactions .c-action-add-income { background: #dec; border-radius: 2px; }
 .c-transactions .c-action-add-expense { background: #fdd; border-radius: 2px; }
 .c-transactions table { margin-top: 10px; }
-.c-transactions table .c-planned { color: #aaa; font-style: italic; }
+.c-transactions table .c-planned { color: #999; }
 .c-transactions table i.color { margin-top: 2px; margin-right: 6px; }
 /* .c-transactions table h5.heading { margin: 1rem 0 0.5rem; } */
 .c-transactions table tr.c-table-divider { border-bottom: 1px solid #ddd; }
@@ -51,6 +51,7 @@ table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1
 .c-settings-columns .c-ousted-sort-icon { position: relative; left: -20px; }
 
 .icon16.c-table { background-image: url('../img/icon16-table.png'); background-size: 16px 16px; }
+.icon16.c-repeating { background-image: url('../img/repeating-glyph.png'); background-size: 16px 16px; opacity: 0.65; }
 
 @media
 (-webkit-min-device-pixel-ratio: 2),

@@ -29,6 +29,9 @@
                     {else}
                         <i class="icon16 color" style="background: rgba(0,0,0,0.13);"></i><span class="gray">[`No category`]</span>
                     {/if}
+                    {if 111}<i class="icon16 c-repeating" title="[`Repeating transaction`]"></i>{/if}
+                    {$_days_diff = round( (strtotime($t->date|cat:' 12:00:00')-strtotime(date('Y-m-d')|cat:' 12:00:00') )/(24*3600) )}
+                    <em class="hint float-right">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %s days`]', $_days_diff)}{/if}</em>
                 </span>
             </td>
             <td><div>{$t->description|escape}<i class="shortener"></i></div></td>
@@ -77,6 +80,7 @@
                     {else}
                         <i class="icon16 color" style="background: rgba(0,0,0,0.13);"></i><span class="gray">[`No category`]</span>
                     {/if}
+                    {if 111}<i class="icon16 c-repeating" title="[`Repeating transaction`]"></i>{/if}
                 </span>
             </td>
             <td><div>{$t->description|escape}<i class="shortener"></i></div></td>
