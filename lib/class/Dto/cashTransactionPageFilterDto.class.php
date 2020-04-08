@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class self
+ * Class cashTransactionPageFilterDto
  */
 class cashTransactionPageFilterDto implements JsonSerializable
 {

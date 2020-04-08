@@ -11,21 +11,7 @@
     </div>
     <div class="c-chart" id="cash-chart"></div>
 
-    <div class="c-transactions">
-
-        <table class="zebra single-lined" id="cash-transaction-list">
-
-{*            {include*}
-{*                    file="./../transaction/TransactionList.html"*}
-{*                    upcoming=$upcoming*}
-{*                    completed=$completed*}
-{*                    filter=$filter*}
-{*                    completedOnDate=$completedOnDate*}
-{*                    upcomingOnDate=$upcomingOnDate*}
-{*            }*}
-
-        </table>
-        <br>
+    <div class="c-transactions" data-cash-wrapper="transaction-list">
     </div>
 
 </div>
@@ -38,7 +24,7 @@
     'use strict';
     (function () {
         var $w = $('#cash-imports-page'),
-            $transactionList = $('#cash-transaction-list'),
+            $transactionList = $('[data-cash-wrapper="transaction-list"]'),
             filterId = '{$filter->identifier}',
             filterType = '{$filter->type}',
             startDate = '{$startDate}',

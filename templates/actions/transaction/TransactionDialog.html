@@ -50,7 +50,7 @@
                             [`Account`]
                         </div>
                         <div class="value no-shift">
-                            <select name="transaction[account_id]">
+                            <select name="transaction[account_id]" data-cash-element="account-with-sign">
                                 {foreach $accounts as $account}
                                     <option value="{$account->id}"
                                             {if $account->id == $transaction->account->id}selected{/if}
@@ -67,7 +67,7 @@
                         </div>
                         <div class="value no-shift">
                             <i class="icon16 color" data-cash-transaction-category style="background: none;"></i>
-                            <select name="transaction[category_id]">
+                            <select name="transaction[category_id]" data-cash-element="category-with-color">
                                 <option value="0" data-cash-category-color="{cashColorStorage::DEFAULT_NO_CATEGORY_GRAPH_COLOR}">[`No category`]</option>
                                 {foreach $categories as $category}
                                     <option value="{$category->id}"

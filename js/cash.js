@@ -262,6 +262,18 @@
                     }
                 });
             })
+            self.$content
+                .on('change.cash', '[data-cash-element="account-with-sign"]', function (e) {
+                    debugger;
+                    $(this)
+                        .find('[data-cash-transaction-account-currency]')
+                        .text($(this).find(':selected').data('cash-account-currency-sign'))
+                })
+                .on('change.cash', '[data-cash-element="category-with-color"]', function (e) {
+                    $(this)
+                        .find('[data-cash-transaction-category]')
+                        .css('background', $(this).find(':selected').data('cash-category-color'))
+                });
             self.$sidebar.on('click', '[data-cash-action="imports-delete"]', function (e) {
                 e.preventDefault();
 
@@ -362,6 +374,10 @@
                     });
                 }
             })
+        },
+        capitalizeFirstLetter: function(string) {
+            // https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
+            return string.charAt(0).toUpperCase() + string.slice(1);
         }
     }
 }(jQuery));

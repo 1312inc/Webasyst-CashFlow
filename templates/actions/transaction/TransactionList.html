@@ -5,7 +5,80 @@
 {** @var cashGraphPeriodVO $selectedForecastPeriod **}
 {** @var cashStatCategoryDetailedDto $completedOnDate **}
 {** @var cashStatCategoryDetailedDto $upcomingOnDate **}
-<section>
+{** @var cashStatOnDateDto[] $onHandsEndday **}
+{** @var cashTransactionListSettingsDto $listSettings **}
+
+<section id="cash-transaction-list">
+<div class="c-table-header">
+    {if $listSettings->showOnHandsEndday}
+        <div class="float-right">
+            {sprintf('[`Cash on hand in %s`]', {$selectedForecastPeriod->getName()})}:
+
+            {foreach $onHandsEndday as $onHand}
+                <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{$onHand->stat->summaryShorten} {$onHand->currency->getSign()}</strong>
+                {if !$onHand@last}+{/if}
+                {foreachelse}
+                <strong class="c-balance large">0</strong>
+            {/foreach}
+            <span class="hint">{$endDate|wa_date:humandate}</span>
+        </div>
+    {/if}
+
+    <ul class="menu-h dropdown c-actions-menu">
+        {if $listSettings->addIncome}
+            <li><a href="#"
+                   class="c-action-add-income"
+                   data-cash-action="add-transaction"
+                   data-cash-category-type="{cashCategory::TYPE_INCOME}"
+                ><i class="icon16 add"></i><strong>[`Add income`]</strong></a></li>
+        {/if}
+        {if $listSettings->addExpense}
+            <li><a href="#"
+                   class="c-action-add-expense"
+                   data-cash-action="add-transaction"
+                   data-cash-category-type="{cashCategory::TYPE_EXPENSE}"
+                ><i class="icon16 delete"></i><strong>[`Add expense`]</strong></a></li>
+        {/if}
+        {if $listSettings->addTransfer}
+        <li><a href="#"
+               class="c-action-add-transfer"
+               data-cash-action="add-transaction"
+               data-cash-category-type="{cashCategory::TYPE_TRANSFER}"
+            ><i class="icon16 move"></i><strong>[`Transfer`]</strong></a></li>
+        {/if}
+        <!--
+
+            TRANSACTION TEMPLATES: some day
+
+        <li>
+            <a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a>
+            <ul class="menu-v">
+                <li><a href="#"><i class="icon16 color"></i>Аренда офиса</a></li>
+                <li><a href="#"><i class="icon16 color"></i>Оплата хостинга</a></li>
+                <li><a href="#"><i class="icon16 color"></i>Подписка на сторонние сервисы</a></li>
+                <li><a href="#"><i class="icon16 color"></i>Комиссия банка</a></li>
+                <li class="bordered-top"><a href="#" class="gray"><i class="icon16 settings"></i>[`Manage templates`]</a></li>
+            </ul>
+        </li> -->
+
+        {if $listSettings->bulkActions}
+        <li class="c-bulk-action"><a href="#" data-cash-bulk-action="move"><i class="icon16 move"></i>[`Move`] <strong class="hint">(N)</strong></a></li>
+        <li class="c-bulk-action"><a href="#" data-cash-bulk-action="move"><i class="icon16 delete"></i>[`Delete`] <strong class="hint">(N)</strong></a></li>
+        {/if}
+    </ul>
+</div>
+
+<table class="zebra single-lined">
+    <!-- <tr>
+        <th>[`Date`]</th>
+        <th>[`Account`]</th>
+        <th>[`Category`]</th>
+        <th>[`Summary`]</th>
+        <th>[`Amount`]</th>
+        <th>[`Balance`]</th>
+        <th></th>
+    </tr> -->
+
 {if $upcoming}
     <tr class="white c-table-divider c-planned">
         <td class="min-width"><input type="checkbox"></td>
@@ -20,7 +93,7 @@
 
     {foreach $upcoming as $t}
         <tr class="c-planned" data-cash-transaction-id="{$t->id}">
-            <td class="min-width"><input type="checkbox"></td>
+            <td class="min-width"><input value="{$t->id}" type="checkbox"></td>
             <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
             <td>
                 <span class="nowrap">
@@ -71,7 +144,7 @@
     {/if}
     {foreach $completed as $t}
         <tr data-cash-transaction-id="{$t->id}">
-            <td class="min-width"><input type="checkbox"></td>
+            <td class="min-width"><input value="{$t->id}" type="checkbox"></td>
             <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
             <td>
                 <span class="nowrap">
@@ -105,4 +178,252 @@
         </td>
     </tr>
     {/if}
+</table>
+<br>
 </section>
+
+<script>
+    'use strict';
+    (function () {
+        var transactionDialog = function(transactionId, filterType, filterId, categoryType) {
+            filterType = filterType || '';
+            filterId = filterId || 0;
+            categoryType = categoryType || '';
+            var action = 'dialog';
+            if (categoryType) {
+                var actionCategory = categoryType;
+                action += (actionCategory.charAt(0).toUpperCase() + actionCategory.slice(1));
+            }
+
+            $('#cash-transaction-dialog').waDialog({
+                'height': '350px',
+                'width': '650px',
+                'url': '?module=transaction&action=' + action + '&transaction_id=' + transactionId + '&category_type=' + categoryType + '&filter_id=' + filterId + '&filter_type=' + filterType,
+                onLoad: function () {
+                    var d = this,
+                        $dialogWrapper = $(d);
+
+                    $dialogWrapper
+                        .on('click.cash', '[data-cash-action="delete-transaction"]', function (e) {
+                            e.preventDefault();
+
+                            if(!confirm($_('The transaction will be permanently deleted. Are you sure?'))) {
+                                return;
+                            }
+
+                            var id = $dialogWrapper.find('form input[name="transaction[id]"]').val();
+                            $.post(
+                                '?module=transaction&action=delete',
+                                { id: id },
+                                function (r) {
+                                    if (r.status === 'ok') {
+                                        $dialogWrapper.trigger('close');
+                                        $.cash_routing.redispatch();
+                                        $.cash.reloadSidebar();
+                                    }
+                                }
+                            );
+                        })
+                        .on('change.cash', '[name="repeating[interval]"]:first', function (e) {
+                            var $selected = $(this).find(':selected'),
+                                $customFrequency = $dialogWrapper.find('[data-cash-repeating-transaction-frequency-custom]'),
+                                interval = $selected.data('cash-repeating-transaction-interval');
+
+                            if (interval === 'custom') {
+                                $customFrequency.show().find(':input').prop('disabled', false);
+                            } else {
+                                $customFrequency.hide().find(':input').prop('disabled', true);
+                            }
+
+                            if (!$selected.val()) {
+                                $dialogWrapper.find('[name="repeating[end_type]"]').closest('.field').hide();
+                            } else {
+                                $dialogWrapper.find('[name="repeating[end_type]"]').closest('.field').show();
+                            }
+                        })
+                        .on('change.cash', '[name="repeating[end_type]"]', function (e) {
+                            var $this = $(this),
+                                $selected = $this.find(':selected'),
+                                typeEnd = $selected.data('cash-repeating-transaction-end'),
+                                $repeatEnd = $dialogWrapper.find('[data-cash-repeating-transaction-end-' + typeEnd + ']');
+
+                            $this.siblings().hide();
+                            $repeatEnd.show();
+                        })
+                        .on('click.cash', '[name="repeating[apply_to_all_in_future]"]', function (e) {
+                            // $dialogWrapper.find('[data-cash-repeating-settings]').toggle();
+                            var $submit = $dialogWrapper.find('[type="submit"]'),
+                                $delete = $dialogWrapper.find('[data-cash-action="delete-transaction"]');
+
+                            if ($(this).is(':checked')) {
+                                $submit.val($submit.data('cash-repeating-transaction-text'));
+                                $delete.find('span').text($delete.data('cash-repeating-transaction-text'));
+                            } else {
+                                $submit.val($submit.data('cash-transaction-text'));
+                                $delete.find('span').text($delete.data('cash-transaction-text'));
+                            }
+                        })
+                    ;
+
+                    $dialogWrapper.find('select').trigger('change.cash');
+
+                    var initDatepicker = function () {
+                        var datepicker_options = {
+                            changeMonth: true,
+                            changeYear: true,
+                            shortYearCutoff: 2,
+                            dateShowWeek: false,
+                            showOtherMonths: true,
+                            selectOtherMonths: true,
+                            stepMonths: 1,
+                            numberOfMonths: 1,
+                            gotoCurrent: true,
+                            constrainInput: false,
+                            dateFormat: "yy-mm-dd",
+                        };
+
+                        $dialogWrapper.find('[name="transaction[date]"]').datepicker(datepicker_options);
+                        $dialogWrapper.find('[name="repeating[end][ondate]"]').datepicker(datepicker_options);
+                    };
+
+                    initDatepicker();
+
+                    setTimeout(function () {
+                        $dialogWrapper.find('[name="transaction[amount]"]').trigger('focus');
+                    }, 13.12);
+                },
+                onSubmit: function (d) {
+                    var $errormsg = d.find('.errormsg');
+
+                    $errormsg.hide();
+                    d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
+                    $.post('?module=transaction&action=save', d.find('form').serialize(), function (r) {
+                        $.cash.$loading.remove();
+                        if (r.status === 'ok') {
+                            d.trigger('close');
+                            // if (!pocketId) {
+                            // window.location.hash = '#/project/' + r.data.id;
+                            // }
+                            $.cash_routing.redispatch();
+                            $.cash.reloadSidebar();
+                        } else {
+                            $errormsg
+                                .show()
+                                .text(r.errors.join('<br>'));
+                        }
+                    }, 'json');
+                    return false;
+                }
+            });
+        };
+
+        var filterId = '{$filter->identifier}',
+            filterType = '{$filter->type}',
+            $transactionList = $('#cash-transaction-list'),
+            settings = {$listSettings|json_encode};
+
+        /*{if $listSettings->addHandler}*/
+        $transactionList
+            .on('click.cash', '[data-cash-action="add-transaction"]', function (e) {
+                e.preventDefault();
+                transactionDialog(0, filterType, filterId, $(this).data('cash-category-type'))
+            })
+        ;
+        /*{/if}*/
+
+        /*{if $listSettings->allowEdit}*/
+        $transactionList
+            .on('click.cash', '[data-cash-transaction-id]', function (e) {
+                if ($(e.target).is('[type="checkbox"]')) {
+                    return true;
+                }
+
+                e.preventDefault();
+                transactionDialog($(this).data('cash-transaction-id'), filterType, filterId, '')
+            })
+        ;
+        /*{/if}*/
+
+        /*{if $listSettings->bulkActions}*/
+        $transactionList
+            .on('click.cash', '[type="checkbox"]', function (e) {
+                var $this = $(this),
+                    $w = $this.closest('tr'),
+                    isPlanned = $w.is('.c-planned'),
+                    isTransaction = !!$this.closest('[data-cash-transaction-id]').length,
+                    checked = $this.is(':checked');
+
+                if (!isTransaction) {
+                    $w.siblings()
+                        .filter(isPlanned ? '.c-planned' : ':not(.c-planned)')
+                        .find('[type="checkbox"]').prop('checked', checked);
+                }
+
+                var selectedCount = $transactionList.find('[type="checkbox"][value]:checked').length;
+                if (selectedCount) {
+                    $transactionList
+                        .find('.c-bulk-action').show()
+                        .find('.hint').text(selectedCount);
+                } else {
+                    $transactionList
+                        .find('.c-bulk-action').hide()
+                        .find('.hint').text(0);
+                }
+            })
+            .on('click.cash', '[data-cash-bulk-action]', function (e) {
+                e.preventDefault();
+
+                var $this = $(this),
+                    action = $this.data('cash-bulk-action'),
+                    ids = JSON.stringify($transactionList.find('[type="checkbox"][value]:checked').map(function() { return $(this).val(); }).get());
+
+                switch (action) {
+                    default:
+                        $.post(
+                            '?module=transaction&action=bulk' + $.cash.capitalizeFirstLetter(action) + 'Dialog',
+                            {
+                                transaction_ids: ids,
+                                filterId: filterId,
+                                filterType: filterType
+                            },
+                            function (html) {
+                                $(html).waDialog({
+                                    'height': '350px',
+                                    'width': '650px',
+                                    onLoad: function () {
+                                        var d = this,
+                                            $dialogWrapper = $(d);
+                                    },
+                                    onSubmit: function (d) {
+                                        var $errormsg = d.find('.errormsg');
+
+                                        $errormsg.hide();
+                                        d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
+                                        $.post('?module=transaction&action=bulk' + $.cash.capitalizeFirstLetter(action), d.find('form').serialize(), function (r) {
+                                            $.cash.$loading.remove();
+                                            if (r.status === 'ok') {
+                                                d.trigger('close');
+                                                $.cash_routing.redispatch();
+                                                $.cash.reloadSidebar();
+                                            } else {
+                                                $errormsg
+                                                    .show()
+                                                    .text(r.errors.join('<br>'));
+                                            }
+                                        }, 'json');
+                                        return false;
+                                    },
+                                    onClose: function() {
+                                        $(this).remove();
+                                    }
+                                });
+                            }
+                        );
+
+                        break;
+                }
+            })
+        ;
+        /*{/if}*/
+    })()
+</script>

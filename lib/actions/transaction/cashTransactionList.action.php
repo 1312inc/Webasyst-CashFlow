@@ -38,6 +38,11 @@ class cashTransactionListAction extends cashTransactionPageAction
             $this->filterDto->type
         );
 
+        // cash on hand end day
+        $onHandsEndday = $calcService->getOnHandOnDate($this->endDate, $this->filterDto->entity);
+
+        $settings = new cashTransactionListSettingsDto($this->filterDto);
+
         $this->view->assign(
             [
                 'upcoming' => $upcoming,
@@ -47,6 +52,10 @@ class cashTransactionListAction extends cashTransactionPageAction
                 'selectedForecastPeriod' => $this->periodForecast,
                 'upcomingOnDate' => $upcomingOnDate,
                 'completedOnDate' => $completedOnDate,
+                'onHandsEndday' => $onHandsEndday,
+                'startDate' => $this->startDate->format('Y-m-d'),
+                'endDate' => $this->endDate->format('Y-m-d'),
+                'listSettings' => $settings,
             ]
         );
     }
