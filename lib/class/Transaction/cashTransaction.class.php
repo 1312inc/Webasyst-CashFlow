@@ -174,6 +174,11 @@ class cashTransaction extends cashAbstractEntity
     {
         $this->category_id = $categoryId;
 
+        if (!$this->category_id) {
+            $this->category_id = null;
+            $this->category = null;
+        }
+
         return $this;
     }
 

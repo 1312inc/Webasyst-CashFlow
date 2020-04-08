@@ -4,7 +4,6 @@
 {** @var cashGraphPeriodVO $selectedForecastPeriod **}
 {** @var string $currentDate **}
 {** @var cashStatOnDateDto[] $onHandsToday **}
-{** @var cashStatOnDateDto[] $onHandsEndday **}
 <div class="content left200px">
     <div id="content">
         <div class="block">
@@ -88,77 +87,7 @@
 
             </div> -->
 
-            <div class="c-transactions">
-
-                <div class="c-table-header">
-                    {if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && (1 || FORECAST_IS_SHOWN)}
-                        <div class="float-right">
-                            {sprintf('[`Cash on hand in %s`]', {$selectedForecastPeriod->getName()})}:
-
-                            {foreach $onHandsEndday as $onHand}
-                                <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{$onHand->stat->summaryShorten} {$onHand->currency->getSign()}</strong>
-                                {if !$onHand@last}+{/if}
-                                {foreachelse}
-                                <strong class="c-balance large">0</strong>
-                            {/foreach}
-                            <span class="hint">{$endDate|wa_date:humandate}</span>
-                        </div>
-                    {/if}
-
-                    <ul class="menu-h dropdown c-actions-menu">
-                        {if ($filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT) || ($filter->type == cashTransactionPageFilterDto::FILTER_CATEGORY && $filter->entity->isIncome())}
-                        <li><a href="#"
-                               class="c-action-add-income"
-                               data-cash-action="add-transaction"
-                               data-cash-category-type="{cashCategory::TYPE_INCOME}"
-                            ><i class="icon16 add"></i><strong>[`Add income`]</strong></a></li>
-                        {/if}
-                        {if ($filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT) || ($filter->type == cashTransactionPageFilterDto::FILTER_CATEGORY && $filter->entity->isExpense())}
-                        <li><a href="#"
-                               class="c-action-add-expense"
-                               data-cash-action="add-transaction"
-                               data-cash-category-type="{cashCategory::TYPE_EXPENSE}"
-                            ><i class="icon16 delete"></i><strong>[`Add expense`]</strong></a></li>
-                        {/if}
-                        <li><a href="#"
-                               class="c-action-add-transfer"
-                               data-cash-action="add-transaction"
-                               data-cash-category-type="{cashCategory::TYPE_TRANSFER}"
-                            ><i class="icon16 move"></i><strong>[`Transfer`]</strong></a></li>
-
-                        <!--
-
-                            TRANSACTION TEMPLATES: some day
-
-                        <li>
-                            <a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a>
-                            <ul class="menu-v">
-                                <li><a href="#"><i class="icon16 color"></i>Аренда офиса</a></li>
-                                <li><a href="#"><i class="icon16 color"></i>Оплата хостинга</a></li>
-                                <li><a href="#"><i class="icon16 color"></i>Подписка на сторонние сервисы</a></li>
-                                <li><a href="#"><i class="icon16 color"></i>Комиссия банка</a></li>
-                                <li class="bordered-top"><a href="#" class="gray"><i class="icon16 settings"></i>[`Manage templates`]</a></li>
-                            </ul>
-                        </li> -->
-
-                        <li class="c-bulk-action"><a href="#"><i class="icon16 move"></i>[`Move`] <strong class="hint">(N)</strong></a></li>
-                        <li class="c-bulk-action"><a href="#"><i class="icon16 delete"></i>[`Delete`] <strong class="hint">(N)</strong></a></li>
-
-                    </ul>
-                </div>
-
-                <table class="zebra single-lined" id="cash-transaction-list">
-                    <!-- <tr>
-                        <th>[`Date`]</th>
-                        <th>[`Account`]</th>
-                        <th>[`Category`]</th>
-                        <th>[`Summary`]</th>
-                        <th>[`Amount`]</th>
-                        <th>[`Balance`]</th>
-                        <th></th>
-                    </tr> -->
-                </table>
-                <br>
+            <div class="c-transactions" data-cash-wrapper="transaction-list">
             </div>
 
         </div>
@@ -172,169 +101,16 @@
 <script>
     'use strict';
     (function () {
-        var transactionDialog = function(transactionId, filterType, filterId, categoryType) {
-            filterType = filterType || '';
-            filterId = filterId || 0;
-            categoryType = categoryType || '';
-            var action = 'dialog';
-            if (categoryType) {
-                var actionCategory = categoryType;
-                action += (actionCategory.charAt(0).toUpperCase() + actionCategory.slice(1));
-            }
-
-            $('#cash-transaction-dialog').waDialog({
-                'height': '350px',
-                'width': '650px',
-                'url': '?module=transaction&action=' + action + '&transaction_id=' + transactionId + '&category_type=' + categoryType + '&filter_id=' + filterId + '&filter_type=' + filterType,
-                onLoad: function () {
-                    var d = this,
-                        $dialogWrapper = $(d);
-
-                    $dialogWrapper
-                        .on('click.cash', '[data-cash-action="delete-transaction"]', function (e) {
-                            e.preventDefault();
-
-                            if(!confirm($_('The transaction will be permanently deleted. Are you sure?'))) {
-                                return;
-                            }
-
-                            var id = $dialogWrapper.find('form input[name="transaction[id]"]').val();
-                            $.post(
-                                '?module=transaction&action=delete',
-                                { id: id },
-                                function (r) {
-                                    if (r.status === 'ok') {
-                                        $dialogWrapper.trigger('close');
-                                        $.cash_routing.redispatch();
-                                        $.cash.reloadSidebar();
-                                    }
-                                }
-                            );
-                        })
-                        .on('change.cash', '[name="transaction[account_id]"]', function (e) {
-                            $dialogWrapper
-                                .find('[data-cash-transaction-account-currency]')
-                                    .text($(this).find(':selected').data('cash-account-currency-sign'))
-                        })
-                        .on('change.cash', '[name="transaction[category_id]"]', function (e) {
-                            $dialogWrapper
-                                .find('[data-cash-transaction-category]')
-                                    .css('background', $(this).find(':selected').data('cash-category-color'))
-                        })
-                        .on('change.cash', '[name="repeating[interval]"]:first', function (e) {
-                            var $selected = $(this).find(':selected'),
-                                $customFrequency = $dialogWrapper.find('[data-cash-repeating-transaction-frequency-custom]'),
-                                interval = $selected.data('cash-repeating-transaction-interval');
-
-                            if (interval === 'custom') {
-                                $customFrequency.show().find(':input').prop('disabled', false);
-                            } else {
-                                $customFrequency.hide().find(':input').prop('disabled', true);
-                            }
-
-                            if (!$selected.val()) {
-                                $dialogWrapper.find('[name="repeating[end_type]"]').closest('.field').hide();
-                            } else {
-                                $dialogWrapper.find('[name="repeating[end_type]"]').closest('.field').show();
-                            }
-                        })
-                        .on('change.cash', '[name="repeating[end_type]"]', function (e) {
-                            var $this = $(this),
-                                $selected = $this.find(':selected'),
-                                typeEnd = $selected.data('cash-repeating-transaction-end'),
-                                $repeatEnd = $dialogWrapper.find('[data-cash-repeating-transaction-end-' + typeEnd + ']');
-
-                            $this.siblings().hide();
-                            $repeatEnd.show();
-                        })
-                        .on('click.cash', '[name="repeating[apply_to_all_in_future]"]', function (e) {
-                            // $dialogWrapper.find('[data-cash-repeating-settings]').toggle();
-                            var $submit = $dialogWrapper.find('[type="submit"]'),
-                                $delete = $dialogWrapper.find('[data-cash-action="delete-transaction"]');
-
-                            if ($(this).is(':checked')) {
-                                $submit.val($submit.data('cash-repeating-transaction-text'));
-                                $delete.find('span').text($delete.data('cash-repeating-transaction-text'));
-                            } else {
-                                $submit.val($submit.data('cash-transaction-text'));
-                                $delete.find('span').text($delete.data('cash-transaction-text'));
-                            }
-                        })
-                    ;
-
-                    $dialogWrapper.find('select').trigger('change.cash');
-
-                    var initDatepicker = function () {
-                        var datepicker_options = {
-                            changeMonth: true,
-                            changeYear: true,
-                            shortYearCutoff: 2,
-                            dateShowWeek: false,
-                            showOtherMonths: true,
-                            selectOtherMonths: true,
-                            stepMonths: 1,
-                            numberOfMonths: 1,
-                            gotoCurrent: true,
-                            constrainInput: false,
-                            dateFormat: "yy-mm-dd",
-                        };
-
-                        $dialogWrapper.find('[name="transaction[date]"]').datepicker(datepicker_options);
-                        $dialogWrapper.find('[name="repeating[end][ondate]"]').datepicker(datepicker_options);
-                    };
-
-                    initDatepicker();
-
-                    setTimeout(function () {
-                        $dialogWrapper.find('[name="transaction[amount]"]').trigger('focus');
-                    }, 13.12);
-                },
-                onSubmit: function (d) {
-                    var $errormsg = d.find('.errormsg');
-
-                    $errormsg.hide();
-                    d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
-                    $.post('?module=transaction&action=save', d.find('form').serialize(), function (r) {
-                        $.cash.$loading.remove();
-                        if (r.status === 'ok') {
-                            d.trigger('close');
-                            // if (!pocketId) {
-                            // window.location.hash = '#/project/' + r.data.id;
-                            // }
-                            $.cash_routing.redispatch();
-                            $.cash.reloadSidebar();
-                        } else {
-                            $errormsg
-                                .show()
-                                .text(r.errors.join('<br>'));
-                        }
-                    }, 'json');
-                    return false;
-                }
-            });
-        };
-
         var TransactionPage = (function () {
             var filterId = '{$filter->identifier}',
                 filterType = '{$filter->type}',
                 startDate = '{$startDate}',
                 endDate = '{$endDate}',
                 currentDate = '{$currentDate}',
-                $transactionList = $('#cash-transaction-list');
+                $transactionList = $('[data-cash-wrapper="transaction-list"]');
 
             $.cash.loadTransactions(startDate, endDate, filterId, filterType, $transactionList);
             $.cash.loadGraphData(startDate, endDate, filterId, filterType, '#cash-chart');
-
-            $('[data-cash-action="add-transaction"]').on('click.cash', function (e) {
-                e.preventDefault();
-                transactionDialog(0, filterType, filterId, $(this).data('cash-category-type'))
-            });
-
-            $transactionList.on('click.cash', '[data-cash-transaction-id]', function (e) {
-                e.preventDefault();
-
-                transactionDialog($(this).data('cash-transaction-id'), filterType, filterId, '')
-            });
 
             $('[data-cash-start-date]').on('click.cash', function (e) {
                 e.preventDefault();

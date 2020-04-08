@@ -79,12 +79,14 @@ class cashTransactionSaver extends cashEntitySaver
      */
     protected function addCategoryId(array $data)
     {
-        if (!empty($data['category_id'])) {
-            /** @var cashCategory $category */
-            $category = cash()->getEntityRepository(cashCategory::class)->findById($data['category_id']);
-            kmwaAssert::instance($category, cashCategory::class);
-            if ($category->isExpense() && $data['amount'] > 0) {
-                $data['amount'] = -$data['amount'];
+        if (array_key_exists('category_id', $data)) {
+            if ($data['category_id']) {
+                /** @var cashCategory $category */
+                $category = cash()->getEntityRepository(cashCategory::class)->findById($data['category_id']);
+                kmwaAssert::instance($category, cashCategory::class);
+                if ($category->isExpense() && $data['amount'] > 0) {
+                    $data['amount'] = -$data['amount'];
+                }
             }
         } else {
             if (isset($data['category_type']) && $data['category_type'] === cashCategory::TYPE_EXPENSE && $data['amount'] > 0) {
