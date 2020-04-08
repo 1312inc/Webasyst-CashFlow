@@ -1,0 +1,17 @@
+<form>
+<div class="dialog-content">
+<div data-cash-wrapper="transaction-bulk-move-dialog">
+    <input type="hidden" value="{$transactionIds}" name="delete[ids]"/>
+    <h1>
+        {sprintf('[`Delete %d transaction`]', $transactionCount)}
+    </h1>
+</div>
+</div>
+<div class="dialog-buttons">
+    <input type="submit"
+           value="{sprintf('[`delete %d transaction`]', $transactionCount)}"
+           class="button red"
+    /> [`or`] <a class="cancel" href="#">[`cancel`]</a>
+    <div class="errormsg" style="display: none"></div>
+</div>
+</form>
