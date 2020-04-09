@@ -18,11 +18,6 @@ class cashRepeatingTransactionDto extends cashTransactionDto
     /**
      * @var int
      */
-    public $create_contact_id;
-
-    /**
-     * @var int
-     */
     public $enabled = 1;
 
     /**
