@@ -5,7 +5,7 @@
  */
 final class cashImportCsv
 {
-    const PROVIDER_CSV = 'csv';
+    const PROVIDER_CSV           = 'csv';
     const DEFAULT_ENCODING       = 'utf-8';
     const DEFAULT_DELIMITER      = ';';
     const MAX_UNIQUENESS_DIVIDER = 4;
@@ -117,10 +117,10 @@ final class cashImportCsv
         try {
             while (($data = fgetcsv($handle, 0, $this->delimiter)) !== false) {
                 $row++;
-
                 if (!$this->notEmptyArray($data)) {
                     continue;
                 }
+                $this->csvInfoDto->totalRows++;
 
                 $data = $this->encodeArray($data);
                 for ($column = 0, $columnsCount = count($data); $column < $columnsCount; $column++) {
@@ -148,7 +148,7 @@ final class cashImportCsv
                     $this->csvInfoDto->firstRows[] = $data;
                 }
             }
-            $this->csvInfoDto->totalRows = $row - 1;
+            $this->csvInfoDto->totalRows--;
         } catch (Exception $ex) {
             $this->error = _w('Error on csv processing');
             cash()->getLogger()->error('Error on csv processing', $ex);
@@ -287,6 +287,30 @@ final class cashImportCsv
     }
 
     /**
+     * @param string $columnName
+     *
+     * @return int
+     */
+    public function getColumnFullness($columnName)
+    {
+        return $this->getColumnValues($columnName) / $this->csvInfoDto->totalRows * 100;
+    }
+
+    /**
+     * @param string $columnName
+     *
+     * @return int
+     */
+    public function getColumnValues($columnName)
+    {
+        if (!isset($this->csvInfoDto->totalRowsByColumn[$columnName])) {
+            return 0;
+        }
+
+        return (int)array_sum($this->csvInfoDto->totalRowsByColumn[$columnName]);
+    }
+
+    /**
      * @param int $count
      *
      * @return bool
@@ -294,7 +318,8 @@ final class cashImportCsv
     public function canBeColumnWithUniqueValues($count)
     {
         return (int)$count <= $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER
-            || ((int)$count > $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER && $this->getCsvInfoDto()->totalRows < self::MAX_UNIQUENESS_LIMIT);
+            || ((int)$count > $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER
+                && $this->getCsvInfoDto()->totalRows < self::MAX_UNIQUENESS_LIMIT);
     }
 
     /**
@@ -587,6 +612,6 @@ final class cashImportCsv
      */
     private function toFloat($value)
     {
-        return (float)str_replace(',','.',$value);
+        return (float)str_replace(',', '.', $value);
     }
 }

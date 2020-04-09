@@ -82,7 +82,7 @@
             </ul>
         {/if}
 
-        {if 1 || IS_APP_ADMIN || MADE_AT_LEAST_ONE_TRANSFER_IN_THE_PAST}
+        {if count($imports) || IS_APP_ADMIN}
             <br>
             <h5 class="heading top-padded">
                 <a href="#" class="count" data-cash-action="imports-delete"><i class="icon16 broom-bw" title="[`Clear import history`]"></i></a>
