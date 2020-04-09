@@ -53,22 +53,22 @@ class cashTransactionDto extends cashAbstractDto
     /**
      * @var int|null
      */
-    public $repeatingId;
+    public $repeating_id;
 
     /**
      * @var int
      */
-    public $createContactId;
+    public $create_contact_id;
 
     /**
      * @var string
      */
-    public $createDatetime;
+    public $create_datetime;
 
     /**
      * @var string|null
      */
-    public $updateDatetime;
+    public $update_datetime;
 
     /**
      * @var cashCategoryDto
