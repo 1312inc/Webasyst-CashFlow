@@ -1,7 +1,7 @@
 {** @var $info cashCsvImportInfoDto **}
-<div id="c-import-step-2">
+<div>
     <form action="?module=import&action=csvProcess" method="post">
-        <div class="c-import-preview" id="c-import-step-2">
+        <div class="c-import-preview">
             <p>{sprintf(
                 '[`We’ve recognized <b>%d rows</b> in the uploaded CSV file:`]',
                 $info->totalRows
@@ -67,7 +67,8 @@
                         <input type="radio" name="import[account][type]"
                                value="{cashCsvImportSettings::TYPE_MULTI}"/>
                         [`Set according to the value in the following column:`]
-                        <select name="import[account][multi][column]" data-cash-csv-import-action="fetch-column-data"
+                        <select name="import[account][multi][column]"
+                                data-cash-csv-import-action="fetch-column-data"
                                 data-cash-csv-import-conditions="account">
                             <option></option>
                             {foreach $info->headers as $header}
@@ -101,8 +102,10 @@
                 <div class="name">
                     [`Date`]
                 </div>
-                <div class="value no-shift">
-                    <select name="import[datetime]">
+                <i class="value no-shift">
+                    <select name="import[datetime]"
+                            data-cash-csv-import-action="check-fullness"
+                    >
                         <option></option>
                         {foreach $info->headers as $header}
                             <option value="{$header}"{if $header|strstr:'[`Date`]'} selected{/if}>{$header|escape}</option>
@@ -118,6 +121,7 @@
                         </select>
                         <span class="small"></span>
                     </span>
+                    <span data-cash-csv-import-check-fullness></span>
                 </div>
             </div>
 
@@ -130,13 +134,16 @@
                         <input type="radio" name="import[amount][type]" value="{cashCsvImportSettings::TYPE_SINGLE}"
                                checked/>
                         [`From the single column:`]
-                        <select name="import[amount][single][column]">
+                        <select name="import[amount][single][column]"
+                                data-cash-csv-import-action="check-fullness"
+                        >
                             <option></option>
                             {foreach $info->headers as $header}
                                 <option value="{$header}"{if $header|strstr:'[`Amount`]'} selected{/if}>{$header|escape}</option>
                             {/foreach}
                         </select>
                     </label>
+                    <span data-cash-csv-import-check-fullness></span>
                 </div>
                 <div class="value no-shift">
                     <label>
@@ -148,21 +155,27 @@
                             <tr>
                                 <td>
                                     [`Income`]:
-                                    <select name="import[amount][multi][map][income]">
+                                    <select name="import[amount][multi][map][income]"
+                                            data-cash-csv-import-action="check-fullness"
+                                    >
                                         <option></option>
                                         {foreach $info->headers as $header}
                                             <option value="{$header}"{if $header|strstr:'[`Income`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
+                                    <span data-cash-csv-import-check-fullness></span>
                                 </td>
                                 <td>
                                     [`Expenses`]:
-                                    <select name="import[amount][multi][map][expense]">
+                                    <select name="import[amount][multi][map][expense]"
+                                            data-cash-csv-import-action="check-fullness"
+                                    >
                                         <option></option>
                                         {foreach $info->headers as $header}
                                             <option value="{$header}"{if $header|strstr:'[`Expense`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
+                                    <span data-cash-csv-import-check-fullness></span>
                                 </td>
                             </tr>
                         </table>
@@ -451,6 +464,23 @@
                         }
                     }, 'json');
                 }
+            })
+            .on('change.cash', '[data-cash-csv-import-action="check-fullness"]', function (e) {
+                var $this = $(this),
+                    name = $this.find(':selected').text(),
+                    $wrapper = $this.parent(),
+                    $exclamation = $wrapper.find('[data-cash-csv-import-check-fullness]');
+
+                $exclamation.hide();
+                $.get('?module=import&action=csvCheckColumnFullness', { column_name: name }, function(r) {
+                    if (r.status === 'ok') {
+                        if (r.data['fullness'] < 100) {
+                            $exclamation.show().html(r.data['message']);
+                        }
+                    } else {
+                        alert(r.errors.join("\n"));
+                    }
+                });
             })
         ;
 
