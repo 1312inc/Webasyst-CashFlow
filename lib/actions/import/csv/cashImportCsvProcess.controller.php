@@ -177,8 +177,8 @@ LOG
      */
     protected function finish($filename)
     {
-        $data = $this->data['info']->jsonSerialize();
-        $this->import = cash()->getEntityRepository(cashImport::class)->findById($this->data['info']->importId);
-        echo json_encode($data + ['import_errors' => $this->import->getErrors()], JSON_UNESCAPED_UNICODE);
+        echo json_encode($this->data['info'], JSON_UNESCAPED_UNICODE);
+
+        return true;
     }
 }
