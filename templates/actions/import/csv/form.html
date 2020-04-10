@@ -119,9 +119,9 @@
                             {/foreach}
                             <option value="">[`Custom`]</option>
                         </select>
-                        <span class="small"></span>
+                        <span class="small" data-cash-import-csv-check-date-format></span>
+                        <span class="small" data-cash-import-csv-check-fullness></span>
                     </span>
-                    <span data-cash-csv-import-check-fullness></span>
                 </div>
             </div>
 
@@ -142,8 +142,8 @@
                                 <option value="{$header}"{if $header|strstr:'[`Amount`]'} selected{/if}>{$header|escape}</option>
                             {/foreach}
                         </select>
+                        <span class="small" data-cash-import-csv-check-fullness></span>
                     </label>
-                    <span data-cash-csv-import-check-fullness></span>
                 </div>
                 <div class="value no-shift">
                     <label>
@@ -163,7 +163,7 @@
                                             <option value="{$header}"{if $header|strstr:'[`Income`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
-                                    <span data-cash-csv-import-check-fullness></span>
+                                    <span class="small" data-cash-import-csv-check-fullness></span>
                                 </td>
                                 <td>
                                     [`Expenses`]:
@@ -175,7 +175,7 @@
                                             <option value="{$header}"{if $header|strstr:'[`Expense`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
-                                    <span data-cash-csv-import-check-fullness></span>
+                                    <span class="small" data-cash-import-csv-check-fullness></span>
                                 </td>
                             </tr>
                         </table>
@@ -251,7 +251,8 @@
                 </div>
                 <div class="value no-shift">
                     <label>
-                        <input type="checkbox" value="import[options][skip_duplicates]" checked/>
+                        <input type="hidden" name="import[options][skip_duplicates]" value="0"/>
+                        <input type="checkbox" name="import[options][skip_duplicates]" checked value="1"/>
                         [`Skip a row if same ACCOUNT && CATEGORY && DATE && AMOUNT pair already exist (recommended)`]
                         <br>
                         <span class="hint">[`Just to make sure all obvious duplicates will be skipped`]</span>
@@ -264,26 +265,24 @@
                     <input type="submit" data-cash-csv-import-action="import" value="{sprintf('[`Import %s transactions`]', $info->totalRows)}"
                            class="button green"/>
                 </div>
+                <div class="value c-csv-configurator" id="c-import-step-3" style="display: none">
+                    <div class="progressbar green">
+                        <div class="progressbar-outer">
+                            <div class="progressbar-inner" style="width: 0%;">
+                            </div>
+                        </div>
+                    </div>
+{*                    <div data-cash-csv-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
+                    <div data-cash-csv-import-progress-errors style="display: none"></div>
+                    <div>
+                        <span data-cash-csv-import-progress-icon="loading" style="display:none;"><i class="icon16 loading"></i> <span>[`Importing...`]</span></span>
+                        <span data-cash-csv-import-progress-icon="success" style="display:none;"><i class="icon16 yes"></i> <span>[`Finalizing...`]</span></span>
+                        <span data-cash-csv-import-progress-icon="error" style="display:none;"><i class="icon16 no"></i> <span>[`Done`]</span></span>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
-</div>
-
-
-<div class="c-csv-configurator" id="c-import-step-3" style="display: none">
-    <div class="progressbar green">
-        <div class="progressbar-outer">
-            <div class="progressbar-inner" style="width: 0%;">
-            </div>
-        </div>
-    </div>
-    <div data-cash-csv-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>
-    <div data-cash-csv-import-progress-errors style="display: none"></div>
-    <div>
-        <span data-cash-csv-import-progress-icon="loading" style="display:none;"><i class="icon16 loading"></i> <span>[`Don't close the window until the import is finished...`]</span></span>
-        <span data-cash-csv-import-progress-icon="success" style="display:none;"><i class="icon16 yes"></i> <span>[`Done`]</span></span>
-        <span data-cash-csv-import-progress-icon="error" style="display:none;"><i class="icon16 no"></i> <span>[`Done`]</span></span>
-    </div>
 </div>
 
 <script type="text/javascript" src="{$wa_app_static_url}js/kmlongaction.js{if !waSystemConfig::isDebug()}?v{$wa->version()}{/if}"></script>
@@ -306,7 +305,7 @@
             $.get('?module=import&action=csvGetColumnUniqueValues', { column_name: name }, callback);
         };
         var fetchColumnDatetimeValues = function (name, format, callback) {
-            var $status = $dateFormatW.find('span');
+            var $status = $dateFormatW.find('[data-cash-import-csv-check-date-format]');
             $status.hide().empty();
             $.get('?module=import&action=csvGetColumnDatetimeValues', { column_name: name, dateformat: format }, function (r) {
                 $status.show();
@@ -331,7 +330,7 @@
                     $transactionStat = $progress.find('[data-cash-csv-import-progress-transactions]'),
                     $transactionErrors = $progress.find('[data-cash-csv-import-progress-errors]');
 
-                $button.prop('disabled', true);
+                $button.prop('disabled', true).hide();
 
                 $('#cash-import-page').trigger('stepChange.cash', 3);
 
@@ -348,34 +347,36 @@
                         },
                         onSuccess: function (r) {
                             $progress.show().find('.progressbar-inner').css('width', '0%');
-                            $transactionStat.show();
+                            // $transactionStat.show();
                         },
                         onError: function (r) {
                             $progressError.show().siblings().hide();
                             $progressError.find('span').text(r.error);
-                            $button.prop('disabled', false);
-                            $transactionStat.hide();
+                            $button.prop('disabled', false).show();
+                            // $transactionStat.hide();
                         }
                     },
                     step: {
                         onProgress: function(r) {
                             $progress.find('.progressbar-inner').css('width', r.progress + '%');
-                            $transactionStat.show();
-                            $transactionStat.find('span').text(r.transactions.ok);
-                            $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
+                            // $transactionStat.show();
+                            // $transactionStat.find('span').text(r.transactions.ok);
+                            // $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
                         },
                         onReady: function (r) {
                             $progressSuccess.show().siblings().hide();
                             $progress.find('.progressbar-inner').css('width', r.progress + '%');
-                            $button.prop('disabled', false);
-                            $transactionStat.show();
-                            $transactionStat.find('span').text(r.transactions.ok);
-                            $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
+                            window.location.hash = '#/import/view/csv/' + r.import_id;
+                            $.cash_routing.redispatch();
+                            // $button.prop('disabled', false);
+                            // $transactionStat.show();
+                            // $transactionStat.find('span').text(r.transactions.ok);
+                            // $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
                         },
                         onError: function (r) {
                             $progressError.show().siblings().hide();
                             $progressError.find('span').text(r.error);
-                            $button.prop('disabled', false);
+                            $button.prop('disabled', false).show();
                         }
                     }
                 });
@@ -469,7 +470,7 @@
                 var $this = $(this),
                     name = $this.find(':selected').text(),
                     $wrapper = $this.parent(),
-                    $exclamation = $wrapper.find('[data-cash-csv-import-check-fullness]');
+                    $exclamation = $wrapper.find('[data-cash-import-csv-check-fullness]');
 
                 $exclamation.hide();
                 $.get('?module=import&action=csvCheckColumnFullness', { column_name: name }, function(r) {
