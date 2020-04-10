@@ -72,7 +72,7 @@
             <div class="block half-padded" style="padding-left: 0;">
                 [`Cash on hand today`]:
                 {foreach $onHandsToday as $onHand}
-                    <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{$onHand->stat->summary} {$onHand->currency->getSign()}</strong>
+                    <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
                     {if !$onHand@last}+{/if}
                     {foreachelse}
                     <strong class="c-balance large">0</strong>
