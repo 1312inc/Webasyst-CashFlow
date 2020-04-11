@@ -45,6 +45,7 @@ class cashTransactionPageAction extends cashViewAction
      * @throws kmwaNotFoundException
      * @throws waException
      * @throws kmwaForbiddenException
+     * @throws Exception
      */
     public function preExecute()
     {

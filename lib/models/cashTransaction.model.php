@@ -18,12 +18,10 @@ class cashTransactionModel extends cashModel
     public function getByDateBoundsAndAccount($startDate, $endDate, $account = null, $returnResult = false)
     {
         $whereAccountSql = '';
-        if ($account) {
-            $whereAccountSql = ' and ct.account_id in (i:account_ids)';
-        }
         $whereAccountSql2 = '';
         if ($account) {
-            $whereAccountSql2 = ' and ct2.account_id in (i:account_ids)';
+            $whereAccountSql = ' and ct.account_id = i:account_id';
+            $whereAccountSql2 = ' and ct2.account_id = i:account_id';
         }
 
         $sql = <<<SQL
@@ -44,7 +42,7 @@ SQL;
             [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'account_ids' => $account ? [$account] : [],
+                'account_id' => $account,
             ]
         );
 
@@ -61,13 +59,29 @@ SQL;
      */
     public function getByDateBoundsAndCategory($startDate, $endDate, $category = null, $returnResult = false)
     {
-        $whereAccountSql = '';
-        if ($category) {
-            $whereAccountSql = ' and ct.category_id in (i:category_ids)';
-        }
-        $whereAccountSql2 = '';
-        if ($category) {
-            $whereAccountSql2 = ' and ct2.category_id in (i:category_ids)';
+        switch (true) {
+            case $category > 0:
+                $whereAccountSql = ' and ct.category_id = i:category_id';
+                $whereAccountSql2 = ' and ct2.category_id = i:category_id';
+                $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
+                break;
+
+            case $category == cashCategoryFactory::NO_CATEGORY_EXPENSE_ID:
+                $whereAccountSql = ' and ct.category_id is null and ct.amount < 0';
+                $whereAccountSql2 = ' and ct2.category_id is null and ct2.amount < 0';
+                $joinCategory = '';
+                break;
+
+            case $category == cashCategoryFactory::NO_CATEGORY_INCOME_ID:
+                $whereAccountSql = ' and ct.category_id is null and ct.amount > 0';
+                $whereAccountSql2 = ' and ct2.category_id is null and ct2.amount > 0';
+                $joinCategory = '';
+                break;
+
+            default:
+                $whereAccountSql = '';
+                $whereAccountSql2 = '';
+                $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
         }
 
         $sql = <<<SQL
@@ -76,7 +90,7 @@ select ct.*,
 from cash_transaction ct
 join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-join cash_category cc on ct.category_id = cc.id
+{$joinCategory}
 where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
       {$whereAccountSql}
@@ -88,7 +102,7 @@ SQL;
             [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'category_ids' => $category ? [$category] : [],
+                'category_id' => $category,
             ]
         );
 
@@ -148,7 +162,8 @@ select ca.currency,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-where ct.date between s:startDate and s:endDate %s
+where ct.date between s:startDate and s:endDate 
+    %s
     and ct.is_archived = 0
 group by ct.date, ca.currency, ct.category_id, if(ct.amount < 0, 'expense', 'income')
 order by ct.date
@@ -202,11 +217,11 @@ SQL;
     /**
      * @param string   $startDate
      * @param string   $endDate
-     * @param int|null $categories
+     * @param int|null $category
      *
      * @return array
      */
-    public function getSummaryByDateBoundsAndCategoryGroupByDay($startDate, $endDate, $categories = null)
+    public function getSummaryByDateBoundsAndCategoryGroupByDay($startDate, $endDate, $category = null)
     {
         $sql = <<<SQL
 select ca.currency,
@@ -217,30 +232,26 @@ select ca.currency,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-where ct.date between s:startDate and s:endDate %s
+where ct.date between s:startDate and s:endDate 
+    %s
     and ct.is_archived = 0
 group by ct.date, ca.currency, ct.category_id, if(ct.amount < 0, 'expense', 'income')
 order by ct.date
 SQL;
 
-        return $this->querySummaryByDateBoundsAndCategory(
-            $sql,
-            $startDate,
-            $endDate,
-            $categories ? [$categories] : []
-        );
+        return $this->querySummaryByDateBoundsAndCategory($sql, $startDate, $endDate, $category);
     }
 
     /**
      * @param string   $startDate
      * @param string   $endDate
-     * @param int|null $accounts
+     * @param int|null $account
      *
      * @return array
      */
-    public function getDateBoundsByAccounts($startDate, $endDate, $accounts = null)
+    public function getDateBoundsByAccounts($startDate, $endDate, $account = null)
     {
-        $accountsSql = $accounts ? ' and ct.account_id in (i:account_ids)' : '';
+        $accountsSql = $account ? ' and ct.account_id in (i:account_id)' : '';
 
         $sql = <<<SQL
 select min(ct.date) startDate, max(ct.date) endDate
@@ -256,7 +267,7 @@ SQL;
                 [
                     'startDate' => $startDate,
                     'endDate' => $endDate,
-                    'account_ids' => $accounts ? [$accounts] : [],
+                    'account_id' => $account,
                 ]
             )
             ->fetchAssoc();
@@ -267,13 +278,13 @@ SQL;
     /**
      * @param string   $startDate
      * @param string   $endDate
-     * @param int|null $categories
+     * @param int|null $category
      *
      * @return array
      */
-    public function getDateBoundsByCategories($startDate, $endDate, $categories = null)
+    public function getDateBoundsByCategories($startDate, $endDate, $category = null)
     {
-        $categorySql = $categories ? ' and ct.category_id in (i:category_ids)' : '';
+        $categorySql = $category ? ' and ct.category_id = i:category_id' : '';
 
         $sql = <<<SQL
 select min(ct.date) startDate, max(ct.date) endDate
@@ -289,7 +300,7 @@ SQL;
                 [
                     'startDate' => $startDate,
                     'endDate' => $endDate,
-                    'category_ids' => $categories ? [$categories] : [],
+                    'category_id' => $category,
                 ]
             )
             ->fetchAssoc();
@@ -328,11 +339,11 @@ SQL;
     /**
      * @param string   $startDate
      * @param string   $endDate
-     * @param int|null $categories
+     * @param int|null $category
      *
      * @return array
      */
-    public function getSummaryByDateBoundsAndCategoryGroupByMonth($startDate, $endDate, $categories = null)
+    public function getSummaryByDateBoundsAndCategoryGroupByMonth($startDate, $endDate, $category = null)
     {
         $sql = <<<SQL
 select ca.currency,
@@ -350,22 +361,17 @@ group by YEAR(ct.date), MONTH(ct.date), ca.currency, ct.category_id, if(ct.amoun
 order by YEAR(ct.date), MONTH(ct.date)
 SQL;
 
-        return $this->querySummaryByDateBoundsAndCategory(
-            $sql,
-            $startDate,
-            $endDate,
-            $categories ? [$categories] : []
-        );
+        return $this->querySummaryByDateBoundsAndCategory($sql, $startDate, $endDate, $category);
     }
 
     /**
      * @param string   $startDate
      * @param string   $endDate
-     * @param int|null $accounts
+     * @param int|null $account
      *
      * @return array
      */
-    public function getBalanceByDateBoundsAndAccountGroupByDay($startDate, $endDate, $accounts = null)
+    public function getBalanceByDateBoundsAndAccountGroupByDay($startDate, $endDate, $account = null)
     {
         $sql = <<<SQL
 select ct.date,
@@ -380,12 +386,7 @@ group by ct.date, ca.id
 order by ct.date
 SQL;
 
-        return $this->querySummaryByDateBoundsAndAccount(
-            $sql,
-            $startDate,
-            $endDate,
-            $accounts ? [$accounts] : []
-        );
+        return $this->querySummaryByDateBoundsAndAccount($sql, $startDate, $endDate, $account);
     }
 
     /**
@@ -523,19 +524,35 @@ SQL;
     /**
      * @param string   $startDate
      * @param string   $endDate
-     * @param int|null $categories
+     * @param int|null $category
      *
      * @return array
      */
-    public function getCategoriesAndCurrenciesHashByCategory($startDate, $endDate, $categories = null)
+    public function getCategoriesAndCurrenciesHashByCategory($startDate, $endDate, $category = null)
     {
-        $categoriesSql = $categories ? ' and ct.category_id in (i:category_ids)' : '';
+        switch (true) {
+            case $category > 0:
+                $categorySql = ' and ct.category_id = i:category_id';
+                break;
+
+            case $category == cashCategoryFactory::NO_CATEGORY_EXPENSE_ID:
+                $categorySql = ' and ct.category_id is null and ct.amount < 0';
+                break;
+
+            case $category == cashCategoryFactory::NO_CATEGORY_INCOME_ID:
+                $categorySql = ' and ct.category_id is null and ct.amount > 0';
+                break;
+
+            default:
+                $categorySql = '';
+        }
+
         $sql = <<<SQL
 select concat(ca.currency,'_',ifnull(ct.category_id,if(ct.amount < 0, 'expense', 'income'))) hash
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
-    {$categoriesSql}
+    {$categorySql}
     and ct.is_archived = 0
 group by concat(ca.currency,'_',ifnull(ct.category_id,if(ct.amount < 0, 'expense', 'income')))
 SQL;
@@ -546,7 +563,7 @@ SQL;
                 [
                     'startDate' => $startDate,
                     'endDate' => $endDate,
-                    'category_ids' => $categories ? [$categories] : [],
+                    'category_id' => $category,
                 ]
             )
             ->fetchAll();
@@ -641,6 +658,28 @@ SQL;
     }
 
     /**
+     * @return bool
+     */
+    public function hasNoCategoryExpenses()
+    {
+        return (int)$this
+            ->select('count(*)')
+            ->where('category_id is null and amount < 0 and is_archived = 0')
+            ->fetchField();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasNoCategoryIncomes()
+    {
+        return (int)$this
+            ->select('count(*)')
+            ->where('category_id is null and amount > 0 and is_archived = 0')
+            ->fetchField();
+    }
+
+    /**
      * @param string $sql
      * @param string $startDate
      * @param string $endDate
@@ -666,17 +705,33 @@ SQL;
     }
 
     /**
-     * @param string $sql
-     * @param string $startDate
-     * @param string $endDate
-     * @param array  $categories
+     * @param string   $sql
+     * @param string   $startDate
+     * @param string   $endDate
+     * @param int|null $category
      *
      * @return array
      */
-    private function querySummaryByDateBoundsAndCategory($sql, $startDate, $endDate, array $categories)
+    private function querySummaryByDateBoundsAndCategory($sql, $startDate, $endDate, $category)
     {
-        $categoriesSql = $categories ? ' and ct.category_id in (i:category_ids)' : '';
-        $sql = sprintf($sql, $categoriesSql, $categoriesSql);
+        switch (true) {
+            case $category > 0:
+                $categoriesSql = ' and ct.category_id = i:category_id';
+                break;
+
+            case $category == cashCategoryFactory::NO_CATEGORY_EXPENSE_ID:
+                $categoriesSql = ' and ct.category_id is null and ct.amount < 0';
+                break;
+
+            case $category == cashCategoryFactory::NO_CATEGORY_INCOME_ID:
+                $categoriesSql = ' and ct.category_id is null and ct.amount > 0';
+                break;
+
+            default:
+                $categoriesSql = '';
+        }
+
+        $sql = sprintf($sql, $categoriesSql);
 
         return $this
             ->query(
@@ -684,7 +739,7 @@ SQL;
                 [
                     'startDate' => $startDate,
                     'endDate' => $endDate,
-                    'category_ids' => $categories,
+                    'category_id' => $category,
                 ]
             )
             ->fetchAll('date', 2);
