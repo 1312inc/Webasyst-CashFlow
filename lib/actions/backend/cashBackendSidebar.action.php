@@ -19,8 +19,22 @@ class cashBackendSidebarAction extends cashViewAction
         $incomes = cash()->getEntityRepository(cashCategory::class)->findAllByType(cashCategory::TYPE_INCOME);
         $incomeDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $incomes);
 
+        if (cash()->getModel(cashTransaction::class)->hasNoCategoryIncomes()) {
+            $incomeDtos[] = cashDtoFromEntityFactory::fromEntity(
+                cashCategoryDto::class,
+                cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryIncome()
+            );
+        }
+
         $expenses = cash()->getEntityRepository(cashCategory::class)->findAllByType(cashCategory::TYPE_EXPENSE);
         $expenseDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $expenses);
+
+        if (cash()->getModel(cashTransaction::class)->hasNoCategoryExpenses()) {
+            $expenseDtos[] = cashDtoFromEntityFactory::fromEntity(
+                cashCategoryDto::class,
+                cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryExpense()
+            );
+        }
 
         $imports = cash()->getEntityRepository(cashImport::class)->findLastN(3);
         $importDtos = cashDtoFromEntityFactory::fromEntities(cashImportDto::class, $imports);
