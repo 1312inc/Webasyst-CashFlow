@@ -90,26 +90,26 @@
             self.sortable();
 
             var isInViewport = function($el) {
-                var $w = $(window),
-                    elementTop = $el.offset().top,
-                    elementBottom = elementTop + $el.outerHeight(),
-                    viewportTop = $w.scrollTop(),
-                    viewportBottom = viewportTop + $w.height();
 
-                return elementBottom > viewportTop && (elementTop < viewportBottom || viewportTop === 0);
             };
 
             function scrollActions() {
                 var $this = $('.c-actions-menu');
 
                 if ($this.length) {
-                    var $w = $this.parent();
-                    isInViewport($w) ? $this.removeClass('fixed') : $this.addClass('fixed');
+                    var $w = $this.parent(),
+                        $window = $(window),
+                        elementTop = $w.offset().top,
+                        elementBottom = elementTop + $w.outerHeight(),
+                        viewportTop = $window.scrollTop(),
+                        viewportBottom = viewportTop + $window.height(),
+                        isInViewport = elementBottom > viewportTop;
+
+                    isInViewport ? $this.removeClass('fixed') : $this.addClass('fixed');
                 }
             }
 
-            setInterval(scrollActions, 300);
-
+            setInterval(scrollActions, 250);
             // window.addEventListener('scroll', $.cash.throttle(scrollActions, 500));
         },
         handlers: function () {
