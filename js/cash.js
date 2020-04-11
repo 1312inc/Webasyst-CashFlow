@@ -89,13 +89,14 @@
             self.handlers();
             self.sortable();
 
-            $.fn.isInViewport = function() {
-                var elementTop = $(this).offset().top,
-                    elementBottom = elementTop + $(this).outerHeight(),
-                    viewportTop = $(window).scrollTop(),
-                    viewportBottom = viewportTop + $(window).height();
+            var isInViewport = function($el) {
+                var $w = $(window),
+                    elementTop = $el.offset().top,
+                    elementBottom = elementTop + $el.outerHeight(),
+                    viewportTop = $w.scrollTop(),
+                    viewportBottom = viewportTop + $w.height();
 
-                return elementBottom > viewportTop && elementTop < viewportBottom;
+                return elementBottom > viewportTop && (elementTop < viewportBottom || viewportTop === 0);
             };
 
             function scrollActions() {
@@ -103,11 +104,13 @@
 
                 if ($this.length) {
                     var $w = $this.parent();
-                    $w.isInViewport() ? $this.removeClass('fixed') : $this.addClass('fixed');
+                    isInViewport($w) ? $this.removeClass('fixed') : $this.addClass('fixed');
                 }
             }
 
-            window.addEventListener('scroll', $.cash.throttle(scrollActions, 131.2));
+            setInterval(scrollActions, 300);
+
+            // window.addEventListener('scroll', $.cash.throttle(scrollActions, 500));
         },
         handlers: function () {
             var self = this;
