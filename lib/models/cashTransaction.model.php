@@ -141,7 +141,7 @@ SQL;
     {
         $sql = <<<SQL
 select ca.currency,
-       concat(ca.currency,ifnull(concat('_',ct.category_id,'')) hash,
+       concat(ca.currency,if(ct.category_id is null, '', concat('_',ct.category_id))) hash,
        if(ct.amount < 0, 'expense', 'income') cd,
        ct.date,
        ct.category_id category_id,
@@ -173,7 +173,7 @@ SQL;
     {
         $sql = <<<SQL
 select ca.currency,
-       concat(ca.currency,ifnull(concat('_',ct.category_id),'')) hash,
+       concat(ca.currency,if(ct.category_id is null, '', concat('_',ct.category_id))) hash,
        if(ct.amount < 0, 'expense', 'income') cd,
        ct.date,
        ct.category_id category_id,
@@ -210,7 +210,7 @@ SQL;
     {
         $sql = <<<SQL
 select ca.currency,
-       concat(ca.currency,ifnull(concat('_',ct.category_id),'')) hash,
+       concat(ca.currency,if(ct.category_id is null, '', concat('_',ct.category_id))) hash,
        if(ct.amount < 0, 'expense', 'income') cd,
        ct.date,
        ct.category_id,
@@ -308,7 +308,7 @@ SQL;
     {
         $sql = <<<SQL
 select ca.currency,
-       concat(ca.currency,ifnull(concat('_',ct.category_id),'')) hash,
+       concat(ca.currency,if(ct.category_id is null, '', concat('_',ct.category_id))) hash,
        concat(YEAR(ct.date), '-', MONTH(ct.date)) date,
        if(ct.amount < 0, 'expense', 'income') cd,
        ct.category_id category_id,
@@ -336,7 +336,7 @@ SQL;
     {
         $sql = <<<SQL
 select ca.currency,
-       concat(ca.currency,ifnull(concat('_',ct.category_id),'')) hash,
+       concat(ca.currency,if(ct.category_id is null, '', concat('_',ct.category_id))) hash,
        concat(YEAR(ct.date), '-', MONTH(ct.date)) date,
        if(ct.amount < 0, 'expense', 'income') cd,
        ct.category_id,
@@ -466,13 +466,13 @@ SQL;
     public function getCategoriesAndCurrenciesHashByImport($startDate, $endDate, $importId)
     {
         $sql = <<<SQL
-select concat(ca.currency,'_',ifnull(concat(ct.category_id,if(ct.amount < 0, 'expense', 'income'))) hash
+select concat(ca.currency,'_',if(ct.category_id is null,concat(if(ct.amount < 0, 'expense', 'income')),ct.category_id)) hash
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
     and ct.import_id = i:import_id
     and ct.is_archived = 0
-group by concat(ca.currency,'_',ifnull(ct.category_id,if(ct.amount < 0, 'expense', 'income')))
+group by concat(ca.currency,'_',if(ct.category_id is null,concat(if(ct.amount < 0, 'expense', 'income')),ct.category_id))
 SQL;
 
         $data = $this
