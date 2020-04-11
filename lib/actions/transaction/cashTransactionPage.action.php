@@ -73,8 +73,10 @@ class cashTransactionPageAction extends cashViewAction
             $this->periodForecast = $this->graphService->getForecastPeriodByDate($this->endDate);
         }
 
-        $this->graphService->saveChartPeriodVo($this->periodChart);
-        $this->graphService->saveForecastPeriodVo($this->periodForecast);
+        if ($this->filterDto->type !== cashTransactionPageFilterDto::FILTER_IMPORT) {
+            $this->graphService->saveChartPeriodVo($this->periodChart);
+            $this->graphService->saveForecastPeriodVo($this->periodForecast);
+        }
 
         $this->today = new DateTime();
 
