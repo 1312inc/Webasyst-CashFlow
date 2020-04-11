@@ -180,7 +180,12 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 $names[$hash] = sprintf('%s, %s', $categories[$category['id']]['name'], $category['currency']);
                 $colors[$hash] = $categories[$category['id']]['color'];
             } else {
-                $names[$hash] = sprintf('%s, %s', _w('No category'), $category['currency']);
+                $names[$hash] = sprintf(
+                    '%s, %s, %s',
+                    _w('No category'),
+                    in_array($hash, $this->groups[$category['currency']]['expense']) ? _w('expense') : _w('income'),
+                    $category['currency']
+                );
                 $colors[$hash] = cashColorStorage::DEFAULT_NO_CATEGORY_GRAPH_COLOR;
             }
         }
