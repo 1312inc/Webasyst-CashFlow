@@ -29,7 +29,7 @@ class cashTransactionBulkMoveDialogAction extends cashViewAction
 
         $accountDtos = cashDtoFromEntityFactory::fromEntities(
             cashAccountDto::class,
-            cash()->getEntityRepository(cashAccount::class)->findAll()
+            cash()->getEntityRepository(cashAccount::class)->findAllActive()
         );
 
         /** @var cashCategoryRepository $categoryRep */
