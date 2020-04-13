@@ -69,10 +69,13 @@ class cashCategorySaver extends cashEntitySaver
             $rep = cash()->getEntityRepository(cashCategory::class);
             /** @var cashCategory[] $categories */
             $categories = $rep->findById(
-                cash()->getModel(cashCategory::class)
-                    ->select('*')
-                    ->where('id in (i:ids)', ['ids' => $order]),
-                'id'
+                array_column(
+                    cash()->getModel(cashCategory::class)
+                        ->select('*')
+                        ->where('id in (i:ids)', ['ids' => $order])
+                        ->fetchAll(),
+                    'id'
+                )
             );
             $i = 0;
             foreach ($order as $categoryId) {
