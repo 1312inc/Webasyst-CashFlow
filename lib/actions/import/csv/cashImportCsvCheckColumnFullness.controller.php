@@ -16,8 +16,8 @@ class cashImportCsvCheckColumnFullnessController extends cashJsonController
             $csvImport = cashImportCsv::createCurrent();
             $this->response = [
                 'fullness' => $csvImport->getColumnFullness($columnName),
-                'message' => sprintf(
-                    '<i class="icon10 exclamation"></i> Only %d out of %d transactions have this column defined. Please make sure the right column is selected.',
+                'message' => '<i class="icon10 exclamation"></i> '.sprintf_wp(
+                    'Only %d out of %d transactions have this column defined. Please make sure the right column is selected.',
                     $csvImport->getColumnValues($columnName),
                     $csvImport->getCsvInfoDto()->totalRows
                 ),
