@@ -120,7 +120,7 @@
                             <option value="">[`Custom`]</option>
                         </select>
                         <span class="small" data-cash-import-csv-check-date-format></span>
-                        <span class="small" data-cash-import-csv-check-fullness></span>
+                        <p class="small" data-cash-import-csv-check-fullness></p>
                     </span>
                 </div>
             </div>
@@ -142,7 +142,7 @@
                                 <option value="{$header}"{if $header|strstr:'[`Amount`]'} selected{/if}>{$header|escape}</option>
                             {/foreach}
                         </select>
-                        <span class="small" data-cash-import-csv-check-fullness></span>
+                        <p class="small" data-cash-import-csv-check-fullness></p>
                     </label>
                 </div>
                 <div class="value no-shift">
@@ -163,7 +163,7 @@
                                             <option value="{$header}"{if $header|strstr:'[`Income`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
-                                    <span class="small" data-cash-import-csv-check-fullness></span>
+                                    <p class="small" data-cash-import-csv-check-fullness></p>
                                 </td>
                                 <td>
                                     [`Expenses`]:
@@ -175,7 +175,7 @@
                                             <option value="{$header}"{if $header|strstr:'[`Expense`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
-                                    <span class="small" data-cash-import-csv-check-fullness></span>
+                                    <p class="small" data-cash-import-csv-check-fullness></p>
                                 </td>
                             </tr>
                         </table>
