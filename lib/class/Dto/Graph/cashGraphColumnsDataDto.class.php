@@ -164,10 +164,15 @@ class cashGraphColumnsDataDto extends cashAbstractDto
      */
     public function jsonSerialize()
     {
-        $columns = [array_merge(['dates'], $this->dates)];
+        $columns = [];
         foreach ($this->columns as $name => $data) {
-            $columns[] = array_values(array_merge([$name], $data));
+            if (in_array($name, $this->groups[$this->categories[$name]['currency']]['expense'])) {
+                array_unshift($columns, array_values(array_merge([$name], $data)));
+            } else {
+                $columns[] = array_values(array_merge([$name], $data));
+            }
         }
+        array_unshift($columns, array_merge(['dates'], $this->dates));
         foreach ($this->lines as $name => $data) {
             $columns[] = array_values(array_merge([$name], $data));
         }
@@ -210,6 +215,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             'data' => [
                 'x' => 'dates',
                 'columns' => $columns,
+                'order' => null,
                 'line' => ['connectNull' => true],
                 'bar' => ['width' => ['ratio' => 0.2]],
                 'types' => $this->types,
