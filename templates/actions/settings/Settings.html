@@ -170,8 +170,23 @@
 
                             <div class="value no-shift">
                                 <label><input type="checkbox" checked> [`Enable average forecasted sales (recommended)`]</label>
-                                <p class="hint">{sprintf('[`<b>Works like magic!</b> Average daily sales (≈N/day based on last month data) will be automatically added as upcoming transactions for better budget planning. When a new order is paid on a certain day, forecasted sales for this day will be cleared automatically and replaced with the real sales data.`]')}</p>
+                                <p class="hint">{sprintf('[`<b>Works like magic!</b> Average daily sales will be automatically added as planned transactions for better budget forecasting. When the day comes, forecasted sales for this day will be cleared automatically and replaced with the real sales data.`]')}</p>
                             </div>
+
+                            <div class="value no-shift">
+                                <label>
+                                    <input type="radio" selected="selected" />
+                                    [`Calculate average daily sales automatically (≈%s/day based on the data for the last 30 days)`]
+                                </label>
+                            </div>
+                            <div class="value no-shift">
+                                <label>
+                                    <input type="radio" />
+                                    [`Enter manually:`]
+                                </label>
+                                <input type="text" class="numerical short" placeholder="0"> {sprintf('[`%s/day`]', 'RUB')}
+                            </div>
+
                         </div>
 
                         <div class="field">
