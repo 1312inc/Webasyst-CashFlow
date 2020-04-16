@@ -71,14 +71,14 @@ class cashAccountSaver extends cashEntitySaver
         try {
             /** @var cashAccount[] $accounts */
             $accounts = $rep->findById($order);
-            $order = array_combine($order, $order);
+            $order = array_flip($order);
             $i = 0;
             foreach ($accounts as $account) {
                 if (!isset($order[$account->getId()])) {
                     continue;
                 }
 
-                $account->setSort($i++);
+                $account->setSort($order[$account->getId()]);
                 cash()->getEntityPersister()->update($account);
             }
 
