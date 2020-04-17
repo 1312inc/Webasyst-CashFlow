@@ -1,4 +1,8 @@
-<div class="content left200px">
+{** @var cashShopScriptSettings $shopScriptSettings **}
+{** @var cashCategoryDto[] $incomes **}
+{** @var cashCategoryDto[] $expenses **}
+
+<div class="content left200px" id="cash-settings">
     <div id="content">
 
         <div class="shadowed blank">
@@ -7,48 +11,41 @@
 
                 <h1>[`Settings`]</h1>
 
-                {$categories_income = [
-                        [ 'Продажи', '#17ae4f' ],
-                        [ 'Левак', '#26b7a3' ],
-                        [ 'Нам вернули долг' ],
-                        [ 'Проценты по вкладам' ],
-                        [ 'Взяли в долг', '#ccc' ],
-                        [ 'Ангельские инвестиции, о спасибо, боже, за этот подарок свыше', '#ccc' ]
-                    ]}
-                {$categories_expense = [
-                        [ 'Закупки', '#c54b58' ],
-                        [ 'Зарплаты' ],
-                        [ 'Налоги' ],
-                        [ 'Офис' ],
-                        [ 'Реклама и маркетинг' ],
-                        [ 'Возврат долга' ],
-                        [ 'Комиссии банков' ],
-                        [ 'Дивиденды: полный вывод баблосов из бизнеса', '#ccc' ]
-                    ]}
-
                 <div class="fields form">
                     <div class="field">
                         <div class="name">[`Categories`]</div>
                         <div class="value no-shift">
                             <div class="c-settings-columns">
                                 <div class="c-column">
-                                    <ul class="menu-v with-icons">
-                                        {foreach $categories_income as $c}
-                                        <li>
-                                             <a href="#/income/N"><i class="icon16 sort c-ousted-sort-icon"></i><i class="icon16 color" style="background: {$c[1]|default:'#47ce6f'};"></i>{$c[0]}</a>
+                                    <ul class="menu-v with-icons" data-sortable-type="category">
+                                        {foreach $incomes as $category}
+                                        <li data-id="{$category->id}">
+                                             <a href="#/income/{$category->id}"><i class="icon16 sort c-ousted-sort-icon"></i><i class="icon16 color" style="background: {$category->color|default:'#47ce6f'};"></i>{$category->name|escape}</a>
                                         </li>
                                         {/foreach}
-                                        <li class="small top-padded"><a href="#"><i class="icon10 add"></i>[`New income category`]</a></li>
+                                        <li class="small top-padded">
+                                            <a href="#"
+                                               data-cash-action="category-dialog"
+                                               data-cash-category-type="income"
+                                               data-cash-category-after-save="redispatch"
+                                            ><i class="icon10 add"></i>[`New income category`]</a>
+                                        </li>
                                     </ul>
                                 </div>
                                 <div class="c-column">
-                                    <ul class="menu-v with-icons">
-                                        {foreach $categories_expense as $c}
-                                        <li>
-                                             <a href="#/income/N"><i class="icon16 sort c-ousted-sort-icon"></i><i class="icon16 color" style="background: {$c[1]|default:'#f56b68'};"></i>{$c[0]}</a>
+                                    <ul class="menu-v with-icons" data-sortable-type="category">
+                                        {foreach $expenses as $category}
+                                        <li data-id="{$category->id}">
+                                             <a href="#/income/{$category->id}"><i class="icon16 sort c-ousted-sort-icon"></i><i class="icon16 color" style="background: {$category->color|default:'#47ce6f'};"></i>{$category->name|escape}</a>
                                         </li>
                                         {/foreach}
-                                        <li class="small top-padded"><a href="#"><i class="icon10 add"></i>[`New expense category`]</a></li>
+                                        <li class="small top-padded">
+                                            <a href="#"
+                                               data-cash-action="category-dialog"
+                                               data-cash-category-type="expense"
+                                               data-cash-category-after-save="redispatch"
+                                            ><i class="icon10 add"></i>[`New expense category`]</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -56,65 +53,56 @@
                     </div>
 
                     {if $wa->shop}
+                    <form id="cash-shopscript-settings">
                     <h2>Shop-Script</h2>
                     <div class="fields-group">
                         <div class="field">
                             <div class="name">[`Enabled`]</div>
                             <div class="value no-shift">
-                                <input type="checkbox" checked />
+                                <input type="hidden" name="shopscript_settings[enabled]" value="0" />
+                                <input type="checkbox"
+                                       name="shopscript_settings[enabled]"
+                                       value="1"
+                                       {if $shopScriptSettings->isEnabled()}checked{/if}
+                                />
                             </div>
                         </div>
                         <div class="field">
                             <div class="name">[`Account`]</div>
                             <div class="value no-shift">
-                                <select>
-                                    <option>Account 1 (RUB)</option>
-                                    <option>Account 2 (USD)</option>
-                                    <option>Account 3 (EUR)</option>
-                                    <option>[`Configure by storefront...`]</option>
+                                <select name="shopscript_settings[accountId]">
+                                    {foreach $accounts as $account}
+                                    <option value="{$account->id}"
+                                            {if $shopScriptSettings->getAccountId() == $account->id}selected{/if}
+                                    >
+                                        {$account->name|escape} ({$account->currency->getCode()})
+                                    </option>
+                                    {/foreach}
+                                    <option value="0"
+                                            {if empty($shopScriptSettings->getAccountId())}selected{/if}
+                                    >
+                                        [`Configure by storefront...`]
+                                    </option>
                                 </select>
-                                <!--
-
-                                    /// configure by storefront ///
-
                                 <table class="zebra" style="width: auto; margin: 0.5rem 0;">
+                                    {foreach $storefronts as $storefront}
                                     <tr>
-                                        <td>mydomain.ru/*</td>
+                                        <td>{$storefront}</td>
                                         <td>&rarr;</td>
                                         <td>
-                                            <select>
-                                                <option>Account 1 (RUB)</option>
-                                                <option>Account 2 (USD)</option>
-                                                <option>Account 3 (EUR)</option>
-                                                <option>[`Don't import this storefront`]</option>
+                                            <select name="shopscript_settings[accountByStorefronts][{$storefront}]">
+                                            {foreach $accounts as $account}
+                                                <option value="{$account->id}"
+                                                        {if $shopScriptSettings->getAccountByStorefront($storefront) == $account->id}selected{/if}
+                                                >
+                                                    {$account->name|escape} ({$account->currency->getCode()})
+                                                </option>
+                                            {/foreach}
                                             </select>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>mydomain.ru/vip/*</td>
-                                        <td>&rarr;</td>
-                                        <td>
-                                            <select>
-                                                <option>Account 1 (RUB)</option>
-                                                <option>Account 2 (USD)</option>
-                                                <option>Account 3 (EUR)</option>
-                                                <option>[`Don't import this storefront`]</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>mydomain.eu/*</td>
-                                        <td>&rarr;</td>
-                                        <td>
-                                            <select>
-                                                <option>Account 1 (RUB)</option>
-                                                <option>Account 2 (USD)</option>
-                                                <option selected>Account 3 (EUR)</option>
-                                                <option>[`Don't import this storefront`]</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                </table> -->
+                                    {/foreach}
+                                </table>
 
                                 <p class="hint">{sprintf('[`In case of different currencies for orders and the account, an order amount will be converted to the selected account currency accroding to the conversion rate defined <a href="%s">in Shop-Script settings</a>.`]', $wa_backend_url|cat:'shop/?action=settings#/currencies/')}</p>
                             </div>
@@ -128,16 +116,28 @@
                             <div class="value no-shift">
                                 [`Paid orders`] &rarr;
                                 <i class="icon16 color" style="background: green;"></i>
-                                <select>
-                                    {foreach $categories_income as $c}<option>{$c[0]}</option>{/foreach}
+                                <select name="shopscript_settings[categoryIncomeId]">
+                                    {foreach $incomes as $category}
+                                    <option value="{$category->id}"
+                                            {if $shopScriptSettings->getCategoryIncomeId() == $category->id}selected{/if}
+                                    >
+                                        {$category->name|escape}
+                                    </option>
+                                    {/foreach}
                                 </select>
                             </div>
 
                             <div class="value no-shift">
                                 [`Refunds`] &rarr;
                                 <i class="icon16 color" style="background: orangered;"></i>
-                                <select>
-                                    {foreach $categories_expense as $c}<option>{$c[0]}</option>{/foreach}
+                                <select name="shopscript_settings[categoryExpenseId]">
+                                    {foreach $expenses as $category}
+                                    <option value="{$category->id}"
+                                            {if $shopScriptSettings->getCategoryExpenseId() == $category->id}selected{/if}
+                                    >
+                                        {$category->name|escape}
+                                    </option>
+                                    {/foreach}
                                 </select>
                             </div>
 
@@ -169,22 +169,42 @@
                             </div>
 
                             <div class="value no-shift">
-                                <label><input type="checkbox" checked> [`Enable average forecasted sales (recommended)`]</label>
+                                <label>
+                                    <input type="hidden" name="shopscript_settings[enableForecast]" value="0" />
+                                    <input type="checkbox"
+                                           name="shopscript_settings[enableForecast]"
+                                           {if $shopScriptSettings->isAutoForecast()}checked{/if}
+                                           value="1" />
+                                    [`Enable average forecasted sales (recommended)`]
+                                </label>
                                 <p class="hint">{sprintf('[`<b>Works like magic!</b> Average daily sales will be automatically added as planned transactions for better budget forecasting. When the day comes, forecasted sales for this day will be cleared automatically and replaced with the real sales data.`]')}</p>
                             </div>
 
                             <div class="value no-shift">
                                 <label>
-                                    <input type="radio" selected="selected" />
+                                    <input type="radio"
+                                           name="shopscript_settings[autoForecast]"
+                                           value="1"
+                                           {if $shopScriptSettings->isAutoForecast()}checked{/if}
+                                    />
                                     [`Calculate average daily sales automatically (≈%s/day based on the data for the last 30 days)`]
                                 </label>
                             </div>
                             <div class="value no-shift">
                                 <label>
-                                    <input type="radio" />
+                                    <input type="radio"
+                                           name="shopscript_settings[autoForecast]"
+                                           value="0"
+                                           {if !$shopScriptSettings->isAutoForecast()}checked{/if}
+                                    />
                                     [`Enter manually:`]
                                 </label>
-                                <input type="text" class="numerical short" placeholder="0"> {sprintf('[`%s/day`]', 'RUB')}
+                                <input type="text"
+                                       class="numerical short"
+                                       placeholder="0"
+                                       name="shopscript_settings[manualForecast]"
+                                       value="{$shopScriptSettings->getManualForecast()}"
+                                /> {sprintf('[`%s/day`]', 'RUB')}
                             </div>
 
                         </div>
@@ -194,7 +214,15 @@
                                 [`Order log`]
                             </div>
                             <div class="value no-shift">
-                                <label><input type="checkbox" checked> [`Record logged transactions in Shop-Script order log`]</label>
+                                <label>
+                                    <input type="hidden" name="shopscript_settings[writeToOrderLog]" value="0" />
+                                    <input type="checkbox"
+                                           name="shopscript_settings[writeToOrderLog]"
+                                           value="1"
+                                            {if $shopScriptSettings->isWriteToOrderLog()}checked{/if}
+                                    />
+                                    [`Record logged transactions in Shop-Script order log`]
+                                </label>
                             </div>
                         </div>
 
@@ -207,6 +235,7 @@
                         </div>
 
                     </div>
+                    </form>
                     {/if}
 
                 </div>
@@ -219,3 +248,45 @@
 
     </div>
 </div>
+
+<script>
+    'use strict';
+    (function () {
+        $.cash.sortable($('#cash-settings').find('[data-sortable-type]'));
+
+        var $ssform = $('#cash-shopscript-settings');
+
+        if ($ssform.length) {
+            $ssform
+                .on('submit.cash', function (e) {
+                    var $saved = $('<i class="icon16 yes"></i>'),
+                        $loading = $('<i class="icon16 loading"></i>'),
+                        $button = $ssform.find('[type="submit"]');
+
+                    e.preventDefault();
+
+                    $button.after($loading);
+                    $.post('?module=settings', $ssform.serialize(), function (html) {
+                        $loading.remove();
+                        $button.after($saved);
+                        setTimeout(function () {
+                            $saved.remove();
+                        }, 3131.2);
+                    })
+                })
+                .on('change.cash', '[name="shopscript_settings[accountId]"]', function (e) {
+                    var $opt = $(this).find('option:selected'),
+                        val = parseInt($opt.val()),
+                        $w = $opt.closest('.value');
+
+                    if (val) {
+                        $w.find('table').hide();
+                    } else {
+                        $w.find('table').show();
+                    }
+                })
+            ;
+            $ssform.find('[name="shopscript_settings[accountId]"]').trigger('change.cash');
+        }
+    }())
+</script>
