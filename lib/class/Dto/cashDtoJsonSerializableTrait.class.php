@@ -12,10 +12,10 @@ trait cashDtoJsonSerializableTrait
     {
         $propToJson = property_exists($this, 'jsonSerializableProperties')
             ? $this->jsonSerializableProperties
-            : get_object_vars($this);
+            : array_keys(get_object_vars($this));
 
         $jsonData = [];
-        foreach ($propToJson as $name => $value) {
+        foreach ($propToJson as $name) {
             $jsonData[$name] = $this->$name;
         }
 

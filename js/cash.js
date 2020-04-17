@@ -58,12 +58,10 @@
             }
         },
         reloadSidebar: function () {
-            var self = this;
-
             $.get('?module=backend&action=sidebar', function (html) {
                 $.cash.$sidebar.html(html);
                 $.cash.highlightSidebar();
-                $.cash.sortable();
+                $.cash.sortable($.cash.$sidebar.find('[data-sortable-type]'));
             });
         },
         throttle: function(fn, wait) {
@@ -87,11 +85,7 @@
             self.$sidebar = $('#cash-left-sidebar');
 
             self.handlers();
-            self.sortable();
-
-            var isInViewport = function($el) {
-
-            };
+            self.sortable(self.$sidebar.find('[data-sortable-type]'));
 
             function scrollActions() {
                 var $this = $('.c-actions-menu');
@@ -193,7 +187,9 @@
             self.$wa.on('click', '[data-cash-action="category-dialog"]', function (e) {
                 e.preventDefault();
                 var $this = $(this),
-                    categoryId = $this.data('cash-category-id');
+                    categoryId = $this.data('cash-category-id'),
+                    categoryType = $this.data('cash-category-type'),
+                    afterSave = $this.data('cash-category-after-save');
 
                 $('#cash-transaction-dialog').waDialog({
                     'height': '300px',
@@ -218,23 +214,29 @@
                                     function (r) {
                                         if (r.status === 'ok') {
                                             $dialogWrapper.trigger('close');
-                                            $.cash_routing.dispatch('#/account/0');
+                                            if (afterSave === 'redispatch') {
+                                                $.cash_routing.redispatch();
+                                            } else {
+                                                $.cash_routing.dispatch('#/account/0');
+                                            }
                                             $.cash.reloadSidebar();
                                         }
                                     }
                                 );
                             })
-                        ;
+                            .on('click', '[data-cash-category-color]', function (e) {
+                                e.preventDefault();
+                                var $this = $(this);
 
-                        $dialogWrapper.on('click', '[data-cash-category-color]', function (e) {
-                            e.preventDefault();
-                            var $this = $(this);
+                                $this.addClass('selected')
+                                    .siblings().removeClass('selected');
 
-                            $this.addClass('selected')
-                                .siblings().removeClass('selected');
-
-                            $dialogWrapper.find('[name="category[color]"]').val($this.data('cash-category-color'));
+                                $dialogWrapper.find('[name="category[color]"]').val($this.data('cash-category-color'));
                         });
+
+                        if (categoryType) {
+                            $dialogWrapper.find('[name="category[type]"] option[value="' + categoryType + '"]').prop('selected', true);
+                        }
 
                         setTimeout(function () {
                             $dialogWrapper.find('[name="category[name]"]').trigger('focus');
@@ -251,10 +253,14 @@
 
                                 d.trigger('close');
                                 var newHash = '#/category/' + r.data.id;
-                                if (window.location.hash === newHash) {
+                                if (afterSave === 'redispatch') {
                                     $.cash_routing.redispatch();
                                 } else {
-                                    window.location.hash = newHash;
+                                    if (window.location.hash === newHash) {
+                                        $.cash_routing.redispatch();
+                                    } else {
+                                        window.location.hash = newHash;
+                                    }
                                 }
                                 setTimeout($.cash.reloadSidebar, 1312);
                             } else {
@@ -297,13 +303,13 @@
                 );
             })
         },
-        sortable: function () {
+        sortable: function ($w) {
             var self = this;
             if (!self.options.isAdmin) {
                 return;
             }
 
-            self.$sidebar.find('[data-sortable-type]').sortable({
+            $w.sortable({
                 items: '[data-id]',
                 distance: 5,
                 placeholder: 'pl-list-placeholder',
