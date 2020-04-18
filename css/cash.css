@@ -58,3 +58,5 @@ table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1
 (min-resolution: 192dpi) {
     .icon16.c-table { background-image: url('../img/icon16-table@2x.png'); background-size: 16px 16px; }
 }
+
+[data-cash-import-csv-check-fullness] { display: none }
