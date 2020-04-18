@@ -120,7 +120,7 @@
                             <option value="">[`Custom`]</option>
                         </select>
                         <span class="small" data-cash-import-csv-check-date-format></span>
-                        <p class="small" data-cash-import-csv-check-fullness></p>
+                        <p class="small" data-cash-import-csv-check-fullness><i class="icon10 exclamation"></i> <span></span></p>
                     </span>
                 </div>
             </div>
@@ -142,7 +142,8 @@
                                 <option value="{$header}"{if $header|strstr:'[`Amount`]'} selected{/if}>{$header|escape}</option>
                             {/foreach}
                         </select>
-                        <p class="small" data-cash-import-csv-check-fullness></p>
+                        <i class="icon10 yes" style="display: none"></i>
+                        <p class="small" data-cash-import-csv-check-fullness><i class="icon10 exclamation"></i> <span></span></p>
                     </label>
                 </div>
                 <div class="value no-shift">
@@ -163,7 +164,8 @@
                                             <option value="{$header}"{if $header|strstr:'[`Income`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
-                                    <p class="small" data-cash-import-csv-check-fullness></p>
+                                    <i class="icon10 yes" style="display: none"></i>
+                                    <p class="small" data-cash-import-csv-check-fullness><i class="icon10 exclamation"></i> <span></span></p>
                                 </td>
                                 <td>
                                     [`Expenses`]:
@@ -175,7 +177,8 @@
                                             <option value="{$header}"{if $header|strstr:'[`Expense`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
-                                    <p class="small" data-cash-import-csv-check-fullness></p>
+                                    <i class="icon10 yes" style="display: none"></i>
+                                    <p class="small" data-cash-import-csv-check-fullness><i class="icon10 exclamation"></i> <span></span></p>
                                 </td>
                             </tr>
                         </table>
@@ -470,13 +473,17 @@
                 var $this = $(this),
                     name = $this.find(':selected').text(),
                     $wrapper = $this.parent(),
-                    $exclamation = $wrapper.find('[data-cash-import-csv-check-fullness]');
+                    $exclamation = $wrapper.find('[data-cash-import-csv-check-fullness]'),
+                    $yes = $wrapper.find('.yes');
 
                 $exclamation.hide();
+                $yes.hide();
                 $.get('?module=import&action=csvCheckColumnFullness', { column_name: name }, function(r) {
                     if (r.status === 'ok') {
                         if (r.data['fullness'] < 100) {
-                            $exclamation.show().html(r.data['message']);
+                            $exclamation.show().find('span').html(r.data['message']);
+                        } else {
+                            $yes.show();
                         }
                     } else {
                         alert(r.errors.join("\n"));
