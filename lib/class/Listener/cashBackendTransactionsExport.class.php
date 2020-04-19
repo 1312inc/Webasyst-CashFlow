@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class cashCashBackend_transactions_exportHandler
+ * Class cashBackendTransactionsExport
  */
-class cashCashBackend_transactions_exportHandler extends waEventHandler
+class cashBackendTransactionsExport extends waEventHandler
 {
     /**
      * @param cashExportEvent $event

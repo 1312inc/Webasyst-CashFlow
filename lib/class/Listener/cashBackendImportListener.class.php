@@ -1,16 +1,16 @@
 <?php
 
 /**
- * Class cashCashBackend_importFile_uploadedHandler
+ * Class cashBackendImportListener
  */
-class cashCashBackend_importFile_uploadedHandler extends waEventHandler
+class cashBackendImportListener extends waEventHandler
 {
     /**
      * @param cashImportFileUploadedEvent $event
      *
      * @return cashImportResponseCsv
      */
-    public function execute(&$event)
+    public function fileUploaded(&$event)
     {
         $csvImport = cashImportCsv::createNew($event->getSavePath().$event->getFile()->name, $event->getParams());
 
