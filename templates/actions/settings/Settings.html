@@ -55,6 +55,34 @@
                     {if $wa->shop}
                     <form id="cash-shopscript-settings">
                     <h2>Shop-Script</h2>
+
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">Действия с заказом, которые создают новые income транзакции</div>
+                            <div class="value">
+                                <select name="shopscript_settings[actions][income]" multiple>
+                                {foreach $actions as $action}
+                                    <option value="{$action->getId()}"
+                                            {if in_array($action->getId(), $shopScriptSettings->getIncomeActions())}selected{/if}
+                                    >{$action->getName()}</option>
+                                {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name">Действия с заказом, которые создают новые expense транзакции</div>
+                            <div class="value">
+                                <select name="shopscript_settings[actions][expense]" multiple>
+                                {foreach $actions as $action}
+                                    <option value="{$action->getId()}"
+                                            {if in_array($action->getId(), $shopScriptSettings->getExpenseActions())}selected{/if}
+                                    >{$action->getName()}</option>
+                                {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="fields-group">
                         <div class="field">
                             <div class="name">[`Enabled`]</div>

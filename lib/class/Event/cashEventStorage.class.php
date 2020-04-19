@@ -12,8 +12,10 @@ final class cashEventStorage
     const ENTITY_UPDATE_BEFORE = 'entity_update.before';
     const ENTITY_UPDATE_AFTER  = 'entity_update.after';
 
-    const WA_BACKEND_SIDEBAR            = 'backend_sidebar';
-    const WA_BACKEND_TRANSACTION_DIALOG = 'backend_transaction_dialog';
+    const WA_BACKEND_SIDEBAR              = 'backend_sidebar';
+    const WA_BACKEND_TRANSACTION_DIALOG   = 'backend_transaction_dialog';
     const WA_BACKEND_IMPORT_FILE_UPLOADED = 'backend_import.file_uploaded';
-    const WA_BACKEND_TRANSACTIONS_EXPORT = 'backend_transactions_export';
+    const WA_BACKEND_TRANSACTIONS_EXPORT  = 'backend_transactions_export';
+
+    const SETTINGS_SAVE = 'settings_save';
 }

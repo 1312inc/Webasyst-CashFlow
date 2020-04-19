@@ -1,3 +1,5 @@
 <?php
 
-return [];
+return [
+    cashEventStorage::SETTINGS_SAVE => [['cashSettingsSaveListener', 'handleForecast']],
+];

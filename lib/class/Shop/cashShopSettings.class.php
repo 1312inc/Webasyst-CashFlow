@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class cashShopScriptSettings
+ * Class cashShopSettings
  */
-class cashShopScriptSettings implements JsonSerializable
+class cashShopSettings implements JsonSerializable
 {
     use cashDtoJsonSerializableTrait;
 
@@ -66,6 +66,16 @@ class cashShopScriptSettings implements JsonSerializable
     private $settingsModel;
 
     /**
+     * @var array
+     */
+    private $incomeActions = ['pay', 'restore', 'complete'];
+
+    /**
+     * @var array
+     */
+    private $expenseActions = ['refund', 'delete', 'cancel'];
+
+    /**
      * @var string[]
      */
     private $jsonSerializableProperties = [
@@ -78,6 +88,8 @@ class cashShopScriptSettings implements JsonSerializable
         'autoForecast',
         'manualForecast',
         'writeToOrderLog',
+        'incomeActions',
+        'expenseActions',
     ];
 
     /**
@@ -93,7 +105,7 @@ class cashShopScriptSettings implements JsonSerializable
     /**
      * @param array $data
      *
-     * @return cashShopScriptSettings
+     * @return cashShopSettings
      */
     public function load(array $data)
     {
@@ -120,7 +132,7 @@ class cashShopScriptSettings implements JsonSerializable
     /**
      * @param bool $enabled
      *
-     * @return cashShopScriptSettings
+     * @return cashShopSettings
      */
     public function setEnabled($enabled)
     {
@@ -202,5 +214,21 @@ class cashShopScriptSettings implements JsonSerializable
     public function isAutoForecast()
     {
         return $this->autoForecast;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIncomeActions()
+    {
+        return $this->incomeActions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExpenseActions()
+    {
+        return $this->expenseActions;
     }
 }
