@@ -53,7 +53,7 @@ class cashShopSettings implements JsonSerializable
     /**
      * @var bool
      */
-    private $writeToOrderLog = 0;
+    private $writeToOrderLog = 1;
 
     /**
      * @var array
@@ -93,13 +93,28 @@ class cashShopSettings implements JsonSerializable
     ];
 
     /**
+     * @var array|mixed
+     */
+    private $stat;
+
+    /**
+     * @var int
+     */
+    private $todayTransactions = 0;
+
+    /**
      * cashShopScriptSettings constructor.
      */
     public function __construct()
     {
         $this->settingsModel = new waAppSettingsModel();
-        $this->savedSettings = json_decode($this->settingsModel->get(cashConfig::APP_ID, 'shopscript_integration'), true) ?: [];
+        $this->savedSettings = json_decode(
+            $this->settingsModel->get(cashConfig::APP_ID, 'shopscript_integration'),
+            true
+        ) ?: [];
         $this->load($this->savedSettings);
+        $statData = json_decode($this->settingsModel->get(cashConfig::APP_ID, 'shopscript_stat'), true) ?: [];
+        $this->todayTransactions = ifset($statData, 'today_transactions', date('Y-m-d'), $this->todayTransactions);
     }
 
     /**
@@ -208,6 +223,19 @@ class cashShopSettings implements JsonSerializable
         );
     }
 
+    public function saveStat()
+    {
+        $this->settingsModel->set(
+            cashConfig::APP_ID,
+            'today_transactions',
+            json_encode(
+                [
+                    'today_transactions' => [date('Y-m-d') => $this->todayTransactions],
+                ]
+            )
+        );
+    }
+
     /**
      * @return bool
      */
@@ -230,5 +258,41 @@ class cashShopSettings implements JsonSerializable
     public function getExpenseActions()
     {
         return $this->expenseActions;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTodayTransactions()
+    {
+        return (int)$this->todayTransactions;
+    }
+
+    /**
+     * @param int $inc
+     *
+     * @return $this
+     */
+    public function incTodayTransactionsCount($inc = 1)
+    {
+        $this->todayTransactions += $inc;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTurnedOn()
+    {
+        return $this->isEnabled() && !$this->savedSettings['enabled'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTurnedOff()
+    {
+        return !$this->isEnabled() && $this->savedSettings['enabled'];
     }
 }

@@ -63,6 +63,16 @@ class cashTransaction extends cashAbstractEntity
     private $is_archived = 0;
 
     /**
+     * @var null|string
+     */
+    private $external_hash = null;
+
+    /**
+     * @var null|string
+     */
+    private $external_source = null;
+
+    /**
      * @var cashCategory|null
      */
     protected $category;
@@ -399,6 +409,46 @@ class cashTransaction extends cashAbstractEntity
     {
         $this->repeatingTransaction = $repeatingTransaction;
         $this->repeating_id = $repeatingTransaction->getId();
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExternalHash()
+    {
+        return $this->external_hash;
+    }
+
+    /**
+     * @param string|null $external_hash
+     *
+     * @return cashTransaction
+     */
+    public function setExternalHash($external_hash)
+    {
+        $this->external_hash = $external_hash;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExternalSource()
+    {
+        return $this->external_source;
+    }
+
+    /**
+     * @param string|null $external_source
+     *
+     * @return cashTransaction
+     */
+    public function setExternalSource($external_source)
+    {
+        $this->external_source = $external_source;
 
         return $this;
     }
