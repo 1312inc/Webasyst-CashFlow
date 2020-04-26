@@ -62,10 +62,14 @@ return array(
         'description' => array('text'),
         'create_datetime' => array('datetime', 'null' => 0),
         'update_datetime' => array('datetime'),
+        'external_hash' => array('varchar', 32),
+        'external_source' => array('varchar', 20),
         ':keys' => array(
             'PRIMARY' => 'id',
             'cash_repeating_transaction_cash_account_id_fk' => 'account_id',
             'cash_repeating_transaction_cash_category_id_fk' => 'category_id',
+            'cash_transaction_external_hash_index' => 'external_hash',
+            'cash_transaction_external_source_index' => 'external_source',
         ),
     ),
     'cash_transaction' => array(

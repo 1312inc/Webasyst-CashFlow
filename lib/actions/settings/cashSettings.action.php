@@ -31,9 +31,21 @@ class cashSettingsAction extends cashViewAction
                 ->load($settingsData)
                 ->save();
 
-            // выключили интеграцию
-            if ($shopIntegration->getSettings()->isTurnedOff()) {
-                $shopIntegration->turnedOff();
+            switch (true) {
+                case $shopIntegration->getSettings()->isTurnedOff():
+                    $shopIntegration->turnedOff();
+                    break;
+
+                case $shopIntegration->getSettings()->isTurnedOn():
+                    $shopIntegration->turnedOn();
+                    break;
+
+                case $shopIntegration->getSettings()->forecastTurnedOff():
+//                    $shopIntegration->disableForecast();
+                    break;
+
+                case $shopIntegration->getSettings()->forecastTurnedOn():
+                    break;
             }
         }
 

@@ -175,6 +175,14 @@ class cashShopSettings implements JsonSerializable
     }
 
     /**
+     * @return array
+     */
+    public function getAccountsWithStorefront()
+    {
+        return $this->accountByStorefronts;
+    }
+
+    /**
      * @return int
      */
     public function getCategoryIncomeId()
@@ -294,5 +302,21 @@ class cashShopSettings implements JsonSerializable
     public function isTurnedOff()
     {
         return !$this->isEnabled() && $this->savedSettings['enabled'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function forecastTurnedOn()
+    {
+        return $this->isEnableForecast() && !$this->savedSettings['enable_forecast'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function forecastTurnedOff()
+    {
+        return !$this->isEnableForecast() && $this->savedSettings['enable_forecast'];
     }
 }
