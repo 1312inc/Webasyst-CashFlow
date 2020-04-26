@@ -26,6 +26,11 @@ class cashImportCsvGetColumnDatetimeValuesController extends cashJsonController
 
                 try {
                     $converted[$date] = cashDatetimeHelper::createDateTimeFromFormat($date, $dateformat);
+                    if (!preg_match('/.*[\.\-\/\\:].*/', $date)) {
+                        $this->errors[] = _w('Some dates do not have proper delimiter');
+
+                        return;
+                    }
                 } catch (Exception $exception) {
                     $errorsCount++;
 
