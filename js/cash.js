@@ -109,7 +109,8 @@
         handlers: function () {
             var self = this;
 
-            self.$wa.on('click', '[data-cash-action="account-dialog"]', function (e) {
+            self.$wa
+                .on('click.cash', '[data-cash-action="account-dialog"]', function (e) {
                 e.preventDefault();
                 var $this = $(this),
                     accountId = $this.data('cash-account-id');
@@ -183,8 +184,8 @@
                         return false;
                     }
                 });
-            });
-            self.$wa.on('click', '[data-cash-action="category-dialog"]', function (e) {
+            })
+                .on('click.cash', '[data-cash-action="category-dialog"]', function (e) {
                 e.preventDefault();
                 var $this = $(this),
                     categoryId = $this.data('cash-category-id'),
@@ -283,7 +284,8 @@
                         .find('[data-cash-transaction-category]')
                         .css('background', $(this).find(':selected').data('cash-category-color'))
                 });
-            self.$sidebar.on('click', '[data-cash-action="imports-delete"]', function (e) {
+            self.$sidebar
+                .on('click.cash', '[data-cash-action="imports-delete"]', function (e) {
                 e.preventDefault();
 
                 if (!confirm($_('Clear import history (don’t worry, imported transactions will not be affected)?'))) {
