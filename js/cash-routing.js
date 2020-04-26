@@ -187,6 +187,12 @@
                 $.cash.$content.html(html);
             });
         },
+        welcomeShopAction: function (id) {
+            var that = this;
+            $.get('?module=welcome&action=shop', function (html) {
+                $.cash.$content.html(html);
+            });
+        },
         preExecute: function () {
         },
         postExecute: function (actionName, hash) {
