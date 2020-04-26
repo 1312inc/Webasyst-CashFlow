@@ -9,11 +9,6 @@ class cashShopTransactionManager
     const EXPENSE = 'expense';
 
     /**
-     * @var cashTransactionFactory
-     */
-    private $factory;
-
-    /**
      * @var cashShopSettings
      */
     private $settings;
@@ -25,16 +20,7 @@ class cashShopTransactionManager
      */
     public function __construct(cashShopSettings $settings)
     {
-        $this->factory = cash()->getEntityFactory(cashTransaction::class);
         $this->settings = $settings;
-    }
-
-    /**
-     * @return cashShopSettings
-     */
-    public function getSettings()
-    {
-        return $this->settings;
     }
 
     /**
@@ -43,7 +29,6 @@ class cashShopTransactionManager
      * @param array  $params
      *
      * @return cashTransaction
-     * @throws ReflectionException
      * @throws kmwaAssertException
      * @throws kmwaRuntimeException
      * @throws waException
@@ -73,7 +58,7 @@ class cashShopTransactionManager
         }
 
         /** @var cashTransaction $transaction */
-        $transaction = $this->factory->createNew();
+        $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
 
         $transaction
             ->setDescription(
@@ -95,6 +80,44 @@ class cashShopTransactionManager
         }
         $transaction->setAmount($amount);
 
+        return $transaction;
+    }
+
+    /**
+     * @param int|float    $amount
+     * @param cashAccount  $account
+     * @param cashCategory $category
+     * @param string       $storefront
+     *
+     * @return cashRepeatingTransaction
+     * @throws Exception
+     */
+    public function createForecastTransaction($amount, cashAccount $account, cashCategory $category, $storefront)
+    {
+        /** @var cashRepeatingTransaction $transaction */
+        $transaction = cash()->getEntityFactory(cashRepeatingTransaction::class)->createNew();
+
+        $transaction
+            ->setDescription('Продажи магазина (план)')
+            ->setAccount($account)
+            ->setCategory($category)
+            ->setExternalHash($storefront)
+            ->setAmount($amount)
+            ->setExternalSource('shop');
+
+        return $transaction;
+    }
+
+    /**
+     * @param cashTransaction $transaction
+     * @param array           $params
+     *
+     * @throws ReflectionException
+     * @throws kmwaRuntimeException
+     * @throws waException
+     */
+    public function saveTransaction(cashTransaction $transaction, $params = [])
+    {
         if (!cash()->getEntityPersister()->save($transaction)) {
             throw new kmwaRuntimeException(
                 sprintf('Save new transaction error: %s', json_encode(cash()->getHydrator()->extract($transaction)))
@@ -132,8 +155,6 @@ class cashShopTransactionManager
         $this->settings
             ->incTodayTransactionsCount()
             ->saveStat();
-
-        return $transaction;
     }
 
     /**
