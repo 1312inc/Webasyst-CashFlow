@@ -197,10 +197,8 @@
             var $h1 = $.cash.$content.find('h1:first');
 
             if ($h1.length) {
-                $('html, body').animate({
-                    scrollTop: $h1.offset().top
-                }, 131.2);
-                $h1.after('<i class="icon16 loading" style="float: left;position: absolute;"></i>');
+                $('html, body').animate({ scrollTop: 0 }, 131.2);
+                $h1.append('<i class="icon16 loading"></i>');
             }
         },
         postExecute: function (actionName, hash) {
