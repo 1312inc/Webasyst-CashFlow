@@ -79,32 +79,7 @@
                                         {$account->name|escape} ({$account->currency->getCode()})
                                     </option>
                                     {/foreach}
-                                    <option value="0"
-                                            {if empty($shopScriptSettings->getAccountId())}selected{/if}
-                                    >
-                                        [`Configure by storefront...`]
-                                    </option>
                                 </select>
-                                <table class="zebra" style="width: auto; margin: 0.5rem 0;">
-                                    {foreach $storefronts as $storefront}
-                                    <tr>
-                                        <td>{$storefront}</td>
-                                        <td>&rarr;</td>
-                                        <td>
-                                            <select name="shopscript_settings[accountByStorefronts][{$storefront}]">
-                                            {foreach $accounts as $account}
-                                                <option value="{$account->id}"
-                                                        {if $shopScriptSettings->getAccountByStorefront($storefront) == $account->id}selected{/if}
-                                                >
-                                                    {$account->name|escape} ({$account->currency->getCode()})
-                                                </option>
-                                            {/foreach}
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    {/foreach}
-                                </table>
-
                                 <p class="hint">{sprintf('[`In case of different currencies for orders and the account, an order amount will be converted to the selected account currency accroding to the conversion rate defined <a href="%s">in Shop-Script settings</a>.`]', $wa_backend_url|cat:'shop/?action=settings#/currencies/')}</p>
                             </div>
                         </div>
@@ -296,17 +271,6 @@
                         }, 3131.2);
                     })
                 })
-                .on('change.cash', '[name="shopscript_settings[accountId]"]', function (e) {
-                    var $opt = $(this).find('option:selected'),
-                        val = parseInt($opt.val()),
-                        $w = $opt.closest('.value');
-
-                    if (val) {
-                        $w.find('table').hide();
-                    } else {
-                        $w.find('table').show();
-                    }
-                })
                 .on('click.cash', '[data-cash-shop-configure-actions]', function (e) {
                     e.preventDefault();
 
@@ -319,7 +283,6 @@
                     }
                 })
             ;
-            $ssform.find('[name="shopscript_settings[accountId]"]').trigger('change.cash');
         }
     }())
 </script>

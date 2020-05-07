@@ -73,25 +73,25 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
     }
 
     /**
-     * @param cashTransaction $transaction
-     * @param array           $repeatingSettings
-     * @param bool            $cloneSourceTransaction
+     * @param cashTransaction                     $transaction
+     * @param cashRepeatingTransactionSettingsDto $repeatingSettings
+     * @param bool                                $cloneSourceTransaction
      *
      * @return bool|cashRepeatingTransaction
      * @throws waException
      */
     public function saveFromTransaction(
         cashTransaction $transaction,
-        array $repeatingSettings,
+        cashRepeatingTransactionSettingsDto $repeatingSettings,
         $cloneSourceTransaction = false
     ) {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashRepeatingTransaction::class);
         $model->startTransaction();
         try {
-            /** @var cashRepeatingTransaction $repeatingT */
             $repeatingT = $this->repeatingTransactionFactory->createNew();
-            $this->fill($repeatingT, $transaction, $repeatingSettings);
+            $this->copyFromTransaction($repeatingT, $transaction);
+            $this->applySettings($repeatingT, $repeatingSettings);
 
             cash()->getEntityPersister()->save($repeatingT);
 
@@ -114,21 +114,25 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
     }
 
     /**
-     * @param cashRepeatingTransaction $repeatingT
-     * @param cashTransaction          $transaction
-     * @param array                    $repeatingSettings
+     * @param cashRepeatingTransaction            $repeatingT
+     * @param cashTransaction                     $transaction
+     * @param cashRepeatingTransactionSettingsDto $repeatingSettings
      *
      * @return bool|cashTransaction
      * @throws waException
      */
-    public function saveExisting(cashRepeatingTransaction $repeatingT, cashTransaction $transaction, array $repeatingSettings)
-    {
+    public function saveExisting(
+        cashRepeatingTransaction $repeatingT,
+        cashTransaction $transaction,
+        cashRepeatingTransactionSettingsDto $repeatingSettings
+    ) {
         $hydrator = cash()->getHydrator();
         $persister = cash()->getEntityPersister();
 
         /** @var cashRepeatingTransaction $newRepeatingT */
         $newRepeatingT = $this->repeatingTransactionFactory->createNew();
-        $this->fill($newRepeatingT, $transaction, $repeatingSettings);
+        $this->copyFromTransaction($newRepeatingT, $transaction);
+        $this->applySettings($newRepeatingT, $repeatingSettings);
 
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
@@ -163,12 +167,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         return false;
     }
 
-    /**
-     * @param cashRepeatingTransaction $repeatingT
-     * @param cashTransaction          $transaction
-     * @param array                    $repeatingSettings
-     */
-    private function fill(cashRepeatingTransaction $repeatingT, cashTransaction $transaction, array $repeatingSettings)
+    private function copyFromTransaction(cashRepeatingTransaction $repeatingT, cashTransaction $transaction)
     {
         $repeatingT
             ->setAccountId($transaction->getAccountId())
@@ -177,28 +176,39 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
             ->setAmount($transaction->getAmount())
             ->setDescription($transaction->getDescription())
             ->setDate($transaction->getDate())
+            ->setExternalHash($transaction->getExternalHash())
+            ->setExternalSource($transaction->getExternalSource())
         ;
+    }
 
-        if (!empty($repeatingSettings['frequency'])) {
-            $repeatingT->setRepeatingFrequency($repeatingSettings['frequency']);
+    /**
+     * @param cashRepeatingTransaction            $repeatingT
+     * @param cashRepeatingTransactionSettingsDto $repeatingSettings
+     */
+    private function applySettings(
+        cashRepeatingTransaction $repeatingT,
+        cashRepeatingTransactionSettingsDto $repeatingSettings
+    ) {
+        if (!empty($repeatingSettings->frequency)) {
+            $repeatingT->setRepeatingFrequency($repeatingSettings->frequency);
         } elseif (empty($repeatingT->getRepeatingFrequency())) {
             $repeatingT->setRepeatingFrequency(cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY);
         }
 
-        if (!empty($repeatingSettings['interval'])) {
-            $repeatingT->setRepeatingInterval($repeatingSettings['interval']);
+        if ($repeatingSettings->interval) {
+            $repeatingT->setRepeatingInterval($repeatingSettings->interval);
         } elseif (empty($repeatingT->getRepeatingInterval())) {
             $repeatingT->setRepeatingInterval(cashRepeatingTransaction::INTERVAL_DAY);
         }
 
-        if (!empty($repeatingSettings['end_type'])) {
-            $repeatingT->setRepeatingEndType($repeatingSettings['end_type']);
+        if ($repeatingSettings->end_type) {
+            $repeatingT->setRepeatingEndType($repeatingSettings->end_type);
         } elseif (empty($repeatingT->getRepeatingEndType())) {
             $repeatingT->setRepeatingEndType(cashRepeatingTransaction::REPEATING_END_NEVER);
         }
 
-        if (!empty($repeatingSettings['end_type'])) {
-            $repeatingT->setRepeatingEndConditions($repeatingSettings['end']);
+        if ($repeatingSettings->end_type) {
+            $repeatingT->setRepeatingEndConditions($repeatingSettings->end);
         }
     }
 
@@ -208,8 +218,10 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
      *
      * @return bool
      */
-    private function repeatingSettingsChanged(cashRepeatingTransaction $transaction, cashRepeatingTransaction $transaction2)
-    {
+    private function repeatingSettingsChanged(
+        cashRepeatingTransaction $transaction,
+        cashRepeatingTransaction $transaction2
+    ) {
         return $transaction->getRepeatingEndConditions() != $transaction2->getRepeatingEndConditions()
             || $transaction->getRepeatingFrequency() != $transaction2->getRepeatingFrequency()
             || $transaction->getRepeatingInterval() != $transaction2->getRepeatingInterval()

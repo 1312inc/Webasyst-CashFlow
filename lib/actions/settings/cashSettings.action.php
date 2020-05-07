@@ -41,10 +41,11 @@ class cashSettingsAction extends cashViewAction
                     break;
 
                 case $shopIntegration->getSettings()->forecastTurnedOff():
-//                    $shopIntegration->disableForecast();
+                    $shopIntegration->disableForecast();
                     break;
 
                 case $shopIntegration->getSettings()->forecastTurnedOn():
+                    $shopIntegration->enableForecast();
                     break;
             }
         }
