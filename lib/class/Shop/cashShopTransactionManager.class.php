@@ -5,8 +5,10 @@
  */
 class cashShopTransactionManager
 {
-    const INCOME  = 'income';
-    const EXPENSE = 'expense';
+    const
+        INCOME = 'income',
+        EXPENSE = 'expense',
+        HASH_FORECAST = 'forecast';
 
     /**
      * @var cashShopSettings
@@ -67,8 +69,7 @@ class cashShopTransactionManager
             ->setAccount($this->getAccount($order))
             ->setCategory($this->getCategory($type))
             ->setExternalHash($externalHash)
-            ->setExternalSource('shop')
-        ;
+            ->setExternalSource('shop');
 
         // конвертнем валюту заказа в валюту аккаунта
         if ($order->currency !== $transaction->getAccount()->getCurrency()) {
@@ -92,7 +93,7 @@ class cashShopTransactionManager
      * @return cashRepeatingTransaction
      * @throws Exception
      */
-    public function createForecastTransaction($amount, cashAccount $account, cashCategory $category, $storefront)
+    public function createForecastTransaction($amount, cashAccount $account, cashCategory $category)
     {
         /** @var cashRepeatingTransaction $transaction */
         $transaction = cash()->getEntityFactory(cashRepeatingTransaction::class)->createNew();
@@ -101,8 +102,9 @@ class cashShopTransactionManager
             ->setDescription('Продажи магазина (план)')
             ->setAccount($account)
             ->setCategory($category)
-            ->setExternalHash($storefront)
+            ->setExternalHash(self::HASH_FORECAST)
             ->setAmount($amount)
+            ->setDate(date('Y-m-d'))
             ->setExternalSource('shop');
 
         return $transaction;

@@ -65,12 +65,12 @@ class cashTransaction extends cashAbstractEntity
     /**
      * @var null|string
      */
-    private $external_hash = null;
+    protected $external_hash = null;
 
     /**
      * @var null|string
      */
-    private $external_source = null;
+    protected $external_source = null;
 
     /**
      * @var cashCategory|null

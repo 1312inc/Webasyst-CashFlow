@@ -669,6 +669,17 @@ SQL;
     }
 
     /**
+     * @param string $source
+     * @param string $date
+     *
+     * @return bool|resource
+     */
+    public function deleteBySourceAfterDate($source, $date)
+    {
+        return $this->exec("delete from {$this->table} where external_source = s:source and date > s:date", ['source' => $source, 'date' => $date]);
+    }
+
+    /**
      * @return bool
      */
     public function hasNoCategoryIncomes()

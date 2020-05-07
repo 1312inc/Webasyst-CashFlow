@@ -33,25 +33,32 @@ class cashTransactionSaveController extends cashJsonController
             return;
         }
 
-        if ($repeating && !empty($repeating['interval'])) {
-            $repeatTransactionSaver = new cashRepeatingTransactionSaver();
-            $transactionRepeater = new cashTransactionRepeater();
-            if ($isNew) {
-                $repeatingTransaction = $repeatTransactionSaver->saveFromTransaction(
-                    $transaction,
-                    $repeating
-                );
-                $transactionRepeater->repeat($repeatingTransaction);
-            } elseif (!empty($repeating['apply_to_all_in_future'])) {
-                $repeatingTransaction = $transaction->getRepeatingTransaction();
-                $savedRepeatingTransaction = $repeatTransactionSaver->saveExisting($repeatingTransaction, $transaction, $repeating);
-                if (!$repeatingTransaction instanceof cashRepeatingTransaction) {
-                    throw new kmwaRuntimeException('Error on repeating transaction save');
-                }
-                // изменились настройки повторения и вернулся новый объект повторяющейся транзакции
+        if ($repeating) {
+            $repeatingDto = new cashRepeatingTransactionSettingsDto($repeating);
+            if($repeatingDto->interval) {
+                $repeatTransactionSaver = new cashRepeatingTransactionSaver();
+                $transactionRepeater = new cashTransactionRepeater();
+                if ($isNew) {
+                    $repeatingTransaction = $repeatTransactionSaver->saveFromTransaction(
+                        $transaction,
+                        $repeatingDto
+                    );
+                    $transactionRepeater->repeat($repeatingTransaction);
+                } elseif (!empty($repeating['apply_to_all_in_future'])) {
+                    $repeatingTransaction = $transaction->getRepeatingTransaction();
+                    $savedRepeatingTransaction = $repeatTransactionSaver->saveExisting(
+                        $repeatingTransaction,
+                        $transaction,
+                        $repeatingDto
+                    );
+                    if (!$repeatingTransaction instanceof cashRepeatingTransaction) {
+                        throw new kmwaRuntimeException('Error on repeating transaction save');
+                    }
+                    // изменились настройки повторения и вернулся новый объект повторяющейся транзакции
 //                if ($savedRepeatingTransaction->getId() !== $repeatingTransaction->getId()) {
 //                    $transactionRepeater->repeat($savedRepeatingTransaction);
 //                }
+                }
             }
         }
 
