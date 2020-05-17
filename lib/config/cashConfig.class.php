@@ -276,6 +276,8 @@ class cashConfig extends waAppConfig
      */
     public function onCount()
     {
+        cash()->getEventDispatcher()->dispatch(new cashEventOnCount(waRequest::request('idle')));
+
         return null;
     }
 

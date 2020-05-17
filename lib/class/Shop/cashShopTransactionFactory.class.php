@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class cashShopTransactionManager
+ * Class cashShopTransactionFactory
  */
-class cashShopTransactionManager
+class cashShopTransactionFactory
 {
     const
         INCOME = 'income',
@@ -69,6 +69,7 @@ class cashShopTransactionManager
             ->setAccount($this->getAccount($order))
             ->setCategory($this->getCategory($type))
             ->setExternalHash($externalHash)
+            ->setDatetime(date('Y-m-d H:i:s'))
             ->setExternalSource('shop');
 
         // конвертнем валюту заказа в валюту аккаунта
@@ -88,15 +89,14 @@ class cashShopTransactionManager
      * @param int|float    $amount
      * @param cashAccount  $account
      * @param cashCategory $category
-     * @param string       $storefront
      *
-     * @return cashRepeatingTransaction
+     * @return cashTransaction
      * @throws Exception
      */
     public function createForecastTransaction($amount, cashAccount $account, cashCategory $category)
     {
-        /** @var cashRepeatingTransaction $transaction */
-        $transaction = cash()->getEntityFactory(cashRepeatingTransaction::class)->createNew();
+        /** @var cashTransaction $transaction */
+        $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
 
         $transaction
             ->setDescription('Продажи магазина (план)')
@@ -108,55 +108,6 @@ class cashShopTransactionManager
             ->setExternalSource('shop');
 
         return $transaction;
-    }
-
-    /**
-     * @param cashTransaction $transaction
-     * @param array           $params
-     *
-     * @throws ReflectionException
-     * @throws kmwaRuntimeException
-     * @throws waException
-     */
-    public function saveTransaction(cashTransaction $transaction, $params = [])
-    {
-        if (!cash()->getEntityPersister()->save($transaction)) {
-            throw new kmwaRuntimeException(
-                sprintf('Save new transaction error: %s', json_encode(cash()->getHydrator()->extract($transaction)))
-            );
-        }
-
-        cash()->getLogger()->debug(
-            sprintf(
-                'Transaction %d created successfully! %s',
-                $transaction->getId(),
-                json_encode(cash()->getHydrator()->extract($transaction))
-            )
-        );
-
-        // запишем в лог заказа
-        if ($this->settings->isWriteToOrderLog()) {
-            (new shopOrderLogModel())->add(
-                array_merge(
-                    $params,
-                    [
-                        'text' => sprintf_wp(
-                            'A transaction %s %s created (%s)',
-                            $transaction->getAmount(),
-                            $transaction->getAccount()->getCurrency(),
-                            $transaction->getAccount()->getName()
-                        ),
-                        'params' => ['cash_transaction_id' => $transaction->getId()],
-                    ]
-                )
-            );
-
-            cash()->getLogger()->debug('Transaction %d info added to order log!', $transaction->getId());
-        }
-
-        $this->settings
-            ->incTodayTransactionsCount()
-            ->saveStat();
     }
 
     /**

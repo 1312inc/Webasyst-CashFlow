@@ -81,7 +81,7 @@ class cashTransactionPageAction extends cashViewAction
 
         $this->today = new DateTime();
 
-        $this->repeatNeverEndingTransactions();
+        cash()->getEventDispatcher()->dispatch(new cashEvent(cashEventStorage::TRANSACTION_PAGE_PREEXECUTE, $this->endDate));
     }
 
     /**
@@ -139,28 +139,6 @@ class cashTransactionPageAction extends cashViewAction
      */
     private function repeatNeverEndingTransactions()
     {
-        $trans = cash()->getEntityRepository(cashRepeatingTransaction::class)->findNeverEndingAfterDate($this->endDate);
-        /** @var cashTransactionRepository $transRep */
-        $transRep = cash()->getEntityRepository(cashTransaction::class);
-        $repeater = new cashTransactionRepeater();
-        foreach ($trans as $transaction) {
-            try {
-                cash()->getLogger()->debug(
-                    sprintf(
-                        'Trying to extend repeating transaction #%d starting from %s',
-                        $transaction->getId(),
-                        $transaction->getDataField('last_transaction_date')
-                    )
-                );
-                $lastT = $transRep->findLastByRepeatingId($transaction->getId());
-                $date = $lastT instanceof cashTransaction ? $lastT->getDate() : $transaction->getDataField('last_transaction_date');
-                $repeater->repeat($transaction, new DateTime($date));
-            } catch (Exception $ex) {
-                cash()->getLogger()->error(
-                    sprintf('Can`t extend repeating transaction #%d', $transaction->getId()),
-                    $ex
-                );
-            }
-        }
+
     }
 }

@@ -61,6 +61,11 @@ class cashShopSettings implements JsonSerializable
     private $savedSettings = [];
 
     /**
+     * @var bool
+     */
+    private $forecastActualizedToday = false;
+
+    /**
      * @var waAppSettingsModel
      */
     private $settingsModel;
@@ -115,6 +120,8 @@ class cashShopSettings implements JsonSerializable
         $this->load($this->savedSettings);
         $statData = json_decode($this->settingsModel->get(cashConfig::APP_ID, 'shopscript_stat'), true) ?: [];
         $this->todayTransactions = ifset($statData, 'today_transactions', date('Y-m-d'), $this->todayTransactions);
+        $this->forecastActualizedToday = !empty($statData['forecast_actualized_today'])
+            && $statData['forecast_actualized_today'] == date('Y-m-d');
     }
 
     /**
@@ -152,6 +159,26 @@ class cashShopSettings implements JsonSerializable
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isForecastActualizedToday()
+    {
+        return $this->forecastActualizedToday;
+    }
+
+    /**
+     * @param bool $forecastActualizedToday
+     *
+     * @return cashShopSettings
+     */
+    public function setForecastActualizedToday($forecastActualizedToday)
+    {
+        $this->forecastActualizedToday = $forecastActualizedToday;
 
         return $this;
     }
@@ -235,10 +262,11 @@ class cashShopSettings implements JsonSerializable
     {
         $this->settingsModel->set(
             cashConfig::APP_ID,
-            'today_transactions',
+            'shopscript_stat',
             json_encode(
                 [
                     'today_transactions' => [date('Y-m-d') => $this->todayTransactions],
+                    'forecast_actualized_today' => $this->forecastActualizedToday ? date('Y-m-d') : 0,
                 ]
             )
         );
@@ -309,7 +337,7 @@ class cashShopSettings implements JsonSerializable
      */
     public function forecastTurnedOn()
     {
-        return $this->isEnableForecast() && !$this->savedSettings['enable_forecast'];
+        return $this->isEnableForecast() && !$this->savedSettings['enableForecast'];
     }
 
     /**
@@ -317,6 +345,25 @@ class cashShopSettings implements JsonSerializable
      */
     public function forecastTurnedOff()
     {
-        return !$this->isEnableForecast() && $this->savedSettings['enable_forecast'];
+        return !$this->isEnableForecast() && $this->savedSettings['enableForecast'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function forecastTypeChanged()
+    {
+        return $this->isEnableForecast() && $this->savedSettings['autoForecast'] != $this->isAutoForecast();
+    }
+
+    /**
+     * @return $this
+     */
+    public function resetStat()
+    {
+        $this->forecastActualizedToday = false;
+        $this->todayTransactions = 0;
+
+        return $this;
     }
 }

@@ -18,4 +18,6 @@ final class cashEventStorage
     const WA_BACKEND_TRANSACTIONS_EXPORT  = 'backend_transactions_export';
 
     const SETTINGS_SAVE = 'settings_save';
+    const TRANSACTION_PAGE_PREEXECUTE = 'transaction_page_preexecute';
+    const ON_COUNT = 'on_count';
 }

@@ -21,7 +21,7 @@ class cashShopOrderActionListener extends waEventHandler
             return;
         }
 
-        $manager = $integration->getTransactionManager();
+        $shopTransactionFactory = $integration->getTransactionFactory();
         try {
             $transaction = null;
 
@@ -30,27 +30,28 @@ class cashShopOrderActionListener extends waEventHandler
                     sprintf('Okay, lets create new income transaction for action %s', $params['action_id'])
                 );
 
-                $transaction = $manager->createTransaction(
+                $transaction = $shopTransactionFactory->createTransaction(
                     $params['order_id'],
-                    cashShopTransactionManager::INCOME
+                    cashShopTransactionFactory::INCOME
                 );
-            } elseif (in_array(
-                $params['action_id'],
-                $settings->getExpenseActions()
-            )) {
+            } elseif (in_array($params['action_id'], $settings->getExpenseActions())) {
                 cash()->getLogger()->debug(
                     sprintf('Okay, lets create new expense transaction for action %s', $params['action_id'])
                 );
 
-                $transaction = $manager->createTransaction(
+                $transaction = $shopTransactionFactory->createTransaction(
                     $params['order_id'],
-                    cashShopTransactionManager::EXPENSE,
+                    cashShopTransactionFactory::EXPENSE,
                     $params
                 );
             }
 
             if ($transaction instanceof cashTransaction) {
-                $manager->saveTransaction($transaction, $params);
+                if ($settings->isEnableForecast()) {
+                    $integration->deleteForecastTransactionForDate(new DateTime());
+                }
+
+                $integration->saveTransaction($transaction, $params);
             }
         } catch (Exception $ex) {
             cash()->getLogger()->error('Some error occurs on shop order transaction creation', $ex);
