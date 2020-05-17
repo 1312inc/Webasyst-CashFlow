@@ -13,9 +13,9 @@ class cashShopIntegration
     private $settings;
 
     /**
-     * @var cashShopTransactionManager
+     * @var cashShopTransactionFactory
      */
-    private $transactionManager;
+    private $transactionFactory;
 
     /**
      * cashShopIntegration constructor.
@@ -26,19 +26,20 @@ class cashShopIntegration
     }
 
     /**
-     * @return cashShopTransactionManager
+     * @return cashShopTransactionFactory
      */
-    public function getTransactionManager()
+    public function getTransactionFactory()
     {
-        if ($this->transactionManager === null) {
-            $this->transactionManager = new cashShopTransactionManager($this->settings);
+        if ($this->transactionFactory === null) {
+            $this->transactionFactory = new cashShopTransactionFactory($this->settings);
         }
 
-        return $this->transactionManager;
+        return $this->transactionFactory;
     }
 
     /**
      * @return bool
+     * @throws waException
      */
     public function shopExists()
     {
@@ -57,8 +58,16 @@ class cashShopIntegration
     public function turnedOff()
     {
         $this->deleteFutureTransactions();
+        $this->settings
+            ->resetStat()
+            ->saveStat();
     }
 
+    /**
+     * @throws kmwaAssertException
+     * @throws waException
+     * @throws kmwaRuntimeException
+     */
     public function turnedOn()
     {
         if ($this->settings->isEnableForecast()) {
@@ -66,14 +75,21 @@ class cashShopIntegration
         }
     }
 
+    /**
+     * @throws waException
+     */
     public function disableForecast()
     {
         $this->deleteFutureTransactions();
+        $this->settings
+            ->resetStat()
+            ->saveStat();
     }
 
     /**
      * @throws kmwaAssertException
      * @throws waException
+     * @throws kmwaRuntimeException
      */
     public function enableForecast()
     {
@@ -83,28 +99,40 @@ class cashShopIntegration
         $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
         kmwaAssert::instance($account, cashAccount::class);
 
-        $amount = 0;
-        if ($this->settings->isAutoForecast()) {
-            $amounts = $this->calculateAvgBill(450);
-            $currencyModel = new shopCurrencyModel();
-            foreach ($amounts as $currency => $bill) {
-                if ($currency != $account->getCurrency()) {
-                    $bill = $currencyModel->convert($bill, $currency, $account->getCurrency());
-                }
-                $amount += $bill;
-            }
-        } else {
-            $amount = $this->settings->getManualForecast();
-        }
+        $amount = $this->settings->isAutoForecast() ? $this->getShopAvgAmount() : $this->settings->getManualForecast();
 
         $category = cash()->getEntityRepository(cashCategory::class)->findById($this->settings->getCategoryIncomeId());
         kmwaAssert::instance($category, cashCategory::class);
 
-        $transaction = $this->getTransactionManager()->createForecastTransaction($amount, $account, $category);
+        $transaction = $this->getTransactionFactory()->createForecastTransaction($amount, $account, $category);
 
         $saver = new cashRepeatingTransactionSaver();
         $repeatingSettings = new cashRepeatingTransactionSettingsDto();
-        $saver->saveFromTransaction($transaction, $repeatingSettings, true);
+        $repeatingSettings->end_type = cashRepeatingTransaction::REPEATING_END_NEVER;
+        $repeatingSettings->interval = cashRepeatingTransaction::INTERVAL_DAY;
+        $repeatingSettings->frequency = cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY;
+        $repeatingTransaction = $saver->saveFromTransaction($transaction, $repeatingSettings, true);
+
+        (new cashTransactionRepeater())->repeat($repeatingTransaction , new DateTime());
+    }
+
+    /**
+     * @throws kmwaAssertException
+     * @throws waException
+     */
+    public function changeForecastType()
+    {
+        $amount = $this->settings->isAutoForecast() ? $this->getShopAvgAmount() : $this->settings->getManualForecast();
+
+        $transaction = $this->getForecastRepeatingTransaction();
+        if (!$transaction instanceof cashRepeatingTransaction) {
+            return;
+        }
+
+        $transaction->setAmount($amount);
+        cash()->getEntityPersister()->update($transaction);
+
+        $this->updateShopTransactionsAfterDate(new DateTime(), $amount);
     }
 
     /**
@@ -119,7 +147,9 @@ class cashShopIntegration
      * @param int    $lastNDays
      * @param string $storefront
      *
-     * @return array
+     * @return float
+     * @throws waDbException
+     * @throws waException
      */
     public function calculateAvgBill($lastNDays = self::DAYS_FOR_AVG_BILL_CALCULATION, $storefront = '')
     {
@@ -134,19 +164,171 @@ class cashShopIntegration
 //group by ifnull(sop.value, 'backend'), currency
 //SQL;
         $sql = <<<SQL
-select currency,
-       sum(total) / count(total) bill
+select sum(total) / count(total) bill
 from shop_order
 where paid_date > s:date
-group by currency
 SQL;
 
         $date = new DateTime("-{$lastNDays} days");
 
-        return (new shopOrderModel())->query(
+        return round((float)(new shopOrderModel())->query(
             $sql,
             ['date' => $date->format('Y-m-d'), 'storefront' => $storefront]
-        )->fetchAll('currency', 1);
+        )->fetchField());
+    }
+
+    /**
+     * @throws waDbException
+     * @throws waException
+     * @throws kmwaAssertException
+     */
+    public function actualizeForecastTransaction()
+    {
+        if (!$this->settings->isEnableForecast()) {
+            return;
+        }
+
+        if (!$this->settings->isAutoForecast()) {
+            return;
+        }
+
+        if ($this->settings->isForecastActualizedToday()) {
+            return;
+        }
+
+        $transaction = $this->getForecastRepeatingTransaction();
+        if (!$transaction instanceof cashRepeatingTransaction) {
+            return;
+        }
+
+        $today = new DateTime();
+        $amount = $this->getShopAvgAmount();
+
+        if ($transaction->getAmount() == $amount) {
+            $this->settings
+                ->setForecastActualizedToday(true)
+                ->saveStat();
+
+            return;
+        }
+
+        $this->updateShopTransactionsAfterDate($today, $amount);
+
+        $transaction->setAmount($amount);
+        if (cash()->getEntityPersister()->update($transaction)) {
+            $this->settings
+                ->setForecastActualizedToday(true)
+                ->saveStat();
+        }
+    }
+
+    /**
+     * @param cashTransaction $transaction
+     * @param array           $params
+     *
+     * @throws kmwaRuntimeException
+     * @throws waDbException
+     * @throws waException
+     */
+    public function saveTransaction(cashTransaction $transaction, $params = [])
+    {
+        if (!cash()->getEntityPersister()->save($transaction)) {
+            throw new kmwaRuntimeException(
+                sprintf('Save new transaction error: %s', json_encode(cash()->getHydrator()->extract($transaction)))
+            );
+        }
+
+        cash()->getLogger()->debug(
+            sprintf(
+                'Transaction %d created successfully! %s',
+                $transaction->getId(),
+                json_encode(cash()->getHydrator()->extract($transaction))
+            )
+        );
+
+        // запишем в лог заказа
+        if ($this->settings->isWriteToOrderLog()) {
+            (new shopOrderLogModel())->add(
+                array_merge(
+                    $params,
+                    [
+                        'text' => sprintf_wp(
+                            'A transaction %s %s created (%s)',
+                            $transaction->getAmount(),
+                            $transaction->getAccount()->getCurrency(),
+                            $transaction->getAccount()->getName()
+                        ),
+                        'params' => ['cash_transaction_id' => $transaction->getId()],
+                    ]
+                )
+            );
+
+            cash()->getLogger()->debug('Transaction %d info added to order log!', $transaction->getId());
+        }
+
+        $this->settings
+            ->incTodayTransactionsCount()
+            ->saveStat();
+    }
+
+    /**
+     * @param DateTime $dateTime
+     *
+     * @return cashTransaction|null
+     * @throws waException
+     */
+    public function getForecastTransactionForDate(DateTime $dateTime)
+    {
+        return cash()->getEntityRepository(cashTransaction::class)->findByFields(
+            [
+                'external_source' => 'shop',
+                'external_hash' => cashShopTransactionFactory::HASH_FORECAST,
+                'date' => $dateTime->format('Y-m-d'),
+            ]
+        ) ?: null;
+    }
+
+    /**
+     * @return cashRepeatingTransaction|null
+     * @throws waException
+     */
+    public function getForecastRepeatingTransaction()
+    {
+        return cash()->getEntityRepository(cashRepeatingTransaction::class)->findByFields(
+            [
+                'external_source' => 'shop',
+                'external_hash' => cashShopTransactionFactory::HASH_FORECAST,
+            ]
+        ) ?: null;
+    }
+
+    /**
+     * @param DateTime $dateTime
+     *
+     * @return null
+     * @throws waException
+     */
+    public function deleteForecastTransactionForDate(DateTime $dateTime)
+    {
+        return cash()->getModel(cashTransaction::class)->deleteByField(
+            [
+                'external_source' => 'shop',
+                'external_hash' => cashShopTransactionFactory::HASH_FORECAST,
+                'date' => $dateTime->format('Y-m-d'),
+            ]
+        );
+    }
+
+    /**
+     * @param cashEventOnCount $event
+     *
+     * @throws waDbException
+     * @throws waException
+     * @throws kmwaAssertException
+     */
+    public function onCount(cashEventOnCount $event)
+    {
+        $this->actualizeForecastTransaction();
     }
 
     /**
@@ -159,9 +341,54 @@ SQL;
             $dateToDelete->modify('yesterday');
         }
 
-        cash()->getModel(cashTransaction::class)->deleteBySourceAfterDate('shop', $dateToDelete->format('Y-m-d'));
+        cash()->getModel(cashTransaction::class)->deleteBySourceAndHashAfterDate(
+            'shop',
+            cashShopTransactionFactory::HASH_FORECAST,
+            $dateToDelete->format('Y-m-d')
+        );
 
-        cash()->getModel(cashRepeatingTransaction::class)
-            ->deleteAllBySourceAndHash('shop', cashShopTransactionManager::HASH_FORECAST);
+        cash()->getModel(cashRepeatingTransaction::class)->deleteAllBySourceAndHash(
+            'shop',
+            cashShopTransactionFactory::HASH_FORECAST
+        );
+    }
+
+    /**
+     * @param DateTime $date
+     * @param float    $amount
+     *
+     * @return bool|resource
+     * @throws waException
+     */
+    private function updateShopTransactionsAfterDate(DateTime $date, $amount)
+    {
+        return cash()->getModel(cashTransaction::class)->updateAmountBySourceAndHashAfterDate(
+            'shop',
+            cashShopTransactionFactory::HASH_FORECAST,
+            $date->format('Y-m-d'),
+            $amount
+        );
+    }
+
+    /**
+     * @return float
+     * @throws kmwaAssertException
+     * @throws waDbException
+     * @throws waException
+     */
+    private function getShopAvgAmount()
+    {
+        /** @var cashAccount $account */
+        $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
+        kmwaAssert::instance($account, cashAccount::class);
+
+        $amount = $this->calculateAvgBill(self::DAYS_FOR_AVG_BILL_CALCULATION);
+        $defaultCurrency = wa('shop')->getConfig()->getCurrency();
+        if ($defaultCurrency != $account->getCurrency()) {
+            $currencyModel = new shopCurrencyModel();
+            $amount = $currencyModel->convert($amount, $defaultCurrency, $account->getCurrency());
+        }
+
+        return $amount;
     }
 }

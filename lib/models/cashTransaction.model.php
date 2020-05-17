@@ -670,13 +670,41 @@ SQL;
 
     /**
      * @param string $source
+     * @param string $hash
      * @param string $date
      *
      * @return bool|resource
      */
-    public function deleteBySourceAfterDate($source, $date)
+    public function deleteBySourceAndHashAfterDate($source, $hash, $date)
     {
-        return $this->exec("delete from {$this->table} where external_source = s:source and date > s:date", ['source' => $source, 'date' => $date]);
+        return $this->exec(
+            "delete from {$this->table} where external_source = s:source and date > s:date",
+            ['source' => $source, 'hash' => $hash, 'date' => $date]
+        );
+    }
+
+    /**
+     * @param string $source
+     * @param string $hash
+     * @param string $date
+     * @param float  $amount
+     *
+     * @return bool|resource
+     */
+    public function updateAmountBySourceAndHashAfterDate($source, $hash, $date, $amount)
+    {
+        return $this->exec(
+            "update {$this->table} 
+            set amount = f:amount, update_datetime = s:datetime 
+            where external_source = s:source and date >= s:date and external_hash = s:hash",
+            [
+                'source' => $source,
+                'hash' => $hash,
+                'date' => $date,
+                'amount' => $amount,
+                'datetime' => date('Y-m-d H:i:s'),
+            ]
+        );
     }
 
     /**
