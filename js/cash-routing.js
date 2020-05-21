@@ -187,13 +187,9 @@
                 $.cash.$content.html(html);
             });
         },
-        welcomeShopAction: function (id) {
-            var that = this;
-            $.get('?module=welcome&action=shop', function (html) {
-                $.cash.$content.html(html);
-            });
-        },
         preExecute: function () {
+            $.cash.$welcome.hide();
+
             var $h1 = $.cash.$content.find('h1:first');
 
             if ($h1.length) {

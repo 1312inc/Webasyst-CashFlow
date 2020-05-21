@@ -366,4 +366,52 @@ class cashShopSettings implements JsonSerializable
 
         return $this;
     }
+
+    /**
+     * @param int $accountId
+     *
+     * @return cashShopSettings
+     */
+    public function setAccountId($accountId)
+    {
+        $this->accountId = $accountId;
+
+        return $this;
+    }
+
+    /**
+     * @param int $categoryIncomeId
+     *
+     * @return cashShopSettings
+     */
+    public function setCategoryIncomeId($categoryIncomeId)
+    {
+        $this->categoryIncomeId = $categoryIncomeId;
+
+        return $this;
+    }
+
+    /**
+     * @param int $categoryExpenseId
+     *
+     * @return cashShopSettings
+     */
+    public function setCategoryExpenseId($categoryExpenseId)
+    {
+        $this->categoryExpenseId = $categoryExpenseId;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $writeToOrderLog
+     *
+     * @return cashShopSettings
+     */
+    public function setWriteToOrderLog($writeToOrderLog)
+    {
+        $this->writeToOrderLog = $writeToOrderLog;
+
+        return $this;
+    }
 }
