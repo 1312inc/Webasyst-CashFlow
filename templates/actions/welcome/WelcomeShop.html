@@ -1,12 +1,100 @@
-<div class="content left200px" id="cash-welcome-shop">
-    <div id="content">
-        <h1>[`Welcome`]</h1>
-        <p>Import please shop orders</p>
+<h1>[`Welcome`]</h1>
+<p>Import please shop orders {$orders_to_import_count}</p>
+
+<a href="#" id="c-welcome-shop-skip">no, skip</a>
+<br>
+<br>
+<br>
+
+<div class="field">
+    <div class="value submit no-shift">
+        <input type="button" id="cash-welcome-shop-start" value="{sprintf('[`Import %s transactions`]', $orders_to_import_count)}"
+               class="button green"/>
+    </div>
+    <div class="value c-csv-configurator" id="c-welcome-import" style="display: none">
+        <div class="progressbar green">
+            <div class="progressbar-outer">
+                <div class="progressbar-inner" style="width: 0%;">
+                </div>
+            </div>
+        </div>
+        {*                    <div data-cash-welcome-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
+        <div data-cash-welcome-import-progress-errors style="display: none"></div>
+        <div>
+            <span data-cash-welcome-import-progress-icon="loading" style="display:none;"><i class="icon16 loading"></i> <span>[`Importing...`]</span></span>
+            <span data-cash-welcome-import-progress-icon="success" style="display:none;"><i class="icon16 yes"></i> <span>[`Finalizing...`]</span></span>
+            <span data-cash-welcome-import-progress-icon="error" style="display:none;"><i class="icon16 no"></i> <span>[`Done`]</span></span>
+        </div>
     </div>
 </div>
 
+<script type="text/javascript" src="{$wa_app_static_url}js/kmlongaction.js{if !waSystemConfig::isDebug()}?v{$wa->version()}{/if}"></script>
 <script>
     'use strict';
     (function () {
+        $('#c-welcome-shop-skip').on('click.cash', function (e) {
+            e.preventDefault();
+
+            $.post('?module=welcome&action=shop', { skip: 1 }, function (r) {
+                window.location = '{$backend_url}';
+            })
+        });
+
+        $('#cash-welcome-shop-start').on('click.cash', function (e) {
+            e.preventDefault();
+            var $button = $(this),
+                $progress = $('#c-welcome-import'),
+                $progressLoading = $progress.find('[data-cash-welcome-import-progress-icon="loading"]'),
+                $progressSuccess = $progress.find('[data-cash-welcome-import-progress-icon="success"]'),
+                $progressError = $progress.find('[data-cash-welcome-import-progress-icon="error"]');
+
+            $button.prop('disabled', true).hide();
+
+            var long = $.wa.kmLongAction();
+            long.start({
+                process_url: '?module=shop&action=importProcess',
+                parallel: 2,
+                debug: true,
+                start: {
+                    onStart: function(r) {
+                        $progress.show();
+                        $progressLoading.show().siblings().hide();
+                    },
+                    onSuccess: function (r) {
+                        $progress.show().find('.progressbar-inner').css('width', '0%');
+                        // $transactionStat.show();
+                    },
+                    onError: function (r) {
+                        $progressError.show().siblings().hide();
+                        $progressError.find('span').text(r.error);
+                        $button.prop('disabled', false).show();
+                        // $transactionStat.hide();
+                    }
+                },
+                step: {
+                    onProgress: function(r) {
+                        $progress.find('.progressbar-inner').css('width', r.progress + '%');
+                        // $transactionStat.show();
+                        // $transactionStat.find('span').text(r.transactions.ok);
+                        // $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
+                    },
+                    onReady: function (r) {
+                        $progressSuccess.show().siblings().hide();
+                        $progress.find('.progressbar-inner').css('width', r.progress + '%');
+                        alert('done, redirect to app');
+                        window.location = '{$backend_url}';
+                        // $button.prop('disabled', false);
+                        // $transactionStat.show();
+                        // $transactionStat.find('span').text(r.transactions.ok);
+                        // $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
+                    },
+                    onError: function (r) {
+                        $progressError.show().siblings().hide();
+                        $progressError.find('span').text(r.error);
+                        $button.prop('disabled', false).show();
+                    }
+                }
+            });
+        })
     }())
 </script>

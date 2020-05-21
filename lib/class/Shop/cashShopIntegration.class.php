@@ -247,7 +247,7 @@ SQL;
         );
 
         // запишем в лог заказа
-        if ($this->settings->isWriteToOrderLog()) {
+        if ($this->settings->isWriteToOrderLog() && !empty($params['order_id'])) {
             (new shopOrderLogModel())->add(
                 array_merge(
                     $params,
