@@ -47,9 +47,22 @@ class cashShopIntegration
             return false;
         }
 
+        if ($this->shopIsOld()) {
+            return false;
+        }
+
         wa('shop');
 
         return true;
+    }
+
+    /**
+     * @return bool
+     * @throws waException
+     */
+    public function shopIsOld()
+    {
+        return (bool)version_compare(wa()->getVersion('shop'), '8.0.0.0', '<');
     }
 
     /**
