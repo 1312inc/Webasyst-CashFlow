@@ -55,7 +55,7 @@ class cashSettingsAction extends cashViewAction
         }
 
         if ($shopIntegration->shopExists()) {
-            $storefronts = shopStorefrontList::getAllStorefronts() ?: [];
+            $storefronts = cashHelper::getAllStorefronts() ?: [];
             $storefronts[] = 'backend';
 
             /** @var waWorkflowAction[] $actions */
@@ -74,6 +74,7 @@ class cashSettingsAction extends cashViewAction
                 'shopScriptSettings' => $shopIntegration->getSettings(),
                 'storefronts' => $storefronts,
                 'actions' => $actions,
+                'shopIsOld' => $shopIntegration->shopIsOld()
             ]
         );
     }
