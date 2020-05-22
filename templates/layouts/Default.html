@@ -31,6 +31,10 @@
         <section id="cash-welcome" style="display:none;"></section>
     </div>
 
+    {if 111 && method_exists($wa->installer, 'reviewWidget')}
+        {$wa->installer->reviewWidget('app/cash')}
+    {/if}
+
     <script>
         'use strict';
         $(function() {
