@@ -7,8 +7,10 @@ class cashBackendController extends waViewController
 {
     public function execute()
     {
+        $shopIntegration = new cashShopIntegration();
         $welcome = waRequest::get('welcome') === 'shop'
-            || ((new cashShopIntegration())->shopExists() && !(new cashShopWelcome())->welcomePassed(wa()->getUser()));
+            || ($shopIntegration->shopExists()
+                && !(new cashShopWelcome($shopIntegration))->welcomePassed(wa()->getUser()));
 
         if ($welcome) {
             $this->setLayout(new cashWelcomeLayout());
