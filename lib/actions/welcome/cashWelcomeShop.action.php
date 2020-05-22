@@ -12,7 +12,9 @@ class cashWelcomeShopAction extends cashViewAction
      */
     public function runAction($params = null)
     {
-        $shopWelcome = new cashShopWelcome();
+        $shopIntegration = new cashShopIntegration();
+        $shopWelcome = new cashShopWelcome($shopIntegration);
+
         if (waRequest::getMethod() === 'post') {
             if (waRequest::post('skip', 0, waRequest::TYPE_INT) === 1) {
                 $shopWelcome->setWelcomePassed(wa()->getUser());
@@ -25,6 +27,7 @@ class cashWelcomeShopAction extends cashViewAction
             [
                 'orders_to_import_count' => $shopWelcome->countOrdersToProcess(),
                 'backend_url' => wa()->getAppUrl(cashConfig::APP_ID),
+                'shop_is_old' => $shopIntegration->shopIsOld()
             ]
         );
     }
