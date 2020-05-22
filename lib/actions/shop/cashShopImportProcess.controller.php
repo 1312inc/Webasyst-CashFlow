@@ -34,7 +34,7 @@ class cashShopImportProcessController extends waLongActionController
             throw new kmwaRuntimeException('No shop app');
         }
 
-        $shopWelcome = new cashShopWelcome();
+        $shopWelcome = new cashShopWelcome($shopIntegration);
 
         $info = new cashShopImportProcessDto($this->processId);
         $info->totalOrders = $shopWelcome->countOrdersToProcess();

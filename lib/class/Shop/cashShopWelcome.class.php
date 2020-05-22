@@ -6,6 +6,21 @@
 class cashShopWelcome
 {
     /**
+     * @var cashShopIntegration
+     */
+    private $shopIntegration;
+
+    /**
+     * cashShopWelcome constructor.
+     *
+     * @param cashShopIntegration $shopIntegration
+     */
+    public function __construct(cashShopIntegration $shopIntegration)
+    {
+        $this->shopIntegration = $shopIntegration;
+    }
+
+    /**
      * @param waContact $contact
      *
      * @return bool
@@ -30,6 +45,10 @@ class cashShopWelcome
      */
     public function countOrdersToProcess()
     {
-        return (int) (new shopOrderModel())->select('count(*)')->where('paid_date is not null')->fetchField();
+        if ($this->shopIntegration->shopExists()) {
+            return (int)(new shopOrderModel())->select('count(*)')->where('paid_date is not null')->fetchField();
+        }
+
+        return 0;
     }
 }
