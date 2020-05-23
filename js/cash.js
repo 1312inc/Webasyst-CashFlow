@@ -383,8 +383,10 @@
                         data: r.data.data,
                         axis: r.data.axis,
                         grid: r.data.grid,
-                        line: r.data.line
+                        line: r.data.line,
+                        regions: r.data.regions
                     });
+                    $(bindToSelector).data('c3-chart', chart);
                 }
             })
         },

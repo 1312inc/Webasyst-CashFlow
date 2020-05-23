@@ -60,3 +60,8 @@ table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1
 }
 
 [data-cash-import-csv-check-fullness] { display: none }
+
+
+.c3-region.cash-c3-future {
+    fill: green;
+}

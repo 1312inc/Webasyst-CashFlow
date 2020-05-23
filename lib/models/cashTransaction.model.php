@@ -320,7 +320,7 @@ SQL;
         $sql = <<<SQL
 select ca.currency,
        concat(ca.currency,if(ct.category_id is null, '', concat('_',ct.category_id))) hash,
-       concat(YEAR(ct.date), '-', MONTH(ct.date)) date,
+       DATE_FORMAT(ct.date, '%%Y-%%m') date,
        if(ct.amount < 0, 'expense', 'income') cd,
        ct.category_id category_id,
        ifnull(sum(ct.amount), 0) summary
@@ -348,7 +348,7 @@ SQL;
         $sql = <<<SQL
 select ca.currency,
        concat(ca.currency,if(ct.category_id is null, '', concat('_',ct.category_id))) hash,
-       concat(YEAR(ct.date), '-', MONTH(ct.date)) date,
+       DATE_FORMAT(ct.date, '%%Y-%%m') date,
        if(ct.amount < 0, 'expense', 'income') cd,
        ct.category_id,
        ifnull(sum(ct.amount), 0) summary
@@ -581,7 +581,7 @@ SQL;
     public function getBalanceByDateBoundsAndAccountGroupByMonth($startDate, $endDate, $accounts = null)
     {
         $sql = <<<SQL
-select concat(YEAR(ct.date), '-', MONTH(ct.date)) date,
+select DATE_FORMAT(ct.date, '%%Y-%%m') date,
        ca.id category_id,
        ifnull(sum(ct.amount), 0) summary
 from cash_transaction ct
@@ -726,7 +726,7 @@ SQL;
      *
      * @return array
      */
-    private function querySummaryByDateBoundsAndAccount($sql, $startDate, $endDate, array $accounts)
+    private function querySummaryByDateBoundsAndAccount($sql, $startDate, $endDate, $accounts = [])
     {
         $accountsSql = $accounts ? ' and ct.account_id in (i:account_ids)' : '';
         $sql = sprintf($sql, $accountsSql, $accountsSql);

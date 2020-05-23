@@ -137,7 +137,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
         $this->currentDate = date('Y-m-d');
         $iterateDate = clone $startDate;
         while ($iterateDate <= $endDate) {
-            $date = $iterateDate->format($this->grouping === cashGraphService::GROUP_BY_DAY ? 'Y-m-d' : 'Y-n');
+            $date = $iterateDate->format($this->grouping === cashGraphService::GROUP_BY_DAY ? 'Y-m-d' : 'Y-m');
             $this->dates[] = $date;
             foreach ($existingCategories as $category) {
                 $this->columns[$category][$date] = null;
@@ -201,7 +201,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             true
         )) {
             foreach ($this->lines as $lineId => $lineData) {
-                $regions[$lineId] = [['start' => $this->currentDate, 'style' => 'dashed']];
+//                $regions[$lineId] = [['start' => $this->currentDate, 'style' => 'dashed']];
 
 //                if ($lineId !== self::ALL_ACCOUNTS_GRAPH_NAME) {
                 $account = cash()->getModel(cashAccount::class)->getById($lineId);
@@ -211,9 +211,12 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             }
         }
 
+        $xFormat = $this->grouping === cashGraphService::GROUP_BY_DAY ? '%Y-%m-%d' : '%Y-%m';
+//        $xFormat = '%Y-%m-%d';
         $data = [
             'data' => [
                 'x' => 'dates',
+                'xFormat' => $xFormat,
                 'columns' => $columns,
                 'order' => null,
                 'line' => ['connectNull' => true],
@@ -233,7 +236,8 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 'names' => $names,
             ],
             'axis' => [
-                'x' => ['type' => $this->grouping === cashGraphService::GROUP_BY_DAY ? 'timeseries' : 'category'],
+//                'x' => ['type' => $this->grouping === cashGraphService::GROUP_BY_DAY ? 'timeseries' : 'category'],
+                'x' => ['type' => 'timeseries'],
             ],
             'grid' => [
                 'y' => ['lines' => [['value' => 0]]],
@@ -242,21 +246,45 @@ class cashGraphColumnsDataDto extends cashAbstractDto
         ];
 
         if ($this->endDate > $this->currentDate) {
+            $start = $this->grouping === cashGraphService::GROUP_BY_DAY
+                ? $this->currentDate
+                : date('Y-n', strtotime($this->currentDate));
             $data['grid']['x'] = [
                 'lines' => [
                     [
-                        'value' => $this->grouping === cashGraphService::GROUP_BY_DAY
-                            ? $this->currentDate
-                            : date('Y-n', strtotime($this->currentDate)),
+                        'value' => $start,
                         'text' => _w('Future'),
                     ],
                 ],
             ];
+            $data['regions'] = [
+                ['axis' => 'x', 'start' => $start, 'class' => 'cash-c3-future'],
+            ];
         }
 
+
+        $tickData = [
+            //            'count' => $tickCount,
+            'rotate' => -45,
+        ];
+        $tickCountDiff = $this->startDate->diff($this->endDate);
+        $tickStartDate = clone $this->startDate;
         if ($this->grouping === cashGraphService::GROUP_BY_DAY) {
-            $data['axis']['x']['tick'] = ['count' => 30, 'format' => '%Y-%m-%d'];
+            $tickValues[] = $tickStartDate->format('Y-m-d');
+            $ticksInterval = round($tickCountDiff->days/25);
+            while ($tickStartDate <= $this->endDate) {
+                $tickValues[] = $tickStartDate->modify("+{$ticksInterval} days")->format('Y-m-d');
+            }
+            $tickData['format'] = '%Y-%m-%d';
+        } else {
+            $tickValues[] = $tickStartDate->format('Y-m');
+            while ($tickStartDate <= $this->endDate) {
+                $tickValues[] = $tickStartDate->modify("+1 month")->format('Y-m');
+            }
+            $tickData['format'] = '%Y-%m';
         }
+        $tickData['values'] = $tickValues;
+        $data['axis']['x']['tick'] = $tickData;
 
         if ($this->lines) {
             $data['data']['axes'] = [];
