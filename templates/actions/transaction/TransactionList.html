@@ -65,6 +65,10 @@
         <li class="c-bulk-action"><a href="#" data-cash-bulk-action="move"><i class="icon16 move"></i>[`Move`] <strong class="hint">(N)</strong></a></li>
         <li class="c-bulk-action"><a href="#" data-cash-bulk-action="delete"><i class="icon16 delete"></i>[`Delete`] <strong class="hint">(N)</strong></a></li>
         {/if}
+
+        <li>
+            <input type="search" placeholder="[`Filter`]" data-cash-action="filter-transactions"/>
+        </li>
     </ul>
 </div>
 
@@ -107,7 +111,7 @@
                     <em class="hint float-right">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %s days`]', $_days_diff)}{/if}</em>
                 </span>
             </td>
-            <td><div>{$t->description|escape}<i class="shortener"></i></div></td>
+            <td data-cash-transaction-field="description"><div>{$t->description|escape}<i class="shortener"></i></div></td>
             <td class="align-right"><strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if}>{round($t->amount,2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
             <td><span class="nowrap">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
             <td><span class="nowrap">{$t->account->name|escape}</span></td>
@@ -156,7 +160,7 @@
                     {if $t->repeating_id}<i class="icon16 c-repeating" title="[`Repeating transaction`]"></i>{/if}
                 </span>
             </td>
-            <td><div>{$t->description|escape}<i class="shortener"></i></div></td>
+            <td data-cash-transaction-field="description"><div>{$t->description|escape}<i class="shortener"></i></div></td>
             <td class="align-right"><strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if}>{round($t->amount,2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
             <td><span class="nowrap">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
             <td><span class="nowrap">{$t->account->name|escape}</span></td>
@@ -356,18 +360,22 @@
                 if (!isTransaction) {
                     $w.siblings()
                         .filter(isPlanned ? '.c-planned' : ':not(.c-planned)')
-                        .find('[type="checkbox"]').prop('checked', checked);
+                        .find('[type="checkbox"]:visible').prop('checked', checked);
                 }
 
-                var selectedCount = $transactionList.find('[type="checkbox"][value]:checked').length;
-                if (selectedCount) {
+                $transactionList.trigger('updateSelectedCount.cash');
+            })
+            .on('updateSelectedCount.cash', function (e) {
+                var selectedCount = $transactionList.find('[type="checkbox"][value]:visible:checked').length - 1;
+                if (selectedCount > 0) {
                     $transactionList
                         .find('.c-bulk-action').show()
                         .find('.hint').text(selectedCount);
                 } else {
+                    selectedCount = 0;
                     $transactionList
                         .find('.c-bulk-action').hide()
-                        .find('.hint').text(0);
+                        .find('.hint').text(selectedCount);
                 }
             })
             .on('click.cash', '[data-cash-bulk-action]', function (e) {
@@ -375,7 +383,7 @@
 
                 var $this = $(this),
                     action = $this.data('cash-bulk-action'),
-                    ids = JSON.stringify($transactionList.find('[type="checkbox"][value]:checked').map(function() { return $(this).val(); }).get());
+                    ids = JSON.stringify($transactionList.find('[type="checkbox"][value]:visible:checked').map(function() { return $(this).val(); }).get());
 
                 switch (action) {
                     default:
@@ -425,5 +433,52 @@
             })
         ;
         /*{/if}*/
+
+        var $allDescriptions = $transactionList.find('[data-cash-transaction-field="description"]');
+        $('[data-cash-action="filter-transactions"]').on('keyup.cash paste.cash', $.cash.throttle(function () {
+            var text = $(this).val(),
+                highlighted = ['<span class="highlighted">', '</span>'];
+
+            $.cash.log('filter transactions by text:' + text);
+
+            $allDescriptions.closest('[data-cash-transaction-id]').show();
+            $allDescriptions.each(function () {
+                var $desc = $(this),
+                    html = $desc.html(),
+                    startPos = html.indexOf(highlighted[0]),
+                    endPost = html.indexOf(highlighted[1]);
+
+                if (startPos !== -1) {
+                    var description = $desc.html();
+                    description = description.slice(0, startPos)
+                        + description.slice(startPos + highlighted[0].length, endPost)
+                        + description.slice(endPost + highlighted[1].length)
+                    ;
+                    $desc.html(description);
+                }
+            });
+
+            if (text) {
+                $allDescriptions.each(function () {
+                    var $desc = $(this),
+                        startPos = $desc.html().toLowerCase().indexOf("" + text + "");
+
+                    if (startPos === -1) {
+                        $desc.closest('[data-cash-transaction-id]').hide();
+                    } else {
+                        var description = $desc.html();
+                        description = description.slice(0, startPos)
+                            + highlighted[0]
+                            + description.slice(startPos, startPos + text.length)
+                            + highlighted[1]
+                            + description.slice(startPos + text.length)
+                        ;
+                        $desc.html(description);
+                    }
+                });
+            }
+
+            $transactionList.trigger('updateSelectedCount.cash');
+        }, 50));
     })()
 </script>
