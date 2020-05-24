@@ -70,7 +70,7 @@
                 wait = wait || 300;
             return function() {
                 if ((time + wait - Date.now()) < 0) {
-                    fn();
+                    fn.call(this);
                     time = Date.now();
                 }
             }
