@@ -34,7 +34,7 @@ class cashCategoryFactory extends cashBaseFactory
     public function createNewNoCategoryExpense()
     {
         return $this->createNew()
-            ->setName(_w('No category, expense'))
+            ->setName(_w('No category'))
             ->setId(self::NO_CATEGORY_EXPENSE_ID);
     }
 
@@ -45,7 +45,7 @@ class cashCategoryFactory extends cashBaseFactory
     public function createNewNoCategoryIncome()
     {
         return $this->createNew()
-            ->setName(_w('No category, income'))
+            ->setName(_w('No category'))
             ->setId(self::NO_CATEGORY_INCOME_ID);
     }
 }
