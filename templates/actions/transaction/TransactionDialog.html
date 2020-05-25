@@ -27,6 +27,14 @@
             <div class="fields form">
                 <div class="field-group">
                     <div class="field">
+                        <div class="name">[`Type`]</div>
+                        <div class="value no-shift">
+                            <span>[`One time`]</span>
+                            <input type="checkbox" checked />
+                            <span class="gray">[`Repeating`]</span>
+                        </div>
+                    </div>
+                    <div class="field">
                         <div class="name nowrap">
                             [`Amount`]
                         </div>
@@ -43,52 +51,6 @@
                                 {$accounts[$transaction->account->id]->currency->getSign()|escape}
                                 {/if}
                             </strong>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="name nowrap">
-                            [`Account`]
-                        </div>
-                        <div class="value no-shift">
-                            <select name="transaction[account_id]" data-cash-element="account-with-sign">
-                                {foreach $accounts as $account}
-                                    <option value="{$account->id}"
-                                            {if $account->id == $transaction->account->id}selected{/if}
-                                            data-cash-account-currency-sign="{$account->currency->getSign()|escape}">
-                                        {$account->currency->getCode()|escape} - {$account->name|escape} ({$account->currency->getSign()|escape})
-                                    </option>
-                                {/foreach}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="name nowrap">
-                            [`Category`]
-                        </div>
-                        <div class="value no-shift">
-                            <i class="icon16 color" data-cash-transaction-category style="background: none;"></i>
-                            <select name="transaction[category_id]" data-cash-element="category-with-color">
-                                <option value="0" data-cash-category-color="{cashColorStorage::DEFAULT_NO_CATEGORY_GRAPH_COLOR}">[`No category`]</option>
-                                {foreach $categories as $category}
-                                    <option value="{$category->id}"
-                                            {if $category->id == $transaction->category->id}selected{/if}
-                                            data-cash-category-color="{$category->color}">
-                                        {$category->name|escape}
-                                    </option>
-                                {/foreach}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="name nowrap">
-                            [`Description`]
-                        </div>
-                        <div class="value no-shift">
-                            <textarea name="transaction[description]"
-                                      cols="30"
-                                      rows="10"
-                                      placeholder="[`Optional`]"
-                            >{$transaction->description|escape}</textarea>
                         </div>
                     </div>
                     <div class="field">
@@ -195,6 +157,54 @@
                         </div>
                     </div>
                     </section>
+                </div>
+                <div class="field-group">
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Account`]
+                        </div>
+                        <div class="value no-shift">
+                            <select name="transaction[account_id]" data-cash-element="account-with-sign">
+                                {foreach $accounts as $account}
+                                    <option value="{$account->id}"
+                                            {if $account->id == $transaction->account->id}selected{/if}
+                                            data-cash-account-currency-sign="{$account->currency->getSign()|escape}">
+                                        {$account->currency->getCode()|escape} - {$account->name|escape} ({$account->currency->getSign()|escape})
+                                    </option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Category`]
+                        </div>
+                        <div class="value no-shift">
+                            <i class="icon16 color" data-cash-transaction-category style="background: none;"></i>
+                            <select name="transaction[category_id]" data-cash-element="category-with-color">
+                                <option value="0" data-cash-category-color="{cashColorStorage::DEFAULT_NO_CATEGORY_GRAPH_COLOR}">[`No category`]</option>
+                                {foreach $categories as $category}
+                                    <option value="{$category->id}"
+                                            {if $category->id == $transaction->category->id}selected{/if}
+                                            data-cash-category-color="{$category->color}">
+                                        {$category->name|escape}
+                                    </option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Description`]
+                        </div>
+                        <div class="value no-shift">
+                            <textarea name="transaction[description]"
+                                      cols="30"
+                                      rows="10"
+                                      placeholder="[`Optional`]"
+                            >{$transaction->description|escape}</textarea>
+                        </div>
+                    </div>
 
                     {if $categoryType == cashCategory::TYPE_TRANSFER}
                     <div class="field">
