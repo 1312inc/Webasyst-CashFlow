@@ -111,7 +111,7 @@
                     <em class="hint float-right">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %s days`]', $_days_diff)}{/if}</em>
                 </span>
             </td>
-            <td data-cash-transaction-field="description"><div>{$t->description|escape}<i class="shortener"></i></div></td>
+            <td><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
             <td class="align-right"><strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if}>{round($t->amount,2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
             <td><span class="nowrap">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
             <td><span class="nowrap">{$t->account->name|escape}</span></td>
@@ -160,7 +160,7 @@
                     {if $t->repeating_id}<i class="icon16 c-repeating" title="[`Repeating transaction`]"></i>{/if}
                 </span>
             </td>
-            <td data-cash-transaction-field="description"><div>{$t->description|escape}<i class="shortener"></i></div></td>
+            <td><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
             <td class="align-right"><strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if}>{round($t->amount,2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
             <td><span class="nowrap">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
             <td><span class="nowrap">{$t->account->name|escape}</span></td>
@@ -436,7 +436,7 @@
 
         var $allDescriptions = $transactionList.find('[data-cash-transaction-field="description"]');
         $('[data-cash-action="filter-transactions"]').on('keyup.cash paste.cash', $.cash.throttle(function () {
-            var text = $(this).val(),
+            var text = $.trim($(this).val()),
                 highlighted = ['<span class="highlighted">', '</span>'];
 
             $.cash.log('filter transactions by text:' + text);
