@@ -54,6 +54,13 @@ class cashCategorySaver extends cashEntitySaver
             return false;
         }
 
+        $data['name'] = trim($data['name']);
+        if ($data['name'] === '') {
+            $this->error = _w('Empty category name');
+
+            return false;
+        }
+
         return true;
     }
 
