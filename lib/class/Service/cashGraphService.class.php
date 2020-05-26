@@ -137,37 +137,8 @@ class cashGraphService
      */
     public function createDto(DateTime $startDate, DateTime $endDate, cashTransactionPageFilterDto $filterDto)
     {
-        /** @var cashTransactionModel $model */
-        $model = cash()->getModel(cashTransaction::class);
-
-        switch ($filterDto->type) {
-            case cashTransactionPageFilterDto::FILTER_ACCOUNT:
-                $dateBounds = $model->getDateBoundsByAccounts(
-                    $startDate->format('Y-m-d 00:00:00'),
-                    $endDate->format('Y-m-d 23:59:59'),
-                    $filterDto->id
-                );
-                break;
-
-            case cashTransactionPageFilterDto::FILTER_CATEGORY:
-                $dateBounds = $model->getDateBoundsByCategories(
-                    $startDate->format('Y-m-d 00:00:00'),
-                    $endDate->format('Y-m-d 23:59:59'),
-                    $filterDto->id
-                );
-                break;
-
-            case cashTransactionPageFilterDto::FILTER_IMPORT:
-                $dateBounds = [
-                    'startDate' => $startDate->format('Y-m-d'),
-                    'endDate' => $endDate->format('Y-m-d'),
-                ];
-                $grouping = self::GROUP_BY_DAY;
-                break;
-        }
-
-        if (!empty($dateBounds['startDate'])) {
-            $startDate = (new DateTime($dateBounds['startDate']))->modify('-1 day');
+        if ($filterDto->type == cashTransactionPageFilterDto::FILTER_IMPORT) {
+            $grouping = self::GROUP_BY_DAY;
         }
 
         if (!isset($grouping)) {
