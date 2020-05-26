@@ -271,7 +271,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
         $tickStartDate = clone $this->startDate;
         if ($this->grouping === cashGraphService::GROUP_BY_DAY) {
             $tickValues[] = $tickStartDate->format('Y-m-d');
-            $ticksInterval = round($tickCountDiff->days/25);
+            $ticksInterval = max(round($tickCountDiff->days/25), 1);
             while ($tickStartDate <= $this->endDate) {
                 $tickValues[] = $tickStartDate->modify("+{$ticksInterval} days")->format('Y-m-d');
             }
