@@ -245,7 +245,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             'line' => ['connectNull' => true],
         ];
 
-        if ($this->endDate > $this->currentDate) {
+        if ($this->endDate->format('Y-m-d') > $this->currentDate) {
             $start = $this->grouping === cashGraphService::GROUP_BY_DAY
                 ? $this->currentDate
                 : date('Y-n', strtotime($this->currentDate));
