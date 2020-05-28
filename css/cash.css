@@ -62,6 +62,14 @@ table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1
 [data-cash-import-csv-check-fullness] { display: none }
 
 
-.c3-region.cash-c3-future {
-    fill: green;
-}
+.c3-region.cash-c3-future { fill: gray; }
+.c3-line { stroke-width: 4px; }
+.c3 path { stroke: gray; }
+.c3-axis-x { fill: gray; }
+.c3-axis-y { fill: lightgray; }
+.c3-axis-y2 { fill: gold; }
+.c3-axis-y2 path { stroke: gold; }
+.c3-axis-y2 text { fill: bold; }
+.c3-axis-y2-label { font-weight: bold; fill: brown !important; }
+/* .c3-bar { opacity: 0.5 !important; } */
+/* .c3-chart-bar:hover .c3-bar { opacity: 1 !important; } */

@@ -384,7 +384,10 @@
                         axis: r.data.axis,
                         grid: r.data.grid,
                         line: r.data.line,
-                        regions: r.data.regions
+                        regions: r.data.regions,
+                        legend: {
+                            show: false
+                        }
                     });
                     $(bindToSelector).data('c3-chart', chart);
                 }
