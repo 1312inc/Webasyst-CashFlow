@@ -237,7 +237,13 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             ],
             'axis' => [
 //                'x' => ['type' => $this->grouping === cashGraphService::GROUP_BY_DAY ? 'timeseries' : 'category'],
-                'x' => ['type' => 'timeseries'],
+                'x' => [
+                    'type' => 'timeseries',
+                    'tick' => [
+                        'count' => 4,
+                        'format' => '%Y-%m-%d'
+                    ]
+                ],
             ],
             'grid' => [
                 'y' => ['lines' => [['value' => 0]]],
@@ -253,7 +259,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 'lines' => [
                     [
                         'value' => $start,
-                        'text' => _w('Future'),
+                        'text' => _w('Today'),
                     ],
                 ],
             ];
@@ -281,7 +287,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             while ($tickStartDate <= $this->endDate) {
                 $tickValues[] = $tickStartDate->modify("+1 month")->format('Y-m');
             }
-            $tickData['format'] = '%Y-%m';
+            $tickData['format'] = '%b %Y';
         }
         $tickData['values'] = $tickValues;
         $data['axis']['x']['tick'] = $tickData;
@@ -305,8 +311,16 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                     $data['data']['axes'][$name] = 'y2';
                     $data['axis']['y2'] = [
                         'show' => true,
+                        'label' => _w('Balance'),
+                        // 'tick' => [
+                        //     'count' => 10
+                        // ]
 //                        'center' => 0,
 //                        'padding' => ['bottom' => 0],
+                    ];
+
+                    $data['axis']['y'] = [
+                        'show' => false
                     ];
                 }
             }
