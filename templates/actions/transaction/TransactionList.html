@@ -276,6 +276,26 @@
                     ;
 
                     $dialogWrapper.find('select').trigger('change.cash');
+                    $dialogWrapper.find('#c-transaction-type').iButton({
+                        labelOn: '',
+                        labelOff: '',
+                        classContainer: 'ibutton-container mini',
+                        change: function ($input) {
+                            var $w = $input.closest('.menu-h'),
+                                $left = $w.find('li:first'),
+                                $right = $w.find('li:last'),
+                                $repeating = $dialogWrapper.find('[data-cash-repeating-settings]');
+
+                            $left.find('span').toggleClass('gray');
+                            $right.find('span').toggleClass('gray');
+
+                            if ($input.is(':checked')) {
+                                $repeating.show();
+                            } else {
+                                $repeating.hide();
+                            }
+                        }
+                    });
 
                     var initDatepicker = function () {
                         var datepicker_options = {
@@ -301,6 +321,8 @@
                     setTimeout(function () {
                         $dialogWrapper.find('[name="transaction[amount]"]').trigger('focus');
                     }, 13.12);
+
+
                 },
                 onSubmit: function (d) {
                     var $errormsg = d.find('.errormsg');

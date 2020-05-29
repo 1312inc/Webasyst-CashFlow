@@ -26,14 +26,19 @@
             </h1>
             <div class="fields form">
                 <div class="field-group">
+                    {if !$transaction->id}
                     <div class="field">
                         <div class="name">[`Type`]</div>
                         <div class="value no-shift">
-                            <span>[`One time`]</span>
-                            <input type="checkbox" checked />
-                            <span class="gray">[`Repeating`]</span>
+                            <ul class="menu-h">
+                                <li><span>[`One time`]</span></li>
+                                <li><input type="checkbox" id="c-transaction-type"/></li>
+                                <li><span class="gray">[`Repeating`]</span></li>
+                            </ul>
                         </div>
                     </div>
+                    {/if}
+
                     <div class="field">
                         <div class="name nowrap">
                             [`Amount`]
@@ -41,6 +46,7 @@
                         <div class="value">
                             {if $categoryType == 'expense'}<strong>&minus;</strong>{/if}
                             <input type="number"
+                                   step="any"
                                    class="large bold numerical"
                                    name="transaction[amount]"
                                    placeholder="0"
@@ -53,6 +59,7 @@
                             </strong>
                         </div>
                     </div>
+
                     <div class="field">
                         <div class="name nowrap">
                             [`Date`]
@@ -81,8 +88,9 @@
                         </div>
                     </div>
                     {/if}
-                    <section data-cash-repeating-settings style="{if $repeatingTransaction->id}display: none{/if}">
-                    <div class="field">
+
+                    <section data-cash-repeating-settings style="display: none">
+                    <div class="field" style="{if $repeatingTransaction->id}display: none{/if}">
                         <div class="name nowrap">
                             [`Repeat`]
                         </div>
@@ -94,7 +102,6 @@
                             <select name="repeating[interval]"
                                     {if $repeatingTransaction->id}readonly{/if}
                             >
-                                <option value="">[`None`]</option>
                                 {foreach cashRepeatingTransaction::getRepeatingEveryIntervals() as $interval => $label}
                                     <option value="{$interval}"
                                             {if $repeatingTransaction->repeating_interval == $interval}selected{/if}
@@ -123,7 +130,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="field" style="display: none">
+                    <div class="field">
                         <div class="name nowrap">
                             [`End repeat`]
                         </div>
