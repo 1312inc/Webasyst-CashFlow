@@ -9,6 +9,19 @@
         <div class="block">
             <h1{if $filter->id} class="float-left"{/if}>
                 {$filter->name|escape}
+
+                {if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT}
+                <span class="small" title="[`Cash on hand today`]">
+                    {foreach $onHandsToday as $onHand}
+                        <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
+                        {if !$onHand@last}+{/if}
+                        {foreachelse}
+                        <strong class="c-balance large">0</strong>
+                    {/foreach}
+                    <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandate}</span>
+                </span>
+                {/if}
+                
             </h1>
             {if $filter->id}
                 <div class="block half-padded" style="position: relative; left: 1rem;">
@@ -67,19 +80,6 @@
                 </ul>
 
             </div>
-
-            {if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT}
-            <div class="block half-padded" style="padding-left: 0;">
-                [`Cash on hand today`]:
-                {foreach $onHandsToday as $onHand}
-                    <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
-                    {if !$onHand@last}+{/if}
-                    {foreachelse}
-                    <strong class="c-balance large">0</strong>
-                {/foreach}
-                <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandate}</span>
-            </div>
-            {/if}
 
             <div class="c-chart" id="cash-chart"></div>
 
