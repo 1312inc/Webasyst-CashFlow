@@ -276,6 +276,7 @@
                     ;
 
                     $dialogWrapper.find('select').trigger('change.cash');
+
                     $dialogWrapper.find('#c-transaction-type').iButton({
                         labelOn: '',
                         labelOff: '',
@@ -321,8 +322,6 @@
                     setTimeout(function () {
                         $dialogWrapper.find('[name="transaction[amount]"]').trigger('focus');
                     }, 13.12);
-
-
                 },
                 onSubmit: function (d) {
                     var $errormsg = d.find('.errormsg');

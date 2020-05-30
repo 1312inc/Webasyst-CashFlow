@@ -31,4 +31,14 @@ final class cashHelper
 
         return $storefronts;
     }
+
+    /**
+     * @param $value
+     *
+     * @return float
+     */
+    public static function parseFloat($value)
+    {
+        return (float)str_replace(',','.',trim($value));
+    }
 }
