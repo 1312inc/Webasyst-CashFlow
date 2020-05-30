@@ -187,7 +187,7 @@
                     }
                 });
             })
-                .on('click.cash', '[data-cash-action="category-dialog"]', function (e) {
+            .on('click.cash', '[data-cash-action="category-dialog"]', function (e) {
                 e.preventDefault();
                 var $this = $(this),
                     categoryId = $this.data('cash-category-id'),
@@ -274,18 +274,41 @@
                     }
                 });
             })
-            self.$content
+
+            $('body')
                 .on('change.cash', '[data-cash-element="account-with-sign"]', function (e) {
-                    debugger;
-                    $(this)
+                    var $select = $(this),
+                        $dialog = $select.closest('.dialog'),
+                        $selected = $select.find(':selected'),
+                        sign = $selected.data('cash-account-currency-sign'),
+                        icon = $selected.data('cash-account-icon'),
+                        iconLink = $selected.data('cash-account-icon-link');
+
+                    $dialog
                         .find('[data-cash-transaction-account-currency]')
-                        .text($(this).find(':selected').data('cash-account-currency-sign'))
+                        .text(sign);
+
+                    if (icon) {
+                        $dialog.find('[data-cash-transaction-account-icon]')
+                            .removeClass().addClass('icon16 ' + icon).removeAttr('style');
+                    } else {
+                        $dialog.find('[data-cash-transaction-account-icon]')
+                            .removeClass().addClass('icon16')
+                            .css({
+                                'background-image': 'url(' + iconLink + ')',
+                                'background-size': '16px 16px'
+                            });
+                    }
                 })
                 .on('change.cash', '[data-cash-element="category-with-color"]', function (e) {
-                    $(this)
+                    var $select = $(this),
+                        $dialog = $select.closest('.dialog');
+
+                    $dialog
                         .find('[data-cash-transaction-category]')
-                        .css('background', $(this).find(':selected').data('cash-category-color'))
+                        .css('background', $select.find(':selected').data('cash-category-color'))
                 });
+
             self.$sidebar
                 .on('click.cash', '[data-cash-action="imports-delete"]', function (e) {
                 e.preventDefault();

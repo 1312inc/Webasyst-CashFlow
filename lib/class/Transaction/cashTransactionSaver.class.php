@@ -67,6 +67,8 @@ class cashTransactionSaver extends cashEntitySaver
             return false;
         }
 
+        $data['amount'] = cashHelper::parseFloat($data['amount']);
+
         return true;
     }
 
