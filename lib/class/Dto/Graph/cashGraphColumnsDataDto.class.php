@@ -337,6 +337,10 @@ class cashGraphColumnsDataDto extends cashAbstractDto
 //            }
         }
 
+        if (empty($this->columns)) {
+            $data['empty'] = true;
+        }
+
         return $data;
     }
 }

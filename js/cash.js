@@ -405,7 +405,7 @@
                 'id': filterId,
                 'filter': filterType
             }, function (r) {
-                if (r.status === 'ok') {
+                if (r.status === 'ok' && !r.data.empty) {
                     var chart = c3.generate({
                         bindto: bindToSelector,
                         data: r.data.data,
