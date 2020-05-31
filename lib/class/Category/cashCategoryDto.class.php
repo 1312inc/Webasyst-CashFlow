@@ -1,6 +1,8 @@
 <?php
 
-
+/**
+ * Class cashCategoryDto
+ */
 class cashCategoryDto extends cashAbstractDto
 {
     /**

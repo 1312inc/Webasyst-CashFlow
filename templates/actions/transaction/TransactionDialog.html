@@ -195,7 +195,7 @@
                         <div class="value no-shift">
                             <i class="icon16 color" data-cash-transaction-category style="background: #dddddd;"></i>
                             <select name="transaction[category_id]" data-cash-element="category-with-color">
-                                <option value="0" data-cash-category-color="{cashColorStorage::DEFAULT_NO_CATEGORY_GRAPH_COLOR}">[`No category`]</option>
+                                <option value="0" data-cash-category-color="{cashCategoryFactory::NO_CATEGORY_COLOR}">[`No category`]</option>
                                 {foreach $categories as $category}
                                     <option value="{$category->id}"
                                             {if $category->id == $transaction->category->id}selected{/if}
