@@ -37,7 +37,7 @@
                     <i class="icon16 color" data-cash-transaction-category style="background: none;"></i>
                     <select name="move[category_id]" data-cash-element="category-with-color">
                         <option value="-1">[`Do not change`]</option>
-                        <option value="0" data-cash-category-color="{cashColorStorage::DEFAULT_NO_CATEGORY_GRAPH_COLOR}">[`No category`]</option>
+                        <option value="0" data-cash-category-color="{cashCategoryFactory::NO_CATEGORY_COLOR}">[`No category`]</option>
                         <optgroup label="[`Income`]">
                         {foreach $categoriesIncome as $category}
                             <option value="{$category->id}"

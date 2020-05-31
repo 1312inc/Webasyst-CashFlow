@@ -5,8 +5,7 @@
  */
 final class cashColorStorage
 {
-    const DEFAULT_NO_CATEGORY_GRAPH_COLOR = '#dddddd';
-    const DEFAULT_ACCOUNT_GRAPH_COLOR     = '#ffd700';
+    const DEFAULT_ACCOUNT_GRAPH_COLOR = '#ffd700';
 
     /**
      * @return array
@@ -100,7 +99,7 @@ final class cashColorStorage
             '#D4E157',
             '#DCE775',
             '#E6EE9C',
-            '#F0F4C3'
+            '#F0F4C3',
 
         ];
     }

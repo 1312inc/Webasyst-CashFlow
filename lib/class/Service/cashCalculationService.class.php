@@ -152,7 +152,7 @@ final class cashCalculationService
             if (!isset($summary[$datum['id']])) {
                 if (!$datum['id']) {
                     $datum['name'] = _w('No category');
-                    $datum['color'] = cashColorStorage::DEFAULT_NO_CATEGORY_GRAPH_COLOR;
+                    $datum['color'] = cashCategoryFactory::NO_CATEGORY_COLOR;
                 }
                 $category = new cashCategoryDto($datum);
                 $summary[$datum['id']] = new cashStatCategoryDetailedDto($category);

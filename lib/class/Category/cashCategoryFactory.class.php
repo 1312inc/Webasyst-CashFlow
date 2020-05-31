@@ -7,6 +7,7 @@ class cashCategoryFactory extends cashBaseFactory
 {
     const NO_CATEGORY_EXPENSE_ID = -1;
     const NO_CATEGORY_INCOME_ID = -2;
+    const NO_CATEGORY_COLOR = '#dddddd';
 
     /**
      * @return cashCategory
@@ -33,8 +34,8 @@ class cashCategoryFactory extends cashBaseFactory
      */
     public function createNewNoCategoryExpense()
     {
-        return $this->createNew()
-            ->setName(_w('No category'))
+        return $this->createNewNoCategory()
+            ->setColor(self::NO_CATEGORY_COLOR)
             ->setId(self::NO_CATEGORY_EXPENSE_ID);
     }
 
@@ -44,8 +45,8 @@ class cashCategoryFactory extends cashBaseFactory
      */
     public function createNewNoCategoryIncome()
     {
-        return $this->createNew()
-            ->setName(_w('No category'))
+        return $this->createNewNoCategory()
+            ->setColor(self::NO_CATEGORY_COLOR)
             ->setId(self::NO_CATEGORY_INCOME_ID);
     }
 }
