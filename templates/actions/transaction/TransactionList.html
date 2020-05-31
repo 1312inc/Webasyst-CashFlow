@@ -8,6 +8,12 @@
 {** @var cashStatOnDateDto[] $onHandsEndday **}
 {** @var cashTransactionListSettingsDto $listSettings **}
 
+{if empty($upcoming) && empty($completed)}
+
+[`No transactions in the selected period.`]
+
+{else}
+
 <section id="cash-transaction-list">
 <div class="c-table-header">
     {if $listSettings->showOnHandsEndday}
@@ -527,3 +533,5 @@
         }, 50));
     })()
 </script>
+
+{/if}
