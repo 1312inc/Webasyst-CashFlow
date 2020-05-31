@@ -12,49 +12,9 @@
                 <h1>[`Settings`]</h1>
 
                 <div class="fields form">
-                    <div class="field">
-                        <div class="name">[`Categories`]</div>
-                        <div class="value no-shift">
-                            <div class="c-settings-columns">
-                                <div class="c-column">
-                                    <ul class="menu-v with-icons" data-sortable-type="category">
-                                        {foreach $incomes as $category}
-                                        <li data-id="{$category->id}">
-                                             <a href="#/income/{$category->id}"><i class="icon16 sort c-ousted-sort-icon"></i><i class="icon16 color" style="background: {$category->color|default:'#47ce6f'};"></i>{$category->name|escape}</a>
-                                        </li>
-                                        {/foreach}
-                                        <li class="small top-padded">
-                                            <a href="#"
-                                               data-cash-action="category-dialog"
-                                               data-cash-category-type="income"
-                                               data-cash-category-after-save="redispatch"
-                                            ><i class="icon10 add"></i>[`New income category`]</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="c-column">
-                                    <ul class="menu-v with-icons" data-sortable-type="category">
-                                        {foreach $expenses as $category}
-                                        <li data-id="{$category->id}">
-                                             <a href="#/income/{$category->id}"><i class="icon16 sort c-ousted-sort-icon"></i><i class="icon16 color" style="background: {$category->color|default:'#47ce6f'};"></i>{$category->name|escape}</a>
-                                        </li>
-                                        {/foreach}
-                                        <li class="small top-padded">
-                                            <a href="#"
-                                               data-cash-action="category-dialog"
-                                               data-cash-category-type="expense"
-                                               data-cash-category-after-save="redispatch"
-                                            ><i class="icon10 add"></i>[`New expense category`]</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     {if $wa->shop}
 
-                        {if $shopIsOld || 1}Старый магазин. Минимально 8{/if}
+                        {if $shopIsOld || 1}<br><br><br>Старый магазин. Минимально 8<br><br><br>{/if}
 
                     <form id="cash-shopscript-settings">
                     <h2>Shop-Script</h2>
@@ -252,8 +212,6 @@
 <script>
     'use strict';
     (function () {
-        $.cash.sortable($('#cash-settings').find('[data-sortable-type]'));
-
         var $ssform = $('#cash-shopscript-settings');
 
         if ($ssform.length) {
