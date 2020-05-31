@@ -276,23 +276,28 @@
             })
 
             $('body')
-                .on('change.cash', '[data-cash-element="account-with-sign"]', function (e) {
+                .on('change.cash', '[data-cash-element-account-with-sign]', function (e) {
                     var $select = $(this),
                         $dialog = $select.closest('.dialog'),
                         $selected = $select.find(':selected'),
-                        sign = $selected.data('cash-account-currency-sign'),
-                        icon = $selected.data('cash-account-icon'),
-                        iconLink = $selected.data('cash-account-icon-link');
+                        sign = $selected.data('cash-account-currency-sign');
 
                     $dialog
                         .find('[data-cash-transaction-account-currency]')
                         .text(sign);
+                })
+                .on('change.cash', '[data-cash-element-account-with-icon]', function (e) {
+                    var $select = $(this),
+                        $wrapper = $select.closest('.field'),
+                        $selected = $select.find(':selected'),
+                        icon = $selected.data('cash-account-icon'),
+                        iconLink = $selected.data('cash-account-icon-link');
 
                     if (icon) {
-                        $dialog.find('[data-cash-transaction-account-icon]')
+                        $wrapper.find('[data-cash-transaction-account-icon]')
                             .removeClass().addClass('icon16 ' + icon).removeAttr('style');
                     } else {
-                        $dialog.find('[data-cash-transaction-account-icon]')
+                        $wrapper.find('[data-cash-transaction-account-icon]')
                             .removeClass().addClass('icon16')
                             .css({
                                 'background-image': 'url(' + iconLink + ')',
@@ -300,11 +305,11 @@
                             });
                     }
                 })
-                .on('change.cash', '[data-cash-element="category-with-color"]', function (e) {
+                .on('change.cash', '[data-cash-element-category-with-color]', function (e) {
                     var $select = $(this),
-                        $dialog = $select.closest('.dialog');
+                        $wrapper = $select.closest('.field');
 
-                    $dialog
+                    $wrapper
                         .find('[data-cash-transaction-category]')
                         .css('background', $select.find(':selected').data('cash-category-color'))
                 });

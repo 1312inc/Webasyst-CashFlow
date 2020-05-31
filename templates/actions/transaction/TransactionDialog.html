@@ -174,7 +174,10 @@
                                data-cash-transaction-account-icon
                                {if $account->iconLink}style="background-image: url('{$account->iconLink}'); background-size: 16px 16px;"{/if}
                             ></i>
-                            <select name="transaction[account_id]" data-cash-element="account-with-sign">
+                            <select name="transaction[account_id]"
+                                    data-cash-element-account-with-sign
+                                    data-cash-element-account-with-icon
+                            >
                                 {foreach $accounts as $account}
                                     <option value="{$account->id}"
                                             {if $account->id == $transaction->account->id}selected{/if}
@@ -194,7 +197,7 @@
                         </div>
                         <div class="value no-shift">
                             <i class="icon16 color" data-cash-transaction-category style="background: #dddddd;"></i>
-                            <select name="transaction[category_id]" data-cash-element="category-with-color">
+                            <select name="transaction[category_id]" data-cash-element-category-with-color>
                                 <option value="0" data-cash-category-color="{cashCategoryFactory::NO_CATEGORY_COLOR}">[`No category`]</option>
                                 {foreach $categories as $category}
                                     <option value="{$category->id}"
@@ -225,9 +228,19 @@
                             [`Transaction account to transfer`]
                         </div>
                         <div class="value">
-                            <select name="transfer[account_id]">
+                            {$account = reset($accounts)}
+                            <i class="icon16 {$account->icon}"
+                               data-cash-transaction-account-icon
+                               {if $account->iconLink}style="background-image: url('{$account->iconLink}'); background-size: 16px 16px;"{/if}
+                            ></i>
+                            <select name="transfer[account_id]" data-cash-element-account-with-icon>
                                 {foreach $accounts as $account}
-                                    <option value="{$account->id}">
+                                    <option value="{$account->id}"
+                                            data-cash-account-currency-sign="{$account->currency->getSign()|escape}"
+                                            data-cash-account-icon="{$account->icon}"
+                                            data-cash-account-icon-link="{$account->iconLink}"
+
+                                    >
                                         {$account->name|escape} ({$account->currency->getSign()|escape})
                                     </option>
                                 {/foreach}
@@ -242,10 +255,14 @@
                                 [`Transaction category to transfer`]
                             </div>
                             <div class="value">
-                                <select name="transfer[category_id]">
+                                <i class="icon16 color" data-cash-transaction-category style="background: #dddddd;"></i>
+                                <select name="transfer[category_id]" data-cash-element-category-with-color>
                                     <option value="0">[`No category`]</option>
                                     {foreach $categoriesIncome as $category}
-                                        <option value="{$category->id}" {if $category->id == $transaction->category->id}selected{/if}>
+                                        <option value="{$category->id}"
+                                                {if $category->id == $transaction->category->id}selected{/if}
+                                                data-cash-category-color="{$category->color}"
+                                        >
                                             {$category->name|escape}
                                         </option>
                                     {/foreach}
