@@ -28,6 +28,8 @@ class cashBackendLocAction extends cashViewAction
             'New expense category: ',
             'Enter format',
             'transactions',
+            'Start repeat',
+            'Date',
         ];
         foreach ($translates as $s) {
             $strings[$s] = _w($s);

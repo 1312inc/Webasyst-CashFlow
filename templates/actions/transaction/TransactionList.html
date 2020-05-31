@@ -288,17 +288,20 @@
                         classContainer: 'ibutton-container mini',
                         change: function ($input) {
                             var $w = $input.closest('.menu-h'),
-                                $left = $w.find('li:first'),
-                                $right = $w.find('li:last'),
-                                $repeating = $dialogWrapper.find('[data-cash-repeating-settings]');
+                                $left = $dialogWrapper.find('li:first'),
+                                $right = $dialogWrapper.find('li:last'),
+                                $repeating = $dialogWrapper.find('[data-cash-repeating-settings]'),
+                                $date = $dialogWrapper.find('[name="transaction[date]"]').closest('.field').find('.name');
 
                             $left.find('span').toggleClass('gray');
                             $right.find('span').toggleClass('gray');
 
                             if ($input.is(':checked')) {
                                 $repeating.show();
+                                $date.text($_('Start repeat'));
                             } else {
                                 $repeating.hide();
+                                $date.text($_('Date'));
                             }
                         }
                     });
@@ -319,6 +322,16 @@
                         };
 
                         $dialogWrapper.find('[name="transaction[date]"]').datepicker(datepicker_options);
+                        $dialogWrapper.find('[name="transaction[date]"]').on('change.cash', function (e) {
+                            var $this = $(this);
+                            $.post('?module=json&action=whichDateIs', {
+                                date: $this.val()
+                            }, function (r) {
+                                if (r.status === 'ok') {
+                                    $this.closest('.value').find('.hint').text(r.data);
+                                }
+                            }, 'json')
+                        });
                         $dialogWrapper.find('[name="repeating[end][ondate]"]').datepicker(datepicker_options);
                     };
 
