@@ -50,6 +50,15 @@
                     <a href="#/category/{$income->id}"><i class="icon16 color" style="background: {$income->color|default:'#47ce6f'};"></i>{$income->name|escape}</a>
                 </li>
                 {/foreach}
+
+                {if 1 || IS_APP_ADMIN}
+                    <li class="small">
+                        <a href="#"
+                           data-cash-action="category-dialog"
+                           data-cash-category-type="income"
+                        ><i class="icon10 add"></i>[`New income category`]</a>
+                    </li>
+                {/if}
             </ul>
         </div>
     {/if}
@@ -66,6 +75,15 @@
                     <a href="#/category/{$expense->id}"><i class="icon16 color" style="background: {$expense->color|default:'#f56b68'};"></i>{$expense->name|escape}</a>
                 </li>
                 {/foreach}
+
+                {if 1 || IS_APP_ADMIN}
+                    <li class="small">
+                        <a href="#"
+                           data-cash-action="category-dialog"
+                           data-cash-category-type="expense"
+                        ><i class="icon10 add"></i>[`New expense category`]</a>
+                    </li>
+                {/if}
             </ul>
         </div>
     {/if}
