@@ -48,12 +48,6 @@ class cashCategorySaver extends cashEntitySaver
      */
     public function validate(array $data)
     {
-        if (empty($data['name'])) {
-            $this->error = _w('No category name');
-
-            return false;
-        }
-
         $data['name'] = trim($data['name']);
         if ($data['name'] === '') {
             $this->error = _w('Empty category name');

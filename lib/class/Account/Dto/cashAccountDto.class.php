@@ -82,6 +82,7 @@ class cashAccountDto extends cashAbstractDto
             $this->currency = cashCurrencyVO::fromWaCurrency($data['currency']);
             if (isset($data['icon']) && strpos($data['icon'], 'http') !== false) {
                 $this->iconLink = $this->icon;
+                $this->icon = '';
             }
         } else {
             $this->name = _w('New account');
