@@ -273,6 +273,11 @@
                                 $delete.find('span').text($delete.data('cash-transaction-text'));
                             }
                         })
+                        .on('keydown.cash change.cash', '[name="transaction[amount]"]', function (e) {
+                            var val = this.value;
+
+                            this.value = val.replace(/[^\-0-9\.,]/g, '');
+                        })
                     ;
 
                     $dialogWrapper.find('select').trigger('change.cash');
