@@ -41,9 +41,10 @@ class cashTransactionBulkMoveController extends cashJsonController
         }
 
         $fields = cash()->getModel(cashTransaction::class)->getMetadata();
+        $params = new cashTransactionSaveParamsDto();
         foreach ($transactions as $transaction) {
             $transactionData = cash()->getHydrator()->extract($transaction, [], $fields);
-            $saver->saveFromArray($transaction, array_merge($transactionData, $updateData));
+            $saver->saveFromArray($transaction, array_merge($transactionData, $updateData), $params);
         }
     }
 }

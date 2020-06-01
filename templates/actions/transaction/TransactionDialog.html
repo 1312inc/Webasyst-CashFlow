@@ -9,7 +9,7 @@
     <div class="dialog-content">
         <div data-cash-wrapper="transaction-add-dialog">
             <input type="hidden" name="transaction[id]" value="{$transaction->id|default:0}"/>
-            <input type="hidden" name="transaction[category_type]" value="{$categoryType}"/>
+            <input type="hidden" name="category_type" value="{$categoryType}"/>
 
             <h1>
                 {if $transaction->id}
@@ -32,7 +32,10 @@
                         <div class="value no-shift">
                             <ul class="menu-h">
                                 <li><span>[`One time`]</span></li>
-                                <li><input type="checkbox" id="c-transaction-type"/></li>
+                                <li>
+                                    <input type="hidden" name="transaction[amount]" value="0"/>
+                                    <input type="checkbox" id="c-transaction-type" name="is_repeating" value="1"/>
+                                </li>
                                 <li><span class="gray">[`Repeating`]</span></li>
                             </ul>
                         </div>

@@ -154,7 +154,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             $this->types[$category] = 'bar';
         }
         foreach ($this->accounts as $account) {
-            $this->types[$account] = 'line';
+            $this->types[$account] = 'area-spline';
         }
     }
 
@@ -195,6 +195,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             }
         }
 
+        $lineIds = [];
         if (in_array(
             $this->filterDto->type,
             [cashTransactionPageFilterDto::FILTER_ACCOUNT, cashTransactionPageFilterDto::FILTER_IMPORT],
@@ -208,6 +209,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 $names[$lineId] = sprintf('%s (%s)', $account['name'], $account['currency']);
                 $colors[$lineId] = cashColorStorage::DEFAULT_ACCOUNT_GRAPH_COLOR;
 //                }
+                $lineIds[] = $lineId;
             }
         }
 
@@ -249,6 +251,10 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 'y' => ['lines' => [['value' => 0]]],
             ],
             'line' => ['connectNull' => true],
+            'helpers' => [
+                'lineIds' => $lineIds,
+                'itemsCount' => count($this->dates)
+            ]
         ];
 
         if ($this->endDate->format('Y-m-d') > $this->currentDate) {

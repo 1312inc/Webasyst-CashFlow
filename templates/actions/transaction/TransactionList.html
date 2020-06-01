@@ -282,7 +282,7 @@
                         .on('keydown.cash change.cash', '[name="transaction[amount]"]', function (e) {
                             var val = this.value;
 
-                            this.value = val.replace(/[^\-0-9\.,]/g, '');
+                            this.value = val.replace(/[^0-9\.,]/g, '');
                         })
                     ;
 
