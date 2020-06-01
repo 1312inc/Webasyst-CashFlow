@@ -154,7 +154,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             $this->types[$category] = 'bar';
         }
         foreach ($this->accounts as $account) {
-            $this->types[$account] = 'area-spline';
+            $this->types[$account] = 'line';
         }
     }
 
@@ -164,7 +164,45 @@ class cashGraphColumnsDataDto extends cashAbstractDto
      */
     public function jsonSerialize()
     {
-        $columns = [];
+        $colors = $names = $regions = $lineIds = $columns = [];
+
+        if (in_array(
+            $this->filterDto->type,
+            [cashTransactionPageFilterDto::FILTER_ACCOUNT, cashTransactionPageFilterDto::FILTER_IMPORT],
+            true
+        )) {
+            $linesGroupedByCurrency = [];
+            foreach ($this->lines as $lineId => $lineData) {
+                $account = cash()->getModel(cashAccount::class)->getById($lineId);
+
+                if ($this->filterDto->id) {
+                    $names[$lineId] = sprintf('%s (%s)', $account['name'], $account['currency']);
+                    $colors[$lineId] = cashColorStorage::DEFAULT_ACCOUNT_GRAPH_COLOR;
+                } else {
+                    if (!isset($linesGroupedByCurrency[$account['currency']])) {
+                        $linesGroupedByCurrency[$account['currency']] = [];
+                        $colors[$account['currency']] = cashColorStorage::DEFAULT_ACCOUNT_GRAPH_COLOR;
+                    }
+
+                    foreach ($lineData as $date => $value) {
+                        if (!isset($linesGroupedByCurrency[$account['currency']][$date])) {
+                            $linesGroupedByCurrency[$account['currency']][$date] = 0;
+                        }
+                        $linesGroupedByCurrency[$account['currency']][$date] += $value;
+                        if ($linesGroupedByCurrency[$account['currency']][$date] == 0) {
+                            $linesGroupedByCurrency[$account['currency']][$date] = null;
+                        }
+                    }
+                }
+            }
+
+            if ($linesGroupedByCurrency) {
+                $this->lines = $linesGroupedByCurrency;
+            }
+
+            $lineIds = array_keys($this->lines);
+        }
+
         foreach ($this->columns as $name => $data) {
             if (in_array($name, $this->groups[$this->categories[$name]['currency']]['expense'])) {
                 array_unshift($columns, array_values(array_merge([$name], $data)));
@@ -177,7 +215,6 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             $columns[] = array_values(array_merge([$name], $data));
         }
 
-        $colors = $names = $regions = [];
 
         $categories = cash()->getModel(cashCategory::class)->getAllActive();
         foreach ($this->categories as $hash => $category) {
@@ -192,24 +229,6 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                     $category['currency']
                 );
                 $colors[$hash] = cashCategoryFactory::NO_CATEGORY_COLOR;
-            }
-        }
-
-        $lineIds = [];
-        if (in_array(
-            $this->filterDto->type,
-            [cashTransactionPageFilterDto::FILTER_ACCOUNT, cashTransactionPageFilterDto::FILTER_IMPORT],
-            true
-        )) {
-            foreach ($this->lines as $lineId => $lineData) {
-//                $regions[$lineId] = [['start' => $this->currentDate, 'style' => 'dashed']];
-
-//                if ($lineId !== self::ALL_ACCOUNTS_GRAPH_NAME) {
-                $account = cash()->getModel(cashAccount::class)->getById($lineId);
-                $names[$lineId] = sprintf('%s (%s)', $account['name'], $account['currency']);
-                $colors[$lineId] = cashColorStorage::DEFAULT_ACCOUNT_GRAPH_COLOR;
-//                }
-                $lineIds[] = $lineId;
             }
         }
 
@@ -243,8 +262,8 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                     'type' => 'timeseries',
                     'tick' => [
                         'count' => 4,
-                        'format' => '%Y-%m-%d'
-                    ]
+                        'format' => '%Y-%m-%d',
+                    ],
                 ],
             ],
             'grid' => [
@@ -253,8 +272,8 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             'line' => ['connectNull' => true],
             'helpers' => [
                 'lineIds' => $lineIds,
-                'itemsCount' => count($this->dates)
-            ]
+                'itemsCount' => count($this->dates),
+            ],
         ];
 
         if ($this->endDate->format('Y-m-d') > $this->currentDate) {
@@ -283,7 +302,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
         $tickStartDate = clone $this->startDate;
         if ($this->grouping === cashGraphService::GROUP_BY_DAY) {
             $tickValues[] = $tickStartDate->format('Y-m-d');
-            $ticksInterval = max(round($tickCountDiff->days/25), 1);
+            $ticksInterval = max(round($tickCountDiff->days / 25), 1);
             while ($tickStartDate <= $this->endDate) {
                 $tickValues[] = $tickStartDate->modify("+{$ticksInterval} days")->format('Y-m-d');
             }
@@ -326,7 +345,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                     ];
 
                     $data['axis']['y'] = [
-                        'show' => false
+                        'show' => false,
                     ];
                 }
             }
