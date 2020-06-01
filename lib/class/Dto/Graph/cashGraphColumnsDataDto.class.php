@@ -347,6 +347,8 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             $data['empty'] = true;
         }
 
+        $data['legend'] = ['hide' => array_keys($this->columns)];
+
         return $data;
     }
 }

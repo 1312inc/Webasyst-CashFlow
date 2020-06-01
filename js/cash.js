@@ -445,9 +445,7 @@
                         grid: graph.grid,
                         line: graph.line,
                         regions: graph.regions,
-                        legend: {
-                            show: false
-                        }
+                        legend: graph.legend
                     });
 
                     // indexies = d3.range(graph.helpers.itemsCount);
