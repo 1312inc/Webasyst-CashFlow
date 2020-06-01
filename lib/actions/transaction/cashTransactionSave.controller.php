@@ -14,6 +14,9 @@ class cashTransactionSaveController extends cashJsonController
         $data = waRequest::post('transaction', [], waRequest::TYPE_ARRAY);
         $transfer = waRequest::post('transfer', [], waRequest::TYPE_ARRAY);
         $repeating = waRequest::post('repeating', [], waRequest::TYPE_ARRAY);
+        $isRepeating = waRequest::post('is_repeating', 0, waRequest::TYPE_INT);
+        $categoryType = waRequest::post('category_type', cashCategory::TYPE_INCOME, waRequest::TYPE_STRING_TRIM);
+
         $isNew = empty($data['id']);
 
         $saver = new cashTransactionSaver();
@@ -27,13 +30,16 @@ class cashTransactionSaveController extends cashJsonController
             $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
         }
 
-        if (!$saver->saveFromArray($transaction, $data, ['transfer' => $transfer])) {
+        $paramsDto = new cashTransactionSaveParamsDto();
+        $paramsDto->transfer = $transfer;
+        $paramsDto->categoryType = $categoryType;
+        if (!$saver->saveFromArray($transaction, $data, $paramsDto)) {
             $this->errors[] = $saver->getError();
 
             return;
         }
 
-        if ($repeating) {
+        if ($isRepeating && $repeating) {
             $repeatingDto = new cashRepeatingTransactionSettingsDto($repeating);
             if($repeatingDto->interval) {
                 $repeatTransactionSaver = new cashRepeatingTransactionSaver();

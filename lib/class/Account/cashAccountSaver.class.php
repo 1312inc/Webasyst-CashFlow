@@ -6,13 +6,13 @@
 class cashAccountSaver extends cashEntitySaver
 {
     /**
-     * @param cashAccount $account
-     * @param array       $data
-     * @param array       $params
+     * @param cashAccount                  $account
+     * @param array                        $data
+     * @param cashTransactionSaveParamsDto $params
      *
      * @return bool
      */
-    public function saveFromArray($account, array $data, array $params = [])
+    public function saveFromArray($account, array $data, cashTransactionSaveParamsDto $params = null)
     {
         if (!$this->validate($data)) {
             return false;

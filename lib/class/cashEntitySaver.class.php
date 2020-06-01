@@ -11,13 +11,13 @@ abstract class cashEntitySaver
     protected $error = '';
 
     /**
-     * @param object $entity
-     * @param array  $data
-     * @param array  $params
+     * @param object                       $entity
+     * @param array                        $data
+     * @param cashTransactionSaveParamsDto $params
      *
      * @return bool|cashAbstractEntity
      */
-    abstract public function saveFromArray($entity, array $data, array $params = []);
+    abstract public function saveFromArray($entity, array $data, cashTransactionSaveParamsDto $params);
 
     /**
      * @param array $data

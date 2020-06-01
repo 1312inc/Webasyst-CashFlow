@@ -17,20 +17,20 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
     }
 
     /**
-     * @param cashRepeatingTransaction $transaction
-     * @param array                    $data
-     * @param array                    $params
+     * @param cashRepeatingTransaction     $transaction
+     * @param array                        $data
+     * @param cashTransactionSaveParamsDto $params
      *
      * @return bool|cashRepeatingTransaction
      * @throws waException
      */
-    public function saveFromArray($transaction, array $data, array $params = [])
+    public function saveFromArray($transaction, array $data, cashTransactionSaveParamsDto $params)
     {
         if (!$this->validate($data)) {
             return false;
         }
 
-        $repeatingSettings = $params['repeating'];
+        $repeatingSettings = new cashRepeatingTransactionSettingsDto($params->repeating);
 
         /** @var cashRepeatingTransaction $model */
         $model = cash()->getModel(cashRepeatingTransaction::class);
@@ -42,21 +42,15 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
 
             $transaction
                 ->setRepeatingFrequency(
-                    !empty($repeatingSettings['frequency'])
-                        ? $repeatingSettings['frequency']
-                        : cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY
+                    $repeatingSettings->frequency ?: cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY
                 )
                 ->setRepeatingInterval(
-                    !empty($repeatingSettings['interval'])
-                        ? $repeatingSettings['interval']
-                        : cashRepeatingTransaction::INTERVAL_DAY
+                    $repeatingSettings->interval ?: cashRepeatingTransaction::INTERVAL_DAY
                 )
                 ->setRepeatingEndType(
-                    !empty($repeatingSettings['end_type'])
-                        ? $repeatingSettings['end_type']
-                        : cashRepeatingTransaction::REPEATING_END_NEVER
+                    $repeatingSettings->end_type ?: cashRepeatingTransaction::REPEATING_END_NEVER
                 )
-                ->setRepeatingEndConditions($repeatingSettings['end']);
+                ->setRepeatingEndConditions($repeatingSettings->end);
 
             cash()->getEntityPersister()->save($transaction);
 
@@ -152,8 +146,9 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
                 $transaction->setRepeatingTransaction($newRepeatingT);
                 $data = $hydrator->extract($transaction, array_keys($model->getMetadata()));
                 unset($data['id'], $data['date'], $data['datetime'], $data['create_datetime']);
+                $params = new cashTransactionSaveParamsDto();
                 foreach ($transactions as $t) {
-                    parent::saveFromArray($t, $data);
+                    parent::saveFromArray($t, $data, $params);
                 }
             }
 
@@ -167,6 +162,10 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         return false;
     }
 
+    /**
+     * @param cashRepeatingTransaction $repeatingT
+     * @param cashTransaction          $transaction
+     */
     private function copyFromTransaction(cashRepeatingTransaction $repeatingT, cashTransaction $transaction)
     {
         $repeatingT
@@ -177,8 +176,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
             ->setDescription($transaction->getDescription())
             ->setDate($transaction->getDate())
             ->setExternalHash($transaction->getExternalHash())
-            ->setExternalSource($transaction->getExternalSource())
-        ;
+            ->setExternalSource($transaction->getExternalSource());
     }
 
     /**

@@ -6,14 +6,14 @@
 class cashTransactionSaver extends cashEntitySaver
 {
     /**
-     * @param cashTransaction $transaction
-     * @param array           $data
-     * @param array           $params
+     * @param cashTransaction              $transaction
+     * @param array                        $data
+     * @param cashTransactionSaveParamsDto $params
      *
      * @return bool|cashTransaction
      * @throws waException
      */
-    public function saveFromArray($transaction, array $data, array $params = [])
+    public function saveFromArray($transaction, array $data, cashTransactionSaveParamsDto $params)
     {
         if (!$this->validate($data)) {
             return false;
@@ -24,12 +24,17 @@ class cashTransactionSaver extends cashEntitySaver
         $model->startTransaction();
 
         try {
+            $data['amount'] = abs($data['amount']);
+            if ($params->categoryType === cashCategory::TYPE_EXPENSE) {
+                $data['amount'] = -$data['amount'];
+            }
+
             $data = $this->addCategoryId($data);
 
             cash()->getHydrator()->hydrate($transaction, $data);
 
-            if (!empty($params['transfer'])) {
-                $this->transfer($transaction, $params['transfer']);
+            if ($params->transfer) {
+                $this->transfer($transaction, $params->transfer);
                 if ($transaction->getAmount() > 0) {
                     $transaction->setAmount(-$transaction->getAmount());
                 }

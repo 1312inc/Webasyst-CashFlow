@@ -85,7 +85,11 @@ final class cashTransactionRepeater
             sprintf('+%d %s', $transaction->getRepeatingFrequency(), $transaction->getRepeatingInterval())
         )->format('Y-m-d H:i:s');
 
-        return $this->transactionSaver->saveFromArray($this->transactionFactory->createNew(), $data);
+        return $this->transactionSaver->saveFromArray(
+            $this->transactionFactory->createNew(),
+            $data,
+            new cashTransactionSaveParamsDto()
+        );
     }
 
     /**
