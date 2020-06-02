@@ -9,17 +9,21 @@
 
             <div class="block double-padded">
 
-                <h1>[`Settings`]</h1>
+                <!-- <h1>[`Settings`]</h1> -->
 
                 <div class="fields form">
                     {if $wa->shop}
 
-                        {if $shopIsOld || 1}<br><br><br>Старый магазин. Минимально 8<br><br><br>{/if}
-
                     <form id="cash-shopscript-settings">
-                    <h2>Shop-Script</h2>
+                    <h1>[`Cash &times; Shop-Script`]</h1>
 
-                    <div class="fields-group">
+                    {if $shopIsOld}
+                        <p><em>[`Shop-Script 8.0 or newer is required. Please install the latest Shop-Script update via the Installer app to enable sales import and Shop-Script &times; Cash integration.`]</em></p>
+                    {else}
+                        <p>[`Enabling Shop-Script integration allows you to automatically import sales (paid orders) data into the Cash app and to forecast your future cash balance.`]</p>
+                    {/if}
+
+                    <div class="fields-group"{if $shopIsOld} style="display: none;"{/if}>
                         <div class="field">
                             <div class="name">[`Enabled`]</div>
                             <div class="value no-shift">
@@ -64,17 +68,19 @@
                                     </option>
                                     {/foreach}
                                 </select>
-                                <a href="#" class="small gray" data-cash-shop-configure-actions="income">[`Configure`]</a>
+                                <a href="#" class="small gray inline-link" data-cash-shop-configure-actions="income"><b><i>[`Configure`]</i></b></a>
                             </div>
                             <div class="value" style="display: none" data-cash-shop-configure-actions-income>
-                                <div>Действия с заказом, которые создают новые income транзакции</div>
-                                <select name="shopscript_settings[actions][income]" multiple>
+                                <div>[`Select all Shop-Script <b>order actions</b> which should generate new income transactions in the Cash app:`]</div>
+                                <select name="shopscript_settings[actions][income]" multiple style="min-height: 130px;">
                                     {foreach $actions as $action}
                                         <option value="{$action->getId()}"
                                                 {if in_array($action->getId(), $shopScriptSettings->getIncomeActions())}selected{/if}
                                         >{$action->getName()}</option>
                                     {/foreach}
                                 </select>
+                                <br>
+                                <span class="hint">[`For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options.`]</span>
                             </div>
 
                             <div class="value no-shift">
@@ -89,17 +95,19 @@
                                     </option>
                                     {/foreach}
                                 </select>
-                                <a href="#" class="small gray" data-cash-shop-configure-actions="expense">[`Configure`]</a>
+                                <a href="#" class="small gray inline-link" data-cash-shop-configure-actions="expense"><b><i>[`Configure`]</i></b></a>
                             </div>
                             <div class="value" style="display: none" data-cash-shop-configure-actions-expense>
-                                <div>Действия с заказом, которые создают новые expense транзакции</div>
-                                <select name="shopscript_settings[actions][expense]" multiple>
+                                <div>[`Select all Shop-Script <b>order actions</b> which should generate new income transactions in the Cash app:`]</div>
+                                <select name="shopscript_settings[actions][expense]" multiple style="min-height: 130px;">
                                     {foreach $actions as $action}
                                         <option value="{$action->getId()}"
                                                 {if in_array($action->getId(), $shopScriptSettings->getExpenseActions())}selected{/if}
                                         >{$action->getName()}</option>
                                     {/foreach}
                                 </select>
+                                <br>
+                                <span class="hint">[`For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options.`]</span>
                             </div>
                         </div>
 
@@ -121,6 +129,8 @@
                                     <p class="hint">[`Useful if you have 'purchase price' field defined for most products in Shop-Script and you don't wish to manually add product purchase transations in the Cash app. Enabling the setting will automatically add expense transactions based on purchase price of the ordered products.`]</p>
                                 </div>
                             </div>
+
+                            Shipping costs?
                         *}
 
                         <div class="field">
