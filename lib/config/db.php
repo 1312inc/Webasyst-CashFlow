@@ -88,6 +88,7 @@ return array(
         'is_archived' => array('tinyint', 1, 'default' => '0'),
         'external_hash' => array('varchar', 32),
         'external_source' => array('varchar', 20),
+        'external_data' => array('text'),
         ':keys' => array(
             'PRIMARY' => 'id',
             'cash_transaction_category_id_index' => 'category_id',

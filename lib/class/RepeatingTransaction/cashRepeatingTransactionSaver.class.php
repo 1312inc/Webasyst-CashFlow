@@ -176,7 +176,8 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
             ->setDescription($transaction->getDescription())
             ->setDate($transaction->getDate())
             ->setExternalHash($transaction->getExternalHash())
-            ->setExternalSource($transaction->getExternalSource());
+            ->setExternalSource($transaction->getExternalSource())
+        ;
     }
 
     /**
