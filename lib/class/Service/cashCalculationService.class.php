@@ -93,25 +93,29 @@ final class cashCalculationService
                     'income' => 0,
                     'expense' => 0,
                     'currency' => cashCurrencyVO::fromWaCurrency($datum['currency']),
+                    'ids' => []
                 ];
             }
             $summaryData[$datum['currency']]['summary'] += $datum['summary'];
             $summaryData[$datum['currency']]['income'] += $datum['income'];
             $summaryData[$datum['currency']]['expense'] += $datum['expense'];
+            $summaryData[$datum['currency']]['ids'][] = $datum['id'];
         }
 
         $summary = [];
         foreach ($summaryData as $currency => $summaryDatum) {
-            if ($summaryDatum['summary'] != 0) {
-                $summary[$currency] = new cashStatOnHandDto(
-                    cashCurrencyVO::fromWaCurrency($currency),
-                    new cashStatOnDateDto(
-                        $summaryDatum['income'],
-                        $summaryDatum['expense'],
-                        $summaryDatum['summary']
-                    )
-                );
+            if ($summaryDatum['summary'] == 0 && $filterIds && $filterIds != $summaryDatum['ids']) {
+                continue;
             }
+
+            $summary[$currency] = new cashStatOnHandDto(
+                cashCurrencyVO::fromWaCurrency($currency),
+                new cashStatOnDateDto(
+                    $summaryDatum['income'],
+                    $summaryDatum['expense'],
+                    $summaryDatum['summary']
+                )
+            );
         }
 
         return $summary;
