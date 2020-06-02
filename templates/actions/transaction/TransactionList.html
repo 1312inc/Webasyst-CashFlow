@@ -89,8 +89,8 @@
         <th></th>
     </tr> -->
 
-{if 0000 && $upcoming}
-    <tr class="white c-table-divider c-planned">
+{if $upcoming}
+    <tr class="white c-table-divider c-planned" style="display: none;">
         <td class="min-width"><input type="checkbox"></td>
         <td colspan="7">
             <h5 class="heading">
@@ -102,7 +102,7 @@
     </tr>
 
     {foreach $upcoming as $t}
-        <tr class="c-planned" data-cash-transaction-id="{$t->id}">
+        <tr class="c-planned" data-cash-transaction-id="{$t->id}" style="display: none;">
             <td class="min-width"><input value="{$t->id}" type="checkbox"></td>
             <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
             <td>
@@ -124,7 +124,7 @@
     {/foreach}
 
     {if $upcomingOnDate}
-    <tr class="white c-planned c-totals">
+    <tr class="white c-planned c-totals" style="display: none;">
         <td colspan="7" class="align-center">
             {if $selectedForecastPeriod}<p>{sprintf('[`Total for the next %s (until %s):`]', {$selectedForecastPeriod->getName()}, {$selectedForecastPeriod->getDateAsString()|wa_date:humandate})}</p>{/if}
             {foreach $upcomingOnDate as $onDateStat}
@@ -151,7 +151,7 @@
         </td>
         <td colspan="4" class="align-right">
             {if $upcoming}
-                <a href="#" class="inline-link nowrap"><b><i>{sprintf( '[`Show %d upcoming transactions (%s)`]', count($upcoming), $selectedForecastPeriod->getName() )}</i></b></a>
+                <a href="#" class="inline-link nowrap" data-cash-action="show-upcoming-transactions"><b><i>{sprintf( '[`Show %d upcoming transactions (%s)`]', count($upcoming), $selectedForecastPeriod->getName() )}</i></b></a>
             {/if}
         </td>
     </tr>
@@ -377,6 +377,61 @@
             $transactionList = $('#cash-transaction-list'),
             settings = {$listSettings|json_encode};
 
+
+        var $allDescriptions = $transactionList.find('[data-cash-transaction-field="description"]');
+        $transactionList
+            .on('click.cash', '[data-cash-action="show-upcoming-transactions"]', function (e) {
+                e.preventDefault();
+                $transactionList.find('.c-planned').slideDown(131.2);
+                $(this).hide();
+            })
+            .on('keyup.cash paste.cash', '[data-cash-action="filter-transactions"]', $.cash.throttle(function () {
+                var text = $.trim($(this).val()),
+                    highlighted = ['<span class="highlighted">', '</span>'];
+
+                $.cash.log('filter transactions by text:' + text);
+
+                $allDescriptions.closest('[data-cash-transaction-id]').show();
+                $allDescriptions.each(function () {
+                    var $desc = $(this),
+                        html = $desc.html(),
+                        startPos = html.indexOf(highlighted[0]),
+                        endPost = html.indexOf(highlighted[1]);
+
+                    if (startPos !== -1) {
+                        var description = $desc.html();
+                        description = description.slice(0, startPos)
+                            + description.slice(startPos + highlighted[0].length, endPost)
+                            + description.slice(endPost + highlighted[1].length)
+                        ;
+                        $desc.html(description);
+                    }
+                });
+
+                if (text) {
+                    $allDescriptions.each(function () {
+                        var $desc = $(this),
+                            startPos = $desc.html().toLowerCase().indexOf("" + text + "");
+
+                        if (startPos === -1) {
+                            $desc.closest('[data-cash-transaction-id]').hide();
+                        } else {
+                            var description = $desc.html();
+                            description = description.slice(0, startPos)
+                                + highlighted[0]
+                                + description.slice(startPos, startPos + text.length)
+                                + highlighted[1]
+                                + description.slice(startPos + text.length)
+                            ;
+                            $desc.html(description);
+                        }
+                    });
+                }
+
+                $transactionList.trigger('updateSelectedCount.cash');
+            }, 50));
+        ;
+
         /*{if $listSettings->addHandler}*/
         $transactionList
             .on('click.cash', '[data-cash-action="add-transaction"]', function (e) {
@@ -484,53 +539,6 @@
             })
         ;
         /*{/if}*/
-
-        var $allDescriptions = $transactionList.find('[data-cash-transaction-field="description"]');
-        $('[data-cash-action="filter-transactions"]').on('keyup.cash paste.cash', $.cash.throttle(function () {
-            var text = $.trim($(this).val()),
-                highlighted = ['<span class="highlighted">', '</span>'];
-
-            $.cash.log('filter transactions by text:' + text);
-
-            $allDescriptions.closest('[data-cash-transaction-id]').show();
-            $allDescriptions.each(function () {
-                var $desc = $(this),
-                    html = $desc.html(),
-                    startPos = html.indexOf(highlighted[0]),
-                    endPost = html.indexOf(highlighted[1]);
-
-                if (startPos !== -1) {
-                    var description = $desc.html();
-                    description = description.slice(0, startPos)
-                        + description.slice(startPos + highlighted[0].length, endPost)
-                        + description.slice(endPost + highlighted[1].length)
-                    ;
-                    $desc.html(description);
-                }
-            });
-
-            if (text) {
-                $allDescriptions.each(function () {
-                    var $desc = $(this),
-                        startPos = $desc.html().toLowerCase().indexOf("" + text + "");
-
-                    if (startPos === -1) {
-                        $desc.closest('[data-cash-transaction-id]').hide();
-                    } else {
-                        var description = $desc.html();
-                        description = description.slice(0, startPos)
-                            + highlighted[0]
-                            + description.slice(startPos, startPos + text.length)
-                            + highlighted[1]
-                            + description.slice(startPos + text.length)
-                        ;
-                        $desc.html(description);
-                    }
-                });
-            }
-
-            $transactionList.trigger('updateSelectedCount.cash');
-        }, 50));
     })()
 </script>
 
