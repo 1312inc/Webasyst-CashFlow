@@ -6,6 +6,7 @@
 class cashTransaction extends cashAbstractEntity
 {
     use kmwaEntityDatetimeTrait;
+    use cashEntityJsonTransformerTrait;
 
     /**
      * @var int
@@ -71,6 +72,11 @@ class cashTransaction extends cashAbstractEntity
      * @var null|string
      */
     protected $external_source = null;
+
+    /**
+     * @var null|array
+     */
+    protected $external_data = null;
 
     /**
      * @var cashCategory|null
@@ -449,6 +455,41 @@ class cashTransaction extends cashAbstractEntity
     public function setExternalSource($external_source)
     {
         $this->external_source = $external_source;
+
+        return $this;
+    }
+
+    public function beforeExtract(array &$fields)
+    {
+        $this->toJson(['external_data']);
+    }
+
+    public function afterExtract(array &$fields)
+    {
+        $this->fromJson(['external_data']);
+    }
+
+    public function afterHydrate($data = [])
+    {
+        $this->fromJson(['external_data']);
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getExternalData()
+    {
+        return $this->external_data;
+    }
+
+    /**
+     * @param array|null $external_data
+     *
+     * @return cashTransaction
+     */
+    public function setExternalData($external_data = null)
+    {
+        $this->external_data = $external_data;
 
         return $this;
     }

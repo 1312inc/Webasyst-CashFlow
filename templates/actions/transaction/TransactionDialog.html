@@ -225,6 +225,12 @@
                         </div>
                     </div>
 
+                    {if $transaction->external_entity}
+                    <div>
+                        {$transaction->external_entity->getHtml()}
+                    </div>
+                    {/if}
+
                     {if $categoryType == cashCategory::TYPE_TRANSFER}
                     <div class="field">
                         <div class="name nowrap">

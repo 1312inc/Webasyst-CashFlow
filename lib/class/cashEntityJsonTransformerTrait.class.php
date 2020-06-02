@@ -13,7 +13,7 @@ trait cashEntityJsonTransformerTrait
         foreach ($properties as $property) {
             if (!is_array($this->$property)) {
                 $this->$property = empty($this->$property)
-                    ? []
+                    ? null
                     : json_decode($this->$property, true);
             }
         }

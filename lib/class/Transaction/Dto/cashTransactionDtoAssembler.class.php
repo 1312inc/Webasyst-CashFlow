@@ -45,6 +45,12 @@ class cashTransactionDtoAssembler
         $transactionDto->currency = $accountDto->currency;
         $transactionDto->category = $categoryDto;
 
+        if ($transaction->getExternalData()) {
+            $transactionDto->external_entity = cashTransactionExternalEntityFactory::createFromTransaction(
+                $transaction
+            );
+        }
+
         return $transactionDto;
     }
 }

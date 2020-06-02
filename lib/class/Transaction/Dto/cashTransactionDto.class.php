@@ -91,6 +91,11 @@ class cashTransactionDto extends cashAbstractDto
     public $is_archived;
 
     /**
+     * @var cashTransactionExternalEntityInterface|null
+     */
+    public $external_entity;
+
+    /**
      * cashTransactionDto constructor.
      *
      * @param array                $data

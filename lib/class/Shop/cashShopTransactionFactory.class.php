@@ -70,7 +70,8 @@ class cashShopTransactionFactory
             ->setCategory($this->getCategory($type))
             ->setExternalHash($externalHash)
             ->setDatetime(date('Y-m-d H:i:s'))
-            ->setExternalSource('shop');
+            ->setExternalSource('shop')
+            ->setExternalData(['id' => $order->getId()]);
 
         // конвертнем валюту заказа в валюту аккаунта
         if ($order->currency !== $transaction->getAccount()->getCurrency()) {
