@@ -314,30 +314,34 @@
 
                     var initDatepicker = function () {
                         var datepicker_options = {
-                            changeMonth: true,
-                            changeYear: true,
-                            shortYearCutoff: 2,
-                            dateShowWeek: false,
-                            showOtherMonths: true,
-                            selectOtherMonths: true,
-                            stepMonths: 1,
-                            numberOfMonths: 1,
-                            gotoCurrent: true,
-                            constrainInput: false,
-                            dateFormat: "yy-mm-dd",
-                        };
+                                changeMonth: true,
+                                changeYear: true,
+                                shortYearCutoff: 2,
+                                dateShowWeek: false,
+                                showOtherMonths: true,
+                                selectOtherMonths: true,
+                                stepMonths: 1,
+                                numberOfMonths: 1,
+                                gotoCurrent: true,
+                                constrainInput: false,
+                                dateFormat: "yy-mm-dd",
+                            },
+                            $datePicker = $dialogWrapper.find('[name="transaction[date]"]');
 
-                        $dialogWrapper.find('[name="transaction[date]"]').datepicker(datepicker_options);
-                        $dialogWrapper.find('[name="transaction[date]"]').on('change.cash', function (e) {
-                            var $this = $(this);
-                            $.post('?module=json&action=whichDateIs', {
-                                date: $this.val()
-                            }, function (r) {
-                                if (r.status === 'ok') {
-                                    $this.closest('.value').find('.hint').text(r.data);
-                                }
-                            }, 'json')
-                        });
+
+                        $datePicker.datepicker(datepicker_options);
+                        $datePicker
+                            .on('change.cash', function (e) {
+                                var $this = $(this);
+                                $.post('?module=json&action=whichDateIs', {
+                                    date: $this.val()
+                                }, function (r) {
+                                    if (r.status === 'ok') {
+                                        $this.closest('.value').find('.hint').text(r.data);
+                                    }
+                                }, 'json')
+                            })
+                            .trigger('change.cash');
                         $dialogWrapper.find('[name="repeating[end][ondate]"]').datepicker(datepicker_options);
                     };
 
