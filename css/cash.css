@@ -6,6 +6,7 @@ i.icon16.color { width: 12px; height: 12px; border: none; }
 ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 
 .c-chart { clear: right; }
+.c-empty-chart-placeholder { height: 200px; text-align: center; padding-top: 120px; color: #aaa; }
 
 .c-transactions { padding: 10px 0; }
 .c-transactions .c-table-header { min-height: 2rem; }

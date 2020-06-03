@@ -8,26 +8,31 @@
 {** @var cashStatOnDateDto[] $onHandsEndday **}
 {** @var cashTransactionListSettingsDto $listSettings **}
 
-{if empty($upcoming) && empty($completed)}
-
-[`No transactions in the selected period.`]
-
-{else}
-
 <section id="cash-transaction-list">
 <div class="c-table-header">
-    {if $listSettings->showOnHandsEndday}
-        <div class="float-right">
-            {sprintf('[`Cash on hand in %s`]', {$selectedForecastPeriod->getName()})}:
 
-            {foreach $onHandsEndday as $onHand}
-                <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
-                {if !$onHand@last}+{/if}
-                {foreachelse}
-                <strong class="c-balance large">0</strong>
-            {/foreach}
-            <span class="hint">{$endDate|wa_date:humandate}</span>
+    {if empty($upcoming) && empty($completed)}
+
+        <div class="c-empty-chart-placeholder">
+            [`No activity in the selected period. Create a transaction to get started!`]
         </div>
+
+    {else}
+
+        {if $listSettings->showOnHandsEndday}
+            <div class="float-right">
+                {sprintf('[`Cash on hand in %s`]', {$selectedForecastPeriod->getName()})}:
+
+                {foreach $onHandsEndday as $onHand}
+                    <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
+                    {if !$onHand@last}+{/if}
+                    {foreachelse}
+                    <strong class="c-balance large">0</strong>
+                {/foreach}
+                <span class="hint">{$endDate|wa_date:humandate}</span>
+            </div>
+        {/if}
+
     {/if}
 
     <ul class="menu-h dropdown c-actions-menu">
@@ -545,5 +550,3 @@
         /*{/if}*/
     })()
 </script>
-
-{/if}
