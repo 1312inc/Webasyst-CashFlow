@@ -164,7 +164,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
      */
     public function jsonSerialize()
     {
-        $colors = $names = $regions = $lineIds = $columns = [];
+        $colors = $names = $regions = $lineIds = $columns = $currencies = [];
 
         if (in_array(
             $this->filterDto->type,
@@ -176,13 +176,16 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 $account = cash()->getModel(cashAccount::class)->getById($lineId);
 
                 if ($this->filterDto->id) {
-                    $names[$lineId] = sprintf('%s (%s)', $account['name'], $account['currency']);
+                    $names[$lineId] = $account['name'];
                     $colors[$lineId] = cashColorStorage::DEFAULT_ACCOUNT_GRAPH_COLOR;
+                    $currencies[$lineId] = cashCurrencyVO::fromWaCurrency($account['currency']);
                 } else {
                     if (!isset($linesGroupedByCurrency[$account['currency']])) {
                         $linesGroupedByCurrency[$account['currency']] = [];
                         $colors[$account['currency']] = cashColorStorage::DEFAULT_ACCOUNT_GRAPH_COLOR;
                     }
+
+                    $currencies[$account['currency']] = cashCurrencyVO::fromWaCurrency($account['currency']);
 
                     foreach ($lineData as $date => $value) {
                         if (!isset($linesGroupedByCurrency[$account['currency']][$date])) {
@@ -219,14 +222,13 @@ class cashGraphColumnsDataDto extends cashAbstractDto
         $categories = cash()->getModel(cashCategory::class)->getAllActive();
         foreach ($this->categories as $hash => $category) {
             if ($category['id'] && isset($categories[$category['id']])) {
-                $names[$hash] = sprintf('%s, %s', $categories[$category['id']]['name'], $category['currency']);
+                $names[$hash] = $categories[$category['id']]['name'];
                 $colors[$hash] = $categories[$category['id']]['color'];
             } else {
                 $names[$hash] = sprintf(
-                    '%s, %s, %s',
+                    '%s, %s',
                     _w('No category'),
-                    in_array($hash, $this->groups[$category['currency']]['expense']) ? _w('expense') : _w('income'),
-                    $category['currency']
+                    in_array($hash, $this->groups[$category['currency']]['expense']) ? _w('expense') : _w('income')
                 );
                 $colors[$hash] = cashCategoryFactory::NO_CATEGORY_COLOR;
             }
@@ -234,6 +236,25 @@ class cashGraphColumnsDataDto extends cashAbstractDto
 
         $xFormat = $this->grouping === cashGraphService::GROUP_BY_DAY ? '%Y-%m-%d' : '%Y-%m';
 //        $xFormat = '%Y-%m-%d';
+
+        $groups = array_filter(
+            array_reduce(
+                $this->groups,
+                function ($groups, $items) {
+                    return array_merge($groups, array_values($items));
+                },
+                []
+            )
+        );
+
+        foreach ($this->groups as $currencyCode => $dataNames) {
+            foreach ($dataNames as $dataName) {
+                foreach ($dataName as $item) {
+                    $currencies[$item] = cashCurrencyVO::fromWaCurrency($currencyCode);
+                }
+            }
+        }
+
         $data = [
             'data' => [
                 'x' => 'dates',
@@ -243,15 +264,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 'line' => ['connectNull' => true],
                 'bar' => ['width' => ['ratio' => 0.2]],
                 'types' => $this->types,
-                'groups' => array_filter(
-                    array_reduce(
-                        $this->groups,
-                        function ($groups, $items) {
-                            return array_merge($groups, array_values($items));
-                        },
-                        []
-                    )
-                ),
+                'groups' => $groups,
                 'regions' => $regions,
                 'colors' => $colors,
                 'names' => $names,
@@ -273,6 +286,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             'helpers' => [
                 'lineIds' => $lineIds,
                 'itemsCount' => count($this->dates),
+                'currencyNames' => $currencies,
             ],
         ];
 
