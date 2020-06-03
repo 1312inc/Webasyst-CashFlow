@@ -445,7 +445,15 @@
                         grid: graph.grid,
                         line: graph.line,
                         regions: graph.regions,
-                        legend: graph.legend
+                        legend: graph.legend,
+                        tooltip: {
+                            format: {
+                                value: function (value, ratio, id, index, t) {
+                                    return ('' + d3.format('~s')(value)).toUpperCase() + ' ' + graph.helpers.currencyNames[id].sign;
+                                }
+//            value: d3.format(',') // apply this format to both y and y2
+                            }
+                        }
                     });
 
                     // indexies = d3.range(graph.helpers.itemsCount);
