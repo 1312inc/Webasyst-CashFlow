@@ -15,7 +15,7 @@
                     {if $wa->shop}
 
                     <form id="cash-shopscript-settings">
-                    <h1>[`Cash &times; Shop-Script`]</h1>
+                    <h1>[`Shop-Script &rarr; Cash`]</h1>
 
                     {if $shopIsOld}
                         <p><em>[`Shop-Script 8.0 or newer is required. Please install the latest Shop-Script update via the Installer app to enable sales import and Shop-Script &times; Cash integration.`]</em></p>
@@ -57,7 +57,7 @@
                             </div>
 
                             <div class="value no-shift">
-                                [`Paid orders`] &rarr;
+                                [`Sales (paid orders)`] &rarr;
                                 <i class="icon16 color" style="background: green;"></i>
                                 <select name="shopscript_settings[categoryIncomeId]">
                                     {foreach $incomes as $category}
@@ -68,11 +68,11 @@
                                     </option>
                                     {/foreach}
                                 </select>
-                                <a href="#" class="small gray inline-link" data-cash-shop-configure-actions="income"><b><i>[`Configure`]</i></b></a>
+                                <a href="#" class="small inline-link" data-cash-shop-configure-actions="income"><b><i>[`Configure pay actions`]</i></b></a>
                             </div>
                             <div class="value" style="display: none" data-cash-shop-configure-actions-income>
-                                <div>[`Select all Shop-Script <b>order actions</b> which should generate new income transactions in the Cash app:`]</div>
-                                <select name="shopscript_settings[actions][income]" multiple style="min-height: 130px;">
+                                <div>[`Select Shop-Script order actions which are directly associated with marking orders as paid. The Cash app will listen only to the selected list of order actions for importing sales:`]</div>
+                                <select name="shopscript_settings[actions][income]" multiple style="min-height: 250px;">
                                     {foreach $actions as $action}
                                         <option value="{$action->getId()}"
                                                 {if in_array($action->getId(), $shopScriptSettings->getIncomeActions())}selected{/if}
@@ -95,10 +95,10 @@
                                     </option>
                                     {/foreach}
                                 </select>
-                                <a href="#" class="small gray inline-link" data-cash-shop-configure-actions="expense"><b><i>[`Configure`]</i></b></a>
+                                <a href="#" class="small inline-link" data-cash-shop-configure-actions="expense"><b><i>[`Configure refund actions`]</i></b></a>
                             </div>
                             <div class="value" style="display: none" data-cash-shop-configure-actions-expense>
-                                <div>[`Select all Shop-Script <b>order actions</b> which should generate new income transactions in the Cash app:`]</div>
+                                <div>[`Select Shop-Script order actions which are related with issueing refunds (cancelling orders that had been paid in the past):`]</div>
                                 <select name="shopscript_settings[actions][expense]" multiple style="min-height: 130px;">
                                     {foreach $actions as $action}
                                         <option value="{$action->getId()}"
@@ -109,27 +109,54 @@
                                 <br>
                                 <span class="hint">[`For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options.`]</span>
                             </div>
-                        </div>
 
-                        {*
-                            /// v2 maybe? ///
-
-                            <div class="field">
-                                <div class="name">
-                                    [`Product purchases`]
-                                </div>
-                                <div class="value no-shift">
-                                    <label><input type="checkbox" checked> [`Import automatically from Shop-Script when product purchase price is defined`]</label>
-                                    <br><br>
-                                    [`Product purchases`] &rarr;
-                                    <i class="icon16 color" style="background: orange;"></i>
-                                    <select>
-                                        {foreach $categories_expense as $c}<option>{$c[0]}</option>{/foreach}
-                                    </select>
-                                    <p class="hint">[`Useful if you have 'purchase price' field defined for most products in Shop-Script and you don't wish to manually add product purchase transations in the Cash app. Enabling the setting will automatically add expense transactions based on purchase price of the ordered products.`]</p>
-                                </div>
+                            <div class="value no-shift">
+                                <br>
+                                [`Product purchases`] &rarr;
+                                <i class="icon16 color" style="background: orange;"></i>
+                                <select>
+                                    <option>[`Don’t import`]</option>
+                                    {foreach $expenses as $category}
+                                        <option value="{$category->id}">{$category->name|escape}</option>
+                                    {/foreach}
+                                </select>
+                                <br>
+                                <span class="hint">[`Enabling the setting will automatically add expense transactions based on purchase price of all ordered products. Useful if you have 'purchase price' field defined for most products in Shop-Script and you don't wish to manually add product purchase transations in the Cash app.`]</span>
+                            </div>
+                            <div class="value no-shift">
+                                [`Shipping costs`] &rarr;
+                                <i class="icon16 color" style="background: orange;"></i>
+                                <select>
+                                    <option>[`Don’t import`]</option>
+                                    {foreach $expenses as $category}
+                                        <option value="{$category->id}">{$category->name|escape}</option>
+                                    {/foreach}
+                                </select>
+                                <br>
+                                <span class="hint">[`Enabling the setting will automatically add expense transactions based on shipping costs for each order.`]</span>
+                            </div>
+                            <div class="value no-shift">
+                                [`Taxes`] &rarr;
+                                <i class="icon16 color" style="background: orange;"></i>
+                                <select>
+                                    <option>[`Don’t import`]</option>
+                                    {foreach $expenses as $category}
+                                        <option value="{$category->id}">{$category->name|escape}</option>
+                                    {/foreach}
+                                </select>
+                                <br>
+                                <span class="hint">[`Enabling the setting will automatically add expense transactions based on tax amount for each order.`]</span>
+                                <br><br>
                             </div>
 
+                        </div>
+
+
+
+
+
+
+{*
                             Shipping costs?
                         *}
 
@@ -147,7 +174,7 @@
                                            value="1" />
                                     [`Enable average forecasted sales (recommended)`]
                                 </label>
-                                <p class="hint">{sprintf('[`<b>Works like magic!</b> Average daily sales will be automatically added as planned transactions for better budget forecasting. When the day comes, forecasted sales for this day will be cleared automatically and replaced with the real sales data.`]')}</p>
+                                <p class="hint">{sprintf('[`<b>Works like magic!</b> Average daily sales will be automatically added as planned transactions for better budget forecasting. When a new day comes, forecasted sales for this day will be cleared automatically and replaced with real sales (paid orders) data.`]')}</p>
                             </div>
 
                             <div class="value no-shift">
