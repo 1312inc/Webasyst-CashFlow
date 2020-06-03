@@ -406,21 +406,7 @@
                 'filter': filterType
             }, function (r) {
                 if (r.status === 'ok' && !r.data.empty) {
-                    var graph = r.data,
-                        indexies = null,
-                        yscale = null,
-                        xscale = null,
-                        c3data = null;
-
-                    if (graph.helpers.lineIds) {
-                        graph.data['color'] = function (color, d) {
-                            if (d.id && d.value && $.inArray(d.id, graph.helpers.lineIds) !== -1 && d.value < 0) {
-                                return 'red';
-                            }
-
-                            return color;
-                        }
-                    }
+                    var graph = r.data;
 
                     if (graph.axis['y']) {
                         graph.axis.y = $.extend({}, graph.axis.y, {
@@ -451,33 +437,9 @@
                                 value: function (value, ratio, id, index, t) {
                                     return ('' + d3.format('~s')(value)).toUpperCase() + ' ' + graph.helpers.currencyNames[id].sign;
                                 }
-//            value: d3.format(',') // apply this format to both y and y2
                             }
                         }
                     });
-
-                    // indexies = d3.range(graph.helpers.itemsCount);
-                    // yscale = chart.internal.y;
-                    // xscale = chart.internal.x;
-                    // c3data = chart.data.shown();
-                    //
-                    // function fillArea(){
-                    //     var area = d3.area()
-                    //         .x(function (d,a,b,c) {
-                    //             return d;
-                    //         })
-                    //         .y1(function (d,a,b,c) {
-                    //             return d;
-                    //         })
-                    //         .y0(0);
-                    //
-                    //     d3.select(bindToSelector + ' svg g').append('path')
-                    //         .datum(indexies)
-                    //         .attr('class', 'area')
-                    //         .attr('fill', 'red')
-                    //         .attr('d', area);
-                    // }
-                    // fillArea();
 
                     $(bindToSelector).data('c3-chart', chart);
                 }
