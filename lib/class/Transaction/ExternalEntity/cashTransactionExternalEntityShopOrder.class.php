@@ -46,9 +46,8 @@ class cashTransactionExternalEntityShopOrder implements cashTransactionExternalE
         $anchor = sprintf_wp('Order %s', $encodedOrder);
         $this->html = <<<HTML
 <a href="{$appUrl}#/orders/id={$orderId}" target="_blank">
-    <i class="icon16 pl-wa-app-icon" style="background-image: url({$appIcon}); background-size: 16px 16px;"></i>
-    {$anchor}
-</a>  
+    <i class="icon16 pl-wa-app-icon" style="background-image: url({$appIcon}); background-size: 16px 16px;"></i>{$anchor}
+</a>
 HTML;
     }
 
