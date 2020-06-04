@@ -435,7 +435,7 @@
                         tooltip: {
                             format: {
                                 value: function (value, ratio, id, index, t) {
-                                    return ('' + d3.format('~s')(value)).toUpperCase() + ' ' + graph.helpers.currencyNames[id].sign;
+                                    return ('' + d3.format(',')(value)).replace(',',' ') + ' ' + graph.helpers.currencyNames[id].sign;
                                 }
                             }
                         }
