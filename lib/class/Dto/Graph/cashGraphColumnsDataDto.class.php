@@ -218,7 +218,6 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             $columns[] = array_values(array_merge([$name], $data));
         }
 
-
         $categories = cash()->getModel(cashCategory::class)->getAllActive();
         foreach ($this->categories as $hash => $category) {
             if ($category['id'] && isset($categories[$category['id']])) {
@@ -235,7 +234,6 @@ class cashGraphColumnsDataDto extends cashAbstractDto
         }
 
         $xFormat = $this->grouping === cashGraphService::GROUP_BY_DAY ? '%Y-%m-%d' : '%Y-%m';
-//        $xFormat = '%Y-%m-%d';
 
         $groups = array_filter(
             array_reduce(
@@ -265,12 +263,10 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 'bar' => ['width' => ['ratio' => 0.2]],
                 'types' => $this->types,
                 'groups' => $groups,
-                'regions' => $regions,
                 'colors' => $colors,
                 'names' => $names,
             ],
             'axis' => [
-//                'x' => ['type' => $this->grouping === cashGraphService::GROUP_BY_DAY ? 'timeseries' : 'category'],
                 'x' => [
                     'type' => 'timeseries',
                     'tick' => [
@@ -307,11 +303,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             ];
         }
 
-
-        $tickData = [
-            //            'count' => $tickCount,
-            'rotate' => -45,
-        ];
+        $tickData = ['rotate' => -45];
         $tickCountDiff = $this->startDate->diff($this->endDate);
         $tickStartDate = clone $this->startDate;
         if ($this->grouping === cashGraphService::GROUP_BY_DAY) {
@@ -351,29 +343,33 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                     $data['axis']['y2'] = [
                         'show' => true,
                         'label' => _w('Balance'),
-                        // 'tick' => [
-                        //     'count' => 10
-                        // ]
-//                        'center' => 0,
-//                        'padding' => ['bottom' => 0],
                     ];
 
                     $data['axis']['y'] = [
-                        'show' => false,
+                        'show' => true,
                     ];
                 }
             }
 
-//            if (isset($data['axis']['y2'])) {
-//                $extremum = ['min' => 0, 'max' => 0];
-//                foreach ($this->lines as $lineData) {
-//                    $extremum['min'] = min($extremum['min'], min(array_filter($lineData)));
-//                    $extremum['max'] = max($extremum['max'], max(array_filter($lineData)));
-//                }
-////                $data['axis']['y2']['center'] = 250;
-////                $data['axis']['y']['min'] =
-//                $data['axis']['y2']['min'] = $extremum['min'];// - 250;
-//            }
+            if (isset($data['axis']['y2'])) {
+                $extremum = ['min' => PHP_INT_MAX, 'max' => PHP_INT_MIN];
+                foreach ($this->lines as $lineData) {
+                    $notNullData = array_filter($lineData);
+                    if ($notNullData) {
+                        $extremum['min'] = min($extremum['min'], min($notNullData));
+                        $extremum['max'] = max($extremum['max'], max($notNullData));
+                    }
+                }
+                foreach ($this->columns as $lineData) {
+                    $notNullData = array_filter($lineData);
+                    if ($notNullData) {
+                        $extremum['min'] = min($extremum['min'], min($notNullData));
+                        $extremum['max'] = max($extremum['max'], max($notNullData));
+                    }
+                }
+                $data['axis']['y']['min'] = $data['axis']['y2']['min'] = $extremum['min'];
+                $data['axis']['y']['max'] = $data['axis']['y2']['max'] = $extremum['max'];
+            }
         }
 
         if (empty($this->columns)) {
