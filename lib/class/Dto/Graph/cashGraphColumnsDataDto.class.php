@@ -13,11 +13,6 @@ class cashGraphColumnsDataDto extends cashAbstractDto
     /**
      * @var array
      */
-    public $types = [];
-
-    /**
-     * @var array
-     */
     public $groups = [];
 
     /**
@@ -150,12 +145,12 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             );
         }
 
-        foreach ($existingCategories as $category) {
-            $this->types[$category] = 'bar';
-        }
-        foreach ($this->accounts as $account) {
-            $this->types[$account] = 'line';
-        }
+//        foreach ($existingCategories as $category) {
+//            $this->types[$category] = 'bar';
+//        }
+//        foreach ($this->accounts as $account) {
+//            $this->types[$account] = 'line';
+//        }
     }
 
     /**
@@ -164,7 +159,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
      */
     public function jsonSerialize()
     {
-        $colors = $names = $regions = $lineIds = $columns = $currencies = [];
+        $colors = $names = $regions = $lineIds = $columns = $currencies = $types = [];
 
         if (in_array(
             $this->filterDto->type,
@@ -192,9 +187,9 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                             $linesGroupedByCurrency[$account['currency']][$date] = 0;
                         }
                         $linesGroupedByCurrency[$account['currency']][$date] += $value;
-                        if ($linesGroupedByCurrency[$account['currency']][$date] == 0) {
-                            $linesGroupedByCurrency[$account['currency']][$date] = null;
-                        }
+//                        if ($linesGroupedByCurrency[$account['currency']][$date] == 0) {
+//                            $linesGroupedByCurrency[$account['currency']][$date] = null;
+//                        }
                     }
                 }
             }
@@ -204,6 +199,9 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             }
 
             $lineIds = array_keys($this->lines);
+            foreach ($lineIds as $lineId) {
+                $types[$lineId] = 'line';
+            }
         }
 
         foreach ($this->columns as $name => $data) {
@@ -212,6 +210,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             } else {
                 $columns[] = array_values(array_merge([$name], $data));
             }
+            $types[$name] = 'bar';
         }
         array_unshift($columns, array_merge(['dates'], $this->dates));
         foreach ($this->lines as $name => $data) {
@@ -261,7 +260,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 'order' => null,
                 'line' => ['connectNull' => true],
                 'bar' => ['width' => ['ratio' => 0.2]],
-                'types' => $this->types,
+                'types' => $types,
                 'groups' => $groups,
                 'colors' => $colors,
                 'names' => $names,
@@ -325,50 +324,69 @@ class cashGraphColumnsDataDto extends cashAbstractDto
 
         if ($this->lines) {
             $data['data']['axes'] = [];
-            foreach ($this->types as $name => $type) {
+            $hasLines = false;
+            foreach ($types as $name => $type) {
                 if ($type === 'bar') {
                     $data['data']['axes'][$name] = 'y';
                 } else {
-                    $data['grid']['y'] = [
-                        'lines' => [
-                            [
-                                'value' => 0,
-                                'axis' => 'y2',
-                                'position' => 'start',
-                                'text' => _w('Account balance zero'),
-                            ],
-                        ],
-                    ];
+                    $hasLines = true;
                     $data['data']['axes'][$name] = 'y2';
-                    $data['axis']['y2'] = [
-                        'show' => true,
-                        'label' => _w('Balance'),
-                    ];
-
-                    $data['axis']['y'] = [
-                        'show' => true,
-                    ];
                 }
             }
 
+            if ($hasLines) {
+                $data['grid']['y'] = [
+                    'lines' => [
+                        [
+                            'value' => 0,
+                            'axis' => 'y2',
+                            'position' => 'start',
+                            'text' => _w('Account balance zero'),
+                        ],
+                    ],
+                ];
+                $data['axis']['y2'] = [
+                    'show' => true,
+                    'label' => _w('Balance'),
+                ];
+                $data['axis']['y'] = [
+                    'show' => true,
+                ];
+            }
+
             if (isset($data['axis']['y2'])) {
-                $extremum = ['min' => PHP_INT_MAX, 'max' => PHP_INT_MIN];
+                $extremum = [
+                    'lines' => ['min' => PHP_INT_MAX, 'max' => PHP_INT_MIN],
+                    'columns' => ['min' => PHP_INT_MAX, 'max' => PHP_INT_MIN],
+                ];
                 foreach ($this->lines as $lineData) {
                     $notNullData = array_filter($lineData);
                     if ($notNullData) {
-                        $extremum['min'] = min($extremum['min'], min($notNullData));
-                        $extremum['max'] = max($extremum['max'], max($notNullData));
+                        $extremum['lines']['min'] = min($extremum['lines']['min'], min($notNullData));
+                        $extremum['lines']['max'] = max($extremum['lines']['max'], max($notNullData));
                     }
                 }
                 foreach ($this->columns as $lineData) {
                     $notNullData = array_filter($lineData);
                     if ($notNullData) {
-                        $extremum['min'] = min($extremum['min'], min($notNullData));
-                        $extremum['max'] = max($extremum['max'], max($notNullData));
+                        $extremum['columns']['min'] = min($extremum['columns']['min'], min($notNullData));
+                        $extremum['columns']['max'] = max($extremum['columns']['max'], max($notNullData));
                     }
                 }
-                $data['axis']['y']['min'] = $data['axis']['y2']['min'] = $extremum['min'];
-                $data['axis']['y']['max'] = $data['axis']['y2']['max'] = $extremum['max'];
+                $ration = [
+                    $extremum['lines']['min'] / $extremum['columns']['min'],
+                    $extremum['lines']['max'] / $extremum['columns']['max'],
+                    (abs($extremum['lines']['min']) + abs($extremum['lines']['max'])) / (abs($extremum['columns']['min']) + abs( $extremum['columns']['max']))
+                ];
+
+                $data['axis']['y']['min'] = $data['axis']['y2']['min'] = min($extremum['lines']['min'], $extremum['columns']['min']);
+                $data['axis']['y']['max'] = $data['axis']['y2']['max'] = max($extremum['lines']['max'], $extremum['columns']['max']);
+
+                $data['helpers']['extremum'] = $extremum;
+                $data['helpers']['ratio'] = $ration;
+
+//                $data['axis']['y']['center'] = -145;
+//                $data['axis']['y2']['center'] = 0;
             }
         }
 

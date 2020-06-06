@@ -294,6 +294,10 @@ class cashGraphService
                 continue;
             }
 
+            foreach ($graphData->accounts as $accountId) {
+                $graphData->lines[$accountId][$date] = (float)$initialBalance[$accountId]['summary'];
+            }
+
             foreach ($data[$date] as $datum) {
                 $accountId = $datum['category_id'];
                 if (!isset($graphData->lines[$accountId])) {
@@ -303,7 +307,7 @@ class cashGraphService
 //                    $accountId = 'All accounts';
 //                    continue;
 //                }
-                $graphData->lines[$accountId][$date] += ((float)$datum['summary'] + (float)$initialBalance[$datum['category_id']]['summary']);
+                $graphData->lines[$accountId][$date] += (float)$datum['summary'];
                 $initialBalance[$datum['category_id']]['summary'] = $graphData->lines[$accountId][$date];
             }
         }
