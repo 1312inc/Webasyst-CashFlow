@@ -408,21 +408,21 @@
                 if (r.status === 'ok' && !r.data.empty) {
                     var graph = r.data;
 
-                    if (graph.axis['y']) {
-                        graph.axis.y = $.extend({}, graph.axis.y, {
-                            tick: {
-                                format: function (d) { return ('' + d3.format('~s')(d)).toUpperCase(); }
-                            }
-                        });
-                    }
-
-                    if (graph.axis['y2']) {
-                        graph.axis.y2 = $.extend({}, graph.axis.y2, {
-                            tick: {
-                                format: function (d) { return ('' + d3.format('~s')(d)).toUpperCase(); }
-                            }
-                        });
-                    }
+                    // if (graph.axis['y']) {
+                    //     graph.axis.y = $.extend({}, graph.axis.y, {
+                    //         tick: {
+                    //             format: function (d) { return ('' + d3.format('~s')(d)).toUpperCase(); }
+                    //         }
+                    //     });
+                    // }
+                    //
+                    // if (graph.axis['y2']) {
+                    //     graph.axis.y2 = $.extend({}, graph.axis.y2, {
+                    //         tick: {
+                    //             format: function (d) { return ('' + d3.format('~s')(d)).toUpperCase(); }
+                    //         }
+                    //     });
+                    // }
 
                     var chart = c3.generate({
                         bindto: bindToSelector,
