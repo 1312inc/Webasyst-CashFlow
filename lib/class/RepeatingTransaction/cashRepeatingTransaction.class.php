@@ -51,23 +51,28 @@ class cashRepeatingTransaction extends cashTransaction
     private $repeating_end_conditions = [];
 
     /**
+     * @var array|string
+     */
+    private $transfer = [];
+
+    /**
      * @var int
      */
     private $repeating_occurrences = 0;
 
     public function beforeExtract(array &$fields)
     {
-        $this->toJson(['repeating_conditions', 'repeating_end_conditions']);
+        $this->toJson(['repeating_conditions', 'repeating_end_conditions', 'transfer']);
     }
 
     public function afterExtract(array &$fields)
     {
-        $this->fromJson(['repeating_conditions', 'repeating_end_conditions']);
+        $this->fromJson(['repeating_conditions', 'repeating_end_conditions', 'transfer']);
     }
 
     public function afterHydrate($data = [])
     {
-        $this->fromJson(['repeating_conditions', 'repeating_end_conditions']);
+        $this->fromJson(['repeating_conditions', 'repeating_end_conditions', 'transfer']);
     }
 
     /**
@@ -244,6 +249,26 @@ class cashRepeatingTransaction extends cashTransaction
     public function setRepeatingEndType($repeating_end_type)
     {
         $this->repeating_end_type = $repeating_end_type;
+
+        return $this;
+    }
+
+    /**
+     * @return array|string
+     */
+    public function getTransfer()
+    {
+        return $this->transfer;
+    }
+
+    /**
+     * @param array $transfer
+     *
+     * @return cashRepeatingTransaction
+     */
+    public function setTransfer($transfer = null)
+    {
+        $this->transfer = $transfer;
 
         return $this;
     }

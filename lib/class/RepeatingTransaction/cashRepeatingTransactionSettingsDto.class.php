@@ -36,6 +36,11 @@ class cashRepeatingTransactionSettingsDto
     ];
 
     /**
+     * @var array
+     */
+    public $transfer = [];
+
+    /**
      * cashRepeatingTransactionSettingsDto constructor.
      *
      * @param array $data

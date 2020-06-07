@@ -123,7 +123,6 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         $hydrator = cash()->getHydrator();
         $persister = cash()->getEntityPersister();
 
-        /** @var cashRepeatingTransaction $newRepeatingT */
         $newRepeatingT = $this->repeatingTransactionFactory->createNew();
         $this->copyFromTransaction($newRepeatingT, $transaction);
         $this->applySettings($newRepeatingT, $repeatingSettings);
@@ -208,6 +207,10 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
 
         if ($repeatingSettings->end_type) {
             $repeatingT->setRepeatingEndConditions($repeatingSettings->end);
+        }
+
+        if ($repeatingSettings->transfer) {
+            $repeatingT->setTransfer($repeatingSettings->transfer);
         }
     }
 
