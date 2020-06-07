@@ -104,7 +104,7 @@ final class cashCalculationService
 
         $summary = [];
         foreach ($summaryData as $currency => $summaryDatum) {
-            if ($summaryDatum['summary'] == 0 && $filterIds && $filterIds != $summaryDatum['ids']) {
+            if ($summaryDatum['summary'] == 0 && $filterIds && !array_intersect($filterIds, $summaryDatum['ids'])) {
                 continue;
             }
 
