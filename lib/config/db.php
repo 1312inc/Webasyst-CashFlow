@@ -64,6 +64,7 @@ return array(
         'update_datetime' => array('datetime'),
         'external_hash' => array('varchar', 32),
         'external_source' => array('varchar', 20),
+        'transfer' => array('text'),
         ':keys' => array(
             'PRIMARY' => 'id',
             'cash_repeating_transaction_cash_account_id_fk' => 'account_id',

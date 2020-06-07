@@ -41,6 +41,10 @@ class cashTransactionSaveController extends cashJsonController
 
         if ($isRepeating && $repeating) {
             $repeatingDto = new cashRepeatingTransactionSettingsDto($repeating);
+            if ($paramsDto->transfer) {
+                $repeatingDto->transfer = $paramsDto->transfer;
+            }
+
             if($repeatingDto->interval) {
                 $repeatTransactionSaver = new cashRepeatingTransactionSaver();
                 $transactionRepeater = new cashTransactionRepeater();
@@ -50,13 +54,14 @@ class cashTransactionSaveController extends cashJsonController
                         $repeatingDto
                     );
                     $transactionRepeater->repeat($repeatingTransaction);
-                } elseif (!empty($repeating['apply_to_all_in_future'])) {
+                } elseif ($repeatingDto->apply_to_all_in_future) {
                     $repeatingTransaction = $transaction->getRepeatingTransaction();
                     $savedRepeatingTransaction = $repeatTransactionSaver->saveExisting(
                         $repeatingTransaction,
                         $transaction,
                         $repeatingDto
                     );
+
                     if (!$repeatingTransaction instanceof cashRepeatingTransaction) {
                         throw new kmwaRuntimeException('Error on repeating transaction save');
                     }
