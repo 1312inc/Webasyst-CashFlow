@@ -86,7 +86,6 @@ final class cashTransactionRepeater
         )->format('Y-m-d H:i:s');
 
         $params = new cashTransactionSaveParamsDto();
-        $params->transfer = $transaction->getTransfer();
 
         return $this->transactionSaver->saveFromArray($this->transactionFactory->createNew(), $data, $params);
     }

@@ -24,9 +24,10 @@ class cashTransactionSaver extends cashEntitySaver
         $model->startTransaction();
 
         try {
-            $data['amount'] = abs($data['amount']);
             if ($params->categoryType === cashCategory::TYPE_EXPENSE) {
-                $data['amount'] = -$data['amount'];
+                $data['amount'] = -abs($data['amount']);
+            } elseif ($params->categoryType === cashCategory::TYPE_INCOME) {
+                $data['amount'] = abs($data['amount']);
             }
 
             $data = $this->addCategoryId($data);
@@ -34,10 +35,12 @@ class cashTransactionSaver extends cashEntitySaver
             cash()->getHydrator()->hydrate($transaction, $data);
 
             if ($params->transfer) {
-                $this->transfer($transaction, $params->transfer);
+                $transferTransaction = $this->transfer($transaction, $params->transfer);
                 if ($transaction->getAmount() > 0) {
                     $transaction->setAmount(-$transaction->getAmount());
                 }
+
+                $transaction->setLinkedTransaction($transferTransaction);
             }
             cash()->getEntityPersister()->save($transaction);
 
