@@ -66,16 +66,20 @@
                             <!-- TODO <li class="bordered-top"><a href="#">[`Select dates...`]</a></li> -->
                         </ul>
                     </li>
+
+                    {if $listSettings->showOnHandsEndday}
                     <li>
-                        <a href="#" class="inline-link gray"><b><i>[`Export`]</i></b><i class="icon10 darr"></i></a>
-                        <ul class="menu-v">
-                            <!-- plugin hook: 'backend_transactions_export' -->
-                            {* @event backend_transactions_export.%plugin_id% *}
-                            {if !empty($backend_transactions_export)}
-                                <li>{foreach $backend_transactions_export as $_}{ifset($_)}{/foreach}</li>
-                            {/if}
-                        </ul>
+                        {sprintf('[`Cash on hand in %s`]', {$selectedForecastPeriod->getName()})}:
+
+                        {foreach $onHandsEndday as $onHand}
+                            <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
+                            {if !$onHand@last}+{/if}
+                            {foreachelse}
+                            <strong class="c-balance large">0</strong>
+                        {/foreach}
+                        <span class="hint">{$endDate|wa_date:humandate}</span>
                     </li>
+                    {/if}
 
                 </ul>
 

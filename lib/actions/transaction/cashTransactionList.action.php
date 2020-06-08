@@ -38,10 +38,19 @@ class cashTransactionListAction extends cashTransactionPageAction
             $this->filterDto->type
         );
 
-        // cash on hand end day
-        $onHandsEndday = $calcService->getOnHandOnDate($this->endDate, $this->filterDto->entity);
-
         $settings = new cashTransactionListSettingsDto($this->filterDto);
+
+        /**
+         * UI in transactions page export dropdown menu
+         *
+         * @event backend_transactions_export
+         *
+         * @param cashExportEvent $event Event object with cashTransactionPageFilterDto as object
+         *
+         * @return string HTML output
+         */
+        $event = new cashExportEvent($this->filterDto, $this->startDate, $this->endDate);
+        $eventResult = cash()->waDispatchEvent($event);
 
         $this->view->assign(
             [
@@ -52,10 +61,11 @@ class cashTransactionListAction extends cashTransactionPageAction
                 'selectedForecastPeriod' => $this->periodForecast,
                 'upcomingOnDate' => $upcomingOnDate,
                 'completedOnDate' => $completedOnDate,
-                'onHandsEndday' => $onHandsEndday,
                 'startDate' => $this->startDate->format('Y-m-d'),
                 'endDate' => $this->endDate->format('Y-m-d'),
                 'listSettings' => $settings,
+
+                'backend_transactions_export' => $eventResult,
             ]
         );
     }
