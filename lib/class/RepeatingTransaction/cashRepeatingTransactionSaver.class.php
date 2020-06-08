@@ -89,12 +89,12 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
 
             cash()->getEntityPersister()->save($repeatingT);
 
-            $model->commit();
-
             if (!$cloneSourceTransaction && !$transaction->getRepeatingId()) {
                 $transaction->setRepeatingId($repeatingT->getId());
                 cash()->getEntityPersister()->save($transaction);
             }
+
+            $model->commit();
 
             return $repeatingT;
         } catch (Exception $ex) {
@@ -207,10 +207,6 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
 
         if ($repeatingSettings->end_type) {
             $repeatingT->setRepeatingEndConditions($repeatingSettings->end);
-        }
-
-        if ($repeatingSettings->transfer) {
-            $repeatingT->setTransfer($repeatingSettings->transfer);
         }
     }
 

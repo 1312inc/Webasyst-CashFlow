@@ -94,6 +94,11 @@ class cashTransaction extends cashAbstractEntity
     private $repeatingTransaction;
 
     /**
+     * @var null|cashTransaction
+     */
+    protected $linkedTransaction;
+
+    /**
      * @return int
      */
     public function getId()
@@ -490,6 +495,26 @@ class cashTransaction extends cashAbstractEntity
     public function setExternalData($external_data = null)
     {
         $this->external_data = $external_data;
+
+        return $this;
+    }
+
+    /**
+     * @return cashTransaction|null
+     */
+    public function getLinkedTransaction()
+    {
+        return $this->linkedTransaction;
+    }
+
+    /**
+     * @param cashTransaction|null $linkedTransaction
+     *
+     * @return cashTransaction
+     */
+    public function setLinkedTransaction(cashTransaction $linkedTransaction = null)
+    {
+        $this->linkedTransaction = $linkedTransaction;
 
         return $this;
     }

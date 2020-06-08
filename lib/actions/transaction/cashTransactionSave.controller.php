@@ -41,9 +41,6 @@ class cashTransactionSaveController extends cashJsonController
 
         if ($isRepeating && $repeating) {
             $repeatingDto = new cashRepeatingTransactionSettingsDto($repeating);
-            if ($paramsDto->transfer) {
-                $repeatingDto->transfer = $paramsDto->transfer;
-            }
 
             if($repeatingDto->interval) {
                 $repeatTransactionSaver = new cashRepeatingTransactionSaver();
@@ -54,6 +51,14 @@ class cashTransactionSaveController extends cashJsonController
                         $repeatingDto
                     );
                     $transactionRepeater->repeat($repeatingTransaction);
+
+                    if ($transaction->getLinkedTransaction()) {
+                        $repeatingTransaction = $repeatTransactionSaver->saveFromTransaction(
+                            $transaction->getLinkedTransaction(),
+                            $repeatingDto
+                        );
+                        $transactionRepeater->repeat($repeatingTransaction);
+                    }
                 } elseif ($repeatingDto->apply_to_all_in_future) {
                     $repeatingTransaction = $transaction->getRepeatingTransaction();
                     $savedRepeatingTransaction = $repeatTransactionSaver->saveExisting(
