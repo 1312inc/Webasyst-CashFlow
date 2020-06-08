@@ -102,22 +102,14 @@ class cashTransactionPageAction extends cashViewAction
             $onHandsToday = $calcService->getOnHandOnDate($this->today, $this->filterDto->entity);
         }
 
+        $settings = new cashTransactionListSettingsDto($this->filterDto);
+
+        // cash on hand end day
+        $onHandsEndday = $calcService->getOnHandOnDate($this->endDate, $this->filterDto->entity);
 
         // total on hand
 //        $farFarFuture = (new DateTime())->modify('+100 years');
 //        $onHandsTotal = $calcService->getOnHandOnDate($farFarFuture, new cashAccount());
-
-        /**
-         * UI in transactions page export dropdown menu
-         *
-         * @event backend_transactions_export
-         *
-         * @param cashExportEvent $event Event object with cashTransactionPageFilterDto as object
-         *
-         * @return string HTML output
-         */
-        $event = new cashExportEvent($this->filterDto, $this->startDate, $this->endDate);
-        $eventResult = cash()->waDispatchEvent($event);
 
         $this->view->assign(
             [
@@ -129,7 +121,8 @@ class cashTransactionPageAction extends cashViewAction
                 'currentDate' => $this->today->format('Y-m-d'),
                 'selectedChartPeriod' => $this->periodChart,
                 'selectedForecastPeriod' => $this->periodForecast,
-                'backend_transactions_export' => $eventResult,
+                'listSettings' => $settings,
+                'onHandsEndday' => $onHandsEndday,
             ]
         );
     }
