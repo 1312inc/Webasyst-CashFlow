@@ -199,7 +199,11 @@ final class cashImportCsv
                     continue;
                 }
 
-                $response->data[$response->rows] = array_combine($headers, $this->encodeArray($data));
+                $encodedArray = $this->encodeArray($data);
+                $response->data[$response->rows] = array_combine(
+                    $headers,
+                    array_slice($encodedArray, 0, count($headers))
+                );
             }
         } catch (Exception $ex) {
             $this->error = _w('Error on csv processing');
@@ -429,7 +433,7 @@ final class cashImportCsv
     /**
      * @param array $a
      *
-     * @return mixed
+     * @return array
      */
     private function encodeArray($a)
     {
@@ -438,6 +442,7 @@ final class cashImportCsv
                 @$v = iconv($this->encoding, "utf-8//IGNORE", $v);
             }
         }
+        unset($v);
 
         return $a;
     }

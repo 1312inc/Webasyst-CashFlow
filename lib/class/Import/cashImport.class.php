@@ -250,7 +250,7 @@ class cashImport extends cashAbstractEntity
      */
     public function addError($error)
     {
-        $this->errors[] = $error;
+        $this->errors[md5($error)] = $error;
 
         return $this;
     }
