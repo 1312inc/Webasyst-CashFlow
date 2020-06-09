@@ -131,15 +131,19 @@ LOG
 
         $response = $this->currentImport->process($this->csvInfo->headers, $this->info->passedRows, $this->info->chunk);
         foreach ($response->data as $rowNum => $datum) {
-            cash()->getLogger()->log(sprintf('Import transaction from row %d', $rowNum), 'import');
+            cash()->getLogger()->log(sprintf('Import transaction from row %d', $rowNum), sprintf('import_%d', $this->info->importId));
 
             if ($this->currentImport->save($datum, $this->info)) {
                 $this->import->setSuccess($this->info->ok);
             } else {
                 $this->import->setFail($this->info->fail);
-                $this->import->addError(sprintf('row #%d: %s', $rowNum, $this->currentImport->getError()));
+                $error = $this->currentImport->getError();
+                $this->import->addError($error);
 
-                cash()->getLogger()->log($this->currentImport->getError(), 'import');
+                cash()->getLogger()->log(
+                    sprintf('row #%d: %s', $rowNum, $error),
+                    sprintf('import_%d_errors', $this->info->importId)
+                );
             }
         }
         cash()->getEntityPersister()->save($this->import);

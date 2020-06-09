@@ -17,14 +17,13 @@ class cashImportCsvDownloadErrorsController extends cashJsonController
             $import = cash()->getEntityRepository(cashImport::class)->findById($id);
             kmwaAssert::instance($import, cashImport::class);
 
-            $path = wa()->getTempPath(sprintf('export_csv_errors/%d.txt', $import->getId()));
-            $file = fopen($path, 'wb+');
-            foreach ($import->getErrors() as $error) {
-                fwrite($file, $error.PHP_EOL);
+            $errorLog = sprintf('%s/cash/import_%s_errors.log', waConfig::get('wa_path_log'), $import->getId());
+            if (!file_exists($errorLog)) {
+                $errorLog = wa()->getTempPath(sprintf('export_csv_errors/%d.txt', $import->getId()));
+                $file = fopen($errorLog, 'wb+');
+                fclose($file);
             }
-            fclose($file);
-
-            waFiles::readFile($path, sprintf('export_csv_errors_%d.txt', $import->getId()));
+            waFiles::readFile($errorLog, sprintf('export_csv_errors_%d.txt', $import->getId()));
         } catch (Exception $exception) {
 
         }
