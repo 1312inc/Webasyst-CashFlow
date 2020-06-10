@@ -5,7 +5,9 @@
  */
 class cashRepeatingTransactionSaver extends cashTransactionSaver
 {
-    /** @var cashRepeatingTransactionFactory */
+    /**
+     * @var cashRepeatingTransactionFactory
+     */
     private $repeatingTransactionFactory;
 
     /**
@@ -13,7 +15,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
      */
     public function __construct()
     {
-        $this->repeatingTransactionFactory = new cashRepeatingTransactionFactory();
+        $this->repeatingTransactionFactory = cash()->getEntityFactory(cashRepeatingTransaction::class);
     }
 
     /**
@@ -35,7 +37,6 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         /** @var cashRepeatingTransaction $model */
         $model = cash()->getModel(cashRepeatingTransaction::class);
         $model->startTransaction();
-
         try {
             $data = $this->addCategoryId($data);
             cash()->getHydrator()->hydrate($transaction, $data);
@@ -112,7 +113,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
      * @param cashTransaction                     $transaction
      * @param cashRepeatingTransactionSettingsDto $repeatingSettings
      *
-     * @return bool|cashTransaction
+     * @return bool|cashRepeatingTransaction
      * @throws waException
      */
     public function saveExisting(
@@ -175,8 +176,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
             ->setDescription($transaction->getDescription())
             ->setDate($transaction->getDate())
             ->setExternalHash($transaction->getExternalHash())
-            ->setExternalSource($transaction->getExternalSource())
-        ;
+            ->setExternalSource($transaction->getExternalSource());
     }
 
     /**
@@ -223,6 +223,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         return $transaction->getRepeatingEndConditions() != $transaction2->getRepeatingEndConditions()
             || $transaction->getRepeatingFrequency() != $transaction2->getRepeatingFrequency()
             || $transaction->getRepeatingInterval() != $transaction2->getRepeatingInterval()
-            || $transaction->getRepeatingEndType() != $transaction2->getRepeatingEndType();
+            || $transaction->getRepeatingEndType() != $transaction2->getRepeatingEndType()
+            || $transaction->getDate() != $transaction2->getDate();
     }
 }
