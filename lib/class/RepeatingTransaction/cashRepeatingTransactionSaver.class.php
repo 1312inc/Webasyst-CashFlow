@@ -72,7 +72,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
      * @param cashRepeatingTransactionSettingsDto $repeatingSettings
      * @param bool                                $cloneSourceTransaction
      *
-     * @return bool|cashRepeatingTransaction
+     * @return cashRepeatingTransactionSaveResultDto
      * @throws waException
      */
     public function saveFromTransaction(
@@ -80,6 +80,8 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         cashRepeatingTransactionSettingsDto $repeatingSettings,
         $cloneSourceTransaction = false
     ) {
+        $result = new cashRepeatingTransactionSaveResultDto();
+
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashRepeatingTransaction::class);
         $model->startTransaction();
@@ -89,23 +91,24 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
             $this->applySettings($repeatingT, $repeatingSettings);
 
             cash()->getEntityPersister()->save($repeatingT);
-
-            if (!$cloneSourceTransaction && !$transaction->getRepeatingId()) {
-                $transaction->setRepeatingId($repeatingT->getId());
-                cash()->getEntityPersister()->save($transaction);
-            }
+            $result->newTransaction = $repeatingT;
+//
+//            if (!$cloneSourceTransaction && !$transaction->getRepeatingId()) {
+//                $transaction->setRepeatingId($repeatingT->getId());
+//            }
 
             $model->commit();
 
-            return $repeatingT;
+            $result->ok = true;
+            $result->shouldRepeat = true;
         } catch (Exception $ex) {
             $model->rollback();
 
-            $this->error = $ex->getMessage();
+            $result->error = $ex->getMessage();
             cash()->getLogger()->error('Repeating transaction save error', $ex);
         }
 
-        return false;
+        return $result;
     }
 
     /**
@@ -113,7 +116,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
      * @param cashTransaction                     $transaction
      * @param cashRepeatingTransactionSettingsDto $repeatingSettings
      *
-     * @return bool|cashRepeatingTransaction
+     * @return cashRepeatingTransactionSaveResultDto
      * @throws waException
      */
     public function saveExisting(
@@ -128,6 +131,9 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         $this->copyFromTransaction($newRepeatingT, $transaction);
         $this->applySettings($newRepeatingT, $repeatingSettings);
 
+        $result = new cashRepeatingTransactionSaveResultDto();
+        $result->oldTransaction = $repeatingT;
+
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
         $model->startTransaction();
@@ -135,9 +141,11 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
             $repeatingT->setEnabled(0);
             $persister->save($newRepeatingT);
             $persister->save($repeatingT);
+            $result->newTransaction = $newRepeatingT;
 
             if ($this->repeatingSettingsChanged($repeatingT, $newRepeatingT)) {
                 $model->deleteAllByRepeatingIdAfterDate($repeatingT->getId(), $transaction->getDate());
+                $result->shouldRepeat = true;
             } else {
                 $transactions = cash()->getEntityRepository(cashTransaction::class)->findAllByRepeatingIdAndAfterDate(
                     $repeatingT->getId(),
@@ -146,20 +154,25 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
                 $transaction->setRepeatingTransaction($newRepeatingT);
                 $data = $hydrator->extract($transaction, array_keys($model->getMetadata()));
                 unset($data['id'], $data['date'], $data['datetime'], $data['create_datetime']);
+
                 $params = new cashTransactionSaveParamsDto();
                 foreach ($transactions as $t) {
-                    parent::saveFromArray($t, $data, $params);
+                    $this->addToPersist(parent::populateFromArray($t, $data, $params));
                 }
+                $this->persistTransactions();
             }
 
             $model->commit();
 
-            return $newRepeatingT;
+            $result->ok = true;
         } catch (Exception $ex) {
             $model->rollback();
+
+            $result->error = $ex->getMessage();
+            cash()->getLogger()->error('Repeating transaction save error', $ex);
         }
 
-        return false;
+        return $result;
     }
 
     /**

@@ -41,6 +41,11 @@ class cashRepeatingTransactionSettingsDto
     public $transfer = [];
 
     /**
+     * @var bool
+     */
+    private $loaded = false;
+
+    /**
      * cashRepeatingTransactionSettingsDto constructor.
      *
      * @param array $data
@@ -49,6 +54,15 @@ class cashRepeatingTransactionSettingsDto
     {
         if ($data) {
             $this->initializeWithArray($data);
+            $this->loaded = true;
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLoaded()
+    {
+        return $this->loaded;
     }
 }

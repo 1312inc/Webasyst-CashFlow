@@ -247,4 +247,24 @@ class cashRepeatingTransaction extends cashTransaction
 
         return $this;
     }
+
+    /**
+     * @return int
+     */
+    public function getRepeatingConditionEndAfter()
+    {
+        return isset($this->repeating_end_conditions['after']) ? $this->repeating_end_conditions['after'] : 0;
+    }
+
+    /**
+     * @param $n
+     *
+     * @return $this
+     */
+    public function setRepeatingConditionEndAfter($n)
+    {
+        $this->repeating_end_conditions['after'] = $n;
+
+        return $this;
+    }
 }

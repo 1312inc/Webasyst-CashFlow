@@ -24,47 +24,37 @@ class cashTransactionFactory extends cashBaseFactory
      * @param cashTransactionSaveParamsDto $params
      *
      * @return bool|cashTransaction
+     * @throws ReflectionException
+     * @throws cashValidateException
+     * @throws kmwaAssertException
+     * @throws kmwaLogicException
+     * @throws kmwaNotImplementedException
      * @throws waException
      */
     public function createFromArray($transaction, array $data, cashTransactionSaveParamsDto $params)
     {
         $this->validate($data);
 
-        /** @var cashTransactionModel $model */
-        $model = cash()->getModel(cashTransaction::class);
-        $model->startTransaction();
-
-        try {
-            if ($params->categoryType === cashCategory::TYPE_EXPENSE) {
-                $data['amount'] = -abs($data['amount']);
-            } elseif ($params->categoryType === cashCategory::TYPE_INCOME) {
-                $data['amount'] = abs($data['amount']);
-            }
-
-            $data = $this->addCategoryId($data);
-
-            cash()->getHydrator()->hydrate($transaction, $data);
-
-            if ($params->transfer) {
-                $transferTransaction = $this->transfer($transaction, $params->transfer);
-                if ($transaction->getAmount() > 0) {
-                    $transaction->setAmount(-$transaction->getAmount());
-                }
-
-                $transaction->setLinkedTransaction($transferTransaction);
-            }
-            cash()->getEntityPersister()->save($transaction);
-
-            $model->commit();
-
-            return $transaction;
-        } catch (Exception $ex) {
-            $model->rollback();
-
-            $this->error = $ex->getMessage();
+        if ($params->categoryType === cashCategory::TYPE_EXPENSE) {
+            $data['amount'] = -abs($data['amount']);
+        } elseif ($params->categoryType === cashCategory::TYPE_INCOME) {
+            $data['amount'] = abs($data['amount']);
         }
 
-        return false;
+        $data = $this->addCategoryId($data);
+
+        cash()->getHydrator()->hydrate($transaction, $data);
+
+        if ($params->transfer) {
+            $transferTransaction = $this->transfer($transaction, $params->transfer);
+            if ($transaction->getAmount() > 0) {
+                $transaction->setAmount(-$transaction->getAmount());
+            }
+
+            $transaction->setLinkedTransaction($transferTransaction);
+        }
+
+        return $transaction;
     }
 
     /**
