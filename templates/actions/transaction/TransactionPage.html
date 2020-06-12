@@ -18,10 +18,10 @@
                         {foreachelse}
                         <strong class="c-balance large">0 {$onHand->currency->getSign()}</strong>
                     {/foreach}
-                    <span class="hint">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandate}</span>
+                    <span class="hint" style="vertical-align: bottom;">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandate}</span>
                 </span>
                 {/if}
-                
+
             </h1>
             {if $filter->id}
                 <div class="block half-padded" style="position: relative; left: 1rem;">
@@ -46,7 +46,7 @@
             <div class="float-right">
                 <ul class="menu-h dropdown" data-cash-chart-dates>
                     <li>
-                        [`Chart`]: <a href="#" class="inline-link nowrap"
+                        [`Past`]: <a href="#" class="inline-link nowrap"
                                       style="display: inline;"><b><i>{$selectedChartPeriod->getName()}</i></b> <i
                                     class="icon10 darr"></i></a>
                         <ul class="menu-v">
@@ -57,7 +57,7 @@
                         </ul>
                     </li>
                     <li>
-                        [`Forecast`]: <a href="#" class="inline-link nowrap"
+                        [`Future`]: <a href="#" class="inline-link nowrap"
                                          style="display: inline;"><b><i>{$selectedForecastPeriod->getName()}</i></b> <i class="icon10 darr"></i></a>
                         <ul class="menu-v">
                             {foreach cashGraphService::getForecastPeriods() as $period}
@@ -67,29 +67,25 @@
                         </ul>
                     </li>
 
-                    {if $listSettings->showOnHandsEndday}
-                    <li>
-                        {sprintf('[`Cash on hand in %s`]', {$selectedForecastPeriod->getName()})}:
-
-                        {foreach $onHandsEndday as $onHand}
-                            <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
-                            {if !$onHand@last}+{/if}
-                            {foreachelse}
-                            <strong class="c-balance large">0</strong>
-                        {/foreach}
-                        <span class="hint">{$endDate|wa_date:humandate}</span>
-                    </li>
-                    {/if}
-
                 </ul>
 
             </div>
 
             <div class="c-chart" id="cash-chart"></div>
 
-            <!-- <div class="float-right">
+            {if $listSettings->showOnHandsEndday}
+                <div class="block align-right">
 
-            </div> -->
+                    {sprintf('[`Cash on hand in %s (%s):`]', $selectedForecastPeriod->getName(), $endDate|wa_date:humandate )}
+
+                    {foreach $onHandsEndday as $onHand}
+                        <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
+                        {if !$onHand@last}+{/if}
+                        {foreachelse}
+                        <strong class="c-balance large">0</strong>
+                    {/foreach}
+                </div>
+            {/if}
 
             <div class="c-transactions" data-cash-wrapper="transaction-list">
             </div>

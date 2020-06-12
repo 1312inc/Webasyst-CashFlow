@@ -3,7 +3,7 @@
     <form action="?module=import&action=csvProcess" method="post">
         <div class="c-import-preview">
             <p>{sprintf(
-                '[`We’ve recognized <b>%d rows</b> in the uploaded CSV file:`]',
+                '[`We’ve recognized <b>%d rows</b> in the uploaded CSV file. Here is the preview:`]',
                 $info->totalRows
                 )}
             </p>
@@ -32,9 +32,9 @@
                     </table>
                     <div class="block double-padded gray align-center">
                         {if count($info->firstRows) == $info->totalRows}
-                            [`Showing all transactions`]
+                            [`Showing all rows`]
                         {else}
-                            {sprintf('[`Showing first %d transactions`]', count($info->firstRows))}
+                            {sprintf('[`Showing first %d rows only`]', count($info->firstRows))}
                         {/if}
                         <br><br><br><br><br>
                     </div>
@@ -53,7 +53,7 @@
                     <label>
                         <input type="radio" name="import[account][type]" value="{cashCsvImportSettings::TYPE_SINGLE}"
                                checked/>
-                        [`Force set for all imported transactions:`]
+                        [`All imported transactions:`]
                         <select name="import[account][single][column]">
                             <option></option>
                             {foreach $accounts as $a}
@@ -113,7 +113,7 @@
                     </select>
                     <span data-cash-import-csv-date-format style="display:none;">
                         <select name="import[dateformat]" id="">
-                            <option value="ai">[`Try to detect automatically`]</option>
+                            <option value="ai">[`Detect automatically`]</option>
                             {foreach $dateFormats as $dateFormat}
                             <option value="{$dateFormat}">{$dateFormat}</option>
                             {/foreach}
@@ -149,7 +149,7 @@
                 <div class="value no-shift">
                     <label>
                         <input type="radio" name="import[amount][type]" value="{cashCsvImportSettings::TYPE_MULTI}"/>
-                        [`From two columns:`]
+                        [`From two different columns:`]
                     </label>
                     <div class="block">
                         <table class="c-import-conditions">
@@ -194,13 +194,13 @@
                     <label>
                         <input type="radio" name="import[category][type]"
                                value="{cashCsvImportSettings::TYPE_SINGLE}" checked/>
-                        [`Force set for all imported transactions:`]
+                        [`Set depending on the amount:`]
                     </label>
                     <div class="block">
                         <table class="c-import-conditions">
                             <tr>
                                 <td>
-                                    [`Income`]:
+                                    [`Income (amount > 0)`]:
                                     <select name="import[category][single][income][column]">
                                         <option></option>
                                         {foreach $categoriesIncome as $category}
@@ -209,7 +209,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    [`Expenses`]:
+                                    [`Expenses (amount < 0)`]:
                                     <select name="import[category][single][expense][column]">
                                         <option></option>
                                         {foreach $categoriesExpense as $category}
@@ -256,9 +256,9 @@
                     <label>
                         <input type="hidden" name="import[options][skip_duplicates]" value="0"/>
                         <input type="checkbox" name="import[options][skip_duplicates]" checked value="1"/>
-                        [`Skip a row if same ACCOUNT && CATEGORY && DATE && AMOUNT pair already exist (recommended)`]
+                        [`Skip a row if same ACCOUNT && CATEGORY && DATE && AMOUNT pair already exist`]
                         <br>
-                        <span class="hint">[`Just to make sure all obvious duplicates will be skipped`]</span>
+                        <span class="hint">[`Recommended to be on just to make sure all obvious duplicates will be skipped. Though, this depends on the data you are about to import.`]</span>
                     </label>
                 </div>
             </div>
