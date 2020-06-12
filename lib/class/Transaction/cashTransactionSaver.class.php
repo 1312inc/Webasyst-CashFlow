@@ -6,47 +6,144 @@
 class cashTransactionSaver extends cashEntitySaver
 {
     /**
+     * @var cashTransaction[]
+     */
+    private $toPrsist = [];
+
+    /**
      * @param cashTransaction              $transaction
      * @param array                        $data
      * @param cashTransactionSaveParamsDto $params
      *
      * @return bool|cashTransaction
+     * @throws ReflectionException
+     * @throws kmwaAssertException
+     * @throws kmwaLogicException
+     * @throws kmwaNotImplementedException
      * @throws waException
      */
     public function saveFromArray($transaction, array $data, cashTransactionSaveParamsDto $params)
+    {
+        $toPersist = [];
+        if ($this->populateFromArray($transaction, $data, $params)) {
+            $toPersist[] = $transaction;
+        }
+
+        if ($params->repeating) {
+            $transferTransaction = $transaction-$this->createTransfer($transaction, $params);
+            if ($transferTransaction) {
+                $toPersist[] = $transferTransaction;
+            }
+        }
+
+        return $this->persistTransactions($toPersist);
+    }
+
+    /**
+     * @param cashTransaction              $transaction
+     * @param array                        $data
+     * @param cashTransactionSaveParamsDto $params
+     *
+     * @return bool|cashTransaction
+     * @throws ReflectionException
+     * @throws kmwaAssertException
+     * @throws waException
+     */
+    public function populateFromArray(cashTransaction $transaction, array $data, cashTransactionSaveParamsDto $params)
     {
         if (!$this->validate($data)) {
             return false;
         }
 
+        if ($params->categoryType === cashCategory::TYPE_EXPENSE) {
+            $data['amount'] = -abs($data['amount']);
+        } elseif ($params->categoryType === cashCategory::TYPE_INCOME) {
+            $data['amount'] = abs($data['amount']);
+        }
+
+        $data = $this->addCategoryId($data);
+
+        cash()->getHydrator()->hydrate($transaction, $data);
+
+        return $transaction;
+    }
+
+    /**
+     * @param cashTransaction              $transaction
+     * @param cashTransactionSaveParamsDto $params
+     *
+     * @return bool|cashTransaction
+     * @throws kmwaAssertException
+     * @throws kmwaLogicException
+     * @throws kmwaNotImplementedException
+     * @throws waException
+     */
+    public function createTransfer(cashTransaction $transaction, cashTransactionSaveParamsDto $params)
+    {
+        if (!$params->transfer) {
+            return false;
+        }
+        $amount = abs($transaction->getAmount());
+
+        $transferTransaction = clone $transaction;
+        $transferTransaction
+            ->setId(null)
+            ->setAmount($amount);
+
+        if (!empty($transferData['category_id'])) {
+            $transferTransaction->setCategoryId($transferData['category_id']);
+        }
+        if (empty($transferData['account_id'])) {
+            throw new kmwaLogicException('No account for transfer to');
+        }
+
+        $transferTransaction->setAccountId($transferData['account_id']);
+
+        /** @var cashAccount $account */
+        $account = cash()->getEntityRepository(cashAccount::class)->findById($transferData['account_id']);
+        kmwaAssert::instance($account, cashAccount::class);
+
+        if ($transaction->getAccount()->getCurrency() !== $account->getCurrency()) {
+            throw new kmwaNotImplementedException('No exchange logic');
+        }
+
+        if ($transaction->getAmount() > 0) {
+            $transaction->setAmount(-$transaction->getAmount());
+        }
+
+        $transaction->setLinkedTransaction($transferTransaction);
+
+        return $transferTransaction;
+    }
+
+    /**
+     * @param cashTransaction[] $transactions
+     *
+     * @return bool
+     * @throws waException
+     */
+    public function persistTransactions(array $transactions = [])
+    {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
         $model->startTransaction();
 
+        if ($transactions) {
+            $this->toPrsist = $transactions;
+        }
+
         try {
-            if ($params->categoryType === cashCategory::TYPE_EXPENSE) {
-                $data['amount'] = -abs($data['amount']);
-            } elseif ($params->categoryType === cashCategory::TYPE_INCOME) {
-                $data['amount'] = abs($data['amount']);
-            }
-
-            $data = $this->addCategoryId($data);
-
-            cash()->getHydrator()->hydrate($transaction, $data);
-
-            if ($params->transfer) {
-                $transferTransaction = $this->transfer($transaction, $params->transfer);
-                if ($transaction->getAmount() > 0) {
-                    $transaction->setAmount(-$transaction->getAmount());
+            foreach ($this->toPrsist as $transaction) {
+                if (!$transaction instanceof cashTransaction) {
+                    continue;
                 }
-
-                $transaction->setLinkedTransaction($transferTransaction);
+                cash()->getEntityPersister()->save($transaction);
             }
-            cash()->getEntityPersister()->save($transaction);
 
             $model->commit();
+            $this->toPrsist = [];
 
-            return $transaction;
+            return true;
         } catch (Exception $ex) {
             $model->rollback();
 
@@ -78,6 +175,14 @@ class cashTransactionSaver extends cashEntitySaver
         $data['amount'] = cashHelper::parseFloat($data['amount']);
 
         return true;
+    }
+
+    /**
+     * @param cashTransaction $transaction
+     */
+    public function addToPersist(cashTransaction $transaction)
+    {
+        $this->toPrsist[spl_object_hash($transaction)] = $transaction;
     }
 
     /**

@@ -30,70 +30,73 @@ class cashTransactionSaveController extends cashJsonController
             $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
         }
 
-        $repeatingDto = new cashRepeatingTransactionSettingsDto($repeating);
-        $repeatTransactionSaver = new cashRepeatingTransactionSaver();
-        $transactionRepeater = new cashTransactionRepeater();
-
         $paramsDto = new cashTransactionSaveParamsDto();
         $paramsDto->transfer = $transfer;
         $paramsDto->categoryType = $categoryType;
+        if (!$saver->populateFromArray($transaction, $data, $paramsDto)) {
+            $this->errors[] = $saver->getError();
 
-        switch (true) {
-            case $isNew && $isRepeating && $repeating && $repeatingDto->interval: // новая повторяющаяся
-                /** @var cashRepeatingTransaction $repeatingTransaction */
-                $repeatingTransaction = cash()->getEntityFactory(cashRepeatingTransaction::class)->createNew();
-                if (!$repeatTransactionSaver->saveFromArray($repeatingTransaction, $data,$paramsDto)) {
-                    $this->errors[] = 'Error on new repeating transaction save';
+            return;
+        }
 
-                    return;
+        $repeatingDto = new cashRepeatingTransactionSettingsDto($repeating);
+        if ($repeatingDto->isLoaded()) {
+            $repeatTransactionSaver = new cashRepeatingTransactionSaver();
+            $transactionRepeater = new cashTransactionRepeater();
+
+            if ($isNew) {
+                $repeatingSaveResult = $repeatTransactionSaver->saveFromTransaction(
+                    $transaction,
+                    $repeatingDto
+                );
+
+                // первая транзакция уже создана
+//                $endAfter = $repeatingTransaction->getRepeatingConditionEndAfter();
+//                if ($endAfter) {
+//                    $repeatingTransaction->setRepeatingConditionEndAfter(--$endAfter);
+//                }
+                if ($repeatingSaveResult->ok) {
+                    $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
                 }
 
-                $transactionRepeater->repeat($repeatingTransaction);
-
                 if ($transaction->getLinkedTransaction()) {
-                    $repeatingTransaction = $repeatTransactionSaver->saveFromTransaction(
+                    $repeatingSaveResult = $repeatTransactionSaver->saveFromTransaction(
                         $transaction->getLinkedTransaction(),
                         $repeatingDto
                     );
-                    $transactionRepeater->repeat($repeatingTransaction);
-                }
-                break;
 
-            case $isRepeating && $repeating && $repeatingDto->apply_to_all_in_future: // обновление повторяющийся
+                    // первая транзакция уже создана
+//                    $repeatingTransaction->setRepeatingConditionEndAfter($endAfter);
+                    $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
+                }
+            } elseif ($repeatingDto->apply_to_all_in_future) {
                 $repeatingTransaction = $transaction->getRepeatingTransaction();
-                $savedRepeatingTransaction = $repeatTransactionSaver->saveExisting(
+                kmwaAssert::instance($repeatingTransaction, cashRepeatingTransaction::class);
+
+                $repeatingSaveResult = $repeatTransactionSaver->saveExisting(
                     $repeatingTransaction,
                     $transaction,
                     $repeatingDto
                 );
 
-                if (!$savedRepeatingTransaction instanceof cashRepeatingTransaction) {
+                if (!$repeatingSaveResult->ok) {
                     throw new kmwaRuntimeException('Error on repeating transaction save');
                 }
 
-                $transactionRepeater->repeat($savedRepeatingTransaction);
-
-            default: // обычная транзакция (создание и обновление)
-                if (!$saver->saveFromArray($transaction, $data, $paramsDto)) {
-                    $this->errors[] = $saver->getError();
-
-                    return;
-                }
-        }
-
-
-
-        if (() || $repeatingDto->apply_to_all_in_future || $repeatingDto->interval) {
-            if ($isNew) {
-
-            } elseif ($repeatingDto->apply_to_all_in_future) {
-
-
                 // изменились настройки повторения и вернулся новый объект повторяющейся транзакции
-//                if ($savedRepeatingTransaction->getId() !== $repeatingTransaction->getId()) {
-//                    $transactionRepeater->repeat($savedRepeatingTransaction);
-//                }
+                if ($repeatingSaveResult->shouldRepeat) {
+                    $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
+                }
             }
+        } else {
+            $saver->addToPersist($transaction);
+            if ($paramsDto->transfer) {
+                $transferTransaction = $saver->createTransfer($transaction, $paramsDto);
+                if ($transferTransaction) {
+                    $saver->addToPersist($transferTransaction);
+                }
+            }
+            $saver->persistTransactions();
         }
 
         $transactionDto = (new cashTransactionDtoAssembler())->createFromEntity($transaction);

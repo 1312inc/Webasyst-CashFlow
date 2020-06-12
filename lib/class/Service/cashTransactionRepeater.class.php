@@ -25,47 +25,51 @@ final class cashTransactionRepeater
     }
 
     /**
-     * @param cashRepeatingTransaction $transaction
+     * @param cashRepeatingTransaction $repeatingTransaction
      * @param DateTime|null            $startDate
      *
-     * @return bool|cashTransaction|null
+     * @return bool|cashTransaction[]|null
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function repeat(cashRepeatingTransaction $transaction, DateTime $startDate = null)
+    public function repeat(cashRepeatingTransaction $repeatingTransaction, DateTime $startDate = null)
     {
-        $data = cash()->getHydrator()->extract($transaction);
-        $endSettings = $transaction->getRepeatingEndConditions();
+        $data = cash()->getHydrator()->extract($repeatingTransaction);
+        $endSettings = $repeatingTransaction->getRepeatingEndConditions();
         unset($data['id'], $data['create_datetime'], $data['create_datetime'], $data['update_datetime']);
-        $data['repeating_id'] = $transaction->getId();
-        $startDate = $startDate ?: new DateTime($transaction->getDate());
-        $t = null;
+        $data['repeating_id'] = $repeatingTransaction->getId();
+        $startDate = $startDate ?: new DateTime($repeatingTransaction->getDate());
+        $t = [];
 
-        switch ($transaction->getRepeatingEndType()) {
+        switch ($repeatingTransaction->getRepeatingEndType()) {
             case cashRepeatingTransaction::REPEATING_END_ONDATE:
                 $endDate = new DateTime($endSettings['ondate']);
                 while ($startDate <= $endDate) {
-                    $t = $this->saveNextTransaction($transaction, $data, $startDate);
+                    $t[] = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
                 }
                 break;
 
             case cashRepeatingTransaction::REPEATING_END_AFTER:
                 $counter = 0;
                 while ($counter++ < $endSettings['after']) {
-                    $t = $this->saveNextTransaction($transaction, $data, $startDate);
+                    $t[] = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
                 }
 
                 break;
 
             case cashRepeatingTransaction::REPEATING_END_NEVER:
                 $counter = 0;
-                while ($counter++ <= $this->getOccurrencesByDefault($transaction)) {
-                    $t = $this->saveNextTransaction($transaction, $data, $startDate);
+                while ($counter++ <= $this->getOccurrencesByDefault($repeatingTransaction)) {
+                    $t[] = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
                 }
                 break;
 
             default:
                 throw new kmwaRuntimeException('No repeating transaction end setting');
+        }
+
+        if ($t) {
+            $this->transactionSaver->persistTransactions($t);
         }
 
         return $t;
@@ -76,18 +80,23 @@ final class cashTransactionRepeater
      * @param array                    $data
      * @param DateTime                 $startDate
      *
-     * @return bool|cashTransaction
+     * @return cashTransaction
+     * @throws ReflectionException
+     * @throws kmwaAssertException
      * @throws waException
      */
-    private function saveNextTransaction(cashRepeatingTransaction $transaction, array $data, DateTime $startDate)
+    private function createNextTransaction(cashRepeatingTransaction $transaction, array $data, DateTime $startDate)
     {
-        $data['date'] = $startDate->modify(
-            sprintf('+%d %s', $transaction->getRepeatingFrequency(), $transaction->getRepeatingInterval())
-        )->format('Y-m-d H:i:s');
+        $data['date'] = $startDate->format('Y-m-d H:i:s');
+        $t = $this->transactionSaver->populateFromArray(
+            $this->transactionFactory->createNew(),
+            $data,
+            new cashTransactionSaveParamsDto()
+        );
 
-        $params = new cashTransactionSaveParamsDto();
+        $startDate->modify(sprintf('+%d %s', $transaction->getRepeatingFrequency(), $transaction->getRepeatingInterval()));
 
-        return $this->transactionSaver->saveFromArray($this->transactionFactory->createNew(), $data, $params);
+        return $t;
     }
 
     /**

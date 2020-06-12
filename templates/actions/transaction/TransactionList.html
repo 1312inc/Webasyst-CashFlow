@@ -92,7 +92,7 @@
     </tr> -->
 
 {if $upcoming}
-    <tr class="white c-table-divider c-planned" style="display: none;">
+    <tr class="white c-table-divider c-planned" style="{if $completed}display: none;{/if}">
         <td class="min-width"><input type="checkbox"></td>
         <td colspan="7">
             <h5 class="heading">
@@ -104,7 +104,7 @@
     </tr>
 
     {foreach $upcoming as $t}
-        <tr class="c-planned" data-cash-transaction-id="{$t->id}" style="display: none;">
+        <tr class="c-planned" data-cash-transaction-id="{$t->id}" style="{if $completed}display: none;{/if}">
             <td class="min-width"><input value="{$t->id}" type="checkbox"></td>
             <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
             <td>
