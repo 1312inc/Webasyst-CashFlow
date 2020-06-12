@@ -24,7 +24,7 @@ class cashImportCsvCheckColumnFullnessController extends cashJsonController
             $this->response = [
                 'fullness' => $fullness,
                 'message' => sprintf_wp(
-                    '<b>Only %d out of %d rows in the file have this column defined.</b> Remaining %d rows have the undefined value and thus will be skipped. Please make sure the right column is selected.',
+                    '<b>Only %d out of %d rows in the file have this column defined.</b> Remaining <span class="highlighted">%d rows have an undefined value</span> and thus will be skipped. Please make sure the right column is selected.',
                     $csvImport->getColumnValues($columnName),
                     $csvImport->getCsvInfoDto()->totalRows,
                     $csvImport->getCsvInfoDto()->totalRows - $csvImport->getColumnValues($columnName)

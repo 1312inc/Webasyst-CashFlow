@@ -17,19 +17,6 @@
             [`No activity in the selected period. Create a transaction to get started!`]
         </div>
 
-    {else}
-    <ul class="menu-h dropdown">
-        <li>
-            <a href="#" class="inline-link gray"><b><i>[`Export`]</i></b><i class="icon10 darr"></i></a>
-            <ul class="menu-v">
-                <!-- plugin hook: 'backend_transactions_export' -->
-                {* @event backend_transactions_export.%plugin_id% *}
-                {if !empty($backend_transactions_export)}
-                    <li>{foreach $backend_transactions_export as $_}{ifset($_)}{/foreach}</li>
-                {/if}
-            </ul>
-        </li>
-    </ul>
     {/if}
 
     <ul class="menu-h dropdown c-actions-menu">
@@ -77,6 +64,14 @@
         <li>
             <input type="search" placeholder="[`Filter`]" data-cash-action="filter-transactions"/>
         </li>
+
+        {if $upcoming}
+        <li class="float-right c-upcoming-toggle">
+            <div class="block half-padded">
+                <a href="#" class="inline-link nowrap" data-cash-action="show-upcoming-transactions"><b><i>{sprintf( '[`Show next %s (%d transactions)`]', $selectedForecastPeriod->getName(), count($upcoming) )}</i></b></a>
+            </div>
+        </li>
+        {/if}
     </ul>
 </div>
 
@@ -94,12 +89,25 @@
 {if $upcoming}
     <tr class="white c-table-divider c-planned" style="{if $completed}display: none;{/if}">
         <td class="min-width"><input type="checkbox"></td>
-        <td colspan="7">
+        <td colspan="2">
             <h5 class="heading">
                 [`Upcoming`]
                 {if $selectedForecastPeriod}<span class="hint">{$selectedForecastPeriod->getName()}</span>{/if}
             </h5>
-
+        </td>
+        <td colspan="4" class="align-right">
+            <ul class="menu-h dropdown float-right">
+                <li>
+                    <a href="#" class="inline-link gray"><b><i>[`Export upcoming`]</i></b><i class="icon10 darr"></i></a>
+                    <ul class="menu-v">
+                        <!-- plugin hook: 'backend_transactions_export' -->
+                        {* @event backend_transactions_export.%plugin_id% *}
+                        {if !empty($backend_transactions_export)}
+                            <li>{foreach $backend_transactions_export as $_}{ifset($_)}{/foreach}</li>
+                        {/if}
+                    </ul>
+                </li>
+            </ul>
         </td>
     </tr>
 
@@ -108,20 +116,23 @@
             <td class="min-width"><input value="{$t->id}" type="checkbox"></td>
             <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
             <td>
-                <span class="nowrap">
-                    {if $t->category}
-                        <i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}
-                    {else}
-                        <i class="icon16 color" style="background: rgba(0,0,0,0.13);"></i><span class="gray">[`No category`]</span>
-                    {/if}
-                    {if $t->repeating_id}<i class="icon16 c-repeating" title="[`Repeating transaction`]"></i>{/if}
-                    {$_days_diff = round( (strtotime($t->date|cat:' 12:00:00')-strtotime(date('Y-m-d')|cat:' 12:00:00') )/(24*3600) )}
-                </span>
+                <div>
+                    <span>
+                        {if $t->category}
+                            <i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}
+                        {else}
+                            <i class="icon16 color" style="background: rgba(0,0,0,0.13);"></i><span class="gray">[`No category`]</span>
+                        {/if}
+                        {if $t->repeating_id}<i class="icon16 c-repeating" title="[`Repeating transaction`]"></i>{/if}
+                        {$_days_diff = round( (strtotime($t->date|cat:' 12:00:00')-strtotime(date('Y-m-d')|cat:' 12:00:00') )/(24*3600) )}
+                    </span>
+                    <i class="shortener"></i>
+                </div>
             </td>
-            <td><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
-            <td class="align-right"><em class="hint">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %s days`]', $_days_diff)}{/if}</em>&nbsp;<strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if}>{round($t->amount,2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
-            <td><span class="nowrap">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
-            <td><span class="nowrap">{$t->account->name|escape}</span></td>
+            <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
+            <td class="align-right"><em class="hint nowrap">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %d days`]', $_days_diff)}{/if}</em>&nbsp;<strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if} title="[`Amount`]">{round($t->amount,2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
+            <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
+            <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
         </tr>
     {/foreach}
 
@@ -148,13 +159,23 @@
         <td class="min-width"><input type="checkbox"></td>
         <td colspan="2">
             <h5 class="heading">
-                {if $selectedChartPeriod}{$selectedChartPeriod->getName()}{else}[`Completed`]{/if}
+                {if $selectedChartPeriod}{$selectedChartPeriod->getName()}{else}[`Completed`]{/if},
+                {sprintf('[`%d transactions`]', count($completed))}
             </h5>
         </td>
         <td colspan="4" class="align-right">
-            {if $upcoming}
-                <a href="#" class="inline-link nowrap" data-cash-action="show-upcoming-transactions"><b><i>{sprintf( '[`Show %d upcoming transactions (%s)`]', count($upcoming), $selectedForecastPeriod->getName() )}</i></b></a>
-            {/if}
+            <ul class="menu-h dropdown float-right">
+                <li>
+                    <a href="#" class="inline-link gray"><b><i>[`Export transactions`]</i></b><i class="icon10 darr"></i></a>
+                    <ul class="menu-v">
+                        <!-- plugin hook: 'backend_transactions_export' -->
+                        {* @event backend_transactions_export.%plugin_id% *}
+                        {if !empty($backend_transactions_export)}
+                            <li>{foreach $backend_transactions_export as $_}{ifset($_)}{/foreach}</li>
+                        {/if}
+                    </ul>
+                </li>
+            </ul>
         </td>
     </tr>
 {/if}
@@ -164,26 +185,29 @@
         <td class="min-width"><input value="{$t->id}" type="checkbox"></td>
         <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
         <td>
-            <span class="nowrap">
-                {if $t->category}
-                    <i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}
-                {else}
-                    <i class="icon16 color" style="background: rgba(0,0,0,0.13);"></i><span class="gray">[`No category`]</span>
-                {/if}
-                {if $t->repeating_id}<i class="icon16 c-repeating" title="[`Repeating transaction`]"></i>{/if}
-            </span>
+            <div>
+                <span>
+                    {if $t->category}
+                        <i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}
+                    {else}
+                        <i class="icon16 color" style="background: rgba(0,0,0,0.13);"></i><span class="gray">[`No category`]</span>
+                    {/if}
+                    {if $t->repeating_id}<i class="icon16 c-repeating" title="[`Repeating transaction`]"></i>{/if}
+                </span>
+                <i class="shortener"></i>
+            </div>
         </td>
-        <td><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
-        <td class="align-right"><strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if}>{round($t->amount,2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
-        <td><span class="nowrap">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
-        <td><span class="nowrap">{$t->account->name|escape}</span></td>
+        <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
+        <td class="align-right"><strong class="nowrap" title="[`Amount`]"{if $t->category} style="color: {$t->category->color};"{/if}>{round($t->amount,2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
+        <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
+        <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
     </tr>
 {/foreach}
 
 {if $completedOnDate}
     <tr class="white c-totals">
         <td colspan="7" class="align-center">
-            <p>{sprintf('[`Total for the selected period (%s):`]', {$selectedChartPeriod->getName()})}</p>
+            <p>{sprintf('[`Total for the selected period (%s, %d transactions):`]', $selectedChartPeriod->getName(), count($completed) )}</p>
             {foreach $completedOnDate as $onDateStat}
             <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
                 {foreach $onDateStat->stat as $statOnDate}
