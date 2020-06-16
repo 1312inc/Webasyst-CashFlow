@@ -139,7 +139,7 @@ final class cashImportCsv
                         if (!isset($this->csvInfoDto->totalRowsByColumn[$key][$data[$column]])) {
                             $this->csvInfoDto->totalRowsByColumn[$key][$data[$column]] = 0;
                         }
-                        if (!empty($data[$column])) {
+                        if (trim($data[$column]) !== '') {
                             $this->csvInfoDto->totalRowsByColumn[$key][$data[$column]]++;
                         }
                     }
@@ -158,7 +158,7 @@ final class cashImportCsv
 
         // cache data
         foreach ($csvData as $key => $datum) {
-            $this->csvInfoDto->uniqueValues[$key] = array_filter(array_unique($datum));
+            $this->csvInfoDto->uniqueValues[$key] = array_unique($datum);
         }
         cash()->getCache()->set(self::getCacheKeyForUser(), $this->csvInfoDto);
 
@@ -352,18 +352,25 @@ final class cashImportCsv
         try {
             cash()->getLogger()->debug($data, 'import');
 
+            $amount = $this->getAmount($data);
+            $categoryId = $this->getCategory(
+                $data,
+                $infoDto,
+                $amount < 0 ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME
+            );
+            if ($categoryId === 0) {
+                $infoDto->fail++;
+                $this->error = 'Skip transaction';
+
+                return false;
+            }
+
             $transaction
-                ->setAmount($this->getAmount($data))
+                ->setAmount($amount)
                 ->setDescription($this->getDescription($data))
                 ->setDate($this->getDate($data))
                 ->setAccountId($this->getAccount($data, $infoDto))
-                ->setCategoryId(
-                    $this->getCategory(
-                        $data,
-                        $infoDto,
-                        $transaction->getAmount() < 0 ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME
-                    )
-                )
+                ->setCategoryId($categoryId)
                 ->setImportId($infoDto->importId);
 
             $selectedCategory = $transaction->getCategoryId();
@@ -600,8 +607,12 @@ final class cashImportCsv
             case cashCsvImportSettings::TYPE_MULTI:
                 $categoryMap = $this->settings->getCategoryMap();
                 $category = $this->settings->getCategory();
-                if (isset($data[$category], $categoryMap[$data[$category]]) && $categoryMap[$data[$category]] > 0) {
-                    $categoryId = $categoryMap[$data[$category]];
+                if (isset($data[$category], $categoryMap[$data[$category]])) {
+                    if ($categoryMap[$data[$category]] > 0) {
+                        $categoryId = $categoryMap[$data[$category]];
+                    } elseif ($categoryMap[$data[$category]] == 0) {
+                        $categoryId = 0;
+                    }
                 }
 
                 break;

@@ -37,7 +37,7 @@ class cashImportCsvProcessController extends waLongActionController
         try {
             parent::execute();
         } catch (Exception $ex) {
-            cash()->getLogger()->error($ex->getMessage(), $ex);
+            cash()->getLogger()->error($ex->getMessage(), $ex, 'import/error');
             $this->getResponse()->addHeader('Content-type', 'application/json');
             echo json_encode(['error' => $ex->getMessage()]);
             exit;
@@ -58,7 +58,7 @@ class cashImportCsvProcessController extends waLongActionController
 ++++++++++++++++++++++++++++++++++++
 PREINIT
 LOG
-        , 'import');
+        , 'import/import');
 
         $settings = waRequest::post('import', [], waRequest::TYPE_ARRAY);
         if (empty($settings)) {
@@ -72,7 +72,7 @@ LOG
         $this->currentImport = cashImportCsv::createCurrent();
         $this->settings = new cashCsvImportSettings($settings);
         if (!$this->settings->isValid()) {
-            cash()->getLogger()->debug(sprintf('PREINIT error: %s', $this->settings->getError()), 'import');
+            cash()->getLogger()->debug(sprintf('PREINIT error: %s', $this->settings->getError()), 'import/import');
 
             throw new kmwaRuntimeException($this->settings->getError());
         }
@@ -83,7 +83,10 @@ LOG
             ->setFilename((new SplFileInfo($this->currentImport->getCsvInfoDto()->path))->getFilename());
         cash()->getEntityPersister()->save($this->import);
 
-        cash()->getLogger()->debug(sprintf('PREINIT ok, new import created: %d', $this->import->getId()), 'import');
+        cash()->getLogger()->debug(
+            sprintf('PREINIT ok, new import created: %d', $this->import->getId()),
+            'import/import'
+        );
 
         return true;
     }
@@ -110,8 +113,8 @@ LOG
         $this->data['csv_info'] = $this->csvInfo;
         $this->data['settings'] = $this->settings;
 
-        cash()->getLogger()->debug('INIT ok', 'import');
-        cash()->getLogger()->debug($this->settings, 'import');
+        cash()->getLogger()->debug('INIT ok', 'import/import');
+        cash()->getLogger()->debug($this->settings, 'import/import');
     }
 
     /**
@@ -127,11 +130,11 @@ LOG
      */
     protected function step()
     {
-        cash()->getLogger()->debug('==== STEP ====', 'import');
+        cash()->getLogger()->debug('==== STEP ====', 'import/import');
 
         $response = $this->currentImport->process($this->csvInfo->headers, $this->info->passedRows, $this->info->chunk);
         foreach ($response->data as $rowNum => $datum) {
-            cash()->getLogger()->log(sprintf('Import transaction from row %d', $rowNum), sprintf('import_%d', $this->info->importId));
+            cash()->getLogger()->log(sprintf('Import transaction from row %d', $rowNum), sprintf('import/import_%d', $this->info->importId));
 
             if ($this->currentImport->save($datum, $this->info)) {
                 $this->import->setSuccess($this->info->ok);
@@ -142,7 +145,7 @@ LOG
 
                 cash()->getLogger()->log(
                     sprintf('row #%d: %s', $rowNum, $error),
-                    sprintf('import_%d_errors', $this->info->importId)
+                    sprintf('import/import_%d_errors', $this->info->importId)
                 );
             }
         }

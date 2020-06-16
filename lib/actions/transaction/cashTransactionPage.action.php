@@ -126,12 +126,4 @@ class cashTransactionPageAction extends cashViewAction
             ]
         );
     }
-
-    /**
-     * @throws waException
-     */
-    private function repeatNeverEndingTransactions()
-    {
-
-    }
 }
