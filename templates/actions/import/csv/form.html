@@ -338,7 +338,8 @@
                 $button.prop('disabled', true).hide();
 
                 $('#cash-import-page').trigger('stepChange.cash', 3);
-                $form.hide();
+                $form.slideUp(131.2);
+                $('html, body').animate({ scrollTop: 0 }, 131.2);
 
                 var long = $.wa.kmLongAction();
                 long.start({
@@ -525,7 +526,7 @@
     <td><span class="c-condition">${columnValue}</span></td>
     <td>=></td>
     <td>
-        <select name="import[category}][multi][map][${columnValue}]">
+        <select name="import[category][multi][map][${columnValue}]">
             <option value="0">${translate['Skip rows with this value']}</option>
             <optgroup data-cash-categories-optgroup="income" label="${translate['Income']}">
                 {{each(id, name, type) sources.income}}

@@ -125,7 +125,7 @@ select ct.*,
 from cash_transaction ct
 join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate)) b
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-join cash_category cc on ct.category_id = cc.id
+left join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
     and ct.import_id = i:import_id
     and ct.is_archived = 0

@@ -107,10 +107,6 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                     $endDate->format('Y-m-d 23:59:59'),
                     $this->filterDto->id
                 );
-                $this->accounts = $model->getExistingAccountsBetweenDates(
-                    $startDate->format('Y-m-d 00:00:00'),
-                    $endDate->format('Y-m-d 23:59:59')
-                );
                 break;
 
             case cashTransactionPageFilterDto::FILTER_CATEGORY:
@@ -161,11 +157,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
     {
         $colors = $names = $regions = $lineIds = $columns = $currencies = $types = [];
 
-        if (in_array(
-            $this->filterDto->type,
-            [cashTransactionPageFilterDto::FILTER_ACCOUNT, cashTransactionPageFilterDto::FILTER_IMPORT],
-            true
-        )) {
+        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
             $linesGroupedByCurrency = [];
             foreach ($this->lines as $lineId => $lineData) {
                 $account = cash()->getModel(cashAccount::class)->getById($lineId);

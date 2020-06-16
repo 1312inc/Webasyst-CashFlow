@@ -5,20 +5,44 @@
  */
 class cashCsvImportInfoDto
 {
+    /**
+     * @var array
+     */
     public $headers = [];
 
+    /**
+     * @var array
+     */
     public $uniqueValues = [];
 
+    /**
+     * @var string
+     */
     public $path = '';
 
+    /**
+     * @var string
+     */
     public $delimiter = '';
 
+    /**
+     * @var string
+     */
     public $encoding = '';
 
+    /**
+     * @var int
+     */
     public $totalRows = 0;
 
+    /**
+     * @var array
+     */
     public $totalRowsByColumn = [];
 
+    /**
+     * @var array
+     */
     public $firstRows = [];
 
     /**
