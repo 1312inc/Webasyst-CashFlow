@@ -253,10 +253,11 @@
                                 return;
                             }
 
-                            var id = $dialogWrapper.find('form input[name="transaction[id]"]').val();
+                            var id = $dialogWrapper.find('form input[name="transaction[id]"]').val(),
+                                all = $dialogWrapper.find('form :checkbox[name="repeating[apply_to_all_in_future]"]').is(':checked');
                             $.post(
                                 '?module=transaction&action=delete',
-                                { id: id },
+                                { id: id, all: all },
                                 function (r) {
                                     if (r.status === 'ok') {
                                         $dialogWrapper.trigger('close');
