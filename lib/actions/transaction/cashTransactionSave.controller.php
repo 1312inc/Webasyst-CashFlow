@@ -40,7 +40,7 @@ class cashTransactionSaveController extends cashJsonController
         }
 
         $repeatingDto = new cashRepeatingTransactionSettingsDto($repeating);
-        if ($repeatingDto->isLoaded()) {
+        if ($isRepeating || $repeatingDto->apply_to_all_in_future) {
             $repeatTransactionSaver = new cashRepeatingTransactionSaver();
             $transactionRepeater = new cashTransactionRepeater();
 
