@@ -119,8 +119,9 @@ class cashTransactionSaver extends cashEntitySaver
     /**
      * @param cashTransaction[] $transactions
      *
-     * @return bool
+     * @return array|bool
      * @throws waException
+     * @throws Exception
      */
     public function persistTransactions(array $transactions = [])
     {
@@ -133,24 +134,24 @@ class cashTransactionSaver extends cashEntitySaver
         }
 
         try {
+            $saved = [];
             foreach ($this->toPrsist as $transaction) {
                 if (!$transaction instanceof cashTransaction) {
                     continue;
                 }
                 cash()->getEntityPersister()->save($transaction);
+                $saved[] = $transaction;
             }
 
             $model->commit();
             $this->toPrsist = [];
 
-            return true;
+            return $saved;
         } catch (Exception $ex) {
             $model->rollback();
 
-            $this->error = $ex->getMessage();
+            throw $ex;
         }
-
-        return false;
     }
 
     /**
