@@ -52,6 +52,9 @@ class cashTransactionListAction extends cashTransactionPageAction
         $event = new cashExportEvent($this->filterDto, $this->startDate, $this->endDate);
         $eventResult = cash()->waDispatchEvent($event);
 
+        $justSavedTransactions = wa()->getStorage()->get('cash_just_saved_transactions') ?: [];
+        wa()->getStorage()->remove('cash_just_saved_transactions');
+
         $this->view->assign(
             [
                 'upcoming' => $upcoming,
@@ -66,6 +69,8 @@ class cashTransactionListAction extends cashTransactionPageAction
                 'listSettings' => $settings,
 
                 'backend_transactions_export' => $eventResult,
+
+                'justSavedTransactions' => $justSavedTransactions,
             ]
         );
     }

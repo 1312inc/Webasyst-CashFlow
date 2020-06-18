@@ -112,7 +112,10 @@
     </tr>
 
     {foreach $upcoming as $t}
-        <tr class="c-planned" data-cash-transaction-id="{$t->id}" style="{if $completed}display: none;{/if}">
+        <tr class="c-planned{if isset($justSavedTransactions[$t->id])} highlighted{/if}"
+            data-cash-transaction-id="{$t->id}"
+            style="{if $completed && !isset($justSavedTransactions[$t->id])}display: none;{/if}"
+        >
             <td class="min-width"><input value="{$t->id}" type="checkbox"></td>
             <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
             <td>
@@ -181,7 +184,7 @@
 {/if}
 
 {foreach $completed as $t}
-    <tr data-cash-transaction-id="{$t->id}">
+    <tr data-cash-transaction-id="{$t->id}" class="{if isset($justSavedTransactions[$t->id])}highlighted{/if}">
         <td class="min-width"><input value="{$t->id}" type="checkbox"></td>
         <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
         <td>

@@ -18,6 +18,7 @@ class cashTransactionSaveController extends cashJsonController
         $categoryType = waRequest::post('category_type', cashCategory::TYPE_INCOME, waRequest::TYPE_STRING_TRIM);
 
         $isNew = empty($data['id']);
+        $newTransactionIds = [];
 
         $saver = new cashTransactionSaver();
 
@@ -56,7 +57,13 @@ class cashTransactionSaveController extends cashJsonController
 //                    $repeatingTransaction->setRepeatingConditionEndAfter(--$endAfter);
 //                }
                 if ($repeatingSaveResult->ok) {
-                    $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
+                    $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
+                    if ($newTransactions) {
+                        foreach ($newTransactions as $newTransaction) {
+                            $newTransactionIds[$newTransaction->getId()] = true;
+                        }
+                        wa()->getStorage()->set('cash_just_saved_transactions', $newTransactionIds);
+                    }
                 }
 
                 if ($transaction->getLinkedTransaction()) {
@@ -67,39 +74,59 @@ class cashTransactionSaveController extends cashJsonController
 
                     // первая транзакция уже создана
 //                    $repeatingTransaction->setRepeatingConditionEndAfter($endAfter);
-                    $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
-                }
-            } elseif ($repeatingDto->apply_to_all_in_future) {
-                $repeatingTransaction = $transaction->getRepeatingTransaction();
-                kmwaAssert::instance($repeatingTransaction, cashRepeatingTransaction::class);
-
-                $repeatingSaveResult = $repeatTransactionSaver->saveExisting(
-                    $repeatingTransaction,
-                    $transaction,
-                    $repeatingDto
-                );
-
-                if (!$repeatingSaveResult->ok) {
-                    throw new kmwaRuntimeException('Error on repeating transaction save');
+                    $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
+                    if ($newTransactions) {
+                        foreach ($newTransactions as $newTransaction) {
+                            $newTransactionIds[$newTransaction->getId()] = true;
+                        }
+                        wa()->getStorage()->set('cash_just_saved_transactions', $newTransactionIds);
+                    }
                 }
 
-                // изменились настройки повторения и вернулся новый объект повторяющейся транзакции
-                if ($repeatingSaveResult->shouldRepeat) {
-                    $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
+                return;
+            }
+
+            $repeatingTransaction = $transaction->getRepeatingTransaction();
+            kmwaAssert::instance($repeatingTransaction, cashRepeatingTransaction::class);
+
+            $repeatingSaveResult = $repeatTransactionSaver->saveExisting(
+                $repeatingTransaction,
+                $transaction,
+                $repeatingDto
+            );
+
+            if (!$repeatingSaveResult->ok) {
+                throw new kmwaRuntimeException('Error on repeating transaction save');
+            }
+
+            // изменились настройки повторения и вернулся новый объект повторяющейся транзакции
+            if ($repeatingSaveResult->shouldRepeat) {
+                $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
+                if ($newTransactions) {
+                    foreach ($newTransactions as $newTransaction) {
+                        $newTransactionIds[$newTransaction->getId()] = true;
+                    }
+                    wa()->getStorage()->set('cash_just_saved_transactions', $newTransactionIds);
                 }
             }
-        } else {
-            $saver->addToPersist($transaction);
-            if ($paramsDto->transfer) {
-                $transferTransaction = $saver->createTransfer($transaction, $paramsDto);
-                if ($transferTransaction) {
-                    $saver->addToPersist($transferTransaction);
-                }
-            }
-            $saver->persistTransactions();
+
+            return;
         }
 
-        $transactionDto = (new cashTransactionDtoAssembler())->createFromEntity($transaction);
-        $this->response = $transactionDto;
+        $saver->addToPersist($transaction);
+        if ($paramsDto->transfer) {
+            $transferTransaction = $saver->createTransfer($transaction, $paramsDto);
+            if ($transferTransaction) {
+                $saver->addToPersist($transferTransaction);
+            }
+        }
+
+        $saved = $saver->persistTransactions();
+        foreach ($saved as $item) {
+            $newTransactionIds[$item->getId()] = true;
+        }
+
+        wa()->getStorage()->set('cash_just_saved_transactions', $newTransactionIds);
+        waLog::dump($newTransactionIds, 'krll.log');
     }
 }
