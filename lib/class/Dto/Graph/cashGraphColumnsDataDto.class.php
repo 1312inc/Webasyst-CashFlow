@@ -374,6 +374,12 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 $data['axis']['y']['min'] = $data['axis']['y2']['min'] = min($extremum['lines']['min'], $extremum['columns']['min']);
                 $data['axis']['y']['max'] = $data['axis']['y2']['max'] = max($extremum['lines']['max'], $extremum['columns']['max']);
 
+                $data['axis']['y']['max'] = $extremum['lines']['max']/$ration[1];
+                $data['axis']['y']['min'] = $extremum['lines']['min']/$ration[1];
+//                $data['axis']['y']['center'] = -1000;
+//                $data['axis']['y2']['padding'] = ['bottom' => 0, 'top' => 0];
+//                $data['axis']['y']['padding'] = ['bottom' => 0, 'top' => 0];
+
                 $data['helpers']['extremum'] = $extremum;
                 $data['helpers']['ratio'] = $ration;
 
