@@ -1,6 +1,6 @@
 <?php
 return array (
-  'name' => 'Cash',
+  'name' => 'Cash Flow',
   'icon' =>
   array (
     48 => 'img/cash48.png',
