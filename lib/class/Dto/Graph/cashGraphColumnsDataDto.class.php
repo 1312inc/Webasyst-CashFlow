@@ -370,23 +370,27 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 foreach ($this->columns as $columnName => $columnData) {
                     $notNullData = array_filter($columnData);
                     if ($notNullData) {
-//                        if (in_array($columnName, $expenseCategories, true)) {
-//                            $notNullData = array_map(function ($v) { return -$v; }, $notNullData);
-//                        }
-                        $extremum['columns']['min'] = 0;
+                        $extremum['columns']['min'] = min($extremum['columns']['min'], min($notNullData));
                         $extremum['columns']['max'] = max($extremum['columns']['max'], max($notNullData));
+                        if (in_array($columnName, $expenseCategories, true)) {
+                            $notNullData = array_map(function ($v) { return -$v; }, $notNullData);
+                            $extremum['columns']['min'] = min($extremum['columns']['min'], min($notNullData));
+//                            $extremum['columns']['max'] = max($extremum['columns']['min'], max($notNullData));
+                        }
                     }
                 }
-//                $extremum['columns']['min'] = min(0, $extremum['columns']['min']);
+                $extremum['columns']['min'] = min(0, $extremum['columns']['min']);
                 $ration = [
-//                    $extremum['lines']['min'] / $extremum['columns']['min'],
+                    $extremum['columns']['min'] ? $extremum['lines']['min'] / $extremum['columns']['min'] : 1,
                     $extremum['lines']['max'] / $extremum['columns']['max'],
-//                    (abs($extremum['lines']['min']) + abs($extremum['lines']['max'])) / (abs($extremum['columns']['min']) + abs( $extremum['columns']['max']))
+                    (abs($extremum['lines']['min']) + abs($extremum['lines']['max'])) / (abs($extremum['columns']['min']) + abs( $extremum['columns']['max']))
                 ];
 
                 $data['axis']['y']['min'] = $data['axis']['y2']['min'] = min($extremum['lines']['min'], $extremum['columns']['min']);
                 $data['axis']['y']['max'] = $data['axis']['y2']['max'] = max($extremum['lines']['max'], $extremum['columns']['max']);
 
+                $data['axis']['y']['max'] = $extremum['lines']['max']/$ration[0];
+                $data['axis']['y']['min'] = $extremum['lines']['min']/$ration[0];
                 $data['axis']['y']['max'] = $extremum['lines']['max']/$ration[0];
                 $data['axis']['y']['min'] = $extremum['lines']['min']/$ration[0];
 //                $data['axis']['y']['max'] = 2370190;
