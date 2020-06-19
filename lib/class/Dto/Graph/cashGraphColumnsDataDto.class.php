@@ -155,7 +155,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
      */
     public function jsonSerialize()
     {
-        $colors = $names = $regions = $lineIds = $columns = $currencies = $types = [];
+        $colors = $names = $regions = $lineIds = $columns = $currencies = $types = $expenseCategories = $incomeCategories = [];
 
         if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
             $linesGroupedByCurrency = [];
@@ -237,8 +237,15 @@ class cashGraphColumnsDataDto extends cashAbstractDto
         );
 
         foreach ($this->groups as $currencyCode => $dataNames) {
-            foreach ($dataNames as $dataName) {
+            foreach ($dataNames as $expenseOrIncome => $dataName) {
                 foreach ($dataName as $item) {
+                    if ($expenseOrIncome === 'expense') {
+                        $expenseCategories = $dataName;
+                    }
+                    if ($expenseOrIncome === 'income') {
+                        $incomeCategories = $dataName;
+                    }
+
                     $currencies[$item] = cashCurrencyVO::fromWaCurrency($currencyCode);
                 }
             }
@@ -351,6 +358,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                     'lines' => ['min' => PHP_INT_MAX, 'max' => PHP_INT_MIN],
                     'columns' => ['min' => PHP_INT_MAX, 'max' => PHP_INT_MIN],
                 ];
+
                 foreach ($this->lines as $lineData) {
                     $notNullData = array_filter($lineData);
                     if ($notNullData) {
@@ -358,24 +366,31 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                         $extremum['lines']['max'] = max($extremum['lines']['max'], max($notNullData));
                     }
                 }
-                foreach ($this->columns as $lineData) {
-                    $notNullData = array_filter($lineData);
+
+                foreach ($this->columns as $columnName => $columnData) {
+                    $notNullData = array_filter($columnData);
                     if ($notNullData) {
-                        $extremum['columns']['min'] = min($extremum['columns']['min'], min($notNullData));
+//                        if (in_array($columnName, $expenseCategories, true)) {
+//                            $notNullData = array_map(function ($v) { return -$v; }, $notNullData);
+//                        }
+                        $extremum['columns']['min'] = 0;
                         $extremum['columns']['max'] = max($extremum['columns']['max'], max($notNullData));
                     }
                 }
+//                $extremum['columns']['min'] = min(0, $extremum['columns']['min']);
                 $ration = [
-                    $extremum['lines']['min'] / $extremum['columns']['min'],
+//                    $extremum['lines']['min'] / $extremum['columns']['min'],
                     $extremum['lines']['max'] / $extremum['columns']['max'],
-                    (abs($extremum['lines']['min']) + abs($extremum['lines']['max'])) / (abs($extremum['columns']['min']) + abs( $extremum['columns']['max']))
+//                    (abs($extremum['lines']['min']) + abs($extremum['lines']['max'])) / (abs($extremum['columns']['min']) + abs( $extremum['columns']['max']))
                 ];
 
                 $data['axis']['y']['min'] = $data['axis']['y2']['min'] = min($extremum['lines']['min'], $extremum['columns']['min']);
                 $data['axis']['y']['max'] = $data['axis']['y2']['max'] = max($extremum['lines']['max'], $extremum['columns']['max']);
 
-                $data['axis']['y']['max'] = $extremum['lines']['max']/$ration[1];
-                $data['axis']['y']['min'] = $extremum['lines']['min']/$ration[1];
+                $data['axis']['y']['max'] = $extremum['lines']['max']/$ration[0];
+                $data['axis']['y']['min'] = $extremum['lines']['min']/$ration[0];
+//                $data['axis']['y']['max'] = 2370190;
+//                $data['axis']['y']['min'] = -462672;
 //                $data['axis']['y']['center'] = -1000;
 //                $data['axis']['y2']['padding'] = ['bottom' => 0, 'top' => 0];
 //                $data['axis']['y']['padding'] = ['bottom' => 0, 'top' => 0];
