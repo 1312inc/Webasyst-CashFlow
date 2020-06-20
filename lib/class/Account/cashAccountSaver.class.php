@@ -42,7 +42,7 @@ class cashAccountSaver extends cashEntitySaver
      *
      * @return bool
      */
-    public function validate(array $data)
+    public function validate(array &$data)
     {
         if (!isset($data['name'])) {
             $this->error = _w('No account name');

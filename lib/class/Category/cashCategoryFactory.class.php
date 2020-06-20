@@ -36,6 +36,7 @@ class cashCategoryFactory extends cashBaseFactory
     {
         return $this->createNewNoCategory()
             ->setColor(self::NO_CATEGORY_COLOR)
+            ->setType(cashCategory::TYPE_EXPENSE)
             ->setId(self::NO_CATEGORY_EXPENSE_ID);
     }
 
@@ -47,6 +48,7 @@ class cashCategoryFactory extends cashBaseFactory
     {
         return $this->createNewNoCategory()
             ->setColor(self::NO_CATEGORY_COLOR)
+            ->setType(cashCategory::TYPE_INCOME)
             ->setId(self::NO_CATEGORY_INCOME_ID);
     }
 }

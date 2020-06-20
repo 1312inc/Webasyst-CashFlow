@@ -375,35 +375,48 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                         if (in_array($columnName, $expenseCategories, true)) {
                             $notNullData = array_map(function ($v) { return -$v; }, $notNullData);
                             $extremum['columns']['min'] = min($extremum['columns']['min'], min($notNullData));
-//                            $extremum['columns']['max'] = max($extremum['columns']['min'], max($notNullData));
                         }
                     }
                 }
                 $extremum['columns']['min'] = min(0, $extremum['columns']['min']);
                 $ration = [
-                    $extremum['columns']['min'] ? $extremum['lines']['min'] / $extremum['columns']['min'] : 1,
-                    $extremum['lines']['max'] / $extremum['columns']['max'],
-                    (abs($extremum['lines']['min']) + abs($extremum['lines']['max'])) / (abs($extremum['columns']['min']) + abs( $extremum['columns']['max']))
+                    'mins' => $extremum['columns']['min']
+                        ? $extremum['lines']['min'] / $extremum['columns']['min']
+                        : 1,
+                    'maxs' => $extremum['lines']['max'] / $extremum['columns']['max'],
+
+                    'abs' => (abs($extremum['lines']['min']) + abs($extremum['lines']['max'])) / (abs($extremum['columns']['min']) + abs( $extremum['columns']['max'])),
+
+                    'lines' => $extremum['lines']['min']
+                        ? abs($extremum['lines']['max']) / abs($extremum['lines']['min'])
+                        : 1,
+                    'columns' => $extremum['columns']['min']
+                        ? abs($extremum['columns']['max']) / abs($extremum['columns']['min'])
+                        : 1,
                 ];
 
-                $data['axis']['y']['min'] = $data['axis']['y2']['min'] = min($extremum['lines']['min'], $extremum['columns']['min']);
-                $data['axis']['y']['max'] = $data['axis']['y2']['max'] = max($extremum['lines']['max'], $extremum['columns']['max']);
+                if ($extremum['lines']['min'] >= 0) {
+                    $data['axis']['y']['min'] = 0;
+                    $data['axis']['y']['max'] = $extremum['columns']['max'];
 
-                $data['axis']['y']['max'] = $extremum['lines']['max']/$ration[0];
-                $data['axis']['y']['min'] = $extremum['lines']['min']/$ration[0];
-                $data['axis']['y']['max'] = $extremum['lines']['max']/$ration[0];
-                $data['axis']['y']['min'] = $extremum['lines']['min']/$ration[0];
-//                $data['axis']['y']['max'] = 2370190;
-//                $data['axis']['y']['min'] = -462672;
-//                $data['axis']['y']['center'] = -1000;
-//                $data['axis']['y2']['padding'] = ['bottom' => 0, 'top' => 0];
-//                $data['axis']['y']['padding'] = ['bottom' => 0, 'top' => 0];
+                    $data['axis']['y2']['min'] = 0;
+                    $data['axis']['y2']['max'] = $extremum['lines']['max'];
+                } elseif ($extremum['lines']['max'] < 0) {
+                    $data['axis']['y']['min'] = $extremum['lines']['min'];
+                    $data['axis']['y']['max'] = $extremum['columns']['max'];
+
+                    $data['axis']['y2']['min'] = $extremum['lines']['min'];
+                    $data['axis']['y2']['max'] = $extremum['columns']['max'];
+                } else {
+                    $data['axis']['y']['min'] = -abs($extremum['lines']['min']/$ration['maxs']);
+                    $data['axis']['y']['max'] = $extremum['columns']['max'];
+
+                    $data['axis']['y2']['min'] = $extremum['lines']['min'];
+                    $data['axis']['y2']['max'] = $extremum['lines']['max'];
+                }
 
                 $data['helpers']['extremum'] = $extremum;
                 $data['helpers']['ratio'] = $ration;
-
-//                $data['axis']['y']['center'] = -145;
-//                $data['axis']['y2']['center'] = 0;
             }
         }
 

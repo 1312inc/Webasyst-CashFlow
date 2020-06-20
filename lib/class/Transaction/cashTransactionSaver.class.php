@@ -159,7 +159,7 @@ class cashTransactionSaver extends cashEntitySaver
      *
      * @return bool
      */
-    public function validate(array $data)
+    public function validate(array &$data)
     {
         if (empty($data['amount'])) {
             $this->error = _w('No amount');
@@ -195,14 +195,18 @@ class cashTransactionSaver extends cashEntitySaver
      */
     protected function addCategoryId(array $data)
     {
-        if (array_key_exists('category_id', $data)) {
-            if ($data['category_id']) {
+        unset($data['category']);
+
+        if (isset($data['category_id'])) {
+            if ($data['category_id'] > 0) {
                 /** @var cashCategory $category */
                 $category = cash()->getEntityRepository(cashCategory::class)->findById($data['category_id']);
                 kmwaAssert::instance($category, cashCategory::class);
                 if ($category->isExpense() && $data['amount'] > 0) {
                     $data['amount'] = -$data['amount'];
                 }
+            } else {
+                $data['category_id'] = null;
             }
         } else {
             if (isset($data['category_type']) && $data['category_type'] === cashCategory::TYPE_EXPENSE && $data['amount'] > 0) {
