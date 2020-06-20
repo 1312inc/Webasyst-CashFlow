@@ -9,7 +9,6 @@
     <div class="block half-padded" style="position: relative; left: 1rem;">
         <a href="#" data-csv-import-action="delete">delete</a>
     </div>
-    <div class="c-chart" id="cash-chart"></div>
 
     <div class="c-transactions" data-cash-wrapper="transaction-list">
     </div>
@@ -31,7 +30,7 @@
             endDate = '{$endDate}';
 
         $.cash.loadTransactions(startDate, endDate, filterId, filterType, $transactionList);
-        $.cash.loadGraphData(startDate, endDate, filterId, filterType, '#cash-chart');
+        // $.cash.loadGraphData(startDate, endDate, filterId, filterType, '#cash-chart');
 
         $w.on('click', '[data-csv-import-action="delete"]', function (e) {
             e.preventDefault();
