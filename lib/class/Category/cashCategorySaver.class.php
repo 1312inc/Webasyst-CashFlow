@@ -46,7 +46,7 @@ class cashCategorySaver extends cashEntitySaver
      *
      * @return bool
      */
-    public function validate(array $data)
+    public function validate(array &$data)
     {
         $data['name'] = trim($data['name']);
         if ($data['name'] === '') {

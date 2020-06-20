@@ -24,7 +24,7 @@ abstract class cashEntitySaver
      *
      * @return bool
      */
-    abstract public function validate(array $data);
+    abstract public function validate(array &$data);
 
     /**
      * @return string
