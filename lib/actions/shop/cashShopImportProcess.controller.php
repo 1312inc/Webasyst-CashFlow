@@ -110,8 +110,9 @@ SQL;
 
         foreach ($orders as $orderId) {
             try {
-                $transaction = $factory->createTransaction($orderId, cashShopTransactionFactory::INCOME);
-                $shopIntegration->saveTransaction($transaction, ['order_id' => $orderId]);
+                $dto = new cashShopCreateTransactionDto(['order_id' => $orderId]);
+                $factory->createTransactions($dto, cashShopTransactionFactory::INCOME);
+                $shopIntegration->saveTransactions($dto);
             } catch (Exception $ex) {
                 cash()->getLogger()->error(sprintf('Error on shop import order %s', $orderId), $ex, 'shop/import');
             } finally {
