@@ -26,21 +26,18 @@ class cashShopTransactionFactory
     }
 
     /**
-     * @param int    $orderId
-     * @param string $type
-     * @param array  $params
+     * @param cashShopCreateTransactionDto $dto
+     * @param string                       $type
      *
-     * @return cashTransaction
+     * @return bool
      * @throws kmwaAssertException
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function createTransaction($orderId, $type, $params = [])
+    public function createTransactions(cashShopCreateTransactionDto $dto, $type)
     {
-        $order = new shopOrder($orderId);
-
-        $amount = $this->getAmount($order, $type, $params);
-        $externalHash = $this->generateExternalHash($order, $type, $amount);
+        $amount = $this->getAmount($dto->order, $type, $dto->params);
+        $externalHash = $this->generateExternalHash($dto->order, $type, $amount);
 
         $transaction = cash()->getEntityRepository(cashTransaction::class)->findByFields(
             [
@@ -52,7 +49,7 @@ class cashShopTransactionFactory
             throw new kmwaRuntimeException(
                 sprintf(
                     'Transaction based on order %s and type %s already exists: %d',
-                    $order->getId(),
+                    $dto->order->getId(),
                     $type,
                     $transaction->getId()
                 )
@@ -64,26 +61,199 @@ class cashShopTransactionFactory
 
         $transaction
             ->setDescription(
-                sprintf_wp('Order %s by %s', shopHelper::encodeOrderId($order->getId()), $order->contact->getName())
+                sprintf_wp('Order %s by %s', shopHelper::encodeOrderId($dto->order->getId()), $dto->order->contact->getName())
             )
-            ->setAccount($this->getAccount($order))
+            ->setAccount($this->getAccount($dto->order))
             ->setCategory($this->getCategory($type))
             ->setExternalHash($externalHash)
             ->setDatetime(date('Y-m-d H:i:s'))
             ->setExternalSource('shop')
-            ->setExternalData(['id' => $order->getId()]);
+            ->setExternalData(['id' => $dto->order->getId()]);
 
         // конвертнем валюту заказа в валюту аккаунта
-        if ($order->currency !== $transaction->getAccount()->getCurrency()) {
+        if ($dto->order->currency !== $transaction->getAccount()->getCurrency()) {
             $amount = (new shopCurrencyModel())->convert(
                 $amount,
-                $order->currency,
+                $dto->order->currency,
                 $transaction->getAccount()->getCurrency()
             );
         }
         $transaction->setAmount($amount);
 
-        return $transaction;
+        $dto->incomeTransaction = $transaction;
+
+        if ($this->settings->getCategoryPurchaseId()) {
+            $this->createPurchaseTransaction($dto);
+        }
+
+        if ($this->settings->getCategoryShippingId()) {
+            $this->createShippingTransaction($dto);
+        }
+
+        if ($this->settings->getCategoryTaxId()) {
+            $this->createTaxTransaction($dto);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param cashShopCreateTransactionDto $dto
+     *
+     * @return bool
+     * @throws kmwaAssertException
+     * @throws waException
+     */
+    public function createPurchaseTransaction(cashShopCreateTransactionDto $dto)
+    {
+        $amount = 0;
+        foreach ($dto->order->items as $item) {
+            $amount += $item['purchase_price'];
+        }
+
+        $externalHash = $this->generateExternalHash($dto->order, 'purchase', $amount);
+
+        /** @var cashCategory $category */
+        $category = cash()->getEntityRepository(cashCategory::class)->findById($this->settings->getCategoryPurchaseId());
+        kmwaAssert::instance($category, cashCategory::class);
+
+        /** @var cashTransaction $transaction */
+        $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
+
+        $transaction
+            ->setDescription(
+                sprintf_wp('Order %s by %s', shopHelper::encodeOrderId($dto->order->getId()), $dto->order->contact->getName())
+            )
+            ->setAccount($dto->incomeTransaction->getAccount())
+            ->setCategory($category)
+            ->setExternalHash($externalHash)
+            ->setDatetime(date('Y-m-d H:i:s'))
+            ->setExternalSource('shop')
+            ->setExternalData(
+                [
+                    'id' => $dto->order->getId(),
+                    'type' => 'purchase',
+                    'linked_transaction' => $dto->incomeTransaction->getId(),
+                ]
+            );
+
+        // конвертнем валюту заказа в валюту аккаунта
+        if ($dto->order->currency !== $transaction->getAccount()->getCurrency()) {
+            $amount = (new shopCurrencyModel())->convert(
+                $amount,
+                $dto->order->currency,
+                $transaction->getAccount()->getCurrency()
+            );
+        }
+        $transaction->setAmount($amount);
+
+        $dto->purchaseTransaction = $transaction;
+
+        return true;
+    }
+
+    /**
+     * @param cashShopCreateTransactionDto $dto
+     *
+     * @return bool
+     * @throws kmwaAssertException
+     * @throws waException
+     */
+    public function createShippingTransaction(cashShopCreateTransactionDto $dto)
+    {
+        $type = 'shipping';
+        $amount = $dto->order->shipping;
+        $externalHash = $this->generateExternalHash($dto->order, $type, $amount);
+
+        /** @var cashCategory $category */
+        $category = cash()->getEntityRepository(cashCategory::class)->findById($this->settings->getCategoryShippingId());
+        kmwaAssert::instance($category, cashCategory::class);
+
+        /** @var cashTransaction $transaction */
+        $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
+
+        $transaction
+            ->setDescription(
+                sprintf_wp('Order %s by %s', shopHelper::encodeOrderId($dto->order->getId()), $dto->order->contact->getName())
+            )
+            ->setAccount($dto->incomeTransaction->getAccount())
+            ->setCategory($category)
+            ->setExternalHash($externalHash)
+            ->setDatetime(date('Y-m-d H:i:s'))
+            ->setExternalSource('shop')
+            ->setExternalData(
+                [
+                    'id' => $dto->order->getId(),
+                    'type' => $type,
+                    'linked_transaction' => $dto->incomeTransaction->getId(),
+                ]
+            );
+
+        // конвертнем валюту заказа в валюту аккаунта
+        if ($dto->order->currency !== $transaction->getAccount()->getCurrency()) {
+            $amount = (new shopCurrencyModel())->convert(
+                $amount,
+                $dto->order->currency,
+                $transaction->getAccount()->getCurrency()
+            );
+        }
+        $transaction->setAmount($amount);
+
+        $dto->shippingTransaction = $transaction;
+
+        return true;
+    }
+
+    /**
+     * @param cashShopCreateTransactionDto $dto
+     *
+     * @return bool
+     * @throws kmwaAssertException
+     * @throws waException
+     */
+    public function createTaxTransaction(cashShopCreateTransactionDto $dto)
+    {
+        $type = 'tax';
+        $amount = $dto->order->tax;
+        $externalHash = $this->generateExternalHash($dto->order, $type, $amount);
+
+        /** @var cashCategory $category */
+        $category = cash()->getEntityRepository(cashCategory::class)->findById($this->settings->getCategoryTaxId());
+        kmwaAssert::instance($category, cashCategory::class);
+
+        /** @var cashTransaction $transaction */
+        $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
+
+        $transaction
+            ->setDescription(
+                sprintf_wp('Order %s by %s', shopHelper::encodeOrderId($dto->order->getId()), $dto->order->contact->getName())
+            )
+            ->setAccount($dto->incomeTransaction->getAccount())
+            ->setCategory($category)
+            ->setExternalHash($externalHash)
+            ->setDatetime(date('Y-m-d H:i:s'))
+            ->setExternalSource('shop')
+            ->setExternalData(
+                [
+                    'id' => $dto->order->getId(),
+                    'type' => $type,
+                    'linked_transaction' => $dto->incomeTransaction->getId(),
+                ]
+            );
+
+        // конвертнем валюту заказа в валюту аккаунта
+        if ($dto->order->currency !== $transaction->getAccount()->getCurrency()) {
+            $amount = (new shopCurrencyModel())->convert(
+                $amount,
+                $dto->order->currency,
+                $transaction->getAccount()->getCurrency()
+            );
+        }
+        $transaction->setAmount($amount);
+
+        $dto->shippingTransaction = $transaction;
+
+        return true;
     }
 
     /**

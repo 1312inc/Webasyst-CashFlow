@@ -161,8 +161,6 @@ class cashShopIntegration
      * @param string $storefront
      *
      * @return float
-     * @throws waDbException
-     * @throws waException
      */
     public function calculateAvgBill($lastNDays = self::DAYS_FOR_AVG_BILL_CALCULATION, $storefront = '')
     {
@@ -236,52 +234,131 @@ SQL;
     }
 
     /**
-     * @param cashTransaction $transaction
-     * @param array           $params
+     * @param cashShopCreateTransactionDto $dto
      *
+     * @throws ReflectionException
      * @throws kmwaRuntimeException
-     * @throws waDbException
      * @throws waException
      */
-    public function saveTransaction(cashTransaction $transaction, $params = [])
+    public function saveTransactions(cashShopCreateTransactionDto $dto)
     {
-        if (!cash()->getEntityPersister()->save($transaction)) {
-            throw new kmwaRuntimeException(
-                sprintf('Save new transaction error: %s', json_encode(cash()->getHydrator()->extract($transaction)))
-            );
-        }
+        cash()->getModel()->startTransaction();
+        try {
+            if (!cash()->getEntityPersister()->save($dto->incomeTransaction)) {
+                throw new kmwaRuntimeException(
+                    sprintf(
+                        'Save new transaction error: %s',
+                        json_encode(cash()->getHydrator()->extract($dto->incomeTransaction))
+                    )
+                );
+            }
 
-        cash()->getLogger()->debug(
-            sprintf(
-                'Transaction %d created successfully! %s',
-                $transaction->getId(),
-                json_encode(cash()->getHydrator()->extract($transaction))
-            )
-        );
-
-        // запишем в лог заказа
-        if ($this->settings->isWriteToOrderLog() && !empty($params['order_id'])) {
-            (new shopOrderLogModel())->add(
-                array_merge(
-                    $params,
-                    [
-                        'text' => sprintf_wp(
-                            'A transaction %s %s created (%s)',
-                            $transaction->getAmount(),
-                            $transaction->getAccount()->getCurrency(),
-                            $transaction->getAccount()->getName()
-                        ),
-                        'params' => ['cash_transaction_id' => $transaction->getId()],
-                    ]
+            cash()->getLogger()->debug(
+                sprintf(
+                    'Transaction %d created successfully! %s',
+                    $dto->incomeTransaction->getId(),
+                    json_encode(cash()->getHydrator()->extract($dto->incomeTransaction))
                 )
             );
+            $transactionListMessage = [
+                sprintf(
+                    '+ %s %s @ %s (pl2e)',
+                    $dto->incomeTransaction->getAmount(),
+                    $dto->incomeTransaction->getAccount()->getCurrency(),
+                    $dto->incomeTransaction->getAccount()->getName()
+                ),
+            ];
 
-            cash()->getLogger()->debug('Transaction %d info added to order log!', $transaction->getId());
+            if ($dto->purchaseTransaction) {
+                if (!cash()->getEntityPersister()->save($dto->purchaseTransaction)) {
+                    throw new kmwaRuntimeException(
+                        sprintf(
+                            'Save new purchase transaction error: %s',
+                            json_encode(cash()->getHydrator()->extract($dto->purchaseTransaction))
+                        )
+                    );
+                }
+
+                $transactionListMessage[] =
+                    sprintf(
+                        '- %s %s @ %s (pl2e)',
+                        $dto->purchaseTransaction->getAmount(),
+                        $dto->purchaseTransaction->getAccount()->getCurrency(),
+                        $dto->purchaseTransaction->getAccount()->getName()
+                    );
+            }
+
+            if ($dto->shippingTransaction) {
+                if (!cash()->getEntityPersister()->save($dto->shippingTransaction)) {
+                    throw new kmwaRuntimeException(
+                        sprintf(
+                            'Save new shipping transaction error: %s',
+                            json_encode(cash()->getHydrator()->extract($dto->shippingTransaction))
+                        )
+                    );
+                }
+
+                $transactionListMessage[] =
+                    sprintf(
+                        '- %s %s @ %s (pl2e)',
+                        $dto->shippingTransaction->getAmount(),
+                        $dto->shippingTransaction->getAccount()->getCurrency(),
+                        $dto->shippingTransaction->getAccount()->getName()
+                    );
+            }
+
+            if ($dto->taxTransaction) {
+                if (!cash()->getEntityPersister()->save($dto->taxTransaction)) {
+                    throw new kmwaRuntimeException(
+                        sprintf(
+                            'Save new tax transaction error: %s',
+                            json_encode(cash()->getHydrator()->extract($dto->taxTransaction))
+                        )
+                    );
+                }
+
+                $transactionListMessage[] =
+                    sprintf(
+                        '- %s %s @ %s (pl2e)',
+                        $dto->taxTransaction->getAmount(),
+                        $dto->taxTransaction->getAccount()->getCurrency(),
+                        $dto->taxTransaction->getAccount()->getName()
+                    );
+            }
+
+            // запишем в лог заказа
+            if ($this->settings->isWriteToOrderLog() && !empty($dto->params['order_id'])) {
+                $message = sprintf(
+                    "%d transactions created in the Cash app:%s%s",
+                    count($transactionListMessage),
+                    '<br>',
+                    implode('<br>', $transactionListMessage)
+                );
+                (new shopOrderLogModel())->add(
+                    array_merge(
+                        $dto->params,
+                        [
+                            'text' => $message,
+                            'params' => ['cash_transaction_id' => $dto->incomeTransaction->getId()],
+                        ]
+                    )
+                );
+
+                cash()->getLogger()->debug('Transaction info added to order log: %s!', $message);
+            }
+
+            $this->settings
+                ->incTodayTransactionsCount()
+                ->saveStat();
+
+            cash()->getModel()->commit();
+        } catch (Exception $ex) {
+            cash()->getModel()->rollback();
+
+            throw new kmwaRuntimeException(
+                sprintf('Save new transactions error: %s', $ex->getMessage()), $ex->getCode(), $ex
+            );
         }
-
-        $this->settings
-            ->incTodayTransactionsCount()
-            ->saveStat();
     }
 
     /**

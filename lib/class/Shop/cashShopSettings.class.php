@@ -108,6 +108,21 @@ class cashShopSettings implements JsonSerializable
     private $todayTransactions = 0;
 
     /**
+     * @var int|null
+     */
+    private $categoryPurchaseId;
+
+    /**
+     * @var int|null
+     */
+    private $categoryShippingId;
+
+    /**
+     * @var int|null
+     */
+    private $categoryTaxId;
+
+    /**
      * cashShopScriptSettings constructor.
      */
     public function __construct()
@@ -411,6 +426,66 @@ class cashShopSettings implements JsonSerializable
     public function setWriteToOrderLog($writeToOrderLog)
     {
         $this->writeToOrderLog = $writeToOrderLog;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCategoryPurchaseId()
+    {
+        return $this->categoryPurchaseId;
+    }
+
+    /**
+     * @param int|null $categoryPurchaseId
+     *
+     * @return cashShopSettings
+     */
+    public function setCategoryPurchaseId($categoryPurchaseId)
+    {
+        $this->categoryPurchaseId = $categoryPurchaseId;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCategoryShippingId()
+    {
+        return $this->categoryShippingId;
+    }
+
+    /**
+     * @param int|null $categoryShippingId
+     *
+     * @return cashShopSettings
+     */
+    public function setCategoryShippingId($categoryShippingId)
+    {
+        $this->categoryShippingId = $categoryShippingId;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCategoryTaxId()
+    {
+        return $this->categoryTaxId;
+    }
+
+    /**
+     * @param int|null $categoryTaxId
+     *
+     * @return cashShopSettings
+     */
+    public function setCategoryTaxId($categoryTaxId)
+    {
+        $this->categoryTaxId = $categoryTaxId;
 
         return $this;
     }
