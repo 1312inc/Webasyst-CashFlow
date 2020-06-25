@@ -74,7 +74,8 @@ class cashSettingsAction extends cashViewAction
                 'shopScriptSettings' => $shopIntegration->getSettings(),
                 'storefronts' => $storefronts,
                 'actions' => $actions,
-                'shopIsOld' => $shopIntegration->shopIsOld()
+                'shopIsOld' => $shopIntegration->shopIsOld(),
+                'avg' => $shopIntegration->calculateAvgBill(),
             ]
         );
     }

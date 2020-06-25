@@ -126,7 +126,7 @@ class cashShopIntegration
         $repeatingSettings->frequency = cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY;
         $repeatingTransaction = $saver->saveFromTransaction($transaction, $repeatingSettings, true);
 
-        (new cashTransactionRepeater())->repeat($repeatingTransaction , new DateTime());
+        (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction , new DateTime());
     }
 
     /**
