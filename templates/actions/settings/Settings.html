@@ -172,7 +172,7 @@
                                     <input type="hidden" name="shopscript_settings[enableForecast]" value="0" />
                                     <input type="checkbox"
                                            name="shopscript_settings[enableForecast]"
-                                           {if $shopScriptSettings->isAutoForecast()}checked{/if}
+                                           {if $shopScriptSettings->isEnableForecast()}checked{/if}
                                            value="1" />
                                     [`Enable average forecasted sales (recommended)`]
                                 </label>
@@ -186,7 +186,7 @@
                                            value="1"
                                            {if $shopScriptSettings->isAutoForecast()}checked{/if}
                                     />
-                                    [`Calculate average daily sales automatically (≈%s/day based on the data for the last 30 days)`]
+                                    [`Calculate average daily sales automatically (≈{$avg}/day based on the data for the last 30 days)`]
                                 </label>
                             </div>
                             <div class="value no-shift">
