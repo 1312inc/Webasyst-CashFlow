@@ -23,7 +23,6 @@ class cashShopOrderActionListener extends waEventHandler
 
         $shopTransactionFactory = $integration->getTransactionFactory();
         try {
-            $transaction = null;
             $createTransactionDto = new cashShopCreateTransactionDto($params);
 
             if (in_array($params['action_id'], $settings->getIncomeActions(), true)) {
@@ -32,6 +31,18 @@ class cashShopOrderActionListener extends waEventHandler
                 );
 
                 $shopTransactionFactory->createTransactions($createTransactionDto, cashShopTransactionFactory::INCOME);
+
+                if ($settings->getCategoryPurchaseId()) {
+                    $shopTransactionFactory->createPurchaseTransaction($createTransactionDto);
+                }
+
+                if ($settings->getCategoryShippingId()) {
+                    $shopTransactionFactory->createShippingTransaction($createTransactionDto);
+                }
+
+                if ($settings->getCategoryTaxId()) {
+                    $shopTransactionFactory->createTaxTransaction($createTransactionDto);
+                }
             } elseif (in_array($params['action_id'], $settings->getExpenseActions(), true)) {
                 cash()->getLogger()->debug(
                     sprintf('Okay, lets create new expense transaction for action %s', $params['action_id'])
@@ -40,7 +51,7 @@ class cashShopOrderActionListener extends waEventHandler
                 $shopTransactionFactory->createTransactions($createTransactionDto, cashShopTransactionFactory::EXPENSE);
             }
 
-            if ($transaction instanceof cashTransaction) {
+            if ($createTransactionDto->mainTransaction instanceof cashTransaction) {
                 if ($settings->isEnableForecast()) {
                     $integration->deleteForecastTransactionForDate(new DateTime());
                 }

@@ -244,11 +244,13 @@ SQL;
     {
         cash()->getModel()->startTransaction();
         try {
-            if (!cash()->getEntityPersister()->save($dto->incomeTransaction)) {
+            $transactionListMessage = [];
+
+            if (!cash()->getEntityPersister()->save($dto->mainTransaction)) {
                 throw new kmwaRuntimeException(
                     sprintf(
                         'Save new transaction error: %s',
-                        json_encode(cash()->getHydrator()->extract($dto->incomeTransaction))
+                        json_encode(cash()->getHydrator()->extract($dto->mainTransaction))
                     )
                 );
             }
@@ -256,18 +258,17 @@ SQL;
             cash()->getLogger()->debug(
                 sprintf(
                     'Transaction %d created successfully! %s',
-                    $dto->incomeTransaction->getId(),
-                    json_encode(cash()->getHydrator()->extract($dto->incomeTransaction))
+                    $dto->mainTransaction->getId(),
+                    json_encode(cash()->getHydrator()->extract($dto->mainTransaction))
                 )
             );
-            $transactionListMessage = [
-                sprintf(
-                    '+ %s %s @ %s (pl2e)',
-                    $dto->incomeTransaction->getAmount(),
-                    $dto->incomeTransaction->getAccount()->getCurrency(),
-                    $dto->incomeTransaction->getAccount()->getName()
-                ),
-            ];
+            $transactionListMessage[] = sprintf(
+                '%s%s %s @ %s (pl2e)',
+                $dto->mainTransaction->getAmount() < 0 ? '' : '+',
+                $dto->mainTransaction->getAmount(),
+                $dto->mainTransaction->getAccount()->getCurrency(),
+                $dto->mainTransaction->getAccount()->getName()
+            );
 
             if ($dto->purchaseTransaction) {
                 if (!cash()->getEntityPersister()->save($dto->purchaseTransaction)) {
@@ -279,13 +280,13 @@ SQL;
                     );
                 }
 
-                $transactionListMessage[] =
-                    sprintf(
-                        '- %s %s @ %s (pl2e)',
-                        $dto->purchaseTransaction->getAmount(),
-                        $dto->purchaseTransaction->getAccount()->getCurrency(),
-                        $dto->purchaseTransaction->getAccount()->getName()
-                    );
+                $transactionListMessage[] = sprintf(
+                    '%s%s %s @ %s (pl2e)',
+                    $dto->mainTransaction->getAmount() < 0 ? '' : '+',
+                    $dto->purchaseTransaction->getAmount(),
+                    $dto->purchaseTransaction->getAccount()->getCurrency(),
+                    $dto->purchaseTransaction->getAccount()->getName()
+                );
             }
 
             if ($dto->shippingTransaction) {
@@ -298,13 +299,13 @@ SQL;
                     );
                 }
 
-                $transactionListMessage[] =
-                    sprintf(
-                        '- %s %s @ %s (pl2e)',
-                        $dto->shippingTransaction->getAmount(),
-                        $dto->shippingTransaction->getAccount()->getCurrency(),
-                        $dto->shippingTransaction->getAccount()->getName()
-                    );
+                $transactionListMessage[] = sprintf(
+                    '%s%s %s @ %s (pl2e)',
+                    $dto->mainTransaction->getAmount() < 0 ? '' : '+',
+                    $dto->shippingTransaction->getAmount(),
+                    $dto->shippingTransaction->getAccount()->getCurrency(),
+                    $dto->shippingTransaction->getAccount()->getName()
+                );
             }
 
             if ($dto->taxTransaction) {
@@ -317,13 +318,13 @@ SQL;
                     );
                 }
 
-                $transactionListMessage[] =
-                    sprintf(
-                        '- %s %s @ %s (pl2e)',
-                        $dto->taxTransaction->getAmount(),
-                        $dto->taxTransaction->getAccount()->getCurrency(),
-                        $dto->taxTransaction->getAccount()->getName()
-                    );
+                $transactionListMessage[] = sprintf(
+                    '%s%s %s @ %s (pl2e)',
+                    $dto->mainTransaction->getAmount() < 0 ? '' : '+',
+                    $dto->taxTransaction->getAmount(),
+                    $dto->taxTransaction->getAccount()->getCurrency(),
+                    $dto->taxTransaction->getAccount()->getName()
+                );
             }
 
             // запишем в лог заказа
@@ -339,7 +340,7 @@ SQL;
                         $dto->params,
                         [
                             'text' => $message,
-                            'params' => ['cash_transaction_id' => $dto->incomeTransaction->getId()],
+                            'params' => ['cash_transaction_id' => $dto->mainTransaction->getId()],
                         ]
                     )
                 );

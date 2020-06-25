@@ -80,19 +80,7 @@ class cashShopTransactionFactory
         }
         $transaction->setAmount($amount);
 
-        $dto->incomeTransaction = $transaction;
-
-        if ($this->settings->getCategoryPurchaseId()) {
-            $this->createPurchaseTransaction($dto);
-        }
-
-        if ($this->settings->getCategoryShippingId()) {
-            $this->createShippingTransaction($dto);
-        }
-
-        if ($this->settings->getCategoryTaxId()) {
-            $this->createTaxTransaction($dto);
-        }
+        $dto->mainTransaction = $transaction;
 
         return true;
     }
@@ -111,6 +99,10 @@ class cashShopTransactionFactory
             $amount += $item['purchase_price'];
         }
 
+        if ($amount <= 0) {
+            return false;
+        }
+
         $externalHash = $this->generateExternalHash($dto->order, 'purchase', $amount);
 
         /** @var cashCategory $category */
@@ -124,7 +116,7 @@ class cashShopTransactionFactory
             ->setDescription(
                 sprintf_wp('Order %s by %s', shopHelper::encodeOrderId($dto->order->getId()), $dto->order->contact->getName())
             )
-            ->setAccount($dto->incomeTransaction->getAccount())
+            ->setAccount($dto->mainTransaction->getAccount())
             ->setCategory($category)
             ->setExternalHash($externalHash)
             ->setDatetime(date('Y-m-d H:i:s'))
@@ -133,7 +125,7 @@ class cashShopTransactionFactory
                 [
                     'id' => $dto->order->getId(),
                     'type' => 'purchase',
-                    'linked_transaction' => $dto->incomeTransaction->getId(),
+                    'linked_transaction' => $dto->mainTransaction->getId(),
                 ]
             );
 
@@ -145,7 +137,7 @@ class cashShopTransactionFactory
                 $transaction->getAccount()->getCurrency()
             );
         }
-        $transaction->setAmount($amount);
+        $transaction->setAmount(-$amount);
 
         $dto->purchaseTransaction = $transaction;
 
@@ -163,6 +155,10 @@ class cashShopTransactionFactory
     {
         $type = 'shipping';
         $amount = $dto->order->shipping;
+        if ($amount <= 0) {
+            return false;
+        }
+
         $externalHash = $this->generateExternalHash($dto->order, $type, $amount);
 
         /** @var cashCategory $category */
@@ -176,7 +172,7 @@ class cashShopTransactionFactory
             ->setDescription(
                 sprintf_wp('Order %s by %s', shopHelper::encodeOrderId($dto->order->getId()), $dto->order->contact->getName())
             )
-            ->setAccount($dto->incomeTransaction->getAccount())
+            ->setAccount($dto->mainTransaction->getAccount())
             ->setCategory($category)
             ->setExternalHash($externalHash)
             ->setDatetime(date('Y-m-d H:i:s'))
@@ -185,7 +181,7 @@ class cashShopTransactionFactory
                 [
                     'id' => $dto->order->getId(),
                     'type' => $type,
-                    'linked_transaction' => $dto->incomeTransaction->getId(),
+                    'linked_transaction' => $dto->mainTransaction->getId(),
                 ]
             );
 
@@ -197,7 +193,7 @@ class cashShopTransactionFactory
                 $transaction->getAccount()->getCurrency()
             );
         }
-        $transaction->setAmount($amount);
+        $transaction->setAmount(-$amount);
 
         $dto->shippingTransaction = $transaction;
 
@@ -215,6 +211,10 @@ class cashShopTransactionFactory
     {
         $type = 'tax';
         $amount = $dto->order->tax;
+        if ($amount <= 0) {
+            return false;
+        }
+
         $externalHash = $this->generateExternalHash($dto->order, $type, $amount);
 
         /** @var cashCategory $category */
@@ -228,7 +228,7 @@ class cashShopTransactionFactory
             ->setDescription(
                 sprintf_wp('Order %s by %s', shopHelper::encodeOrderId($dto->order->getId()), $dto->order->contact->getName())
             )
-            ->setAccount($dto->incomeTransaction->getAccount())
+            ->setAccount($dto->mainTransaction->getAccount())
             ->setCategory($category)
             ->setExternalHash($externalHash)
             ->setDatetime(date('Y-m-d H:i:s'))
@@ -237,7 +237,7 @@ class cashShopTransactionFactory
                 [
                     'id' => $dto->order->getId(),
                     'type' => $type,
-                    'linked_transaction' => $dto->incomeTransaction->getId(),
+                    'linked_transaction' => $dto->mainTransaction->getId(),
                 ]
             );
 
@@ -249,7 +249,7 @@ class cashShopTransactionFactory
                 $transaction->getAccount()->getCurrency()
             );
         }
-        $transaction->setAmount($amount);
+        $transaction->setAmount(-$amount);
 
         $dto->shippingTransaction = $transaction;
 
