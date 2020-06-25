@@ -115,9 +115,11 @@
                                 [`Product purchases`] &rarr;
                                 <i class="icon16 color" style="background: orange;"></i>
                                 <select name="shopscript_settings[categoryPurchaseId]">
-                                    <option>[`Don’t import`]</option>
+                                    <option value="0">[`Don’t import`]</option>
                                     {foreach $expenses as $category}
-                                        <option value="{$category->id}">{$category->name|escape}</option>
+                                        <option value="{$category->id}"
+                                                {if $category->id == $shopScriptSettings->getCategoryPurchaseId()}selected{/if}
+                                        >{$category->name|escape}</option>
                                     {/foreach}
                                 </select>
                                 <br>
@@ -127,9 +129,11 @@
                                 [`Shipping costs`] &rarr;
                                 <i class="icon16 color" style="background: orange;"></i>
                                 <select name="shopscript_settings[categoryShippingId]">
-                                    <option>[`Don’t import`]</option>
+                                    <option value="0">[`Don’t import`]</option>
                                     {foreach $expenses as $category}
-                                        <option value="{$category->id}">{$category->name|escape}</option>
+                                        <option value="{$category->id}"
+                                                {if $category->id == $shopScriptSettings->getCategoryShippingId()}selected{/if}
+                                        >{$category->name|escape}</option>
                                     {/foreach}
                                 </select>
                                 <br>
@@ -139,9 +143,11 @@
                                 [`Taxes`] &rarr;
                                 <i class="icon16 color" style="background: orange;"></i>
                                 <select name="shopscript_settings[categoryTaxId]">
-                                    <option>[`Don’t import`]</option>
+                                    <option value="0">[`Don’t import`]</option>
                                     {foreach $expenses as $category}
-                                        <option value="{$category->id}">{$category->name|escape}</option>
+                                        <option value="{$category->id}"
+                                                {if $category->id == $shopScriptSettings->getCategoryTaxId()}selected{/if}
+                                        >{$category->name|escape}</option>
                                     {/foreach}
                                 </select>
                                 <br>

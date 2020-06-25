@@ -5,7 +5,7 @@ class cashShopCreateTransactionDto
     /**
      * @var cashTransaction
      */
-    public $incomeTransaction;
+    public $mainTransaction;
 
     /**
      * @var shopOrder
@@ -36,6 +36,8 @@ class cashShopCreateTransactionDto
      * cashShopCreateTransactionDto constructor.
      *
      * @param array $params
+     *
+     * @throws waException
      */
     public function __construct($params = [])
     {
