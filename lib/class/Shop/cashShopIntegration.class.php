@@ -282,7 +282,7 @@ SQL;
 
                 $transactionListMessage[] = sprintf(
                     '%s%s %s @ %s (pl2e)',
-                    $dto->mainTransaction->getAmount() < 0 ? '' : '+',
+                    $dto->purchaseTransaction->getAmount() < 0 ? '' : '+',
                     $dto->purchaseTransaction->getAmount(),
                     $dto->purchaseTransaction->getAccount()->getCurrency(),
                     $dto->purchaseTransaction->getAccount()->getName()
@@ -301,7 +301,7 @@ SQL;
 
                 $transactionListMessage[] = sprintf(
                     '%s%s %s @ %s (pl2e)',
-                    $dto->mainTransaction->getAmount() < 0 ? '' : '+',
+                    $dto->shippingTransaction->getAmount() < 0 ? '' : '+',
                     $dto->shippingTransaction->getAmount(),
                     $dto->shippingTransaction->getAccount()->getCurrency(),
                     $dto->shippingTransaction->getAccount()->getName()
@@ -320,7 +320,7 @@ SQL;
 
                 $transactionListMessage[] = sprintf(
                     '%s%s %s @ %s (pl2e)',
-                    $dto->mainTransaction->getAmount() < 0 ? '' : '+',
+                    $dto->taxTransaction->getAmount() < 0 ? '' : '+',
                     $dto->taxTransaction->getAmount(),
                     $dto->taxTransaction->getAccount()->getCurrency(),
                     $dto->taxTransaction->getAccount()->getName()
