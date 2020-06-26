@@ -49,17 +49,13 @@ class cashTransactionListSettingsDto implements JsonSerializable
      */
     public function __construct(cashTransactionPageFilterDto $filter = null)
     {
-        if ($filter instanceof cashTransactionListSettingsDto) {
+        if ($filter instanceof cashTransactionPageFilterDto) {
             $this->showOnHandsEndday = $filter->type === cashTransactionPageFilterDto::FILTER_ACCOUNT;/* && FORECAST_IS_SHOWN*/
             $this->addIncome = ($filter->type === cashTransactionPageFilterDto::FILTER_ACCOUNT)
                 || ($filter->type === cashTransactionPageFilterDto::FILTER_CATEGORY && $filter->entity->isIncome());
             $this->addExpense = ($filter->type === cashTransactionPageFilterDto::FILTER_ACCOUNT)
                 || ($filter->type === cashTransactionPageFilterDto::FILTER_CATEGORY && $filter->entity->isExpense());
-            $this->addTransfer = in_array(
-                $filter->type,
-                [cashTransactionPageFilterDto::FILTER_ACCOUNT, cashTransactionPageFilterDto::FILTER_CATEGORY],
-                true
-            );
+            $this->addTransfer = $filter->type === cashTransactionPageFilterDto::FILTER_ACCOUNT;
             $this->bulkActions = in_array(
                 $filter->type,
                 [cashTransactionPageFilterDto::FILTER_ACCOUNT, cashTransactionPageFilterDto::FILTER_CATEGORY],

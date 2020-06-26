@@ -90,20 +90,28 @@ class cashTransactionSaver extends cashEntitySaver
             ->setId(null)
             ->setAmount($amount);
 
-        if (!empty($transferData['category_id'])) {
-            $transferTransaction->setCategoryId($transferData['category_id']);
+        if (!isset($params->transfer['category_id'])) {
+            throw new kmwaLogicException('No category for transfer to');
         }
-        if (empty($transferData['account_id'])) {
+        if (!isset($params->transfer['account_id'])) {
             throw new kmwaLogicException('No account for transfer to');
         }
 
-        $transferTransaction->setAccountId($transferData['account_id']);
+        if ($params->transfer['category_id']) {
+            /** @var cashCategory $category */
+            $category = cash()->getEntityRepository(cashCategory::class)->findById($params->transfer['category_id']);
+            kmwaAssert::instance($category, cashCategory::class);
+        } else {
+            $category = cash()->getEntityFactory(cashCategory::class)->createNewNoCategory();
+        }
+        $transferTransaction->setCategory($category);
 
         /** @var cashAccount $account */
-        $account = cash()->getEntityRepository(cashAccount::class)->findById($transferData['account_id']);
+        $account = cash()->getEntityRepository(cashAccount::class)->findById($params->transfer['account_id']);
         kmwaAssert::instance($account, cashAccount::class);
+        $transferTransaction->setAccount($account);
 
-        if ($transaction->getAccount()->getCurrency() !== $account->getCurrency()) {
+        if ($transaction->getAccount()->getCurrency() !== $transferTransaction->getAccount()->getCurrency()) {
             throw new kmwaNotImplementedException('No exchange logic');
         }
 
