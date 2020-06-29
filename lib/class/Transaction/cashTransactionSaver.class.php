@@ -83,7 +83,12 @@ class cashTransactionSaver extends cashEntitySaver
         if (!$params->transfer) {
             return false;
         }
-        $amount = abs($transaction->getAmount());
+
+        if (empty($params->transfer['incoming_amount'])) {
+            throw new kmwaLogicException(_w('No transfer amount'));
+        }
+
+        $amount = (float)$params->transfer['incoming_amount'];
 
         $transferTransaction = clone $transaction;
         $transferTransaction
@@ -111,15 +116,10 @@ class cashTransactionSaver extends cashEntitySaver
         kmwaAssert::instance($account, cashAccount::class);
         $transferTransaction->setAccount($account);
 
-        if ($transaction->getAccount()->getCurrency() !== $transferTransaction->getAccount()->getCurrency()) {
-            throw new kmwaNotImplementedException('No exchange logic');
-        }
-
-        if ($transaction->getAmount() > 0) {
-            $transaction->setAmount(-$transaction->getAmount());
-        }
-
-        $transaction->setLinkedTransaction($transferTransaction);
+        $transaction
+            ->setAmount(-abs($transaction->getAmount()))
+            ->setLinkedTransaction($transferTransaction)
+        ;
 
         return $transferTransaction;
     }

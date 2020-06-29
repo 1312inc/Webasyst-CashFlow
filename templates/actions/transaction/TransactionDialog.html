@@ -186,6 +186,7 @@
                                     <option value="{$account->id}"
                                             {if $account->id == $transaction->account->id}selected{/if}
                                             data-cash-account-currency-sign="{$account->currency->getSign()|escape}"
+                                            data-cash-account-currency-code="{$account->currency->getCode()|escape}"
                                             data-cash-account-icon="{$account->icon}"
                                             data-cash-account-icon-link="{$account->iconLink}"
                                     >
@@ -246,6 +247,7 @@
                                 {foreach $accounts as $account}
                                     <option value="{$account->id}"
                                             data-cash-account-currency-sign="{$account->currency->getSign()|escape}"
+                                            data-cash-account-currency-code="{$account->currency->getCode()|escape}"
                                             data-cash-account-icon="{$account->icon}"
                                             data-cash-account-icon-link="{$account->iconLink}"
 
@@ -256,28 +258,35 @@
                             </select>
                         </div>
                     </div>
-                    {/if}
 
-                    {if $categoryType == cashCategory::TYPE_TRANSFER}
-                        <div class="field">
-                            <div class="name nowrap">
-                                [`Transaction category to transfer`]
-                            </div>
-                            <div class="value">
-                                <i class="icon16 color" data-cash-transaction-category style="background: #dddddd;"></i>
-                                <select name="transfer[category_id]" data-cash-element-category-with-color>
-                                    <option value="0">[`No category`]</option>
-                                    {foreach $categoriesIncome as $category}
-                                        <option value="{$category->id}"
-                                                {if $category->id == $transaction->category->id}selected{/if}
-                                                data-cash-category-color="{$category->color}"
-                                        >
-                                            {$category->name|escape|truncate:42}
-                                        </option>
-                                    {/foreach}
-                                </select>
-                            </div>
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Transaction category to transfer`]
                         </div>
+                        <div class="value">
+                            <i class="icon16 color" data-cash-transaction-category style="background: #dddddd;"></i>
+                            <select name="transfer[category_id]" data-cash-element-category-with-color>
+                                <option value="0">[`No category`]</option>
+                                {foreach $categoriesIncome as $category}
+                                    <option value="{$category->id}"
+                                            {if $category->id == $transaction->category->id}selected{/if}
+                                            data-cash-category-color="{$category->color}"
+                                    >
+                                        {$category->name|escape|truncate:42}
+                                    </option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Transfer incoming amount`]
+                        </div>
+                        <div class="value">
+                            <input type="text" name="transfer[incoming_amount]" placeholder="0">
+                        </div>
+                    </div>
                     {/if}
                 </div>
 
