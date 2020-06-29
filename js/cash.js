@@ -388,12 +388,14 @@
                 }
             });
         },
-        loadTransactions: function (startDate, endDate, filterId, filterType, $htmlW) {
+        loadTransactions: function (startDate, endDate, filterId, filterType, $htmlW, start, limit) {
             $.get('?module=transaction&action=list', {
                 'start_date': startDate,
                 'end_date': endDate,
                 'id': filterId,
-                'filter': filterType
+                'filter': filterType,
+                'start': start || 0,
+                'limit': limit || 500
             }, function (html) {
                 $htmlW.html(html);
             });

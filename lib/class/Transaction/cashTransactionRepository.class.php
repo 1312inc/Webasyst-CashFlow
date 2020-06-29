@@ -13,12 +13,18 @@ class cashTransactionRepository extends cashBaseRepository
      * @param DateTime                     $startDate
      * @param DateTime                     $endDate
      * @param cashTransactionPageFilterDto $filterDto
+     * @param cashPagination               $pagination
      *
      * @return array
-     * @throws waException
      * @throws kmwaRuntimeException
+     * @throws waException
      */
-    public function findByDates(DateTime $startDate, DateTime $endDate, cashTransactionPageFilterDto $filterDto)
+    public function findByDates(
+        DateTime $startDate,
+        DateTime $endDate,
+        cashTransactionPageFilterDto $filterDto,
+        cashPagination $pagination
+    )
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
@@ -33,8 +39,12 @@ class cashTransactionRepository extends cashBaseRepository
                 $data = $model->getByDateBoundsAndAccount(
                     $startDate->format('Y-m-d 00:00:00'),
                     $endDate->format('Y-m-d 23:59:59'),
-                    $filterDto->id
+                    $filterDto->id,
+                    false,
+                    $pagination->getStart(),
+                    $pagination->getLimit()
                 );
+                $pagination->setTotalRows((int)$model->query('SELECT FOUND_ROWS()')->fetchField());
 
                 break;
 
@@ -42,8 +52,12 @@ class cashTransactionRepository extends cashBaseRepository
                 $data = $model->getByDateBoundsAndCategory(
                     $startDate->format('Y-m-d 00:00:00'),
                     $endDate->format('Y-m-d 23:59:59'),
-                    $filterDto->id
+                    $filterDto->id,
+                    false,
+                    $pagination->getStart(),
+                    $pagination->getLimit()
                 );
+                $pagination->setTotalRows((int)$model->query('SELECT FOUND_ROWS()')->fetchField());
 
                 break;
 
@@ -60,6 +74,7 @@ class cashTransactionRepository extends cashBaseRepository
                 throw new kmwaRuntimeException(_w('Wrong filter type'));
         }
 
+        /** @var cashCategoryDto[] $categoryDtos */
         $categoryDtos = cashDtoFromEntityFactory::fromEntities(
             cashCategoryDto::class,
             cash()->getEntityRepository(cashCategory::class)->findAll()

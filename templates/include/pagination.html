@@ -1,0 +1,45 @@
+{if count($pagination) > 1 || $show_records_on_page}
+<div class="block paging">
+    <div class="c-page-list">
+        {if $show_total_rows}<span style="margin-right:20px;">[`Total`]: {$total_rows}</span>{/if}
+        {if count($pagination) > 1}
+            <span>
+                {foreach $pagination as $page => $offset}
+                    {if $offset !== false}
+                        <a{if $current_page == $page} class="selected"{/if}
+                                href="{$base_url}/{$offset}/{$limit}/"
+                                data-pagination-start="{$offset}"
+                                data-pagination-limit="{$limit}"
+                        >{$page}</a>
+                    {else}
+                        ...
+                    {/if}
+                {/foreach}
+                {if $current_page != 1}
+                    <a href="{$base_url}/{$start-$limit}/{$limit}/"
+                       class="prev"
+                       data-pagination-start="{$start-$limit}"
+                       data-pagination-limit="{$limit}"
+                    ><i class="icon10 larr"></i> [`prev`]</a>
+                {/if}
+                {if $current_page != $page}
+                    <a href="{$base_url}/{$start+$limit}/{$limit}/"
+                       class="next"
+                       data-pagination-start="{$start+$limit}"
+                       data-pagination-limit="{$limit}"
+                    >[`next`] <i class="icon10 rarr"></i></a>
+                {/if}
+            </span>
+        {/if}
+    </div>
+    {if $show_records_on_page}
+    <div class="c-page-num">[`Show`]
+        <select id="records-per-page">
+            {foreach $records_on_page as $onpage}
+                <option value="{$onpage}"{if $limit==$onpage} selected="selected"{/if}>{$onpage}</option>
+            {/foreach}
+        </select> [`at page`]
+    </div>
+    {/if}
+</div>
+{/if}

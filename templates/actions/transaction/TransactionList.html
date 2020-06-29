@@ -7,6 +7,13 @@
 {** @var cashStatCategoryDetailedDto $upcomingOnDate **}
 {** @var cashStatOnDateDto[] $onHandsEndday **}
 {** @var cashTransactionListSettingsDto $listSettings **}
+{** @var cashPagination $pagination **}
+
+{capture name="cash_transaction_list_pagination"}
+<section data-cash-transaction-pagination>
+    {$paginationHtml}
+</section>
+{/capture}
 
 <section id="cash-transaction-list">
 <div class="c-table-header">
@@ -156,6 +163,11 @@
     {/if}
 
 {/if}
+</table>
+
+<table class="zebra single-lined">
+
+{$smarty.capture.cash_transaction_list_pagination}
 
 {if $completed}
     <tr class="white c-table-divider">
@@ -224,6 +236,9 @@
 {/if}
 
 </table>
+
+{$smarty.capture.cash_transaction_list_pagination}
+
 <br>
 </section>
 
@@ -458,7 +473,7 @@
                 }
 
                 $transactionList.trigger('updateSelectedCount.cash');
-            }, 50));
+            }, 50))
         ;
 
         /*{if $listSettings->addHandler}*/
@@ -568,5 +583,24 @@
             })
         ;
         /*{/if}*/
+
+        $transactionList.on('click', '[data-cash-transaction-pagination] a', function (e) {
+            e.preventDefault();
+            var filterId = '{$filter->identifier}',
+                filterType = '{$filter->type}',
+                startDate = '{$startDate}',
+                endDate = '{$endDate}',
+                $this = $(this),
+                $pagination = $this.closest('[data-cash-transaction-pagination]'),
+                start = $this.data('pagination-start'),
+                limit = $this.data('pagination-limit'),
+                $transactionList = $('[data-cash-wrapper="transaction-list"]'),
+                baseUrl = '{$pagination->getBaseUrl()}';
+
+            $pagination.append('<i class="icon16 loading"></i>');
+            $.cash.loadTransactions(startDate, endDate, filterId, filterType, $transactionList, start, limit);
+            $.cash_routing.stopDispatch(1);
+            window.location.hash = baseUrl + '/' + start + '/' + limit;
+        })
     })()
 </script>

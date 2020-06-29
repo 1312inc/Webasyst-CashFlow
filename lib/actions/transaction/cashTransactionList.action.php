@@ -17,11 +17,11 @@ class cashTransactionListAction extends cashTransactionPageAction
         $calcService = new cashCalculationService();
 
         $upcoming = array_reverse(
-            $repository->findByDates($tomorrow, $this->endDate, $this->filterDto),
+            $repository->findByDates($tomorrow, $this->endDate, $this->filterDto, $this->pagination),
             true
         );
         $completed = array_reverse(
-            $repository->findByDates($this->startDate, $this->today, $this->filterDto),
+            $repository->findByDates($this->startDate, $this->today, $this->filterDto, $this->pagination),
             true
         );
 
@@ -71,6 +71,9 @@ class cashTransactionListAction extends cashTransactionPageAction
                 'backend_transactions_export' => $eventResult,
 
                 'justSavedTransactions' => $justSavedTransactions,
+
+                'paginationHtml' => $this->pagination->prepare()->render($this->view),
+                'pagination' => $this->pagination,
             ]
         );
     }
