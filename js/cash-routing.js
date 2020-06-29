@@ -72,8 +72,8 @@
         },
         // if this is > 0 then this.dispatch() decrements it and ignores a call
         skipDispatch: 0,
-            /** Cancel the next n automatic dispatches when window.location.hash changes */
-            stopDispatch: function (n) {
+        /** Cancel the next n automatic dispatches when window.location.hash changes */
+        stopDispatch: function (n) {
             this.skipDispatch = n;
         },
         /** Implements #hash-based navigation. Called every time location.hash changes. */
@@ -162,17 +162,39 @@
                 $.cash.$content.html(html);
             });
         },
-        accountAction: function (id, start_date, end_date) {
+        accountAction: function (id, start_date, end_date, start, limit) {
             start_date = start_date || '';
             end_date = end_date || '';
-            $.get('?module=transaction&action=page&filter=account&id=' + id + '&start_date=' + start_date + '&end_date=' + end_date, function (html) {
-                $.cash.$content.html(html);
-            });
+            start = start || '';
+            limit = limit || '';
+
+            $.get('?module=transaction', {
+                    action: 'page',
+                    filter: 'account',
+                    id: id,
+                    start_date: start_date,
+                    end_date: end_date,
+                    start: start,
+                    limit: limit
+                }, function (html) {
+                    $.cash.$content.html(html);
+                });
         },
-        categoryAction: function (id, start_date, end_date) {
+        categoryAction: function (id, start_date, end_date, start, limit) {
             start_date = start_date || '';
             end_date = end_date || '';
-            $.get('?module=transaction&action=page&filter=category&id=' + id + '&start_date=' + start_date + '&end_date=' + end_date, function (html) {
+            start = start || '';
+            limit = limit || '';
+
+            $.get('?module=transaction', {
+                action: 'page',
+                filter: 'category',
+                id: id,
+                start_date: start_date,
+                end_date: end_date,
+                start: start,
+                limit: limit
+            }, function (html) {
                 $.cash.$content.html(html);
             });
         },

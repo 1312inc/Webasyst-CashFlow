@@ -13,10 +13,19 @@ class cashTransactionModel extends cashModel
      * @param int|null $account
      * @param bool     $returnResult
      *
+     * @param int      $start
+     * @param int      $limit
+     *
      * @return waDbResultIterator|array
      */
-    public function getByDateBoundsAndAccount($startDate, $endDate, $account = null, $returnResult = false)
-    {
+    public function getByDateBoundsAndAccount(
+        $startDate,
+        $endDate,
+        $account = null,
+        $returnResult = false,
+        $start = 0,
+        $limit = 100
+    ) {
         $whereAccountSql = '';
         $whereAccountSql2 = '';
         if ($account) {
@@ -25,7 +34,7 @@ class cashTransactionModel extends cashModel
         }
 
         $sql = <<<SQL
-select ct.*,
+select SQL_CALC_FOUND_ROWS ct.*,
        (@balance := @balance + ct.amount) as balance
 from cash_transaction ct
 join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
@@ -35,6 +44,7 @@ where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
       {$whereAccountSql}
 order by ct.date, ct.id
+limit i:start, i:limit
 SQL;
 
         $query = $this->query(
@@ -43,6 +53,8 @@ SQL;
                 'startDate' => $startDate,
                 'endDate' => $endDate,
                 'account_id' => $account,
+                'start' => $start,
+                'limit' => $limit,
             ]
         );
 
@@ -55,9 +67,19 @@ SQL;
      * @param int|null $category
      * @param bool     $returnResult
      *
+     * @param int      $start
+     * @param int      $limit
+     *
      * @return waDbResultIterator|array
      */
-    public function getByDateBoundsAndCategory($startDate, $endDate, $category = null, $returnResult = false)
+    public function getByDateBoundsAndCategory(
+        $startDate,
+        $endDate,
+        $category = null,
+        $returnResult = false,
+        $start = 0,
+        $limit = 100
+    )
     {
         switch (true) {
             case $category > 0:
@@ -85,7 +107,7 @@ SQL;
         }
 
         $sql = <<<SQL
-select ct.*,
+select SQL_CALC_FOUND_ROWS ct.*,
        (@balance := @balance + ct.amount) as balance
 from cash_transaction ct
 join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
@@ -95,6 +117,7 @@ where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
       {$whereAccountSql}
 order by ct.date, ct.id
+limit i:start, i:limit
 SQL;
 
         $query = $this->query(
@@ -103,6 +126,8 @@ SQL;
                 'startDate' => $startDate,
                 'endDate' => $endDate,
                 'category_id' => $category,
+                'start' => $start,
+                'limit' => $limit,
             ]
         );
 

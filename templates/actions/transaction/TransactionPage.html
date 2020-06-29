@@ -107,9 +107,11 @@
                 startDate = '{$startDate}',
                 endDate = '{$endDate}',
                 currentDate = '{$currentDate}',
+                start = {$pagination->getStart()},
+                limit = {$pagination->getLimit()},
                 $transactionList = $('[data-cash-wrapper="transaction-list"]');
 
-            $.cash.loadTransactions(startDate, endDate, filterId, filterType, $transactionList);
+            $.cash.loadTransactions(startDate, endDate, filterId, filterType, $transactionList, start, limit);
             $.cash.loadGraphData(startDate, endDate, filterId, filterType, '#cash-chart');
 
             $('[data-cash-start-date]').on('click.cash', function (e) {

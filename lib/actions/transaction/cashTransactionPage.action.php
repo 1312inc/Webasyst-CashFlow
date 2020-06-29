@@ -36,6 +36,11 @@ class cashTransactionPageAction extends cashViewAction
     protected $filterDto;
 
     /**
+     * @var cashPagination
+     */
+    protected $pagination;
+
+    /**
      * @var DateTime
      */
     protected $today;
@@ -80,6 +85,18 @@ class cashTransactionPageAction extends cashViewAction
         }
 
         $this->today = new DateTime();
+        $this->pagination = new cashPagination(
+            sprintf(
+                '#/%s/%d/%s/%s',
+                $this->filterDto->type,
+                $this->filterDto->id,
+                $this->startDate->format('Y-m-d'),
+                $this->endDate->format('Y-m-d')
+            )
+        );
+        $this->pagination
+            ->setStart(waRequest::get('start', 0, waRequest::TYPE_INT) ?: 0)
+            ->setLimit(waRequest::get('limit', 0, waRequest::TYPE_INT) ?: cashPagination::LIMIT);
 
         cash()->getEventDispatcher()->dispatch(new cashEvent(cashEventStorage::TRANSACTION_PAGE_PREEXECUTE, $this->endDate));
     }
@@ -89,7 +106,6 @@ class cashTransactionPageAction extends cashViewAction
      *
      * @return mixed|void
      * @throws kmwaLogicException
-     * @throws kmwaNotFoundException
      * @throws waException
      */
     public function runAction($params = null)
@@ -123,6 +139,7 @@ class cashTransactionPageAction extends cashViewAction
                 'selectedForecastPeriod' => $this->periodForecast,
                 'listSettings' => $settings,
                 'onHandsEndday' => $onHandsEndday,
+                'pagination' => $this->pagination,
             ]
         );
     }
