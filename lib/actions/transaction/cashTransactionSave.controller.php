@@ -51,11 +51,6 @@ class cashTransactionSaveController extends cashJsonController
                     $repeatingDto
                 );
 
-                // первая транзакция уже создана
-//                $endAfter = $repeatingTransaction->getRepeatingConditionEndAfter();
-//                if ($endAfter) {
-//                    $repeatingTransaction->setRepeatingConditionEndAfter(--$endAfter);
-//                }
                 if ($repeatingSaveResult->ok) {
                     $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
                     if ($newTransactions) {
@@ -72,8 +67,6 @@ class cashTransactionSaveController extends cashJsonController
                         $repeatingDto
                     );
 
-                    // первая транзакция уже создана
-//                    $repeatingTransaction->setRepeatingConditionEndAfter($endAfter);
                     $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
                     if ($newTransactions) {
                         foreach ($newTransactions as $newTransaction) {
@@ -86,6 +79,7 @@ class cashTransactionSaveController extends cashJsonController
                 return;
             }
 
+            /** @var cashRepeatingTransaction $repeatingTransaction */
             $repeatingTransaction = $transaction->getRepeatingTransaction();
             kmwaAssert::instance($repeatingTransaction, cashRepeatingTransaction::class);
 
