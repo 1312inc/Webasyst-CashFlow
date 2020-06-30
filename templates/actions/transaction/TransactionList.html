@@ -18,14 +18,6 @@
 <section id="cash-transaction-list">
 <div class="c-table-header">
 
-    {if empty($upcoming) && empty($completed)}
-
-        <div class="c-empty-chart-placeholder">
-            [`No activity in the selected period. Create a transaction to get started!`]
-        </div>
-
-    {/if}
-
     <ul class="menu-h dropdown c-actions-menu">
         {if $listSettings->addIncome}
             <li><a href="#"
@@ -82,7 +74,16 @@
     </ul>
 </div>
 
-<table class="zebra single-lined">
+{if empty($upcoming) && empty($completed)}
+
+<div class="c-empty-chart-placeholder">
+    [`No activity in the selected period. Create a transaction to get started!`]
+</div>
+
+{/if}
+
+
+    <table class="zebra single-lined">
     <!-- <tr>
         <th>[`Date`]</th>
         <th>[`Account`]</th>
