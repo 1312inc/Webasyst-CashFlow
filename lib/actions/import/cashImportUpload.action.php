@@ -18,12 +18,19 @@ class cashImportUploadAction extends cashViewAction
         $this->getStorage()->close();
         $files = waRequest::file('upload');
 
+        $errors = $responses = [];
         $importService = new cashImportService();
-        $responses = $importService->uploadFile($files, waRequest::request('upload', [], waRequest::TYPE_ARRAY));
+        try {
+            $responses = $importService->uploadFile($files, waRequest::request('upload', [], waRequest::TYPE_ARRAY));
+            $errors = $importService->getErrors();
+        } catch (Exception $exception) {
+            $errors[] = _w('Some error occurs: %s', $exception->getMessage());
+            cash()->getLogger()->error('Error on import file upload', $exception);
+        }
 
         $this->view->assign(
             [
-                'errors' => $importService->getErrors(),
+                'errors' => $errors,
                 'responses' => $responses,
             ]
         );
