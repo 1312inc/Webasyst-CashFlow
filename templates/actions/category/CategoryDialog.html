@@ -36,13 +36,30 @@
                         <div class="value no-shift" id="cash-category-color">
                             <input type="hidden" name="category[color]" value="{$category->color}"/>
                             <div class="c-category-color">
-                                {foreach cashColorStorage::getColorsByType($category->type) as $color}
+                                <div data-cash-category-colors="income"
+                                     {if $category->type !== cashCategory::TYPE_INCOME}style="display:none"{/if}
+                                >
+                                {foreach cashColorStorage::getColorsByType(cashCategory::TYPE_INCOME) as $color}
                                     <a href="#"
+                                       data-cash-category-color="{$color}"
                                        {if $category->color == $color}class="selected"{/if}
-                                       data-cash-category-color="{$color}">
+                                    >
                                         <i class="icon16 color" style="background-color: {$color}"></i>
                                     </a>
                                 {/foreach}
+                                </div>
+                                <div data-cash-category-colors="expense"
+                                     {if $category->type !== cashCategory::TYPE_EXPENSE}style="display:none"{/if}
+                                >
+                                {foreach cashColorStorage::getColorsByType(cashCategory::TYPE_EXPENSE) as $color}
+                                    <a href="#"
+                                       data-cash-category-color="{$color}"
+                                       {if $category->color == $color}class="selected"{/if}
+                                    >
+                                        <i class="icon16 color" style="background-color: {$color}"></i>
+                                    </a>
+                                {/foreach}
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -203,7 +203,7 @@
                             $dialogWrapper = $(d);
 
                         $dialogWrapper
-                            .on('click', '[data-cash-action="delete-category"]', function (e) {
+                            .on('click.cash', '[data-cash-action="delete-category"]', function (e) {
                                 e.preventDefault();
 
                                 if(!confirm($_('DANGER: This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
@@ -227,7 +227,7 @@
                                     }
                                 );
                             })
-                            .on('click', '[data-cash-category-color]', function (e) {
+                            .on('click.cash', '[data-cash-category-color]', function (e) {
                                 e.preventDefault();
                                 var $this = $(this);
 
@@ -235,10 +235,17 @@
                                     .siblings().removeClass('selected');
 
                                 $dialogWrapper.find('[name="category[color]"]').val($this.data('cash-category-color'));
-                        });
+                            })
+                            .on('change.cash', '[name="category[type]"]', function (e) {
+                                $dialogWrapper
+                                    .find('[data-cash-category-colors="'+$(this).val()+'"]').show()
+                                    .siblings().hide();
+                            })
+                        ;
 
                         if (categoryType) {
                             $dialogWrapper.find('[name="category[type]"] option[value="' + categoryType + '"]').prop('selected', true);
+                            $dialogWrapper.find('[name="category[type]"]').trigger('change.cash');
                         }
 
                         setTimeout(function () {
