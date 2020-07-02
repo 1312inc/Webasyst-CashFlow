@@ -267,7 +267,7 @@ SQL;
                 $dto->mainTransaction->getAmount() < 0 ? '' : '+',
                 $dto->mainTransaction->getAmount(),
                 $dto->mainTransaction->getAccount()->getCurrency(),
-                $dto->mainTransaction->getAccount()->getName()
+                $dto->mainTransaction->getCategory() ? $dto->mainTransaction->getCategory()->getName() : ''
             );
 
             if ($dto->purchaseTransaction) {
@@ -285,7 +285,7 @@ SQL;
                     $dto->purchaseTransaction->getAmount() < 0 ? '' : '+',
                     $dto->purchaseTransaction->getAmount(),
                     $dto->purchaseTransaction->getAccount()->getCurrency(),
-                    $dto->purchaseTransaction->getAccount()->getName()
+                    $dto->purchaseTransaction->getCategory() ? $dto->mainTransaction->getCategory()->getName() : ''
                 );
             }
 
@@ -304,7 +304,7 @@ SQL;
                     $dto->shippingTransaction->getAmount() < 0 ? '' : '+',
                     $dto->shippingTransaction->getAmount(),
                     $dto->shippingTransaction->getAccount()->getCurrency(),
-                    $dto->shippingTransaction->getAccount()->getName()
+                    $dto->shippingTransaction->getCategory() ? $dto->mainTransaction->getCategory()->getName() : ''
                 );
             }
 
@@ -323,7 +323,7 @@ SQL;
                     $dto->taxTransaction->getAmount() < 0 ? '' : '+',
                     $dto->taxTransaction->getAmount(),
                     $dto->taxTransaction->getAccount()->getCurrency(),
-                    $dto->taxTransaction->getAccount()->getName()
+                    $dto->taxTransaction->getCategory() ? $dto->mainTransaction->getCategory()->getName() : ''
                 );
             }
 
