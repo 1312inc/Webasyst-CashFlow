@@ -10,7 +10,7 @@ ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 
 .c-transactions { padding: 10px 0; }
 .c-transactions .c-table-header { min-height: 2rem; }
-.c-transactions .c-actions-menu .c-bulk-action { display: none; }
+.c-transactions .c-actions-menu.c-bulk-actions-menu { display: none; }
 .c-transactions .c-actions-menu.fixed { position: fixed; z-index: 1; top: 0; background: white; display: block; width: 100%; padding: 12px 0; box-shadow: 0 15px 10px -10px #eee; }
 .c-transactions .c-actions-menu.fixed .c-upcoming-toggle { display: none; }
 .c-transactions .c-actions-menu a { border-radius: 4px; padding: 8px; }
