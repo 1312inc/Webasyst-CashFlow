@@ -395,25 +395,25 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                         : 1,
                 ];
 
-//                if ($extremum['lines']['min'] >= 0) {
-//                    $data['axis']['y']['min'] = 0;
-//                    $data['axis']['y']['max'] = $extremum['columns']['max'];
-//
-//                    $data['axis']['y2']['min'] = 0;
-//                    $data['axis']['y2']['max'] = $extremum['lines']['max'];
-//                } elseif ($extremum['lines']['max'] < 0) {
-//                    $data['axis']['y']['min'] = $extremum['lines']['min'];
-//                    $data['axis']['y']['max'] = $extremum['columns']['max'];
-//
-//                    $data['axis']['y2']['min'] = $extremum['lines']['min'];
-//                    $data['axis']['y2']['max'] = $extremum['columns']['max'];
-//                } else {
-//                    $data['axis']['y']['min'] = -abs($extremum['lines']['min']/$ration['maxs']);
-//                    $data['axis']['y']['max'] = $extremum['columns']['max'];
-//
-//                    $data['axis']['y2']['min'] = $extremum['lines']['min'];
-//                    $data['axis']['y2']['max'] = $extremum['lines']['max'];
-//                }
+                if ($extremum['lines']['min'] >= 0) {
+                    $data['axis']['y']['min'] = 0;
+                    $data['axis']['y']['max'] = $extremum['columns']['max'];
+
+                    $data['axis']['y2']['min'] = 0;
+                    $data['axis']['y2']['max'] = $extremum['lines']['max'];
+                } elseif ($extremum['lines']['max'] < 0) {
+                    $data['axis']['y']['min'] = $extremum['lines']['min'];
+                    $data['axis']['y']['max'] = $extremum['columns']['max'];
+
+                    $data['axis']['y2']['min'] = $extremum['lines']['min'];
+                    $data['axis']['y2']['max'] = $extremum['columns']['max'];
+                } else {
+                    $data['axis']['y']['min'] = -abs($extremum['lines']['min']/$ration['maxs']);
+                    $data['axis']['y']['max'] = $extremum['columns']['max'];
+
+                    $data['axis']['y2']['min'] = $extremum['lines']['min'];
+                    $data['axis']['y2']['max'] = $extremum['lines']['max'];
+                }
 
                 $data['helpers']['extremum'] = $extremum;
                 $data['helpers']['ratio'] = $ration;
