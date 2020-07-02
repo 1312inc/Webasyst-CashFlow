@@ -21,4 +21,14 @@ interface cashImportFileUploadedEventResponseInterface
      * @return string
      */
     public function getHtml();
+
+    /**
+     * @return string
+     */
+    public function getError();
+
+    /**
+     * @param string $error
+     */
+    public function setError($error);
 }

@@ -127,6 +127,10 @@ final class cashImportCsv
                     if ($row === 1) {
                         $this->csvInfoDto->headers[] = $data[$column];
                     } else {
+                        if (!isset($this->csvInfoDto->headers[$column])) {
+                            continue;
+                        }
+
                         $key = $this->csvInfoDto->headers[$column];
                         if (!isset($csvData[$key])) {
                             $csvData[$key] = [];
@@ -156,13 +160,22 @@ final class cashImportCsv
             fclose($handle);
         }
 
+        if (count($this->csvInfoDto->headers) < 2) {
+            $this->error = _w('No data columns were located in the uploaded file. Make sure right separator and encoding were chosen for this upload.');
+        }
+
         // cache data
         foreach ($csvData as $key => $datum) {
             $this->csvInfoDto->uniqueValues[$key] = array_unique($datum);
         }
-        cash()->getCache()->set(self::getCacheKeyForUser(), $this->csvInfoDto);
 
-        $response->setCsvInfoDto($this->csvInfoDto);
+        if (!$this->error) {
+            cash()->getCache()->set(self::getCacheKeyForUser(), $this->csvInfoDto);
+        }
+
+        $response
+            ->setCsvInfoDto($this->csvInfoDto)
+            ->setError($this->error);
 
         return $response;
     }
