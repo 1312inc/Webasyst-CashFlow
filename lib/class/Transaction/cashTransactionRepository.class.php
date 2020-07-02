@@ -13,7 +13,7 @@ class cashTransactionRepository extends cashBaseRepository
      * @param DateTime                     $startDate
      * @param DateTime                     $endDate
      * @param cashTransactionPageFilterDto $filterDto
-     * @param cashPagination               $pagination
+     * @param cashPagination|null          $pagination
      *
      * @return array
      * @throws kmwaRuntimeException
@@ -23,7 +23,7 @@ class cashTransactionRepository extends cashBaseRepository
         DateTime $startDate,
         DateTime $endDate,
         cashTransactionPageFilterDto $filterDto,
-        cashPagination $pagination
+        cashPagination $pagination = null
     )
     {
         /** @var cashTransactionModel $model */
@@ -34,6 +34,13 @@ class cashTransactionRepository extends cashBaseRepository
             $accountDtos[$a->getId()] = cashAccountDto::fromEntity($a);
         }
 
+        $start = null;
+        $limit = null;
+        if ($pagination) {
+            $start = $pagination->getStart();
+            $limit = $pagination->getLimit();
+        }
+
         switch ($filterDto->type) {
             case cashTransactionPageFilterDto::FILTER_ACCOUNT:
                 $data = $model->getByDateBoundsAndAccount(
@@ -41,11 +48,17 @@ class cashTransactionRepository extends cashBaseRepository
                     $endDate->format('Y-m-d 23:59:59'),
                     $filterDto->id,
                     false,
-                    $pagination->getStart(),
-                    $pagination->getLimit()
+                    $start,
+                    $limit
                 );
-                $pagination->setTotalRows((int)$model->query('SELECT FOUND_ROWS()')->fetchField());
 
+                if ($pagination) {
+                    $pagination->setTotalRows($model->countByDateBoundsAndAccount(
+                        $startDate->format('Y-m-d 00:00:00'),
+                        $endDate->format('Y-m-d 23:59:59'),
+                        $filterDto->id
+                    ));
+                }
                 break;
 
             case cashTransactionPageFilterDto::FILTER_CATEGORY:
@@ -54,11 +67,17 @@ class cashTransactionRepository extends cashBaseRepository
                     $endDate->format('Y-m-d 23:59:59'),
                     $filterDto->id,
                     false,
-                    $pagination->getStart(),
-                    $pagination->getLimit()
+                    $start,
+                    $limit
                 );
-                $pagination->setTotalRows((int)$model->query('SELECT FOUND_ROWS()')->fetchField());
 
+                if ($pagination) {
+                    $pagination->setTotalRows($model->countByDateBoundsAndCategory(
+                        $startDate->format('Y-m-d 00:00:00'),
+                        $endDate->format('Y-m-d 23:59:59'),
+                        $filterDto->id
+                    ));
+                }
                 break;
 
             case cashTransactionPageFilterDto::FILTER_IMPORT:

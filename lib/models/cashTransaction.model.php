@@ -12,9 +12,8 @@ class cashTransactionModel extends cashModel
      * @param string   $endDate
      * @param int|null $account
      * @param bool     $returnResult
-     *
-     * @param int      $start
-     * @param int      $limit
+     * @param int|null $start
+     * @param int|null $limit
      *
      * @return waDbResultIterator|array
      */
@@ -23,8 +22,8 @@ class cashTransactionModel extends cashModel
         $endDate,
         $account = null,
         $returnResult = false,
-        $start = 0,
-        $limit = 100
+        $start = null,
+        $limit = null
     ) {
         $whereAccountSql = '';
         $whereAccountSql2 = '';
@@ -33,8 +32,13 @@ class cashTransactionModel extends cashModel
             $whereAccountSql2 = ' and ct2.account_id = i:account_id';
         }
 
+        $limits = '';
+        if ($start !== null && $limit !== null) {
+            $limits = 'limit i:start, i:limit';
+        }
+
         $sql = <<<SQL
-select SQL_CALC_FOUND_ROWS ct.*,
+select ct.*,
        (@balance := @balance + ct.amount) as balance
 from cash_transaction ct
 join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
@@ -43,8 +47,8 @@ left join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
       {$whereAccountSql}
-order by ct.date, ct.id
-limit i:start, i:limit
+order by ct.date desc, ct.id desc
+{$limits}
 SQL;
 
         $query = $this->query(
@@ -64,11 +68,48 @@ SQL;
     /**
      * @param string   $startDate
      * @param string   $endDate
+     * @param int|null $account
+     *
+     * @return int
+     */
+    public function countByDateBoundsAndAccount($startDate, $endDate, $account = null)
+    {
+        $whereAccountSql = '';
+        $whereAccountSql2 = '';
+        if ($account) {
+            $whereAccountSql = ' and ct.account_id = i:account_id';
+            $whereAccountSql2 = ' and ct2.account_id = i:account_id';
+        }
+
+        $sql = <<<SQL
+select count(ct.id)
+from cash_transaction ct
+join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+where ct.date between s:startDate and s:endDate
+      and ct.is_archived = 0
+      {$whereAccountSql}
+SQL;
+
+        $query = $this->query(
+            $sql,
+            [
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'account_id' => $account
+            ]
+        );
+
+        return (int) $query->fetchField();
+    }
+
+    /**
+     * @param string   $startDate
+     * @param string   $endDate
      * @param int|null $category
      * @param bool     $returnResult
-     *
-     * @param int      $start
-     * @param int      $limit
+     * @param int|null      $start
+     * @param int|null      $limit
      *
      * @return waDbResultIterator|array
      */
@@ -77,8 +118,8 @@ SQL;
         $endDate,
         $category = null,
         $returnResult = false,
-        $start = 0,
-        $limit = 100
+        $start = null,
+        $limit = null
     )
     {
         switch (true) {
@@ -106,8 +147,13 @@ SQL;
                 $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
         }
 
+        $limits = '';
+        if ($start !== null && $limit !== null) {
+            $limits = 'limit i:start, i:limit';
+        }
+
         $sql = <<<SQL
-select SQL_CALC_FOUND_ROWS ct.*,
+select ct.*,
        (@balance := @balance + ct.amount) as balance
 from cash_transaction ct
 join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
@@ -116,8 +162,8 @@ join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
       {$whereAccountSql}
-order by ct.date, ct.id
-limit i:start, i:limit
+order by ct.date desc, ct.id desc
+{$limits}
 SQL;
 
         $query = $this->query(
@@ -132,6 +178,63 @@ SQL;
         );
 
         return $returnResult ? $query->fetchAll() : $query->getIterator();
+    }
+
+    /**
+     * @param string   $startDate
+     * @param string   $endDate
+     * @param int|null $category
+     *
+     * @return int
+     */
+    public function countByDateBoundsAndCategory($startDate, $endDate, $category = null)
+    {
+        switch (true) {
+            case $category > 0:
+                $whereAccountSql = ' and ct.category_id = i:category_id';
+                $whereAccountSql2 = ' and ct2.category_id = i:category_id';
+                $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
+                break;
+
+            case $category == cashCategoryFactory::NO_CATEGORY_EXPENSE_ID:
+                $whereAccountSql = ' and ct.category_id is null and ct.amount < 0';
+                $whereAccountSql2 = ' and ct2.category_id is null and ct2.amount < 0';
+                $joinCategory = '';
+                break;
+
+            case $category == cashCategoryFactory::NO_CATEGORY_INCOME_ID:
+                $whereAccountSql = ' and ct.category_id is null and ct.amount > 0';
+                $whereAccountSql2 = ' and ct2.category_id is null and ct2.amount > 0';
+                $joinCategory = '';
+                break;
+
+            default:
+                $whereAccountSql = '';
+                $whereAccountSql2 = '';
+                $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
+        }
+
+        $sql = <<<SQL
+select count(ct.id)
+from cash_transaction ct
+join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+{$joinCategory}
+where ct.date between s:startDate and s:endDate
+      and ct.is_archived = 0
+      {$whereAccountSql}
+SQL;
+
+        $query = $this->query(
+            $sql,
+            [
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'category_id' => $category
+            ]
+        );
+
+        return (int) $query->fetchField();
     }
 
     /**

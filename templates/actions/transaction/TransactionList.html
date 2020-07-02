@@ -173,7 +173,7 @@
         <td colspan="2">
             <h5 class="heading">
                 {if $selectedChartPeriod}{$selectedChartPeriod->getName()}{else}[`Completed`]{/if},
-                {sprintf('[`%d transactions`]', count($completed))}
+                {sprintf('[`%d transactions`]', $pagination->getTotalRows())}
             </h5>
         </td>
         <td colspan="2">
@@ -223,7 +223,7 @@
 {if $completedOnDate}
     <tr class="white c-totals">
         <td colspan="7" class="align-center">
-            <p>{sprintf('[`Total for the selected period (%s, %d transactions):`]', $selectedChartPeriod->getName(), count($completed) )}</p>
+            <p>{sprintf('[`Total for the selected period (%s, %d transactions):`]', $selectedChartPeriod->getName(), $pagination->getTotalRows() )}</p>
             {foreach $completedOnDate as $onDateStat}
             <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
                 {foreach $onDateStat->stat as $statOnDate}
@@ -240,7 +240,7 @@
 
 <div class="block double-padded">
     {$smarty.capture.cash_transaction_list_pagination}
-    <p class="hint align-center"><br>{sprintf('[`%d transactions per page`]', 500)}</p>
+    <p class="hint align-center"><br>{sprintf('[`%d transactions per page`]', $pagination->getTotalRows())}</p>
 </div>
 
 </section>
@@ -436,7 +436,7 @@
                 $transactionList = $('[data-cash-wrapper="transaction-list"]'),
                 baseUrl = '{$pagination->getBaseUrl()}';
 
-            $pagination.append('<i class="icon16 loading"></i>');
+            $pagination.find('div:first').append('<i class="icon16 loading" style="display: inline-block;margin: 0;"></i>');
             $.cash.loadTransactions(startDate, endDate, filterId, filterType, $transactionList, start, limit);
             $.cash_routing.stopDispatch(1);
             window.location.hash = baseUrl + '/' + start + '/' + limit;
