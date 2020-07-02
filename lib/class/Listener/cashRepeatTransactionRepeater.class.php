@@ -25,7 +25,7 @@ class cashRepeatTransactionRepeater extends waEventHandler
         $transRep = cash()->getEntityRepository(cashTransaction::class);
         $repeater = new cashTransactionRepeater();
 
-        /** @var cashTransactionRepeater $transaction */
+        /** @var cashRepeatingTransaction $transaction */
         foreach ($trans as $transaction) {
             try {
                 cash()->getLogger()->debug(
