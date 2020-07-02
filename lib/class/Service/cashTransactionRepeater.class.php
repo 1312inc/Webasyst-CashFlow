@@ -58,8 +58,8 @@ final class cashTransactionRepeater
                 break;
 
             case cashRepeatingTransaction::REPEATING_END_NEVER:
-                $counter = 0;
-                while ($counter++ <= $this->getOccurrencesByDefault($repeatingTransaction)) {
+                $endDate = $this->getEndDateForNeverEndByDefault($repeatingTransaction, $startDate);
+                while ($startDate <= $endDate) {
                     $t[] = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
                 }
                 break;
@@ -101,23 +101,31 @@ final class cashTransactionRepeater
 
     /**
      * @param cashRepeatingTransaction $transaction
+     * @param DateTime                 $startDate
      *
-     * @return int
+     * @return DateTime
      */
-    private function getOccurrencesByDefault(cashRepeatingTransaction $transaction)
+    private function getEndDateForNeverEndByDefault(cashRepeatingTransaction $transaction, DateTime $startDate)
     {
+        $date = max(new DateTime(), $startDate);
         switch ($transaction->getRepeatingInterval()) {
             case cashRepeatingTransaction::INTERVAL_DAY:
-                return 365;
+                $date->modify('+1 year');
+                break;
 
             case cashRepeatingTransaction::INTERVAL_WEEK:
-                return 60;
+                $date->modify('+60 weeks');
+                break;
 
             case cashRepeatingTransaction::INTERVAL_MONTH:
-                return 12;
+                $date->modify('+12 months');
+                break;
 
             case cashRepeatingTransaction::INTERVAL_YEAR:
-                return 10;
+                $date->modify('+10 years');
+                break;
         }
+
+        return $date;
     }
 }
