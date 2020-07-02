@@ -168,8 +168,6 @@
 
 <table class="zebra single-lined">
 
-{$smarty.capture.cash_transaction_list_pagination}
-
 {if $completed}
     <tr class="white c-table-divider">
         <td class="min-width"><input type="checkbox"></td>
@@ -179,7 +177,10 @@
                 {sprintf('[`%d transactions`]', count($completed))}
             </h5>
         </td>
-        <td colspan="4" class="align-right">
+        <td colspan="2">
+            {$smarty.capture.cash_transaction_list_pagination}
+        </td>
+        <td colspan="2" class="align-right">
             <ul class="menu-h dropdown float-right">
                 <li>
                     <a href="#" class="inline-link gray"><b><i>[`Export transactions`]</i></b><i class="icon10 darr"></i></a>
@@ -238,9 +239,11 @@
 
 </table>
 
-{$smarty.capture.cash_transaction_list_pagination}
+<div class="block double-padded">
+    {$smarty.capture.cash_transaction_list_pagination}
+    <p class="hint align-center"><br>{sprintf('[`%d transactions per page`]', 500)}</p>
+</div>
 
-<br>
 </section>
 
 <script type="text/javascript" src="{$wa_app_static_url}js/transaction-dialog.js{if !waSystemConfig::isDebug()}?v{$wa->version()}{/if}"></script>

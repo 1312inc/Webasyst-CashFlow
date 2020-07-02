@@ -1,9 +1,15 @@
 {if count($pagination) > 1 || $show_records_on_page}
-<div class="block paging">
-    <div class="c-page-list">
+    <div class="paging c-page-list align-center">
         {if $show_total_rows}<span style="margin-right:20px;">[`Total`]: {$total_rows}</span>{/if}
         {if count($pagination) > 1}
             <span>
+                {if $current_page != 1}
+                    <a href="{$base_url}/{$start-$limit}/{$limit}/"
+                       class="prev"
+                       data-pagination-start="{$start-$limit}"
+                       data-pagination-limit="{$limit}"
+                    ><i class="icon10 larr"></i> [`prev`]</a>
+                {/if}
                 {foreach $pagination as $page => $offset}
                     {if $offset !== false}
                         <a{if $current_page == $page} class="selected"{/if}
@@ -15,13 +21,6 @@
                  ***REMOVED***
                     {/if}
                 {/foreach}
-                {if $current_page != 1}
-                    <a href="{$base_url}/{$start-$limit}/{$limit}/"
-                       class="prev"
-                       data-pagination-start="{$start-$limit}"
-                       data-pagination-limit="{$limit}"
-                    ><i class="icon10 larr"></i> [`prev`]</a>
-                {/if}
                 {if $current_page != $page}
                     <a href="{$base_url}/{$start+$limit}/{$limit}/"
                        class="next"
@@ -41,5 +40,4 @@
         </select> [`at page`]
     </div>
     {/if}
-</div>
 {/if}
