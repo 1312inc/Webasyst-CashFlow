@@ -1,5 +1,7 @@
 {if $errors}
-    {$errors|print_r}
+    {foreach $errors as $error}
+    <div class="errormsg">{$error}</div>
+    {/foreach}
 {else}
     {foreach $responses as $fileType => $eventResponses}
         <!-- {$fileType} -->

@@ -32,6 +32,10 @@ class cashImportService
                                 continue;
                             }
 
+                            if ($eventResponse->getError()) {
+                                throw new cashValidateException($eventResponse->getError());
+                            }
+
                             $fileType = $eventResponse->getFileType();
                             if (!isset($responses[$fileType])) {
                                 $responses[$fileType] = [];
@@ -63,7 +67,7 @@ class cashImportService
             $name_ext = 'php';
         }
 
-        if (in_array($name_ext, ['php', 'phtml', 'htaccess'])) {
+        if (in_array($name_ext, ['php', 'phtml', 'htaccess'], true)) {
             $this->errors[] = sprintf(
                 _w('Files with extension .%s are not allowed to security considerations.'),
                 $name_ext
@@ -73,7 +77,7 @@ class cashImportService
         }
 
         if (exif_imagetype($file->tmp_name)) {
-            $this->errors[] = _w('File is image');
+            $this->errors[] = _w('File is image.');
 
             return false;
         }

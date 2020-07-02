@@ -19,6 +19,11 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
     }
 
     /**
+     * @var
+     */
+    private $error;
+
+    /**
      * @inheritDoc
      */
     public function getHtml()
@@ -31,26 +36,24 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
         /** @var cashAccountDto[] $accountDtos */
         $accountDtos = cashDtoFromEntityFactory::fromEntities(cashAccountDto::class, $accounts);
 
-        /** @var cashCategory[] $categoriesIncome */
         $categoriesIncome = cash()->getEntityRepository(cashCategory::class)->findAllIncome();
         /** @var cashCategoryDto[] $categoryIncomeDtos */
         $categoryIncomeDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $categoriesIncome);
         array_unshift(
             $categoryIncomeDtos,
-            new cashCategoryDto(
-                ['name' => _w('New income category'), 'id' => -1, 'type' => cashCategory::TYPE_INCOME]
-            )
+            cash()->getEntityFactory(cashCategory::class)
+                ->createNewNoCategoryIncome()
+                ->setName(_w('New income category'))
         );
 
-        /** @var cashCategory[] $categoriesExpense */
         $categoriesExpense = cash()->getEntityRepository(cashCategory::class)->findAllExpense();
         /** @var cashCategoryDto[] $categoryExpenseDtos */
         $categoryExpenseDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $categoriesExpense);
         array_unshift(
             $categoryExpenseDtos,
-            new cashCategoryDto(
-                ['name' => _w('New expense category'), 'id' => -2, 'type' => cashCategory::TYPE_EXPENSE]
-            )
+            cash()->getEntityFactory(cashCategory::class)
+                ->createNewNoCategoryExpense()
+                ->setName(_w('New expense category'))
         );
 
         $view->assign(
@@ -92,5 +95,25 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
     public function getCsvInfoDto()
     {
         return $this->csvInfoDto;
+    }
+
+    /**
+     * @return string
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
+     * @param string $error
+     *
+     * @return cashImportResponseCsv
+     */
+    public function setError($error)
+    {
+        $this->error = $error;
+
+        return $this;
     }
 }
