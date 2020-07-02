@@ -18,7 +18,7 @@
 <section id="cash-transaction-list">
 <div class="c-table-header">
 
-    <ul class="menu-h dropdown c-actions-menu">
+    <ul class="menu-h dropdown c-actions-menu" data-cash-transaction-list-actions>
         {if $listSettings->addIncome}
             <li><a href="#"
                    class="c-action-add-income"
@@ -40,7 +40,7 @@
                data-cash-category-type="{cashCategory::TYPE_TRANSFER}"
             ><i class="icon16 move"></i><strong>[`Transfer`]</strong></a></li>
         {/if}
-        <!--
+        {*
 
             TRANSACTION TEMPLATES: some day
 
@@ -53,13 +53,18 @@
                 <li><a href="#"><i class="icon16 color"></i>Комиссия банка</a></li>
                 <li class="bordered-top"><a href="#" class="gray"><i class="icon16 settings"></i>[`Manage templates`]</a></li>
             </ul>
-        </li> -->
+        </li> *}
+    </ul>
 
-        {if $listSettings->bulkActions}
+    {if $listSettings->bulkActions}
+    <ul class="menu-h dropdown c-actions-menu c-bulk-actions-menu" data-cash-transaction-list-bulk-actions>
         <li class="c-bulk-action"><a href="#" data-cash-bulk-action="move"><i class="icon16 move"></i>[`Move`] <strong class="hint">(N)</strong></a></li>
         <li class="c-bulk-action"><a href="#" data-cash-bulk-action="delete"><i class="icon16 delete"></i>[`Delete`] <strong class="hint">(N)</strong></a></li>
+        <li class="c-bulk-action float-right gray"><a href="#" data-cash-bulk-action="unselectall"><i class="icon16 delete"></i>[`Unselect all`] <strong class="hint">(N)</strong></a></li>
         {/if}
+    </ul>
 
+    <ul class="menu-h dropdown c-actions-menu">
         <li>
             <input type="search" placeholder="[`Filter`]" data-cash-action="filter-transactions"/>
         </li>
@@ -355,15 +360,25 @@
                 $transactionList.trigger('updateSelectedCount.cash');
             })
             .on('updateSelectedCount.cash', function (e) {
-                var selectedCount = $transactionList.find('[type="checkbox"][value]:visible:checked').length - 1;
+                var total =  $transactionList.find('[type="checkbox"][value]:visible').length,
+                    selectedCount = $transactionList.find('[type="checkbox"][value]:visible:checked').length;
+
+                if (total == selectedCount) {
+                    selectedCount--;
+                }
+
                 if (selectedCount > 0) {
                     $transactionList
-                        .find('.c-bulk-action').show()
+                        .find('[data-cash-transaction-list-actions]').hide()
+                        .end()
+                        .find('[data-cash-transaction-list-bulk-actions]').show()
                         .find('.hint').text(selectedCount);
                 } else {
                     selectedCount = 0;
                     $transactionList
-                        .find('.c-bulk-action').hide()
+                        .find('[data-cash-transaction-list-actions]').show()
+                        .end()
+                        .find('[data-cash-transaction-list-bulk-actions]').hide()
                         .find('.hint').text(selectedCount);
                 }
             })
@@ -375,6 +390,11 @@
                     ids = JSON.stringify($transactionList.find('[type="checkbox"][value]:visible:checked').map(function() { return $(this).val(); }).get());
 
                 switch (action) {
+                    case 'unselectall':
+                        $transactionList.find('[type="checkbox"][value]:visible:checked').prop('checked', false);
+                        $transactionList.trigger('updateSelectedCount.cash');
+                        break;
+
                     default:
                         $.post(
                             '?module=transaction&action=bulk' + $.cash.capitalizeFirstLetter(action) + 'Dialog',
@@ -416,7 +436,6 @@
                                 });
                             }
                         );
-
                         break;
                 }
             })
