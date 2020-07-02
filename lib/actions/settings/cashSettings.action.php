@@ -66,6 +66,11 @@ class cashSettingsAction extends cashViewAction
             $shopIntegration->getSettings()->setEnabled(false)->save();
         }
 
+        /** @var cashAccount $incomeAccount */
+        $incomeAccount = cash()->getEntityRepository(cashAccount::class)->findById(
+            $shopIntegration->getSettings()->getAccountId()
+        );
+
         $this->view->assign(
             [
                 'incomes' => $incomeDtos,
@@ -75,7 +80,11 @@ class cashSettingsAction extends cashViewAction
                 'storefronts' => $storefronts,
                 'actions' => $actions,
                 'shopIsOld' => $shopIntegration->shopIsOld(),
-                'avg' => $shopIntegration->calculateAvgBill(),
+                'avg' => sprintf(
+                    '%s%s',
+                    $shopIntegration->calculateAvgBill(),
+                    $incomeAccount ? cashCurrencyVO::fromWaCurrency($incomeAccount->getCurrency())->getSignHtml() : ''
+                ),
             ]
         );
     }
