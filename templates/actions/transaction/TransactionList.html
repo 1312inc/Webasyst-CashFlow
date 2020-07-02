@@ -83,7 +83,7 @@
 {/if}
 
 
-    <table class="zebra single-lined">
+    <table class="zebra single-lined" data-cash-planned-transactions style="{if $completed && empty($justSavedTransactions)}display: none;{/if}">
     <!-- <tr>
         <th>[`Date`]</th>
         <th>[`Account`]</th>
@@ -95,7 +95,7 @@
     </tr> -->
 
 {if $upcoming}
-    <tr class="white c-table-divider c-planned" style="{if $completed}display: none;{/if}">
+    <tr class="white c-table-divider c-planned">
         <td class="min-width"><input type="checkbox"></td>
         <td colspan="2">
             <h5 class="heading">
@@ -122,7 +122,6 @@
     {foreach $upcoming as $t}
         <tr class="c-planned{if isset($justSavedTransactions[$t->id])} highlighted{/if}"
             data-cash-transaction-id="{$t->id}"
-            style="{if $completed && !isset($justSavedTransactions[$t->id])}display: none;{/if}"
         >
             <td class="min-width"><input value="{$t->id}" type="checkbox"></td>
             <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
@@ -148,7 +147,7 @@
     {/foreach}
 
     {if $upcomingOnDate}
-    <tr class="white c-planned c-totals" style="display: none;">
+    <tr class="white c-planned c-totals">
         <td colspan="7" class="align-center">
             {if $selectedForecastPeriod}<p>{sprintf('[`Total for the next %s (until %s):`]', {$selectedForecastPeriod->getName()}, {$selectedForecastPeriod->getDateAsString()|wa_date:humandate})}</p>{/if}
             {foreach $upcomingOnDate as $onDateStat}
@@ -260,8 +259,14 @@
         $transactionList
             .on('click.cash', '[data-cash-action="show-upcoming-transactions"]', function (e) {
                 e.preventDefault();
-                $transactionList.find('.c-planned').slideDown(131.2);
-                $(this).hide();
+                var $this = $(this),
+                    $l = $('<i class="icon16 loading"></i>');
+
+                $this.prepend($l);
+                $transactionList.find('[data-cash-planned-transactions]').slideDown(131.2, function () {
+                    $this.hide();
+                    $l.remove();
+                });
             })
             .on('keyup.cash paste.cash', '[data-cash-action="filter-transactions"]', $.cash.throttle(function () {
                 var text = $.trim($(this).val()),
