@@ -22,7 +22,11 @@
                         <div class="value no-shift">
                             <select name="account[currency]">
                             {foreach $currencies as $currency}
-                                <option value="{$currency->getCode()}" {if $account->currency->getCode() == $currency->getCode()}selected{/if}>{$currency->getCode()} - {$currency->getTitle()} ({$currency->getSign()})</option>
+                                <option value="{$currency->getCode()}"
+                                        {if $account->currency->getCode() == $currency->getCode()}selected{/if}
+                                >
+                                    {$currency->getCode()} - {$currency->getTitle()} ({$currency->getSign()})
+                                </option>
                             {/foreach}
                             </select>
                             {if $account->id}
@@ -43,7 +47,8 @@
                                 {foreach cashIconStorage::getIcons() as $icon}
                                 <a href="#"
                                    {if $account->icon == $icon}class="selected"{/if}
-                                   data-cash-account-icon="{$icon}">
+                                   data-cash-account-icon="{$icon}"
+                                >
                                     <i class="icon16 {$icon}"></i>
                                 </a>
                                 {/foreach}

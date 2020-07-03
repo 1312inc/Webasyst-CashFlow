@@ -126,7 +126,7 @@
                             $dialogWrapper = $(d);
 
                         $dialogWrapper
-                            .on('click', '[data-cash-action="delete-account"]', function (e) {
+                            .on('click.cash', '[data-cash-action="delete-account"]', function (e) {
                                 e.preventDefault();
 
                                 if(!confirm($_('DANGER: This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
@@ -146,18 +146,21 @@
                                     }
                                 );
                             })
+                            .on('click.cash', '[data-cash-account-icon]', function (e) {
+                                e.preventDefault();
+                                var $this = $(this);
+
+                                $this.addClass('selected')
+                                    .siblings().removeClass('selected');
+
+                                $dialogWrapper.find('[name="account[icon]"]').val($this.data('cash-account-icon'));
+                                $dialogWrapper.find('[name="account[icon_link]"]').val('');
+                            })
                         ;
 
-                        $dialogWrapper.on('click', '[data-cash-account-icon]', function (e) {
-                            e.preventDefault();
-                            var $this = $(this);
-
-                            $this.addClass('selected')
-                                .siblings().removeClass('selected');
-
-                            $dialogWrapper.find('[name="account[icon]"]').val($this.data('cash-account-icon'));
-                            $dialogWrapper.find('[name="account[icon_link]"]').val('');
-                        });
+                        if (!$dialogWrapper.find('.c-account-icon-list .selected').length) {
+                            $dialogWrapper.find('.c-account-icon-list [data-cash-account-icon]:first').trigger('click.cash');
+                        }
 
                         setTimeout(function () {
                             $dialogWrapper.find('[name="account[name]"]').trigger('focus');
@@ -237,9 +240,13 @@
                                 $dialogWrapper.find('[name="category[color]"]').val($this.data('cash-category-color'));
                             })
                             .on('change.cash', '[name="category[type]"]', function (e) {
-                                $dialogWrapper
-                                    .find('[data-cash-category-colors="'+$(this).val()+'"]').show()
+                                var $colorsW = $dialogWrapper.find('[data-cash-category-colors="'+$(this).val()+'"]');
+                                $colorsW.show()
                                     .siblings().hide();
+
+                                if (!$colorsW.find('.selected').length) {
+                                    $colorsW.find('[data-cash-category-color]:first').trigger('click.cash');
+                                }
                             })
                         ;
 
