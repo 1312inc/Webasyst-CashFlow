@@ -30,6 +30,8 @@ class cashBackendLocAction extends cashViewAction
             'transactions',
             'Start repeat',
             'Date',
+            'Save %d transactions',
+            'Delete %s transactions'
         ];
         foreach ($translates as $s) {
             $strings[$s] = _w($s);
