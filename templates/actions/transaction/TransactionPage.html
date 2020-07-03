@@ -8,7 +8,13 @@
     <div id="content">
         <div class="block">
             <h1{if $filter->id} class="float-left"{/if}>
-                {$filter->name|escape}
+                {if $filter->type == 'category' && $filter->id == cashCategoryFactory::NO_CATEGORY_INCOME_ID}
+                    [`No category (income)`]
+                {elseif $filter->type == 'category' && $filter->id == cashCategoryFactory::NO_CATEGORY_EXPENSE_ID}
+                    [`No category (expense)`]
+                {else}
+                    {$filter->name|escape}
+                {/if}
 
                 {if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT}
                 <span class="small" title="[`Cash on hand today`]">
