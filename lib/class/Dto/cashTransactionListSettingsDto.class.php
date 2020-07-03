@@ -61,7 +61,7 @@ class cashTransactionListSettingsDto implements JsonSerializable
                 [cashTransactionPageFilterDto::FILTER_ACCOUNT, cashTransactionPageFilterDto::FILTER_CATEGORY],
                 true
             );
-            $this->addHandler = $this->addTransfer && $this->addExpense && $this->addIncome;
+            $this->addHandler = $this->addTransfer || $this->addExpense || $this->addIncome;
         }
     }
 }

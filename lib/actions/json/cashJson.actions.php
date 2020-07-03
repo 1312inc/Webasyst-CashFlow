@@ -12,29 +12,29 @@ class cashJsonActions extends kmwaWaJsonActions
     {
         try {
             $date = waRequest::post('date');
-            $today = (new DateTime())->setTime(0, 0);
-            $date = (new DateTime($date))->setTime(0, 0);
+            $today = new DateTime('midnight');
+            $date = (new DateTime($date))->modify('midnight');
 
             $diff = $today->diff($date);
             switch (true) {
-                case $diff->d == 0:
+                case $diff->days === 0:
                     $this->response = _w('Today');
                     break;
 
-                case $diff->d == 1 && $diff->invert:
+                case $diff->days === 1 && $diff->invert:
                     $this->response = _w('Yesterday');
                     break;
 
-                case $diff->d == 1 && !$diff->invert:
+                case $diff->days === 1 && !$diff->invert:
                     $this->response = _w('Tomorrow');
                     break;
 
                 case $diff->invert:
-                    $this->response = sprintf_wp('%d days ago', $diff->d);
+                    $this->response = sprintf_wp('%d days ago', $diff->days);
                     break;
 
                 case !$diff->invert:
-                    $this->response = sprintf_wp('In %d days', $diff->d);
+                    $this->response = sprintf_wp('In %d days', $diff->days);
                     break;
 
                 default:
