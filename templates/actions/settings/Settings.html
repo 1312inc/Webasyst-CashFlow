@@ -56,13 +56,14 @@
                                 [`Categories`]
                             </div>
 
-                            <div class="value no-shift">
+                            <div class="value no-shift" data-cash-category-color-icon>
                                 [`Sales (paid orders)`] &rarr;
-                                <i class="icon16 color" style="background: green;"></i>
+                                <i class="icon16 color" style="background:  {$shopScriptSettings->getCategoryIncome()->getColor()}" data-cash-category-color></i>
                                 <select name="shopscript_settings[categoryIncomeId]">
                                     {foreach $incomes as $category}
                                     <option value="{$category->id}"
                                             {if $shopScriptSettings->getCategoryIncomeId() == $category->id}selected{/if}
+                                            data-cash-category-color="{$category->color}"
                                     >
                                         {$category->name|escape}
                                     </option>
@@ -83,13 +84,14 @@
                                 <span class="hint">[`For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options.`]</span>
                             </div>
 
-                            <div class="value no-shift">
+                            <div class="value no-shift" data-cash-category-color-icon>
                                 [`Refunds`] &rarr;
-                                <i class="icon16 color" style="background: orangered;"></i>
+                                <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryExpense()->getColor()}"></i>
                                 <select name="shopscript_settings[categoryExpenseId]">
                                     {foreach $expenses as $category}
                                     <option value="{$category->id}"
                                             {if $shopScriptSettings->getCategoryExpenseId() == $category->id}selected{/if}
+                                            data-cash-category-color="{$category->color}"
                                     >
                                         {$category->name|escape}
                                     </option>
@@ -110,43 +112,46 @@
                                 <span class="hint">[`For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options.`]</span>
                             </div>
 
-                            <div class="value no-shift">
+                            <div class="value no-shift" data-cash-category-color-icon>
                                 <br>
                                 [`Product purchases`] &rarr;
-                                <i class="icon16 color" style="background: orange;"></i>
+                                <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryPurchase()->getColor()}"></i>
                                 <select name="shopscript_settings[categoryPurchaseId]">
                                     <option value="0">[`Don’t import`]</option>
                                     {foreach $expenses as $category}
                                         <option value="{$category->id}"
                                                 {if $category->id == $shopScriptSettings->getCategoryPurchaseId()}selected{/if}
+                                                data-cash-category-color="{$category->color}"
                                         >{$category->name|escape}</option>
                                     {/foreach}
                                 </select>
                                 <br>
                                 <span class="hint">[`Enabling the setting will automatically add expense transactions based on purchase price of all ordered products. Useful if you have 'purchase price' field defined for most products in Shop-Script and you don't wish to manually add product purchase transations in the Cash app.`]</span>
                             </div>
-                            <div class="value no-shift">
+                            <div class="value no-shift" data-cash-category-color-icon>
                                 [`Shipping costs`] &rarr;
-                                <i class="icon16 color" style="background: orange;"></i>
+                                <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryShipping()->getColor()}"></i>
                                 <select name="shopscript_settings[categoryShippingId]">
                                     <option value="0">[`Don’t import`]</option>
                                     {foreach $expenses as $category}
                                         <option value="{$category->id}"
                                                 {if $category->id == $shopScriptSettings->getCategoryShippingId()}selected{/if}
+                                                data-cash-category-color="{$category->color}"
                                         >{$category->name|escape}</option>
                                     {/foreach}
                                 </select>
                                 <br>
                                 <span class="hint">[`Enabling the setting will automatically add expense transactions based on shipping costs for each order.`]</span>
                             </div>
-                            <div class="value no-shift">
+                            <div class="value no-shift" data-cash-category-color-icon>
                                 [`Taxes`] &rarr;
-                                <i class="icon16 color" style="background: orange;"></i>
+                                <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryTax()->getColor()}"></i>
                                 <select name="shopscript_settings[categoryTaxId]">
                                     <option value="0">[`Don’t import`]</option>
                                     {foreach $expenses as $category}
                                         <option value="{$category->id}"
                                                 {if $category->id == $shopScriptSettings->getCategoryTaxId()}selected{/if}
+                                                data-cash-category-color="{$category->color}"
                                         >{$category->name|escape}</option>
                                     {/foreach}
                                 </select>
@@ -281,6 +286,14 @@
                     if ($w.length) {
                         $w.toggle();
                     }
+                })
+                .on('change.cash', '[data-cash-category-color-icon] select', function () {
+                    var $select = $(this),
+                        $w = $select.closest('[data-cash-category-color-icon]'),
+                        $color = $w.find('.icon16'),
+                        $selected = $select.find(':selected');
+
+                    $color.css('background', $selected.data('cash-category-color'));
                 })
             ;
         }

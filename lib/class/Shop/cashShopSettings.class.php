@@ -126,6 +126,16 @@ class cashShopSettings implements JsonSerializable
     private $categoryTaxId;
 
     /**
+     * @var cashCategoryFactory
+     */
+    private $categoryFactory;
+
+    /**
+     * @var cashCategoryRepository
+     */
+    private $categoryRepository;
+
+    /**
      * cashShopScriptSettings constructor.
      */
     public function __construct()
@@ -140,6 +150,9 @@ class cashShopSettings implements JsonSerializable
         $this->todayTransactions = ifset($statData, 'today_transactions', date('Y-m-d'), $this->todayTransactions);
         $this->forecastActualizedToday = !empty($statData['forecast_actualized_today'])
             && $statData['forecast_actualized_today'] == date('Y-m-d');
+
+        $this->categoryFactory = cash()->getEntityFactory(cashCategory::class);
+        $this->categoryRepository = cash()->getEntityRepository(cashCategory::class);
     }
 
     /**
@@ -241,6 +254,22 @@ class cashShopSettings implements JsonSerializable
     public function getCategoryExpenseId()
     {
         return $this->categoryExpenseId;
+    }
+
+    /**
+     * @return cashCategory
+     */
+    public function getCategoryIncome()
+    {
+        return $this->findCategoryOrCreateNoCategory($this->categoryIncomeId);
+    }
+
+    /**
+     * @return cashCategory
+     */
+    public function getCategoryExpense()
+    {
+        return $this->findCategoryOrCreateNoCategory($this->categoryExpenseId);
     }
 
     /**
@@ -442,6 +471,14 @@ class cashShopSettings implements JsonSerializable
     }
 
     /**
+     * @return cashCategory
+     */
+    public function getCategoryPurchase()
+    {
+        return $this->findCategoryOrCreateNoCategory($this->categoryPurchaseId);
+    }
+
+    /**
      * @param int|null $categoryPurchaseId
      *
      * @return cashShopSettings
@@ -459,6 +496,14 @@ class cashShopSettings implements JsonSerializable
     public function getCategoryShippingId()
     {
         return $this->categoryShippingId;
+    }
+
+    /**
+     * @return cashCategory
+     */
+    public function getCategoryShipping()
+    {
+        return $this->findCategoryOrCreateNoCategory($this->categoryShippingId);
     }
 
     /**
@@ -482,6 +527,14 @@ class cashShopSettings implements JsonSerializable
     }
 
     /**
+     * @return cashCategory
+     */
+    public function getCategoryTax()
+    {
+        return $this->findCategoryOrCreateNoCategory($this->categoryTaxId);
+    }
+
+    /**
      * @param int|null $categoryTaxId
      *
      * @return cashShopSettings
@@ -491,5 +544,16 @@ class cashShopSettings implements JsonSerializable
         $this->categoryTaxId = $categoryTaxId;
 
         return $this;
+    }
+
+    /**
+     * @param $id
+     *
+     * @return cashCategory
+     * @throws waException
+     */
+    private function findCategoryOrCreateNoCategory($id)
+    {
+        return $this->categoryRepository->findById($id) ?: $this->categoryFactory->createNewNoCategory();
     }
 }
