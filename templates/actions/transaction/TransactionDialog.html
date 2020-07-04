@@ -47,7 +47,7 @@
                             [`Amount`]
                         </div>
                         <div class="value">
-                            {if $categoryType == 'expense'}<strong>&minus;</strong>{/if}
+                            {if $categoryType == 'expense'}<strong>&minus;</strong>{elseif $categoryType == 'income'}<strong>+</strong>{/if}
                             <input class="large bold numerical"
                                    name="transaction[amount]"
                                    placeholder="0"
@@ -316,7 +316,7 @@
         <input type="submit"
                value="[`Save`]"
                class="button green"
-               data-cash-transaction-text="[`Save 1 transaction`]"
+               data-cash-transaction-text="[`Save`]"
                data-cash-repeating-transaction-text="{sprintf('[`Save %d transactions`]', $repeatingTransaction->occurrences_in_future)}"
         /> [`or`] <a class="cancel" href="#">[`cancel`]</a>
         <div class="errormsg" style="display: none"></div>

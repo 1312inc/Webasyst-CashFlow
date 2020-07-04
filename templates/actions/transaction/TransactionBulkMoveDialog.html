@@ -6,7 +6,7 @@
 <div data-cash-wrapper="transaction-bulk-move-dialog">
     <input type="hidden" value="{$transactionIds}" name="move[ids]"/>
     <h1>
-        {sprintf('[`move %d transaction`]', $transactionCount)}
+        {sprintf('[`Move %d transactions`]', $transactionCount)}
     </h1>
     <div class="fields form">
         <div class="field-group">
@@ -15,14 +15,15 @@
                     [`Account`]
                 </div>
                 <div class="value no-shift">
+                    <!-- <i class="icon16 color" data-cash-transaction-account style="background: none;"></i> -->
                     <select name="move[account_id]" data-cash-element="account-with-sign">
-                        <option value="0">[`Do not change`]</option>
+                        <option value="0">[`Don’t change`]</option>
                         {foreach $accounts as $account}
                             <option value="{$account->id}"
                                     {if $filter->type === cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id == $account->id}selected{/if}
                                     data-cash-account-currency-sign="{$account->currency->getSign()|escape}"
                             >
-                                {$account->currency->getCode()|escape} - {$account->name|escape} ({$account->currency->getSign()|escape})
+                                {$account->currency->getCode()|escape} - {$account->name|escape|truncate:32} ({$account->currency->getSign()|escape})
                             </option>
                         {/foreach}
                     </select>
@@ -34,9 +35,9 @@
                     [`Category`]
                 </div>
                 <div class="value no-shift">
-                    <i class="icon16 color" data-cash-transaction-category style="background: none;"></i>
+                    <!-- <i class="icon16 color" data-cash-transaction-category style="background: none;"></i> -->
                     <select name="move[category_id]" data-cash-element="category-with-color">
-                        <option value="-1">[`Do not change`]</option>
+                        <option value="-1">[`Don’t change`]</option>
                         <option value="0" data-cash-category-color="{cashCategoryFactory::NO_CATEGORY_COLOR}">[`No category`]</option>
                         <optgroup label="[`Income`]">
                         {foreach $categoriesIncome as $category}
@@ -44,7 +45,7 @@
                                     {if $filter->type === cashTransactionPageFilterDto::FILTER_CATEGORY && $filter->id == $category->id}selected{/if}
                                     data-cash-category-color="{$category->color}"
                             >
-                                {$category->name|escape}
+                                {$category->name|escape|truncate:32}
                             </option>
                         {/foreach}
                         </optgroup>
@@ -55,12 +56,16 @@
                                     {if $filter->type === cashTransactionPageFilterDto::FILTER_CATEGORY && $filter->id == $category->id}selected{/if}
                                     data-cash-category-color="{$category->color}"
                             >
-                                {$category->name|escape}
+                                {$category->name|escape|truncate:32}
                             </option>
                         {/foreach}
                         </optgroup>
 
                     </select>
+
+                </div>
+                <div class="value no-shift">
+                    <span class="hint"><i class="icon10 exclamation"></i> [`Please be sure to select <b>the right account and the right category type applicable to all selected transactions</b> to avoid wrong currency conversion effects.`]</span>
                 </div>
             </div>
 
@@ -71,8 +76,8 @@
 </div>
 <div class="dialog-buttons">
     <input type="submit"
-           value="{sprintf('[`apply to %d transaction`]', $transactionCount)}"
-           class="button green"
+           value="{sprintf('[`Update %d transactions`]', $transactionCount)}"
+           class="button blue"
     /> [`or`] <a class="cancel" href="#">[`cancel`]</a>
     <div class="errormsg" style="display: none"></div>
 </div>

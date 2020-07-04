@@ -19,6 +19,13 @@
 <div class="c-table-header">
 
     <ul class="menu-h dropdown c-actions-menu" data-cash-transaction-list-actions>
+
+        {if $upcoming && !empty($completed)}
+        <li class="float-right c-upcoming-toggle">
+            <a href="#" class="inline-link nowrap" data-cash-action="show-upcoming-transactions"><b><i>{sprintf( '[`Show next %s (%d transactions)`]', $selectedForecastPeriod->getName(), count($upcoming) )}</i></b></a>
+        </li>
+        {/if}
+
         {if $listSettings->addIncome}
             <li><a href="#"
                    class="c-action-add-income"
@@ -54,29 +61,20 @@
                 <li class="bordered-top"><a href="#" class="gray"><i class="icon16 settings"></i>[`Manage templates`]</a></li>
             </ul>
         </li> *}
+
+        <li>
+            <input type="search" placeholder="[`Filter`]" data-cash-action="filter-transactions"/>
+        </li>
     </ul>
 
     {if $listSettings->bulkActions}
     <ul class="menu-h dropdown c-actions-menu c-bulk-actions-menu" data-cash-transaction-list-bulk-actions>
-        <li class="c-bulk-action"><a href="#" data-cash-bulk-action="move"><i class="icon16 move"></i>[`Move`] <strong class="hint">(N)</strong></a></li>
-        <li class="c-bulk-action"><a href="#" data-cash-bulk-action="delete"><i class="icon16 delete"></i>[`Delete`] <strong class="hint">(N)</strong></a></li>
-        <li class="c-bulk-action float-right gray"><a href="#" data-cash-bulk-action="unselectall"><i class="icon16 delete"></i>[`Unselect all`] <strong class="hint">(N)</strong></a></li>
+        <li class="c-bulk-action"><a href="#" data-cash-bulk-action="move"><i class="icon16 move"></i>[`Move`]&nbsp; <strong class="count indicator red">(N)</strong></a></li>
+        <li class="c-bulk-action"><a href="#" data-cash-bulk-action="delete"><i class="icon16 delete"></i>[`Delete`]&nbsp; <strong class="count indicator red">(N)</strong></a></li>
+        <li class="c-bulk-action"><a href="#" data-cash-bulk-action="unselectall" class="gray inline-link"><b><i>[`Unselect all`]</i></b></a></li>
         {/if}
     </ul>
 
-    <ul class="menu-h dropdown c-actions-menu">
-        <li>
-            <input type="search" placeholder="[`Filter`]" data-cash-action="filter-transactions"/>
-        </li>
-
-        {if $upcoming}
-        <li class="float-right c-upcoming-toggle">
-            <div class="block half-padded">
-                <a href="#" class="inline-link nowrap" data-cash-action="show-upcoming-transactions"><b><i>{sprintf( '[`Show next %s (%d transactions)`]', $selectedForecastPeriod->getName(), count($upcoming) )}</i></b></a>
-            </div>
-        </li>
-        {/if}
-    </ul>
 </div>
 
 {if empty($upcoming) && empty($completed)}
@@ -103,7 +101,7 @@
     <tr class="white c-table-divider c-planned">
         <td class="min-width"><input type="checkbox"></td>
         <td colspan="2">
-            <h5 class="heading">
+            <h5 class="heading nowrap">
                 [`Upcoming`]
                 {if $selectedForecastPeriod}<span class="hint">{$selectedForecastPeriod->getName()}</span>{/if}
             </h5>
@@ -145,7 +143,7 @@
                 </div>
             </td>
             <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
-            <td class="align-right"><em class="hint nowrap">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %d days`]', $_days_diff)}{/if}</em>&nbsp;<strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if} title="[`Amount`]">{round($t->amount,2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
+            <td class="align-right"><em class="hint nowrap">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %d days`]', $_days_diff)}{/if}</em>&nbsp;<strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if} title="[`Amount`]">{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
             <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
             <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
         </tr>
@@ -176,7 +174,7 @@
     <tr class="white c-table-divider">
         <td class="min-width"><input type="checkbox"></td>
         <td colspan="2">
-            <h5 class="heading">
+            <h5 class="heading nowrap">
                 {if $selectedChartPeriod}{$selectedChartPeriod->getName()}{else}[`Completed`]{/if},
                 {sprintf('[`%d transactions`]', $pagination->getTotalRows())}
             </h5>
@@ -219,7 +217,7 @@
             </div>
         </td>
         <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
-        <td class="align-right"><strong class="nowrap" title="[`Amount`]"{if $t->category} style="color: {$t->category->color};"{/if}>{round($t->amount,2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
+        <td class="align-right"><strong class="nowrap" title="[`Amount`]"{if $t->category} style="color: {$t->category->color};"{/if}>{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
         <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
         <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
     </tr>
@@ -245,7 +243,9 @@
 
 <div class="block double-padded">
     {$smarty.capture.cash_transaction_list_pagination}
-    <p class="hint align-center"><br>{sprintf('[`%d transactions per page`]', $pagination->getTotalRows())}</p>
+    {if $pagination->getTotalRows() > $pagination->getLimit()}
+        <p class="hint align-center"><br>{sprintf('[`%d transactions per page`]', $pagination->getLimit())}</p>
+    {/if}
 </div>
 
 </section>
@@ -372,14 +372,14 @@
                         .find('[data-cash-transaction-list-actions]').hide()
                         .end()
                         .find('[data-cash-transaction-list-bulk-actions]').show()
-                        .find('.hint').text(selectedCount);
+                        .find('.indicator').text(selectedCount);
                 } else {
                     selectedCount = 0;
                     $transactionList
                         .find('[data-cash-transaction-list-actions]').show()
                         .end()
                         .find('[data-cash-transaction-list-bulk-actions]').hide()
-                        .find('.hint').text(selectedCount);
+                        .find('.indicator').text(selectedCount);
                 }
             })
             .on('click.cash', '[data-cash-bulk-action]', function (e) {
@@ -405,8 +405,8 @@
                             },
                             function (html) {
                                 $(html).waDialog({
-                                    'height': '350px',
-                                    'width': '650px',
+                                    'height': '250px',
+                                    'width': '450px',
                                     onLoad: function () {
                                         var d = this,
                                             $dialogWrapper = $(d);
