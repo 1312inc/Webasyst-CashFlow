@@ -23,8 +23,9 @@ class cashBackendTransactionsExport extends waEventHandler
         ];
         $url = sprintf('?module=export&action=csv&%s', http_build_query($urlParams));
 
-        return <<<HTML
-<a href="{$url}"><i class="icon16 c-table"></i>{$anchor}</a>
-HTML;
+        return [
+            'upcoming' => "<a href=\"{$url}&type=upcoming\"><i class=\"icon16 c-table\"></i>{$anchor}</a>",
+            'completed' => "<a href=\"{$url}&type=completed\"><i class=\"icon16 c-table\"></i>{$anchor}</a>",
+        ];
     }
 }
