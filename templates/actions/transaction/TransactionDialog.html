@@ -13,15 +13,19 @@
 
             <h1>
                 {if $transaction->id}
+                    <span class="hint float-right">ID: {$transaction->id}</span>
                     [`Edit transaction`]
+                    {if $repeatingTransaction->id && ($repeatingTransaction->occurrences_in_future || $repeatingTransaction->repeating_end_type == cashRepeatingTransaction::REPEATING_END_NEVER)}
+                        <i class="icon16 c-repeating" title="Repeating transaction"></i>
+                    {/if}
                 {else}
-                {if $categoryType == 'income'}
-                    [`New income`]
-                {elseif $categoryType == 'expense'}
-                    [`New expense`]
-                {else}
-                    [`New transfer`]
-                {/if}
+                    {if $categoryType == 'income'}
+                        [`New income`]
+                    {elseif $categoryType == 'expense'}
+                        [`New expense`]
+                    {else}
+                        [`New transfer`]
+                    {/if}
                 {/if}
             </h1>
             <div class="fields form">
@@ -29,8 +33,8 @@
                     {if !$transaction->id}
                     <div class="field">
                         <div class="name">[`Type`]</div>
-                        <div class="value no-shift">
-                            <ul class="menu-h">
+                        <div class="value">
+                            <ul class="menu-h c-onetime-repeating-toggle">
                                 <li><span>[`One time`]</span></li>
                                 <li>
                                     <input type="hidden" name="transaction[amount]" value="0"/>
@@ -170,7 +174,7 @@
                 <div class="field-group">
                     <div class="field">
                         <div class="name nowrap">
-                            [`Account`]
+                            {if $categoryType == cashCategory::TYPE_TRANSFER}[`From`]{else}[`Account`]{/if}
                         </div>
                         <div class="value no-shift">
                             {$account = reset($accounts)}
@@ -196,6 +200,46 @@
                             </select>
                         </div>
                     </div>
+                    {if $categoryType == cashCategory::TYPE_TRANSFER}
+                        <div class="field">
+                            <div class="name nowrap">
+                                [`To`]
+                            </div>
+                            <div class="value">
+                                {$account = reset($accounts)}
+                                <i class="icon16 {$account->icon}"
+                                   data-cash-transaction-account-icon
+                                   {if $account->iconLink}style="background-image: url('{$account->iconLink}'); background-size: 16px 16px;"{/if}
+                                ></i>
+                                <select name="transfer[account_id]" data-cash-element-account-with-icon>
+                                    {foreach $accounts as $account}
+                                        <option value="{$account->id}"
+                                                data-cash-account-currency-sign="{$account->currency->getSign()|escape}"
+                                                data-cash-account-currency-code="{$account->currency->getCode()|escape}"
+                                                data-cash-account-icon="{$account->icon}"
+                                                data-cash-account-icon-link="{$account->iconLink}"
+
+                                        >
+                                            {$account->currency->getCode()|escape} - {$account->name|escape|truncate:42} ({$account->currency->getSign()|escape})
+                                        </option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="name nowrap">
+                                [`Incoming amount`]
+                            </div>
+                            <div class="value">
+                                <input type="text" name="transfer[incoming_amount]" placeholder="0" class="numerical bold"  style="width: 130px !important; min-width: 0;">
+                                <p class="small">
+                                    <i class="icon10 exclamation"></i>
+                                    <strong><span>USD</span> &rarr; <span>RUB</span>.</strong>
+                                    <span class="gray">[`You are about to make a transfer from one currency to another. Please enter the right incoming amount to make sure the conversion rate is right.`]</span>
+                                </p>
+                            </div>
+                        </div>
+                    {/if}
                     <div class="field">
                         <div class="name nowrap">
                             [`Category`]
@@ -235,32 +279,6 @@
                     {if $categoryType == cashCategory::TYPE_TRANSFER}
                     <div class="field">
                         <div class="name nowrap">
-                            [`Transaction account to transfer`]
-                        </div>
-                        <div class="value">
-                            {$account = reset($accounts)}
-                            <i class="icon16 {$account->icon}"
-                               data-cash-transaction-account-icon
-                               {if $account->iconLink}style="background-image: url('{$account->iconLink}'); background-size: 16px 16px;"{/if}
-                            ></i>
-                            <select name="transfer[account_id]" data-cash-element-account-with-icon>
-                                {foreach $accounts as $account}
-                                    <option value="{$account->id}"
-                                            data-cash-account-currency-sign="{$account->currency->getSign()|escape}"
-                                            data-cash-account-currency-code="{$account->currency->getCode()|escape}"
-                                            data-cash-account-icon="{$account->icon}"
-                                            data-cash-account-icon-link="{$account->iconLink}"
-
-                                    >
-                                        {$account->name|escape|truncate:42} ({$account->currency->getSign()|escape})
-                                    </option>
-                                {/foreach}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <div class="name nowrap">
                             [`Transaction category to transfer`]
                         </div>
                         <div class="value">
@@ -276,15 +294,6 @@
                                     </option>
                                 {/foreach}
                             </select>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <div class="name nowrap">
-                            [`Transfer incoming amount`]
-                        </div>
-                        <div class="value">
-                            <input type="text" name="transfer[incoming_amount]" placeholder="0">
                         </div>
                     </div>
                     {/if}
