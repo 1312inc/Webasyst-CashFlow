@@ -21,7 +21,8 @@ final class cashExportCsv
                 'category',
                 'description',
                 'amount',
-                'account'
+                'account',
+                'currency',
             ];
             fputcsv($file, $headers, ';');
             foreach ($data as $datum) {
@@ -30,7 +31,8 @@ final class cashExportCsv
                     $datum->category ? $datum->category->name : '',
                     $datum->description ?: '',
                     $datum->amount,
-                    $datum->account->name
+                    $datum->account->name,
+                    $datum->account->currency->getCode()
                 ];
                 fputcsv($file, $row, ';');
             }

@@ -22,9 +22,18 @@ class cashExportCsvAction extends cashViewAction
             throw new kmwaRuntimeException(_w('No settings to export CSV'));
         }
 
+        switch (waRequest::request('type', waRequest::TYPE_STRING_TRIM, '')) {
+            case 'upcoming':
+                $startDate = (new DateTime('tomorrow'))->modify('midnight');
+                $endDate = new DateTime($settings['end_date']);
+                break;
+
+            case 'completed':
+            default:
+                $startDate = new DateTime($settings['start_date']);
+                $endDate = new DateTime('midnight');
+        }
         $filterDto = new cashTransactionPageFilterDto($settings['entity_type'], $settings['entity_id']);
-        $startDate = new DateTime($settings['start_date']);
-        $endDate = new DateTime($settings['end_date']);
 
         /** @var cashTransactionRepository $repository */
         $repository = cash()->getEntityRepository(cashTransaction::class);

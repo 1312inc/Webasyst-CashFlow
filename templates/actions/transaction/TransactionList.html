@@ -114,7 +114,7 @@
                         <!-- plugin hook: 'backend_transactions_export' -->
                         {* @event backend_transactions_export.%plugin_id% *}
                         {if !empty($backend_transactions_export)}
-                            <li>{foreach $backend_transactions_export as $_}{ifset($_)}{/foreach}</li>
+                            <li>{foreach $backend_transactions_export as $_}{ifset($_.upcoming)}{/foreach}</li>
                         {/if}
                     </ul>
                 </li>
@@ -190,7 +190,7 @@
                         <!-- plugin hook: 'backend_transactions_export' -->
                         {* @event backend_transactions_export.%plugin_id% *}
                         {if !empty($backend_transactions_export)}
-                            <li>{foreach $backend_transactions_export as $_}{ifset($_)}{/foreach}</li>
+                            <li>{foreach $backend_transactions_export as $_}{ifset($_.completed)}{/foreach}</li>
                         {/if}
                     </ul>
                 </li>
