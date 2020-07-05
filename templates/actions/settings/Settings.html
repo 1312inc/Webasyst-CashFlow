@@ -47,7 +47,7 @@
                                     </option>
                                     {/foreach}
                                 </select>
-                                <p class="hint">{sprintf('[`In case of different currencies for orders and the account, an order amount will be converted to the selected account currency accroding to the conversion rate defined <a href="%s">in Shop-Script settings</a>.`]', $wa_backend_url|cat:'shop/?action=settings#/currencies/')}</p>
+                                <p class="hint">{sprintf('[`In case of different currencies for orders and the account, an order amount will be converted to the selected account currency according to the conversion rate defined <a href="%s">in Shop-Script settings</a>.`]', $wa_backend_url|cat:'shop/?action=settings#/currencies/')}</p>
                             </div>
                         </div>
 
@@ -160,6 +160,10 @@
                                 <br><br>
                             </div>
 
+                            <div class="value small">
+                                <p>👆<em>{sprintf('[`All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then use <a href="%s">this re-import tool</a>.`]', '?welcome=shop')}</em></p>
+                            </div>
+
                         </div>
 
 
@@ -209,6 +213,7 @@
                                        name="shopscript_settings[manualForecast]"
                                        value="{$shopScriptSettings->getManualForecast()}"
                                 /> {sprintf('[`%s/day`]', 'RUB')}
+                                <br><br>
                             </div>
 
                         </div>
@@ -232,9 +237,8 @@
 
                         <div class="field">
                             <div class="value submit">
+                                <br>
                                 <input type="submit" class="button green" value="[`Save`]" />
-                                <hr>
-                                <p>👆 [`All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, use <a href="%s">this re-import tool</a>.`]</p>
                             </div>
                         </div>
 
