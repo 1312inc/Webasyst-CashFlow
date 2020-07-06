@@ -21,6 +21,7 @@ class cashTransactionBulkMoveDialogAction extends cashViewAction
         }
 
         $ids = json_decode($ids, true);
+        $ids = array_filter($ids);
         if (!is_array($ids)) {
             return;
         }
