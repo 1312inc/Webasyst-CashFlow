@@ -49,6 +49,6 @@ class cashShorteningService
             return $num;
         }
 
-        return preg_replace('/(\d+)(\.0+)(\D*)/s', '$1$3', $num);
+        return preg_replace('/(\d+)(\.0+)([MK])/s', '$1$3', $num);
     }
 }
