@@ -99,7 +99,7 @@
 
 {if $upcoming}
     <tr class="white c-table-divider c-planned">
-        <td class="min-width"><input type="checkbox"></td>
+        <td class="min-width"><input type="checkbox" value="0"></td>
         <td colspan="2">
             <h5 class="heading nowrap">
                 [`Upcoming`]
@@ -172,7 +172,7 @@
 
 {if $completed}
     <tr class="white c-table-divider">
-        <td class="min-width"><input type="checkbox"></td>
+        <td class="min-width"><input type="checkbox" value="0"></td>
         <td colspan="2">
             <h5 class="heading nowrap">
                 {if $selectedChartPeriod}{$selectedChartPeriod->getName()}{else}[`Completed`]{/if},

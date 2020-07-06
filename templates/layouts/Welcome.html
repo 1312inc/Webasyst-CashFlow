@@ -26,7 +26,7 @@
             $.cash.init({
                 isAdmin: {$isAdmin},
                 userId: {$userId},
-                accountName: '{$wa->accountName()}',
+                accountName: '{$wa->accountName()|escape}',
                 appName: '{$wa->appName()}'
             });
             $.cash_routing.init();
