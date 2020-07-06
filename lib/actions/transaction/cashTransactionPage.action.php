@@ -118,7 +118,7 @@ class cashTransactionPageAction extends cashViewAction
             $onHandsToday = $calcService->getOnHandOnDate($this->today, $this->filterDto->entity);
         }
 
-        $settings = new cashTransactionListSettingsDto($this->filterDto);
+        $settings = new cashTransactionListSettingsDto($this->filterDto, $this->periodForecast);
 
         // cash on hand end day
         $onHandsEndday = $calcService->getOnHandOnDate($this->endDate, $this->filterDto->entity);

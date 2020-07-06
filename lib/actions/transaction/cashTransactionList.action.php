@@ -32,7 +32,7 @@ class cashTransactionListAction extends cashTransactionPageAction
             $this->filterDto->type
         );
 
-        $settings = new cashTransactionListSettingsDto($this->filterDto);
+        $settings = new cashTransactionListSettingsDto($this->filterDto, $this->periodForecast);
 
         /**
          * UI in transactions page export dropdown menu
