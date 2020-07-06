@@ -33,11 +33,6 @@ class cashAccount extends cashAbstractEntity
     private $currency;
 
     /**
-     * @var float
-     */
-    private $current_balance = 0.0;
-
-    /**
      * @var int
      */
     private $customer_contact_id;
@@ -148,26 +143,6 @@ class cashAccount extends cashAbstractEntity
     public function setCurrency($currency)
     {
         $this->currency = $currency;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getCurrentBalance()
-    {
-        return $this->current_balance;
-    }
-
-    /**
-     * @param float $currentBalance
-     *
-     * @return cashAccount
-     */
-    public function setCurrentBalance($currentBalance)
-    {
-        $this->current_balance = $currentBalance;
 
         return $this;
     }
