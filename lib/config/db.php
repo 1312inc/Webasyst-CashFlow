@@ -6,7 +6,6 @@ return array(
         'description' => array('text'),
         'icon' => array('varchar', 255),
         'currency' => array('varchar', 3, 'null' => 0),
-        'current_balance' => array('decimal', "18,4", 'default' => '0.0000'),
         'customer_contact_id' => array('int', 11),
         'is_archived' => array('tinyint', 4, 'default' => '0'),
         'sort' => array('smallint', 6),
