@@ -66,7 +66,7 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
             [
                 'dateFormats' => array_keys(cashDatetimeHelper::getDatetimeFormats()),
                 'info' => $this->csvInfoDto,
-                'accounts' => $accountDtos,
+                'accounts' => array_values($accountDtos),
                 'categoriesIncome' => array_values($categoryIncomeDtos),
                 'categoriesExpense' => array_values($categoryExpenseDtos),
             ]
