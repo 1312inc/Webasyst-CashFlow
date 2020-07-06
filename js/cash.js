@@ -92,7 +92,7 @@
             self.sortable(self.$sidebar.find('[data-sortable-type]'));
 
             function scrollActions() {
-                var $this = $('.c-actions-menu');
+                var $this = $('[data-cash-fixed-header]');
 
                 if ($this.length) {
                     var $w = $this.parent(),
