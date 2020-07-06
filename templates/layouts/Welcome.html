@@ -25,7 +25,9 @@
         $(function() {
             $.cash.init({
                 isAdmin: {$isAdmin},
-                userId: {$userId}
+                userId: {$userId},
+                accountName: '{$wa->accountName()}',
+                appName: '{$wa->appName()}'
             });
             $.cash_routing.init();
         });

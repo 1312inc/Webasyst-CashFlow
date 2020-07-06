@@ -10,7 +10,9 @@
         defaults: {
             isAdmin: false,
             routingOptions: {},
-            userId: 0
+            userId: 0,
+            accountName: '',
+            appName: '',
         },
         options: {},
         skipHighlightSidebar: false,
@@ -113,181 +115,191 @@
 
             self.$wa
                 .on('click.cash', '[data-cash-action="account-dialog"]', function (e) {
-                e.preventDefault();
-                var $this = $(this),
-                    accountId = $this.data('cash-account-id');
+                    e.preventDefault();
+                    var $this = $(this),
+                        accountId = $this.data('cash-account-id');
 
-                $('#cash-transaction-dialog').waDialog({
-                    'height': '400px',
-                    'width': '600px',
-                    'url': '?module=account&action=dialog&account_id=' + accountId,
-                    onLoad: function () {
-                        var d = this,
-                            $dialogWrapper = $(d);
+                    $('#cash-transaction-dialog').waDialog({
+                        'height': '400px',
+                        'width': '600px',
+                        'url': '?module=account&action=dialog&account_id=' + accountId,
+                        onLoad: function () {
+                            var d = this,
+                                $dialogWrapper = $(d);
 
-                        $dialogWrapper
-                            .on('click.cash', '[data-cash-action="delete-account"]', function (e) {
-                                e.preventDefault();
+                            $dialogWrapper
+                                .on('click.cash', '[data-cash-action="delete-account"]', function (e) {
+                                    e.preventDefault();
 
-                                if(!confirm($_('DANGER: This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
-                                    return;
-                                }
-
-                                var id = $dialogWrapper.find('form input[name="account[id]"]').val();
-                                $.post(
-                                    '?module=account&action=delete',
-                                    { id: id },
-                                    function (r) {
-                                        if (r.status === 'ok') {
-                                            $dialogWrapper.trigger('close');
-                                            $.cash_routing.dispatch('#/account/0');
-                                            $.cash.reloadSidebar();
-                                        }
+                                    if(!confirm($_('DANGER: This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
+                                        return;
                                     }
-                                );
-                            })
-                            .on('click.cash', '[data-cash-account-icon]', function (e) {
-                                e.preventDefault();
-                                var $this = $(this);
 
-                                $this.addClass('selected')
-                                    .siblings().removeClass('selected');
-
-                                $dialogWrapper.find('[name="account[icon]"]').val($this.data('cash-account-icon'));
-                                $dialogWrapper.find('[name="account[icon_link]"]').val('');
-                            })
-                        ;
-
-                        if (!$dialogWrapper.find('.c-account-icon-list .selected').length) {
-                            $dialogWrapper.find('.c-account-icon-list [data-cash-account-icon]:first').trigger('click.cash');
-                        }
-
-                        setTimeout(function () {
-                            $dialogWrapper.find('[name="account[name]"]').trigger('focus');
-                        }, 13.12);
-                    },
-                    onSubmit: function (d) {
-                        var $errorMsg = d.find('.errormsg');
-
-                        $errorMsg.hide();
-                        d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
-                        $.post('?module=account&action=save', d.find('form').serialize(), function (r) {
-                            $.cash.$loading.remove();
-                            if (r.status === 'ok') {
-                                d.trigger('close');
-                                var newHash = '#/account/' + r.data.id;
-                                if (window.location.hash === newHash) {
-                                    $.cash_routing.redispatch();
-                                } else {
-                                    window.location.hash = newHash;
-                                }
-                                setTimeout($.cash.reloadSidebar, 1312)
-                            } else {
-                                $errorMsg.text(r.errors.join('<br>')).show();
-                            }
-                        }, 'json');
-                        return false;
-                    }
-                });
-            })
-            .on('click.cash', '[data-cash-action="category-dialog"]', function (e) {
-                e.preventDefault();
-                var $this = $(this),
-                    categoryId = $this.data('cash-category-id'),
-                    categoryType = $this.data('cash-category-type'),
-                    afterSave = $this.data('cash-category-after-save');
-
-                $('#cash-transaction-dialog').waDialog({
-                    'height': '300px',
-                    'width': '600px',
-                    'url': '?module=category&action=dialog&category_id=' + categoryId,
-                    onLoad: function () {
-                        var d = this,
-                            $dialogWrapper = $(d);
-
-                        $dialogWrapper
-                            .on('click.cash', '[data-cash-action="delete-category"]', function (e) {
-                                e.preventDefault();
-
-                                if(!confirm($_('DANGER: This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
-                                    return;
-                                }
-
-                                var id = $dialogWrapper.find('form input[name="category[id]"]').val();
-                                $.post(
-                                    '?module=category&action=delete',
-                                    { id: id },
-                                    function (r) {
-                                        if (r.status === 'ok') {
-                                            $dialogWrapper.trigger('close');
-                                            if (afterSave === 'redispatch') {
-                                                $.cash_routing.redispatch();
-                                            } else {
+                                    var id = $dialogWrapper.find('form input[name="account[id]"]').val();
+                                    $.post(
+                                        '?module=account&action=delete',
+                                        { id: id },
+                                        function (r) {
+                                            if (r.status === 'ok') {
+                                                $dialogWrapper.trigger('close');
                                                 $.cash_routing.dispatch('#/account/0');
+                                                $.cash.reloadSidebar();
                                             }
-                                            $.cash.reloadSidebar();
                                         }
-                                    }
-                                );
-                            })
-                            .on('click.cash', '[data-cash-category-color]', function (e) {
-                                e.preventDefault();
-                                var $this = $(this);
+                                    );
+                                })
+                                .on('click.cash', '[data-cash-account-icon]', function (e) {
+                                    e.preventDefault();
+                                    var $this = $(this);
 
-                                $this.addClass('selected')
-                                    .siblings().removeClass('selected');
+                                    $this.addClass('selected')
+                                        .siblings().removeClass('selected');
 
-                                $dialogWrapper.find('[name="category[color]"]').val($this.data('cash-category-color'));
-                            })
-                            .on('change.cash', '[name="category[type]"]', function (e) {
-                                var $colorsW = $dialogWrapper.find('[data-cash-category-colors="'+$(this).val()+'"]');
-                                $colorsW.show()
-                                    .siblings().hide();
+                                    $dialogWrapper.find('[name="account[icon]"]').val($this.data('cash-account-icon'));
+                                    $dialogWrapper.find('[name="account[icon_link]"]').val('');
+                                })
+                            ;
 
-                                if (!$colorsW.find('.selected').length) {
-                                    $colorsW.find('[data-cash-category-color]:first').trigger('click.cash');
-                                }
-                            })
-                        ;
+                            if (!$dialogWrapper.find('.c-account-icon-list .selected').length) {
+                                $dialogWrapper.find('.c-account-icon-list [data-cash-account-icon]:first').trigger('click.cash');
+                            }
 
-                        if (categoryType) {
-                            $dialogWrapper.find('[name="category[type]"] option[value="' + categoryType + '"]').prop('selected', true);
-                            $dialogWrapper.find('[name="category[type]"]').trigger('change.cash');
-                        }
+                            setTimeout(function () {
+                                $dialogWrapper.find('[name="account[name]"]').trigger('focus');
+                            }, 13.12);
+                        },
+                        onSubmit: function (d) {
+                            var $errorMsg = d.find('.errormsg');
 
-                        setTimeout(function () {
-                            $dialogWrapper.find('[name="category[name]"]').trigger('focus');
-                        }, 13.12);
-                    },
-                    onSubmit: function (d) {
-                        var $errorMsg = d.find('.errormsg');
-
-                        $errorMsg.hide();
-                        d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
-                        $.post('?module=category&action=save', d.find('form').serialize(), function (r) {
-                            $.cash.$loading.remove();
-                            if (r.status === 'ok') {
-
-                                d.trigger('close');
-                                var newHash = '#/category/' + r.data.id;
-                                if (afterSave === 'redispatch') {
-                                    $.cash_routing.redispatch();
-                                } else {
+                            $errorMsg.hide();
+                            d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
+                            $.post('?module=account&action=save', d.find('form').serialize(), function (r) {
+                                $.cash.$loading.remove();
+                                if (r.status === 'ok') {
+                                    d.trigger('close');
+                                    var newHash = '#/account/' + r.data.id;
                                     if (window.location.hash === newHash) {
                                         $.cash_routing.redispatch();
                                     } else {
                                         window.location.hash = newHash;
                                     }
+                                    setTimeout($.cash.reloadSidebar, 1312)
+                                } else {
+                                    $errorMsg.text(r.errors.join('<br>')).show();
                                 }
-                                setTimeout($.cash.reloadSidebar, 1312);
-                            } else {
-                                $errorMsg.text(r.errors.join('<br>')).show();
+                            }, 'json');
+                            return false;
+                        }
+                    });
+                })
+                .on('click.cash', '[data-cash-action="category-dialog"]', function (e) {
+                    e.preventDefault();
+                    var $this = $(this),
+                        categoryId = $this.data('cash-category-id'),
+                        categoryType = $this.data('cash-category-type'),
+                        afterSave = $this.data('cash-category-after-save');
+
+                    $('#cash-transaction-dialog').waDialog({
+                        'height': '300px',
+                        'width': '600px',
+                        'url': '?module=category&action=dialog&category_id=' + categoryId,
+                        onLoad: function () {
+                            var d = this,
+                                $dialogWrapper = $(d);
+
+                            $dialogWrapper
+                                .on('click.cash', '[data-cash-action="delete-category"]', function (e) {
+                                    e.preventDefault();
+
+                                    if(!confirm($_('DANGER: This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?'))) {
+                                        return;
+                                    }
+
+                                    var id = $dialogWrapper.find('form input[name="category[id]"]').val();
+                                    $.post(
+                                        '?module=category&action=delete',
+                                        { id: id },
+                                        function (r) {
+                                            if (r.status === 'ok') {
+                                                $dialogWrapper.trigger('close');
+                                                if (afterSave === 'redispatch') {
+                                                    $.cash_routing.redispatch();
+                                                } else {
+                                                    $.cash_routing.dispatch('#/account/0');
+                                                }
+                                                $.cash.reloadSidebar();
+                                            }
+                                        }
+                                    );
+                                })
+                                .on('click.cash', '[data-cash-category-color]', function (e) {
+                                    e.preventDefault();
+                                    var $this = $(this);
+
+                                    $this.addClass('selected')
+                                        .siblings().removeClass('selected');
+
+                                    $dialogWrapper.find('[name="category[color]"]').val($this.data('cash-category-color'));
+                                })
+                                .on('change.cash', '[name="category[type]"]', function (e) {
+                                    var $colorsW = $dialogWrapper.find('[data-cash-category-colors="'+$(this).val()+'"]');
+                                    $colorsW.show()
+                                        .siblings().hide();
+
+                                    if (!$colorsW.find('.selected').length) {
+                                        $colorsW.find('[data-cash-category-color]:first').trigger('click.cash');
+                                    }
+                                })
+                            ;
+
+                            if (categoryType) {
+                                $dialogWrapper.find('[name="category[type]"] option[value="' + categoryType + '"]').prop('selected', true);
+                                $dialogWrapper.find('[name="category[type]"]').trigger('change.cash');
                             }
-                        }, 'json');
-                        return false;
+
+                            setTimeout(function () {
+                                $dialogWrapper.find('[name="category[name]"]').trigger('focus');
+                            }, 13.12);
+                        },
+                        onSubmit: function (d) {
+                            var $errorMsg = d.find('.errormsg');
+
+                            $errorMsg.hide();
+                            d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
+                            $.post('?module=category&action=save', d.find('form').serialize(), function (r) {
+                                $.cash.$loading.remove();
+                                if (r.status === 'ok') {
+
+                                    d.trigger('close');
+                                    var newHash = '#/category/' + r.data.id;
+                                    if (afterSave === 'redispatch') {
+                                        $.cash_routing.redispatch();
+                                    } else {
+                                        if (window.location.hash === newHash) {
+                                            $.cash_routing.redispatch();
+                                        } else {
+                                            window.location.hash = newHash;
+                                        }
+                                    }
+                                    setTimeout($.cash.reloadSidebar, 1312);
+                                } else {
+                                    $errorMsg.text(r.errors.join('<br>')).show();
+                                }
+                            }, 'json');
+                            return false;
+                        }
+                    });
+                })
+                .on('postExecute.cash', function (e, data) {
+                    var $h1 = self.$content.find('h1:first'),
+                        title = self.options.appName + ' &mdash; ' + self.options.accountName;
+
+                    if ($h1.length) {
+                        title = $h1.text().trim() + ' &mdash; ' + self.options.accountName;
                     }
-                });
-            })
+                    $('title').html(title);
+                })
+            ;
 
             $('body')
                 .on('change.cash', '[data-cash-element-account-with-sign]', function (e) {
@@ -330,24 +342,25 @@
 
             self.$sidebar
                 .on('click.cash', '[data-cash-action="imports-delete"]', function (e) {
-                e.preventDefault();
+                    e.preventDefault();
 
-                if (!confirm($_('Clear import history (don’t worry, imported transactions will not be affected)?'))) {
-                    return;
-                }
+                    if (!confirm($_('Clear import history (don’t worry, imported transactions will not be affected)?'))) {
+                        return;
+                    }
 
-                $.post(
-                    '?module=import&action=deleteAll',
-                    function (r) {
-                        if (r.status === 'ok') {
-                            self.reloadSidebar();
-                        } else {
-                            self.log(r.errors.join("\n"));
-                        }
-                    },
-                    'json'
-                );
-            })
+                    $.post(
+                        '?module=import&action=deleteAll',
+                        function (r) {
+                            if (r.status === 'ok') {
+                                self.reloadSidebar();
+                            } else {
+                                self.log(r.errors.join("\n"));
+                            }
+                        },
+                        'json'
+                    );
+                })
+            ;
         },
         sortable: function ($w) {
             var self = this;

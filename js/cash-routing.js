@@ -153,16 +153,19 @@
             this.accountAction(0);
         },
         settingsAction: function () {
+            var that = this;
             $.get('?module=settings', function (html) {
-                $.cash.$content.html(html);
+                that.setContent(html);
             });
         },
         importAction: function () {
+            var that = this;
             $.get('?module=import', function (html) {
-                $.cash.$content.html(html);
+                that.setContent(html);
             });
         },
         accountAction: function (id, start_date, end_date, start, limit) {
+            var that = this;
             start_date = start_date || '';
             end_date = end_date || '';
             start = start || '';
@@ -177,37 +180,47 @@
                     start: start,
                     limit: limit
                 }, function (html) {
-                    $.cash.$content.html(html);
+                    that.setContent(html);
                 });
         },
         categoryAction: function (id, start_date, end_date, start, limit) {
+            var that = this;
             start_date = start_date || '';
             end_date = end_date || '';
             start = start || '';
             limit = limit || '';
 
             $.get('?module=transaction', {
-                action: 'page',
-                filter: 'category',
-                id: id,
-                start_date: start_date,
-                end_date: end_date,
-                start: start,
-                limit: limit
-            }, function (html) {
-                $.cash.$content.html(html);
-            });
+                    action: 'page',
+                    filter: 'category',
+                    id: id,
+                    start_date: start_date,
+                    end_date: end_date,
+                    start: start,
+                    limit: limit
+                }, function (html) {
+                    that.setContent(html);
+                });
         },
         importViewAction: function (provider ,id) {
+            var that = this;
             $.get('?module=import&action=' + provider + 'View&id=' + id, function (html) {
-                $.cash.$content.html(html);
+                that.setContent(html);
             });
         },
         sourceAction: function (id) {
             var that = this;
             $.get('?module=backend&action=source', function (html) {
-                $.cash.$content.html(html);
+                that.setContent(html);
             });
+        },
+        setContent: function (content, $w) {
+            if ($w) {
+                $w.html(content);
+            } else {
+                $.cash.$content.html(content);
+            }
+            $.cash.$wa.trigger('postExecute.cash', {html: content});
         },
         preExecute: function () {
             $.cash.$welcome.hide();
@@ -220,10 +233,9 @@
             }
         },
         postExecute: function (actionName, hash) {
-            if (actionName !== 'y') {
-                var value = $.isArray(hash) ? hash.join('/') : '';
-                $.storage.set('/cash/hash/' + this.options.user_id, value);
-            }
+            var value = $.isArray(hash) ? hash.join('/') : '';
+            $.storage.set('/cash/hash/' + this.options.user_id, value);
+
             $.cash.highlightSidebar();
         },
     };
