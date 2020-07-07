@@ -26,10 +26,8 @@ class cashTransactionModel extends cashModel
         $limit = null
     ) {
         $whereAccountSql = '';
-        $whereAccountSql2 = '';
         if ($account) {
             $whereAccountSql = ' and ct.account_id = i:account_id';
-            $whereAccountSql2 = ' and ct2.account_id = i:account_id';
         }
 
         $limits = '';
@@ -38,10 +36,8 @@ class cashTransactionModel extends cashModel
         }
 
         $sql = <<<SQL
-select ct.*,
-       (@balance := @balance + ct.amount) as balance
+select ct.*
 from cash_transaction ct
-join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 left join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
@@ -75,16 +71,13 @@ SQL;
     public function countByDateBoundsAndAccount($startDate, $endDate, $account = null)
     {
         $whereAccountSql = '';
-        $whereAccountSql2 = '';
         if ($account) {
             $whereAccountSql = ' and ct.account_id = i:account_id';
-            $whereAccountSql2 = ' and ct2.account_id = i:account_id';
         }
 
         $sql = <<<SQL
 select count(ct.id)
 from cash_transaction ct
-join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
@@ -120,30 +113,25 @@ SQL;
         $returnResult = false,
         $start = null,
         $limit = null
-    )
-    {
+    ) {
         switch (true) {
             case $category > 0:
                 $whereAccountSql = ' and ct.category_id = i:category_id';
-                $whereAccountSql2 = ' and ct2.category_id = i:category_id';
                 $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
                 break;
 
             case $category == cashCategoryFactory::NO_CATEGORY_EXPENSE_ID:
                 $whereAccountSql = ' and ct.category_id is null and ct.amount < 0';
-                $whereAccountSql2 = ' and ct2.category_id is null and ct2.amount < 0';
                 $joinCategory = '';
                 break;
 
             case $category == cashCategoryFactory::NO_CATEGORY_INCOME_ID:
                 $whereAccountSql = ' and ct.category_id is null and ct.amount > 0';
-                $whereAccountSql2 = ' and ct2.category_id is null and ct2.amount > 0';
                 $joinCategory = '';
                 break;
 
             default:
                 $whereAccountSql = '';
-                $whereAccountSql2 = '';
                 $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
         }
 
@@ -153,10 +141,8 @@ SQL;
         }
 
         $sql = <<<SQL
-select ct.*,
-       (@balance := @balance + ct.amount) as balance
+select ct.*
 from cash_transaction ct
-join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate {$whereAccountSql2})) b
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 {$joinCategory}
 where ct.date between s:startDate and s:endDate
