@@ -37,7 +37,7 @@ class cashExportCsvAction extends cashViewAction
 
         /** @var cashTransactionRepository $repository */
         $repository = cash()->getEntityRepository(cashTransaction::class);
-        $data = $repository->findByDates($startDate, $endDate, $filterDto);
+        $data = array_reverse($repository->findByDates($startDate, $endDate, $filterDto));
         $filename = sprintf(
             'cash_%s_%s_%s_utf8.csv',
             mb_strtoupper($filterDto->name),

@@ -9,18 +9,33 @@ class cashTransactionDtoAssembler
      * @param waDbResultIterator $data
      * @param cashAccountDto[]   $accounts
      * @param cashCategoryDto[]  $categories
+     * @param float|null         $initialBalance
      *
      * @return Generator
      */
-    public function generateFromIterator(waDbResultIterator $data, array $accounts, array $categories)
-    {
+    public function generateFromIterator(
+        waDbResultIterator $data,
+        array $accounts,
+        array $categories,
+        $initialBalance = null
+    ) {
         foreach ($data as $datum) {
-            yield $datum['id'] => new cashTransactionDto(
+            if ($initialBalance !== null && !isset($datum['balance'])) {
+                $datum['balance'] = $initialBalance;
+            }
+
+            $dto = new cashTransactionDto(
                 $datum,
                 $accounts[$datum['account_id']],
                 $accounts[$datum['account_id']]->currency,
                 ifset($categories, $datum['category_id'], null)
             );
+
+            if ($initialBalance !== null) {
+                $initialBalance -= $datum['amount'];
+            }
+
+            yield $datum['id'] => $dto;
         }
     }
 

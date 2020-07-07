@@ -24,8 +24,7 @@ class cashTransactionRepository extends cashBaseRepository
         DateTime $endDate,
         cashTransactionPageFilterDto $filterDto,
         cashPagination $pagination = null
-    )
-    {
+    ) {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
 
@@ -41,6 +40,8 @@ class cashTransactionRepository extends cashBaseRepository
             $limit = $pagination->getLimit();
         }
 
+        $initialBalance = null;
+
         switch ($filterDto->type) {
             case cashTransactionPageFilterDto::FILTER_ACCOUNT:
                 $data = $model->getByDateBoundsAndAccount(
@@ -53,11 +54,22 @@ class cashTransactionRepository extends cashBaseRepository
                 );
 
                 if ($pagination) {
-                    $pagination->setTotalRows($model->countByDateBoundsAndAccount(
-                        $startDate->format('Y-m-d 00:00:00'),
+                    $pagination->setTotalRows(
+                        $model->countByDateBoundsAndAccount(
+                            $startDate->format('Y-m-d 00:00:00'),
+                            $endDate->format('Y-m-d 23:59:59'),
+                            $filterDto->id
+                        )
+                    );
+                }
+
+                if ($data->count() && $filterDto->id) {
+                    $initialBalance = cash()->getModel(cashAccount::class)->getStatDataForAccounts(
+                        '1970-01-01 00:00:00',
                         $endDate->format('Y-m-d 23:59:59'),
                         $filterDto->id
-                    ));
+                    );
+                    $initialBalance = (float)ifset($initialBalance, $filterDto->id, 'summary', 0.0);
                 }
                 break;
 
@@ -72,11 +84,13 @@ class cashTransactionRepository extends cashBaseRepository
                 );
 
                 if ($pagination) {
-                    $pagination->setTotalRows($model->countByDateBoundsAndCategory(
-                        $startDate->format('Y-m-d 00:00:00'),
-                        $endDate->format('Y-m-d 23:59:59'),
-                        $filterDto->id
-                    ));
+                    $pagination->setTotalRows(
+                        $model->countByDateBoundsAndCategory(
+                            $startDate->format('Y-m-d 00:00:00'),
+                            $endDate->format('Y-m-d 23:59:59'),
+                            $filterDto->id
+                        )
+                    );
                 }
                 break;
 
@@ -101,7 +115,7 @@ class cashTransactionRepository extends cashBaseRepository
 
         $dtoAssembler = new cashTransactionDtoAssembler();
         $dtos = [];
-        foreach ($dtoAssembler->generateFromIterator($data, $accountDtos, $categoryDtos) as $id => $dto) {
+        foreach ($dtoAssembler->generateFromIterator($data, $accountDtos, $categoryDtos, $initialBalance) as $id => $dto) {
             $dtos[$id] = $dto;
         }
 
@@ -109,7 +123,7 @@ class cashTransactionRepository extends cashBaseRepository
     }
 
     /**
-     * @param int $repeatingId
+     * @param int    $repeatingId
      * @param string $date
      *
      * @return cashTransaction[]
