@@ -94,7 +94,7 @@
                             <option value="{$header}"{if $header|strstr:'[`Description`]'} selected{/if}>{$header|escape}</option>
                         {/foreach}
                     </select>
-                    <i class="icon10 yes"></i>
+                    <i class="icon10 yes" style="display: none"></i>
                 </div>
             </div>
 
@@ -104,24 +104,24 @@
                 </div>
                 <div class="value no-shift">
                     <select name="import[datetime]"
-                            data-cash-csv-import-action="check-fullness"
+                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::DATETIME}"
                     >
                         <option></option>
                         {foreach $info->headers as $header}
-                            <option value="{$header}"{if $header|strstr:'[`Date`]'} selected{/if}>{$header|escape}</option>
+                        <option value="{$header}"{if $header|strstr:'[`Date`]'} selected{/if}>{$header|escape}</option>
                         {/foreach}
                     </select>
                     <span data-cash-import-csv-date-format style="display:none;">
-                        <select name="import[dateformat]" id="">
+                        <select name="import[dateformat]">
                             <option value="ai">[`Detect automatically`]</option>
                             {foreach $dateFormats as $dateFormat}
                             <option value="{$dateFormat}">{$dateFormat}</option>
                             {/foreach}
                             <option value="">[`Custom`]</option>
                         </select>
-                        <span class="small" data-cash-import-csv-check-date-format></span>
-                        <p class="small" data-cash-import-csv-check-fullness><i class="icon10 exclamation"></i> <span></span></p>
                     </span>
+                    <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
+                    <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
                 </div>
             </div>
 
@@ -135,15 +135,15 @@
                                checked/>
                         [`From the single column:`]
                         <select name="import[amount][single][column]"
-                                data-cash-csv-import-action="check-fullness"
+                                data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
                         >
                             <option></option>
                             {foreach $info->headers as $header}
                                 <option value="{$header}"{if $header|strstr:'[`Amount`]'} selected{/if}>{$header|escape}</option>
                             {/foreach}
                         </select>
-                        <i class="icon10 yes" style="display: none"></i>
-                        <p class="small" data-cash-import-csv-check-fullness><i class="icon10 exclamation"></i> <span></span></p>
+                        <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
+                        <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
                     </label>
                 </div>
                 <div class="value no-shift">
@@ -157,28 +157,28 @@
                                 <td>
                                     [`Income`]:
                                     <select name="import[amount][multi][map][income]"
-                                            data-cash-csv-import-action="check-fullness"
+                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
                                     >
                                         <option></option>
                                         {foreach $info->headers as $header}
                                             <option value="{$header}"{if $header|strstr:'[`Income`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
-                                    <i class="icon10 yes" style="display: none"></i>
-                                    <p class="small" data-cash-import-csv-check-fullness><i class="icon10 exclamation"></i> <span></span></p>
+                                    <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
+                                    <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
                                 </td>
                                 <td>
                                     [`Expenses`]:
                                     <select name="import[amount][multi][map][expense]"
-                                            data-cash-csv-import-action="check-fullness"
+                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
                                     >
                                         <option></option>
                                         {foreach $info->headers as $header}
                                             <option value="{$header}"{if $header|strstr:'[`Expense`]'} selected{/if}>{$header|escape}</option>
                                         {/foreach}
                                     </select>
-                                    <i class="icon10 yes" style="display: none"></i>
-                                    <p class="small" data-cash-import-csv-check-fullness><i class="icon10 exclamation"></i> <span></span></p>
+                                    <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
+                                    <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
                                 </td>
                             </tr>
                         </table>
@@ -307,15 +307,15 @@
             $dateFormatW = $form.find('[data-cash-import-csv-date-format]');
 
         var fetchColumnUniqueValues = function (name, callback) {
-            $.get('?module=import&action=csvGetColumnUniqueValues', { column_name: name }, callback);
+            $.get('?module=import&action=csvValidateColumn', { column_name: name, to_validate: '{cashImportCsvAbstractValidator::UNIQUE_VALUES}' }, callback);
         };
         var fetchColumnDatetimeValues = function (name, format, callback) {
             var $status = $dateFormatW.find('[data-cash-import-csv-check-date-format]');
             $status.hide().empty();
-            $.get('?module=import&action=csvGetColumnDatetimeValues', { column_name: name, dateformat: format }, function (r) {
+            $.get('?module=import&action=csvValidateColumn', { column_name: name, dateformat: format, to_validate: '{cashImportCsvAbstractValidator::DATETIME}' }, function (r) {
                 $status.show();
                 if (r.status === 'ok') {
-                    $status.append('<i class="icon10 yes"></i>' + r.data.source + ' => ' + r.data.converted);
+                    $status.append('<i class="icon10 yes"></i>' + r.data.datetime.source + ' => ' + r.data.datetime.converted);
                 } else {
                     $status.append('<i class="icon10 no"></i>' + r.errors.join("\n"));
                 }
@@ -325,7 +325,6 @@
         $form
             .on('submit', function (e) {
                 e.preventDefault();
-                // debugger;
 
                 var $button = $form.find('[data-cash-csv-import-action="import"]'),
                     $progress = $('#c-import-step-3'),
@@ -399,6 +398,7 @@
                 $wrapper.empty();
 
                 fetchColumnUniqueValues(name, function (r) {
+                    debugger;
                     if (r.status === 'ok') {
                         $.each(r.data, function (index, columnValue) {
                             $template.tmpl({
@@ -418,17 +418,17 @@
                     }
                 });
             })
-            .on('change.cash', '[name="import[datetime]"]', function(e) {
-                var $this = $(this),
-                    $selected = $this.find(':selected');
-
-                if ($selected.val()) {
-                    $dateFormatW.show();
-                    fetchColumnDatetimeValues($selected.val(), $dateFormatW.find('select').val());
-                } else {
-                    $dateFormatW.hide();
-                }
-            })
+            // .on('change.cash', '[name="import[datetime]"]', function(e) {
+            //     var $this = $(this),
+            //         $selected = $this.find(':selected');
+            //
+            //     if ($selected.val()) {
+            //         $dateFormatW.show();
+            //         fetchColumnDatetimeValues($selected.val(), $dateFormatW.find('select').val());
+            //     } else {
+            //         $dateFormatW.hide();
+            //     }
+            // })
             .on('change.cash', '[data-cash-csv-import-conditions-category] select, [name="import[category][single][income][column]"], [name="import[category][single][expense][column]"]', function(e) {
                 var $this = $(this),
                     $selected = $this.find(':selected'),
@@ -473,26 +473,50 @@
                     }, 'json');
                 }
             })
-            .on('change.cash', '[data-cash-csv-import-action="check-fullness"]', function (e) {
+            .on('change.cash', '[data-cash-csv-import-validate]', function (e) {
                 var $this = $(this),
                     name = $this.find(':selected').text(),
                     $wrapper = $this.parent(),
-                    $exclamation = $wrapper.find('[data-cash-import-csv-check-fullness]'),
-                    $yes = $wrapper.find('.yes');
+                    $error = $wrapper.find('[data-cash-import-csv-validate-error]'),
+                    $ok = $wrapper.find('[data-cash-import-csv-validate-ok]'),
+                    to_validate = $this.data('cash-csv-import-validate');
 
-                $exclamation.hide();
-                $yes.hide();
-                $.get('?module=import&action=csvCheckColumnFullness', { column_name: name }, function(r) {
+                $error.hide().find('span').html('');
+                $ok.hide().find('span').html('');
+
+                var isDateformat = function() {
+                    return to_validate.indexOf('{cashImportCsvAbstractValidator::DATETIME}') !== -1;
+                }
+
+                if (isDateformat()) {
+                    $dateFormatW.show();
+                }
+
+                $.get('?module=import&action=csvValidateColumn', {
+                    column_name: name,
+                    to_validate: to_validate,
+                    dateformat: $dateFormatW.find('select').val()
+                }, function (r) {
                     if (r.status === 'ok') {
-                        if (r.data['fullness'] < 100) {
-                            $exclamation.show().find('span').html(r.data['message']);
-                        } else {
-                            $yes.show();
+                        $ok.show();
+                        debugger
+                        if (isDateformat()) {
+                            $ok.find('span').text(r.data.datetime.source + ' => ' + r.data.datetime.converted);
                         }
                     } else {
-                        alert(r.errors.join("\n"));
+                        $error.show().find('span').html(r.errors.join('<br>'));
                     }
                 });
+            })
+            .on('change.cash', '[name="import[description]"]', function (e) {
+                var $this = $(this),
+                    $yes = $this.closest('.field').find('.yes');
+
+                if ($this.find(':selected').val()) {
+                    $yes.show();
+                } else {
+                    $yes.hide();
+                }
             })
         ;
 
@@ -510,7 +534,7 @@
                     $this.trigger('change.cash');
                 }
             } else {
-                fetchColumnDatetimeValues($form.find('[name="import[datetime]"]').val(), value);
+                $form.find('[name="import[datetime]"]').trigger('change.cash');
             }
         });
 

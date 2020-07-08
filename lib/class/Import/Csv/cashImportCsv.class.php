@@ -86,7 +86,7 @@ final class cashImportCsv
      * @return static
      * @throws kmwaLogicException
      */
-    public static function createCurrent()
+    public static function createCurrent(): cashImportCsv
     {
         $cashInfoDto = cash()->getCache()->get(self::getCacheKeyForUser());
         if (!$cashInfoDto instanceof cashCsvImportInfoDto) {
@@ -161,7 +161,9 @@ final class cashImportCsv
         }
 
         if (count($this->csvInfoDto->headers) < 2) {
-            $this->error = _w('No data columns were located in the uploaded file. Make sure right separator and encoding were chosen for this upload.');
+            $this->error = _w(
+                'No data columns were located in the uploaded file. Make sure right separator and encoding were chosen for this upload.'
+            );
         }
 
         // cache data
