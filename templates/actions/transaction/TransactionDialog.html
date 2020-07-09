@@ -57,7 +57,7 @@
                                    placeholder="0"
                                    style="width: 130px !important; min-width: 0;"
                                    {if $transaction->amount|abs}value="{$transaction->amount|abs}"{/if} />
-                            <strong data-cash-transaction-account-currency>
+                            <strong data-cash-transaction-account-amount-currency-sign>
                                 {if $filter->type === cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}
                                 {$accounts[$transaction->account->id]->currency->getSign()|escape}
                                 {/if}
@@ -183,7 +183,7 @@
                                {if $account->iconLink}style="background-image: url('{$account->iconLink}'); background-size: 16px 16px;"{/if}
                             ></i>
                             <select name="transaction[account_id]"
-                                    data-cash-element-account-with-sign
+                                    data-cash-element-account-with-sign="data-cash-transaction-account-amount-currency"
                                     data-cash-element-account-with-icon
                             >
                                 {foreach $accounts as $account}
@@ -211,7 +211,10 @@
                                    data-cash-transaction-account-icon
                                    {if $account->iconLink}style="background-image: url('{$account->iconLink}'); background-size: 16px 16px;"{/if}
                                 ></i>
-                                <select name="transfer[account_id]" data-cash-element-account-with-icon>
+                                <select name="transfer[account_id]"
+                                        data-cash-element-account-with-sign="data-cash-transaction-account-transfer-currency"
+                                        data-cash-element-account-with-icon
+                                >
                                     {foreach $accounts as $account}
                                         <option value="{$account->id}"
                                                 data-cash-account-currency-sign="{$account->currency->getSign()|escape}"
@@ -226,15 +229,16 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="field">
+                        <div class="field" style="display:none;" data-cash-transaction-dialog-transfer-amount>
                             <div class="name nowrap">
                                 [`Incoming amount`]
                             </div>
                             <div class="value">
                                 <input type="text" name="transfer[incoming_amount]" placeholder="0" class="numerical bold"  style="width: 130px !important; min-width: 0;">
+                                <strong data-cash-transaction-account-transfer-currency-sign></strong>
                                 <p class="small">
                                     <i class="icon10 exclamation"></i>
-                                    <strong><span>USD</span> &rarr; <span>RUB</span>.</strong>
+                                    <strong><span data-cash-transaction-account-amount-currency-code>USD</span> &rarr; <span data-cash-transaction-account-transfer-currency-code>RUB</span>.</strong>
                                     <span class="gray">[`You are about to make a transfer from one currency to another. Please enter the right incoming amount to make sure the conversion rate is right.`]</span>
                                 </p>
                             </div>
@@ -275,28 +279,6 @@
                         </div>
                         {/if}
                     </div>
-
-                    {if $categoryType == cashCategory::TYPE_TRANSFER}
-                    <div class="field">
-                        <div class="name nowrap">
-                            [`Transaction category to transfer`]
-                        </div>
-                        <div class="value">
-                            <i class="icon16 color" data-cash-transaction-category style="background: #dddddd;"></i>
-                            <select name="transfer[category_id]" data-cash-element-category-with-color>
-                                <option value="0">[`No category`]</option>
-                                {foreach $categoriesIncome as $category}
-                                    <option value="{$category->id}"
-                                            {if $category->id == $transaction->category->id}selected{/if}
-                                            data-cash-category-color="{$category->color}"
-                                    >
-                                        {$category->name|escape|truncate:42}
-                                    </option>
-                                {/foreach}
-                            </select>
-                        </div>
-                    </div>
-                    {/if}
                 </div>
 
                 <!-- plugin hook: 'backend_transaction_dialog' -->

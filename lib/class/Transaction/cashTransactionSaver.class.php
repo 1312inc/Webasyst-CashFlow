@@ -95,9 +95,7 @@ class cashTransactionSaver extends cashEntitySaver
             ->setId(null)
             ->setAmount($amount);
 
-        if (!isset($params->transfer['category_id'])) {
-            throw new kmwaLogicException('No category for transfer to');
-        }
+        $params->transfer['category_id'] = $transaction->getCategoryId();
         if (!isset($params->transfer['account_id'])) {
             throw new kmwaLogicException('No account for transfer to');
         }
