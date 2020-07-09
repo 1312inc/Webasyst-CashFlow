@@ -107,7 +107,7 @@ final class cashTransactionRepeater
      */
     private function getEndDateForNeverEndByDefault(cashRepeatingTransaction $transaction, DateTime $startDate)
     {
-        $date = max(new DateTime(), $startDate);
+        $date = max(new DateTime(), clone $startDate);
         switch ($transaction->getRepeatingInterval()) {
             case cashRepeatingTransaction::INTERVAL_DAY:
                 $date->modify('+1 year');
