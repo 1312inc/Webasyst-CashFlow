@@ -6,7 +6,7 @@ var CashTransactionDialog = (function ($) {
         var action = 'dialog';
         if (categoryType) {
             var actionCategory = categoryType;
-            action += (actionCategory.charAt(0).toUpperCase() + actionCategory.slice(1));
+            // action += (actionCategory.charAt(0).toUpperCase() + actionCategory.slice(1));
         }
 
         $('#cash-transaction-dialog').waDialog({
@@ -89,6 +89,27 @@ var CashTransactionDialog = (function ($) {
 
                         if (accountCurrency == transferAccountCurrency && $transferValue.val() != value) {
                             $transferValue.val(value);
+                        }
+                    })
+                    .on('change.cash', '[data-cash-element-account-with-sign]', function (e) {
+                        var $this = $(this),
+                            sign = $this.find(':selected').data('cash-account-currency-sign'),
+                            code = $this.find(':selected').data('cash-account-currency-code'),
+                            $sign = $dialogWrapper.find('[' + $this.data('cash-element-account-with-sign') + '-sign]'),
+                            $code = $dialogWrapper.find('[' + $this.data('cash-element-account-with-sign') + '-code]');
+
+                        $sign.html(sign);
+                        $code.html(code);
+                    })
+                    .on('change.cash', '[name="transaction[account_id]"], [name="transfer[account_id]"]', function (e) {
+                        var accountCurrency = $account.find(':selected').data('cash-account-currency-code'),
+                            transferAccountCurrency = $transferAccount.find(':selected').data('cash-account-currency-code'),
+                            $transferValue = $dialogWrapper.find('[name="transfer[incoming_amount]"]'),
+                            $transferAmount = $dialogWrapper.find('[data-cash-transaction-dialog-transfer-amount]');
+
+                        $transferAmount.toggle(accountCurrency != transferAccountCurrency);
+                        if (accountCurrency == transferAccountCurrency) {
+                            $transferValue.val($dialogWrapper.find('[name="transaction[amount]"]').val());
                         }
                     })
                 ;
