@@ -188,6 +188,7 @@
                                 <p class="hint">{sprintf('[`<b>Works like magic!</b> Average daily sales will be automatically added as planned transactions for better budget forecasting. When a new day comes, forecasted sales for this day will be cleared automatically and replaced with real sales (paid orders) data.`]')}</p>
                             </div>
 
+                            <section data-cash-settings="forecast-variants" style="{if !$shopScriptSettings->isEnableForecast()}display: none{/if}">
                             <div class="value no-shift">
                                 <label>
                                     <input type="radio"
@@ -215,7 +216,7 @@
                                 /> {sprintf('[`%s/day`]', 'RUB')}
                                 <br><br>
                             </div>
-
+                            </section>
                         </div>
 
                         <div class="field">
@@ -298,6 +299,9 @@
                         $selected = $select.find(':selected');
 
                     $color.css('background', $selected.data('cash-category-color'));
+                })
+                .on('change.cash', '[name="shopscript_settings[enableForecast]"]', function (e) {
+                    $ssform.find('[data-cash-settings="forecast-variants"]').toggle($(this).is(':checked'));
                 })
             ;
         }
