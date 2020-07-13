@@ -482,16 +482,20 @@
                     $wrapper = $this.parent(),
                     $error = $wrapper.find('[data-cash-import-csv-validate-error]'),
                     $ok = $wrapper.find('[data-cash-import-csv-validate-ok]'),
-                    to_validate = $this.data('cash-csv-import-validate');
+                    to_validate = $this.data('cash-csv-import-validate'),
+                    isDateformat = to_validate.indexOf('{cashImportCsvAbstractValidator::DATETIME}') !== -1;
 
                 $error.hide().find('span').html('');
                 $ok.hide().find('span').html('');
-
-                var isDateformat = function() {
-                    return to_validate.indexOf('{cashImportCsvAbstractValidator::DATETIME}') !== -1;
+                if (isDateformat) {
+                    $dateFormatW.hide();
                 }
 
-                if (isDateformat()) {
+                if (!name) {
+                    return;
+                }
+
+                if (isDateformat) {
                     $dateFormatW.show();
                 }
 
@@ -502,7 +506,7 @@
                 }, function (r) {
                     if (r.status === 'ok') {
                         $ok.show();
-                        if (isDateformat()) {
+                        if (isDateformat) {
                             $ok.find('span').text(r.data.datetime.source + ' => ' + r.data.datetime.converted);
                         }
                     } else {
@@ -540,7 +544,7 @@
             }
         });
 
-        $form.find('[name="import[datetime]"]').trigger('change.cash');
+        $form.find('[name="import[datetime]"], [name="import[amount][single][column]"]').trigger('change.cash');
         $('#c-import-step-1').hide();
 
     }(jQuery))
