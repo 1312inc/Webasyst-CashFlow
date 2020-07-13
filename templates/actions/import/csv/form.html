@@ -398,9 +398,12 @@
                 $wrapper.empty();
 
                 fetchColumnUniqueValues(name, function (r) {
-                    debugger;
                     if (r.status === 'ok') {
-                        $.each(r.data, function (index, columnValue) {
+                        if (!r.data['{{cashImportCsvAbstractValidator::UNIQUE_VALUES}}']) {
+                            return;
+                        }
+
+                        $.each(r.data.{{cashImportCsvAbstractValidator::UNIQUE_VALUES}}, function (index, columnValue) {
                             $template.tmpl({
                                 columnValue: columnValue,
                                 sources: data[scope],
@@ -499,7 +502,6 @@
                 }, function (r) {
                     if (r.status === 'ok') {
                         $ok.show();
-                        debugger
                         if (isDateformat()) {
                             $ok.find('span').text(r.data.datetime.source + ' => ' + r.data.datetime.converted);
                         }
