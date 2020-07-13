@@ -19,9 +19,9 @@
                         <i class="icon16 c-repeating" title="Repeating transaction"></i>
                     {/if}
                 {else}
-                    {if $categoryType == 'income'}
+                    {if $categoryType == cashCategory::TYPE_INCOME}
                         [`New income`]
-                    {elseif $categoryType == 'expense'}
+                    {elseif $categoryType == cashCategory::TYPE_EXPENSE}
                         [`New expense`]
                     {else}
                         [`New transfer`]
@@ -37,7 +37,7 @@
                             <ul class="menu-h c-onetime-repeating-toggle">
                                 <li><span>[`One time`]</span></li>
                                 <li>
-                                    <input type="hidden" name="transaction[amount]" value="0"/>
+                                    <input type="hidden" name="is_repeating" value="0"/>
                                     <input type="checkbox" id="c-transaction-type" name="is_repeating" value="1"/>
                                 </li>
                                 <li><span class="gray">[`Repeating`]</span></li>
@@ -244,6 +244,8 @@
                             </div>
                         </div>
                     {/if}
+
+                    {if $categoryType != cashCategory::TYPE_TRANSFER}
                     <div class="field">
                         <div class="name nowrap">
                             [`Category`]
@@ -262,6 +264,8 @@
                             </select>
                         </div>
                     </div>
+                    {/if}
+
                     <div class="field">
                         <div class="name nowrap">
                             [`Description`]
