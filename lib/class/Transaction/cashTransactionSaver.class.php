@@ -167,6 +167,12 @@ class cashTransactionSaver extends cashEntitySaver
      */
     public function validate(array &$data)
     {
+        if (empty($data['date'])) {
+            $this->error = _w('No transaction date specified');
+
+            return false;
+        }
+
         if (empty($data['amount'])) {
             $this->error = _w('No amount');
 
