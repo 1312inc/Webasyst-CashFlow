@@ -85,7 +85,7 @@ class cashTransactionSaver extends cashEntitySaver
         }
 
         if (empty($params->transfer['incoming_amount'])) {
-            throw new kmwaLogicException(_w('No transfer amount'));
+            throw new kmwaLogicException(_w('No incoming transfer amount specified'));
         }
 
         $amount = (float)$params->transfer['incoming_amount'];
@@ -97,7 +97,7 @@ class cashTransactionSaver extends cashEntitySaver
 
         $params->transfer['category_id'] = $transaction->getCategoryId();
         if (!isset($params->transfer['account_id'])) {
-            throw new kmwaLogicException('No account for transfer to');
+            throw new kmwaLogicException('No incoming transfer account selected');
         }
 
         if ($params->transfer['category_id']) {
@@ -174,13 +174,13 @@ class cashTransactionSaver extends cashEntitySaver
         }
 
         if (empty($data['amount'])) {
-            $this->error = _w('No amount');
+            $this->error = _w('No amount specified');
 
             return false;
         }
 
         if (empty($data['account_id'])) {
-            $this->error = _w('No account');
+            $this->error = _w('No account selected');
 
             return false;
         }
@@ -253,7 +253,7 @@ class cashTransactionSaver extends cashEntitySaver
             $secondTransaction->setCategoryId($transferData['category_id']);
         }
         if (empty($transferData['account_id'])) {
-            throw new kmwaLogicException('No account for transfer to');
+            throw new kmwaLogicException('No incoming transfer account selected');
         }
 
         $secondTransaction->setAccountId($transferData['account_id']);
@@ -263,7 +263,7 @@ class cashTransactionSaver extends cashEntitySaver
         kmwaAssert::instance($account, cashAccount::class);
 
         if ($transaction->getAccount()->getCurrency() !== $account->getCurrency()) {
-            throw new kmwaNotImplementedException('No exchange logic');
+            throw new kmwaNotImplementedException('No currency exchange logic defined');
         }
 
         cash()->getEntityPersister()->save($secondTransaction);

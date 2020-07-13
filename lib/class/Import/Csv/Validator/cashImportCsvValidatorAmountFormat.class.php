@@ -24,7 +24,7 @@ class cashImportCsvValidatorAmountFormat extends cashImportCsvAbstractValidator 
                 }
 
                 if (!preg_match('/[\d,.\- ]/', $amount)) {
-                    $this->errors[] = _w('Some amount do not have proper format');
+                    $this->errors[] = _w('Some rows seem to contain non-numerical data');
 
                     return false;
                 }
