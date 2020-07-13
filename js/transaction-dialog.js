@@ -87,6 +87,7 @@ var CashTransactionDialog = (function ($) {
                             accountCurrency = $account.find(':selected').data('cash-account-currency-code'),
                             transferAccountCurrency = $transferAccount.find(':selected').data('cash-account-currency-code');
 
+                        debugger;
                         if (accountCurrency == transferAccountCurrency && $transferValue.val() != value) {
                             $transferValue.val(value);
                         }
