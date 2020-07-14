@@ -1,7 +1,6 @@
 {** @var cashTransactionDto $transaction **}
 {** @var cashAccountDto[] $accounts **}
 {** @var cashCategoryDto[] $categories **}
-{** @var cashCategoryDto[] $categoriesIncome **}
 {** @var cashTransactionPageFilterDto $filter **}
 {** @var string $categoryType **}
 {** @var cashRepeatingTransactionDto $repeatingTransaction **}
@@ -51,7 +50,7 @@
                             [`Amount`]
                         </div>
                         <div class="value">
-                            {if $categoryType == 'expense'}<strong>&minus;</strong>{elseif $categoryType == 'income'}<strong>+</strong>{/if}
+                            <strong>{if $categoryType == cashCategory::TYPE_EXPENSE}&minus;{elseif $categoryType == cashCategory::TYPE_INCOME}+{/if}</strong>
                             <input class="large bold numerical"
                                    name="transaction[amount]"
                                    placeholder="0"
@@ -253,16 +252,26 @@
                             [`Category`]
                         </div>
                         <div class="value no-shift">
-                            <i class="icon16 color" data-cash-transaction-category style="background: #dddddd;"></i>
-                            <select name="transaction[category_id]" data-cash-element-category-with-color>
+                            <i class="icon16 color"
+                               data-cash-transaction-category
+                               style="background: {$transaction->category->color};"
+                            ></i>
+                            <select name="transaction[category_id]"
+                                    data-cash-element-category-with-color
+                                    {if $transaction->category->id == cashCategoryFactory::TRANSFER_CATEGORY_ID}disabled{/if}
+                            >
+                                {if $transaction->category->id == cashCategoryFactory::TRANSFER_CATEGORY_ID}
+                                <option selected>{$transaction->category->name|escape|truncate:42}</option>
+                                {else}
                                 <option value="0" data-cash-category-color="{cashCategoryFactory::NO_CATEGORY_COLOR}">[`No category`]</option>
                                 {foreach $categories as $category}
-                                    <option value="{$category->id}"
-                                            {if $category->id == $transaction->category->id}selected{/if}
-                                            data-cash-category-color="{$category->color}">
-                                        {$category->name|escape|truncate:42}
-                                    </option>
+                                <option value="{$category->id}"
+                                        {if $category->id == $transaction->category->id}selected{/if}
+                                        data-cash-category-color="{$category->color}">
+                                    {$category->name|escape|truncate:42}
+                                </option>
                                 {/foreach}
+                                {/if}
                             </select>
                         </div>
                     </div>

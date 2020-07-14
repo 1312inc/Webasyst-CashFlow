@@ -27,7 +27,7 @@ class cashTransactionDialogAction extends cashViewAction
         if ($transactionId) {
             $transaction = cash()->getEntityRepository(cashTransaction::class)->findById($transactionId);
             kmwaAssert::instance($transaction, cashTransaction::class);
-            $categoryType = $transaction->getCategory()->getType();
+            $categoryType = $transaction->getCategoryType();
         } else {
             $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
             if ($filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
@@ -43,28 +43,24 @@ class cashTransactionDialogAction extends cashViewAction
             cash()->getEntityRepository(cashAccount::class)->findAllActive()
         );
         $repeatingTransactionDto = $transaction->getRepeatingTransaction() instanceof cashRepeatingTransaction
-            ? (new cashRepeatingTransactionDtoAssembler())->createFromEntity($transaction->getRepeatingTransaction(), $transaction)
+            ? (new cashRepeatingTransactionDtoAssembler())->createFromEntity(
+                $transaction->getRepeatingTransaction(),
+                $transaction
+            )
             : new cashRepeatingTransactionDto([]);
 
         /** @var cashCategoryRepository $categoryRep */
         $categoryRep = cash()->getEntityRepository(cashCategory::class);
-        $categoryDtosIncome = [];
-        if ($categoryType) {
-            if ($categoryType === cashCategory::TYPE_TRANSFER) {
-                $categoryDtos = cashDtoFromEntityFactory::fromEntities(
-                    cashCategoryDto::class,
-                    $categoryRep->findAllExpense()
-                );
-                $categoryDtosIncome = cashDtoFromEntityFactory::fromEntities(
-                    cashCategoryDto::class,
-                    $categoryRep->findAllIncome()
-                );
-            } else {
-                $categoryDtos = cashDtoFromEntityFactory::fromEntities(
-                    cashCategoryDto::class,
-                    $categoryRep->findAllByType($categoryType)
-                );
-            }
+        if ($categoryType === cashCategory::TYPE_INCOME) {
+            $categoryDtos = cashDtoFromEntityFactory::fromEntities(
+                cashCategoryDto::class,
+                $categoryRep->findAllIncome()
+            );
+        } elseif ($categoryType === cashCategory::TYPE_EXPENSE) {
+            $categoryDtos = cashDtoFromEntityFactory::fromEntities(
+                cashCategoryDto::class,
+                $categoryRep->findAllExpense()
+            );
         } else {
             $categoryDtos = cashDtoFromEntityFactory::fromEntities(
                 cashCategoryDto::class,
@@ -90,7 +86,6 @@ class cashTransactionDialogAction extends cashViewAction
                 'repeatingTransaction' => $repeatingTransactionDto,
                 'accounts' => $accountDtos,
                 'categories' => $categoryDtos,
-                'categoriesIncome' => $categoryDtosIncome,
                 'categoryType' => $categoryType,
                 'filter' => $filterDto,
 

@@ -130,6 +130,11 @@ SQL;
                 $joinCategory = '';
                 break;
 
+            case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
+                $whereAccountSql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
+                $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
+                break;
+
             default:
                 $whereAccountSql = '';
                 $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
@@ -192,6 +197,12 @@ SQL;
                 $whereAccountSql = ' and ct.category_id is null and ct.amount > 0';
                 $whereAccountSql2 = ' and ct2.category_id is null and ct2.amount > 0';
                 $joinCategory = '';
+                break;
+
+            case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
+                $whereAccountSql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
+                $whereAccountSql2 = sprintf(' and ct2.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
+                $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
                 break;
 
             default:
@@ -657,6 +668,10 @@ SQL;
                 $categorySql = ' and ct.category_id is null and ct.amount > 0';
                 break;
 
+            case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
+                $categorySql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
+                break;
+
             default:
                 $categorySql = '';
         }
@@ -878,6 +893,10 @@ SQL;
 
             case $category == cashCategoryFactory::NO_CATEGORY_INCOME_ID:
                 $categoriesSql = ' and ct.category_id is null and ct.amount > 0';
+                break;
+
+            case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
+                $categoriesSql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
                 break;
 
             default:

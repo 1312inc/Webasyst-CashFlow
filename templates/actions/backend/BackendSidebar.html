@@ -88,6 +88,18 @@
         </div>
     {/if}
     <div class="block">
+        {if 1 || IS_APP_ADMIN || MADE_AT_LEAST_ONE_TRANSFER_IN_THE_PAST}
+            <h5 class="heading top-padded">
+                <!-- <a href="#" class="count"><i class="icon16 add"></i></a> -->
+                [`Other`]
+            </h5>
+            <ul class="menu-v with-icons">
+                <li>
+                    <a href="#/category/-1312"><i class="icon16 color" style="background: {cashColorStorage::TRANSFER_CATEGORY_COLOR};"></i>[`Transfers`]</a>
+                </li>
+            </ul>
+        {/if}
+
         {if count($imports) || IS_APP_ADMIN}
             <br>
             <h5 class="heading top-padded">
