@@ -297,13 +297,15 @@ class cashTransaction extends cashAbstractEntity
 
     /**
      * @return cashCategory
+     * @throws waException
      */
-    public function getCategory()
+    public function getCategory(): cashCategory
     {
         if ($this->category === null) {
             if ($this->category_id) {
                 $this->category = cash()->getEntityRepository(cashCategory::class)->findById($this->category_id);
             }
+
             if (!$this->category instanceof cashCategory) {
                 $this->category = $this->amount < 0
                     ? cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryExpense()
@@ -312,6 +314,35 @@ class cashTransaction extends cashAbstractEntity
         }
 
         return $this->category;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategoryType(): string
+    {
+        $category = $this->getCategory();
+        if ($category->isTransfer()) {
+            return $this->isExpense() ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME;
+        }
+
+        return  $category->getType();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpense(): bool
+    {
+        return $this->amount < 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIncome(): bool
+    {
+        return $this->amount > 0;
     }
 
     /**

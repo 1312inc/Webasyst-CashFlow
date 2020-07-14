@@ -459,7 +459,7 @@ class cashGraphService
                     ];
                 }
 
-                $graphData->columns[$dateDatum['hash']][$date] = (float)abs($dateDatum['summary']);
+                $graphData->columns[$dateDatum['hash']][$date] += (float)abs($dateDatum['summary']);
             }
         }
     }
