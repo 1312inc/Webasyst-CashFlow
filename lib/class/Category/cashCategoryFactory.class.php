@@ -7,6 +7,7 @@ class cashCategoryFactory extends cashBaseFactory
 {
     const NO_CATEGORY_EXPENSE_ID = -1;
     const NO_CATEGORY_INCOME_ID = -2;
+    const TRANSFER_CATEGORY_ID = -1312;
     const NO_CATEGORY_COLOR = '#dddddd';
 
     /**

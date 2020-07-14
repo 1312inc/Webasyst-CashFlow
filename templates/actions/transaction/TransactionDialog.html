@@ -245,7 +245,9 @@
                         </div>
                     {/if}
 
-                    {if $categoryType != cashCategory::TYPE_TRANSFER}
+                    {if $categoryType == cashCategory::TYPE_TRANSFER}
+                    <input type="hidden" name="transaction[category_id]" value="{cashCategoryFactory::TRANSFER_CATEGORY_ID}">
+                    {else}
                     <div class="field">
                         <div class="name nowrap">
                             [`Category`]

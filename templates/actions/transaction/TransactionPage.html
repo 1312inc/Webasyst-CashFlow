@@ -39,7 +39,7 @@
                                data-cash-action="account-dialog" data-cash-account-id="{$filter->id}"
                             ><i class="icon16 settings"></i>[`Account settings`]</a>
                             {/if}
-                            {if $filter->type == cashTransactionPageFilterDto::FILTER_CATEGORY}
+                            {if $filter->type == cashTransactionPageFilterDto::FILTER_CATEGORY && !$filter->entity->isSystem()}
                             <a href="#"
                                class="gray"
                                data-cash-action="category-dialog" data-cash-category-id="{$filter->id}"

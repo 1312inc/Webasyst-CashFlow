@@ -36,6 +36,11 @@ class cashCategoryDto extends cashAbstractDto
     public $createDatetime;
 
     /**
+     * @var bool
+     */
+    public $is_system = false;
+
+    /**
      * cashCategoryDto constructor.
      *
      * @param array $data

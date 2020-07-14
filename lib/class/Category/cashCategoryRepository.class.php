@@ -48,11 +48,27 @@ class cashCategoryRepository extends cashBaseRepository
     }
 
     /**
-     * @return cashCategory[]
+     * @return cashCategory
      * @throws waException
      */
-    public function findAllTransfer()
+    public function findTransferCategory()
     {
-        return $this->findAllByType(cashCategory::TYPE_TRANSFER);
+        $transfers = $this->findById(cashCategoryFactory::TRANSFER_CATEGORY_ID);
+        if (!$transfers instanceof cashCategory) {
+            $data = [
+                'id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,
+                'type' => cashCategory::TYPE_TRANSFER,
+                'color' => cashColorStorage::TRANSFER_CATEGORY_COLOR,
+                'name' => _w('Transfers'),
+                'create_datetime' => date('Y-m-d H:i:s'),
+            ];
+            $this->getModel()->insert($data);
+            $transfers = cash()->getHydrator()->hydrate(
+                cash()->getEntityFactory(cashCategory::class)->createNew(),
+                $data
+            );
+        }
+
+        return $transfers;
     }
 }
