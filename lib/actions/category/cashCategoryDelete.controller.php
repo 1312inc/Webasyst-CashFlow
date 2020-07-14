@@ -15,6 +15,10 @@ class cashCategoryDeleteController extends cashJsonController
         $category = cash()->getEntityRepository(cashCategory::class)->findById($this->getId());
         kmwaAssert::instance($category, cashCategory::class);
 
+        if ($category->isSystem()) {
+            throw new kmwaRuntimeException(_w('You can`t do anything with system categories'));
+        }
+
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
         $model->startTransaction();
@@ -27,7 +31,8 @@ class cashCategoryDeleteController extends cashJsonController
             $model->commit();
         } catch (Exception $ex) {
             $model->rollback();
-            $this->errors[] = $ex->getMessage();
+
+            throw $ex;
         }
     }
 }

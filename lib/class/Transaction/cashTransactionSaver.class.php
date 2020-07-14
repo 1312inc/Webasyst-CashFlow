@@ -88,35 +88,31 @@ class cashTransactionSaver extends cashEntitySaver
             throw new kmwaLogicException(_w('No incoming transfer amount specified'));
         }
 
-        $amount = (float)$params->transfer['incoming_amount'];
-
-        $transferTransaction = clone $transaction;
-        $transferTransaction
-            ->setId(null)
-            ->setAmount($amount);
-
-        $params->transfer['category_id'] = $transaction->getCategoryId();
         if (!isset($params->transfer['account_id'])) {
             throw new kmwaLogicException('No incoming transfer account selected');
         }
 
-        if ($params->transfer['category_id']) {
-            /** @var cashCategory $category */
-            $category = cash()->getEntityRepository(cashCategory::class)->findById($params->transfer['category_id']);
-            kmwaAssert::instance($category, cashCategory::class);
-        } else {
-            $category = cash()->getEntityFactory(cashCategory::class)->createNewNoCategory();
-        }
-        $transferTransaction->setCategory($category);
-
         /** @var cashAccount $account */
         $account = cash()->getEntityRepository(cashAccount::class)->findById($params->transfer['account_id']);
         kmwaAssert::instance($account, cashAccount::class);
-        $transferTransaction->setAccount($account);
+
+        /** @var cashCategoryRepository $categoryRepository */
+        $categoryRepository = cash()->getEntityRepository(cashCategory::class);
+        $category = $categoryRepository->findTransferCategory();
+
+        $amount = (float)$params->transfer['incoming_amount'];
+        $transferTransaction = clone $transaction;
+        $transferTransaction
+            ->setId(null)
+            ->setAmount($amount)
+            ->setCategory($category)
+            ->setAccount($account)
+        ;
 
         $transaction
             ->setAmount(-abs($transaction->getAmount()))
             ->setLinkedTransaction($transferTransaction)
+            ->setCategory($category)
         ;
 
         return $transferTransaction;

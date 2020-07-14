@@ -169,4 +169,12 @@ class cashCategory extends cashAbstractEntity
     {
         return $this->type === self::TYPE_TRANSFER;
     }
+
+    /**
+     * @return bool
+     */
+    public function isSystem()
+    {
+        return $this->id < 0;
+    }
 }

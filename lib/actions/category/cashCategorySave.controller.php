@@ -18,6 +18,10 @@ class cashCategorySaveController extends cashJsonController
             $category = cash()->getEntityFactory(cashCategory::class)->createNew();
         }
 
+        if ($category->isSystem()) {
+            throw new kmwaRuntimeException(_w('You can`t do anything with system categories'));
+        }
+
         $saver = new cashCategorySaver();
         $category = $saver->saveFromArray($category, $data);
         if ($category) {

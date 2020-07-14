@@ -9,8 +9,7 @@ foreach ($db as $table => $info) {
         $m->exec(sprintf('alter table %s engine=innodb', $table));
         $innodb = 1;
     } catch (waException $ex) {
-        waLog::log('mysql do not support InnoDb engine', 'cash/error.log');
-        waLog::log($ex->getMessage(), 'cash/error.log');
+        cash()->getLogger()->error('mysql do not support InnoDb engine', $ex);
     } finally {
         (new waAppSettingsModel())->set('cash', 'innodb', $innodb);
     }
@@ -49,8 +48,7 @@ if ($innodb) {
                             on update cascade on delete set null'
         );
     } catch (waException $ex) {
-        waLog::log('fail to add foreign keys', 'cash/error.log');
-        waLog::log($ex->getMessage(), 'cash/error.log');
+        cash()->getLogger()->error('fail to add foreign keys', $ex);
     }
 } else {
     throw new waException('InnoDb engine is required');
@@ -84,3 +82,13 @@ foreach ($fixtures as $type => $categories) {
         );
     }
 }
+
+cash()->getModel(cashCategory::class)->insert(
+    [
+        'id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,
+        'type' => cashCategory::TYPE_TRANSFER,
+        'color' => cashColorStorage::TRANSFER_CATEGORY_COLOR,
+        'name' => _w('Transfers'),
+        'create_datetime' => date('Y-m-d H:i:s'),
+    ]
+);
