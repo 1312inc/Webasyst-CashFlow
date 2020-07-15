@@ -39,6 +39,9 @@ class cashTransactionSaveController extends cashJsonController
 
             return;
         }
+        if ($paramsDto->transfer) {
+            $transferTransaction = $saver->createTransfer($transaction, $paramsDto);
+        }
 
         $repeatingDto = new cashRepeatingTransactionSettingsDto($repeating);
         if ($isRepeating || $repeatingDto->apply_to_all_in_future) {
@@ -108,11 +111,8 @@ class cashTransactionSaveController extends cashJsonController
         }
 
         $saver->addToPersist($transaction);
-        if ($paramsDto->transfer) {
-            $transferTransaction = $saver->createTransfer($transaction, $paramsDto);
-            if ($transferTransaction) {
-                $saver->addToPersist($transferTransaction);
-            }
+        if (isset($transferTransaction)) {
+            $saver->addToPersist($transferTransaction);
         }
 
         $saved = $saver->persistTransactions();
