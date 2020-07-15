@@ -459,7 +459,12 @@ class cashGraphService
                     ];
                 }
 
-                $graphData->columns[$dateDatum['hash']][$date] += (float)abs($dateDatum['summary']);
+                // для славной категории трансферов надо суммировать, потому что нет отдельно expense и income
+                if ($dateDatum['category_id'] == cashCategoryFactory::TRANSFER_CATEGORY_ID) {
+                    $graphData->columns[$dateDatum['hash']][$date] += (float)abs($dateDatum['summary']);
+                } else {
+                    $graphData->columns[$dateDatum['hash']][$date] = (float)abs($dateDatum['summary']);
+                }
             }
         }
     }
