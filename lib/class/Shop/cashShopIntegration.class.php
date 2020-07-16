@@ -142,10 +142,15 @@ class cashShopIntegration
             return;
         }
 
-        $transaction->setAmount($amount);
+        $transaction
+            ->setAmount($amount)
+            ->setAccount(cash()->getEntityRepository(cashAccount::class)->findById($this->getSettings()->getAccountId()))
+            ->setCategory($this->getSettings()->getCategoryIncome())
+        ;
+
         cash()->getEntityPersister()->update($transaction);
 
-        $this->updateShopTransactionsAfterDate(new DateTime(), $amount);
+        $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);
     }
 
     /**
@@ -223,14 +228,14 @@ SQL;
             return;
         }
 
-        $this->updateShopTransactionsAfterDate($today, $amount);
-
         $transaction->setAmount($amount);
         if (cash()->getEntityPersister()->update($transaction)) {
             $this->settings
                 ->setForecastActualizedToday(true)
                 ->saveStat();
         }
+
+        $this->updateShopTransactionsAfterDate($today, $transaction);
     }
 
     /**
@@ -445,19 +450,23 @@ SQL;
     }
 
     /**
-     * @param DateTime $date
-     * @param float    $amount
+     * @param DateTime        $date
+     * @param cashTransaction $transaction
      *
      * @return bool|resource
      * @throws waException
      */
-    private function updateShopTransactionsAfterDate(DateTime $date, $amount)
+    private function updateShopTransactionsAfterDate(DateTime $date, cashTransaction $transaction)
     {
         return cash()->getModel(cashTransaction::class)->updateAmountBySourceAndHashAfterDate(
             'shop',
             cashShopTransactionFactory::HASH_FORECAST,
             $date->format('Y-m-d'),
-            $amount
+            [
+                ['f', 'amount', $transaction->getAmount()],
+                ['i', 'account_id', $transaction->getAccountId()],
+                ['i', 'category_id', $transaction->getCategoryId()],
+            ]
         );
     }
 

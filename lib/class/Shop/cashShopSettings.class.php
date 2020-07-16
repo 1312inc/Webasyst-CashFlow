@@ -398,15 +398,31 @@ class cashShopSettings implements JsonSerializable
     /**
      * @return bool
      */
-    public function forecastTypeChanged()
+    public function forecastTypeChanged(): bool
     {
         return $this->enableForecast && ($this->savedSettings['autoForecast'] != $this->autoForecast || $this->savedSettings['manualForecast'] != $this->manualForecast);
     }
 
     /**
+     * @return bool
+     */
+    public function forecastAccountChanged(): bool
+    {
+        return $this->enableForecast && $this->savedSettings['accountId'] != $this->accountId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function forecastCategoryIncomeChanged(): bool
+    {
+        return $this->enableForecast && $this->savedSettings['categoryIncomeId'] != $this->categoryIncomeId;
+    }
+
+    /**
      * @return $this
      */
-    public function resetStat()
+    public function resetStat(): self
     {
         $this->forecastActualizedToday = false;
         $this->todayTransactions = 0;
