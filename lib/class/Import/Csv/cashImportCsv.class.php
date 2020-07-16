@@ -503,14 +503,14 @@ final class cashImportCsv
         $amount = 0;
         switch ($this->settings->getAmountType()) {
             case cashCsvImportSettings::TYPE_SINGLE:
-                $amount = $this->toFloat($data[$this->settings->getAmount()]);
+                $amount = cashHelper::parseFloat($data[$this->settings->getAmount()]);
                 break;
 
             case cashCsvImportSettings::TYPE_MULTI:
                 if (!empty($data[$this->settings->getIncome()])) {
-                    $amount = abs($this->toFloat($data[$this->settings->getIncome()]));
+                    $amount = abs(cashHelper::parseFloat($data[$this->settings->getIncome()]));
                 } elseif (!empty($data[$this->settings->getExpense()])) {
-                    $amount = -abs($this->toFloat($data[$this->settings->getExpense()]));
+                    $amount = -abs(cashHelper::parseFloat($data[$this->settings->getExpense()]));
                 }
                 break;
         }
@@ -634,15 +634,5 @@ final class cashImportCsv
         }
 
         return $categoryId;
-    }
-
-    /**
-     * @param $value
-     *
-     * @return float
-     */
-    private function toFloat($value)
-    {
-        return (float)str_replace(',', '.', $value);
     }
 }

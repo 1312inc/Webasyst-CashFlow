@@ -100,7 +100,7 @@ class cashTransactionSaver extends cashEntitySaver
         $categoryRepository = cash()->getEntityRepository(cashCategory::class);
         $category = $categoryRepository->findTransferCategory();
 
-        $amount = (float)$params->transfer['incoming_amount'];
+        $amount = cashHelper::parseFloat($params->transfer['incoming_amount']);
         $transferTransaction = clone $transaction;
         $transferTransaction
             ->setId(null)
