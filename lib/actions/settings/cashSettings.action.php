@@ -48,7 +48,9 @@ class cashSettingsAction extends cashViewAction
                     $shopIntegration->enableForecast();
                     break;
 
-                case $shopIntegration->getSettings()->forecastTypeChanged():
+                case $shopIntegration->getSettings()->forecastTypeChanged()
+                    || $shopIntegration->getSettings()->forecastAccountChanged()
+                    || $shopIntegration->getSettings()->forecastCategoryIncomeChanged():
                     $shopIntegration->changeForecastType();
                     break;
             }
@@ -83,7 +85,9 @@ class cashSettingsAction extends cashViewAction
                 'avg' => sprintf(
                     '%s%s',
                     $shopIntegration->calculateAvgBill(),
-                    $incomeAccount ? cashCurrencyVO::fromWaCurrency($incomeAccount->getCurrency())->getSignHtml() : ''
+                    $incomeAccount
+                        ? cashCurrencyVO::fromWaCurrency($incomeAccount->getCurrency())->getSignHtml()
+                        : cashCurrencyVO::fromWaCurrency(wa()->getLocale() === 'en_US' ? 'USD' : 'RUB')->getSignHtml()
                 ),
             ]
         );

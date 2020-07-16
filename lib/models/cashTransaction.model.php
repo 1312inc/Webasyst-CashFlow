@@ -816,23 +816,44 @@ SQL;
      * @param string $source
      * @param string $hash
      * @param string $date
-     * @param float  $amount
+     * @param array  $data
      *
      * @return bool|resource
      */
-    public function updateAmountBySourceAndHashAfterDate($source, $hash, $date, $amount)
+    public function updateAmountBySourceAndHashAfterDate($source, $hash, $date, array $data)
     {
         return $this->exec(
-            "update {$this->table} 
-            set amount = f:amount, update_datetime = s:datetime 
-            where external_source = s:source and date >= s:date and external_hash = s:hash",
+            sprintf(
+                "update {$this->table} 
+                set %s, update_datetime = s:datetime 
+                where external_source = s:source and date >= s:date and external_hash = s:hash",
+                implode(
+                    ',',
+                    array_reduce(
+                        $data,
+                        static function ($sqlParams, $value) {
+                            $sqlParams[] = sprintf('%s = %s:%s', $value[1], $value[0], $value[1]);
+
+                            return $sqlParams;
+                        },
+                        []
+                    )
+                )
+            ),
             [
                 'source' => $source,
                 'hash' => $hash,
                 'date' => $date,
-                'amount' => $amount,
                 'datetime' => date('Y-m-d H:i:s'),
-            ]
+            ] + array_reduce(
+                $data,
+                static function ($sqlParams, $value) {
+                    $sqlParams[$value[1]] = $value[2];
+
+                    return $sqlParams;
+                },
+                []
+            )
         );
     }
 
