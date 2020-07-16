@@ -84,10 +84,7 @@
                             <label>
                                 <input type="hidden" name="repeating[apply_to_all_in_future]" value="0"/>
                                 <input type="checkbox" name="repeating[apply_to_all_in_future]" value="1"/>
-                                [`Apply this change to all future repeating transactions`]
-                                {if $repeatingTransaction->repeating_end_type != cashRepeatingTransaction::REPEATING_END_NEVER}
-                                    ({$repeatingTransaction->occurrences_in_future})
-                                {/if}
+                                {sprintf('[`Update all %d future recurring transactions too`]', $repeatingTransaction->occurrences_in_future)}
                             </label>
                             <span class="hint"></span>
                         </div>
