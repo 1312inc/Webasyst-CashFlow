@@ -28,8 +28,8 @@ ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 .c-transactions table td.c-description { min-width: 30%; }
 .c-transactions table td.c-balance { padding-left: 10px; padding-right: 10px; color: #777; text-align: right; }
 .c-transactions table span { cursor: pointer; }
-.c-transactions table.zebra.single-lined tr.highlighted td { background: #fff7b3 !important; }
-.c-transactions table.zebra.single-lined tr.highlighted td div i.shortener { box-shadow: -10px 0 10px #fff7b3 inset !important; }
+.c-transactions table.zebra.single-lined tr.highlighted td { background: #ffffb3 !important; }
+.c-transactions table.zebra.single-lined tr.highlighted td div i.shortener { box-shadow: -10px 0 10px #ffffb3 inset !important; }
 .c-transactions table .c-page-list a { display: inline; color: #03c !important; }
 .c-transactions table .c-page-list a:hover { color: red !important; }
 .c-transactions .c-totals p { font-size: 0.9rem; margin-top: 1rem; }
