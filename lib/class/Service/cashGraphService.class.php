@@ -21,7 +21,10 @@ class cashGraphService
             new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -90),
             new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -180),
             new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -365),
+            //new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, -12),
             new cashGraphPeriodVO(cashGraphPeriodVO::YEARS_PERIOD, -3),
+            new cashGraphPeriodVO(cashGraphPeriodVO::YEARS_PERIOD, -5),
+            new cashGraphPeriodVO(cashGraphPeriodVO::YEARS_PERIOD, -10),
             new cashGraphPeriodVO(cashGraphPeriodVO::ALL_TIME_PERIOD),
         ];
     }
@@ -33,10 +36,12 @@ class cashGraphService
     {
         return [
             new cashGraphPeriodVO(cashGraphPeriodVO::NONE_PERIOD),
-            new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 1),
-            new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 3),
-            new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 6),
-            new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 12),
+            new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, 30),
+            new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, 90),
+            new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, 180),
+            new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, 365),
+            new cashGraphPeriodVO(cashGraphPeriodVO::YEARS_PERIOD, 2),
+            new cashGraphPeriodVO(cashGraphPeriodVO::YEARS_PERIOD, 3),
         ];
     }
 
