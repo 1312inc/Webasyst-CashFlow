@@ -37,7 +37,7 @@ final class cashHelper
      *
      * @return float
      */
-    public static function parseFloat($value)
+    public static function parseFloat($value): float
     {
         return (float)str_replace(',','.',trim($value));
     }

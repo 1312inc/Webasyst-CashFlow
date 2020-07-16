@@ -10,7 +10,7 @@ class cashShorteningService
      *
      * @return string
      */
-    public static function money($amount)
+    public static function money($amount): string
     {
         $sign = '';
         if ($amount < 0) {
