@@ -64,11 +64,22 @@ cash()->getEntityPersister()->insert(
 $fixtures = [
     cashCategory::TYPE_INCOME => [
         _w('Sales') => '#00dd00',
-        _w('Investment') => '#001100',
+        _w('Investment') => '#00dd00',
+        _w('Loan') => '#00dd00',
+        _w('Cashback') => '#00dd00',
+        _w('Other') => '#33dd33',
     ],
     cashCategory::TYPE_EXPENSE => [
         _w('Salary') => '#dd0000',
-        _w('Tax') => '#110000',
+        _w('Purchase') => '#dd0000',
+        _w('Marketing') => '#dd0000',
+        _w('Rent') => '#dd0000',
+        _w('Errand') => '#dd0000',
+        _w('Loan payout') => '#dd0000',
+        _w('Commission') => '#dd0000',
+        _w('Dividend') => '#dd0000',
+        _w('Tax') => '#dd0000',
+        _w('Other') => '#dd3333',
     ],
 ];
 
