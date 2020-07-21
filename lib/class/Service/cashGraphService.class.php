@@ -452,9 +452,9 @@ class cashGraphService
                     ['expense' => [], 'income' => []]
                 );
 
-                if (!$dateDatum['category_id']) {
-                    $dateDatum['hash'] .= ('_' . $dateDatum['cd']);
-                }
+//                if (!$dateDatum['category_id']) {
+//                    $dateDatum['hash'] .= ('_' . $dateDatum['cd']);
+//                }
 
                 if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']][$dateDatum['cd']])) {
                     $graphData->groups[$dateDatum['currency']][$dateDatum['cd']][] = $dateDatum['hash'];
