@@ -19,4 +19,16 @@ return [
         'class' => 'cashBackendTransactionsExport',
         'method' => ['execute'],
     ],
+    [
+        'event_app_id' => 'contacts',
+        'event' => 'delete',
+        'class' => 'cashContactsDelete',
+        'method' => ['execute'],
+    ],
+    [
+        'event_app_id' => 'contacts',
+        'event' => 'links',
+        'class' => 'cashContactsDelete',
+        'method' => ['links'],
+    ],
 ];

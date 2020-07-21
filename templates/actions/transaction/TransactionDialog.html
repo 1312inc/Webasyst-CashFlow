@@ -274,13 +274,14 @@
                     </div>
                     {/if}
 
-                    {if $categoryType != cashCategory::TYPE_TRANSFER}
+                    {if $categoryType != cashCategory::TYPE_TRANSFER && $transaction->category->id != cashCategoryFactory::TRANSFER_CATEGORY_ID}
                     <div class="field">
                         <div class="name nowrap">
                             [`Contractor`]
                         </div>
                         <div class="value no-shift">
-                            <input type="text" name="transaction[contractor_contact_id]" value="{$transaction->contractor->getName()|escape}">
+                            <input type="search" data-cash-contractor value="{$transaction->contractor->getName()|escape}">
+                            <input type="hidden" name="transaction[contractor_contact_id]" value="{$transaction->contractor->getId()|default:0}">
                         </div>
                     </div>
                     {/if}

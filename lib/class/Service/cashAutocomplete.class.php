@@ -33,7 +33,7 @@ class cashAutocomplete
         // Name starts with requested string
         $sqls[] = "SELECT c.id, c.name, c.firstname, c.middlename, c.lastname, c.photo
                    FROM wa_contact AS c
-                   WHERE c.name LIKE '".$m->escape($q, 'like')."%'
+                   WHERE c.name LIKE '" . $m->escape($q, 'like') . "%'
                    LIMIT {LIMIT}";
         $search_terms[] = $q;
 
@@ -42,7 +42,7 @@ class cashAutocomplete
                    FROM wa_contact AS c
                        JOIN wa_contact_emails AS e
                            ON e.contact_id=c.id
-                   WHERE e.email LIKE '".$m->escape($q, 'like')."%'
+                   WHERE e.email LIKE '" . $m->escape($q, 'like') . "%'
                    LIMIT {LIMIT}";
         $search_terms[] = $q;
 
@@ -84,11 +84,11 @@ class cashAutocomplete
             $phones = waUtils::getFieldValues($transform_results, 'phone');
 
             if ($phones) {
-                $condition = array();
+                $condition = [];
                 foreach ($phones as $phone) {
                     $condition[] = str_replace('{PHONE}', $phone, $condition_rule);
                 }
-                $condition = '('.join(' OR ', $condition).')';
+                $condition = '(' . join(' OR ', $condition) . ')';
                 $sql = str_replace('{CONDITION}', $condition, $sql_template);
 
                 $sqls[] = $sql;
@@ -109,7 +109,7 @@ class cashAutocomplete
         // Name contains requested string
         $sqls[] = "SELECT c.id, c.name, c.firstname, c.middlename, c.lastname, c.photo
                    FROM wa_contact AS c
-                   WHERE c.name LIKE '_%".$m->escape($q, 'like')."%'
+                   WHERE c.name LIKE '_%" . $m->escape($q, 'like') . "%'
                    LIMIT {LIMIT}";
         $search_terms[] = $q;
 
@@ -118,12 +118,12 @@ class cashAutocomplete
                    FROM wa_contact AS c
                        JOIN wa_contact_emails AS e
                            ON e.contact_id=c.id
-                   WHERE e.email LIKE '_%".$m->escape($q, 'like')."%'
+                   WHERE e.email LIKE '_%" . $m->escape($q, 'like') . "%'
                    LIMIT {LIMIT}";
         $search_terms[] = $q;
 
         $limit = $limit !== null ? $limit : 5;
-        $result = array();
+        $result = [];
         foreach ($sqls as $index => $sql) {
             if (count($result) >= $limit) {
                 break;
@@ -152,7 +152,7 @@ class cashAutocomplete
                         if ($this->match($email, $term_safe)) {
                             $email = $this->prepare($email, $term_safe, false);
                             if ($email) {
-                                $email = '<i class="icon16 email"></i>'.$email;
+                                $email = '<i class="icon16 email"></i>' . $email;
                             }
                             $match = true;
                         }
@@ -160,7 +160,7 @@ class cashAutocomplete
                         if ($this->match($phone, $term_safe)) {
                             $phone = $this->prepare($phone, $term_safe, false);
                             if ($phone) {
-                                $phone = '<i class="icon16 phone"></i>'.$phone;
+                                $phone = '<i class="icon16 phone"></i>' . $phone;
                             }
                             $match = true;
                         }
@@ -170,13 +170,13 @@ class cashAutocomplete
                         }
                     }
 
-                    $result[$c['id']] = array(
+                    $result[$c['id']] = [
                         'id' => $c['id'],
                         'value' => $c['id'],
                         'name' => $c['name'],
                         'photo_url' => waContact::getPhotoUrl($c['id'], $c['photo'], 96),
-                        'label' => implode(' ', array_filter(array($name, $email, $phone))),
-                    );
+                        'label' => implode(' ', array_filter([$name, $email, $phone])),
+                    ];
 
                     if (count($result) >= $limit) {
                         break 2;
@@ -186,9 +186,9 @@ class cashAutocomplete
         }
 
         foreach ($result as &$c) {
-            $customer = new shopCustomer($c['id']);
-            $userpic = $customer->getUserpic(array('size' => 20));
-            $c['label'] = "<i class='icon16 userpic20' style='background-image: url(\"".$userpic."\");'></i>".$c['label'];
+            $contact = new waContact($c['id']);
+            $userpic = $contact->getPhoto(20);
+            $c['label'] = sprintf('<i class="icon16 userpic20" style="background-image: url(%s);"></i>%s', $userpic, $c['label']);
         }
         unset($c);
 
@@ -196,5 +196,40 @@ class cashAutocomplete
         cash()->getCache()->set($key, $found, 30);
 
         return $found;
+    }
+
+
+    /**
+     * @param      $str
+     * @param      $term_safe
+     * @param bool $escape
+     *
+     * @return string|string[]|null
+     */
+    protected function prepare($str, $term_safe, $escape = true)
+    {
+        $pattern = '~(' . preg_quote($term_safe, '~') . ')~ui';
+        $template = '<span class="bold highlighted">\1</span>';
+        if ($escape) {
+            $str = htmlspecialchars($str, ENT_QUOTES, 'utf-8');
+        }
+
+        return preg_replace($pattern, $template, $str);
+    }
+
+    /**
+     * @param      $str
+     * @param      $term_safe
+     * @param bool $escape
+     *
+     * @return false|int
+     */
+    protected function match($str, $term_safe, $escape = true)
+    {
+        if ($escape) {
+            $str = htmlspecialchars($str, ENT_QUOTES, 'utf-8');
+        }
+
+        return preg_match('~(' . preg_quote($term_safe, '~') . ')~ui', $str);
     }
 }

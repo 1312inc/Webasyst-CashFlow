@@ -89,3 +89,8 @@ h1 .icon16.c-repeating { width: 24px; height: 24px; }
 .c3-axis-y2-label { font-weight: bold; fill: brown !important; }
 /* .c3-bar { opacity: 0.5 !important; } */
 /* .c3-chart-bar:hover .c3-bar { opacity: 1 !important; } */
+
+.ui-autocomplete { z-index:101;}
+/*.ui-autocomplete .ui-menu-item { padding: 0 !important; }*/
+/*.ui-autocomplete .ui-menu-item-wrapper { padding: 8px !important; display: block; }*/
+/*.ui-autocomplete .ui-menu-item-wrapper.ui-state-active { background: #58a8f8; }*/
