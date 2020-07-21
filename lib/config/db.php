@@ -63,6 +63,7 @@ return array(
         'update_datetime' => array('datetime'),
         'external_hash' => array('varchar', 32),
         'external_source' => array('varchar', 20),
+        'contractor_contact_id' => array('int', 11),
         ':keys' => array(
             'PRIMARY' => 'id',
             'cash_repeating_transaction_cash_account_id_fk' => 'account_id',
@@ -88,6 +89,7 @@ return array(
         'external_hash' => array('varchar', 32),
         'external_source' => array('varchar', 20),
         'external_data' => array('text'),
+        'contractor_contact_id' => array('int', 11),
         ':keys' => array(
             'PRIMARY' => 'id',
             'cash_transaction_category_id_index' => 'category_id',

@@ -274,6 +274,17 @@
                     </div>
                     {/if}
 
+                    {if $categoryType != cashCategory::TYPE_TRANSFER}
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Contractor`]
+                        </div>
+                        <div class="value no-shift">
+                            <input type="text" name="transaction[contractor_contact_id]" value="{$transaction->contractor->getName()|escape}">
+                        </div>
+                    </div>
+                    {/if}
+
                     <div class="field">
                         <div class="name nowrap">
                             [`Description`]

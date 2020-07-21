@@ -117,6 +117,39 @@ var CashTransactionDialog = (function ($) {
 
                 $dialogWrapper.find('select').trigger('change.cash');
 
+                $dialogWrapper.find('[name="transaction[contractor_contact_id]"]').autocomplete({
+                    source: function (request, response) {
+                        term = request.term;
+                        $.getJSON('?module=json&action=contactAutocomplete', request, function (r) {
+                            // (r = r || []).push({
+                            //     label: $_('New customer'),
+                            //     name: $_('New customer'),
+                            //     value: 0
+                            // });
+                            response(r);
+                        });
+                    },
+                    delay: 300,
+                    minLength: 3,
+                    select: function (event, ui) {
+                        debugger;
+                        var item = ui.item;
+
+
+                        // autocomplete make focus for its input. That brakes out plan!
+                        // setTimout-hack for fix it
+                        // setTimeout(function () {
+                        //     that.focusFirstEmptyInput();
+                        // }, 200);
+
+                        return false;
+                    },
+                    focus: function (event, ui) {
+                        this.value = ui.item.name;
+                        return false;
+                    }
+                });
+
                 $dialogWrapper.find('#c-transaction-type').iButton({
                     labelOn: '',
                     labelOff: '',
