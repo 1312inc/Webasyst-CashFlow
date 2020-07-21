@@ -127,6 +127,8 @@ class cashShopIntegration
         $repeatingTransaction = $saver->saveFromTransaction($transaction, $repeatingSettings, true);
 
         (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction , new DateTime());
+
+        return $transaction;
     }
 
     /**
@@ -135,22 +137,22 @@ class cashShopIntegration
      */
     public function changeForecastType()
     {
-        $amount = $this->settings->isAutoForecast() ? $this->getShopAvgAmount() : $this->settings->getManualForecast();
-
         $transaction = $this->getForecastRepeatingTransaction();
         if (!$transaction instanceof cashRepeatingTransaction) {
-            return;
+            $this->enableForecast();
+        } else {
+            $amount = $this->settings->isAutoForecast() ? $this->getShopAvgAmount() : $this->settings->getManualForecast();
+            $transaction
+                ->setAmount($amount)
+                ->setAccount(
+                    cash()->getEntityRepository(cashAccount::class)->findById($this->getSettings()->getAccountId())
+                )
+                ->setCategory($this->getSettings()->getCategoryIncome());
+
+            cash()->getEntityPersister()->update($transaction);
+
+            $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);
         }
-
-        $transaction
-            ->setAmount($amount)
-            ->setAccount(cash()->getEntityRepository(cashAccount::class)->findById($this->getSettings()->getAccountId()))
-            ->setCategory($this->getSettings()->getCategoryIncome())
-        ;
-
-        cash()->getEntityPersister()->update($transaction);
-
-        $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);
     }
 
     /**
