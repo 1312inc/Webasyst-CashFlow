@@ -8,13 +8,13 @@ class cashGraphService
     const GROUP_BY_DAY   = 1;
     const GROUP_BY_MONTH = 2;
 
-    const DEFAULT_CHART_PERIOD_NAME = 'default_chart_period';
+    const DEFAULT_CHART_PERIOD_NAME    = 'default_chart_period';
     const DEFAULT_FORECAST_PERIOD_NAME = 'default_forecast_period';
 
     /**
      * @return array
      */
-    public static function getChartPeriods()
+    public static function getChartPeriods(): array
     {
         return [
             new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -30),
@@ -25,14 +25,14 @@ class cashGraphService
             new cashGraphPeriodVO(cashGraphPeriodVO::YEARS_PERIOD, -3),
             new cashGraphPeriodVO(cashGraphPeriodVO::YEARS_PERIOD, -5),
             new cashGraphPeriodVO(cashGraphPeriodVO::YEARS_PERIOD, -10),
-            new cashGraphPeriodVO(cashGraphPeriodVO::ALL_TIME_PERIOD),
+//            new cashGraphPeriodVO(cashGraphPeriodVO::ALL_TIME_PERIOD),
         ];
     }
 
     /**
      * @return array
      */
-    public static function getForecastPeriods()
+    public static function getForecastPeriods(): array
     {
         return [
             new cashGraphPeriodVO(cashGraphPeriodVO::NONE_PERIOD),
@@ -48,7 +48,7 @@ class cashGraphService
     /**
      * @return cashGraphPeriodVO
      */
-    public function getDefaultChartPeriod()
+    public function getDefaultChartPeriod(): cashGraphPeriodVO
     {
         $stored = wa()->getUser()->getSettings(cashConfig::APP_ID, self::DEFAULT_CHART_PERIOD_NAME);
         if ($stored) {
@@ -63,7 +63,7 @@ class cashGraphService
     /**
      * @return cashGraphPeriodVO
      */
-    public function getDefaultForecastPeriod()
+    public function getDefaultForecastPeriod(): cashGraphPeriodVO
     {
         $stored = wa()->getUser()->getSettings(cashConfig::APP_ID, self::DEFAULT_FORECAST_PERIOD_NAME);
         if ($stored) {
@@ -97,7 +97,7 @@ class cashGraphService
      * @return cashGraphPeriodVO
      * @throws Exception
      */
-    public function getChartPeriodByDate(DateTimeInterface $dateTime)
+    public function getChartPeriodByDate(DateTimeInterface $dateTime): cashGraphPeriodVO
     {
         $periods = array_reverse(self::getChartPeriods());
         $periods[] = new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, 0);
@@ -116,7 +116,7 @@ class cashGraphService
      * @return cashGraphPeriodVO
      * @throws Exception
      */
-    public function getForecastPeriodByDate(DateTimeInterface $dateTime)
+    public function getForecastPeriodByDate(DateTimeInterface $dateTime): cashGraphPeriodVO
     {
         $periods = self::getForecastPeriods();
         if ($periods[0]->getDate()->diff($dateTime)->d === 0) {
@@ -140,8 +140,11 @@ class cashGraphService
      * @return cashGraphColumnsDataDto
      * @throws waException
      */
-    public function createDto(DateTime $startDate, DateTime $endDate, cashTransactionPageFilterDto $filterDto)
-    {
+    public function createDto(
+        DateTime $startDate,
+        DateTime $endDate,
+        cashTransactionPageFilterDto $filterDto
+    ): cashGraphColumnsDataDto {
         if ($filterDto->type == cashTransactionPageFilterDto::FILTER_IMPORT) {
             $grouping = self::GROUP_BY_DAY;
         }
@@ -290,9 +293,9 @@ class cashGraphService
         foreach ($graphData->dates as $date) {
             if (!isset($data[$date])) {
 //                if ($firstDot) {
-                    foreach ($graphData->accounts as $accountId) {
-                        $graphData->lines[$accountId][$date] += (float)$initialBalance[$accountId]['summary'];
-                    }
+                foreach ($graphData->accounts as $accountId) {
+                    $graphData->lines[$accountId][$date] += (float)$initialBalance[$accountId]['summary'];
+                }
 //                    $firstDot = false;
 //                }
 
@@ -420,17 +423,18 @@ class cashGraphService
 //    }
 
     /**
-     * @param DateTimeInterface $startDate
+     * @param DateTimeInterface      $startDate
      * @param DateTimeInterface|null $endDate
      *
      * @return int
      * @throws Exception
      */
-    private function determineGroup(DateTimeInterface $startDate, DateTimeInterface $endDate = null)
+    private function determineGroup(DateTimeInterface $startDate, DateTimeInterface $endDate = null): int
     {
         if (!$endDate) {
             $endDate = new DateTime();
         }
+
         if ($startDate->diff($endDate)->days > 90) {
             return self::GROUP_BY_MONTH;
         }
