@@ -279,9 +279,11 @@
                         <div class="name nowrap">
                             [`Contractor`]
                         </div>
-                        <div class="value no-shift">
-                            <input type="search" data-cash-contractor value="{$transaction->contractor->getName()|escape}">
+                        <div class="value">
+                            <input type="text" data-cash-contractor value="{$transaction->contractor->getName()|escape}" placeholder="[`Name of a company or a person`]">
                             <input type="hidden" name="transaction[contractor_contact_id]" value="{$transaction->contractor->getId()|default:0}">
+                            <br>
+                            <span class="hint">[`Search for existing contact or enter any new contact name.`]</span>
                         </div>
                     </div>
                     {/if}
