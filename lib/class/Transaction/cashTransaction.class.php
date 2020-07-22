@@ -56,6 +56,11 @@ class cashTransaction extends cashAbstractEntity
     /**
      * @var int|null
      */
+    protected $contractor_contact_id;
+
+    /**
+     * @var int|null
+     */
     private $import_id;
 
     /**
@@ -550,5 +555,21 @@ class cashTransaction extends cashAbstractEntity
         $this->linkedTransaction = $linkedTransaction;
 
         return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getContractorContactId()
+    {
+        return $this->contractor_contact_id;
+    }
+
+    /**
+     * @param int|null $contractor_contact_id
+     */
+    public function setContractorContactId($contractor_contact_id)
+    {
+        $this->contractor_contact_id = $contractor_contact_id;
     }
 }

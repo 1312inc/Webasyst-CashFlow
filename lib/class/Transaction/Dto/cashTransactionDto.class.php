@@ -96,6 +96,11 @@ class cashTransactionDto extends cashAbstractDto
     public $external_entity;
 
     /**
+     * @var waContact
+     */
+    public $contractor;
+
+    /**
      * cashTransactionDto constructor.
      *
      * @param array                $data
@@ -118,5 +123,9 @@ class cashTransactionDto extends cashAbstractDto
         $this->account = $account;
         $this->currency = $currency;
         $this->category = $category;
+
+        $this->contractor = new waContact(
+            !empty($data['contractor_contact_id']) ? $data['contractor_contact_id'] : null
+        );
     }
 }
