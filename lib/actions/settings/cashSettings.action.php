@@ -56,22 +56,24 @@ class cashSettingsAction extends cashViewAction
             }
         }
 
+        /** @var cashAccount $incomeAccount */
+        $incomeAccount = cash()->getEntityRepository(cashAccount::class)->findById(
+            $shopIntegration->getSettings()->getAccountId()
+        );
+
         if ($shopIntegration->shopExists()) {
             $storefronts = cashHelper::getAllStorefronts() ?: [];
             $storefronts[] = 'backend';
 
             /** @var waWorkflowAction[] $actions */
             $actions = (new shopWorkflow())->getAllActions();
+            $avg = round($shopIntegration->getShopAvgAmount(), 2);
         } else {
             $storefronts = [];
             $actions = [];
             $shopIntegration->getSettings()->setEnabled(false)->save();
+            $avg = 0;
         }
-
-        /** @var cashAccount $incomeAccount */
-        $incomeAccount = cash()->getEntityRepository(cashAccount::class)->findById(
-            $shopIntegration->getSettings()->getAccountId()
-        );
 
         $this->view->assign(
             [
@@ -84,7 +86,7 @@ class cashSettingsAction extends cashViewAction
                 'shopIsOld' => $shopIntegration->shopIsOld(),
                 'avg' => sprintf(
                     '%s%s',
-                    $shopIntegration->calculateAvgBill(),
+                    $avg,
                     $incomeAccount
                         ? cashCurrencyVO::fromWaCurrency($incomeAccount->getCurrency())->getSignHtml()
                         : cashCurrencyVO::fromWaCurrency(wa()->getLocale() === 'en_US' ? 'USD' : 'RUB')->getSignHtml()

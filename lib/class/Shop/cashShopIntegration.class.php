@@ -195,6 +195,30 @@ SQL;
         )->fetchField());
     }
 
+
+    /**
+     * @param int $days
+     *
+     * @return float
+     * @throws kmwaAssertException
+     * @throws waException
+     */
+    public function getShopAvgAmount($days = self::DAYS_FOR_AVG_BILL_CALCULATION)
+    {
+        /** @var cashAccount $account */
+        $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
+        kmwaAssert::instance($account, cashAccount::class);
+
+        $amount = $this->calculateAvgBill($days);
+        $defaultCurrency = wa('shop')->getConfig()->getCurrency();
+        if ($defaultCurrency != $account->getCurrency()) {
+            $currencyModel = new shopCurrencyModel();
+            $amount = $currencyModel->convert($amount, $defaultCurrency, $account->getCurrency());
+        }
+
+        return $amount;
+    }
+
     /**
      * @throws waDbException
      * @throws waException
@@ -470,27 +494,5 @@ SQL;
                 ['i', 'category_id', $transaction->getCategoryId()],
             ]
         );
-    }
-
-    /**
-     * @return float
-     * @throws kmwaAssertException
-     * @throws waDbException
-     * @throws waException
-     */
-    private function getShopAvgAmount()
-    {
-        /** @var cashAccount $account */
-        $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
-        kmwaAssert::instance($account, cashAccount::class);
-
-        $amount = $this->calculateAvgBill(self::DAYS_FOR_AVG_BILL_CALCULATION);
-        $defaultCurrency = wa('shop')->getConfig()->getCurrency();
-        if ($defaultCurrency != $account->getCurrency()) {
-            $currencyModel = new shopCurrencyModel();
-            $amount = $currencyModel->convert($amount, $defaultCurrency, $account->getCurrency());
-        }
-
-        return $amount;
     }
 }
