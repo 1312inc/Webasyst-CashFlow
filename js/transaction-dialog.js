@@ -146,6 +146,42 @@ var CashTransactionDialog = (function ($) {
                         .appendTo(ul);
                 };
 
+                if ($contractorAutocomplete.length) {
+                    var selected = null,
+                        $pic = $contractorAutocomplete.closest('.value').find('i.userpic20');
+
+                    $contractorAutocomplete.autocomplete({
+                        source: function (request, response) {
+                            $.getJSON('?module=json&action=contactAutocomplete', request, function (r) {
+                                response(r.data);
+                            });
+                        },
+                        delay: 300,
+                        minLength: 3,
+                        select: function (event, ui) {
+                            $pic.css('background-image', 'url(' + ui.item.photo_url + ')');
+                            selected = ui.item.id;
+                            $contractor.val(selected);
+                            return false;
+                        },
+                        focus: function (event, ui) {
+                            this.value = ui.item.name;
+                            return false;
+                        }
+                    });
+                    $contractorAutocomplete.on('keyup.cash, change.cash', function (e) {
+                        if (!$(this).val().trim()) {
+                            $contractor.val(0);
+                            $pic.css('background-image', 'url(' + $pic.data('cash-default-url') + ')');
+                        }
+                    });
+                    $contractorAutocomplete.data('ui-autocomplete')._renderItem = function (ul, item) {
+                        return $('<li style="c-autocomplete-item">')
+                            .append(item.label)
+                            .appendTo(ul);
+                    };
+                }
+
                 $dialogWrapper.find('#c-transaction-type').iButton({
                     labelOn: '',
                     labelOff: '',
