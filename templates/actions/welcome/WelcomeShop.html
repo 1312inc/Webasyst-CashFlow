@@ -1,35 +1,133 @@
-<h1>[`Welcome`]</h1>
+<div class="block">
+
+    <h1>[`Let the cash flow!`]</h1>
+
+    <p>[`Start forecasting your cash flow by importing sales data from Shop-Script and setting your average expenses categories — and the app will do the rest.`]
+
+    <div class="fields form">
+
+        <div class="field">
+            <div class="name">
+                [`Income`]
+            </div>
+            <div class="value no-shift">
+                <label>
+                    <input type="radio" selected="selected">
+                    [`Import from Shop-Script`]
+                </label>
+                <div class="block double-padded">
+                    {sprintf('[`<strong>You have %d paid orders</strong> in your Shop-Script online store beginning on %s.`]', $orders_to_import_count, 'DATEOFTHEFIRSTORDER')}
+                    <br>
+                    [`Import them into the Cash Flow app to quickly understand and forecast your cash flow.`]
+                </div>
+
+                {if $shop_is_old}Sorry, but Shop-Script 8.0 or later is required. Older versions are not supported.{/if}
 
 
-{if $shop_is_old}старенький магазин, 8 минимум{/if}
+            </div>
+            <div class="value no-shift">
+                <label>
+                    <input type="radio">
+                    [`Enter average income manually`]:
+                </label>
+                + <input type="text" class="numerical short" placeholder="0"> {sprintf('[`%s / mo`]', 'JPY')}
 
-<p>Import please shop orders {$orders_to_import_count}</p>
+            </div>
+        </div>
 
-<a href="#" id="c-welcome-shop-skip">no, skip</a>
-<br>
-<br>
-<br>
+        <div class="field">
+            <div class="name">
+                [`Expenses`]
+            </div>
+            <div class="value no-shift">
+                [`Set your average monthly recurring expenses to initially make the financial model more precise:`]
+                <br><br>
 
-<div class="field">
-    <div class="value submit no-shift">
-        <input type="button" id="cash-welcome-shop-start" value="{sprintf('[`Import %s transactions`]', $orders_to_import_count)}"
-               class="button green"/>
-    </div>
-    <div class="value c-csv-configurator" id="c-welcome-import" style="display: none">
-        <div class="progressbar green">
-            <div class="progressbar-outer">
-                <div class="progressbar-inner" style="width: 0%;">
+                <div class="fields width100px">
+                    <div class="field">
+                        <div class="name">
+                            [`Salary`]
+                        </div>
+                        <div class="value">
+                            &minus; <input type="text" class="numerical short" placeholder="0"> {sprintf('[`%s / mo`]', 'JPY')}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name">
+                            [`Purchases & Supplies`]
+                        </div>
+                        <div class="value">
+                            &minus; <input type="text" class="numerical short" placeholder="0"> {sprintf('[`%s / mo`]', 'JPY')}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name">
+                            [`Rent`]
+                        </div>
+                        <div class="value">
+                            &minus; <input type="text" class="numerical short" placeholder="0"> {sprintf('[`%s / mo`]', 'JPY')}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name">
+                            [`Marketing`]
+                        </div>
+                        <div class="value">
+                            &minus; <input type="text" class="numerical short" placeholder="0"> {sprintf('[`%s / mo`]', 'JPY')}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name">
+                            [`Other`]
+                        </div>
+                        <div class="value">
+                            &minus; <input type="text" class="numerical short" placeholder="0"> {sprintf('[`%s / mo`]', 'JPY')}
+                        </div>
+                    </div>
+                </div>
+                <div class="clear-both"></div>
+
+                <p class="hint">[`Don’t worry — you’ll be able to add, edit, delete, or finetune income and expenses later.`]</p>
+
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="value no-shift">
+                <input type="button" id="cash-welcome-shop-start" value="{sprintf('[`Import all %d paid orders data from Shop-Script`]', $orders_to_import_count)}"
+                       class="button green"/>
+                [`or`]
+                <a href="#" id="c-welcome-shop-skip">[`skip the import and start with a simple demo account`]</a>
+
+                <br><br>
+                <span class="gray">
+                    {if $orders_to_import_count > 1000}
+                        [`Importing 1K+ orders may take few minutes to complete.`]
+                    {else}
+                        [`You'll be able to import sales data from Shop-Script or a CSV file any time later.`]
+                    {/if}
+                </span>
+
+            </div>
+            <div class="value c-csv-configurator" id="c-welcome-import" style="display: none">
+                <div class="progressbar green">
+                    <div class="progressbar-outer">
+                        <div class="progressbar-inner" style="width: 0%;">
+                        </div>
+                    </div>
+                </div>
+                {*                    <div data-cash-welcome-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
+                <div data-cash-welcome-import-progress-errors style="display: none"></div>
+                <div>
+                    <span data-cash-welcome-import-progress-icon="loading" style="display:none;"><i class="icon16 loading"></i> <span>[`Importing...`]</span></span>
+                    <span data-cash-welcome-import-progress-icon="success" style="display:none;"><i class="icon16 yes"></i> <span>[`Finalizing...`]</span></span>
+                    <span data-cash-welcome-import-progress-icon="error" style="display:none;"><i class="icon16 no"></i> <span>[`Done`]</span></span>
                 </div>
             </div>
         </div>
-        {*                    <div data-cash-welcome-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
-        <div data-cash-welcome-import-progress-errors style="display: none"></div>
-        <div>
-            <span data-cash-welcome-import-progress-icon="loading" style="display:none;"><i class="icon16 loading"></i> <span>[`Importing...`]</span></span>
-            <span data-cash-welcome-import-progress-icon="success" style="display:none;"><i class="icon16 yes"></i> <span>[`Finalizing...`]</span></span>
-            <span data-cash-welcome-import-progress-icon="error" style="display:none;"><i class="icon16 no"></i> <span>[`Done`]</span></span>
-        </div>
+
     </div>
+
 </div>
 
 <script type="text/javascript" src="{$wa_app_static_url}js/kmlongaction.js{if !waSystemConfig::isDebug()}?v{$wa->version()}{/if}"></script>
