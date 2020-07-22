@@ -280,7 +280,8 @@
                             [`Contractor`]
                         </div>
                         <div class="value">
-                            <input type="text" data-cash-contractor value="{$transaction->contractor->getName()|escape}" placeholder="[`Name of a company or a person`]">
+                            <i class="icon16 userpic20" style="background-image: url(/wa-content/img/userpic20.jpg);" data-cash-default-url="/wa-content/img/userpic20.jpg"></i>
+                            <input type="search" name="contractor" data-cash-contractor value="{$transaction->contractor->getName()|escape}">
                             <input type="hidden" name="transaction[contractor_contact_id]" value="{$transaction->contractor->getId()|default:0}">
                             <br>
                             <span class="hint">[`Search for existing contact or enter any new contact name.`]</span>

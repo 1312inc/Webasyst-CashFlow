@@ -94,3 +94,4 @@ h1 .icon16.c-repeating { width: 24px; height: 24px; }
 /*.ui-autocomplete .ui-menu-item { padding: 0 !important; }*/
 /*.ui-autocomplete .ui-menu-item-wrapper { padding: 8px !important; display: block; }*/
 /*.ui-autocomplete .ui-menu-item-wrapper.ui-state-active { background: #58a8f8; }*/
+.c-autocomplete-item {}

@@ -16,6 +16,7 @@ class cashTransactionSaveController extends cashJsonController
         $repeating = waRequest::post('repeating', [], waRequest::TYPE_ARRAY);
         $isRepeating = waRequest::post('is_repeating', 0, waRequest::TYPE_INT);
         $categoryType = waRequest::post('category_type', cashCategory::TYPE_INCOME, waRequest::TYPE_STRING_TRIM);
+        $contractor = waRequest::post('contractor', '', waRequest::TYPE_STRING_TRIM);
 
         $isNew = empty($data['id']);
         $newTransactionIds = [];
@@ -34,6 +35,14 @@ class cashTransactionSaveController extends cashJsonController
         $paramsDto = new cashTransactionSaveParamsDto();
         $paramsDto->transfer = $transfer;
         $paramsDto->categoryType = $categoryType;
+
+        if (empty($data['contractor_contact_id']) && !empty($contractor)) {
+            $newContractor = new waContact();
+            $newContractor->set('name', $contractor);
+            $newContractor->save();
+            $data['contractor_contact_id'] = $newContractor->getId();
+        }
+
         if (!$saver->populateFromArray($transaction, $data, $paramsDto)) {
             $this->errors[] = $saver->getError();
 
