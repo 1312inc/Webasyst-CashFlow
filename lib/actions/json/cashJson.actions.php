@@ -44,4 +44,17 @@ class cashJsonActions extends kmwaWaJsonActions
             $this->response = _w('Any date in the past or in the future');
         }
     }
+
+    public function contactAutocompleteAction()
+    {
+        $this->response = [];
+        try {
+            $term = waRequest::get('term', '', waRequest::TYPE_STRING_TRIM);
+            if ($term) {
+                $this->response = (new cashAutocomplete())->findContacts($term, 10);
+            }
+        } catch (Exception $exception) {
+            // tsss.. silence
+        }
+    }
 }
