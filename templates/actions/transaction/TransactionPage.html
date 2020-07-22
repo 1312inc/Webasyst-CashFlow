@@ -35,13 +35,11 @@
                         <li>
                             {if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT}
                             <a href="#"
-                               class="gray"
                                data-cash-action="account-dialog" data-cash-account-id="{$filter->id}"
                             ><i class="icon16 settings"></i>[`Account settings`]</a>
                             {/if}
                             {if $filter->type == cashTransactionPageFilterDto::FILTER_CATEGORY && !$filter->entity->isSystem()}
                             <a href="#"
-                               class="gray"
                                data-cash-action="category-dialog" data-cash-category-id="{$filter->id}"
                             ><i class="icon16 settings"></i>[`Category settings`]</a>
                             {/if}
@@ -82,7 +80,7 @@
             {if $listSettings->showOnHandsEndday}
                 <div class="block align-right">
 
-                    {sprintf('[`<b>Forecast for %s</b> (in %s):`]', $endDate|wa_date:humandate, $selectedForecastPeriod->getName() )}
+                    {sprintf('[`<b>Forecasted cash on hand in %s</b> (%s):`]', $selectedForecastPeriod->getName(), $endDate|wa_date:humandate )}
 
                     {foreach $onHandsEndday as $onHand}
                         <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
