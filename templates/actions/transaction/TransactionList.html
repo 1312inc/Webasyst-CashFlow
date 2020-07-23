@@ -102,7 +102,7 @@
 {if $upcoming}
     <tr class="white c-table-divider c-planned">
         <td class="min-width"><input type="checkbox" value="0"></td>
-        <td colspan="2">
+        <td colspan="3">
             <h5 class="heading nowrap">
                 [`Upcoming`]
                 {if $selectedForecastPeriod}<span class="hint">{$selectedForecastPeriod->getName()}</span>{/if}
@@ -144,6 +144,7 @@
                     <i class="shortener"></i>
                 </div>
             </td>
+            <td class="min-width">{if rand(0,1)}<i class="icon16 userpic20" title="CONTRACTOR NAME"></i>{/if}</td>
             <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
             <td class="align-right"><em class="hint nowrap">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %d days`]', $_days_diff)}{/if}</em>&nbsp;<strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if} title="[`Amount`]">{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
             <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
@@ -153,7 +154,7 @@
 
     {if $upcomingOnDate}
     <tr class="white c-planned c-totals">
-        <td colspan="7" class="align-center">
+        <td colspan="8" class="align-center">
             {if $selectedForecastPeriod}<p>{sprintf('[`Total for the next %s (until %s):`]', {$selectedForecastPeriod->getName()}, {$selectedForecastPeriod->getDateAsString()|wa_date:humandate})}</p>{/if}
             {foreach $upcomingOnDate as $onDateStat}
             <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
@@ -175,7 +176,7 @@
 {if $completed}
     <tr class="white c-table-divider">
         <td class="min-width"><input type="checkbox" value="0"></td>
-        <td colspan="2">
+        <td colspan="3">
             <h5 class="heading nowrap">
                 {if $selectedChartPeriod}{$selectedChartPeriod->getName()}{else}[`Completed`]{/if},
                 {sprintf('[`%d transactions`]', $pagination->getTotalRows())}
@@ -218,6 +219,7 @@
                 <i class="shortener"></i>
             </div>
         </td>
+        <td class="min-width">{if rand(0,1)}<i class="icon16 userpic20" title="CONTRACTOR NAME"></i>{/if}</td>
         <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
         <td class="align-right"><strong class="nowrap" title="[`Amount`]"{if $t->category} style="color: {$t->category->color};"{/if}>{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
         <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
@@ -227,7 +229,7 @@
 
 {if $completedOnDate}
     <tr class="white c-totals">
-        <td colspan="7" class="align-center">
+        <td colspan="8" class="align-center">
             <p>{sprintf('[`Total for the selected period (%s, %d transactions):`]', $selectedChartPeriod->getName(), $pagination->getTotalRows() )}</p>
             {foreach $completedOnDate as $onDateStat}
             <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
