@@ -7,9 +7,10 @@ class cashRightConfig extends waRightConfig
 {
     const CAN_ACCESS_ACCOUNT = 'can_access_account';
 
-    const RIGHT_FULL_ACCESS          = 99;
-    const RIGHT_ADD_TRANSACTION_ONLY = 1;
-    const RIGHT_NONE                 = 0;
+    const RIGHT_FULL_ACCESS                 = 99;
+    const RIGHT_ADD_VIEW_ALLOWED_CATEGORIES = 2;
+    const RIGHT_ADD_ONLY                    = 1;
+    const RIGHT_NONE                        = 0;
 
     /**
      * @var int
@@ -65,15 +66,16 @@ class cashRightConfig extends waRightConfig
 
         $this->addItem(
             self::CAN_ACCESS_ACCOUNT,
-            _w('Can access account'),
+            _w('Accounts'),
             'selectlist',
             [
                 'items' => $items,
                 'position' => 'right',
                 'options' => [
                     self::RIGHT_NONE => _w('No access'),
-                    self::RIGHT_ADD_TRANSACTION_ONLY => _w('Add transactions only'),
-                    self::RIGHT_FULL_ACCESS => _w('Full access'),
+                    self::RIGHT_ADD_ONLY => _w('Add & edit self-created transactions only'),
+                    self::RIGHT_ADD_VIEW_ALLOWED_CATEGORIES => _w('Add, edit & view transactions created by others'),
+                    self::RIGHT_FULL_ACCESS => _w('Full access: see the account balance & manage settings'),
                 ],
             ]
         );
