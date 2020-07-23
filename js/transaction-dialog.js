@@ -118,37 +118,13 @@ var CashTransactionDialog = (function ($) {
 
                 $dialogWrapper.find('select').trigger('change.cash');
 
-                $contractorAutocomplete.autocomplete({
-                    source: function (request, response) {
-                        $.getJSON('?module=json&action=contactAutocomplete', request, function (r) {
-                            response(r.data);
-                        });
-                    },
-                    delay: 300,
-                    minLength: 3,
-                    select: function (event, ui) {
-                        $contractor.val(ui.item.id);
-                        return false;
-                    },
-                    focus: function (event, ui) {
-                        this.value = ui.item.name;
-                        return false;
-                    }
-                });
-                $contractorAutocomplete.on('change.cash', function (e) {
-                    if (!$(this).val().trim()) {
-                        $contractor.val(0);
-                    }
-                });
-                $contractorAutocomplete.data('ui-autocomplete')._renderItem = function (ul, item) {
-                    return $("<li>")
-                        .append(item.label)
-                        .appendTo(ul);
-                };
-
                 if ($contractorAutocomplete.length) {
-                    var selected = null,
-                        $pic = $contractorAutocomplete.closest('.value').find('i.userpic20');
+                    var newContact = false,
+                        selectedContact = '',
+                        $pic = $contractorAutocomplete.closest('.value').find('i.userpic20'),
+                        $hint = $contractorAutocomplete.closest('.value').find('.hint'),
+                        newContactHint = $_('New contact will be created'),
+                        searchContactHint = $_('Search for existing contact or enter any new contact name.');
 
                     $contractorAutocomplete.autocomplete({
                         source: function (request, response) {
@@ -157,26 +133,40 @@ var CashTransactionDialog = (function ($) {
                             });
                         },
                         delay: 300,
-                        minLength: 3,
+                        minLength: 1,
                         select: function (event, ui) {
                             $pic.css('background-image', 'url(' + ui.item.photo_url + ')');
-                            selected = ui.item.id;
-                            $contractor.val(selected);
+                            newContact = false;
+                            selectedContact = ui.item.name;
+                            $contractor.val(ui.item.id);
+                            $hint.text('');
+                            this.value = ui.item.name;
+
                             return false;
                         },
-                        focus: function (event, ui) {
-                            this.value = ui.item.name;
-                            return false;
-                        }
+                        // focus: function (event, ui) {
+                        //     this.value = ui.item.name;
+                        //     return false;
+                        // }
                     });
                     $contractorAutocomplete.on('keyup.cash, change.cash', function (e) {
-                        if (!$(this).val().trim()) {
+                        var val = $(this).val().trim();
+
+                        if (val !== selectedContact) {
+                            selectedContact = '';
                             $contractor.val(0);
+                            newContact = true;
+                            $hint.text(newContactHint);
                             $pic.css('background-image', 'url(' + $pic.data('cash-default-url') + ')');
+                        }
+
+                        if (!val) {
+                            newContact = false;
+                            $hint.text(searchContactHint);
                         }
                     });
                     $contractorAutocomplete.data('ui-autocomplete')._renderItem = function (ul, item) {
-                        return $('<li style="c-autocomplete-item">')
+                        return $('<li class="c-autocomplete-item">')
                             .append(item.label)
                             .appendTo(ul);
                     };

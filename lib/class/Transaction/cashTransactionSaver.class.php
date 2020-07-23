@@ -183,7 +183,7 @@ class cashTransactionSaver extends cashEntitySaver
 
         $data['amount'] = cashHelper::parseFloat($data['amount']);
         if (empty($data['contractor_contact_id'])) {
-            unset($data['contractor_contact_id']);
+            $data['contractor_contact_id'] = null;
         }
 
         return true;
