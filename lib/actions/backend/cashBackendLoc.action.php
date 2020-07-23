@@ -31,7 +31,9 @@ class cashBackendLocAction extends cashViewAction
             'Start repeat',
             'Date',
             'Save %d transactions',
-            'Delete %s transactions'
+            'Delete %s transactions',
+            'New contact will be created',
+            'Search for existing contact or enter any new contact name.'
         ];
         foreach ($translates as $s) {
             $strings[$s] = _w($s);
