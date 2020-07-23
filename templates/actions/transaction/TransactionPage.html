@@ -80,7 +80,7 @@
             {if $listSettings->showOnHandsEndday}
                 <div class="block align-right">
 
-                    {sprintf('[`<b>Forecasted cash on hand in %s</b> (%s):`]', $selectedForecastPeriod->getName(), $endDate|wa_date:humandate )}
+                    {sprintf('[`<b>Cash on hand in %s</b> (%s):`]', $selectedForecastPeriod->getName(), $endDate|wa_date:humandate )}
 
                     {foreach $onHandsEndday as $onHand}
                         <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
