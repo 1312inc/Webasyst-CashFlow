@@ -57,4 +57,24 @@ class cashJsonActions extends kmwaWaJsonActions
             // tsss.. silence
         }
     }
+
+    public function checkShopCurrencyAction()
+    {
+        $account = waRequest::post('account', null, waRequest::TYPE_INT);
+        $account = cash()->getEntityRepository(cashAccount::class)->findById($account);
+        if (!$account instanceof cashAccount) {
+            $this->errors = _w('No account');
+
+            return;
+        }
+
+        $shopIntegration = new cashShopIntegration();
+        if ($shopIntegration->shopExists()) {
+            if (!(new shopCurrencyModel())->getById($account->getCurrency())) {
+                $this->errors = _w('Dude..');
+
+                return;
+            }
+        }
+    }
 }

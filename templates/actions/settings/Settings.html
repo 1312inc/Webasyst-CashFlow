@@ -48,6 +48,7 @@
                                     {/foreach}
                                 </select>
                                 <p class="hint">{sprintf('[`In case of different currencies for orders and the account, an order amount will be converted to the selected account currency according to the conversion rate defined <a href="%s">in Shop-Script settings</a>.`]', $wa_backend_url|cat:'shop/?action=settings#/currencies/')}</p>
+                                {if !$shopCurrencyExists}<p class="errormsg">[`Dude..`]</p>{/if}
                             </div>
                         </div>
 
@@ -302,6 +303,17 @@
                 })
                 .on('change.cash', '[name="shopscript_settings[enableForecast]"]', function (e) {
                     $ssform.find('[data-cash-settings="forecast-variants"]').toggle($(this).is(':checked'));
+                })
+                .on('change.cash', '[ name="shopscript_settings[accountId]"]', function (e) {
+                    var $this = $(this),
+                        $error = $this.closest('.field').find('.errormsg');
+
+                    $error.hide();
+                    $.post('?module=json&action=checkShopCurrency', { account: $this.val() }, function (r) {
+                        if (r.status === 'fail') {
+                            $error.text(r.errors).show();
+                        }
+                    }, 'json')
                 })
             ;
         }
