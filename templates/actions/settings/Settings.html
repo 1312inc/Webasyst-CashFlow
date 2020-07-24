@@ -279,7 +279,8 @@
                         $button.after($saved);
                         setTimeout(function () {
                             $saved.remove();
-                        }, 3131.2);
+                            $.cash_routing.redispatch();
+                        }, 131.2);
                     })
                 })
                 .on('click.cash', '[data-cash-shop-configure-actions]', function (e) {
