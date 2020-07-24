@@ -48,7 +48,7 @@
                                     {/foreach}
                                 </select>
                                 <p class="hint">{sprintf('[`In case of different currencies for orders and the account, an order amount will be converted to the selected account currency according to the conversion rate defined <a href="%s">in Shop-Script settings</a>.`]', $wa_backend_url|cat:'shop/?action=settings#/currencies/')}</p>
-                                {if !$shopCurrencyExists}<p class="errormsg">[`Dude..`]</p>{/if}
+                                {if !$shopCurrencyExists}<p class="errormsg">[`The currency of the selected account is not defined in Shop-Script settings. Conversion won’t work well.`]</p>{/if}
                             </div>
                         </div>
 
