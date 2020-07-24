@@ -57,7 +57,7 @@ class cashGraphService
             return new cashGraphPeriodVO($stored['type'], $stored['value']);
         }
 
-        return new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -90);
+        return new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, -365);
     }
 
     /**
@@ -72,7 +72,7 @@ class cashGraphService
             return new cashGraphPeriodVO($stored['type'], $stored['value']);
         }
 
-        return new cashGraphPeriodVO(cashGraphPeriodVO::MONTH_PERIOD, 1);
+        return new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, 180);
     }
 
     /**
