@@ -160,7 +160,7 @@
                                 })
                             ;
 
-                            if (!$dialogWrapper.find('.c-account-icon-list .selected').length) {
+                            if (!$dialogWrapper.find('.c-account-icon-list .selected').length && !$dialogWrapper.find('[name="account[icon_link]"]').val()) {
                                 $dialogWrapper.find('.c-account-icon-list [data-cash-account-icon]:first').trigger('click.cash');
                             }
 

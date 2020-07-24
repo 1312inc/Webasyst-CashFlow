@@ -55,7 +55,7 @@
                             </div>
                             <span class="small">[`Or enter any icon image URL (an image will be scaled to 16x16 pixels in size):`]</span>
                             <br>
-                            <input type="text" name="account[icon_link]" value="{$account->iconLink}" style="width: 80%; margin-top: 8px;" placeholder="https://" />
+                            <input type="text" name="account[icon_link]" value="{$account->iconLink|escape}" style="width: 80%; margin-top: 8px;" placeholder="https://" />
                         </div>
                     </div>
                 </div>
