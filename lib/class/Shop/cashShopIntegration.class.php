@@ -18,6 +18,11 @@ class cashShopIntegration
     private $transactionFactory;
 
     /**
+     * @var shopCurrencyModel
+     */
+    private $shopCurrencyModel;
+
+    /**
      * cashShopIntegration constructor.
      */
     public function __construct()
@@ -211,10 +216,7 @@ SQL;
 
         $amount = $this->calculateAvgBill($days);
         $defaultCurrency = wa('shop')->getConfig()->getCurrency();
-        if ($defaultCurrency != $account->getCurrency()) {
-            $currencyModel = new shopCurrencyModel();
-            $amount = $currencyModel->convert($amount, $defaultCurrency, $account->getCurrency());
-        }
+        $amount = $this->convert($amount, $defaultCurrency, $account->getCurrency());
 
         return $amount;
     }
@@ -454,6 +456,25 @@ SQL;
     }
 
     /**
+     * @param float  $amount
+     * @param string $from
+     * @param string $to
+     *
+     * @return mixed
+     */
+    public function convert($amount, $from, $to)
+    {
+        if ($from !== $to
+            && $this->getShopCurrencyModel()->getById($to)
+            && $this->getShopCurrencyModel()->getById($from)
+        ) {
+            $amount = $this->getShopCurrencyModel()->convert($amount, $from, $to);
+        }
+
+        return $amount;
+    }
+
+    /**
      * @throws waException
      */
     private function deleteFutureTransactions()
@@ -495,4 +516,17 @@ SQL;
             ]
         );
     }
+
+    /**
+     * @return shopCurrencyModel
+     */
+    private function getShopCurrencyModel(): shopCurrencyModel
+    {
+        if ($this->shopCurrencyModel === null) {
+            $this->shopCurrencyModel = new shopCurrencyModel();
+        }
+
+        return $this->shopCurrencyModel;
+    }
+
 }

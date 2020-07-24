@@ -73,13 +73,12 @@ class cashShopTransactionFactory
         ;
 
         // конвертнем валюту заказа в валюту аккаунта
-        if ($dto->order->currency !== $transaction->getAccount()->getCurrency()) {
-            $amount = (new shopCurrencyModel())->convert(
-                $amount,
-                $dto->order->currency,
-                $transaction->getAccount()->getCurrency()
-            );
-        }
+        $amount = (new cashShopIntegration())->convert(
+            $amount,
+            $dto->order->currency,
+            $transaction->getAccount()->getCurrency()
+        );
+
         $transaction->setAmount($amount);
 
         $dto->mainTransaction = $transaction;
@@ -132,13 +131,12 @@ class cashShopTransactionFactory
             );
 
         // конвертнем валюту заказа в валюту аккаунта
-        if ($dto->order->currency !== $transaction->getAccount()->getCurrency()) {
-            $amount = (new shopCurrencyModel())->convert(
-                $amount,
-                $dto->order->currency,
-                $transaction->getAccount()->getCurrency()
-            );
-        }
+        $amount = (new cashShopIntegration())->convert(
+            $amount,
+            $dto->order->currency,
+            $transaction->getAccount()->getCurrency()
+        );
+
         $transaction->setAmount(-$amount);
 
         $dto->purchaseTransaction = $transaction;
@@ -188,13 +186,12 @@ class cashShopTransactionFactory
             );
 
         // конвертнем валюту заказа в валюту аккаунта
-        if ($dto->order->currency !== $transaction->getAccount()->getCurrency()) {
-            $amount = (new shopCurrencyModel())->convert(
-                $amount,
-                $dto->order->currency,
-                $transaction->getAccount()->getCurrency()
-            );
-        }
+        $amount = (new cashShopIntegration())->convert(
+            $amount,
+            $dto->order->currency,
+            $transaction->getAccount()->getCurrency()
+        );
+
         $transaction->setAmount(-$amount);
 
         $dto->shippingTransaction = $transaction;
@@ -244,13 +241,12 @@ class cashShopTransactionFactory
             );
 
         // конвертнем валюту заказа в валюту аккаунта
-        if ($dto->order->currency !== $transaction->getAccount()->getCurrency()) {
-            $amount = (new shopCurrencyModel())->convert(
-                $amount,
-                $dto->order->currency,
-                $transaction->getAccount()->getCurrency()
-            );
-        }
+        $amount = (new cashShopIntegration())->convert(
+            $amount,
+            $dto->order->currency,
+            $transaction->getAccount()->getCurrency()
+        );
+
         $transaction->setAmount(-$amount);
 
         $dto->shippingTransaction = $transaction;
@@ -380,5 +376,21 @@ class cashShopTransactionFactory
     private function generateExternalHash(shopOrder $order, $type, $amount)
     {
         return md5(sprintf('%s/%s/%s', $order->getId(), $type, $amount));
+    }
+
+    /**
+     * @param float  $amount
+     * @param string $from
+     * @param string $to
+     *
+     * @return mixed
+     */
+    public function convert($amount, $from, $to)
+    {
+        if ($from !== $to && $this->currencyModel->getById($from)) {
+            $amount = $this->currencyModel->convert($amount, $from, $to);
+        }
+
+        return $amount;
     }
 }
