@@ -71,7 +71,7 @@ class cashJsonActions extends kmwaWaJsonActions
         $shopIntegration = new cashShopIntegration();
         if ($shopIntegration->shopExists()) {
             if (!(new shopCurrencyModel())->getById($account->getCurrency())) {
-                $this->errors = _w('Dude..');
+                $this->errors = _w('The currency of the selected account is not defined in Shop-Script settings. Conversion won’t work well.');
 
                 return;
             }
