@@ -25,7 +25,6 @@ class cashRepeatTransactionRepeater extends waEventHandler
         $transRep = cash()->getEntityRepository(cashTransaction::class);
         $repeater = new cashTransactionRepeater();
 
-        /** @var cashRepeatingTransaction $transaction */
         foreach ($trans as $transaction) {
             try {
                 cash()->getLogger()->debug(
@@ -39,7 +38,11 @@ class cashRepeatTransactionRepeater extends waEventHandler
                 $lastT = $transRep->findLastByRepeatingId($transaction->getId());
                 $date = $lastT instanceof cashTransaction ? $lastT->getDate() : $transaction->getDataField('last_transaction_date');
 
-                $repeater->repeat($transaction, new DateTime($date));
+                $startDate = new DateTime($date);
+                // но начать надо со следующей итерации, так как у нас уже есть "последняя" повторяющаяся транзакция
+                $startDate->modify(sprintf('+%d %s', $transaction->getRepeatingFrequency(), $transaction->getRepeatingInterval()));
+
+                $repeater->repeat($transaction, $startDate);
             } catch (Exception $ex) {
                 cash()->getLogger()->error(
                     sprintf('Can`t extend repeating transaction #%d', $transaction->getId()),

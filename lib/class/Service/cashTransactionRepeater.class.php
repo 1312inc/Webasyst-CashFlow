@@ -110,15 +110,15 @@ final class cashTransactionRepeater
         $date = max(new DateTime(), clone $startDate);
         switch ($transaction->getRepeatingInterval()) {
             case cashRepeatingTransaction::INTERVAL_DAY:
-                $date->modify('+1 year');
+                $date->modify('+3 year');
                 break;
 
             case cashRepeatingTransaction::INTERVAL_WEEK:
-                $date->modify('+60 weeks');
+                $date->modify('+160 weeks');
                 break;
 
             case cashRepeatingTransaction::INTERVAL_MONTH:
-                $date->modify('+12 months');
+                $date->modify('+36 months');
                 break;
 
             case cashRepeatingTransaction::INTERVAL_YEAR:

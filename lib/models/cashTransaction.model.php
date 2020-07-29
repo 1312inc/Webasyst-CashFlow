@@ -1002,4 +1002,28 @@ SQL;
             )
             ->fetchAll('date', 2);
     }
+
+    /**
+     * @param int $repeatingId
+     *
+     * @return bool|resource
+     */
+    public function deleteAllRepeating($repeatingId)
+    {
+        return $this->deleteByField('repeating_id', $repeatingId);
+    }
+
+    /**
+     * @param int $repeatingId
+     * @param int $transactionId
+     *
+     * @return bool|resource
+     */
+    public function deleteAllRepeatingAfterTransaction($repeatingId, $transactionId)
+    {
+        return $this->exec(
+            'delete from cash_transaction where repeating_id = i:rid and id > i:tid',
+            ['rid' => $repeatingId, 'tid' => $transactionId]
+        );
+    }
 }

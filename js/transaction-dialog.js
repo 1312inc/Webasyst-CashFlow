@@ -72,14 +72,17 @@ var CashTransactionDialog = (function ($) {
                     .on('click.cash', '[name="repeating[apply_to_all_in_future]"]', function (e) {
                         // $dialogWrapper.find('[data-cash-repeating-settings]').toggle();
                         var $submit = $dialogWrapper.find('[type="submit"]'),
-                            $delete = $dialogWrapper.find('[data-cash-action="delete-transaction"]');
+                            $delete = $dialogWrapper.find('[data-cash-action="delete-transaction"]'),
+                            $date = $dialogWrapper.find('[name="transaction[date]"]');
 
                         if ($(this).is(':checked')) {
                             $submit.val($submit.data('cash-repeating-transaction-text'));
                             $delete.find('span').text($delete.data('cash-repeating-transaction-text'));
+                            $date.prop('disabled', true);
                         } else {
                             $submit.val($submit.data('cash-transaction-text'));
                             $delete.find('span').text($delete.data('cash-transaction-text'));
+                            $date.prop('disabled', false);
                         }
                     })
                     .on('change.cash', '[name="transaction[amount]"]', function (e) {

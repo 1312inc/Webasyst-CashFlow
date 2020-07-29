@@ -22,6 +22,8 @@ class cashTransactionSaveController extends cashJsonController
         $newTransactionIds = [];
 
         $saver = new cashTransactionSaver();
+        $repeatingDto = new cashRepeatingTransactionSettingsDto($repeating);
+        $isRepeating = $isRepeating || $repeatingDto->apply_to_all_in_future;
 
         /** @var cashTransaction $transaction */
         if (!empty($data['id'])) {
@@ -43,18 +45,23 @@ class cashTransactionSaveController extends cashJsonController
             $data['contractor_contact_id'] = $newContractor->getId();
         }
 
+        // не обновлять дату если применяется ко всем следующим повторяющимся транзакциям
+        if ($repeatingDto->apply_to_all_in_future) {
+            $data['date'] = $transaction->getDate();
+        }
+
         if (!$saver->populateFromArray($transaction, $data, $paramsDto)) {
             $this->errors[] = $saver->getError();
 
             return;
         }
+
         if ($paramsDto->transfer) {
             $transferTransaction = $saver->createTransfer($transaction, $paramsDto);
         }
 
         // @todo: только ад и боль ждут дальше
-        $repeatingDto = new cashRepeatingTransactionSettingsDto($repeating);
-        if ($isRepeating || $repeatingDto->apply_to_all_in_future) {
+        if ($isRepeating) {
             $repeatTransactionSaver = new cashRepeatingTransactionSaver();
             $transactionRepeater = new cashTransactionRepeater();
 
@@ -96,26 +103,34 @@ class cashTransactionSaveController extends cashJsonController
             $repeatingTransaction = $transaction->getRepeatingTransaction();
             kmwaAssert::instance($repeatingTransaction, cashRepeatingTransaction::class);
 
-            $repeatingSaveResult = $repeatTransactionSaver->saveExisting(
-                $repeatingTransaction,
-                $transaction,
-                $repeatingDto
+            $repeatingTransaction
+                ->setAccountId($transaction->getAccountId())
+                ->setCategoryId($transaction->getCategoryId())
+                ->setDescription($transaction->getDescription())
+                ->setAmount($transaction->getAmount())
+                ->setContractorContactId($transaction->getContractorContactId());
+            $saver->addToPersist($repeatingTransaction);
+
+            $transactions = cash()->getEntityRepository(cashTransaction::class)->findAllByRepeatingIdAndAfterDate(
+                $repeatingTransaction->getId(),
+                $transaction->getDate()
             );
+            foreach ($transactions as $t) {
+                $t
+                    ->setAccountId($transaction->getAccountId())
+                    ->setCategoryId($transaction->getCategoryId())
+                    ->setDescription($transaction->getDescription())
+                    ->setAmount($transaction->getAmount())
+                    ->setContractorContactId($transaction->getContractorContactId());
 
-            if (!$repeatingSaveResult->ok) {
-                throw new kmwaRuntimeException('Error on repeating transaction save');
+                $saver->addToPersist($t);
             }
 
-            // изменились настройки повторения и вернулся новый объект повторяющейся транзакции
-            if ($repeatingSaveResult->shouldRepeat) {
-                $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
-                if ($newTransactions) {
-                    foreach ($newTransactions as $newTransaction) {
-                        $newTransactionIds[$newTransaction->getId()] = true;
-                    }
-                    wa()->getStorage()->set('cash_just_saved_transactions', $newTransactionIds);
-                }
+            $saved = $saver->persistTransactions();
+            foreach ($saved as $item) {
+                $newTransactionIds[$item->getId()] = true;
             }
+            wa()->getStorage()->set('cash_just_saved_transactions', $newTransactionIds);
 
             return;
         }
@@ -131,6 +146,6 @@ class cashTransactionSaveController extends cashJsonController
         }
 
         wa()->getStorage()->set('cash_just_saved_transactions', $newTransactionIds);
-        waLog::dump($newTransactionIds, 'krll.log');
+//        waLog::dump($newTransactionIds, 'krll.log');
     }
 }

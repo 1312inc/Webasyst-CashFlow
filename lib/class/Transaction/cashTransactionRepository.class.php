@@ -156,15 +156,4 @@ class cashTransactionRepository extends cashBaseRepository
             false
         );
     }
-
-    /**
-     * @param int $repeatingId
-     *
-     * @return bool|resource
-     * @throws waException
-     */
-    public function deleteAllRepeating($repeatingId)
-    {
-        return $this->getModel()->deleteByField('repeating_id', $repeatingId);
-    }
 }
