@@ -475,6 +475,17 @@ SQL;
     }
 
     /**
+     * @param cashRepeatingTransaction $transaction
+     *
+     * @return bool
+     */
+    public function isShopForecastRepeatingTransaction(cashRepeatingTransaction $transaction): bool
+    {
+        return $transaction->getExternalSource() === 'shop'
+            && $transaction->getExternalHash() === cashShopTransactionFactory::HASH_FORECAST;
+    }
+
+    /**
      * @throws waException
      */
     private function deleteFutureTransactions()
@@ -528,5 +539,4 @@ SQL;
 
         return $this->shopCurrencyModel;
     }
-
 }
