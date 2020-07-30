@@ -73,12 +73,16 @@ var CashTransactionDialog = (function ($) {
                         // $dialogWrapper.find('[data-cash-repeating-settings]').toggle();
                         var $submit = $dialogWrapper.find('[type="submit"]'),
                             $delete = $dialogWrapper.find('[data-cash-action="delete-transaction"]'),
-                            $date = $dialogWrapper.find('[name="transaction[date]"]');
+                            $date = $dialogWrapper.find('[name="transaction[date]"]'),
+                            oldDate = $date.data('cash-date');
 
                         if ($(this).is(':checked')) {
                             $submit.val($submit.data('cash-repeating-transaction-text'));
                             $delete.find('span').text($delete.data('cash-repeating-transaction-text'));
-                            $date.prop('disabled', true);
+                            $date
+                                .prop('disabled', true)
+                                .val(oldDate)
+                                .trigger('change.cash');
                         } else {
                             $submit.val($submit.data('cash-transaction-text'));
                             $delete.find('span').text($delete.data('cash-transaction-text'));
