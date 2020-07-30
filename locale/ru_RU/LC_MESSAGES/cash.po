@@ -1,0 +1,893 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cash\n"
+"POT-Creation-Date: 2020-07-30 10:21+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: cash\n"
+"Language-Team: cash\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: utf-8\n"
+"Language: ru_RU\n"
+"X-Generator: Poedit 2.3\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: .\n"
+
+msgid "Total"
+msgstr "Итого"
+
+msgid "prev"
+msgstr "пред"
+
+msgid "next"
+msgstr "след"
+
+msgid "Show"
+msgstr "Показывать"
+
+msgid "at page"
+msgstr "на странице"
+
+msgid "Sorry. You are not allowed to see anything on this page."
+msgstr "Сорян. Вам не разрешено ничего видеть на этой странице."
+
+msgid "Move %d transactions"
+msgstr "Переместить %d операций"
+
+msgid "Account"
+msgstr "Счет"
+
+msgid "Don’t change"
+msgstr "Не менять"
+
+msgid "Category"
+msgstr "Статья"
+
+msgid "No category"
+msgstr "Без статьи"
+
+msgid "Income"
+msgstr "Доход"
+
+msgid "Expense"
+msgstr "Расход"
+
+msgid "Please be sure to select <b>the right account and the right category type applicable to all selected transactions</b> to avoid wrong currency conversion effects."
+msgstr ""
+
+msgid "Update %d transactions"
+msgstr "Обновить %d операций"
+
+msgid "or"
+msgstr "или"
+
+msgid "cancel"
+msgstr "отменить"
+
+msgid "Edit transaction"
+msgstr "Редактировать операцию"
+
+msgid "New income"
+msgstr "Добавить доход"
+
+msgid "New expense"
+msgstr "Добавить расход"
+
+msgid "New transfer"
+msgstr "Перевод"
+
+msgid "Apply changes to"
+msgstr "Применить"
+
+msgid "This transaction only"
+msgstr "Только к этой операции"
+
+msgid "This & all related future recurring transactions (%d)"
+msgstr "К этой и всем будущим повторениям (%d)"
+
+msgid "Amount"
+msgstr "Сумма"
+
+msgid "Date"
+msgstr "Дата"
+
+msgid "Type"
+msgstr "Тип"
+
+msgid "One time"
+msgstr "Единоразовая"
+
+msgid "Repeating"
+msgstr "Регулярная"
+
+msgid "Apply changes to all %d future recurring transactions"
+msgstr ""
+
+msgid "Repeat"
+msgstr "Повторять"
+
+msgid "Custom..."
+msgstr "Настроить…"
+
+msgid "Every"
+msgstr "Каждый"
+
+msgid "End repeat"
+msgstr "Окончание"
+
+msgid "occurrences"
+msgstr "раз"
+
+msgid "From"
+msgstr "От"
+
+msgid "To"
+msgstr "До"
+
+msgid "Incoming amount"
+msgstr "Сумма поступления"
+
+msgid "You are about to make a transfer from one currency to another. Please enter the right incoming amount to make sure the conversion rate is right."
+msgstr "Вы делаете перевод из одной валюты в другую. Укажите правильную сумму поступления согласно текущему курсу валют."
+
+msgid "Contractor"
+msgstr "Контрагент"
+
+msgid "Search for existing contact or enter any new contact name."
+msgstr "Свяжите с существующим контактом или создайте нового."
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "Optional"
+msgstr "Не обязательно"
+
+msgid "Delete transaction"
+msgstr "Удалить операцию"
+
+msgid "Delete %s transactions"
+msgstr "Удалить %s операций"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Save %d transactions"
+msgstr "Сохранить %d операций"
+
+msgid "Delete %d transactions"
+msgstr "Удалить %d операций"
+
+msgid "Transactions will be permanently deleted without the ability to restore. Are you sure?"
+msgstr "Операции будут удалены без возможности восстановления. Вы уверены?"
+
+msgid "Show next %s (%d transactions)"
+msgstr "Показать план на %s (%d операций)"
+
+msgid "Add income"
+msgstr "Добавить доход"
+
+msgid "Add expense"
+msgstr "Добавить расход"
+
+msgid "Transfer"
+msgstr "Перевод"
+
+msgid "Select template"
+msgstr ""
+
+msgid "Manage templates"
+msgstr ""
+
+msgid "Filter"
+msgstr "Поиск"
+
+msgid "Move"
+msgstr "Переместить"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Unselect all"
+msgstr "Снять выделение"
+
+msgid "No activity in the selected period. Create a transaction to get started!"
+msgstr "В указанный период операций не производилось. Добавьте операцию для начала работы!"
+
+msgid "Summary"
+msgstr "Краткое описание"
+
+msgid "Balance"
+msgstr "Баланс"
+
+msgid "Upcoming"
+msgstr "План"
+
+msgid "Export upcoming"
+msgstr "Экспорт запланированных операций"
+
+msgid "Repeating transaction"
+msgstr "Повторяющаяся операция"
+
+msgid "Tomorrow"
+msgstr "Завтра"
+
+msgid "In %d days"
+msgstr "Через %d дней"
+
+msgid "Account balance"
+msgstr "Остаток на счете"
+
+msgid "Total for the next %s (until %s):"
+msgstr "Итого за следующие %s (до %s):"
+
+msgid "Completed"
+msgstr "Выполнено"
+
+msgid "%d transactions"
+msgstr "%d операций"
+
+msgid "Export transactions"
+msgstr "Экспорт операций"
+
+msgid "Total for the selected period (%s, %d transactions):"
+msgstr "Итого за выбранный период (%s, %d операций):"
+
+msgid "%d transactions per page"
+msgstr "%d операций на странице"
+
+msgid "No category (income)"
+msgstr "Без статьи (доход)"
+
+msgid "No category (expense)"
+msgstr "Без статьи (расход)"
+
+msgid "Cash on hand today"
+msgstr "Деньги сегодня"
+
+msgid "Account settings"
+msgstr "Настройки счета"
+
+msgid "Category settings"
+msgstr "Настройки статьи"
+
+msgid "Past"
+msgstr "Прошлое"
+
+msgid "Select dates..."
+msgstr "Выбрать даты…"
+
+msgid "Future"
+msgstr "Будущее"
+
+msgid "<b>Cash on hand in %s</b> (%s):"
+msgstr "<b>Деньги через %s</b> (%s):"
+
+msgid "Settings"
+msgstr "Настройки"
+
+msgid "Shop-Script &rarr; Cash"
+msgstr ""
+
+msgid "Shop-Script 8.0 or newer is required. Please install the latest Shop-Script update via the Installer app to enable sales import and Shop-Script &times; Cash integration."
+msgstr ""
+
+msgid "Enabling Shop-Script integration allows you to automatically import sales (paid orders) data into the Cash app and to forecast your future cash balance."
+msgstr ""
+
+msgid "Enabled"
+msgstr "Включен"
+
+msgid "In case of different currencies for orders and the account, an order amount will be converted to the selected account currency according to the conversion rate defined <a href=\"%s\">in Shop-Script settings</a>."
+msgstr ""
+
+msgid "The currency of the selected account is not defined in Shop-Script settings. Conversion won’t work well."
+msgstr ""
+
+msgid "Categories"
+msgstr "Статьи"
+
+msgid "Sales (paid orders)"
+msgstr "Продажи (оплаченные заказы)"
+
+msgid "Configure pay actions"
+msgstr "Настроить по действиям"
+
+msgid "Select Shop-Script order actions which are directly associated with marking orders as paid. The Cash app will listen only to the selected list of order actions for importing sales:"
+msgstr ""
+
+msgid "For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options."
+msgstr ""
+
+msgid "Refunds"
+msgstr "Возвраты"
+
+msgid "Configure refund actions"
+msgstr "Настроить действия возвратов"
+
+msgid "Select Shop-Script order actions which are related with issueing refunds (cancelling orders that had been paid in the past):"
+msgstr ""
+
+msgid "Product purchases"
+msgstr "Закуп"
+
+msgid "Don’t import"
+msgstr "Не импортировать"
+
+msgid "Enabling the setting will automatically add expense transactions based on purchase price of all ordered products. Useful if you have 'purchase price' field defined for most products in Shop-Script and you don't wish to manually add product purchase transations in the Cash app."
+msgstr ""
+
+msgid "Shipping costs"
+msgstr "Доставка"
+
+msgid "Enabling the setting will automatically add expense transactions based on shipping costs for each order."
+msgstr ""
+
+msgid "Taxes"
+msgstr "Налоги"
+
+msgid "Enabling the setting will automatically add expense transactions based on tax amount for each order."
+msgstr ""
+
+msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then use <a href=\"%s\">this re-import tool</a>."
+msgstr ""
+
+msgid "Forecasted sales"
+msgstr "Прогноз продаж"
+
+msgid "Enable average forecasted sales (recommended)"
+msgstr "Включить прогноз продаж на основе исторических данных (рекомендуется)"
+
+msgid "<b>Works like magic!</b> Average daily sales will be automatically added as planned transactions for better budget forecasting. When a new day comes, forecasted sales for this day will be cleared automatically and replaced with real sales (paid orders) data."
+msgstr ""
+
+msgid "Calculate average daily sales automatically (≈{$avg}/day based on the data for the last 30 days)"
+msgstr ""
+
+msgid "Enter manually:"
+msgstr "Ввести вручную:"
+
+msgid "%s/day"
+msgstr "%s в день"
+
+msgid "Order log"
+msgstr "Журнал"
+
+msgid "Record logged transactions in Shop-Script order log"
+msgstr "Фиксировать добавленные транзакции в журнале действий с заказом"
+
+msgid "Category name"
+msgstr "Название статьи"
+
+msgid "Category type"
+msgstr "Тип статьи"
+
+msgid "Color"
+msgstr "Цвет"
+
+msgid "Delete category"
+msgstr "Удалить статью"
+
+msgid "Cash on hand"
+msgstr "Деньги"
+
+msgid "New account"
+msgstr "Новый счет"
+
+msgid "New income category"
+msgstr "Новая статья доходов"
+
+msgid "Expenses"
+msgstr "Расходы"
+
+msgid "New expense category"
+msgstr "Новая статья расходов"
+
+msgid "Other"
+msgstr "Другие"
+
+msgid "Transfers"
+msgstr "Переводы"
+
+msgid "Clear import history"
+msgstr "Очистить историю импортов"
+
+msgid "Import history"
+msgstr "История импортов"
+
+msgid "Cash flow"
+msgstr "Движение средств"
+
+msgid "Calendar"
+msgstr "Календарь"
+
+msgid "Customers"
+msgstr "Покупатели"
+
+msgid "Import"
+msgstr "Импорт"
+
+msgid "All accounts"
+msgstr "Все счета"
+
+msgid "Chart"
+msgstr "График"
+
+msgid "Last 365 days"
+msgstr "Последние 365 дней"
+
+msgid "Last %d days"
+msgstr "Последние %d дней"
+
+msgid "Last 3 years"
+msgstr "Последние 3 года"
+
+msgid "All time"
+msgstr "Все время"
+
+msgid "Forecast"
+msgstr "Прогноз"
+
+msgid "3 months"
+msgstr "3 месяца"
+
+msgid "None"
+msgstr "Нет"
+
+msgid "1 month"
+msgstr "1 месяц"
+
+msgid "6 months"
+msgstr "6 месяцев"
+
+msgid "12 months"
+msgstr "12 месяцев"
+
+msgid "Export"
+msgstr "Экспорт"
+
+msgid "CSV"
+msgstr "CSV"
+
+msgid "Cash on hand on %s"
+msgstr ""
+
+msgid "Total income: <b>%s</b> / Total expense: <b>%s</b>"
+msgstr ""
+
+msgid "Let the cash flow!"
+msgstr ""
+
+msgid "Start forecasting your cash flow by importing sales data from Shop-Script and setting your average expenses categories — and the app will do the rest."
+msgstr ""
+
+msgid "Import from Shop-Script"
+msgstr ""
+
+msgid "<strong>You have %d paid orders</strong> in your Shop-Script online store beginning on %s."
+msgstr ""
+
+msgid "Import them into the Cash Flow app to quickly understand and forecast your cash flow."
+msgstr ""
+
+msgid "Enter average income manually"
+msgstr ""
+
+msgid "%s / mo"
+msgstr "%s в месяц"
+
+msgid "Set your average monthly recurring expenses to initially make the financial model more precise:"
+msgstr ""
+
+msgid "Salary"
+msgstr "Зарплаты"
+
+msgid "Purchases & Supplies"
+msgstr ""
+
+msgid "Rent"
+msgstr "Аренда"
+
+msgid "Marketing"
+msgstr "Маркетинг"
+
+msgid "Don’t worry — you’ll be able to add, edit, delete, or finetune income and expenses later."
+msgstr ""
+
+msgid "Import all %d paid orders data from Shop-Script"
+msgstr ""
+
+msgid "skip the import and start with a simple demo account"
+msgstr ""
+
+msgid "Importing 1K+ orders may take few minutes to complete."
+msgstr ""
+
+msgid "You'll be able to import sales data from Shop-Script or a CSV file any time later."
+msgstr ""
+
+msgid "Importing..."
+msgstr ""
+
+msgid "Finalizing..."
+msgstr ""
+
+msgid "Done"
+msgstr "Готово"
+
+msgid "Account name"
+msgstr "Название счета"
+
+msgid "Currency"
+msgstr "Валюта"
+
+msgid "Changing currency will automatically convert all transactions to the new currency (no exchange rate will be applied)."
+msgstr ""
+
+msgid "Icon"
+msgstr "Иконка"
+
+msgid "Or enter any icon image URL (an image will be scaled to 16x16 pixels in size):"
+msgstr ""
+
+msgid "Delete account"
+msgstr "Удалить счет"
+
+msgid "We’ve recognized <b>%d rows</b> in the uploaded CSV file. Here is the preview:"
+msgstr ""
+
+msgid "Looks like something was not properly recognized in the uploaded file. To try another encoding or a delimeter, please reload the page."
+msgstr ""
+
+msgid "Showing all rows"
+msgstr "Показаны все строки"
+
+msgid "Showing first %d rows only"
+msgstr "Показаны первые %d строк"
+
+msgid "Configure how these rows should be imported as transactions:"
+msgstr ""
+
+msgid "Account & currency"
+msgstr "Счет и валюта"
+
+msgid "All imported transactions:"
+msgstr "Все операции:"
+
+msgid "Set according to the value in the following column:"
+msgstr "В зависимости от значения:"
+
+msgid "Detect automatically"
+msgstr "Определить автоматически"
+
+msgid "Custom"
+msgstr "Настроить"
+
+msgid "From the single column:"
+msgstr "Из одного столбца:"
+
+msgid "From two different columns:"
+msgstr "Из двух разных столбцов:"
+
+msgid "Set depending on the amount:"
+msgstr "В зависимости от суммы:"
+
+msgid "Income (amount > 0)"
+msgstr "Доход (сумма > 0)"
+
+msgid "Expenses (amount < 0)"
+msgstr "Расход (сумма < 0)"
+
+msgid "Duplicates"
+msgstr "Дубли"
+
+msgid "Skip a row if same ACCOUNT && CATEGORY && DATE && AMOUNT pair already exist"
+msgstr ""
+
+msgid "Recommended to be on just to make sure all obvious duplicates will be skipped. Though, this depends on the data you are about to import."
+msgstr ""
+
+msgid "Import %s transactions"
+msgstr ""
+
+msgid "Select a file."
+msgstr ""
+
+msgid "Preview & configure."
+msgstr ""
+
+msgid "Import!"
+msgstr ""
+
+msgid "Encoding"
+msgstr ""
+
+msgid "Delimeter"
+msgstr ""
+
+msgid "Select file"
+msgstr ""
+
+msgid "Supported file formats: <b>%s</b>"
+msgstr ""
+
+msgid "Sales"
+msgstr "Продажи"
+
+msgid "Investment"
+msgstr "Инвестиции"
+
+msgid "Loan"
+msgstr "Займ"
+
+msgid "Cashback"
+msgstr "Кешбек"
+
+msgid "Unexpected profit"
+msgstr "Халтурка"
+
+msgid "Purchase"
+msgstr "Закупки"
+
+msgid "Delivery"
+msgstr "Доставка"
+
+msgid "Errand"
+msgstr "Командировки"
+
+msgid "Loan payout"
+msgstr "Возврат долга"
+
+msgid "Commission"
+msgstr "Комиссионные"
+
+msgid "Dividend"
+msgstr "Выплата дивидендов"
+
+msgid "Refund"
+msgstr "Возвраты"
+
+msgid "Tax"
+msgstr "Налоги"
+
+msgid "Unexpected loss"
+msgstr "Просто убыток"
+
+msgid "Accounts"
+msgstr "Счета"
+
+msgid "No access"
+msgstr "Нет доступа"
+
+msgid "Add & edit self-created transactions only"
+msgstr ""
+
+msgid "Add, edit & view transactions created by others"
+msgstr ""
+
+msgid "Full access: see the account balance & manage settings"
+msgstr ""
+
+msgid "Error while deleting transaction"
+msgstr ""
+
+msgid "You can`t do anything with system categories"
+msgstr ""
+
+msgid "Some error on category save"
+msgstr ""
+
+msgid "Error while deleting category"
+msgstr ""
+
+msgid "Today"
+msgstr "Сегодня"
+
+msgid "Yesterday"
+msgstr "Вчера"
+
+msgid "Any date in the past or in the future"
+msgstr ""
+
+msgid "No account"
+msgstr ""
+
+msgid "%d days ago"
+msgstr "%d дней назад"
+
+msgid "No settings to export CSV"
+msgstr ""
+
+msgid "Error while updating account"
+msgstr ""
+
+msgid "No import id"
+msgstr ""
+
+msgid "No import found"
+msgstr ""
+
+msgid "Account not found"
+msgstr ""
+
+msgid "Category not found"
+msgstr ""
+
+msgid "Import not found"
+msgstr ""
+
+msgid "Import #%s"
+msgstr ""
+
+msgid "expense"
+msgstr ""
+
+msgid "income"
+msgstr ""
+
+msgid "Account balance zero"
+msgstr ""
+
+msgid "Wrong filter type"
+msgstr ""
+
+msgid "No amount"
+msgstr ""
+
+msgid "No incoming transfer amount specified"
+msgstr ""
+
+msgid "No transaction date specified"
+msgstr ""
+
+msgid "No amount specified"
+msgstr ""
+
+msgid "No account selected"
+msgstr ""
+
+msgid "Order %s"
+msgstr "Заказ %s"
+
+msgid "Last"
+msgstr ""
+
+msgid "%d %s"
+msgstr "%d %s"
+
+msgid "Transaction contractor"
+msgstr ""
+
+msgid "Transaction author"
+msgstr ""
+
+msgid "Empty category name"
+msgstr ""
+
+msgid "New category"
+msgstr ""
+
+msgid "Order %s by %s"
+msgstr ""
+
+msgid "day"
+msgstr "день"
+
+msgid "week"
+msgstr "неделя"
+
+msgid "month"
+msgstr "месяц"
+
+msgid "year"
+msgstr "год"
+
+msgid "Every day"
+msgstr "Каждый день"
+
+msgid "Every week"
+msgstr "Каждая неделя"
+
+msgid "Every month"
+msgstr "Каждый месяц"
+
+msgid "Every year"
+msgstr "Каждый год"
+
+msgid "Never"
+msgstr "Никогда"
+
+msgid "After"
+msgstr "После"
+
+msgid "On date"
+msgstr "До указанной даты"
+
+msgid "No app access"
+msgstr ""
+
+msgid "No account name"
+msgstr ""
+
+msgid "Empty account name"
+msgstr ""
+
+msgid "No account currency"
+msgstr ""
+
+msgid "Files with extension .%s are not allowed to security considerations."
+msgstr ""
+
+msgid "File is image."
+msgstr ""
+
+msgid "Failed to upload file %s."
+msgstr ""
+
+msgid "Temp path is not writable"
+msgstr ""
+
+msgid "Some rows seem to contain non-numerical data"
+msgstr ""
+
+msgid "This column has too many unique values, so that import conditions setup seems not applicable here"
+msgstr ""
+
+msgid "This column has no unique values, so that import conditions setup seems not applicable here"
+msgstr ""
+
+msgid "<b>Only %d out of %d rows in the file have this column defined.</b> Remaining <span class=\"highlighted\">%d rows have an undefined value</span> and thus will be skipped. Please make sure the right column is selected."
+msgstr ""
+
+msgid "Some dates do not have proper delimiter"
+msgstr ""
+
+msgid "Some dates might be in the wrong format"
+msgstr ""
+
+msgid "The column %s contains no dates in the selected format"
+msgstr ""
+
+msgid "Error on csv processing"
+msgstr ""
+
+msgid "No data columns were located in the uploaded file. Make sure right separator and encoding were chosen for this upload."
+msgstr ""
+
+msgid "Semicolon"
+msgstr ""
+
+msgid "Comma"
+msgstr ""
+
+msgid "Tab"
+msgstr ""
+
+msgid "No amount column"
+msgstr ""
+
+msgid "No account column"
+msgstr ""
+
+msgid "No date column"
+msgstr ""
+
+msgid "Expected %s. Got %s"
+msgstr ""
+
+msgid "Variable %s should be greater then %s"
+msgstr ""
+
+msgid "Variable %s should be greater or equal then %s"
+msgstr ""
+
+msgid "Not found"
+msgstr ""
+
+msgid "Not implemented for now"
+msgstr ""
+
+msgid "Access denied"
+msgstr ""
