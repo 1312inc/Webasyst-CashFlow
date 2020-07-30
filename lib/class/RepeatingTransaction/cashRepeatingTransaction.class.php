@@ -193,7 +193,7 @@ class cashRepeatingTransaction extends cashTransaction
     /**
      * @return array
      */
-    public static function getRepeatingIntervals()
+    public static function getRepeatingIntervals(): array
     {
         return [
             self::INTERVAL_DAY => _w('day'),
@@ -206,12 +206,12 @@ class cashRepeatingTransaction extends cashTransaction
     /**
      * @return array
      */
-    public static function getRepeatingEveryIntervals()
+    public static function getRepeatingEveryIntervals(): array
     {
         return [
+            self::INTERVAL_MONTH => _w('Every month'),
             self::INTERVAL_DAY => _w('Every day'),
             self::INTERVAL_WEEK => _w('Every week'),
-            self::INTERVAL_MONTH => _w('Every month'),
             self::INTERVAL_YEAR => _w('Every year'),
         ];
     }
@@ -219,7 +219,7 @@ class cashRepeatingTransaction extends cashTransaction
     /**
      * @return array
      */
-    public static function getRepeatingEndTypes()
+    public static function getRepeatingEndTypes(): array
     {
         return [
             self::REPEATING_END_NEVER => _w('Never'),
@@ -231,7 +231,7 @@ class cashRepeatingTransaction extends cashTransaction
     /**
      * @return string
      */
-    public function getRepeatingEndType()
+    public function getRepeatingEndType(): string
     {
         return $this->repeating_end_type;
     }
