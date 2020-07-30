@@ -28,22 +28,32 @@
                 {/if}
             </h1>
             <div class="fields form">
-                <div class="field-group">
-                    {if !$transaction->id}
-                    <div class="field">
-                        <div class="name">[`Type`]</div>
-                        <div class="value">
-                            <ul class="menu-h c-onetime-repeating-toggle">
-                                <li><span>[`One time`]</span></li>
-                                <li>
-                                    <input type="hidden" name="is_repeating" value="0"/>
-                                    <input type="checkbox" id="c-transaction-type" name="is_repeating" value="1"/>
-                                </li>
-                                <li><span class="gray">[`Repeating`]</span></li>
-                            </ul>
+                {if $repeatingTransaction->id && ($repeatingTransaction->occurrences_in_future || $repeatingTransaction->repeating_end_type == cashRepeatingTransaction::REPEATING_END_NEVER) && $repeatingTransaction->occurrences_in_future > 1}
+                    {* editing existing transaction *}
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">
+                                [`Apply changes to`]
+                            </div>
+                            <div class="value no-shift">
+                                <label>
+                                    <input type="radio" selected="selected "/>
+                                    [`This transaction only`]
+                                </label>
+                                <span class="hint"></span>
+                            </div>
+                            <div class="value no-shift">
+                                <label>
+                                    <input type="radio" selected="selected "/>
+                                    {sprintf('[`This & all related future recurring transactions (%d)`]', $repeatingTransaction->occurrences_in_future - 1)}
+                                </label>
+                                <span class="hint"></span>
+                            </div>
                         </div>
                     </div>
-                    {/if}
+                {/if}
+
+                <div class="field-group">
 
                     <div class="field">
                         <div class="name nowrap">
@@ -77,14 +87,30 @@
                         </div>
                     </div>
 
-                    {if $repeatingTransaction->id && ($repeatingTransaction->occurrences_in_future || $repeatingTransaction->repeating_end_type == cashRepeatingTransaction::REPEATING_END_NEVER)}
+                    {if !$transaction->id}
+                    <div class="field" style="padding-top: 6px;">
+                        <div class="name">[`Type`]</div>
+                        <div class="value">
+                            <ul class="menu-h c-onetime-repeating-toggle">
+                                <li><span>[`One time`]</span></li>
+                                <li>
+                                    <input type="hidden" name="is_repeating" value="0"/>
+                                    <input type="checkbox" id="c-transaction-type" name="is_repeating" value="1"/>
+                                </li>
+                                <li><span class="gray">[`Repeating`]</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    {/if}
+
+                    {if $repeatingTransaction->id && ($repeatingTransaction->occurrences_in_future || $repeatingTransaction->repeating_end_type == cashRepeatingTransaction::REPEATING_END_NEVER) && $repeatingTransaction->occurrences_in_future > 1}
                     {* editing existing transaction *}
                     <div class="field">
                         <div class="value no-shift">
                             <label>
                                 <input type="hidden" name="repeating[apply_to_all_in_future]" value="0"/>
                                 <input type="checkbox" name="repeating[apply_to_all_in_future]" value="1"/>
-                                {sprintf('[`Update all %d future recurring transactions too`]', $repeatingTransaction->occurrences_in_future)}
+                                {sprintf('[`Apply changes to all %d future recurring transactions`]', $repeatingTransaction->occurrences_in_future)}
                             </label>
                             <span class="hint"></span>
                         </div>

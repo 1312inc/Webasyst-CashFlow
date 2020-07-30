@@ -159,7 +159,7 @@
             {foreach $upcomingOnDate as $onDateStat}
             <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
                 {foreach $onDateStat->stat as $statOnDate}
-                <strong class="nowrap" style="color: {$onDateStat->category->color};">{round($statOnDate->stat->summary,2)|wa_format_number:false} {$statOnDate->currency->getSign()}</strong>
+                <strong class="nowrap" style="color: {$onDateStat->category->color};">{if $statOnDate->stat->summary>0}+{elseif $statOnDate->stat->summary<0}&minus;{/if} {round(abs($statOnDate->stat->summary),2)|wa_format_number:false} {$statOnDate->currency->getSign()}</strong>
                 {if !$statOnDate@last}+{/if}
                 {/foreach}
             </span>
@@ -234,7 +234,7 @@
             {foreach $completedOnDate as $onDateStat}
             <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
                 {foreach $onDateStat->stat as $statOnDate}
-                <strong class="nowrap" style="color: {$onDateStat->category->color};">{round($statOnDate->stat->summary,2)|wa_format_number:false} {$statOnDate->currency->getSign()}</strong>
+                <strong class="nowrap" style="color: {$onDateStat->category->color};">{if $statOnDate->stat->summary>0}+{elseif $statOnDate->stat->summary<0}&minus;{/if} {round(abs($statOnDate->stat->summary),2)|wa_format_number:false} {$statOnDate->currency->getSign()}</strong>
                 {if !$statOnDate@last}+{/if}
                 {/foreach}
             </span>
