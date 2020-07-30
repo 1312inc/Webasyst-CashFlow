@@ -85,7 +85,7 @@ final class cashTransactionRepeater
      * @throws kmwaAssertException
      * @throws waException
      */
-    private function createNextTransaction(cashRepeatingTransaction $transaction, array $data, DateTime $startDate)
+    private function createNextTransaction(cashRepeatingTransaction $transaction, array $data, DateTime $startDate): cashTransaction
     {
         $data['date'] = $startDate->format('Y-m-d H:i:s');
         $t = $this->transactionSaver->populateFromArray(
@@ -94,7 +94,21 @@ final class cashTransactionRepeater
             new cashTransactionSaveParamsDto()
         );
 
-        $startDate->modify(sprintf('+%d %s', $transaction->getRepeatingFrequency(), $transaction->getRepeatingInterval()));
+        if ($transaction->getRepeatingInterval() === cashRepeatingTransaction::INTERVAL_MONTH) {
+            $monthCount = $transaction->getRepeatingFrequency();
+            $nextDate = clone $startDate;
+            $dayOfMonth = (new DateTime($transaction->getDate()))->format('j');
+            if ($dayOfMonth > 28 && $nextDate->modify("last day of {$monthCount} month")->format('j') < $dayOfMonth) {
+                $startDate->modify("last day of {$monthCount} month");
+            } else {
+                $startDate->modify("+{$monthCount} month");
+                $startDate->setDate($startDate->format('Y'), $startDate->format('n'), $dayOfMonth);
+            }
+        } else {
+            $startDate->modify(
+                sprintf('+%d %s', $transaction->getRepeatingFrequency(), $transaction->getRepeatingInterval())
+            );
+        }
 
         return $t;
     }
@@ -105,7 +119,7 @@ final class cashTransactionRepeater
      *
      * @return DateTime
      */
-    private function getEndDateForNeverEndByDefault(cashRepeatingTransaction $transaction, DateTime $startDate)
+    private function getEndDateForNeverEndByDefault(cashRepeatingTransaction $transaction, DateTime $startDate): DateTime
     {
         $date = max(new DateTime(), clone $startDate);
         switch ($transaction->getRepeatingInterval()) {

@@ -38,9 +38,16 @@ class cashRepeatTransactionRepeater extends waEventHandler
                 $lastT = $transRep->findLastByRepeatingId($transaction->getId());
                 $date = $lastT instanceof cashTransaction ? $lastT->getDate() : $transaction->getDataField('last_transaction_date');
 
+                if (!$date) {
+                    $date = $transaction->getDate();
+                }
                 $startDate = new DateTime($date);
-                // но начать надо со следующей итерации, так как у нас уже есть "последняя" повторяющаяся транзакция
-                $startDate->modify(sprintf('+%d %s', $transaction->getRepeatingFrequency(), $transaction->getRepeatingInterval()));
+                if ($lastT) {
+                    // но начать надо со следующей итерации, так как у нас уже есть "последняя" повторяющаяся транзакция
+                    $startDate->modify(
+                        sprintf('+%d %s', $transaction->getRepeatingFrequency(), $transaction->getRepeatingInterval())
+                    );
+                }
 
                 $repeater->repeat($transaction, $startDate);
             } catch (Exception $ex) {
