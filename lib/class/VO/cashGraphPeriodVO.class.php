@@ -57,14 +57,38 @@ class cashGraphPeriodVO implements JsonSerializable
                 $this->period = self::YEARS_PERIOD;
                 break;
 
-            default:
-                $last = '';
+            case self::DAYS_PERIOD:
+                $typeStr = _w('day', 'days', abs($value));
                 if ($value < 0) {
-                    $last = _w('Last ');
+                    $this->name = _w('Last %d', abs($value)) . ' ' . $typeStr;
+                } else {
+                    $this->name = abs($value). ' ' . $typeStr;
                 }
                 $this->period = $type;
+                break;
 
-                $this->name = $last.sprintf_wp('%d %s', abs($value), $type);
+            case self::MONTH_PERIOD:
+                $typeStr = _w('month', 'months', abs($value));
+                if ($value < 0) {
+                    $this->name = _w('Last %d', abs($value)) . ' ' . $typeStr;
+                } else {
+                    $this->name = abs($value). ' ' . $typeStr;
+                }
+                $this->period = $type;
+                break;
+
+            case self::YEARS_PERIOD:
+                $typeStr = _w('year', 'years', abs($value));
+                if ($value < 0) {
+                    $this->name = _w('Last %d', abs($value)) . ' ' . $typeStr;
+                } else {
+                    $this->name = abs($value). ' ' . $typeStr;
+                }
+                $this->period = $type;
+                break;
+
+            default:
+                throw new kmwaRuntimeException(sprintf('Unknown graph period type %s', $type));
         }
 
         $this->value = $value;
