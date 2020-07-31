@@ -772,16 +772,25 @@ msgid "Order %s by %s"
 msgstr ""
 
 msgid "day"
-msgstr ""
+msgid_plural "days"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 msgid "week"
 msgstr ""
 
 msgid "month"
-msgstr ""
+msgid_plural "months"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 msgid "year"
-msgstr ""
+msgid_plural "years"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 msgid "Every day"
 msgstr ""
@@ -889,4 +898,10 @@ msgid "Not implemented for now"
 msgstr ""
 
 msgid "Access denied"
+msgstr ""
+
+msgid "Last %d"
+msgstr ""
+
+msgid "Last %d %s"
 msgstr ""
