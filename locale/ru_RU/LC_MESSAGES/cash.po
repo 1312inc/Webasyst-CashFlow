@@ -50,7 +50,7 @@ msgid "No category"
 msgstr "Без статьи"
 
 msgid "Income"
-msgstr "Доход"
+msgstr "Доходы"
 
 msgid "Expense"
 msgstr "Расход"
@@ -167,10 +167,10 @@ msgid "Show next %s (%d transactions)"
 msgstr "Показать план на %s (%d операций)"
 
 msgid "Add income"
-msgstr "Добавить доход"
+msgstr "Доход"
 
 msgid "Add expense"
-msgstr "Добавить расход"
+msgstr "Расход"
 
 msgid "Transfer"
 msgstr "Перевод"
@@ -269,10 +269,10 @@ msgid "Settings"
 msgstr "Настройки"
 
 msgid "Shop-Script &rarr; Cash"
-msgstr ""
+msgstr "Shop-Script &rarr; Cash"
 
 msgid "Shop-Script 8.0 or newer is required. Please install the latest Shop-Script update via the Installer app to enable sales import and Shop-Script &times; Cash integration."
-msgstr ""
+msgstr "Требуется Shop-Script 8.0 или новее. Обновите Shop-Script в «Инсталлере» и попробуйте импортировать операции по заказам еще раз."
 
 msgid "Enabling Shop-Script integration allows you to automatically import sales (paid orders) data into the Cash app and to forecast your future cash balance."
 msgstr ""
@@ -386,7 +386,7 @@ msgid "New expense category"
 msgstr "Новая статья расходов"
 
 msgid "Other"
-msgstr "Другие"
+msgstr "Прочее"
 
 msgid "Transfers"
 msgstr "Переводы"
@@ -452,7 +452,7 @@ msgid "CSV"
 msgstr "CSV"
 
 msgid "Cash on hand on %s"
-msgstr ""
+msgstr "Деньги %s"
 
 msgid "Total income: <b>%s</b> / Total expense: <b>%s</b>"
 msgstr ""
@@ -593,25 +593,25 @@ msgid "Import %s transactions"
 msgstr ""
 
 msgid "Select a file."
-msgstr ""
+msgstr "Выбрать файл."
 
 msgid "Preview & configure."
-msgstr ""
+msgstr "Настроить параметры импорта."
 
 msgid "Import!"
-msgstr ""
+msgstr "Импортировать!"
 
 msgid "Encoding"
-msgstr ""
+msgstr "Кодировка"
 
 msgid "Delimeter"
-msgstr ""
+msgstr "Разделитель"
 
 msgid "Select file"
-msgstr ""
+msgstr "Выбрать файл"
 
 msgid "Supported file formats: <b>%s</b>"
-msgstr ""
+msgstr "Поддерживаемые форматы: <b>%s</b>"
 
 msgid "Sales"
 msgstr "Продажи"
@@ -773,16 +773,25 @@ msgid "Order %s by %s"
 msgstr ""
 
 msgid "day"
-msgstr "день"
+msgid_plural "days"
+msgstr[0] "день"
+msgstr[1] "дня"
+msgstr[2] "дней"
 
 msgid "week"
 msgstr "неделя"
 
 msgid "month"
-msgstr "месяц"
+msgid_plural "months"
+msgstr[0] "месяц"
+msgstr[1] "месяца"
+msgstr[2] "месяцев"
 
 msgid "year"
-msgstr "год"
+msgid_plural "years"
+msgstr[0] "год"
+msgstr[1] "года"
+msgstr[2] "лет"
 
 msgid "Every day"
 msgstr "Каждый день"
@@ -891,3 +900,9 @@ msgstr ""
 
 msgid "Access denied"
 msgstr ""
+
+msgid "Last %d"
+msgstr "Последние %d"
+
+msgid "Last %d %s"
+msgstr "Последние %d %s"
