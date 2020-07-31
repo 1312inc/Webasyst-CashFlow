@@ -16,28 +16,26 @@ class cashBackendLocAction extends cashViewAction
 
         // Application locale strings
         $translates = [
-            'The transaction will be permanently deleted. Are you sure?',
-            'DANGER: This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?',
-            'DANGER: This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?',
-            'Save all',
-            'Save',
-            'Delete transactions?',
-            'Delete transaction?',
-            'Clear import history (don’t worry, imported transactions will not be affected)?',
-            'New income category: ',
-            'New expense category: ',
-            'Enter format',
-            'transactions',
-            'Start repeat',
-            'Date',
-            'Save %d transactions',
-            'Delete %s transactions',
-            'New contact will be created',
-            'Search for existing contact or enter any new contact name.'
+            _w('The transaction will be permanently deleted. Are you sure?'),
+            _w('DANGER: This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?'),
+            _w('DANGER: This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?'),
+            _w('Save all'),
+            _w('Save'),
+            _w('Delete transactions?'),
+            _w('Delete transaction?'),
+            _w('Clear import history (don’t worry, imported transactions will not be affected)?'),
+            _w('New income category: '),
+            _w('New expense category: '),
+            _w('Enter format'),
+            _w('transactions'),
+            _w('Start repeat'),
+            _w('Date'),
+            _w('Save %d transactions'),
+            _w('Delete %s transactions'),
+            _w('New contact will be created'),
+            _w('Search for existing contact or enter any new contact name.'),
+            _w('Skip rows with this value')
         ];
-        foreach ($translates as $s) {
-            $strings[$s] = _w($s);
-        }
 
         $this->view->assign(
             'strings',
