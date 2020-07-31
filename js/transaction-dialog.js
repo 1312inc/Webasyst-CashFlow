@@ -127,21 +127,13 @@ var CashTransactionDialog = (function ($) {
 
                 if ($contractorAutocomplete.length) {
                     var newContact = false,
+                        somethingFound = true,
                         selectedContact = '',
                         $pic = $contractorAutocomplete.closest('.value').find('i.userpic20'),
                         $hint = $contractorAutocomplete.closest('.value').find('.hint'),
                         newContactHint = $_('New contact will be created'),
-                        searchContactHint = $_('Search for existing contact or enter any new contact name.');
-
-                    $contractorAutocomplete.autocomplete({
-                        source: function (request, response) {
-                            $.getJSON('?module=json&action=contactAutocomplete', request, function (r) {
-                                response(r.data);
-                            });
-                        },
-                        delay: 300,
-                        minLength: 1,
-                        select: function (event, ui) {
+                        searchContactHint = $_('Search for existing contact or enter any new contact name.'),
+                        selectItem = function (event, ui) {
                             $pic.css('background-image', 'url(' + ui.item.photo_url + ')');
                             newContact = false;
                             selectedContact = ui.item.name;
@@ -150,16 +142,25 @@ var CashTransactionDialog = (function ($) {
                             this.value = ui.item.name;
 
                             return false;
+                        };
+
+                    $contractorAutocomplete.autocomplete({
+                        source: function (request, response) {
+                            $.getJSON('?module=json&action=contactAutocomplete', request, function (r) {
+                                response(r.data);
+                                somethingFound = !!r.data.length;
+                                $contractorAutocomplete.trigger('change.cash');
+                            });
                         },
-                        // focus: function (event, ui) {
-                        //     this.value = ui.item.name;
-                        //     return false;
-                        // }
+                        delay: 300,
+                        minLength: 1,
+                        select: selectItem,
+                        focus: selectItem
                     });
                     $contractorAutocomplete.on('keyup.cash, change.cash', function (e) {
                         var val = $(this).val().trim();
 
-                        if (val !== selectedContact) {
+                        if (val !== selectedContact && !somethingFound) {
                             selectedContact = '';
                             $contractor.val(0);
                             newContact = true;
