@@ -136,6 +136,11 @@ class cashShopSettings implements JsonSerializable
     private $categoryRepository;
 
     /**
+     * @var bool
+     */
+    private $firstTime = true;
+
+    /**
      * cashShopScriptSettings constructor.
      */
     public function __construct()
@@ -145,6 +150,11 @@ class cashShopSettings implements JsonSerializable
             $this->settingsModel->get(cashConfig::APP_ID, 'shopscript_integration'),
             true
         ) ?: [];
+
+        $this->firstTime = filter_var(
+            $this->settingsModel->get(cashConfig::APP_ID, 'shopscript_integration_first_time', true),
+            FILTER_VALIDATE_BOOLEAN
+        );
         $this->load($this->savedSettings);
         $statData = json_decode($this->settingsModel->get(cashConfig::APP_ID, 'shopscript_stat'), true) ?: [];
         $this->todayTransactions = ifset($statData, 'today_transactions', date('Y-m-d'), $this->todayTransactions);
@@ -305,6 +315,15 @@ class cashShopSettings implements JsonSerializable
         );
     }
 
+    public function saveFirstTime()
+    {
+        $this->settingsModel->set(
+            cashConfig::APP_ID,
+            'shopscript_integration_first_time',
+            (int)$this->isFirstTime()
+        );
+    }
+
     public function saveStat()
     {
         $this->settingsModel->set(
@@ -317,6 +336,13 @@ class cashShopSettings implements JsonSerializable
                 ]
             )
         );
+    }
+
+    public function resetSettings()
+    {
+        $this->settingsModel->del(cashConfig::APP_ID, 'shopscript_integration_first_time');
+        $this->settingsModel->del(cashConfig::APP_ID, 'shopscript_integration');
+        $this->settingsModel->del(cashConfig::APP_ID, 'shopscript_stat');
     }
 
     /**
@@ -558,6 +584,26 @@ class cashShopSettings implements JsonSerializable
     public function setCategoryTaxId($categoryTaxId)
     {
         $this->categoryTaxId = $categoryTaxId;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFirstTime(): bool
+    {
+        return $this->firstTime;
+    }
+
+    /**
+     * @param bool $firstTime
+     *
+     * @return cashShopSettings
+     */
+    public function setFirstTime(bool $firstTime): cashShopSettings
+    {
+        $this->firstTime = $firstTime;
 
         return $this;
     }

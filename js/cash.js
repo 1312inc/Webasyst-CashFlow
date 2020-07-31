@@ -5,7 +5,6 @@
         $loading: $('<i class="icon16 loading">'),
         $wa: null,
         $content: null,
-        $welcome: null,
         $sidebar: null,
         defaults: {
             isAdmin: false,
@@ -86,7 +85,6 @@
             self.$wa = $('#wa-app');
             self.$content = $('#cash-content');
             self.$sidebar = $('#cash-left-sidebar');
-            self.$welcome = $('#cash-welcome');
 
             self.handlers();
             self.sortable(self.$sidebar.find('[data-sortable-type]'));

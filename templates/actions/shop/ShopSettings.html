@@ -24,6 +24,7 @@
                     {/if}
 
                     <div class="fields-group"{if $shopIsOld} style="display: none;"{/if}>
+                        {if !$shopScriptSettings->isFirstTime()}
                         <div class="field">
                             <div class="name">[`Enabled`]</div>
                             <div class="value no-shift">
@@ -35,6 +36,7 @@
                                 />
                             </div>
                         </div>
+                        {/if}
                         <div class="field">
                             <div class="name">[`Account`]</div>
                             <div class="value no-shift">
@@ -160,11 +162,6 @@
                                 <span class="hint">[`Enabling the setting will automatically add expense transactions based on tax amount for each order.`]</span>
                                 <br><br>
                             </div>
-
-                            <div class="value small">
-                                <p>👆<em>{sprintf('[`All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then use <a href="%s">this re-import tool</a>.`]', '?welcome=shop')}</em></p>
-                            </div>
-
                         </div>
 
 
@@ -238,11 +235,41 @@
                         </div>
 
                         <div class="field">
+                            {if !$shopScriptSettings->isFirstTime()}
                             <div class="value submit">
                                 <br>
                                 <input type="submit" class="button green" value="[`Save`]" />
                             </div>
+
+                            <div class="value small" style="display: none;" data-cash-shop-rerun-message>
+                                <p>👆<em>{sprintf('[`All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then use <a href="%s" data-cash-shop-action="rerun-import">this re-import tool</a>.`]', '?module=shop&action=rerun')}</em></p>
+                            </div>
+
+                            {else}
+
+                            <div class="value c-csv-configurator" id="c-welcome-import">
+                                <br>
+                                <input type="button"
+                                       id="cash-welcome-shop-start"
+                                       class="button green"
+                                       value="{sprintf('[`Import %d paid orders`]', $ordersToImportCount)}"
+                                />
+                                <div class="progressbar green" style="display: none">
+                                    <div class="progressbar-outer"><div class="progressbar-inner" style="width: 0%;"></div></div>
+                                </div>
+                                {*<div data-cash-shop-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
+                                <div data-cash-shop-import-progress-errors style="display: none"></div>
+                                <div>
+                                    <span data-cash-shop-import-progress-icon="loading" style="display:none;"><i class="icon16 loading"></i> <span>[`Importing...`]</span></span>
+                                    <span data-cash-shop-import-progress-icon="success" style="display:none;"><i class="icon16 yes"></i> <span>[`Finalizing...`]</span></span>
+                                    <span data-cash-shop-import-progress-icon="error" style="display:none;"><i class="icon16 no"></i> <span>[`Done`]</span></span>
+                                </div>
+                            </div>
+                            {/if}
+
                         </div>
+
+
 
                     </div>
                     </form>
@@ -259,22 +286,26 @@
     </div>
 </div>
 
+<script type="text/javascript" src="{$wa_app_static_url}js/kmlongaction.js{if !waSystemConfig::isDebug()}?v{$wa->version()}{/if}"></script>
 <script>
     'use strict';
     (function () {
-        var $ssform = $('#cash-shopscript-settings');
+        var $ssform = $('#cash-shopscript-settings'),
+            formData = $ssform.serialize();
 
         if ($ssform.length) {
             $ssform
-                .on('submit.cash', function (e) {
+                .on('submit.cash', function (e, data) {
                     var $saved = $('<i class="icon16 yes"></i>'),
                         $loading = $('<i class="icon16 loading"></i>'),
                         $button = $ssform.find('[type="submit"]');
 
                     e.preventDefault();
 
+                    formData = $ssform.serialize();
+
                     $button.after($loading);
-                    $.post('?module=settings', $ssform.serialize(), function (html) {
+                    $.post('?module=shop&action=settings', formData, function (html) {
                         $loading.remove();
                         $button.after($saved);
                         setTimeout(function () {
@@ -316,7 +347,83 @@
                         }
                     }, 'json')
                 })
+                .on('change.cash', ':input', function (e) {
+                    $ssform.find('[data-cash-shop-rerun-message]').toggle(formData != $ssform.serialize());
+                })
+                .on('click.cash', '[data-cash-shop-action="rerun-import"]', function (e) {
+                    e.preventDefault();
+
+                    if (!confirm($_('Sure to delete all settings?'))) {
+                        return;
+                    }
+
+                    $.post('?module=shop&action=resetImport', { }, function (r) {
+                        $.cash_routing.redispatch();
+                    });
+                })
             ;
+
+            $ssform.find('select').trigger('change.cash');
+
+            $('#cash-welcome-shop-start').on('click.cash', function (e) {
+                e.preventDefault();
+                var $button = $(this),
+                    $progress = $('#c-welcome-import'),
+                    $progressBar = $progress.find('.progressbar'),
+                    $progressLoading = $progress.find('[data-cash-shop-import-progress-icon="loading"]'),
+                    $progressSuccess = $progress.find('[data-cash-shop-import-progress-icon="success"]'),
+                    $progressError = $progress.find('[data-cash-shop-import-progress-icon="error"]');
+
+                $.post('?module=shop&action=settings', $ssform.serialize(), function (r) {
+                    $button.prop('disabled', true).hide();
+                    var long = $.wa.kmLongAction();
+                    long.start({
+                        process_url: '?module=shop&action=importProcess',
+                        parallel: 2,
+                        debug: true,
+                        start: {
+                            onStart: function(r) {
+                                $progressBar.show();
+                                $button.hide();
+                                $progressLoading.show().siblings().hide();
+                            },
+                            onSuccess: function (r) {
+                                $progressBar.find('.progressbar-inner').css('width', '0%');
+                                // $transactionStat.show();
+                            },
+                            onError: function (r) {
+                                $progressError.show().siblings().hide();
+                                $progressError.find('span').text(r.error);
+                                $button.prop('disabled', false).show();
+                                // $transactionStat.hide();
+                            }
+                        },
+                        step: {
+                            onProgress: function(r) {
+                                $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
+                                // $transactionStat.show();
+                                // $transactionStat.find('span').text(r.transactions.ok);
+                                // $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
+                            },
+                            onReady: function (r) {
+                                $progressSuccess.show().siblings().hide();
+                                $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
+                                alert('done, redirect to app');
+                                {*window.location = '{$backend_url}';*}
+                                // $button.prop('disabled', false);
+                                // $transactionStat.show();
+                                // $transactionStat.find('span').text(r.transactions.ok);
+                                // $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
+                            },
+                            onError: function (r) {
+                                $progressError.show().siblings().hide();
+                                $progressError.find('span').text(r.error);
+                                $button.prop('disabled', false).show();
+                            }
+                        }
+                    });
+                });
+            })
         }
     }())
 </script>

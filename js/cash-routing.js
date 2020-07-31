@@ -152,9 +152,9 @@
         defaultAction: function () {
             this.accountAction(0);
         },
-        settingsAction: function () {
+        shopscriptAction: function () {
             var that = this;
-            $.get('?module=settings', function (html) {
+            $.get('?module=shop&action=settings', function (html) {
                 that.setContent(html);
             });
         },
@@ -223,8 +223,6 @@
             $.cash.$wa.trigger('postExecute.cash', {html: content});
         },
         preExecute: function () {
-            $.cash.$welcome.hide();
-
             var $h1 = $.cash.$content.find('h1:first');
 
             if ($h1.length) {

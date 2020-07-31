@@ -132,6 +132,7 @@ class cashFixtures
             $this->demoAccount = cash()->getEntityFactory(cashAccount::class)->createNew();
             $this->demoAccount
                 ->setName(_w('Demo account'))
+                ->setCurrency($this->currency)
                 ->setIcon('star');
             $this->perister->insert($this->demoAccount);
 

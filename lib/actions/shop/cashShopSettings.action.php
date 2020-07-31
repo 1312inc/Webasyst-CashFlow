@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class cashSettingsAction
+ * Class cashShopSettingsAction
  */
-class cashSettingsAction extends cashViewAction
+class cashShopSettingsAction extends cashViewAction
 {
     /**
      * @param null $params
@@ -56,10 +56,15 @@ class cashSettingsAction extends cashViewAction
             }
         }
 
-        /** @var cashAccount $account */
-        $account = cash()->getEntityRepository(cashAccount::class)->findById(
-            $shopIntegration->getSettings()->getAccountId()
-        );
+        if ($shopIntegration->getSettings()->getAccountId()) {
+            /** @var cashAccount $account */
+            $account = cash()->getEntityRepository(cashAccount::class)->findById(
+                $shopIntegration->getSettings()->getAccountId()
+            );
+        } else {
+            $account =cash()->getEntityRepository(cashAccount::class)->findFirst();
+            $shopIntegration->getSettings()->setAccountId($account->getId());
+        }
 
         $storefronts = [];
         $actions = [];
@@ -94,6 +99,7 @@ class cashSettingsAction extends cashViewAction
                         : cashCurrencyVO::fromWaCurrency(wa()->getLocale() === 'en_US' ? 'USD' : 'RUB')->getSignHtml()
                 ),
                 'shopCurrencyExists' => $shopCurrencyExists,
+                'ordersToImportCount' => $shopIntegration->countOrdersToProcess(),
             ]
         );
     }

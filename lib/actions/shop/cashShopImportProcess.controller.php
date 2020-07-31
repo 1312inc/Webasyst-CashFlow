@@ -5,10 +5,11 @@
  *
  * @todo move process to service
  * @property cashShopImportProcessDto  data['info']
- * @property cashShopImportSettingsDto data['settings']
  */
 class cashShopImportProcessController extends waLongActionController
 {
+    const ORDERS_TO_PROCEED = 30;
+
     public function execute()
     {
         try {
@@ -51,11 +52,10 @@ class cashShopImportProcessController extends waLongActionController
             throw new kmwaRuntimeException('No Cash categories');
         }
 
-        $categoryIncome = reset($categories);
-        $settings = new cashShopImportSettingsDto($account->getId(), $categoryIncome->getId());
+        $shopIntegration->getSettings()->setFirstTime(false)->saveFirstTime();
+        $shopIntegration->getSettings()->setEnabled(true)->save();
 
         $this->data['info'] = $info;
-        $this->data['settings'] = $settings;
 
         cash()->getLogger()->debug($this->_data, 'shop/import');
         cash()->getLogger()->debug('INIT ok', 'shop/import');
@@ -92,7 +92,7 @@ limit i:start, i:chunk
 SQL;
         $orders = $shopOrderModel->query(
             $ordersSql,
-            ['start' => $this->data['info']->passedOrders, 'chunk' => $this->data['settings']->chunk]
+            ['start' => $this->data['info']->passedOrders, 'chunk' => self::ORDERS_TO_PROCEED]
         )->fetchAll();
         $orders = array_column($orders, 'id');
 
@@ -102,15 +102,13 @@ SQL;
             return true;
         }
 
-        $shopIntegration->getSettings()
-//            ->setWriteToOrderLog(true)
-            ->setAccountId($this->data['settings']->accountId)
-            ->setCategoryIncomeId($this->data['settings']->categoryIncomeId);
         $factory = new cashShopTransactionFactory($shopIntegration->getSettings());
 
         foreach ($orders as $orderId) {
             try {
-                $dto = new cashShopCreateTransactionDto(['order_id' => $orderId]);
+                $dto = new cashShopCreateTransactionDto(
+                    ['order_id' => $orderId, 'action_id' => '', 'before_state_id' => '', 'after_state_id' => '']
+                );
                 $factory->createTransactions($dto, cashShopTransactionFactory::INCOME);
                 $shopIntegration->saveTransactions($dto);
             } catch (Exception $ex) {
