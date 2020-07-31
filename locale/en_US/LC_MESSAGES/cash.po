@@ -956,3 +956,33 @@ msgstr ""
 
 msgid "Skip rows with this value"
 msgstr ""
+
+msgid "Demo account"
+msgstr ""
+
+msgid "Office rent"
+msgstr ""
+
+msgid "Initial investment"
+msgstr ""
+
+msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then use <a href=\"%s\" data-cash-shop-action=\"rerun-import\">this re-import tool</a>."
+msgstr ""
+
+msgid "Import %d paid orders"
+msgstr ""
+
+msgid "Took a loan in the bank"
+msgstr ""
+
+msgid "Product purchase"
+msgstr ""
+
+msgid "Sales team"
+msgstr ""
+
+msgid "Dividend payouts"
+msgstr ""
+
+msgid "Pop-up store time-limited sale"
+msgstr ""

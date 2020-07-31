@@ -57,9 +57,9 @@ class cashFixtures
                 [
                     'Sales' => [_w('Sales'), '#94fa4e'],
                     'Investment' => [_w('Investment'), '#78fa7a'],
-                    'Loan' => [_w('Loan'), '#78faa2'],
-                    'Cashback' => [_w('Cashback'), '#77fbfd'],
-                    'Unexpected profit' => [_w('Unexpected profit'), '#81cafa'],
+                    'Cashback' => [_w('Cashback'), '#78faa2'],
+                    'Unexpected profit' => [_w('Unexpected profit'), '#77fbfd'],
+                    'Loan' => [_w('Loan'), '#81cafa'],
                 ],
                 true
             ),
@@ -70,13 +70,12 @@ class cashFixtures
                     'Marketing' => [_w('Marketing'), '#d53964'],
                     'Delivery' => [_w('Delivery'), '#de6c92'],
                     'Rent' => [_w('Rent'), '#eebecf'],
-                    'Errand' => [_w('Errand'), '#f7cebf'],
-                    'Loan payout' => [_w('Loan payout'), '#f9dea2'],
                     'Commission' => [_w('Commission'), '#f2ab63'],
                     'Dividend' => [_w('Dividend'), '#e58231'],
-                    'Refund' => [_w('Refund'), '#b75822'],
-                    'Tax' => [_w('Tax'), '#a72e26'],
-                    'Unexpected loss' => [_w('Unexpected loss'), '#f7cfd3'],
+                    'Tax' => [_w('Tax'), '#b75822'],
+                    'Refund' => [_w('Refund'), '#C62828'],
+                    'Loan payout' => [_w('Loan payout'), '#EE2222'],
+                    'Unexpected loss' => [_w('Unexpected loss'), '#FF5722'],
                 ],
                 true
             ),
@@ -128,23 +127,49 @@ class cashFixtures
             $repeatingDto = new cashRepeatingTransactionSettingsDto();
             $repeatingDto->interval = cashRepeatingTransaction::INTERVAL_MONTH;
 
-            // счет "Demo account"
+            // an isolated demo account!
             $this->demoAccount = cash()->getEntityFactory(cashAccount::class)->createNew();
             $this->demoAccount
                 ->setName(_w('Demo account'))
                 ->setCurrency($this->currency)
-                ->setIcon('star');
+                ->setIcon('luggage');
             $this->perister->insert($this->demoAccount);
 
-            // повторяющуюся транзакцию "аренда" ≈ 30К. начало — 1 год назад. конец — никогда. категория — Rent.
+
+            // a huge initial investment transaction!
+            $tx = $this->txFactory->createNew();
+            $startDate = new DateTime('-11 month');
+            $tx
+                ->setAmount($this->getAmountInCurrency(293041))
+                ->setAccount($this->demoAccount)
+                ->setCategory($this->categories['Investment'])
+                ->setDescription( _w('Initial investment') )
+                ->setDate($startDate->format('Y-m-d'))
+                ->setDatetime($startDate->format('Y-m-d H:i:s'));
+            $this->perister->insert($tx);
+
+            $tx = $this->txFactory->createNew();
+            $startDate = new DateTime('-11 month');
+            $tx
+                ->setAmount($this->getAmountInCurrency(192000))
+                ->setAccount($this->demoAccount)
+                ->setCategory($this->categories['Loan'])
+                ->setDescription( _w('Took a loan in the bank') )
+                ->setDate($startDate->format('Y-m-d'))
+                ->setDatetime($startDate->format('Y-m-d H:i:s'));
+            $this->perister->insert($tx);
+
+            /* NEVER-ENDING REPEATING TRANSACTIONS */
+
+            // bloody office rent :()
             $tx = $this->repeatingTxFactory->createFromTransactionWithRepeatingSettings(
                 $this->txFactory->createNew(),
                 $repeatingDto
             );
-            $startDate = new DateTime('-1 year');
+            $startDate = new DateTime('-10 month');
             $tx
-                ->setDescription('аренда')
-                ->setAmount($this->getAmountInCurrency(50000))
+                ->setDescription( _w('Office rent') )
+                ->setAmount($this->getAmountInCurrency(27500))
                 ->setDate($startDate->format('Y-m-d H:i:s'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
                 ->setAccount($this->demoAccount)
@@ -152,33 +177,79 @@ class cashFixtures
             $this->perister->insert($tx);
             $repeater->repeat($tx);
 
-            // повторяющуюся транзакцию "продажи" ≈ 100К. начало — 6 месяцев назад. конец — никогда. категория — Sales.
+            // oh that marketing again
             $tx = $this->repeatingTxFactory->createFromTransactionWithRepeatingSettings(
                 $this->txFactory->createNew(),
                 $repeatingDto
             );
-            $startDate = new DateTime('-6 months');
+            $startDate = new DateTime('-6 month');
             $tx
-                ->setDescription('продажи')
-                ->setAmount($this->getAmountInCurrency(100000))
-                ->setDate($startDate->format('Y-m-d'))
+                ->setDescription( _w('Marketing') )
+                ->setAmount($this->getAmountInCurrency(37000))
+                ->setDate($startDate->format('Y-m-d H:i:s'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
                 ->setAccount($this->demoAccount)
-                ->setCategory($this->categories['Sales']);
+                ->setCategory($this->categories['Marketing']);
             $this->perister->insert($tx);
             $repeater->repeat($tx);
 
-            // повторяющуюся транзакцию "продажи" ≈ 50К. начало — 1 год назад. конец — 6 месяцев назад. категория — Sales.
-            $repeatingDto->end_type = cashRepeatingTransaction::REPEATING_END_ONDATE;
-            $repeatingDto->end['ondate'] = (new DateTime('-6 months'))->format('Y-m-d H:i:s');
+            // endless product purchases and purchases and purchases
             $tx = $this->repeatingTxFactory->createFromTransactionWithRepeatingSettings(
                 $this->txFactory->createNew(),
                 $repeatingDto
             );
-            $startDate = new DateTime('-1 year');
+            $startDate = new DateTime('-11 month');
             $tx
-                ->setDescription('продажи')
+                ->setDescription( _w('Product purchase') )
+                ->setAmount($this->getAmountInCurrency(54700))
+                ->setDate($startDate->format('Y-m-d H:i:s'))
+                ->setDateTime($startDate->format('Y-m-d H:i:s'))
+                ->setAccount($this->demoAccount)
+                ->setCategory($this->categories['Purchase']);
+            $this->perister->insert($tx);
+            $repeater->repeat($tx);
+
+            // oh, and salaries!
+            $tx = $this->repeatingTxFactory->createFromTransactionWithRepeatingSettings(
+                $this->txFactory->createNew(),
+                $repeatingDto
+            );
+            $startDate = new DateTime('-3 months');
+            $tx
+                ->setDescription( _w('Sales team') )
+                ->setAmount($this->getAmountInCurrency(120000))
+                ->setDate($startDate->format('Y-m-d'))
+                ->setDateTime($startDate->format('Y-m-d H:i:s'))
+                ->setAccount($this->demoAccount)
+                ->setCategory($this->categories['Salary']);
+            $this->perister->insert($tx);
+            $repeater->repeat($tx);
+
+            // oh that marketing again
+            $tx = $this->repeatingTxFactory->createFromTransactionWithRepeatingSettings(
+                $this->txFactory->createNew(),
+                $repeatingDto
+            );
+            $startDate = new DateTime('+2 month');
+            $tx
+                ->setDescription( _w('Dividend payouts') )
                 ->setAmount($this->getAmountInCurrency(50000))
+                ->setDate($startDate->format('Y-m-d H:i:s'))
+                ->setDateTime($startDate->format('Y-m-d H:i:s'))
+                ->setAccount($this->demoAccount)
+                ->setCategory($this->categories['Dividend']);
+            $this->perister->insert($tx);
+            $repeater->repeat($tx);
+
+            // ok, we've started selling! hooray!
+            $tx = $this->repeatingTxFactory->createFromTransactionWithRepeatingSettings(
+                $this->txFactory->createNew(),
+                $repeatingDto
+            );
+            $startDate = new DateTime('-3 months');
+            $tx
+                ->setDescription( _w('Sales') )
+                ->setAmount($this->getAmountInCurrency(350000))
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
                 ->setAccount($this->demoAccount)
@@ -186,17 +257,76 @@ class cashFixtures
             $this->perister->insert($tx);
             $repeater->repeat($tx);
 
-            // одиночную транзакцию "начальные инвестиции" = 50К. 1 год назад. категория — Investment.
+
+            // an unexpected sale :)
             $tx = $this->txFactory->createNew();
-            $startDate = new DateTime('-1 year');
+            $startDate = new DateTime('-4 month');
             $tx
-                ->setAmount($this->getAmountInCurrency(50000))
+                ->setAmount($this->getAmountInCurrency(119511))
                 ->setAccount($this->demoAccount)
-                ->setCategory($this->categories['Investment'])
-                ->setDescription('начальные инвестиции')
+                ->setCategory($this->categories['Unexpected profit'])
+                ->setDescription( _w('Pop-up store time-limited sale') )
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDatetime($startDate->format('Y-m-d H:i:s'));
             $this->perister->insert($tx);
+
+            /* TIME-LIMITED REPEATING TRANSACTIONS */
+
+            // salary
+            $repeatingDto->end_type = cashRepeatingTransaction::REPEATING_END_ONDATE;
+            $repeatingDto->end['ondate'] = (new DateTime('-4 months'))->format('Y-m-d H:i:s');
+            $tx = $this->repeatingTxFactory->createFromTransactionWithRepeatingSettings(
+                $this->txFactory->createNew(),
+                $repeatingDto
+            );
+            $startDate = new DateTime('-10 month');
+            $tx
+                ->setDescription( _w('Sales team') )
+                ->setAmount($this->getAmountInCurrency(69300))
+                ->setDate($startDate->format('Y-m-d'))
+                ->setDateTime($startDate->format('Y-m-d H:i:s'))
+                ->setAccount($this->demoAccount)
+                ->setCategory($this->categories['Salary']);
+            $this->perister->insert($tx);
+            $repeater->repeat($tx);
+
+            // sales
+            $repeatingDto->end_type = cashRepeatingTransaction::REPEATING_END_ONDATE;
+            $repeatingDto->end['ondate'] = (new DateTime('-4 months'))->format('Y-m-d H:i:s');
+            $tx = $this->repeatingTxFactory->createFromTransactionWithRepeatingSettings(
+                $this->txFactory->createNew(),
+                $repeatingDto
+            );
+            $startDate = new DateTime('-11 month');
+            $tx
+                ->setDescription( _w('Sales') )
+                ->setAmount($this->getAmountInCurrency(95000))
+                ->setDate($startDate->format('Y-m-d'))
+                ->setDateTime($startDate->format('Y-m-d H:i:s'))
+                ->setAccount($this->demoAccount)
+                ->setCategory($this->categories['Sales']);
+            $this->perister->insert($tx);
+            $repeater->repeat($tx);
+
+            // loan payout
+            $repeatingDto->end_type = cashRepeatingTransaction::REPEATING_END_ONDATE;
+            $repeatingDto->end['ondate'] = (new DateTime('+2 months'))->format('Y-m-d H:i:s');
+            $tx = $this->repeatingTxFactory->createFromTransactionWithRepeatingSettings(
+                $this->txFactory->createNew(),
+                $repeatingDto
+            );
+            $startDate = new DateTime('-10 month');
+            $tx
+                ->setDescription( _w('Loan payout') )
+                ->setAmount($this->getAmountInCurrency(23055))
+                ->setDate($startDate->format('Y-m-d'))
+                ->setDateTime($startDate->format('Y-m-d H:i:s'))
+                ->setAccount($this->demoAccount)
+                ->setCategory($this->categories['Loan payout']);
+            $this->perister->insert($tx);
+            $repeater->repeat($tx);
+
+
         } catch (Exception $ex) {
             cash()->getLogger()->error('Demo init error', $ex);
         }
