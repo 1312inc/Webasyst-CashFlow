@@ -620,7 +620,7 @@ msgid "Investment"
 msgstr "Инвестиции"
 
 msgid "Loan"
-msgstr "Займ"
+msgstr "Взяли в долг"
 
 msgid "Cashback"
 msgstr "Кешбек"
@@ -647,7 +647,7 @@ msgid "Dividend"
 msgstr "Выплата дивидендов"
 
 msgid "Refund"
-msgstr "Возвраты"
+msgstr "Возвраты заказов"
 
 msgid "Tax"
 msgstr "Налоги"
@@ -957,3 +957,33 @@ msgstr "До указанной даты"
 
 msgid "Skip rows with this value"
 msgstr "Пропускать строки с этим значением"
+
+msgid "Demo account"
+msgstr "Демо-счет"
+
+msgid "Office rent"
+msgstr "Аренда офиса"
+
+msgid "Initial investment"
+msgstr "Начальные инвестиции"
+
+msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then use <a href=\"%s\" data-cash-shop-action=\"rerun-import\">this re-import tool</a>."
+msgstr ""
+
+msgid "Import %d paid orders"
+msgstr ""
+
+msgid "Took a loan in the bank"
+msgstr "Взяли кредит в банке"
+
+msgid "Product purchase"
+msgstr "Закуп товаров"
+
+msgid "Sales team"
+msgstr "Зарплаты продавцов"
+
+msgid "Dividend payouts"
+msgstr "Выплата дивидендов"
+
+msgid "Pop-up store time-limited sale"
+msgstr "Выездная торговля и акция"
