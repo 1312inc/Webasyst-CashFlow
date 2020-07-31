@@ -60,9 +60,9 @@ class cashGraphPeriodVO implements JsonSerializable
             case self::DAYS_PERIOD:
                 $typeStr = _w('day', 'days', abs($value));
                 if ($value < 0) {
-                    $this->name = sprintf_wp('Last %d', abs($value)) . ' ' . $typeStr;
+                    $this->name = sprintf_wp('Last %d %s', abs($value), $typeStr);
                 } else {
-                    $this->name = abs($value). ' ' . $typeStr;
+                    $this->name = sprintf_wp('%d %s', abs($value), $typeStr);
                 }
                 $this->period = $type;
                 break;
@@ -70,9 +70,9 @@ class cashGraphPeriodVO implements JsonSerializable
             case self::MONTH_PERIOD:
                 $typeStr = _w('month', 'months', abs($value));
                 if ($value < 0) {
-                    $this->name = sprintf_wp('Last %d', abs($value)) . ' ' . $typeStr;
+                    $this->name = sprintf_wp('Last %d %s', abs($value), $typeStr);
                 } else {
-                    $this->name = abs($value). ' ' . $typeStr;
+                    $this->name = sprintf_wp('%d %s', abs($value), $typeStr);
                 }
                 $this->period = $type;
                 break;
@@ -80,9 +80,9 @@ class cashGraphPeriodVO implements JsonSerializable
             case self::YEARS_PERIOD:
                 $typeStr = _w('year', 'years', abs($value));
                 if ($value < 0) {
-                    $this->name = sprintf_wp('Last %d', abs($value)) . ' ' . $typeStr;
+                    $this->name = sprintf_wp('Last %d %s', abs($value), $typeStr);
                 } else {
-                    $this->name = abs($value). ' ' . $typeStr;
+                    $this->name = sprintf_wp('%d %s', abs($value), $typeStr);
                 }
                 $this->period = $type;
                 break;
