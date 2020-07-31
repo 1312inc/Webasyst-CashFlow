@@ -22,13 +22,19 @@ return [
     [
         'event_app_id' => 'contacts',
         'event' => 'delete',
-        'class' => 'cashContactsDelete',
+        'class' => 'cashContactsDeleteListener',
         'method' => ['execute'],
     ],
     [
         'event_app_id' => 'contacts',
         'event' => 'links',
-        'class' => 'cashContactsDelete',
+        'class' => 'cashContactsDeleteListener',
         'method' => ['links'],
+    ],
+    [
+        'event_app_id' => 'webasyst',
+        'event' => 'backend_header',
+        'class' => 'cashWebasystBackendHeaderListener',
+        'method' => ['execute'],
     ],
 ];

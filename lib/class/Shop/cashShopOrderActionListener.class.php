@@ -53,7 +53,7 @@ class cashShopOrderActionListener extends waEventHandler
 
             if ($createTransactionDto->mainTransaction instanceof cashTransaction) {
                 if ($settings->isEnableForecast()) {
-                    $integration->deleteForecastTransactionForDate(new DateTime());
+                    $integration->deleteForecastTransactionBeforeDate(new DateTime(), true);
                 }
 
                 $integration->saveTransactions($createTransactionDto);

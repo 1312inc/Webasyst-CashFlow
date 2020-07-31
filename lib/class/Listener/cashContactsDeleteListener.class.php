@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class cashContactsDelete
+ * Class cashContactsDeleteListener
  */
-class cashContactsDelete extends waEventHandler
+class cashContactsDeleteListener extends waEventHandler
 {
     /**
      * @param int[] $event
