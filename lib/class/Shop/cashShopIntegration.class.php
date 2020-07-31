@@ -428,13 +428,18 @@ SQL;
 
     /**
      * @param DateTime $dateTime
+     * @param bool     $include
      *
      * @return null
      * @throws waException
      */
-    public function deleteForecastTransactionForDate(DateTime $dateTime)
+    public function deleteForecastTransactionBeforeDate(DateTime $dateTime, $include = false)
     {
-        return cash()->getModel(cashTransaction::class)->deleteByField(
+        return cash()->getModel(cashTransaction::class)->$this->exec(
+            sprintf(
+                'delete from cash_transaction where date %s s:date and external_source = s:external_source and external_hash = s:external_hash',
+                $include ? '<=' : '<'
+            ),
             [
                 'external_source' => 'shop',
                 'external_hash' => cashShopTransactionFactory::HASH_FORECAST,
