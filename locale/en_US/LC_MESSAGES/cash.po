@@ -905,3 +905,54 @@ msgstr ""
 
 msgid "Last %d %s"
 msgstr ""
+
+msgid "How often"
+msgstr ""
+
+msgid "The transaction will be permanently deleted. Are you sure?"
+msgstr ""
+
+msgid "DANGER: This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?"
+msgstr ""
+
+msgid "DANGER: This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?"
+msgstr ""
+
+msgid "Save all"
+msgstr ""
+
+msgid "Delete transactions?"
+msgstr ""
+
+msgid "Delete transaction?"
+msgstr ""
+
+msgid "Clear import history (don’t worry, imported transactions will not be affected)?"
+msgstr ""
+
+msgid "New income category:"
+msgstr ""
+
+msgid "New expense category:"
+msgstr ""
+
+msgid "Enter format"
+msgstr ""
+
+msgid "transactions"
+msgstr ""
+
+msgid "Start repeat"
+msgstr ""
+
+msgid "New contact will be created"
+msgstr ""
+
+msgid "Limit the number of occurrences"
+msgstr ""
+
+msgid "Until the date"
+msgstr ""
+
+msgid "Skip rows with this value"
+msgstr ""
