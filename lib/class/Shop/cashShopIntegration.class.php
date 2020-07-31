@@ -486,6 +486,19 @@ SQL;
     }
 
     /**
+     * @return int
+     * @throws waException
+     */
+    public function countOrdersToProcess(): int
+    {
+        if ($this->shopExists()) {
+            return (int)(new shopOrderModel())->select('count(*)')->where('paid_date is not null')->fetchField();
+        }
+
+        return 0;
+    }
+
+    /**
      * @throws waException
      */
     private function deleteFutureTransactions()
