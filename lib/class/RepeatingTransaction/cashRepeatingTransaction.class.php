@@ -223,8 +223,8 @@ class cashRepeatingTransaction extends cashTransaction
     {
         return [
             self::REPEATING_END_NEVER => _w('Never'),
-            self::REPEATING_END_AFTER => _w('After'),
-            self::REPEATING_END_ONDATE => _w('On date'),
+            self::REPEATING_END_AFTER => _w('Limit the number of occurrences'),
+            self::REPEATING_END_ONDATE => _w('Until the date'),
         ];
     }
 
