@@ -46,7 +46,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
                     $repeatingSettings->frequency ?: cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY
                 )
                 ->setRepeatingInterval(
-                    $repeatingSettings->interval ?: cashRepeatingTransaction::INTERVAL_DAY
+                    $repeatingSettings->interval ?: cashRepeatingTransaction::INTERVAL_MONTH
                 )
                 ->setRepeatingEndType(
                     $repeatingSettings->end_type ?: cashRepeatingTransaction::REPEATING_END_NEVER
@@ -86,9 +86,10 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         $model = cash()->getModel(cashRepeatingTransaction::class);
         $model->startTransaction();
         try {
-            $repeatingT = $this->repeatingTransactionFactory->createNew();
-            $this->copyFromTransaction($repeatingT, $transaction);
-            $this->applySettings($repeatingT, $repeatingSettings);
+            $repeatingT = $this->repeatingTransactionFactory->createFromTransactionWithRepeatingSettings(
+                $transaction,
+                $repeatingSettings
+            );
 
             cash()->getEntityPersister()->save($repeatingT);
             $result->newTransaction = $repeatingT;
@@ -127,9 +128,10 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         $hydrator = cash()->getHydrator();
         $persister = cash()->getEntityPersister();
 
-        $newRepeatingT = $this->repeatingTransactionFactory->createNew();
-        $this->copyFromTransaction($newRepeatingT, $transaction);
-        $this->applySettings($newRepeatingT, $repeatingSettings);
+        $newRepeatingT = $this->repeatingTransactionFactory->createFromTransactionWithRepeatingSettings(
+            $transaction,
+            $repeatingSettings
+        );
 
         $result = new cashRepeatingTransactionSaveResultDto();
         $result->oldTransaction = $repeatingT;
@@ -173,54 +175,6 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         }
 
         return $result;
-    }
-
-    /**
-     * @param cashRepeatingTransaction $repeatingT
-     * @param cashTransaction          $transaction
-     */
-    private function copyFromTransaction(cashRepeatingTransaction $repeatingT, cashTransaction $transaction)
-    {
-        $repeatingT
-            ->setAccountId($transaction->getAccountId())
-            ->setCategoryId($transaction->getCategoryId())
-            ->setCreateContactId($transaction->getCreateContactId())
-            ->setAmount($transaction->getAmount())
-            ->setDescription($transaction->getDescription())
-            ->setDate($transaction->getDate())
-            ->setExternalHash($transaction->getExternalHash())
-            ->setExternalSource($transaction->getExternalSource());
-    }
-
-    /**
-     * @param cashRepeatingTransaction            $repeatingT
-     * @param cashRepeatingTransactionSettingsDto $repeatingSettings
-     */
-    private function applySettings(
-        cashRepeatingTransaction $repeatingT,
-        cashRepeatingTransactionSettingsDto $repeatingSettings
-    ) {
-        if (!empty($repeatingSettings->frequency)) {
-            $repeatingT->setRepeatingFrequency($repeatingSettings->frequency);
-        } elseif (empty($repeatingT->getRepeatingFrequency())) {
-            $repeatingT->setRepeatingFrequency(cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY);
-        }
-
-        if ($repeatingSettings->interval) {
-            $repeatingT->setRepeatingInterval($repeatingSettings->interval);
-        } elseif (empty($repeatingT->getRepeatingInterval())) {
-            $repeatingT->setRepeatingInterval(cashRepeatingTransaction::INTERVAL_DAY);
-        }
-
-        if ($repeatingSettings->end_type) {
-            $repeatingT->setRepeatingEndType($repeatingSettings->end_type);
-        } elseif (empty($repeatingT->getRepeatingEndType())) {
-            $repeatingT->setRepeatingEndType(cashRepeatingTransaction::REPEATING_END_NEVER);
-        }
-
-        if ($repeatingSettings->end_type) {
-            $repeatingT->setRepeatingEndConditions($repeatingSettings->end);
-        }
     }
 
     /**

@@ -54,54 +54,7 @@ if ($innodb) {
     throw new waException('InnoDb engine is required');
 }
 
-cash()->getEntityPersister()->insert(
-    (new cashAccount())
-        ->setName(wa()->accountName())
-        ->setCurrency(wa()->getLocale() === 'en_US' ? 'USD' : 'RUB')
-        ->setIcon('star')
-);
+$installing = new cashFixtures();
 
-$fixtures = [
-    cashCategory::TYPE_INCOME => array_reverse([
-        _w('Sales') => '#94fa4e',
-        _w('Investment') => '#78fa7a',
-        _w('Loan') => '#78faa2',
-        _w('Cashback') => '#77fbfd',
-        _w('Unexpected profit') => '#81cafa',
-    ], true),
-    cashCategory::TYPE_EXPENSE => array_reverse([
-        _w('Salary') => '#e9382a',
-        _w('Purchase') => '#d2483e',
-        _w('Marketing') => '#d53964',
-        _w('Delivery') => '#de6c92',
-        _w('Rent') => '#eebecf',
-        _w('Errand') => '#f7cebf',
-        _w('Loan payout') => '#f9dea2',
-        _w('Commission') => '#f2ab63',
-        _w('Dividend') => '#e58231',
-        _w('Refund') => '#b75822',
-        _w('Tax') => '#a72e26',
-        _w('Unexpected loss') => '#f7cfd3',
-    ], true),
-];
-
-foreach ($fixtures as $type => $categories) {
-    foreach ($categories as $name => $color) {
-        cash()->getEntityPersister()->insert(
-            (new cashCategory())
-                ->setType($type)
-                ->setColor($color)
-                ->setName($name)
-        );
-    }
-}
-
-cash()->getModel(cashCategory::class)->insert(
-    [
-        'id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,
-        'type' => cashCategory::TYPE_TRANSFER,
-        'color' => cashColorStorage::TRANSFER_CATEGORY_COLOR,
-        'name' => _w('Transfers'),
-        'create_datetime' => date('Y-m-d H:i:s'),
-    ]
-);
+$installing->createAccountsAndCategories();
+$installing->createDemo();
