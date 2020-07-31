@@ -55,27 +55,27 @@ class cashFixtures
         $this->fixtures = [
             cashCategory::TYPE_INCOME => array_reverse(
                 [
-                    'Sales' => [_w('Sales'), '#94fa4e'],
-                    'Investment' => [_w('Investment'), '#78fa7a'],
-                    'Cashback' => [_w('Cashback'), '#78faa2'],
-                    'Unexpected profit' => [_w('Unexpected profit'), '#77fbfd'],
-                    'Loan' => [_w('Loan'), '#81cafa'],
+                    'Sales' => [_wd(cashConfig::APP_ID, 'Sales'), '#94fa4e'],
+                    'Investment' => [_wd(cashConfig::APP_ID, 'Investment'), '#78fa7a'],
+                    'Cashback' => [_wd(cashConfig::APP_ID, 'Cashback'), '#78faa2'],
+                    'Unexpected profit' => [_wd(cashConfig::APP_ID, 'Unexpected profit'), '#77fbfd'],
+                    'Loan' => [_wd(cashConfig::APP_ID, 'Loan'), '#81cafa'],
                 ],
                 true
             ),
             cashCategory::TYPE_EXPENSE => array_reverse(
                 [
-                    'Salary' => [_w('Salary'), '#e9382a'],
-                    'Purchase' => [_w('Purchase'), '#d2483e'],
-                    'Marketing' => [_w('Marketing'), '#d53964'],
-                    'Delivery' => [_w('Delivery'), '#de6c92'],
-                    'Rent' => [_w('Rent'), '#eebecf'],
-                    'Commission' => [_w('Commission'), '#f2ab63'],
-                    'Dividend' => [_w('Dividend'), '#e58231'],
-                    'Tax' => [_w('Tax'), '#b75822'],
-                    'Refund' => [_w('Refund'), '#C62828'],
-                    'Loan payout' => [_w('Loan payout'), '#EE2222'],
-                    'Unexpected loss' => [_w('Unexpected loss'), '#FF5722'],
+                    'Salary' => [_wd(cashConfig::APP_ID, 'Salary'), '#e9382a'],
+                    'Purchase' => [_wd(cashConfig::APP_ID, 'Purchase'), '#d2483e'],
+                    'Marketing' => [_wd(cashConfig::APP_ID, 'Marketing'), '#d53964'],
+                    'Delivery' => [_wd(cashConfig::APP_ID, 'Delivery'), '#de6c92'],
+                    'Rent' => [_wd(cashConfig::APP_ID, 'Rent'), '#eebecf'],
+                    'Commission' => [_wd(cashConfig::APP_ID, 'Commission'), '#f2ab63'],
+                    'Dividend' => [_wd(cashConfig::APP_ID, 'Dividend'), '#e58231'],
+                    'Tax' => [_wd(cashConfig::APP_ID, 'Tax'), '#b75822'],
+                    'Refund' => [_wd(cashConfig::APP_ID, 'Refund'), '#C62828'],
+                    'Loan payout' => [_wd(cashConfig::APP_ID, 'Loan payout'), '#EE2222'],
+                    'Unexpected loss' => [_wd(cashConfig::APP_ID, 'Unexpected loss'), '#FF5722'],
                 ],
                 true
             ),
@@ -114,7 +114,7 @@ class cashFixtures
                 'id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,
                 'type' => cashCategory::TYPE_TRANSFER,
                 'color' => cashColorStorage::TRANSFER_CATEGORY_COLOR,
-                'name' => _w('Transfers'),
+                'name' => _wd(cashConfig::APP_ID, 'Transfers'),
                 'create_datetime' => date('Y-m-d H:i:s'),
             ]
         );
@@ -130,7 +130,7 @@ class cashFixtures
             // an isolated demo account!
             $this->demoAccount = cash()->getEntityFactory(cashAccount::class)->createNew();
             $this->demoAccount
-                ->setName(_w('Demo account'))
+                ->setName(_wd(cashConfig::APP_ID, 'Demo account'))
                 ->setCurrency($this->currency)
                 ->setIcon('luggage');
             $this->perister->insert($this->demoAccount);
@@ -143,7 +143,7 @@ class cashFixtures
                 ->setAmount($this->getAmountInCurrency(293041))
                 ->setAccount($this->demoAccount)
                 ->setCategory($this->categories['Investment'])
-                ->setDescription( _w('Initial investment') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Initial investment') )
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDatetime($startDate->format('Y-m-d H:i:s'));
             $this->perister->insert($tx);
@@ -154,7 +154,7 @@ class cashFixtures
                 ->setAmount($this->getAmountInCurrency(192000))
                 ->setAccount($this->demoAccount)
                 ->setCategory($this->categories['Loan'])
-                ->setDescription( _w('Took a loan in the bank') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Took a loan in the bank') )
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDatetime($startDate->format('Y-m-d H:i:s'));
             $this->perister->insert($tx);
@@ -168,7 +168,7 @@ class cashFixtures
             );
             $startDate = new DateTime('-10 month');
             $tx
-                ->setDescription( _w('Office rent') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Office rent') )
                 ->setAmount($this->getAmountInCurrency(27500))
                 ->setDate($startDate->format('Y-m-d H:i:s'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
@@ -184,7 +184,7 @@ class cashFixtures
             );
             $startDate = new DateTime('-6 month');
             $tx
-                ->setDescription( _w('Marketing') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Marketing') )
                 ->setAmount($this->getAmountInCurrency(37000))
                 ->setDate($startDate->format('Y-m-d H:i:s'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
@@ -200,7 +200,7 @@ class cashFixtures
             );
             $startDate = new DateTime('-11 month');
             $tx
-                ->setDescription( _w('Product purchase') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Product purchase') )
                 ->setAmount($this->getAmountInCurrency(54700))
                 ->setDate($startDate->format('Y-m-d H:i:s'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
@@ -216,7 +216,7 @@ class cashFixtures
             );
             $startDate = new DateTime('-3 months');
             $tx
-                ->setDescription( _w('Sales team') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Sales team') )
                 ->setAmount($this->getAmountInCurrency(120000))
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
@@ -232,7 +232,7 @@ class cashFixtures
             );
             $startDate = new DateTime('+2 month');
             $tx
-                ->setDescription( _w('Dividend payouts') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Dividend payouts') )
                 ->setAmount($this->getAmountInCurrency(50000))
                 ->setDate($startDate->format('Y-m-d H:i:s'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
@@ -248,7 +248,7 @@ class cashFixtures
             );
             $startDate = new DateTime('-3 months');
             $tx
-                ->setDescription( _w('Sales') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Sales') )
                 ->setAmount($this->getAmountInCurrency(350000))
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
@@ -265,7 +265,7 @@ class cashFixtures
                 ->setAmount($this->getAmountInCurrency(119511))
                 ->setAccount($this->demoAccount)
                 ->setCategory($this->categories['Unexpected profit'])
-                ->setDescription( _w('Pop-up store time-limited sale') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Pop-up store time-limited sale') )
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDatetime($startDate->format('Y-m-d H:i:s'));
             $this->perister->insert($tx);
@@ -281,7 +281,7 @@ class cashFixtures
             );
             $startDate = new DateTime('-10 month');
             $tx
-                ->setDescription( _w('Sales team') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Sales team') )
                 ->setAmount($this->getAmountInCurrency(69300))
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
@@ -299,7 +299,7 @@ class cashFixtures
             );
             $startDate = new DateTime('-11 month');
             $tx
-                ->setDescription( _w('Sales') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Sales') )
                 ->setAmount($this->getAmountInCurrency(95000))
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
@@ -317,7 +317,7 @@ class cashFixtures
             );
             $startDate = new DateTime('-10 month');
             $tx
-                ->setDescription( _w('Loan payout') )
+                ->setDescription( _wd(cashConfig::APP_ID, 'Loan payout') )
                 ->setAmount($this->getAmountInCurrency(23055))
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
