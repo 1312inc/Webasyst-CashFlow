@@ -37,14 +37,14 @@
                             </div>
                             <div class="value no-shift">
                                 <label>
-                                    <input type="radio" selected="selected "/>
+                                    <input type="radio" checked name="repeating[apply_to_all_in_future]" value="0"/>
                                     [`This transaction only`]
                                 </label>
                                 <span class="hint"></span>
                             </div>
                             <div class="value no-shift">
                                 <label>
-                                    <input type="radio" selected="selected "/>
+                                    <input type="radio" name="repeating[apply_to_all_in_future]" value="1"/>
                                     {sprintf('[`This & all related future recurring transactions (%d)`]', $repeatingTransaction->occurrences_in_future - 1)}
                                 </label>
                                 <span class="hint"></span>
@@ -101,20 +101,6 @@
                                 </li>
                                 <li><span class="gray">[`Repeating`]</span></li>
                             </ul>
-                        </div>
-                    </div>
-                    {/if}
-
-                    {if $repeatingTransaction->id && ($repeatingTransaction->occurrences_in_future || $repeatingTransaction->repeating_end_type == cashRepeatingTransaction::REPEATING_END_NEVER) && $repeatingTransaction->occurrences_in_future > 1}
-                    {* editing existing transaction *}
-                    <div class="field">
-                        <div class="value no-shift">
-                            <label>
-                                <input type="hidden" name="repeating[apply_to_all_in_future]" value="0"/>
-                                <input type="checkbox" name="repeating[apply_to_all_in_future]" value="1"/>
-                                {sprintf('[`Apply changes to all %d future recurring transactions`]', $repeatingTransaction->occurrences_in_future)}
-                            </label>
-                            <span class="hint"></span>
                         </div>
                     </div>
                     {/if}

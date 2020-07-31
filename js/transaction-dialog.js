@@ -30,7 +30,7 @@ var CashTransactionDialog = (function ($) {
                         }
 
                         var id = $dialogWrapper.find('form input[name="transaction[id]"]').val(),
-                            all = $dialogWrapper.find('form :checkbox[name="repeating[apply_to_all_in_future]"]').is(':checked');
+                            all = $dialogWrapper.find('form [name="repeating[apply_to_all_in_future]"]').val();
                         $.post(
                             '?module=transaction&action=delete',
                             {id: id, all: all},
@@ -69,14 +69,15 @@ var CashTransactionDialog = (function ($) {
                         $this.siblings().hide();
                         $repeatEnd.show();
                     })
-                    .on('click.cash', '[name="repeating[apply_to_all_in_future]"]', function (e) {
+                    .on('change.cash', '[name="repeating[apply_to_all_in_future]"]', function (e) {
                         // $dialogWrapper.find('[data-cash-repeating-settings]').toggle();
                         var $submit = $dialogWrapper.find('[type="submit"]'),
                             $delete = $dialogWrapper.find('[data-cash-action="delete-transaction"]'),
                             $date = $dialogWrapper.find('[name="transaction[date]"]'),
-                            oldDate = $date.data('cash-date');
+                            oldDate = $date.data('cash-date'),
+                            isRepeating = $(this).val() == 1;
 
-                        if ($(this).is(':checked')) {
+                        if (isRepeating) {
                             $submit.val($submit.data('cash-repeating-transaction-text'));
                             $delete.find('span').text($delete.data('cash-repeating-transaction-text'));
                             $date
