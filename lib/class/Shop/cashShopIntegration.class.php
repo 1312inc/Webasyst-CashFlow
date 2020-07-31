@@ -187,7 +187,7 @@ class cashShopIntegration
 //group by ifnull(sop.value, 'backend'), currency
 //SQL;
         $sql = <<<SQL
-select sum(total) / count(total) bill
+select sum(total) / {$lastNDays} bill
 from shop_order
 where paid_date > s:date
 SQL;
