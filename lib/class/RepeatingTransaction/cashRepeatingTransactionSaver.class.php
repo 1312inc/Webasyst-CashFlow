@@ -79,7 +79,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         cashTransaction $transaction,
         cashRepeatingTransactionSettingsDto $repeatingSettings,
         $cloneSourceTransaction = false
-    ) {
+    ): cashRepeatingTransactionSaveResultDto {
         $result = new cashRepeatingTransactionSaveResultDto();
 
         /** @var cashTransactionModel $model */
@@ -124,7 +124,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
         cashRepeatingTransaction $repeatingT,
         cashTransaction $transaction,
         cashRepeatingTransactionSettingsDto $repeatingSettings
-    ) {
+    ): cashRepeatingTransactionSaveResultDto {
         $hydrator = cash()->getHydrator();
         $persister = cash()->getEntityPersister();
 
@@ -186,7 +186,7 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
     private function repeatingSettingsChanged(
         cashRepeatingTransaction $transaction,
         cashRepeatingTransaction $transaction2
-    ) {
+    ): bool {
         return $transaction->getRepeatingEndConditions() != $transaction2->getRepeatingEndConditions()
             || $transaction->getRepeatingFrequency() != $transaction2->getRepeatingFrequency()
             || $transaction->getRepeatingInterval() != $transaction2->getRepeatingInterval()
