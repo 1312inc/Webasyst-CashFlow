@@ -131,7 +131,7 @@ class cashShopIntegration
         $repeatingSettings->frequency = cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY;
         $repeatingTransaction = $saver->saveFromTransaction($transaction, $repeatingSettings, true);
 
-        (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction , new DateTime());
+        (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction , new DateTime('tomorrow'));
 
         return $transaction;
     }
@@ -186,7 +186,7 @@ class cashShopIntegration
      *
      * @return float
      */
-    public function calculateAvgBill($lastNDays = self::DAYS_FOR_AVG_BILL_CALCULATION, $storefront = '')
+    public function calculateAvgBill($lastNDays = self::DAYS_FOR_AVG_BILL_CALCULATION, $storefront = ''): float
     {
 //        $sql = <<<SQL
 //select ifnull(sop.value, 'backend'),
@@ -220,7 +220,7 @@ SQL;
      * @throws kmwaAssertException
      * @throws waException
      */
-    public function getShopAvgAmount($days = self::DAYS_FOR_AVG_BILL_CALCULATION)
+    public function getShopAvgAmount($days = self::DAYS_FOR_AVG_BILL_CALCULATION): float
     {
         /** @var cashAccount $account */
         $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
@@ -234,7 +234,6 @@ SQL;
     }
 
     /**
-     * @throws waDbException
      * @throws waException
      * @throws kmwaAssertException
      */
@@ -281,7 +280,6 @@ SQL;
     /**
      * @param cashShopCreateTransactionDto $dto
      *
-     * @throws ReflectionException
      * @throws kmwaRuntimeException
      * @throws waException
      */

@@ -34,7 +34,7 @@ class cashShopTransactionFactory
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function createTransactions(cashShopCreateTransactionDto $dto, $type)
+    public function createTransactions(cashShopCreateTransactionDto $dto, $type): bool
     {
         $amount = $this->getAmount($dto->order, $type, $dto->params);
         $externalHash = $this->generateExternalHash($dto->order, $type, $amount);
@@ -66,6 +66,7 @@ class cashShopTransactionFactory
             ->setAccount($this->getAccount($dto->order))
             ->setCategory($this->getCategory($type))
             ->setExternalHash($externalHash)
+            ->setDate($dto->order->paid_date)
             ->setDatetime(date('Y-m-d H:i:s'))
             ->setExternalSource('shop')
             ->setExternalData(['id' => $dto->order->getId()])
@@ -93,7 +94,7 @@ class cashShopTransactionFactory
      * @throws kmwaAssertException
      * @throws waException
      */
-    public function createPurchaseTransaction(cashShopCreateTransactionDto $dto)
+    public function createPurchaseTransaction(cashShopCreateTransactionDto $dto): bool
     {
         $amount = 0;
         foreach ($dto->order->items as $item) {
@@ -262,18 +263,20 @@ class cashShopTransactionFactory
      * @return cashTransaction
      * @throws Exception
      */
-    public function createForecastTransaction($amount, cashAccount $account, cashCategory $category)
+    public function createForecastTransaction($amount, cashAccount $account, cashCategory $category): cashTransaction
     {
         /** @var cashTransaction $transaction */
         $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
+        $date = new DateTime('tomorrow');
 
         $transaction
-            ->setDescription('Продажи магазина (план)')
+            ->setDescription(_w('Продажи магазина (план)'))
             ->setAccount($account)
             ->setCategory($category)
             ->setExternalHash(self::HASH_FORECAST)
             ->setAmount($amount)
-            ->setDate(date('Y-m-d'))
+            ->setDate($date->format('Y-m-d'))
+            ->setDatetime($date->format('Y-m-d H:i:s'))
             ->setExternalSource('shop');
 
         return $transaction;
@@ -287,7 +290,7 @@ class cashShopTransactionFactory
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    private function getAccount(shopOrder $order)
+    private function getAccount(shopOrder $order): cashAccount
     {
         /** @var cashAccountRepository $rep */
         $rep = cash()->getEntityRepository(cashAccount::class);
@@ -322,7 +325,7 @@ class cashShopTransactionFactory
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    private function getCategory($type)
+    private function getCategory($type): cashCategory
     {
         switch ($type) {
             case self::INCOME:
@@ -373,24 +376,8 @@ class cashShopTransactionFactory
      *
      * @return string
      */
-    private function generateExternalHash(shopOrder $order, $type, $amount)
+    private function generateExternalHash(shopOrder $order, $type, $amount): string
     {
         return md5(sprintf('%s/%s/%s', $order->getId(), $type, $amount));
-    }
-
-    /**
-     * @param float  $amount
-     * @param string $from
-     * @param string $to
-     *
-     * @return mixed
-     */
-    public function convert($amount, $from, $to)
-    {
-        if ($from !== $to && $this->currencyModel->getById($from)) {
-            $amount = $this->currencyModel->convert($amount, $from, $to);
-        }
-
-        return $amount;
     }
 }

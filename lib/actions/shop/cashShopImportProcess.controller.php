@@ -124,7 +124,7 @@ SQL;
             return false;
         }
 
-        return !$this->data['info']->done;
+        return false;
     }
 
     /**
