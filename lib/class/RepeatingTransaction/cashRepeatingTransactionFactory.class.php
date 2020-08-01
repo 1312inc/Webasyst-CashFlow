@@ -20,12 +20,13 @@ class cashRepeatingTransactionFactory extends cashBaseFactory
      */
     public function createFromTransaction(cashTransaction $transaction): cashRepeatingTransaction
     {
-        $tx = self::createNew();
+        $tx = $this->createNew();
 
         $tx
             ->setAccountId($transaction->getAccountId())
             ->setCategoryId($transaction->getCategoryId())
             ->setCreateContactId($transaction->getCreateContactId())
+            ->setContractorContactId($transaction->getContractorContactId())
             ->setAmount($transaction->getAmount())
             ->setDescription($transaction->getDescription())
             ->setDate($transaction->getDate())
@@ -45,7 +46,7 @@ class cashRepeatingTransactionFactory extends cashBaseFactory
         cashTransaction $transaction,
         cashRepeatingTransactionSettingsDto $repeatingSettings
     ): cashRepeatingTransaction {
-        $tx = self::createFromTransaction($transaction);
+        $tx = $this->createFromTransaction($transaction);
 
         if (!empty($repeatingSettings->frequency)) {
             $tx->setRepeatingFrequency($repeatingSettings->frequency);

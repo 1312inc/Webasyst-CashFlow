@@ -567,9 +567,13 @@ class cashTransaction extends cashAbstractEntity
 
     /**
      * @param int|null $contractor_contact_id
+     *
+     * @return cashTransaction
      */
     public function setContractorContactId($contractor_contact_id)
     {
         $this->contractor_contact_id = $contractor_contact_id;
-    }
+
+        return $this;
+   }
 }
