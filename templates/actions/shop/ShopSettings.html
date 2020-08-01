@@ -332,7 +332,7 @@
                 .on('change.cash', '[name="shopscript_settings[enableForecast]"]', function (e) {
                     $ssform.find('[data-cash-settings="forecast-variants"]').toggle($(this).is(':checked'));
                 })
-                .on('change.cash', '[ name="shopscript_settings[accountId]"]', function (e) {
+                .on('change.cash', '[name="shopscript_settings[accountId]"]', function (e) {
                     var $this = $(this),
                         $error = $this.closest('.field').find('.errormsg');
 
@@ -404,8 +404,8 @@
                             onReady: function (r) {
                                 $progressSuccess.show().siblings().hide();
                                 $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
-                                alert('done, redirect to app');
-                                {*window.location = '{$backend_url}';*}
+                                // alert('done, redirect to app');
+                                window.location.hash = '/account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
                                 // $button.prop('disabled', false);
                                 // $transactionStat.show();
                                 // $transactionStat.find('span').text(r.transactions.ok);

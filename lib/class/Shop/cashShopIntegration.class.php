@@ -139,6 +139,7 @@ class cashShopIntegration
     /**
      * @throws kmwaAssertException
      * @throws waException
+     * @throws kmwaRuntimeException
      */
     public function changeForecastType()
     {
@@ -146,18 +147,29 @@ class cashShopIntegration
         if (!$transaction instanceof cashRepeatingTransaction) {
             $this->enableForecast();
         } else {
-            $amount = $this->settings->isAutoForecast() ? $this->getShopAvgAmount() : $this->settings->getManualForecast();
-            $transaction
-                ->setAmount($amount)
-                ->setAccount(
-                    cash()->getEntityRepository(cashAccount::class)->findById($this->getSettings()->getAccountId())
-                )
-                ->setCategory($this->getSettings()->getCategoryIncome());
-
-            cash()->getEntityPersister()->update($transaction);
-
-            $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);
+            $this->updateForecastTransactionAmount($transaction);
         }
+    }
+
+    /**
+     * @param cashRepeatingTransaction $transaction
+     *
+     * @throws kmwaAssertException
+     * @throws waException
+     */
+    public function updateForecastTransactionAmount(cashRepeatingTransaction $transaction)
+    {
+        $amount = $this->settings->isAutoForecast() ? $this->getShopAvgAmount() : $this->settings->getManualForecast();
+        $transaction
+            ->setAmount($amount)
+            ->setAccount(
+                cash()->getEntityRepository(cashAccount::class)->findById($this->getSettings()->getAccountId())
+            )
+            ->setCategory($this->getSettings()->getCategoryIncome());
+
+        cash()->getEntityPersister()->update($transaction);
+
+        $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);
     }
 
     /**
@@ -435,7 +447,7 @@ SQL;
      */
     public function deleteForecastTransactionBeforeDate(DateTime $dateTime, $include = false)
     {
-        return cash()->getModel(cashTransaction::class)->$this->exec(
+        return cash()->getModel(cashTransaction::class)->exec(
             sprintf(
                 'delete from cash_transaction where date %s s:date and external_source = s:external_source and external_hash = s:external_hash',
                 $include ? '<=' : '<'
