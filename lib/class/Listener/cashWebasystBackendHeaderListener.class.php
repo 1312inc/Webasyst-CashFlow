@@ -15,6 +15,9 @@ class cashWebasystBackendHeaderListener extends waEventHandler
             if ($shopIntegration->shopExists() && $shopIntegration->getSettings()->isEnableForecast()) {
                 $date = DateTime::createFromFormat('Y-m-d|', date('Y-m-d'));
                 $shopIntegration->deleteForecastTransactionBeforeDate($date);
+
+                // обновить сумму транзакции или заного сгенерить транзакции
+                $shopIntegration->changeForecastType();
             }
         } catch (Exception $ex) {
             cash()->getLogger()->debug(
