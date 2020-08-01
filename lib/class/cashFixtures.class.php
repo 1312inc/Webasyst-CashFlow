@@ -65,13 +65,13 @@ class cashFixtures
             ),
             cashCategory::TYPE_EXPENSE => array_reverse(
                 [
-                    'Salary' => [_wd(cashConfig::APP_ID, 'Salary'), '#e9382a'],
-                    'Purchase' => [_wd(cashConfig::APP_ID, 'Purchase'), '#d2483e'],
-                    'Marketing' => [_wd(cashConfig::APP_ID, 'Marketing'), '#d53964'],
-                    'Delivery' => [_wd(cashConfig::APP_ID, 'Delivery'), '#de6c92'],
                     'Rent' => [_wd(cashConfig::APP_ID, 'Rent'), '#eebecf'],
-                    'Commission' => [_wd(cashConfig::APP_ID, 'Commission'), '#f2ab63'],
+                    'Delivery' => [_wd(cashConfig::APP_ID, 'Delivery'), '#de6c92'],
+                    'Purchase' => [_wd(cashConfig::APP_ID, 'Purchase'), '#d2483e'],
+                    'Salary' => [_wd(cashConfig::APP_ID, 'Salary'), '#e9382a'],
+                    'Marketing' => [_wd(cashConfig::APP_ID, 'Marketing'), '#d53964'],
                     'Dividend' => [_wd(cashConfig::APP_ID, 'Dividend'), '#e58231'],
+                    'Commission' => [_wd(cashConfig::APP_ID, 'Commission'), '#f2ab63'],
                     'Tax' => [_wd(cashConfig::APP_ID, 'Tax'), '#b75822'],
                     'Refund' => [_wd(cashConfig::APP_ID, 'Refund'), '#C62828'],
                     'Loan payout' => [_wd(cashConfig::APP_ID, 'Loan payout'), '#EE2222'],

@@ -165,10 +165,6 @@
                         </div>
 
 
-{*
-                            Shipping costs?
-                        *}
-
                         <div class="field">
                             <div class="name">
                                 [`Forecasted sales`]
@@ -252,7 +248,7 @@
                                 <input type="button"
                                        id="cash-welcome-shop-start"
                                        class="button green"
-                                       value="{sprintf('[`Import %d paid orders`]', $ordersToImportCount)}"
+                                       value="{if $ordersToImportCount}{sprintf('[`Import %d paid orders`]', $ordersToImportCount)}{else}[`Enable Shop-Script integration`]{/if}"
                                 />
                                 <div class="progressbar green" style="display: none">
                                     <div class="progressbar-outer"><div class="progressbar-inner" style="width: 0%;"></div></div>
