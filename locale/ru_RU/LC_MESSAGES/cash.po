@@ -638,7 +638,7 @@ msgid "Errand"
 msgstr "Командировки"
 
 msgid "Loan payout"
-msgstr "Возврат долга"
+msgstr "Вернули долг"
 
 msgid "Commission"
 msgstr "Комиссионные"
@@ -647,7 +647,7 @@ msgid "Dividend"
 msgstr "Выплата дивидендов"
 
 msgid "Refund"
-msgstr "Возвраты заказов"
+msgstr "Возврат"
 
 msgid "Tax"
 msgstr "Налоги"
