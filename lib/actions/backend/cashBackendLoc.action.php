@@ -34,7 +34,8 @@ class cashBackendLocAction extends cashViewAction
             _w('Delete %s transactions'),
             _w('New contact will be created'),
             _w('Search for existing contact or enter any new contact name.'),
-            _w('Skip rows with this value')
+            _w('Skip rows with this value'),
+            _w('This will flush all Shop-Script import settings so you can re-start the import from scratch. All existing transactions will remain as is unless you delete them manually. Re-start the integration?')
         ];
 
         $this->view->assign(

@@ -331,7 +331,7 @@ msgstr "Налоги"
 msgid "Enabling the setting will automatically add expense transactions based on tax amount for each order."
 msgstr "Включите, чтобы для каждого заказа автоматически создавалась операция по расходам на налоги."
 
-msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then use <a href=\"%s\">this re-import tool</a>."
+msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then <a href=\"%s\">re-start the integration from scratch</a>."
 msgstr "Все изменения в настройках интеграции будут применены только к новым заказам. Чтобы обновить данные ранее импортированных заказов, удалите старые операции вручную и <a href=\"%s\">запустите импорт заново</a>."
 
 msgid "Forecasted sales"
@@ -967,11 +967,8 @@ msgstr "Аренда офиса"
 msgid "Initial investment"
 msgstr "Начальные инвестиции"
 
-msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then use <a href=\"%s\" data-cash-shop-action=\"rerun-import\">this re-import tool</a>."
-msgstr ""
-
 msgid "Import %d paid orders"
-msgstr ""
+msgstr "Импортировать операции по %d оплаченным заказам"
 
 msgid "Took a loan in the bank"
 msgstr "Взяли кредит в банке"
@@ -987,3 +984,15 @@ msgstr "Выплата дивидендов"
 
 msgid "Pop-up store time-limited sale"
 msgstr "Выездная торговля и акция"
+
+msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then <a href=\"%s\" data-cash-shop-action=\"rerun-import\">re-start the integration from scratch</a>."
+msgstr "Все изменения настроек импорта будут применены только к новым заказам. Чтобы обновить уже импортированные заказы, необходимо вручную удалить соответствующие им операции и <a href=\"%s\" data-cash-shop-action=\"rerun-import\">перезапустить интеграцию заново</a>."
+
+msgid "Enable Shop-Script integration"
+msgstr "Включить интеграцию с Shop-Script"
+
+msgid "Planned online store sales"
+msgstr "Продажи интернет-магазина (план)"
+
+msgid "This will flush all Shop-Script import settings so you can re-start the import from scratch. All existing transactions will remain as is unless you delete them manually. Re-start the integration?"
+msgstr "Интеграция с Shop-Script будет перезапущена с нуля, и вы сможете заново импортировать все операции. Все ранее импортированные операции останутся в приложении, пока вы не удалите их вручную. Перезапускаем?"

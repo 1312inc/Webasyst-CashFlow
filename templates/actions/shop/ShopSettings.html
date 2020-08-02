@@ -234,11 +234,12 @@
                             {if !$shopScriptSettings->isFirstTime()}
                             <div class="value submit">
                                 <br>
-                                <input type="submit" class="button green" value="[`Save`]" />
+                                <input type="submit" class="button green" value="[`Save`]" data-cash-shop-save-button />
                             </div>
 
-                            <div class="value small" style="display: none;" data-cash-shop-rerun-message>
-                                <p>👆<em>{sprintf('[`All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then use <a href="%s" data-cash-shop-action="rerun-import">this re-import tool</a>.`]', '?module=shop&action=rerun')}</em></p>
+                            <div class="value" style="font-size: 0.9em; display: none;" data-cash-shop-rerun-message>
+                                <br>
+                                <p>👆<em>{sprintf('[`All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then <a href="%s" data-cash-shop-action="rerun-import">re-start the integration from scratch</a>.`]', '?module=shop&action=rerun')}</em></p>
                             </div>
 
                             {else}
@@ -345,11 +346,12 @@
                 })
                 .on('change.cash', ':input', function (e) {
                     $ssform.find('[data-cash-shop-rerun-message]').toggle(formData != $ssform.serialize());
+                    $ssform.find('[data-cash-shop-save-button]').addClass( formData != $ssform.serialize() ? 'yellow' : 'green');
                 })
                 .on('click.cash', '[data-cash-shop-action="rerun-import"]', function (e) {
                     e.preventDefault();
 
-                    if (!confirm($_('Sure to delete all settings?'))) {
+                    if (!confirm($_('This will flush all Shop-Script import settings so you can re-start the import from scratch. All existing transactions will remain as is unless you delete them manually. Re-start the integration?'))) {
                         return;
                     }
 
