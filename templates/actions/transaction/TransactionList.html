@@ -108,7 +108,7 @@
                 {if $selectedForecastPeriod}<span class="hint">{$selectedForecastPeriod->getName()}</span>{/if}
             </h5>
         </td>
-        <td colspan="4" class="align-right">
+        <td colspan="5" class="align-right">
             <ul class="menu-h dropdown float-right">
                 <li>
                     <a href="#" class="inline-link gray"><b><i>[`Export upcoming`]</i></b><i class="icon10 darr"></i></a>
@@ -147,6 +147,7 @@
             <td class="min-width">{if $t->contractor->getId()}<i class="icon16 userpic20" title="{$t->contractor->getName()|escape}" style="background-image: url({$t->contractor->getPhoto(20)});"></i>{/if}</td>
             <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
             <td class="align-right"><em class="hint nowrap">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %d days`]', $_days_diff)}{/if}</em>&nbsp;<strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if} title="[`Amount`]">{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
+            <td class="min-width">{if 111}<i class="icon16" style="background-image: url('/wa-apps/shop/img/shop.png'); background-size: 16px 16px;"></i>{/if}</td>
             <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
             <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
         </tr>
@@ -154,7 +155,7 @@
 
     {if $upcomingOnDate}
     <tr class="white c-planned c-totals">
-        <td colspan="8" class="align-center">
+        <td colspan="9" class="align-center">
             {if $selectedForecastPeriod}<p>{sprintf('[`Total for the next %s (until %s):`]', {$selectedForecastPeriod->getName()}, {$selectedForecastPeriod->getDateAsString()|wa_date:humandate})}</p>{/if}
             {foreach $upcomingOnDate as $onDateStat}
             <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
@@ -182,7 +183,7 @@
                 {sprintf('[`%d transactions`]', $pagination->getTotalRows())}
             </h5>
         </td>
-        <td colspan="2">
+        <td colspan="3">
             {$smarty.capture.cash_transaction_list_pagination}
         </td>
         <td colspan="2" class="align-right">
@@ -222,6 +223,7 @@
         <td class="min-width">{if $t->contractor->getId()}<i class="icon16 userpic20" title="{$t->contractor->getName()|escape}" style="background-image: url({$t->contractor->getPhoto(20)});"></i>{/if}</td>
         <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
         <td class="align-right"><strong class="nowrap" title="[`Amount`]"{if $t->category} style="color: {$t->category->color};"{/if}>{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
+        <td class="min-width">{if 111}<i class="icon16" style="background-image: url('/wa-apps/shop/img/shop.png'); background-size: 16px 16px;"></i>{/if}</td>
         <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
         <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
     </tr>
@@ -229,7 +231,7 @@
 
 {if $completedOnDate}
     <tr class="white c-totals">
-        <td colspan="8" class="align-center">
+        <td colspan="9" class="align-center">
             <p>{sprintf('[`Total for the selected period (%s, %d transactions):`]', $selectedChartPeriod->getName(), $pagination->getTotalRows() )}</p>
             {foreach $completedOnDate as $onDateStat}
             <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
