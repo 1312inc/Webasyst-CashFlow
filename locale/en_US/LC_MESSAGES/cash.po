@@ -330,7 +330,7 @@ msgstr ""
 msgid "Enabling the setting will automatically add expense transactions based on tax amount for each order."
 msgstr ""
 
-msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then use <a href=\"%s\">this re-import tool</a>."
+msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then <a href=\"%s\">re-start the integration from scratch</a>."
 msgstr ""
 
 msgid "Forecasted sales"
@@ -966,9 +966,6 @@ msgstr ""
 msgid "Initial investment"
 msgstr ""
 
-msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then use <a href=\"%s\" data-cash-shop-action=\"rerun-import\">this re-import tool</a>."
-msgstr ""
-
 msgid "Import %d paid orders"
 msgstr ""
 
@@ -985,4 +982,16 @@ msgid "Dividend payouts"
 msgstr ""
 
 msgid "Pop-up store time-limited sale"
+msgstr ""
+
+msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then <a href=\"%s\" data-cash-shop-action=\"rerun-import\">re-start the integration from scratch</a>."
+msgstr ""
+
+msgid "Enable Shop-Script integration"
+msgstr ""
+
+msgid "Planned online store sales"
+msgstr ""
+
+msgid "This will flush all Shop-Script import settings so you can re-start the import from scratch. All existing transactions will remain as is unless you delete them manually. Re-start the integration?"
 msgstr ""

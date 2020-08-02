@@ -270,7 +270,7 @@ class cashShopTransactionFactory
         $date = new DateTime('tomorrow');
 
         $transaction
-            ->setDescription(_w('Продажи магазина (план)'))
+            ->setDescription(_w('Planned online store sales'))
             ->setAccount($account)
             ->setCategory($category)
             ->setExternalHash(self::HASH_FORECAST)
