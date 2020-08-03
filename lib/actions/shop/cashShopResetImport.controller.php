@@ -13,5 +13,7 @@ class cashShopResetImportController extends cashJsonController
     {
         $shopIntegration = new cashShopIntegration();
         $shopIntegration->getSettings()->resetSettings();
+        $shopIntegration->disableForecast();
+        $shopIntegration->deleteAllShopTransactions();
     }
 }

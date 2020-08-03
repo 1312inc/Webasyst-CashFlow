@@ -100,3 +100,8 @@ h1 .icon16.c-repeating { width: 24px; height: 24px; }
 .ui-autocomplete .ui-menu-item:hover { background: #eee; }
 .ui-autocomplete .ui-state-active { border: none !important; }
 .ui-autocomplete .ui-state-active.highlighed { background: #ffc !important; }
+
+
+.c-shop-settings-wrapper-disabled {
+    opacity: 0.5;
+}

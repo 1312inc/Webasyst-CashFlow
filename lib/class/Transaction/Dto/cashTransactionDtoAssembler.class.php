@@ -35,6 +35,12 @@ class cashTransactionDtoAssembler
                 $initialBalance -= $datum['amount'];
             }
 
+            if ($datum['external_data']) {
+                $dto->external_entity = cashTransactionExternalEntityFactory::createFromSource(
+                    $datum['external_source'], $datum['external_data']
+                );
+            }
+
             yield $datum['id'] => $dto;
         }
     }

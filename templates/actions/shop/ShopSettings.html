@@ -1,8 +1,8 @@
 {** @var cashShopScriptSettings $shopScriptSettings **}
 {** @var cashCategoryDto[] $incomes **}
 {** @var cashCategoryDto[] $expenses **}
-
-<div class="content left200px" id="cash-settings">
+<section id="cash-settings">
+<div class="content left200px">
     <div id="content">
 
         <div class="shadowed blank">
@@ -37,6 +37,11 @@
                             </div>
                         </div>
                         {/if}
+
+                        <section
+                                data-cash-shop-settings-wrapper
+                                class="{if !$shopScriptSettings->isFirstTime() && !$shopScriptSettings->isEnabled()}c-shop-settings-wrapper-disabled{/if}"
+                        >
                         <div class="field">
                             <div class="name">[`Account`]</div>
                             <div class="value no-shift">
@@ -62,7 +67,8 @@
                             <div class="value no-shift" data-cash-category-color-icon>
                                 [`Sales (paid orders)`] &rarr;
                                 <i class="icon16 color" style="background:  {$shopScriptSettings->getCategoryIncome()->getColor()}" data-cash-category-color></i>
-                                <select name="shopscript_settings[categoryIncomeId]">
+                                <select name="shopscript_settings[categoryIncomeId]" class="{if isset($errors['categoryIncomeId'])}error{/if}">
+                                    <option value="0"></option>
                                     {foreach $incomes as $category}
                                     <option value="{$category->id}"
                                             {if $shopScriptSettings->getCategoryIncomeId() == $category->id}selected{/if}
@@ -90,7 +96,8 @@
                             <div class="value no-shift" data-cash-category-color-icon>
                                 [`Refunds`] &rarr;
                                 <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryExpense()->getColor()}"></i>
-                                <select name="shopscript_settings[categoryExpenseId]">
+                                <select name="shopscript_settings[categoryExpenseId]" class="{if isset($errors['categoryExpenseId'])}error{/if}">
+                                    <option value="0"></option>
                                     {foreach $expenses as $category}
                                     <option value="{$category->id}"
                                             {if $shopScriptSettings->getCategoryExpenseId() == $category->id}selected{/if}
@@ -207,7 +214,7 @@
                                        placeholder="0"
                                        name="shopscript_settings[manualForecast]"
                                        value="{$shopScriptSettings->getManualForecast()}"
-                                /> {sprintf('[`%s/day`]', 'RUB')}
+                                /> {sprintf('[`%s/day`]', $accountCurrencySign)}
                                 <br><br>
                             </div>
                             </section>
@@ -229,6 +236,7 @@
                                 </label>
                             </div>
                         </div>
+                        </section>
 
                         <div class="field">
                             {if !$shopScriptSettings->isFirstTime()}
@@ -257,7 +265,7 @@
                                 {*<div data-cash-shop-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
                                 <div data-cash-shop-import-progress-errors style="display: none"></div>
                                 <div>
-                                    <span data-cash-shop-import-progress-icon="loading" style="display:none;"><i class="icon16 loading"></i> <span>[`Importing...`]</span></span>
+                                    <span data-cash-shop-import-progress-icon="loading" style="display:none;"><i class="icon16 loading"></i> <span>[`Importing`] <span data-cash-shop-import-progress-counts></span></span></span>
                                     <span data-cash-shop-import-progress-icon="success" style="display:none;"><i class="icon16 yes"></i> <span>[`Finalizing...`]</span></span>
                                     <span data-cash-shop-import-progress-icon="error" style="display:none;"><i class="icon16 no"></i> <span>[`Done`]</span></span>
                                 </div>
@@ -266,8 +274,13 @@
 
                         </div>
 
-
-
+                        {if !empty($errors)}
+                        <div class="field" data-cash-shop-errors>
+                            <div class="value no-shift errormsg">
+                                {$errors|implode:'<br>'}
+                            </div>
+                        </div>
+                        {/if}
                     </div>
                     </form>
                     {/if}
@@ -359,6 +372,15 @@
                         $.cash_routing.redispatch();
                     });
                 })
+                .on('click.cash', '[name="shopscript_settings[enabled]"]:checkbox', function (e) {
+                    var $setW = $ssform.find('[data-cash-shop-settings-wrapper]');
+
+                    if ($(this).is(':checked')) {
+                        $setW.removeClass('c-shop-settings-wrapper-disabled');
+                    } else {
+                        $setW.addClass('c-shop-settings-wrapper-disabled');
+                    }
+                })
             ;
 
             $ssform.find('select').trigger('change.cash');
@@ -369,59 +391,68 @@
                     $progress = $('#c-welcome-import'),
                     $progressBar = $progress.find('.progressbar'),
                     $progressLoading = $progress.find('[data-cash-shop-import-progress-icon="loading"]'),
+                    $progressCounts = $progressLoading.find('[data-cash-shop-import-progress-counts]'),
                     $progressSuccess = $progress.find('[data-cash-shop-import-progress-icon="success"]'),
                     $progressError = $progress.find('[data-cash-shop-import-progress-icon="error"]');
 
-                $.post('?module=shop&action=settings', $ssform.serialize(), function (r) {
-                    $button.prop('disabled', true).hide();
-                    var long = $.wa.kmLongAction();
-                    long.start({
-                        process_url: '?module=shop&action=importProcess',
-                        parallel: 2,
-                        debug: true,
-                        start: {
-                            onStart: function(r) {
-                                $progressBar.show();
-                                $button.hide();
-                                $progressLoading.show().siblings().hide();
+                $.post('?module=shop&action=settings', $ssform.serialize(), function (html) {
+                    var $html = $(html);
+                    debugger
+                    if ($html.find('[data-cash-shop-errors]').length) {
+                        $('#cash-settings').html(html);
+                    } else {
+                        $button.prop('disabled', true).hide();
+                        var long = $.wa.kmLongAction();
+                        long.start({
+                            process_url: '?module=shop&action=importProcess',
+                            parallel: 2,
+                            debug: true,
+                            start: {
+                                onStart: function (r) {
+                                    $progressBar.show();
+                                    $button.hide();
+                                    $progressLoading.show().siblings().hide();
+                                },
+                                onSuccess: function (r) {
+                                    $progressBar.find('.progressbar-inner').css('width', '0%');
+                                    // $transactionStat.show();
+                                },
+                                onError: function (r) {
+                                    $progressError.show().siblings().hide();
+                                    $progressError.find('span').text(r.error);
+                                    $button.prop('disabled', false).show();
+                                    // $transactionStat.hide();
+                                }
                             },
-                            onSuccess: function (r) {
-                                $progressBar.find('.progressbar-inner').css('width', '0%');
-                                // $transactionStat.show();
-                            },
-                            onError: function (r) {
-                                $progressError.show().siblings().hide();
-                                $progressError.find('span').text(r.error);
-                                $button.prop('disabled', false).show();
-                                // $transactionStat.hide();
+                            step: {
+                                onProgress: function (r) {
+                                    $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
+                                    $progressCounts.text(r.passed_orders + ' / ' + r.total_orders)
+                                    // $transactionStat.show();
+                                    // $transactionStat.find('span').text(r.transactions.ok);
+                                    // $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
+                                },
+                                onReady: function (r) {
+                                    $progressSuccess.show().siblings().hide();
+                                    $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
+                                    // alert('done, redirect to app');
+                                    window.location.hash = '/account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
+                                    // $button.prop('disabled', false);
+                                    // $transactionStat.show();
+                                    // $transactionStat.find('span').text(r.transactions.ok);
+                                    // $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
+                                },
+                                onError: function (r) {
+                                    $progressError.show().siblings().hide();
+                                    $progressError.find('span').text(r.error);
+                                    $button.prop('disabled', false).show();
+                                }
                             }
-                        },
-                        step: {
-                            onProgress: function(r) {
-                                $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
-                                // $transactionStat.show();
-                                // $transactionStat.find('span').text(r.transactions.ok);
-                                // $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
-                            },
-                            onReady: function (r) {
-                                $progressSuccess.show().siblings().hide();
-                                $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
-                                // alert('done, redirect to app');
-                                window.location.hash = '/account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
-                                // $button.prop('disabled', false);
-                                // $transactionStat.show();
-                                // $transactionStat.find('span').text(r.transactions.ok);
-                                // $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
-                            },
-                            onError: function (r) {
-                                $progressError.show().siblings().hide();
-                                $progressError.find('span').text(r.error);
-                                $button.prop('disabled', false).show();
-                            }
-                        }
-                    });
+                        });
+                    }
                 });
             })
         }
     }())
 </script>
+</section>

@@ -17,13 +17,13 @@ class cashWebasystBackendHeaderListener extends waEventHandler
                 $shopIntegration->deleteForecastTransactionBeforeDate($date);
 
                 // обновить сумму транзакции или заного сгенерить транзакции
-                $shopIntegration->changeForecastType();
+                $shopIntegration->actualizeForecastTransaction();
             }
         } catch (Exception $ex) {
             cash()->getLogger()->debug(
                 sprintf(
                     "Error on delete previous shop forecast transaction before date %s: %s.\n%s",
-                    $date ? $date->format('Y-m-d') : '???',
+                    isset($date) ? $date->format('Y-m-d') : '???',
                     $ex->getMessage(),
                     $ex->getTraceAsString()
                 )

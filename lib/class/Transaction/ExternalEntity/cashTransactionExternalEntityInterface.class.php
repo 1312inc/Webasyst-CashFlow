@@ -6,14 +6,12 @@
 interface cashTransactionExternalEntityInterface
 {
     /**
-     * cashTransactionExternalEntityInterface constructor.
-     *
-     * @param cashTransaction $transaction
+     * @return string
      */
-    public function __construct(cashTransaction $transaction);
+    public function getHtml(): string;
 
     /**
      * @return string
      */
-    public function getHtml();
+    public function getIcon(): string;
 }

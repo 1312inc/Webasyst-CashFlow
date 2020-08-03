@@ -75,7 +75,7 @@ class cashShopIntegration
      */
     public function turnedOff()
     {
-        $this->deleteFutureTransactions();
+        $this->deleteFutureForecastTransactions();
         $this->settings
             ->resetStat()
             ->saveStat();
@@ -98,7 +98,7 @@ class cashShopIntegration
      */
     public function disableForecast()
     {
-        $this->deleteFutureTransactions();
+        $this->deleteFutureForecastTransactions();
         $this->settings
             ->resetStat()
             ->saveStat();
@@ -111,7 +111,7 @@ class cashShopIntegration
      */
     public function enableForecast()
     {
-        $this->deleteFutureTransactions();
+        $this->deleteFutureForecastTransactions();
 
         /** @var cashAccount $account */
         $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
@@ -137,6 +137,8 @@ class cashShopIntegration
     }
 
     /**
+     * Поменяет тип прогноза, создаст нужную повторяющуюся транзакцию и повторит ее
+     *
      * @throws kmwaAssertException
      * @throws waException
      * @throws kmwaRuntimeException
@@ -147,29 +149,17 @@ class cashShopIntegration
         if (!$transaction instanceof cashRepeatingTransaction) {
             $this->enableForecast();
         } else {
-            $this->updateForecastTransactionAmount($transaction);
-        }
-    }
+            $amount = $this->settings->isAutoForecast() ? $this->getShopAvgAmount() : $this->settings->getManualForecast();
+            $transaction
+                ->setAmount($amount)
+                ->setAccount(
+                    cash()->getEntityRepository(cashAccount::class)->findById($this->getSettings()->getAccountId())
+                )
+                ->setCategory($this->getSettings()->getCategoryIncome());
 
-    /**
-     * @param cashRepeatingTransaction $transaction
-     *
-     * @throws kmwaAssertException
-     * @throws waException
-     */
-    public function updateForecastTransactionAmount(cashRepeatingTransaction $transaction)
-    {
-        $amount = $this->settings->isAutoForecast() ? $this->getShopAvgAmount() : $this->settings->getManualForecast();
-        $transaction
-            ->setAmount($amount)
-            ->setAccount(
-                cash()->getEntityRepository(cashAccount::class)->findById($this->getSettings()->getAccountId())
-            )
-            ->setCategory($this->getSettings()->getCategoryIncome());
+            cash()->getEntityPersister()->update($transaction);
 
-        cash()->getEntityPersister()->update($transaction);
-
-        $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);
+            $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);        }
     }
 
     /**
@@ -234,8 +224,9 @@ SQL;
     }
 
     /**
-     * @throws waException
      * @throws kmwaAssertException
+     * @throws kmwaRuntimeException
+     * @throws waException
      */
     public function actualizeForecastTransaction()
     {
@@ -247,34 +238,7 @@ SQL;
             return;
         }
 
-        if ($this->settings->isForecastActualizedToday()) {
-            return;
-        }
-
-        $transaction = $this->getForecastRepeatingTransaction();
-        if (!$transaction instanceof cashRepeatingTransaction) {
-            return;
-        }
-
-        $today = new DateTime();
-        $amount = $this->getShopAvgAmount();
-
-        if ($transaction->getAmount() == $amount) {
-            $this->settings
-                ->setForecastActualizedToday(true)
-                ->saveStat();
-
-            return;
-        }
-
-        $transaction->setAmount($amount);
-        if (cash()->getEntityPersister()->update($transaction)) {
-            $this->settings
-                ->setForecastActualizedToday(true)
-                ->saveStat();
-        }
-
-        $this->updateShopTransactionsAfterDate($today, $transaction);
+        $this->changeForecastType();
     }
 
     /**
@@ -516,7 +480,15 @@ SQL;
     /**
      * @throws waException
      */
-    private function deleteFutureTransactions()
+    public function deleteAllShopTransactions()
+    {
+        cash()->getModel(cashTransaction::class)->deleteBySource('shop');
+    }
+
+    /**
+     * @throws waException
+     */
+    private function deleteFutureForecastTransactions()
     {
         $dateToDelete = new DateTime();
         if ($this->settings->getTodayTransactions() === 0) {

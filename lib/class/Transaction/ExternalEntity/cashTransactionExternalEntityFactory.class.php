@@ -11,12 +11,22 @@ class cashTransactionExternalEntityFactory
      * @return cashTransactionExternalEntityInterface
      * @throws waException
      */
-    static public function createFromTransaction(cashTransaction $transaction)
+    public static function createFromTransaction(cashTransaction $transaction)
     {
-        $source = $transaction->getExternalSource();
-        switch ($source) {
-            case 'shop':
-                return new cashTransactionExternalEntityShopOrder($transaction);
+        return self::createFromSource($transaction->getExternalSource(), $transaction->getExternalData());
+    }
+
+    /**
+     * @param string $source
+     * @param mixed  $data
+     *
+     * @return cashTransactionExternalEntityInterface
+     * @throws waException
+     */
+    public static function createFromSource($source, $data)
+    {
+        if ($source === 'shop') {
+            return new cashTransactionExternalEntityShopOrder($source, $data);
         }
 
         return null;

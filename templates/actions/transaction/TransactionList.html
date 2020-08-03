@@ -147,7 +147,7 @@
             <td class="min-width">{if $t->contractor->getId()}<i class="icon16 userpic20" title="{$t->contractor->getName()|escape}" style="background-image: url({$t->contractor->getPhoto(20)});"></i>{/if}</td>
             <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
             <td class="align-right"><em class="hint nowrap">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %d days`]', $_days_diff)}{/if}</em>&nbsp;<strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if} title="[`Amount`]">{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
-            <td class="min-width">{if 111}<i class="icon16" style="background-image: url('/wa-apps/shop/img/shop.png'); background-size: 16px 16px;"></i>{/if}</td>
+            <td class="min-width">{if $t->external_entity}{$t->external_entity->getIcon()}{/if}</td>
             <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
             <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
         </tr>
@@ -223,7 +223,7 @@
         <td class="min-width">{if $t->contractor->getId()}<i class="icon16 userpic20" title="{$t->contractor->getName()|escape}" style="background-image: url({$t->contractor->getPhoto(20)});"></i>{/if}</td>
         <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
         <td class="align-right"><strong class="nowrap" title="[`Amount`]"{if $t->category} style="color: {$t->category->color};"{/if}>{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
-        <td class="min-width">{if 111}<i class="icon16" style="background-image: url('/wa-apps/shop/img/shop.png'); background-size: 16px 16px;"></i>{/if}</td>
+        <td class="min-width">{if $t->external_entity}{$t->external_entity->getIcon()}{/if}</td>
         <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
         <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
     </tr>
