@@ -25,8 +25,8 @@ class cashShopSettingsAction extends cashViewAction
 
         $shopIntegration = new cashShopIntegration();
 
-        if (waRequest::getMethod() === 'post') {
-            $settingsData = waRequest::post('shopscript_settings', waRequest::TYPE_ARRAY_TRIM, []);
+        $settingsData = waRequest::post('shopscript_settings', waRequest::TYPE_ARRAY_TRIM, []);
+        if (waRequest::getMethod() === 'post' && $shopIntegration->getSettings()->validate($settingsData)) {
             $shopIntegration->getSettings()
                 ->load($settingsData)
                 ->save();
@@ -62,7 +62,7 @@ class cashShopSettingsAction extends cashViewAction
                 $shopIntegration->getSettings()->getAccountId()
             );
         } else {
-            $account =cash()->getEntityRepository(cashAccount::class)->findFirst();
+            $account = cash()->getEntityRepository(cashAccount::class)->findFirst();
             $shopIntegration->getSettings()->setAccountId($account->getId());
         }
 
@@ -82,6 +82,10 @@ class cashShopSettingsAction extends cashViewAction
             $shopIntegration->getSettings()->setEnabled(false)->save();
         }
 
+        $accountCurrency = $account
+            ? cashCurrencyVO::fromWaCurrency($account->getCurrency())
+            : cashCurrencyVO::fromWaCurrency(wa()->getLocale() === 'en_US' ? 'USD' : 'RUB');
+
         $this->view->assign(
             [
                 'incomes' => $incomeDtos,
@@ -91,15 +95,11 @@ class cashShopSettingsAction extends cashViewAction
                 'storefronts' => $storefronts,
                 'actions' => $actions,
                 'shopIsOld' => $shopIntegration->shopIsOld(),
-                'avg' => sprintf(
-                    '%s%s',
-                    $avg,
-                    $account
-                        ? cashCurrencyVO::fromWaCurrency($account->getCurrency())->getSignHtml()
-                        : cashCurrencyVO::fromWaCurrency(wa()->getLocale() === 'en_US' ? 'USD' : 'RUB')->getSignHtml()
-                ),
+                'avg' => sprintf('%s%s', $avg, $accountCurrency->getSignHtml()),
+                'accountCurrencySign' => $accountCurrency->getSignHtml(),
                 'shopCurrencyExists' => $shopCurrencyExists,
                 'ordersToImportCount' => $shopIntegration->countOrdersToProcess(),
+                'errors' => $shopIntegration->getSettings()->getErrors(),
             ]
         );
     }

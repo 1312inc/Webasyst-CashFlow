@@ -101,12 +101,19 @@ class cashTransactionDto extends cashAbstractDto
     public $contractor;
 
     /**
+     * @var string
+     */
+    public $appIcon;
+
+    /**
      * cashTransactionDto constructor.
      *
      * @param array                $data
      * @param cashAccountDto|null  $account
      * @param cashCurrencyVO|null  $currency
      * @param cashCategoryDto|null $category
+     *
+     * @throws waException
      */
     public function __construct(
         array $data,

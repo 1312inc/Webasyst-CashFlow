@@ -879,6 +879,19 @@ SQL;
 
     /**
      * @param string $source
+     *
+     * @return bool|resource
+     */
+    public function deleteBySource($source)
+    {
+        return $this->exec(
+            "delete from {$this->table} where external_source = s:source",
+            ['source' => $source]
+        );
+    }
+
+    /**
+     * @param string $source
      * @param string $hash
      * @param string $date
      * @param array  $data

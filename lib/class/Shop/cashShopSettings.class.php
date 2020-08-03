@@ -21,6 +21,11 @@ class cashShopSettings implements JsonSerializable
     private $accountId = 0;
 
     /**
+     * @var cashAccount
+     */
+    private $account;
+
+    /**
      * @var array
      */
     private $accountByStorefronts = [];
@@ -38,12 +43,12 @@ class cashShopSettings implements JsonSerializable
     /**
      * @var bool
      */
-    private $enableForecast = 0;
+    private $enableForecast = 1;
 
     /**
      * @var bool
      */
-    private $autoForecast = 0;
+    private $autoForecast = 1;
 
     /**
      * @var int
@@ -141,6 +146,11 @@ class cashShopSettings implements JsonSerializable
     private $firstTime = true;
 
     /**
+     * @var array
+     */
+    private $errors = [];
+
+    /**
      * cashShopScriptSettings constructor.
      */
     public function __construct()
@@ -156,6 +166,7 @@ class cashShopSettings implements JsonSerializable
             FILTER_VALIDATE_BOOLEAN
         );
         $this->load($this->savedSettings);
+
         $statData = json_decode($this->settingsModel->get(cashConfig::APP_ID, 'shopscript_stat'), true) ?: [];
         $this->todayTransactions = ifset($statData, 'today_transactions', date('Y-m-d'), $this->todayTransactions);
         $this->forecastActualizedToday = !empty($statData['forecast_actualized_today'])
@@ -168,9 +179,27 @@ class cashShopSettings implements JsonSerializable
     /**
      * @param array $data
      *
+     * @return bool
+     */
+    public function validate(array $data):bool
+    {
+        if (empty($data['categoryIncomeId'])) {
+            $this->errors['categoryIncomeId'] = _w('No category income');
+        }
+
+        if (empty($data['categoryExpenseId'])) {
+            $this->errors['categoryExpenseId'] = _w('No category expense');
+        }
+
+        return empty($this->errors);
+    }
+
+    /**
+     * @param array $data
+     *
      * @return cashShopSettings
      */
-    public function load(array $data)
+    public function load(array $data): cashShopSettings
     {
         $data = array_merge($this->savedSettings, $data);
         foreach (get_class_vars(__CLASS__) as $varname => $value) {
@@ -182,6 +211,14 @@ class cashShopSettings implements JsonSerializable
         }
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 
     /**
@@ -617,5 +654,18 @@ class cashShopSettings implements JsonSerializable
     private function findCategoryOrCreateNoCategory($id)
     {
         return $this->categoryRepository->findById($id) ?: $this->categoryFactory->createNewNoCategory();
+    }
+
+    /**
+     * @return cashAccount
+     */
+    public function getAccount(): cashAccount
+    {
+        if ($this->account === null) {
+            $this->account = cash()->getEntityRepository(cashAccount::class)->findById($this->accountId);
+            kmwaAssert::instance($this->account, cashAccount::class);
+        }
+
+        return $this->account;
     }
 }
