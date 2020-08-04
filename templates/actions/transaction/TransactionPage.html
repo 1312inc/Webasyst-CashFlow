@@ -47,6 +47,22 @@
                     </ul>
                 </div>
             {/if}
+
+            {if 111 || REDIRECTED_FROM_SHOPSCRIPT_FIRST_IMPORT}
+            <div class="c-notice">
+
+                {sprintf('[`Hooray! <strong>Created %d income &amp; %d expense transactions</strong> based on your historical Shop-Script sales data.`]', 500500, 100100)}
+                <br><br>
+                {sprintf('[`<strong class="highlighted">%s</strong> (see above) — this is how much cash you <i>would</i> have on hand right now if there were only sales (income), but no business expenses such as salaries, office rent, marketing, purchase & supplies, and so on.`]', round($onHand->stat->summary,2)|wa_format_number:false|cat:' '|cat:$onHand->currency->getSign())}
+                <br><br>
+                {sprintf('[`<strong>Add (or import from a CSV file) your historical expenses now</strong> to get to know your real cash on hand forecast. It’s easy — try clicking on %s button below.<br>
+                Only both income &amp; expense transactions together will show you the real picture of how your business finances work.`]', '<strong style="background: #ffb5b5; padding: 3px 4px; border-radius: 2px; white-space: nowrap;"><i class="icon16 delete" style="margin-top: 1px;"></i>[`Add expense`]</strong>')}
+                <br><br>
+                <a href="#" class="inline-link"><b><i><strong>[`Ok, got that!`]</strong></i></b></a>
+
+            </div>
+            {/if}
+
             <div class="float-right">
                 <ul class="menu-h dropdown" data-cash-chart-dates>
                     <li>

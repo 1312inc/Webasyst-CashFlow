@@ -300,7 +300,7 @@ class cashFixtures
             $startDate = new DateTime('-11 month');
             $tx
                 ->setDescription( _wd(cashConfig::APP_ID, 'Sales') )
-                ->setAmount($this->getAmountInCurrency(95000))
+                ->setAmount($this->getAmountInCurrency(110000))
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
                 ->setAccount($this->demoAccount)
