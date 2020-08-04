@@ -50,7 +50,7 @@
                                     <option value="{$account->id}"
                                             {if $shopScriptSettings->getAccountId() == $account->id}selected{/if}
                                     >
-                                        {$account->name|escape} ({$account->currency->getCode()})
+                                        {$account->currency->getCode()|escape} - {$account->name|escape|truncate:42} ({$account->currency->getSign()|escape})
                                     </option>
                                     {/foreach}
                                 </select>
@@ -236,6 +236,28 @@
                                 </label>
                             </div>
                         </div>
+
+                        <div class="field">
+                            <div class="name">
+                                [`Import orders`]
+                            </div>
+                            <div class="value no-shift">
+                                <label>
+                                    <input type="radio" selected="selected" />
+                                    [`All time`]
+                                </label>
+                                <span class="hint">{sprintf('%s — %s', 'Dec 15, 2008', 'Today')}</span>
+                            </div>
+                            <div class="value no-shift">
+                                <label>
+                                    <input type="radio" />
+                                    [`Only orders paid after`]
+                                </label>
+                                <input type="text" />
+                                <i class="icon16 calendar"></i>
+                            </div>
+                        </div>
+
                         </section>
 
                         <div class="field">
@@ -245,7 +267,7 @@
                                 <input type="submit" class="button green" value="[`Save`]" data-cash-shop-save-button />
                             </div>
 
-                            <div class="value" style="font-size: 0.9em; display: none;" data-cash-shop-rerun-message>
+                            <div class="value" style="font-size: 0.9em; /* display: none; */" data-cash-shop-rerun-message>
                                 <br>
                                 <p>👆<em>{sprintf('[`All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then <a href="%s" data-cash-shop-action="rerun-import">re-start the integration from scratch</a>.`]', '?module=shop&action=rerun')}</em></p>
                             </div>
@@ -358,7 +380,7 @@
                     }, 'json')
                 })
                 .on('change.cash', ':input', function (e) {
-                    $ssform.find('[data-cash-shop-rerun-message]').toggle(formData != $ssform.serialize());
+                    // $ssform.find('[data-cash-shop-rerun-message]').toggle(formData != $ssform.serialize());
                     $ssform.find('[data-cash-shop-save-button]').addClass( formData != $ssform.serialize() ? 'yellow' : 'green');
                 })
                 .on('click.cash', '[data-cash-shop-action="rerun-import"]', function (e) {

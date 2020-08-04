@@ -10,7 +10,7 @@ var CashTransactionDialog = (function ($) {
         }
 
         $('#cash-transaction-dialog').waDialog({
-            'height': '440px',
+            'height': '450px',
             'width': '650px',
             'url': '?module=transaction&action=' + action + '&transaction_id=' + transactionId + '&category_type=' + categoryType + '&filter_id=' + filterId + '&filter_type=' + filterType,
             onLoad: function () {
