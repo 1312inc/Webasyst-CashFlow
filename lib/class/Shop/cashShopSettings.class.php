@@ -184,11 +184,11 @@ class cashShopSettings implements JsonSerializable
     public function validate(array $data):bool
     {
         if (empty($data['categoryIncomeId'])) {
-            $this->errors['categoryIncomeId'] = _w('No category income');
+            $this->errors['categoryIncomeId'] = _w('Sales category must be set');
         }
 
         if (empty($data['categoryExpenseId'])) {
-            $this->errors['categoryExpenseId'] = _w('No category expense');
+            $this->errors['categoryExpenseId'] = _w('Refund category must be set');
         }
 
         return empty($this->errors);
