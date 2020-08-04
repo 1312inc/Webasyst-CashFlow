@@ -74,21 +74,6 @@
                         </div>
                     </div>
 
-                    <div class="field">
-                        <div class="name nowrap">
-                            [`Date`]
-                        </div>
-                        <div class="value">
-                            <input type="text"
-                                   name="transaction[date]"
-                                   value="{$transaction->date}"
-                                   data-cash-date="{$transaction->date}"
-                            />
-                            <i class="icon16 calendar"></i>
-                            <span class="hint"></span>
-                        </div>
-                    </div>
-
                     {if !$transaction->id}
                     <div class="field" style="padding-top: 6px;">
                         <div class="name">[`Repeat`]</div>
@@ -104,6 +89,21 @@
                         </div>
                     </div>
                     {/if}
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Date`]
+                        </div>
+                        <div class="value">
+                            <input type="text"
+                                   name="transaction[date]"
+                                   value="{$transaction->date}"
+                                   data-cash-date="{$transaction->date}"
+                            />
+                            <i class="icon16 calendar"></i>
+                            <span class="hint"></span>
+                        </div>
+                    </div>
 
                     <section data-cash-repeating-settings style="display: none">
                     <div class="field" style="{if $repeatingTransaction->id}display: none{/if}">
@@ -184,7 +184,7 @@
                 <div class="field-group">
                     <div class="field">
                         <div class="name nowrap">
-                            {if $categoryType == cashCategory::TYPE_TRANSFER}[`From`]{else}[`Account`]{/if}
+                            {if $categoryType == cashCategory::TYPE_TRANSFER}[`From account`]{else}[`Account`]{/if}
                         </div>
                         <div class="value no-shift">
                             {$account = reset($accounts)}
@@ -213,7 +213,7 @@
                     {if $categoryType == cashCategory::TYPE_TRANSFER}
                         <div class="field">
                             <div class="name nowrap">
-                                [`To`]
+                                [`To account`]
                             </div>
                             <div class="value">
                                 {$account = reset($accounts)}
