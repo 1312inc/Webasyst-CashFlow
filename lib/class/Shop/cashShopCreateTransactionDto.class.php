@@ -41,7 +41,10 @@ class cashShopCreateTransactionDto
      */
     public function __construct($params = [])
     {
-        $this->params = $params;
-        $this->order = new shopOrder($params['order_id']);
+        $this->params = array_merge(
+            ['action_id' => '', 'before_state_id' => '', 'after_state_id' => ''],
+            $params
+        );
+        $this->order = new shopOrder($this->params['order_id']);
     }
 }

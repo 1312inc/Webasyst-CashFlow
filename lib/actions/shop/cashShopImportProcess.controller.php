@@ -106,11 +106,23 @@ SQL;
 
         foreach ($orders as $orderId) {
             try {
-                $dto = new cashShopCreateTransactionDto(
-                    ['order_id' => $orderId, 'action_id' => '', 'before_state_id' => '', 'after_state_id' => '']
-                );
+                $dto = new cashShopCreateTransactionDto(['order_id' => $orderId]);
                 $factory->createTransactions($dto, cashShopTransactionFactory::INCOME);
                 $shopIntegration->saveTransactions($dto);
+
+                if ($dto->mainTransaction) {
+                    $this->data['info']->incomeTransactions++;
+                }
+                if ($dto->purchaseTransaction) {
+                    $this->data['info']->expenseTransactions++;
+                }
+                if ($dto->shippingTransaction) {
+                    $this->data['info']->expenseTransactions++;
+                }
+                if ($dto->taxTransaction) {
+                    $this->data['info']->expenseTransactions++;
+                }
+
             } catch (Exception $ex) {
                 cash()->getLogger()->error(sprintf('Error on shop import order %s', $orderId), $ex, 'shop/import');
             } finally {
@@ -141,6 +153,11 @@ SQL;
     protected function finish($filename)
     {
         echo json_encode($this->data['info'], JSON_UNESCAPED_UNICODE);
+
+        wa()->getStorage()->set(cashShopIntegration::SESSION_SSIMPORT, [
+            'incomeTransactions' => $this->data['info']->incomeTransactions,
+            'expenseTransactions' => $this->data['info']->expenseTransactions,
+        ]);
 
         return true;
     }

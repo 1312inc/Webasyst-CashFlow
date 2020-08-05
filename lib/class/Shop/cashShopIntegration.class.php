@@ -6,6 +6,7 @@
 class cashShopIntegration
 {
     const DAYS_FOR_AVG_BILL_CALCULATION = 30;
+    const SESSION_SSIMPORT = 'cash.shopscript_import';
 
     /**
      * @var cashShopSettings

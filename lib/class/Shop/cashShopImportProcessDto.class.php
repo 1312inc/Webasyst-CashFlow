@@ -19,6 +19,10 @@ class cashShopImportProcessDto implements JsonSerializable
 
     public $error = '';
 
+    public $incomeTransactions = 0;
+
+    public $expenseTransactions = 0;
+
     /**
      * cashShopImportProcessDto constructor.
      *

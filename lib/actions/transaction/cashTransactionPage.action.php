@@ -140,7 +140,14 @@ class cashTransactionPageAction extends cashViewAction
                 'listSettings' => $settings,
                 'onHandsEndday' => $onHandsEndday,
                 'pagination' => $this->pagination,
+                'fromShopScriptImport' => false,
             ]
         );
+
+        $fromSsimport = wa()->getStorage()->get(cashShopIntegration::SESSION_SSIMPORT);
+        if ($fromSsimport) {
+            wa()->getStorage()->del(cashShopIntegration::SESSION_SSIMPORT);
+            $this->view->assign(['fromShopScriptImport' => $fromSsimport]);
+        }
     }
 }
