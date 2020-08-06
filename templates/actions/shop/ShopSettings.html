@@ -237,26 +237,28 @@
                             </div>
                         </div>
 
+                        {if $shopScriptSettings->isFirstTime()}
                         <div class="field">
                             <div class="name">
                                 [`Import orders`]
                             </div>
                             <div class="value no-shift">
                                 <label>
-                                    <input type="radio" selected="selected" />
+                                    <input type="radio" checked name="import_period" value="all"/>
                                     [`All time`]
                                 </label>
-                                <span class="hint">{sprintf('%s — %s', 'Dec 15, 2008', 'Today')}</span>
+                                <span class="hint">{sprintf('%s — %s', $shopOrderDateBounds['min']|wa_date:humandate, $shopOrderDateBounds['max']|wa_date:humandate)}</span>
                             </div>
                             <div class="value no-shift">
                                 <label>
-                                    <input type="radio" />
+                                    <input type="radio" name="import_period" value="after"/>
                                     [`Only orders paid after`]
                                 </label>
-                                <input type="text" />
+                                <input type="text" name="import_period_after"/>
                                 <i class="icon16 calendar"></i>
                             </div>
                         </div>
+                        {/if}
 
                         </section>
 
@@ -407,73 +409,116 @@
 
             $ssform.find('select').trigger('change.cash');
 
-            $('#cash-welcome-shop-start').on('click.cash', function (e) {
-                e.preventDefault();
-                var $button = $(this),
-                    $progress = $('#c-welcome-import'),
-                    $progressBar = $progress.find('.progressbar'),
-                    $progressLoading = $progress.find('[data-cash-shop-import-progress-icon="loading"]'),
-                    $progressCounts = $progressLoading.find('[data-cash-shop-import-progress-counts]'),
-                    $progressSuccess = $progress.find('[data-cash-shop-import-progress-icon="success"]'),
-                    $progressError = $progress.find('[data-cash-shop-import-progress-icon="error"]');
+            var $welcome = $('#cash-welcome-shop-start');
+            if ($welcome.length) {
+                var $allPeriod = $ssform.find('[name="import_period"]:first'),
+                    $afterPeriod = $ssform.find('[name="import_period"]:last'),
+                    datepicker_options = {
+                        changeMonth: true,
+                        changeYear: true,
+                        shortYearCutoff: 2,
+                        dateShowWeek: false,
+                        showOtherMonths: true,
+                        selectOtherMonths: true,
+                        stepMonths: 1,
+                        numberOfMonths: 1,
+                        gotoCurrent: true,
+                        constrainInput: false,
+                        dateFormat: "yy-mm-dd",
+                        onSelect: function(date) {
+                            $afterPeriod.prop('checked', true);
+                            updateImportOrderCount(date);
+                        },
+                    },
+                    $datePicker = $ssform.find('[name="import_period_after"]');
+                $datePicker.datepicker(datepicker_options);
 
-                $.post('?module=shop&action=settings', $ssform.serialize(), function (html) {
-                    var $html = $(html);
-                    debugger
-                    if ($html.find('[data-cash-shop-errors]').length) {
-                        $('#cash-settings').html(html);
-                    } else {
-                        $button.prop('disabled', true).hide();
-                        var long = $.wa.kmLongAction();
-                        long.start({
-                            process_url: '?module=shop&action=importProcess',
-                            parallel: 2,
-                            debug: true,
-                            start: {
-                                onStart: function (r) {
-                                    $progressBar.show();
-                                    $button.hide();
-                                    $progressLoading.show().siblings().hide();
-                                },
-                                onSuccess: function (r) {
-                                    $progressBar.find('.progressbar-inner').css('width', '0%');
-                                    // $transactionStat.show();
-                                },
-                                onError: function (r) {
-                                    $progressError.show().siblings().hide();
-                                    $progressError.find('span').text(r.error);
-                                    $button.prop('disabled', false).show();
-                                    // $transactionStat.hide();
-                                }
-                            },
-                            step: {
-                                onProgress: function (r) {
-                                    $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
-                                    $progressCounts.text(r.passed_orders + ' / ' + r.total_orders)
-                                    // $transactionStat.show();
-                                    // $transactionStat.find('span').text(r.transactions.ok);
-                                    // $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
-                                },
-                                onReady: function (r) {
-                                    $progressSuccess.show().siblings().hide();
-                                    $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
-                                    // alert('done, redirect to app');
-                                    window.location.hash = '/account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
-                                    // $button.prop('disabled', false);
-                                    // $transactionStat.show();
-                                    // $transactionStat.find('span').text(r.transactions.ok);
-                                    // $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
-                                },
-                                onError: function (r) {
-                                    $progressError.show().siblings().hide();
-                                    $progressError.find('span').text(r.error);
-                                    $button.prop('disabled', false).show();
-                                }
-                            }
-                        });
-                    }
+                var updateImportOrderCount = function (after) {
+                    $.post('?module=json&action=updateImportOrderCount', { after: after }, function (r) {
+                        if (r.status !== 'fail') {
+                            $welcome.val($_('Import ' + parseInt(r.data) + ' paid orders'))
+                        }
+                    }, 'json')
+                };
+
+                $afterPeriod.on('click.cash', function (e) {
+                    updateImportOrderCount($datePicker.val());
                 });
-            })
+                $allPeriod.on('click.cash', function (e) {
+                    updateImportOrderCount();
+                });
+
+                $welcome.on('click.cash', function (e) {
+                    e.preventDefault();
+                    var $button = $(this),
+                        $progress = $('#c-welcome-import'),
+                        $progressBar = $progress.find('.progressbar'),
+                        $progressLoading = $progress.find('[data-cash-shop-import-progress-icon="loading"]'),
+                        $progressCounts = $progressLoading.find('[data-cash-shop-import-progress-counts]'),
+                        $progressSuccess = $progress.find('[data-cash-shop-import-progress-icon="success"]'),
+                        $progressError = $progress.find('[data-cash-shop-import-progress-icon="error"]');
+
+                    $.post('?module=shop&action=settings', $ssform.serialize(), function (html) {
+                        var $html = $(html);
+                        if ($html.find('[data-cash-shop-errors]').length) {
+                            $('#cash-settings').html(html);
+                        } else {
+                            $button.prop('disabled', true).hide();
+                            var long = $.wa.kmLongAction();
+                            long.start({
+                                process_url: '?module=shop&action=importProcess',
+                                parallel: 2,
+                                debug: true,
+                                start: {
+                                    data: {
+                                        'period': $('[name="import_period"]:checked').val(),
+                                        'period_after': $datePicker.val()
+                                    },
+                                    onStart: function (r) {
+                                        $progressBar.show();
+                                        $button.hide();
+                                        $progressLoading.show().siblings().hide();
+                                    },
+                                    onSuccess: function (r) {
+                                        $progressBar.find('.progressbar-inner').css('width', '0%');
+                                        // $transactionStat.show();
+                                    },
+                                    onError: function (r) {
+                                        $progressError.show().siblings().hide();
+                                        $progressError.find('span').text(r.error);
+                                        $button.prop('disabled', false).show();
+                                        // $transactionStat.hide();
+                                    }
+                                },
+                                step: {
+                                    onProgress: function (r) {
+                                        $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
+                                        $progressCounts.text(r.passed_orders + ' / ' + r.total_orders)
+                                        // $transactionStat.show();
+                                        // $transactionStat.find('span').text(r.transactions.ok);
+                                        // $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
+                                    },
+                                    onReady: function (r) {
+                                        $progressSuccess.show().siblings().hide();
+                                        $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
+                                        // alert('done, redirect to app');
+                                        window.location.hash = '/account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
+                                        // $button.prop('disabled', false);
+                                        // $transactionStat.show();
+                                        // $transactionStat.find('span').text(r.transactions.ok);
+                                        // $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
+                                    },
+                                    onError: function (r) {
+                                        $progressError.show().siblings().hide();
+                                        $progressError.find('span').text(r.error);
+                                        $button.prop('disabled', false).show();
+                                    }
+                                }
+                            });
+                        }
+                    });
+                })
+            }
         }
     }())
 </script>

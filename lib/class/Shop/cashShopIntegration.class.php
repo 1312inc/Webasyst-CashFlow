@@ -466,13 +466,20 @@ SQL;
     }
 
     /**
+     * @param DateTime|null $after
+     *
      * @return int
-     * @throws waException
      */
-    public function countOrdersToProcess(): int
+    public function countOrdersToProcess(DateTime $after = null): int
     {
         if ($this->shopExists()) {
-            return (int)(new shopOrderModel())->select('count(*)')->where('paid_date is not null')->fetchField();
+            return (int)(new shopOrderModel())
+                ->select('count(*)')
+                ->where(
+                    sprintf('paid_date is not null %s', $after ? 'and create_datetime >= s:after' : ''),
+                    ['after' => $after ? $after->format('Y-m-d H:i:s') : '']
+                )
+                ->fetchField();
         }
 
         return 0;
@@ -484,6 +491,20 @@ SQL;
     public function deleteAllShopTransactions()
     {
         cash()->getModel(cashTransaction::class)->deleteBySource('shop');
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrderBounds(): array
+    {
+        $dates = (new shopOrderModel())
+            ->query(
+                'select min(create_datetime), max(create_datetime) from shop_order where paid_date is not null'
+            )
+            ->fetchArray();
+
+        return ['min' => $dates[0] ?? date('Y-m-d H:i:s'), 'max' => $dates[1] ?? date('Y-m-d H:i:s')];
     }
 
     /**
