@@ -13,6 +13,11 @@ class cashShopCreateTransactionDto
     public $order;
 
     /**
+     * @var string
+     */
+    public $encodedOrderId;
+
+    /**
      * @var array
      */
     public $params = [];
@@ -46,5 +51,6 @@ class cashShopCreateTransactionDto
             $params
         );
         $this->order = new shopOrder($this->params['order_id']);
+        $this->encodedOrderId = shopHelper::encodeOrderId($this->order->getId());
     }
 }

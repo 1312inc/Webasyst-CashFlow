@@ -463,6 +463,7 @@
                         if ($html.find('[data-cash-shop-errors]').length) {
                             $('#cash-settings').html(html);
                         } else {
+                            $ssform.find('[data-cash-shop-errors]').remove();
                             $button.prop('disabled', true).hide();
                             var long = $.wa.kmLongAction();
                             long.start({

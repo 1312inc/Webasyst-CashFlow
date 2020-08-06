@@ -114,12 +114,10 @@ SQL;
             return true;
         }
 
-        $factory = new cashShopTransactionFactory($shopIntegration->getSettings());
-
         foreach ($orders as $orderId) {
             try {
                 $dto = new cashShopCreateTransactionDto(['order_id' => $orderId]);
-                $factory->createTransactions($dto, cashShopTransactionFactory::INCOME);
+                $shopIntegration->getTransactionFactory()->createIncomeTransaction($dto);
                 $shopIntegration->saveTransactions($dto);
 
                 if ($dto->mainTransaction) {
