@@ -30,25 +30,13 @@ class cashShopOrderActionListener extends waEventHandler
                     sprintf('Okay, lets create new income transaction for action %s', $params['action_id'])
                 );
 
-                $shopTransactionFactory->createTransactions($createTransactionDto, cashShopTransactionFactory::INCOME);
-
-                if ($settings->getCategoryPurchaseId()) {
-                    $shopTransactionFactory->createPurchaseTransaction($createTransactionDto);
-                }
-
-                if ($settings->getCategoryShippingId()) {
-                    $shopTransactionFactory->createShippingTransaction($createTransactionDto);
-                }
-
-                if ($settings->getCategoryTaxId()) {
-                    $shopTransactionFactory->createTaxTransaction($createTransactionDto);
-                }
+                $shopTransactionFactory->createIncomeTransaction($createTransactionDto);
             } elseif (in_array($params['action_id'], $settings->getExpenseActions(), true)) {
                 cash()->getLogger()->debug(
                     sprintf('Okay, lets create new expense transaction for action %s', $params['action_id'])
                 );
 
-                $shopTransactionFactory->createTransactions($createTransactionDto, cashShopTransactionFactory::EXPENSE);
+                $shopTransactionFactory->createExpenseTransaction($createTransactionDto);
             }
 
             if ($createTransactionDto->mainTransaction instanceof cashTransaction) {

@@ -34,10 +34,10 @@ class cashShopIntegration
     /**
      * @return cashShopTransactionFactory
      */
-    public function getTransactionFactory()
+    public function getTransactionFactory(): cashShopTransactionFactory
     {
         if ($this->transactionFactory === null) {
-            $this->transactionFactory = new cashShopTransactionFactory($this->settings);
+            $this->transactionFactory = new cashShopTransactionFactory($this);
         }
 
         return $this->transactionFactory;
