@@ -20,4 +20,5 @@ final class cashEventStorage
     const SETTINGS_SAVE = 'settings_save';
     const TRANSACTION_PAGE_PREEXECUTE = 'transaction_page_preexecute';
     const ON_COUNT = 'on_count';
+    const ACCOUNT_ARCHIVE = 'account_archive';
 }
