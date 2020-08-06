@@ -55,27 +55,28 @@ class cashFixtures
         $this->fixtures = [
             cashCategory::TYPE_INCOME => array_reverse(
                 [
-                    'Sales' => [_wd(cashConfig::APP_ID, 'Sales'), '#94fa4e'],
-                    'Investment' => [_wd(cashConfig::APP_ID, 'Investment'), '#78fa7a'],
-                    'Cashback' => [_wd(cashConfig::APP_ID, 'Cashback'), '#78faa2'],
-                    'Unexpected profit' => [_wd(cashConfig::APP_ID, 'Unexpected profit'), '#77fbfd'],
-                    'Loan' => [_wd(cashConfig::APP_ID, 'Loan'), '#81cafa'],
+                    'Sales' => [_wd(cashConfig::APP_ID, 'Sales'), '#00CC66'],
+                    'Investment' => [_wd(cashConfig::APP_ID, 'Investment'), '#00CCCC'],
+                    'Cashback' => [_wd(cashConfig::APP_ID, 'Cashback'), '#00CCFF'],
+                    'Took a loan' => [_wd(cashConfig::APP_ID, 'Took a loan'), '#6699FF'],
+                    'Unexpected profit' => [_wd(cashConfig::APP_ID, 'Unexpected profit'), '#6666FF'],
                 ],
                 true
             ),
             cashCategory::TYPE_EXPENSE => array_reverse(
                 [
-                    'Rent' => [_wd(cashConfig::APP_ID, 'Rent'), '#eebecf'],
-                    'Delivery' => [_wd(cashConfig::APP_ID, 'Delivery'), '#de6c92'],
-                    'Purchase' => [_wd(cashConfig::APP_ID, 'Purchase'), '#d2483e'],
-                    'Salary' => [_wd(cashConfig::APP_ID, 'Salary'), '#e9382a'],
-                    'Marketing' => [_wd(cashConfig::APP_ID, 'Marketing'), '#d53964'],
-                    'Dividend' => [_wd(cashConfig::APP_ID, 'Dividend'), '#e58231'],
-                    'Commission' => [_wd(cashConfig::APP_ID, 'Commission'), '#f2ab63'],
-                    'Tax' => [_wd(cashConfig::APP_ID, 'Tax'), '#b75822'],
-                    'Refund' => [_wd(cashConfig::APP_ID, 'Refund'), '#C62828'],
-                    'Loan payout' => [_wd(cashConfig::APP_ID, 'Loan payout'), '#EE2222'],
-                    'Unexpected loss' => [_wd(cashConfig::APP_ID, 'Unexpected loss'), '#FF5722'],
+                    'Office rent' => [_wd(cashConfig::APP_ID, 'Office rent'), '#880E4F'],
+                    'Purchasing & supply' => [_wd(cashConfig::APP_ID, 'Purchasing & supply'), '#E91E63'],
+                    'Shipping' => [_wd(cashConfig::APP_ID, 'Shipping'), '#EC407A'],
+                    'Marketing' => [_wd(cashConfig::APP_ID, 'Marketing'), '#F48FB1'],
+                    'Hosting' => [_wd(cashConfig::APP_ID, 'Hosting'), '#F8BBD0'],
+                    'Salaries' => [_wd(cashConfig::APP_ID, 'Salaries'), '#E91E63'],
+                    'Taxes' => [_wd(cashConfig::APP_ID, 'Taxes'), '#FF8A65'],
+                    'Commissions & fees' => [_wd(cashConfig::APP_ID, 'Commissions & fees'), '#FB8C20'],
+                    'Dividend payouts' => [_wd(cashConfig::APP_ID, 'Dividend payouts'), '#FF7043'],
+                    'Refunds' => [_wd(cashConfig::APP_ID, 'Refunds'), '#FF1312'],
+                    'Loan payouts' => [_wd(cashConfig::APP_ID, 'Loan payouts'), '#EE2222'],
+                    'Unexpected loss' => [_wd(cashConfig::APP_ID, 'Unexpected loss'), '#FF1312'],
                 ],
                 true
             ),
@@ -153,7 +154,7 @@ class cashFixtures
             $tx
                 ->setAmount($this->getAmountInCurrency(192000))
                 ->setAccount($this->demoAccount)
-                ->setCategory($this->categories['Loan'])
+                ->setCategory($this->categories['Took a loan'])
                 ->setDescription( _wd(cashConfig::APP_ID, 'Took a loan in the bank') )
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDatetime($startDate->format('Y-m-d H:i:s'));
@@ -173,7 +174,7 @@ class cashFixtures
                 ->setDate($startDate->format('Y-m-d H:i:s'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
                 ->setAccount($this->demoAccount)
-                ->setCategory($this->categories['Rent']);
+                ->setCategory($this->categories['Office rent']);
             $this->perister->insert($tx);
             $repeater->repeat($tx);
 
@@ -205,7 +206,7 @@ class cashFixtures
                 ->setDate($startDate->format('Y-m-d H:i:s'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
                 ->setAccount($this->demoAccount)
-                ->setCategory($this->categories['Purchase']);
+                ->setCategory($this->categories['Purchasing & supply']);
             $this->perister->insert($tx);
             $repeater->repeat($tx);
 
@@ -221,7 +222,7 @@ class cashFixtures
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
                 ->setAccount($this->demoAccount)
-                ->setCategory($this->categories['Salary']);
+                ->setCategory($this->categories['Salaries']);
             $this->perister->insert($tx);
             $repeater->repeat($tx);
 
@@ -237,7 +238,7 @@ class cashFixtures
                 ->setDate($startDate->format('Y-m-d H:i:s'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
                 ->setAccount($this->demoAccount)
-                ->setCategory($this->categories['Dividend']);
+                ->setCategory($this->categories['Dividend payouts']);
             $this->perister->insert($tx);
             $repeater->repeat($tx);
 
@@ -286,7 +287,7 @@ class cashFixtures
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
                 ->setAccount($this->demoAccount)
-                ->setCategory($this->categories['Salary']);
+                ->setCategory($this->categories['Salaries']);
             $this->perister->insert($tx);
             $repeater->repeat($tx);
 
@@ -322,7 +323,7 @@ class cashFixtures
                 ->setDate($startDate->format('Y-m-d'))
                 ->setDateTime($startDate->format('Y-m-d H:i:s'))
                 ->setAccount($this->demoAccount)
-                ->setCategory($this->categories['Loan payout']);
+                ->setCategory($this->categories['Loan payouts']);
             $this->perister->insert($tx);
             $repeater->repeat($tx);
 
