@@ -25,10 +25,11 @@ class cashAccountDeleteController extends cashJsonController
             }
 
             $model->commit();
+
+            cash()->event(cashEventStorage::ACCOUNT_ARCHIVE, $account);
         } catch (Exception $ex) {
             $model->rollback();
             $this->errors[] = $ex->getMessage();
         }
-
     }
 }

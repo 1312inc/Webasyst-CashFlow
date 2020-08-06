@@ -6,5 +6,8 @@ return [
     ],
     cashEventStorage::ON_COUNT => [
         ['cashShopIntegration', 'onCount']
+    ],
+    cashEventStorage::ACCOUNT_ARCHIVE => [
+        ['cashShopAccountArchiveListener', 'execute']
     ]
 ];
