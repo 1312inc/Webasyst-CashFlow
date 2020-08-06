@@ -110,7 +110,7 @@ msgid "Repeat"
 msgstr "Повтор"
 
 msgid "Custom..."
-msgstr "Настроить…"
+msgstr "Настроить..."
 
 msgid "Every"
 msgstr "Каждый"
@@ -257,7 +257,7 @@ msgid "Past"
 msgstr "Прошлое"
 
 msgid "Select dates..."
-msgstr "Выбрать даты…"
+msgstr "Выбрать даты..."
 
 msgid "Future"
 msgstr "Будущее"
@@ -293,16 +293,13 @@ msgid "Sales (paid orders)"
 msgstr "Продажи (оплаченные заказы)"
 
 msgid "Configure pay actions"
-msgstr "Настроить по действиям"
+msgstr "Настроить действия оплаты"
 
 msgid "Select Shop-Script order actions which are directly associated with marking orders as paid. The Cash app will listen only to the selected list of order actions for importing sales:"
 msgstr "Выберите действия с заказами Shop-Script, которые связаны с поступлением оплаты по заказам (переводом заказов в статус «Оплачен»). Приложение Cash Flow будет следить только за выбранными действиями при создании операций по оплаченным заказам:"
 
 msgid "For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options."
 msgstr "Windows: зажмите Ctrl и выделите нужные пункты.<br> macOS: зажмите Cmd и выделите нужные пункты."
-
-msgid "Refunds"
-msgstr "Возвраты"
 
 msgid "Configure refund actions"
 msgstr "Настроить действия возвратов"
@@ -324,9 +321,6 @@ msgstr "Доставка"
 
 msgid "Enabling the setting will automatically add expense transactions based on shipping costs for each order."
 msgstr "Включите, чтобы для каждого заказа автоматически создавалась операция по расходам на доставку."
-
-msgid "Taxes"
-msgstr "Налоги"
 
 msgid "Enabling the setting will automatically add expense transactions based on tax amount for each order."
 msgstr "Включите, чтобы для каждого заказа автоматически создавалась операция по расходам на налоги."
@@ -481,18 +475,6 @@ msgstr "%s в месяц"
 msgid "Set your average monthly recurring expenses to initially make the financial model more precise:"
 msgstr ""
 
-msgid "Salary"
-msgstr "Зарплаты"
-
-msgid "Purchases & Supplies"
-msgstr ""
-
-msgid "Rent"
-msgstr "Аренда"
-
-msgid "Marketing"
-msgstr "Маркетинг"
-
 msgid "Don’t worry — you’ll be able to add, edit, delete, or finetune income and expenses later."
 msgstr ""
 
@@ -509,10 +491,10 @@ msgid "You'll be able to import sales data from Shop-Script or a CSV file any ti
 msgstr ""
 
 msgid "Importing..."
-msgstr "Импорт…"
+msgstr "Импорт..."
 
 msgid "Finalizing..."
-msgstr "Завершение…"
+msgstr "Завершение..."
 
 msgid "Done"
 msgstr "Готово"
@@ -619,37 +601,46 @@ msgstr "Продажи"
 msgid "Investment"
 msgstr "Инвестиции"
 
-msgid "Loan"
-msgstr "Взяли в долг"
+msgid "Took a loan"
+msgstr "Взяли кредит"
 
 msgid "Cashback"
 msgstr "Кешбек"
 
 msgid "Unexpected profit"
-msgstr "Халтурка"
+msgstr "Просто прибыль"
 
-msgid "Purchase"
+msgid "Salaries"
+msgstr "Зарплаты"
+
+msgid "Office rent"
+msgstr "Аренда офиса"
+
+msgid "Marketing"
+msgstr "Маркетинг"
+
+msgid "Purchasing & supply"
 msgstr "Закупки"
 
-msgid "Delivery"
+msgid "Shipping"
 msgstr "Доставка"
 
-msgid "Errand"
-msgstr "Командировки"
+msgid "Hosting"
+msgstr "Хостинг"
 
-msgid "Loan payout"
-msgstr "Вернули долг"
+msgid "Loan payouts"
+msgstr "Выплаты по кредитам"
 
-msgid "Commission"
-msgstr "Комиссионные"
+msgid "Commissions & fees"
+msgstr "Комиссии банков"
 
-msgid "Dividend"
+msgid "Dividend payouts"
 msgstr "Выплата дивидендов"
 
-msgid "Refund"
-msgstr "Возврат"
+msgid "Refunds"
+msgstr "Возвраты"
 
-msgid "Tax"
+msgid "Taxes"
 msgstr "Налоги"
 
 msgid "Unexpected loss"
@@ -961,9 +952,6 @@ msgstr "Пропускать строки с этим значением"
 msgid "Demo account"
 msgstr "Демо-счет"
 
-msgid "Office rent"
-msgstr "Аренда офиса"
-
 msgid "Initial investment"
 msgstr "Начальные инвестиции"
 
@@ -979,9 +967,6 @@ msgstr "Закуп товаров"
 msgid "Sales team"
 msgstr "Зарплаты продавцов"
 
-msgid "Dividend payouts"
-msgstr "Выплата дивидендов"
-
 msgid "Pop-up store time-limited sale"
 msgstr "Выездная торговля и акция"
 
@@ -996,3 +981,44 @@ msgstr "Продажи интернет-магазина (план)"
 
 msgid "This will flush all Shop-Script import settings so you can re-start the import from scratch. All existing transactions will remain as is unless you delete them manually. Re-start the integration?"
 msgstr "Интеграция с Shop-Script будет перезапущена с нуля, и вы сможете заново импортировать все операции. Все ранее импортированные операции останутся в приложении, пока вы не удалите их вручную. Перезапускаем?"
+
+msgid "Cash Flow"
+msgstr "Деньги"
+
+msgid "From account"
+msgstr "Со счета"
+
+msgid "To account"
+msgstr "На счет"
+
+msgid "Hooray! <strong>Created %d income &amp; %d expense transactions</strong> based on your historical Shop-Script sales data."
+msgstr "Ура! <strong>Создали %d доходных и %d расходных операций</strong> на основе данных об оплаченных заказах Shop-Script."
+
+msgid "<strong class=\"highlighted\">%s</strong> (see above) — this is how much cash you <i>would</i> have on hand right now if there were only sales (income), but no business expenses such as salaries, office rent, marketing, purchase & supplies, and so on."
+msgstr "<strong class=\"highlighted\">%s</strong> (см. баланс счета выше) — это та сумма наличных в кассе, которая <i>была бы</i> у вас прямо сейчас, если бы у бизнеса были только доходы (продажи) и никаких расходов, таких как зарплаты, аренда, маркетинг, закупки и так далее."
+
+msgid ""
+"<strong>Add (or import from a CSV file) your historical expenses now</strong> to get to know your real cash on hand forecast. It’s easy — try clicking on %s button below.<br>\n"
+"                Only both income &amp; expense transactions together will show you the real picture of how your business finances work."
+msgstr "<strong>Теперь добавьте расходы,</strong> чтобы построить полную финансовую модель бизнеса и получить прогноз прибыли и баланса. Все очень просто — добавьте расходные операции %s вручную или импортируйте все операции разом из CSV-файла."
+
+msgid "Ok, got that!"
+msgstr "Ок, понятно!"
+
+msgid "Import orders"
+msgstr "Импорт операций"
+
+msgid "Only orders paid after"
+msgstr "Только начиная с"
+
+msgid "Importing"
+msgstr "Импорт"
+
+msgid "Sales category must be set"
+msgstr "Нужно указать статью операций для продаж"
+
+msgid "Refund category must be set"
+msgstr "Нужно указать статью операций для возвратов"
+
+msgid "Purchases & Supplies"
+msgstr ""
