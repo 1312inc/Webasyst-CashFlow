@@ -35,7 +35,7 @@ class cashTransactionDtoAssembler
                 $initialBalance -= $datum['amount'];
             }
 
-            if ($datum['external_data']) {
+            if ($datum['external_hash']) {
                 $dto->external_entity = cashTransactionExternalEntityFactory::createFromSource(
                     $datum['external_source'], $datum['external_data']
                 );
@@ -66,7 +66,7 @@ class cashTransactionDtoAssembler
         $transactionDto->currency = $accountDto->currency;
         $transactionDto->category = $categoryDto;
 
-        if ($transaction->getExternalData()) {
+        if ($transaction->getExternalHash()) {
             $transactionDto->external_entity = cashTransactionExternalEntityFactory::createFromTransaction(
                 $transaction
             );
