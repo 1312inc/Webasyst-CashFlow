@@ -35,10 +35,15 @@ class cashShopImportProcessController extends waLongActionController
             throw new kmwaRuntimeException('No shop app');
         }
 
-        $shopWelcome = new cashShopWelcome($shopIntegration);
-
         $info = new cashShopImportProcessDto($this->processId);
-        $info->totalOrders = $shopWelcome->countOrdersToProcess();
+        $info->period = waRequest::request('period', 'all', waRequest::TYPE_STRING_TRIM);
+        $info->periodAfter = waRequest::request('period_after', null, waRequest::TYPE_STRING_TRIM);
+        if ($info->period !== 'all' && empty($info->periodAfter)) {
+            throw new kmwaRuntimeException('Wrong import period');
+        }
+        $info->periodAfter = new DateTime($info->periodAfter);
+
+        $info->totalOrders = $shopIntegration->countOrdersToProcess($info->periodAfter ?: null);
 
         $account = cash()->getEntityRepository(cashAccount::class)->findAllActive();
         if (!$account) {
@@ -86,13 +91,18 @@ class cashShopImportProcessController extends waLongActionController
         $shopOrderModel = new shopOrderModel();
         $ordersSql = <<<SQL
 select id from shop_order 
-where paid_date is not null 
+where paid_date is not null
+%s
 order by id 
 limit i:start, i:chunk
 SQL;
         $orders = $shopOrderModel->query(
-            $ordersSql,
-            ['start' => $this->data['info']->passedOrders, 'chunk' => self::ORDERS_TO_PROCEED]
+            sprintf($ordersSql, $this->data['info']->period === 'all' ? '' : ' and create_datetime >= i:start_date'),
+            [
+                'start' => $this->data['info']->passedOrders,
+                'chunk' => self::ORDERS_TO_PROCEED,
+                'start_date' => $this->data['info']->periodAfter->format('Y-m-d 00:00:00'),
+            ]
         )->fetchAll();
         $orders = array_column($orders, 'id');
 

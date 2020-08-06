@@ -23,6 +23,13 @@ class cashShopImportProcessDto implements JsonSerializable
 
     public $expenseTransactions = 0;
 
+    public $period = 'all';
+
+    /**
+     * @var DateTime|null
+     */
+    public $periodAfter;
+
     /**
      * cashShopImportProcessDto constructor.
      *

@@ -78,8 +78,10 @@ class cashShopSettingsAction extends cashViewAction
             $actions = (new shopWorkflow())->getAllActions();
             $avg = round($shopIntegration->getShopAvgAmount(), 2);
             $shopCurrencyExists = (bool)(new shopCurrencyModel())->getById($account->getCurrency());
+            $dateBounds = $shopIntegration->getOrderBounds();
         } else {
             $shopIntegration->getSettings()->setEnabled(false)->save();
+            $dateBounds = ['min' => '', 'max' => ''];
         }
 
         $accountCurrency = $account
@@ -100,6 +102,7 @@ class cashShopSettingsAction extends cashViewAction
                 'shopCurrencyExists' => $shopCurrencyExists,
                 'ordersToImportCount' => $shopIntegration->countOrdersToProcess(),
                 'errors' => $shopIntegration->getSettings()->getErrors(),
+                'shopOrderDateBounds' => $dateBounds,
             ]
         );
     }

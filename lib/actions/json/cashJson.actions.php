@@ -77,4 +77,16 @@ class cashJsonActions extends kmwaWaJsonActions
             }
         }
     }
+
+    /**
+     * @throws Exception
+     */
+    public function updateImportOrderCountAction()
+    {
+        $after = waRequest::post('after', null, waRequest::TYPE_STRING_TRIM);
+        $this->response = (new cashShopIntegration())
+            ->countOrdersToProcess(
+                new DateTime($after ?? '-1312 years')
+            );
+    }
 }
