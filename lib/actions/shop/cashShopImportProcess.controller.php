@@ -43,7 +43,9 @@ class cashShopImportProcessController extends waLongActionController
         }
         $info->periodAfter = new DateTime($info->periodAfter);
 
-        $info->totalOrders = $shopIntegration->countOrdersToProcess($info->periodAfter ?: null);
+        $info->totalOrders = $shopIntegration->countOrdersToProcess(
+            $info->period === 'all' ? null : $info->periodAfter
+        );
 
         $account = cash()->getEntityRepository(cashAccount::class)->findAllActive();
         if (!$account) {
