@@ -388,12 +388,38 @@
                 .on('click.cash', '[data-cash-shop-action="rerun-import"]', function (e) {
                     e.preventDefault();
 
-                    if (!confirm($_('This will flush all Shop-Script import settings so you can re-start the import from scratch. All existing transactions will remain as is unless you delete them manually. Re-start the integration?'))) {
-                        return;
-                    }
 
-                    $.post('?module=shop&action=resetImport', { }, function (r) {
-                        $.cash_routing.redispatch();
+                    $('<div id="shop-reset-import-dialog">').waDialog({
+                        'height': '400px',
+                        'width': '600px',
+                        'url': '?module=shop&action=resetImportDialog',
+                        onLoad: function () {
+                            var d = this,
+                                $dialogWrapper = $(d);
+
+                            setTimeout(function () {
+                                $dialogWrapper.find('[name="code"]').trigger('focus');
+                            }, 13.12);
+                        },
+                        onSubmit: function (d) {
+                            var $errorMsg = d.find('.errormsg');
+
+                            $errorMsg.hide();
+                            d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
+                            $.post('?module=shop&action=resetImport', d.find('form').serialize(), function (r) {
+                                $.cash.$loading.remove();
+                                if (r.status === 'ok') {
+                                    d.trigger('close');
+
+                                    $.cash_routing.redispatch();
+                                    setTimeout($.cash.reloadSidebar, 1312)
+                                } else {
+                                    $errorMsg.text(r.errors.join('<br>')).show();
+                                }
+                            }, 'json');
+
+                            return false;
+                        }
                     });
                 })
                 .on('click.cash', '[name="shopscript_settings[enabled]"]:checkbox', function (e) {
