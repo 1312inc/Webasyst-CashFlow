@@ -105,10 +105,9 @@ class cashShopTransactionFactory
         $transaction
             ->setDescription(sprintf_wp('Purchase costs for order %s', $dto->encodedOrderId))
             ->setAccount($dto->mainTransaction->getAccount())
-            ->setContractorContactId($dto->mainTransaction->getContractorContactId())
             ->setCategory($category)
             ->setExternalHash($externalHash)
-            ->setDatetime(date('Y-m-d H:i:s'))
+            ->setDate($dto->mainTransaction->getDate())
             ->setExternalSource('shop')
             ->setExternalData(
                 [
@@ -161,10 +160,9 @@ class cashShopTransactionFactory
         $transaction
             ->setDescription(sprintf_wp('Shipping costs for order %s', $dto->encodedOrderId))
             ->setAccount($dto->mainTransaction->getAccount())
-            ->setContractorContactId($dto->mainTransaction->getContractorContactId())
             ->setCategory($category)
             ->setExternalHash($externalHash)
-            ->setDatetime(date('Y-m-d H:i:s'))
+            ->setDate($dto->mainTransaction->getDate())
             ->setExternalSource('shop')
             ->setExternalData(
                 [
@@ -217,10 +215,9 @@ class cashShopTransactionFactory
         $transaction
             ->setDescription(sprintf_wp('Taxes for order %s', $dto->encodedOrderId))
             ->setAccount($dto->mainTransaction->getAccount())
-            ->setContractorContactId($dto->mainTransaction->getContractorContactId())
             ->setCategory($category)
             ->setExternalHash($externalHash)
-            ->setDatetime(date('Y-m-d H:i:s'))
+            ->setDate($dto->mainTransaction->getDate())
             ->setExternalSource('shop')
             ->setExternalData(
                 [
@@ -409,7 +406,6 @@ class cashShopTransactionFactory
             ->setCategory($this->getCategory($type))
             ->setExternalHash($externalHash)
             ->setDate($dto->order->paid_date)
-            ->setDatetime(date('Y-m-d H:i:s'))
             ->setExternalSource('shop')
             ->setExternalData(['id' => $dto->order->getId()])
             ->setContractorContactId($dto->order->contact->getId());

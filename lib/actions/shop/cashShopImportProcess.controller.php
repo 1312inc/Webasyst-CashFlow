@@ -99,7 +99,7 @@ order by id
 limit i:start, i:chunk
 SQL;
         $orders = $shopOrderModel->query(
-            sprintf($ordersSql, $this->data['info']->period === 'all' ? '' : ' and create_datetime >= i:start_date'),
+            sprintf($ordersSql, $this->data['info']->period === 'all' ? '' : ' and create_datetime >= s:start_date'),
             [
                 'start' => $this->data['info']->passedOrders,
                 'chunk' => self::ORDERS_TO_PROCEED,
