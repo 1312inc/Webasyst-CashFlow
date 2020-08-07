@@ -10,6 +10,8 @@ class cashShopSettingsAction extends cashViewAction
      *
      * @return mixed|void
      *
+     * @throws kmwaAssertException
+     * @throws kmwaRuntimeException
      * @throws waException
      */
     public function runAction($params = null)
@@ -26,44 +28,47 @@ class cashShopSettingsAction extends cashViewAction
         $shopIntegration = new cashShopIntegration();
 
         $settingsData = waRequest::post('shopscript_settings', waRequest::TYPE_ARRAY_TRIM, []);
-        if (waRequest::getMethod() === 'post' && $shopIntegration->getSettings()->validate($settingsData)) {
-            $shopIntegration->getSettings()
+        $settings = $shopIntegration->getSettings();
+        if (waRequest::getMethod() === 'post') {
+            $settings
                 ->load($settingsData)
                 ->save();
 
-            switch (true) {
-                case $shopIntegration->getSettings()->isTurnedOff():
-                    $shopIntegration->turnedOff();
-                    break;
+            if ($settings->validate($settingsData)) {
+                switch (true) {
+                    case $settings->isTurnedOff():
+                        $shopIntegration->turnedOff();
+                        break;
 
-                case $shopIntegration->getSettings()->isTurnedOn():
-                    $shopIntegration->turnedOn();
-                    break;
+                    case $settings->isTurnedOn():
+                        $shopIntegration->turnedOn();
+                        break;
 
-                case $shopIntegration->getSettings()->forecastTurnedOff():
-                    $shopIntegration->disableForecast();
-                    break;
+                    case $settings->forecastTurnedOff():
+                        $shopIntegration->disableForecast();
+                        break;
 
-                case $shopIntegration->getSettings()->forecastTurnedOn():
-                    $shopIntegration->enableForecast();
-                    break;
+                    case $settings->forecastTurnedOn():
+                        $shopIntegration->enableForecast();
+                        break;
 
-                case $shopIntegration->getSettings()->forecastTypeChanged()
-                    || $shopIntegration->getSettings()->forecastAccountChanged()
-                    || $shopIntegration->getSettings()->forecastCategoryIncomeChanged():
-                    $shopIntegration->changeForecastType();
-                    break;
+                    case $settings->forecastTypeChanged()
+                        || $settings->forecastAccountChanged()
+                        || $settings->forecastCategoryIncomeChanged():
+                        $shopIntegration->changeForecastType();
+                        break;
+                }
             }
         }
 
-        if ($shopIntegration->getSettings()->getAccountId()) {
+        if ($settings->getAccountId()) {
             /** @var cashAccount $account */
             $account = cash()->getEntityRepository(cashAccount::class)->findById(
-                $shopIntegration->getSettings()->getAccountId()
+                $settings->getAccountId()
             );
         } else {
             $account = cash()->getEntityRepository(cashAccount::class)->findFirst();
-            $shopIntegration->getSettings()->setAccountId($account->getId());
+            $settings->setAccountId($account->getId());
         }
 
         $storefronts = [];
@@ -80,7 +85,7 @@ class cashShopSettingsAction extends cashViewAction
             $shopCurrencyExists = (bool)(new shopCurrencyModel())->getById($account->getCurrency());
             $dateBounds = $shopIntegration->getOrderBounds();
         } else {
-            $shopIntegration->getSettings()->setEnabled(false)->save();
+            $settings->setEnabled(false)->save();
             $dateBounds = ['min' => '', 'max' => ''];
         }
 
@@ -93,7 +98,7 @@ class cashShopSettingsAction extends cashViewAction
                 'incomes' => $incomeDtos,
                 'expenses' => $expenseDtos,
                 'accounts' => $accountDtos,
-                'shopScriptSettings' => $shopIntegration->getSettings(),
+                'shopScriptSettings' => $settings,
                 'storefronts' => $storefronts,
                 'actions' => $actions,
                 'shopIsOld' => $shopIntegration->shopIsOld(),
@@ -101,7 +106,7 @@ class cashShopSettingsAction extends cashViewAction
                 'accountCurrencySign' => $accountCurrency->getSignHtml(),
                 'shopCurrencyExists' => $shopCurrencyExists,
                 'ordersToImportCount' => $shopIntegration->countOrdersToProcess(),
-                'errors' => $shopIntegration->getSettings()->getErrors(),
+                'errors' => $settings->getErrors(),
                 'shopOrderDateBounds' => $dateBounds,
             ]
         );
