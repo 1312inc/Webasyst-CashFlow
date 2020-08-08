@@ -150,7 +150,7 @@ class cashGraphService
         }
 
         if (!isset($grouping)) {
-            $grouping = $this->determineGroup($startDate);
+            $grouping = $this->determineGroup($startDate, $endDate);
         }
 
         return new cashGraphColumnsDataDto($startDate, $endDate, $filterDto, $grouping);
