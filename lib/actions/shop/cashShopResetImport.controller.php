@@ -24,10 +24,10 @@ class cashShopResetImportController extends cashJsonController
                 $shopIntegration->disableForecast();
                 $shopIntegration->deleteAllShopTransactions();
             } else {
-                $this->setError(_w('Wrong code'));
+                $this->setError(_w('Invalid code'));
             }
         } else {
-            $this->setError('Wrong method');
+            $this->setError('Invalid method');
         }
     }
 }
