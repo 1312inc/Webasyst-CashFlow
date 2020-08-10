@@ -979,8 +979,8 @@ msgstr "Включить интеграцию с Shop-Script"
 msgid "Planned online store sales"
 msgstr "Продажи интернет-магазина (план)"
 
-msgid "This will flush all Shop-Script import settings so you can re-start the import from scratch. All existing transactions will remain as is unless you delete them manually. Re-start the integration?"
-msgstr "Интеграция с Shop-Script будет перезапущена с нуля, и вы сможете заново импортировать все операции. Все ранее импортированные операции останутся в приложении, пока вы не удалите их вручную. Перезапускаем?"
+msgid "This will flush all Shop-Script import settings so you can restart the import from scratch. All transactions imported from Shop-Script will be deleted. Restart the integration?"
+msgstr "Интеграция с Shop-Script будет перезапущена с нуля, и вы сможете заново импортировать все операции. Все операции, ранее импортированные из Shop-Script, будут удалены. Перезапустить?"
 
 msgid "Cash Flow"
 msgstr "Деньги"
@@ -1021,4 +1021,34 @@ msgid "Refund category must be set"
 msgstr "Нужно указать статью операций для возвратов"
 
 msgid "Purchases & Supplies"
-msgstr ""
+msgstr "Закупки"
+
+msgid "Delete Shop-Script related data?"
+msgstr "Удалить импортированные из Shop-Script данные?"
+
+msgid "Type in the code"
+msgstr "Введите код"
+
+msgid "Restart the integration"
+msgstr "Перезапустить интеграцию"
+
+msgid "Salary"
+msgstr "Зарплата"
+
+msgid "Tax"
+msgstr "Налог"
+
+msgid "Invalid code"
+msgstr "Неверный код"
+
+msgid "Refund for order %s by %s"
+msgstr "Возврат по заказу %s (%s)"
+
+msgid "Purchase costs for order %s"
+msgstr "Расходы на закупки по заказу %s"
+
+msgid "Shipping costs for order %s"
+msgstr "Расходы на доставку по заказу %s"
+
+msgid "Taxes for order %s"
+msgstr "Налоги по заказу %s"
