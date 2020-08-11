@@ -5,5 +5,10 @@
  */
 interface cashReportDdsDataProviderInterface
 {
-    public function getDataForPeriod(cashReportDdsPeriod $period);
+    /**
+     * @param cashReportDdsPeriod $period
+     *
+     * @return array
+     */
+    public function getDataForPeriod(cashReportDdsPeriod $period): array;
 }
