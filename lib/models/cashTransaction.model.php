@@ -1039,4 +1039,17 @@ SQL;
             ['rid' => $repeatingId, 'tid' => $transactionId]
         );
     }
+
+    /**
+     * @return array
+     */
+    public function getYearsWithTransactions(): array
+    {
+        return array_column(
+            $this->query(
+                'select year(`date`) transaction_year from cash_transaction where is_archived = 0 group by year(`date`) order by year(`date`)'
+            )->fetchAll(),
+            'transaction_year'
+        );
+    }
 }

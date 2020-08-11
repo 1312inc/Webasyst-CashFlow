@@ -214,6 +214,25 @@
                 that.setContent(html);
             });
         },
+        reportAction: function (report) {
+            var that = this,
+                url = '?module=report&action=dds',
+                loadReport = function () {
+                    url += '&action=' + report;
+                    $.get(url, function (html) {
+                        that.setContent(html, $.cash.$content.find('#c-report'));
+                    });
+                };
+
+            // if (!$.cash.$content.find('#c-reports-menu').length) {
+                $.get(url, function (html) {
+                    that.setContent(html);
+                    // if (report) {
+                    //     loadReport();
+                    // }
+                });
+            // }
+        },
         setContent: function (content, $w) {
             if ($w) {
                 $w.html(content);
