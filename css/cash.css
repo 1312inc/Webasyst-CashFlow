@@ -18,7 +18,7 @@ ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 .c-transactions .c-action-add-income { background: #aae86a; }
 .c-transactions .c-action-add-expense { background: #ffb5b5; }
 .c-transactions table { margin-top: 10px; }
-.c-transactions table .c-planned { color: #999; }
+.c-transactions table .c-planned { font-style: italic; }
 .c-transactions table i.icon16 { margin-top: 2px; }
 .c-transactions table i.icon16.color { margin-top: 3px; margin-right: 6px; }
 /* .c-transactions table h5.heading { margin: 1rem 0 0.5rem; } */
