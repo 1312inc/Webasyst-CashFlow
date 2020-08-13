@@ -19,12 +19,14 @@ class cashReportDdsAction extends cashViewAction
         $currentPeriod = cashReportDdsPeriod::createForYear($year);
 
         $ddsTypes = $reportService->getTypes();
-        $type = waRequest::get('type', null, waRequest::TYPE_STRING_TRIM);
+        $type = waRequest::get('type', cashReportDds::TYPE_CATEGORY, waRequest::TYPE_STRING_TRIM);
         if (isset($ddsTypes[$type])) {
             $type = $ddsTypes[$type];
         }
 
         $periods = $reportService->getPeriodsByYear();
+
+        $data = $reportService->getDataForTypeAndPeriod($type, $currentPeriod);
 
         $this->view->assign(
             [
@@ -32,6 +34,8 @@ class cashReportDdsAction extends cashViewAction
                 'reportPeriods' => $periods,
                 'ddsTypes' => $ddsTypes,
                 'type' => $type,
+                'data' => $data,
+                'grouping' => $currentPeriod->getGrouping(),
             ]
         );
     }

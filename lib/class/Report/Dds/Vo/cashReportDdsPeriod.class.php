@@ -5,6 +5,10 @@
  */
 final class cashReportDdsPeriod
 {
+    const GROUPING_DAY   = 'day';
+    const GROUPING_MONTH = 'month';
+    const GROUPING_YEAR  = 'year';
+
     /**
      * @var string
      */
@@ -21,17 +25,53 @@ final class cashReportDdsPeriod
     private $end;
 
     /**
+     * @var cashReportDdsPeriodGroupingDto[]
+     */
+    private $grouping = null;
+
+    /**
+     * @var string
+     */
+    private $groupBy;
+
+    /**
      * cashReportDdsPeriod constructor.
      *
      * @param string   $name
      * @param DateTime $start
      * @param DateTime $end
+     * @param          $groupBy
      */
-    public function __construct($name, DateTime $start, DateTime $end)
+    public function __construct($name, DateTime $start, DateTime $end, $groupBy)
     {
         $this->name = $name;
         $this->start = $start;
         $this->end = $end;
+        $this->groupBy = $groupBy;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGrouping(): array
+    {
+        if ($this->grouping === null) {
+            switch ($this->groupBy) {
+                case self::GROUPING_MONTH:
+                default:
+                    $from = clone $this->start;
+                    while ($from < $this->end) {
+                        $this->grouping[$from->format('n')] = new cashReportDdsPeriodGroupingDto(
+                            _w($from->format('F Y')),
+                            $from->format('Y-m-d'),
+                            $from->format('n')
+                        );
+                        cashDatetimeHelper::addMonthToDate($from);
+                    }
+            }
+        }
+
+        return $this->grouping;
     }
 
     public function getName(): string
@@ -60,6 +100,16 @@ final class cashReportDdsPeriod
     }
 
     /**
+     * @param $key
+     *
+     * @return array|null
+     */
+    public function getGroupingByKey($key)
+    {
+        return $this->grouping[$key] ?? null;
+    }
+
+    /**
      * @param string $year
      *
      * @return cashReportDdsPeriod
@@ -67,10 +117,10 @@ final class cashReportDdsPeriod
      */
     public static function createForYear($year): cashReportDdsPeriod
     {
-        $start = new DateTime($year . '-m-d');
+        $start = DateTime::createFromFormat('Y-m-d|', date($year . '-01-01'));
         $end = clone $start;
         $end->modify('next year');
 
-        return new self($year, $start, $end);
+        return new self($year, $start, $end, self::GROUPING_MONTH);
     }
 }

@@ -149,7 +149,7 @@ class cashCategory extends cashAbstractEntity
     /**
      * @return bool
      */
-    public function isExpense()
+    public function isExpense(): bool
     {
         return $this->type === self::TYPE_EXPENSE;
     }
@@ -157,7 +157,7 @@ class cashCategory extends cashAbstractEntity
     /**
      * @return bool
      */
-    public function isIncome()
+    public function isIncome(): bool
     {
         return $this->type === self::TYPE_INCOME;
     }
@@ -165,7 +165,7 @@ class cashCategory extends cashAbstractEntity
     /**
      * @return bool
      */
-    public function isTransfer()
+    public function isTransfer(): bool
     {
         return $this->type === self::TYPE_TRANSFER;
     }
@@ -173,7 +173,7 @@ class cashCategory extends cashAbstractEntity
     /**
      * @return bool
      */
-    public function isSystem()
+    public function isSystem(): bool
     {
         return $this->id < 0;
     }

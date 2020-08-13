@@ -27,6 +27,25 @@ class cashReportDds
     }
 
     /**
+     * @param cashReportDdsTypeDto $type
+     * @param cashReportDdsPeriod  $period
+     *
+     * @return array
+     * @throws waException
+     */
+    public function getDataForTypeAndPeriod(cashReportDdsTypeDto $type, cashReportDdsPeriod $period): array
+    {
+        switch ($type->id) {
+            case self::TYPE_CATEGORY:
+                $data = (new cashReportDdsCategoryDataProvider())->getDataForPeriod($period);
+
+                break;
+        }
+
+        return $data;
+    }
+
+    /**
      * @return cashReportDdsTypeDto[]
      */
     public function getTypes(): array

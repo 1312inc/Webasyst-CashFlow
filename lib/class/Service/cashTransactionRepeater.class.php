@@ -95,15 +95,11 @@ final class cashTransactionRepeater
         );
 
         if ($transaction->getRepeatingInterval() === cashRepeatingTransaction::INTERVAL_MONTH) {
-            $monthCount = $transaction->getRepeatingFrequency();
-            $nextDate = clone $startDate;
-            $dayOfMonth = (new DateTime($transaction->getDate()))->format('j');
-            if ($dayOfMonth > 28 && $nextDate->modify("last day of {$monthCount} month")->format('j') < $dayOfMonth) {
-                $startDate->modify("last day of {$monthCount} month");
-            } else {
-                $startDate->modify("+{$monthCount} month");
-                $startDate->setDate($startDate->format('Y'), $startDate->format('n'), $dayOfMonth);
-            }
+            cashDatetimeHelper::addMonthToDate(
+                $startDate,
+                $transaction->getRepeatingFrequency(),
+                new DateTime($transaction->getDate())
+            );
         } else {
             $startDate->modify(
                 sprintf('+%d %s', $transaction->getRepeatingFrequency(), $transaction->getRepeatingInterval())

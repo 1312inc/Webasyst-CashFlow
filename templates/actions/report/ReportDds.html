@@ -1,16 +1,21 @@
 {** $currentPeriod cashReportDdsPeriod **}
 {** $reportPeriods cashReportDdsPeriod[] **}
+{** $ddsTypes cashReportDdsTypeDto[] **}
+{** $type cashReportDdsTypeDto **}
+{** $grouping cashReportDdsPeriodGroupingDto[] **}
+{** $data cashReportDdsStatDto[] **}
+
 <div class="content left200px">
 
 <h1>[`Cash flow report`]</h1>
 
 <div class="block">
-    <input type="hidden" value="{$type}" name="dds[type]"/>
+    <input type="hidden" value="{$type->id}" name="dds[type]"/>
     <ul class="menu-h with-icons">
         {foreach $ddsTypes as $ddsType}
         <li>
             <a href="#/report/dds/{$ddsType->id}"
-               {if $ddsType == $ddsType->id}class="selected"{/if}
+               {if $type->id == $ddsType->id}class="selected"{/if}
             >
                 {$ddsType->name|escape}
             </a>
@@ -37,5 +42,37 @@
         </ul>
     </li>
 </ul>
+
+
+    <table class="zebra">
+        <thead>
+        <tr>
+            <th></th>
+             {foreach $grouping as $group}
+             <th>{$group->name|escape}</th>
+             {/foreach}
+        </tr>
+        </thead>
+
+        <tbody>
+        {foreach $data as $datum}
+        <tr>
+            {if !empty($datum->valuesPerPeriods)}
+            <td>{$datum->entity->getName()|escape}</td>
+            {foreach $datum->valuesPerPeriods as $values}
+                <td>
+                {foreach $values as $value}
+                    <div>{$value.per_month} {$datum->currencies[$value.currency]->getSign()}</div>
+                {/foreach}
+                </td>
+            {/foreach}
+            {/if}
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+
+
+{*    <pre>{$data|print_r}</pre>*}
 
 </div>
