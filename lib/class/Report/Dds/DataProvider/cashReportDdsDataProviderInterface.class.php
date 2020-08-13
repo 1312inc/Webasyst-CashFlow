@@ -8,7 +8,7 @@ interface cashReportDdsDataProviderInterface
     /**
      * @param cashReportDdsPeriod $period
      *
-     * @return array
+     * @return cashReportDdsStatDto[]
      */
     public function getDataForPeriod(cashReportDdsPeriod $period): array;
 }
