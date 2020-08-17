@@ -27,6 +27,22 @@ class cashReportDdsAction extends cashViewAction
         $periods = $reportService->getPeriodsByYear();
 
         $data = $reportService->getDataForTypeAndPeriod($type, $currentPeriod);
+        $chartData = $reportService->formatDataForPie($data, $type, $currentPeriod);
+
+        $entityStat = [
+            'incomes' => 0,
+            'expenses' => 0,
+        ];
+        $entityStat = array_reduce($data, static function ($entityStat, cashReportDdsStatDto $dto) {
+            if ($dto->entity->isIncome()) {
+                $entityStat['incomes']++;
+            }
+            if ($dto->entity->isExpense()) {
+                $entityStat['expenses']++;
+            }
+
+            return $entityStat;
+        }, $entityStat);
 
         $this->view->assign(
             [
@@ -36,6 +52,8 @@ class cashReportDdsAction extends cashViewAction
                 'type' => $type,
                 'data' => $data,
                 'grouping' => $currentPeriod->getGrouping(),
+                'chartData' => json_encode($chartData, JSON_UNESCAPED_SLASHES),
+                'entityStat' => $entityStat,
             ]
         );
     }

@@ -9,6 +9,9 @@ class cashReportDds
     const TYPE_CONTRACTOR = 'contractor';
     const TYPE_ACCOUNT    = 'account';
 
+    const ALL_INCOME_KEY  = 'all_income';
+    const ALL_EXPENSE_KEY = 'all_expense';
+
     /**
      * @return cashReportDdsPeriod[]
      * @throws waException
@@ -43,6 +46,48 @@ class cashReportDds
         }
 
         return $data;
+    }
+
+    /**
+     * @param array                $data
+     * @param cashReportDdsTypeDto $type
+     * @param cashReportDdsPeriod  $period
+     *
+     * @return array
+     * @throws waException
+     */
+    public function formatDataForPie(array $data, cashReportDdsTypeDto $type, cashReportDdsPeriod $period): array
+    {
+        $chartData = [
+            self::ALL_INCOME_KEY => [],
+            self::ALL_EXPENSE_KEY => [],
+        ];
+
+        /** @var cashReportDdsStatDto $datum */
+        foreach ($data as $datum) {
+            $id = $datum->entity->getId();
+            if (in_array($id, [self::ALL_INCOME_KEY, self::ALL_EXPENSE_KEY])) {
+                continue;
+            }
+
+            $incOrExp = $datum->entity->isExpense() ? self::ALL_EXPENSE_KEY : self::ALL_INCOME_KEY;
+            /** @var cashCurrencyVO $currency */
+            foreach ($datum->currencies as $currency) {
+                $currencyCode = $currency->getCode();
+                if (!isset($chartData[$incOrExp][$currencyCode])) {
+                    $chartData[$incOrExp][$currencyCode] = new cashReportDdsPieDto($currency);
+                }
+                $chartData[$incOrExp][$currencyCode]->columns[$id] = [$datum->entity->getName()];
+            }
+
+            foreach ($datum->valuesPerPeriods as $valuesPerPeriod) {
+                foreach ($valuesPerPeriod as $currency => $value) {
+                    $chartData[$incOrExp][$currency]->columns[$id][] = (float) abs($value['per_month']);
+                }
+            }
+        }
+
+        return $chartData;
     }
 
     /**

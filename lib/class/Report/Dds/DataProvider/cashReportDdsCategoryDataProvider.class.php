@@ -92,23 +92,35 @@ SQL;
         $statData = [];
 
         $statData[] = new cashReportDdsStatDto(
-            new cashReportDdsEntity(_w('All income'), 0),
+            new cashReportDdsEntity(_w('All income'), cashReportDds::ALL_INCOME_KEY, false, true, '', true),
             $categoryData[cashCategory::TYPE_INCOME] ?? []
         );
         foreach ($this->categoryRep->findAllIncome() as $category) {
             $statData[] = new cashReportDdsStatDto(
-                new cashReportDdsEntity($category->getName(), $category->getId()),
+                new cashReportDdsEntity(
+                    $category->getName(),
+                    $category->getId(),
+                    $category->isExpense(),
+                    $category->isIncome(),
+                    sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor())
+                ),
                 $categoryData[$category->getId()] ?? []
             );
         }
 
         $statData[] = new cashReportDdsStatDto(
-            new cashReportDdsEntity(_w('All expense'), 0),
+            new cashReportDdsEntity(_w('All expense'), cashReportDds::ALL_EXPENSE_KEY, true, false, '', true),
             $categoryData[cashCategory::TYPE_EXPENSE] ?? []
         );
         foreach ($this->categoryRep->findAllExpense() as $category) {
             $statData[] = new cashReportDdsStatDto(
-                new cashReportDdsEntity($category->getName(), $category->getId()),
+                new cashReportDdsEntity(
+                    $category->getName(),
+                    $category->getId(),
+                    $category->isExpense(),
+                    $category->isIncome(),
+                    sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor())
+                ),
                 $categoryData[$category->getId()] ?? []
             );
         }
