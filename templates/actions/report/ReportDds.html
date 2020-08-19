@@ -49,8 +49,9 @@
          {foreach $grouping as $group}
          <th>{$group->name|escape}</th>
          {/foreach}
+        {if $type->hasChart}
         <th></th>
-        <th></th>
+        {/if}
     </tr>
     </thead>
 
@@ -70,8 +71,8 @@
         {/foreach}
         </td>
         {/foreach}
-        {if $datum->entity->isHeader()}
-        <td rowspan="{if $datum->entity->isExpense()}{$entityStat.expenses}{/if}{if $datum->entity->isIncome()}{$entityStat.incomes}{/if}">
+        {if $datum->entity->isHeader() && $type->hasChart}
+        <td rowspan="{if $datum->entity->isExpense()}{$type->expenseEntities}{/if}{if $datum->entity->isIncome()}{$type->incomeEntities}{/if}">
             {foreach $datum->currencies as $currency}
             График {if $datum->entity->isExpense()}expense{/if}{if $datum->entity->isIncome()}income{/if} {$currency->getCode()}
             <br>

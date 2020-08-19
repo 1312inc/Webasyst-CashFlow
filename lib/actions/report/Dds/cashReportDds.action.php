@@ -19,9 +19,12 @@ class cashReportDdsAction extends cashViewAction
         $currentPeriod = cashReportDdsPeriod::createForYear($year);
 
         $ddsTypes = $reportService->getTypes();
+        /** @var cashReportDdsTypeDto|string $type */
         $type = waRequest::get('type', cashReportDds::TYPE_CATEGORY, waRequest::TYPE_STRING_TRIM);
         if (isset($ddsTypes[$type])) {
             $type = $ddsTypes[$type];
+        } else {
+            throw new waException(sprintf('Unknown report type: %s', $type));
         }
 
         $periods = $reportService->getPeriodsByYear();
@@ -29,20 +32,16 @@ class cashReportDdsAction extends cashViewAction
         $data = $reportService->getDataForTypeAndPeriod($type, $currentPeriod);
         $chartData = $reportService->formatDataForPie($data, $type, $currentPeriod);
 
-        $entityStat = [
-            'incomes' => 0,
-            'expenses' => 0,
-        ];
-        $entityStat = array_reduce($data, static function ($entityStat, cashReportDdsStatDto $dto) {
+        $type = array_reduce($data, static function ($type, cashReportDdsStatDto $dto) {
             if ($dto->entity->isIncome()) {
-                $entityStat['incomes']++;
+                $type->incomeEntities++;
             }
             if ($dto->entity->isExpense()) {
-                $entityStat['expenses']++;
+                $type->expenseEntities++;
             }
 
-            return $entityStat;
-        }, $entityStat);
+            return $type;
+        }, $type);
 
         $this->view->assign(
             [
@@ -52,8 +51,7 @@ class cashReportDdsAction extends cashViewAction
                 'type' => $type,
                 'data' => $data,
                 'grouping' => $currentPeriod->getGrouping(),
-                'chartData' => json_encode($chartData, JSON_UNESCAPED_SLASHES),
-                'entityStat' => $entityStat,
+                'chartData' => json_encode($chartData, JSON_UNESCAPED_UNICODE),
             ]
         );
     }
