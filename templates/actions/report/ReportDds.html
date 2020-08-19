@@ -14,7 +14,7 @@
     <ul class="menu-h with-icons">
         {foreach $ddsTypes as $ddsType}
         <li>
-            <a href="#/report/dds/{$ddsType->id}"
+            <a href="#/report/dds/{$ddsType->id}/{$currentPeriod->getValue()}"
                {if $type->id == $ddsType->id}class="selected"{/if}
             >
                 {$ddsType->name|escape}
@@ -26,11 +26,12 @@
 
 <ul class="menu-h dropdown float-right">
     <li>
-        <a href="#" class="inline-link gray"><b><i>{$currentPeriod->getName()}</i></b><i class="icon10 darr"></i></a>
+        <a href="javascript:void(0);" class="inline-link gray"><b><i>{$currentPeriod->getName()}</i></b><i class="icon10 darr"></i></a>
         <ul class="menu-v">
             {foreach $reportPeriods as $reportPeriod}
             <li>
-                <a href="#"
+                <a href="#/report/dds/{$type->id}/{$reportPeriod->getValue()}"
+                   data-cash-period-value="{$reportPeriod->getValue()}"
                    data-cash-period-start="{$reportPeriod->getStartDate()}"
                    data-cash-period-end="{$reportPeriod->getEndDate()}"
                 >

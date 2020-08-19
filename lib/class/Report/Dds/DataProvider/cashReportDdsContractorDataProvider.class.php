@@ -37,7 +37,7 @@ select ct.contractor_contact_id id,
 from cash_transaction ct
          join cash_account ca on ct.account_id = ca.id
          join cash_category cc on ct.category_id = cc.id
-where date between s:start and s:end
+where ct.date between s:start and s:end
   and ca.is_archived = 0
   and ct.is_archived = 0
   and ct.contractor_contact_id is not null
@@ -47,13 +47,14 @@ SQL;
         $data = $this->transactionModel->query(
             $sql,
             [
-                'start' => $period->getStart()->format('Y-m-d 00:00:00'),
-                'end' => $period->getEnd()->format('Y-m-d 00:00:00'),
+                'start' => $period->getStart()->format('Y-m-d'),
+                'end' => $period->getEnd()->format('Y-m-d'),
             ]
         )->fetchAll();
 
         $rawData = [];
 
+        $incomeExists = $expenseExists = false;
         foreach ($data as $datum) {
             if (!isset($rawData[cashCategory::TYPE_INCOME][cashReportDds::ALL_INCOME_KEY][$datum['month']][$datum['currency']])) {
                 foreach ($period->getGrouping() as $groupingDto) {
@@ -83,8 +84,10 @@ SQL;
 
             $rawData[$datum['type']][$datum['id']][$datum['month']][$datum['currency']]['per_month'] = (float)$datum['per_month'];
             if ($datum['type'] === cashCategory::TYPE_INCOME) {
+                $incomeExists = $incomeExists || abs($datum['per_month']) > 0;
                 $rawData[$datum['type']][cashReportDds::ALL_INCOME_KEY][$datum['month']][$datum['currency']]['per_month'] += (float)$datum['per_month'];
             } else {
+                $expenseExists = $expenseExists || abs($datum['per_month']) > 0;
                 $rawData[$datum['type']][cashReportDds::ALL_EXPENSE_KEY][$datum['month']][$datum['currency']]['per_month'] += (float)$datum['per_month'];
             }
         }
@@ -99,20 +102,23 @@ SQL;
 //            []
 //        );
 
-        $statData = [
-            cashCategory::TYPE_INCOME => [
-                new cashReportDdsStatDto(
-                    new cashReportDdsEntity(_w('All income'), cashReportDds::ALL_INCOME_KEY, false, true, '', true),
-                    $rawData[cashCategory::TYPE_INCOME][cashReportDds::ALL_INCOME_KEY] ?? []
-                ),
-            ],
-            cashCategory::TYPE_EXPENSE => [
+        $statData = [];
+        if ($expenseExists) {
+            $statData[cashCategory::TYPE_EXPENSE] = [
                 new cashReportDdsStatDto(
                     new cashReportDdsEntity(_w('All expense'), cashReportDds::ALL_EXPENSE_KEY, true, false, '', true),
                     $rawData[cashCategory::TYPE_EXPENSE][cashReportDds::ALL_EXPENSE_KEY] ?? []
                 ),
-            ],
-        ];
+            ];
+        }
+        if ($incomeExists) {
+            $statData[cashCategory::TYPE_INCOME] = [
+                new cashReportDdsStatDto(
+                    new cashReportDdsEntity(_w('All income'), cashReportDds::ALL_INCOME_KEY, false, true, '', true),
+                    $rawData[cashCategory::TYPE_INCOME][cashReportDds::ALL_INCOME_KEY] ?? []
+                ),
+            ];
+        }
 
         foreach ($rawData as $type => $rawDatum) {
             foreach ($rawDatum as $id => $datum) {
@@ -150,6 +156,9 @@ SQL;
             }
         }
 
-        return array_merge($statData[cashCategory::TYPE_INCOME], $statData[cashCategory::TYPE_EXPENSE]);
+        return array_merge(
+            $statData[cashCategory::TYPE_INCOME] ?? [],
+            $statData[cashCategory::TYPE_EXPENSE] ?? []
+        ) ?: [];
     }
 }
