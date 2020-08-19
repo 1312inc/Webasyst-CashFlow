@@ -214,9 +214,10 @@
                 that.setContent(html);
             });
         },
-        reportAction: function (report) {
+        reportAction: function (report, type) {
             var that = this,
-                url = '?module=report&action=dds',
+                type = type || 'category',
+                url = '?module=report&action=dds&type=' + type,
                 loadReport = function () {
                     url += '&action=' + report;
                     $.get(url, function (html) {

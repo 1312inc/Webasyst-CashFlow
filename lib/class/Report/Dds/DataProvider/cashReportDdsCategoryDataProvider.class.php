@@ -35,8 +35,8 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
     public function getDataForPeriod(cashReportDdsPeriod $period): array
     {
         $sql = <<<SQL
-select ct.category_id category,
-       cc.type category_type,
+select ct.category_id id,
+       cc.type type,
        ca.currency currency,
        MONTH(ct.date) month,
        sum(ct.amount) per_month
@@ -57,27 +57,26 @@ SQL;
             ]
         )->fetchAll();
 
-
-        $categoryData = [];
+        $rawData = [];
 
         foreach ($data as $datum) {
-            if (!isset($categoryData[cashCategory::TYPE_INCOME][$datum['month']][$datum['currency']])) {
+            if (!isset($rawData[cashCategory::TYPE_INCOME][$datum['month']][$datum['currency']])) {
                 foreach ($period->getGrouping() as $groupingDto) {
                     $initVals = [
-                        'category' => $datum['category_type'],
+                        'id' => $datum['type'],
                         'currency' => $datum['currency'],
                         'month' => $groupingDto->key,
                         'per_month' => .0,
                     ];
-                    $categoryData[cashCategory::TYPE_INCOME][$groupingDto->key][$datum['currency']] = $initVals;
-                    $categoryData[cashCategory::TYPE_EXPENSE][$groupingDto->key][$datum['currency']] = $initVals;
+                    $rawData[cashCategory::TYPE_INCOME][$groupingDto->key][$datum['currency']] = $initVals;
+                    $rawData[cashCategory::TYPE_EXPENSE][$groupingDto->key][$datum['currency']] = $initVals;
                 }
             }
 
-            if (!isset($categoryData[$datum['category']][$datum['month']][$datum['currency']])) {
+            if (!isset($rawData[$datum['id']][$datum['month']][$datum['currency']])) {
                 foreach ($period->getGrouping() as $groupingDto) {
-                    $categoryData[$datum['category']][$groupingDto->key][$datum['currency']] = [
-                        'category' => $datum['category'],
+                    $rawData[$datum['id']][$groupingDto->key][$datum['currency']] = [
+                        'id' => $datum['id'],
                         'currency' => $datum['currency'],
                         'month' => $groupingDto->key,
                         'per_month' => .0,
@@ -85,15 +84,15 @@ SQL;
                 }
             }
 
-            $categoryData[$datum['category']][$datum['month']][$datum['currency']]['per_month'] = $datum['per_month'];
-            $categoryData[$datum['category_type']][$datum['month']][$datum['currency']]['per_month'] += $datum['per_month'];
+            $rawData[$datum['id']][$datum['month']][$datum['currency']]['per_month'] = (float) $datum['per_month'];
+            $rawData[$datum['type']][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
         }
 
         $statData = [];
 
         $statData[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(_w('All income'), cashReportDds::ALL_INCOME_KEY, false, true, '', true),
-            $categoryData[cashCategory::TYPE_INCOME] ?? []
+            $rawData[cashCategory::TYPE_INCOME] ?? []
         );
         foreach ($this->categoryRep->findAllIncome() as $category) {
             $statData[] = new cashReportDdsStatDto(
@@ -104,13 +103,13 @@ SQL;
                     $category->isIncome(),
                     sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor())
                 ),
-                $categoryData[$category->getId()] ?? []
+                $rawData[$category->getId()] ?? []
             );
         }
 
         $statData[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(_w('All expense'), cashReportDds::ALL_EXPENSE_KEY, true, false, '', true),
-            $categoryData[cashCategory::TYPE_EXPENSE] ?? []
+            $rawData[cashCategory::TYPE_EXPENSE] ?? []
         );
         foreach ($this->categoryRep->findAllExpense() as $category) {
             $statData[] = new cashReportDdsStatDto(
@@ -121,7 +120,7 @@ SQL;
                     $category->isIncome(),
                     sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor())
                 ),
-                $categoryData[$category->getId()] ?? []
+                $rawData[$category->getId()] ?? []
             );
         }
 

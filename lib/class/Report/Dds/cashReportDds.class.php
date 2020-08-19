@@ -43,6 +43,16 @@ class cashReportDds
                 $data = (new cashReportDdsCategoryDataProvider())->getDataForPeriod($period);
 
                 break;
+
+            case self::TYPE_ACCOUNT:
+                $data = (new cashReportDdsAccountDataProvider())->getDataForPeriod($period);
+
+                break;
+
+            case self::TYPE_CONTRACTOR:
+                $data = (new cashReportDdsContractorDataProvider())->getDataForPeriod($period);
+
+                break;
         }
 
         return $data;
@@ -96,9 +106,9 @@ class cashReportDds
     public function getTypes(): array
     {
         return [
-            self::TYPE_CATEGORY => new cashReportDdsTypeDto(self::TYPE_CATEGORY, _w('Categories')),
-            self::TYPE_ACCOUNT => new cashReportDdsTypeDto(self::TYPE_ACCOUNT, _w('Accounts')),
-            self::TYPE_CONTRACTOR => new cashReportDdsTypeDto(self::TYPE_CONTRACTOR, _w('Contractors')),
+            self::TYPE_CATEGORY => new cashReportDdsTypeDto(self::TYPE_CATEGORY, _w('Categories'), true),
+            self::TYPE_ACCOUNT => new cashReportDdsTypeDto(self::TYPE_ACCOUNT, _w('Accounts'), false),
+            self::TYPE_CONTRACTOR => new cashReportDdsTypeDto(self::TYPE_CONTRACTOR, _w('Contractors'), false),
         ];
     }
 }
