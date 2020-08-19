@@ -15,7 +15,10 @@ class cashReportDdsAction extends cashViewAction
     {
         $reportService = new cashReportDds();
 
-        $year = waRequest::get('year', date('Y'), waRequest::TYPE_INT);
+        $year = waRequest::get('year', 0, waRequest::TYPE_INT);
+        if (empty($year)) {
+            $year = date('Y');
+        }
         $currentPeriod = cashReportDdsPeriod::createForYear($year);
 
         $ddsTypes = $reportService->getTypes();

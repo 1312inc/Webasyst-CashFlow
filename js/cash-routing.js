@@ -214,10 +214,10 @@
                 that.setContent(html);
             });
         },
-        reportAction: function (report, type) {
+        reportAction: function (report, type, year) {
+            type = type || 'category';
             var that = this,
-                type = type || 'category',
-                url = '?module=report&action=dds&type=' + type,
+                url = '?module=report&action=dds&type=' + type + '&year=' + year,
                 loadReport = function () {
                     url += '&action=' + report;
                     $.get(url, function (html) {

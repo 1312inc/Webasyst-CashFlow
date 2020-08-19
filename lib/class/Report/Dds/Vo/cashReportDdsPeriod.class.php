@@ -35,19 +35,26 @@ final class cashReportDdsPeriod
     private $groupBy;
 
     /**
+     * @var string
+     */
+    private $value;
+
+    /**
      * cashReportDdsPeriod constructor.
      *
      * @param string   $name
+     * @param string   $value
      * @param DateTime $start
      * @param DateTime $end
      * @param          $groupBy
      */
-    public function __construct($name, DateTime $start, DateTime $end, $groupBy)
+    public function __construct($name, $value, DateTime $start, DateTime $end, $groupBy)
     {
         $this->name = $name;
         $this->start = $start;
         $this->end = $end;
         $this->groupBy = $groupBy;
+        $this->value = $value;
     }
 
     /**
@@ -100,6 +107,14 @@ final class cashReportDdsPeriod
     }
 
     /**
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    /**
      * @param $key
      *
      * @return array|null
@@ -121,6 +136,6 @@ final class cashReportDdsPeriod
         $end = clone $start;
         $end->modify('next year');
 
-        return new self($year, $start, $end, self::GROUPING_MONTH);
+        return new self($year, $start->format('Y'), $start, $end, self::GROUPING_MONTH);
     }
 }

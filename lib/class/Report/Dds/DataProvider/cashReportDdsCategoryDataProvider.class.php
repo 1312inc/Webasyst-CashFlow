@@ -43,7 +43,7 @@ select ct.category_id id,
 from cash_transaction ct
          join cash_account ca on ct.account_id = ca.id
          join cash_category cc on ct.category_id = cc.id
-where date between s:start and s:end
+where ct.date between s:start and s:end
   and ca.is_archived = 0
   and ct.is_archived = 0
 group by ct.category_id, ca.currency, MONTH(ct.date)
@@ -52,8 +52,8 @@ SQL;
         $data = $this->transactionModel->query(
             $sql,
             [
-                'start' => $period->getStart()->format('Y-m-d 00:00:00'),
-                'end' => $period->getEnd()->format('Y-m-d 00:00:00'),
+                'start' => $period->getStart()->format('Y-m-d'),
+                'end' => $period->getEnd()->format('Y-m-d'),
             ]
         )->fetchAll();
 
@@ -124,6 +124,6 @@ SQL;
             );
         }
 
-        return $statData;
+        return $statData ?: [];
     }
 }
