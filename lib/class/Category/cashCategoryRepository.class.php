@@ -15,7 +15,7 @@ class cashCategoryRepository extends cashBaseRepository
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllByType($type)
+    public function findAllByType($type): array
     {
         return $this->generateWithData($this->getModel()->getByType($type), true);
     }
@@ -24,7 +24,7 @@ class cashCategoryRepository extends cashBaseRepository
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllActive()
+    public function findAllActive(): array
     {
         return $this->generateWithData($this->getModel()->getAllActive(), true);
     }
@@ -33,7 +33,7 @@ class cashCategoryRepository extends cashBaseRepository
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllIncome()
+    public function findAllIncome(): array
     {
         return $this->findAllByType(cashCategory::TYPE_INCOME);
     }
@@ -42,7 +42,7 @@ class cashCategoryRepository extends cashBaseRepository
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllExpense()
+    public function findAllExpense(): array
     {
         return $this->findAllByType(cashCategory::TYPE_EXPENSE);
     }
@@ -51,22 +51,12 @@ class cashCategoryRepository extends cashBaseRepository
      * @return cashCategory
      * @throws waException
      */
-    public function findTransferCategory()
+    public function findTransferCategory(): cashCategory
     {
         $transfers = $this->findById(cashCategoryFactory::TRANSFER_CATEGORY_ID);
         if (!$transfers instanceof cashCategory) {
-            $data = [
-                'id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,
-                'type' => cashCategory::TYPE_TRANSFER,
-                'color' => cashColorStorage::TRANSFER_CATEGORY_COLOR,
-                'name' => _w('Transfers'),
-                'create_datetime' => date('Y-m-d H:i:s'),
-            ];
-            $this->getModel()->insert($data);
-            $transfers = cash()->getHydrator()->hydrate(
-                cash()->getEntityFactory(cashCategory::class)->createNew(),
-                $data
-            );
+            $transfers = cash()->getEntityFactory(cashCategory::class)->createNewTransferCategory();
+            cash()->getEntityPersister()->insert($transfers);
         }
 
         return $transfers;

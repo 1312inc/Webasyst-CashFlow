@@ -216,9 +216,7 @@ class cashTransactionSaver extends cashEntitySaver
                 if ($category->isExpense() && $data['amount'] > 0) {
                     $data['amount'] = -$data['amount'];
                 }
-            } elseif ($data['category_id'] == cashCategoryFactory::TRANSFER_CATEGORY_ID) {
-                $data['category_id'] = cashCategoryFactory::TRANSFER_CATEGORY_ID;
-            } else {
+            } elseif (!in_array($data['category_id'], cashCategoryFactory::getSystemIds())) {
                 $data['category_id'] = null;
             }
         } else {

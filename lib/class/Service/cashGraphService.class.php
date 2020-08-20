@@ -47,6 +47,8 @@ class cashGraphService
 
     /**
      * @return cashGraphPeriodVO
+     * @throws kmwaRuntimeException
+     * @throws waException
      */
     public function getDefaultChartPeriod(): cashGraphPeriodVO
     {

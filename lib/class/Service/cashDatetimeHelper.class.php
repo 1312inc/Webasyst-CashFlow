@@ -46,4 +46,20 @@ class cashDatetimeHelper
         ];
     }
 
+    /**
+     * @param DateTime      $dateTime
+     * @param int           $monthCount
+     * @param DateTime|null $relativeDate
+     */
+    public static function addMonthToDate(DateTime $dateTime, $monthCount = 1, DateTime $relativeDate = null)
+    {
+        $nextDate = clone $dateTime;
+        $dayOfMonth = $relativeDate ? $relativeDate->format('j') : $dateTime->format('j');
+        if ($dayOfMonth > 28 && $nextDate->modify("last day of {$monthCount} month")->format('j') < $dayOfMonth) {
+            $dateTime->modify("last day of {$monthCount} month");
+        } else {
+            $dateTime->modify("+{$monthCount} month");
+            $dateTime->setDate($dateTime->format('Y'), $dateTime->format('n'), $dayOfMonth);
+        }
+    }
 }
