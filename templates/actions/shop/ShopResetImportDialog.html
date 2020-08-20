@@ -5,15 +5,17 @@
                 [`Delete Shop-Script related data?`]
             </h1>
 
-            <p>[`This will flush all Shop-Script import settings so you can re-start the import from scratch. All existing transactions will remain as is unless you delete them manually. Re-start the integration?`]</p>
+            <p>[`This will flush all Shop-Script import settings so you can restart the import from scratch. All transactions imported from Shop-Script will be deleted. Restart the integration?`]</p>
 
             <div class="fields form">
                 <div class="field-group">
                     <div class="field">
                         <div class="name nowrap">
-                            Введите это {$code}:
+                            [`Type in the code`]
                         </div>
-                        <div class="value no-shift">
+                        <div class="value">
+                            {$code}
+                            &rarr;
                             <input type="text" name="code"/>
                         </div>
                     </div>
@@ -23,7 +25,7 @@
     </div>
 
     <div class="dialog-buttons">
-        <input type="submit" value="[`Do it`]" class="button red"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
+        <input type="submit" value="[`Restart the integration`]" class="button red"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
         <div class="block errormsg" style="display: none; float: right;"></div>
     </div>
 </section>
