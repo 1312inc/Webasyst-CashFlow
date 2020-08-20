@@ -486,11 +486,13 @@
 
                     $.post('?module=shop&action=settings', $ssform.serialize(), function (html) {
                         var $html = $(html);
+
+                        $ssform.find('[data-cash-shop-errors]').remove();
+                        $button.prop('disabled', true).hide();
+
                         if ($html.find('[data-cash-shop-errors]').length) {
                             $('#cash-settings').html(html);
                         } else {
-                            $ssform.find('[data-cash-shop-errors]').remove();
-                            $button.prop('disabled', true).hide();
                             var long = $.wa.kmLongAction();
                             long.start({
                                 process_url: '?module=shop&action=importProcess',

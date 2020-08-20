@@ -115,28 +115,13 @@ SQL;
         $limit = null
     ) {
         switch (true) {
-            case $category > 0:
-                $whereAccountSql = ' and ct.category_id = i:category_id';
-                $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
-                break;
-
-            case $category == cashCategoryFactory::NO_CATEGORY_EXPENSE_ID:
-                $whereAccountSql = ' and ct.category_id is null and ct.amount < 0';
-                $joinCategory = '';
-                break;
-
-            case $category == cashCategoryFactory::NO_CATEGORY_INCOME_ID:
-                $whereAccountSql = ' and ct.category_id is null and ct.amount > 0';
-                $joinCategory = '';
-                break;
-
             case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
                 $whereAccountSql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
                 $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
                 break;
 
             default:
-                $whereAccountSql = '';
+                $whereAccountSql = ' and ct.category_id = i:category_id';
                 $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
         }
 
@@ -181,24 +166,6 @@ SQL;
     public function countByDateBoundsAndCategory($startDate, $endDate, $category = null)
     {
         switch (true) {
-            case $category > 0:
-                $whereAccountSql = ' and ct.category_id = i:category_id';
-                $whereAccountSql2 = ' and ct2.category_id = i:category_id';
-                $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
-                break;
-
-            case $category == cashCategoryFactory::NO_CATEGORY_EXPENSE_ID:
-                $whereAccountSql = ' and ct.category_id is null and ct.amount < 0';
-                $whereAccountSql2 = ' and ct2.category_id is null and ct2.amount < 0';
-                $joinCategory = '';
-                break;
-
-            case $category == cashCategoryFactory::NO_CATEGORY_INCOME_ID:
-                $whereAccountSql = ' and ct.category_id is null and ct.amount > 0';
-                $whereAccountSql2 = ' and ct2.category_id is null and ct2.amount > 0';
-                $joinCategory = '';
-                break;
-
             case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
                 $whereAccountSql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
                 $whereAccountSql2 = sprintf(' and ct2.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
@@ -206,8 +173,8 @@ SQL;
                 break;
 
             default:
-                $whereAccountSql = '';
-                $whereAccountSql2 = '';
+                $whereAccountSql = ' and ct.category_id = i:category_id';
+                $whereAccountSql2 = ' and ct2.category_id = i:category_id';
                 $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
         }
 
@@ -713,24 +680,12 @@ SQL;
     public function getCategoriesAndCurrenciesHashByCategory($startDate, $endDate, $category = null)
     {
         switch (true) {
-            case $category > 0:
-                $categorySql = ' and ct.category_id = i:category_id';
-                break;
-
-            case $category == cashCategoryFactory::NO_CATEGORY_EXPENSE_ID:
-                $categorySql = ' and ct.category_id is null and ct.amount < 0';
-                break;
-
-            case $category == cashCategoryFactory::NO_CATEGORY_INCOME_ID:
-                $categorySql = ' and ct.category_id is null and ct.amount > 0';
-                break;
-
             case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
                 $categorySql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
                 break;
 
             default:
-                $categorySql = '';
+                $categorySql = ' and ct.category_id = i:category_id';
         }
 
         $sql = <<<SQL
@@ -835,6 +790,17 @@ SQL;
             $categoryId,
             ['is_archived' => 1, 'update_datetime' => date('Y-m-d H:i:s')]
         );
+    }
+
+    /**
+     * @param int $oldCategoryId
+     * @param int $newCategoryId
+     *
+     * @return bool|waDbResultUpdate|null
+     */
+    public function changeCategoryId($oldCategoryId, $newCategoryId)
+    {
+        return $this->updateByField('category_id', $oldCategoryId, ['category_id' => $newCategoryId]);
     }
 
     /**
@@ -982,24 +948,12 @@ SQL;
     private function querySummaryByDateBoundsAndCategory($sql, $startDate, $endDate, $category)
     {
         switch (true) {
-            case $category > 0:
-                $categoriesSql = ' and ct.category_id = i:category_id';
-                break;
-
-            case $category == cashCategoryFactory::NO_CATEGORY_EXPENSE_ID:
-                $categoriesSql = ' and ct.category_id is null and ct.amount < 0';
-                break;
-
-            case $category == cashCategoryFactory::NO_CATEGORY_INCOME_ID:
-                $categoriesSql = ' and ct.category_id is null and ct.amount > 0';
-                break;
-
             case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
                 $categoriesSql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
                 break;
 
             default:
-                $categoriesSql = '';
+                $categoriesSql = ' and ct.category_id = i:category_id';
         }
 
         $sql = sprintf($sql, $categoriesSql);
@@ -1037,6 +991,19 @@ SQL;
         return $this->exec(
             'delete from cash_transaction where repeating_id = i:rid and id > i:tid',
             ['rid' => $repeatingId, 'tid' => $transactionId]
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getYearsWithTransactions(): array
+    {
+        return array_column(
+            $this->query(
+                'select year(`date`) transaction_year from cash_transaction where is_archived = 0 group by year(`date`) order by year(`date`)'
+            )->fetchAll(),
+            'transaction_year'
         );
     }
 }

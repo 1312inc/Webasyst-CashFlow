@@ -110,15 +110,17 @@ class cashFixtures
             }
         }
 
-        cash()->getModel(cashCategory::class)->insert(
-            [
-                'id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,
-                'type' => cashCategory::TYPE_TRANSFER,
-                'color' => cashColorStorage::TRANSFER_CATEGORY_COLOR,
-                'name' => _wd(cashConfig::APP_ID, 'Transfers'),
-                'create_datetime' => date('Y-m-d H:i:s'),
-            ]
-        );
+        $transferCategory = cash()->getEntityFactory(cashCategory::class)->createNewTransferCategory();
+        $data = cash()->getHydrator()->extract($transferCategory);
+        cash()->getModel(cashCategory::class)->insert($data);
+
+        $incomeNoCategory = cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryIncome();
+        $data = cash()->getHydrator()->extract($incomeNoCategory);
+        cash()->getModel(cashCategory::class)->insert($data);
+
+        $expenseNoCategory = cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryExpense();
+        $data = cash()->getHydrator()->extract($expenseNoCategory);
+        cash()->getModel(cashCategory::class)->insert($data);
     }
 
     public function createDemo()

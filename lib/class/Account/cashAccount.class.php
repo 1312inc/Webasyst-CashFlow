@@ -130,6 +130,20 @@ class cashAccount extends cashAbstractEntity
     /**
      * @return string
      */
+    public function getIconHtml(): string
+    {
+        if (strpos($this->icon, 'http') !== false) {
+            $html = sprintf('<i class="icon16" style="background-image: url(%s); background-size: 16px 16px;"></i>', $this->icon);
+        } else {
+            $html = sprintf('<i class="icon16 %s"></i>', $this->icon);
+        }
+
+        return $html;
+    }
+
+    /**
+     * @return string
+     */
     public function getCurrency()
     {
         return $this->currency;
