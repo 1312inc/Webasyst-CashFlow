@@ -11,12 +11,13 @@ final class cashIconStorage
     public static function getIcons()
     {
         return [
-            'blog',
+            'star',
+            'store',
+            'home',
             'notebook',
             'lock',
             'lock-unlocked',
             'broom',
-            'star',
             'livejournal',
             'contact',
             'lightning',
@@ -38,7 +39,6 @@ final class cashIconStorage
             'bug',
             'clock',
             'cup',
-            'home',
             'fruit',
             'luggage',
             'guitar',
@@ -47,7 +47,6 @@ final class cashIconStorage
             'target',
             'medal',
             'phone',
-            'store',
         ];
     }
 }

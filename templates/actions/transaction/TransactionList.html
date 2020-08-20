@@ -23,7 +23,7 @@
 
         {if $upcoming && !empty($completed)}
         <li class="float-right c-upcoming-toggle">
-            <a href="#" class="inline-link nowrap" data-cash-action="show-upcoming-transactions"><b><i>{sprintf( '[`Show next %s (%d transactions)`]', $selectedForecastPeriod->getName(), count($upcoming) )}</i></b></a>
+            <a href="#" class="inline-link nowrap" data-cash-action="show-upcoming-transactions"><b><i><em>{sprintf( '[`Show next %s (%d transactions)`]', $selectedForecastPeriod->getName(), count($upcoming) )}</em></i></b></a>
         </li>
         {/if}
 
