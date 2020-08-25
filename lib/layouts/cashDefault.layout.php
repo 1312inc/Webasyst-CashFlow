@@ -16,7 +16,8 @@ class cashDefaultLayout extends waLayout
         $this->view->assign(
             [
                 'content' => '<i class="icon16 loading"></i>',
-                'isAdmin' => (int)cash()->getRightConfig()->isAdmin(),
+                'isAdmin' => (int)cash()->getUser()->canImport(),
+                'contextUser' => cash()->getUser(),
                 'userId' => (int)wa()->getUser()->getId(),
                 'show_review_widget' => $showReviewWidget,
             ]

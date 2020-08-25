@@ -10,20 +10,41 @@ class cashAccountRepository extends cashBaseRepository
     protected $entity = cashAccount::class;
 
     /**
+     * @param waContact|null $contact
+     *
      * @return cashAccount[]
      * @throws waException
      */
-    public function findAllActive()
+    public function findAllActiveForContact(waContact $contact = null): array
     {
-        return $this->generateWithData($this->getModel()->getAllActive(), true);
+        if (!$contact) {
+            $contact = wa()->getUser();
+        }
+
+        return $this->generateWithData($this->getModel()->getAllActiveForContact($contact), true);
     }
 
     /**
+     * @param waContact|null $contact
+     *
      * @return cashAccount
      * @throws waException
      */
-    public function findFirst()
+    public function findFirstForContact(waContact $contact = null): cashAccount
     {
-        return $this->findByQuery($this->getModel()->select('*')->order('id')->limit(1), false);
+        if (!$contact) {
+            $contact = wa()->getUser();
+        }
+
+        return $this->findByQuery(
+            cash()->getContactRights()->filterQueryAccountsForContact(
+                $this->getModel()
+                    ->select('*')
+                    ->order('id')
+                    ->limit(1),
+                $contact
+            ),
+            false
+        );
     }
 }

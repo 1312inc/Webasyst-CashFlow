@@ -28,6 +28,10 @@ class cashTransactionDialogAction extends cashViewAction
             $transaction = cash()->getEntityRepository(cashTransaction::class)->findById($transactionId);
             kmwaAssert::instance($transaction, cashTransaction::class);
             $categoryType = $transaction->getCategoryType();
+
+            if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
+                throw new kmwaForbiddenException(_w('You can not edit transaction'));
+            }
         } else {
             $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
             if ($filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
@@ -35,12 +39,16 @@ class cashTransactionDialogAction extends cashViewAction
             } else {
                 $transaction->setCategoryId($filterDto->id);
             }
+
+            if (!cash()->getContactRights()->canAddTransaction(wa()->getUser(), $transaction)) {
+                throw new kmwaForbiddenException(_w('You can not add new transaction'));
+            }
         }
 
         $transactionDto = (new cashTransactionDtoAssembler())->createFromEntity($transaction);
         $accountDtos = cashDtoFromEntityFactory::fromEntities(
             cashAccountDto::class,
-            cash()->getEntityRepository(cashAccount::class)->findAllActive()
+            cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact()
         );
         $repeatingTransactionDto = $transaction->getRepeatingTransaction() instanceof cashRepeatingTransaction
             ? (new cashRepeatingTransactionDtoAssembler())->createFromEntity(
@@ -54,7 +62,7 @@ class cashTransactionDialogAction extends cashViewAction
         if ($categoryType === cashCategory::TYPE_INCOME) {
             $categoryDtos = cashDtoFromEntityFactory::fromEntities(
                 cashCategoryDto::class,
-                $categoryRep->findAllIncome()
+                $categoryRep->findAllIncomeForContact()
             );
         } elseif ($categoryType === cashCategory::TYPE_EXPENSE) {
             $categoryDtos = cashDtoFromEntityFactory::fromEntities(
@@ -64,7 +72,7 @@ class cashTransactionDialogAction extends cashViewAction
         } else {
             $categoryDtos = cashDtoFromEntityFactory::fromEntities(
                 cashCategoryDto::class,
-                $categoryRep->findAllActive()
+                $categoryRep->findAllActiveForContact()
             );
         }
 

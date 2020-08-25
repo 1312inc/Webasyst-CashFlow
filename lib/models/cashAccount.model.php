@@ -8,30 +8,39 @@ class cashAccountModel extends cashModel
     protected $table = 'cash_account';
 
     /**
+     * @param waContact $contact
+     *
      * @return array
+     * @throws waException
      */
-    public function getAllActive()
+    public function getAllActiveForContact(waContact $contact): array
     {
-        return $this
-            ->select('*')
-            ->where('is_archived = 0')
-            ->order('sort ASC, id DESC')
-            ->fetchAll();
+        return cash()->getContactRights()->filterQueryAccountsForContact(
+            $this
+                ->select('*')
+                ->where('is_archived = 0')
+                ->order('sort ASC, id DESC'),
+            $contact
+        )->fetchAll();
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $accounts
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $accounts
      *
      * @return array
      */
-    public function getStatDataForAccounts($startDate, $endDate, $accounts = null)
+    public function getStatDataForAccounts($startDate, $endDate, waContact $contact, $accounts = null): array
     {
         $accountFilterSql = '';
         if ($accounts) {
             $accountFilterSql = ' and ca.id in (i:accounts)';
         }
+
+        $accountRights = cash()->getContactRights()->getSqlForAccountJoinWithFullAccess($contact);
+        $categoryRights = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL
 select ca.id,
@@ -50,9 +59,12 @@ from cash_account ca
              left join cash_category cc on ct.category_id = cc.id
     where ct.date between s:startDate and s:endDate
           and ca.is_archived = 0
+          and {$accountRights}
+          and {$categoryRights}
           {$accountFilterSql}
     group by ca.id
-) t on ca.id = t.id
+) t on ca.id = t.id 
+where {$accountRights}
 SQL;
 
         return $this
@@ -63,6 +75,7 @@ SQL;
     /**
      * @param string     $startDate
      * @param string     $endDate
+     * @param waContact  $contact
      * @param string     $filterType
      * @param null|array $filterIds
      *
@@ -71,9 +84,13 @@ SQL;
     public function getStatDetailedCategoryData(
         $startDate,
         $endDate,
+        waContact $contact,
         $filterType = cashTransactionPageFilterDto::FILTER_ACCOUNT,
         $filterIds = null
-    ) {
+    ): array {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess($contact, 'ct', 'account_id');
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         $filterSql = '';
         if ($filterIds) {
             switch ($filterType) {
@@ -107,6 +124,8 @@ where ct.date between s:startDate and s:endDate
       and ca.is_archived = 0
       and ct.is_archived = 0
       {$filterSql}
+      and {$accountAccessSql}
+      and {$categoryAccessSql}
 group by ct.category_id, ca.currency
 SQL;
 
@@ -116,14 +135,18 @@ SQL;
     }
 
     /**
-     * @param string $startDate
-     * @param string $endDate
-     * @param array  $categories
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param array     $categories
      *
      * @return array
      */
-    public function getStatDataForCategories($startDate, $endDate, $categories)
+    public function getStatDataForCategories($startDate, $endDate, waContact $contact, $categories): array
     {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess($contact, 'ca', 'id');
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'id');
+
         $sql = <<<SQL
 select ca.id,
        ca.currency,
@@ -142,6 +165,8 @@ from cash_account ca
     where ct.date between s:startDate and s:endDate
           and ca.is_archived = 0
           and cc.id in (i:categories)
+          and {$accountAccessSql}
+          and {$categoryAccessSql}
     group by ca.id
 ) t on ca.id = t.id
 SQL;
@@ -152,14 +177,18 @@ SQL;
     }
 
     /**
-     * @param string $startDate
-     * @param string $endDate
-     * @param int    $importId
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int       $importId
      *
      * @return array
      */
-    public function getStatDataForImport($startDate, $endDate, $importId)
+    public function getStatDataForImport($startDate, $endDate, waContact $contact, $importId): array
     {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess($contact, 'ca', 'account_id');
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         $sql = <<<SQL
 select ca.id,
        ca.currency,
@@ -178,6 +207,8 @@ from cash_account ca
     where ct.date between s:startDate and s:endDate
           and ca.is_archived = 0
           and ct.import_id = i:import_id
+          and {$accountAccessSql}
+          and {$categoryAccessSql}
     group by ca.id
 ) t on ca.id = t.id
 SQL;

@@ -6,6 +6,17 @@
 class cashShopResetImportController extends cashJsonController
 {
     /**
+     * @throws kmwaForbiddenException
+     * @throws waException
+     */
+    protected function preExecute()
+    {
+        if (!cash()->getUser()->isAdmin()) {
+            throw new kmwaForbiddenException();
+        }
+    }
+
+    /**
      * @param null $params
      *
      * @return mixed|void

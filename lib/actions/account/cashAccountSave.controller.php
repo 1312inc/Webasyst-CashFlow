@@ -17,7 +17,15 @@ class cashAccountSaveController extends cashJsonController
         if (!empty($data['id'])) {
             $account = cash()->getEntityRepository(cashAccount::class)->findById($data['id']);
             kmwaAssert::instance($account, cashAccount::class);
+
+            if (!cash()->getContactRights()->hasFullAccessToAccount(wa()->getUser(), $account)) {
+                throw new kmwaForbiddenException(_w('You have no access to this account'));
+            }
         } else {
+            if (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
+                throw new kmwaForbiddenException(_w('You can not create any account'));
+            }
+
             $account = cash()->getEntityFactory(cashAccount::class)->createNew();
         }
 

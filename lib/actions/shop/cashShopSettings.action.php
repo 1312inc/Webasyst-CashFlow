@@ -6,6 +6,17 @@
 class cashShopSettingsAction extends cashViewAction
 {
     /**
+     * @throws kmwaForbiddenException
+     * @throws waException
+     */
+    protected function preExecute()
+    {
+        if (!cash()->getUser()->isAdmin()) {
+            throw new kmwaForbiddenException();
+        }
+    }
+
+    /**
      * @param null $params
      *
      * @return mixed|void
@@ -16,13 +27,13 @@ class cashShopSettingsAction extends cashViewAction
      */
     public function runAction($params = null)
     {
-        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActive();
+        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
         $accountDtos = cashDtoFromEntityFactory::fromEntities(cashAccountDto::class, $accounts);
 
-        $incomes = cash()->getEntityRepository(cashCategory::class)->findAllByType(cashCategory::TYPE_INCOME);
+        $incomes = cash()->getEntityRepository(cashCategory::class)->findAllByTypeForContact(cashCategory::TYPE_INCOME);
         $incomeDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $incomes);
 
-        $expenses = cash()->getEntityRepository(cashCategory::class)->findAllByType(cashCategory::TYPE_EXPENSE);
+        $expenses = cash()->getEntityRepository(cashCategory::class)->findAllByTypeForContact(cashCategory::TYPE_EXPENSE);
         $expenseDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $expenses);
 
         $shopIntegration = new cashShopIntegration();

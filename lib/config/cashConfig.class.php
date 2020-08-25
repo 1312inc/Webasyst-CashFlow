@@ -13,9 +13,9 @@ class cashConfig extends waAppConfig
     private $persister;
 
     /**
-     * @var cashRightConfig
+     * @var cashContactRightsManager
      */
-    private $rightConfig;
+    private $contactRights;
 
     /**
      * @var array
@@ -46,6 +46,11 @@ class cashConfig extends waAppConfig
      * @var cashLogger
      */
     private $logger;
+
+    /**
+     * @var cashUser
+     */
+    private $contextUser;
 
     public function __construct($environment, $root_path, $application = null, $locale = null)
     {
@@ -255,15 +260,28 @@ class cashConfig extends waAppConfig
     }
 
     /**
-     * @return cashRightConfig
+     * @return cashContactRightsManager
      */
-    public function getRightConfig()
+    public function getContactRights(): cashContactRightsManager
     {
-        if ($this->rightConfig === null) {
-            $this->rightConfig = new cashRightConfig();
+        if ($this->contactRights === null) {
+            $this->contactRights = new cashContactRightsManager();
         }
 
-        return $this->rightConfig;
+        return $this->contactRights;
+    }
+
+    /**
+     * @return cashUser
+     * @throws waException
+     */
+    public function getUser(): cashUser
+    {
+        if ($this->contextUser === null) {
+            $this->contextUser = new cashUser(wa()->getUser());
+        }
+
+        return $this->contextUser;
     }
 
     /**

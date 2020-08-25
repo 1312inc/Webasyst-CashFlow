@@ -5,12 +5,20 @@
  */
 class cashRightConfig extends waRightConfig
 {
-    const CAN_ACCESS_ACCOUNT = 'can_access_account';
+    const RIGHT_CAN_ACCESS_ACCOUNT  = 'can_access_account';
+    const RIGHT_CAN_ACCESS_CATEGORY = 'can_access_category';
+    const RIGHT_BACKEND             = 'backend';
+    const RIGHT_IMPORT_TRANSACTIONS = 'can_import_transactions';
+    const RIGHT_SEE_REPORTS         = 'can_see_reports';
 
-    const RIGHT_FULL_ACCESS                 = 99;
-    const RIGHT_ADD_VIEW_ALLOWED_CATEGORIES = 2;
-    const RIGHT_ADD_ONLY                    = 1;
-    const RIGHT_NONE                        = 0;
+    const ACCOUNT_FULL_ACCESS                                  = 99;
+    const ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS = 2;
+    const ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY      = 1;
+    const CATEGORY_FULL_ACCESS                                 = 1;
+
+    const ADMIN_ACCESS = 2;
+    const YES_ACCESS = 1;
+    const NO_ACCESS  = 0;
 
     /**
      * @var int
@@ -18,19 +26,9 @@ class cashRightConfig extends waRightConfig
     private $userId;
 
     /**
-     * @var waContactRightsModel
+     * @throws waException
      */
-    private $model;
-
-    /**
-     * @var array
-     */
-    private $accesses = [];
-
-    /**
-     * cashRightConfig constructor.
-     */
-    public function __construct()
+    public function init()
     {
         $this->userId = waRequest::post('user_id', 0, waRequest::TYPE_INT);
 
@@ -38,47 +36,47 @@ class cashRightConfig extends waRightConfig
             $this->userId = waRequest::request('id', 0, waRequest::TYPE_INT);
         }
 
-        $this->model = new waContactRightsModel();
-
-        parent::__construct();
-    }
-
-    /**
-     * @return array
-     */
-    public function getRightsList()
-    {
-        return [
-            self::CAN_ACCESS_ACCOUNT,
-        ];
-    }
-
-    /**
-     * @throws waException
-     */
-    public function init()
-    {
         $items = [];
-        /** @var cashAccount $account */
-        foreach (cash()->getEntityRepository(cashAccount::class)->findAll() as $account) {
+        foreach (cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact() as $account) {
             $items[$account->getId()] = $account->getName();
         }
 
+        $this->addItem(self::RIGHT_SEE_REPORTS, _w('Can see reports'), 'checkbox');
+        $this->addItem(self::RIGHT_IMPORT_TRANSACTIONS, _w('Can import transactions'), 'checkbox');
+
         $this->addItem(
-            self::CAN_ACCESS_ACCOUNT,
+            self::RIGHT_CAN_ACCESS_ACCOUNT,
             _w('Accounts'),
             'selectlist',
             [
                 'items' => $items,
                 'position' => 'right',
                 'options' => [
-                    self::RIGHT_NONE => _w('No access'),
-                    self::RIGHT_ADD_ONLY => _w('Add & edit self-created transactions only'),
-                    self::RIGHT_ADD_VIEW_ALLOWED_CATEGORIES => _w('Add, edit & view transactions created by others'),
-                    self::RIGHT_FULL_ACCESS => _w('Full access: see the account balance & manage settings'),
+                    self::NO_ACCESS => _w('No access'),
+                    self::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY => _w(
+                        'Add & edit self-created transactions only'
+                    ),
+                    self::ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS => _w(
+                        'Add, edit & view transactions created by others'
+                    ),
+                    self::ACCOUNT_FULL_ACCESS => _w('Full access: see the account balance & manage settings'),
                 ],
             ]
         );
+
+        $items = [];
+        foreach (cash()->getEntityRepository(cashCategory::class)->findAllIncomeForContact() as $category) {
+            $items[$category->getId()] = $category->getName();
+        }
+
+        $this->addItem(self::RIGHT_CAN_ACCESS_CATEGORY, _w('Income'), 'list', ['items' => $items]);
+
+        $items = [];
+        foreach (cash()->getEntityRepository(cashCategory::class)->findAllExpense() as $category) {
+            $items[$category->getId()] = $category->getName();
+        }
+
+        $this->addItem(self::RIGHT_CAN_ACCESS_CATEGORY, _w('Expense'), 'list', ['items' => $items]);
 
         /**
          * @event rights.config
@@ -95,95 +93,18 @@ class cashRightConfig extends waRightConfig
      *
      * @return array
      */
-    public function getDefaultRights($contact_id)
+    public function getDefaultRights($contact_id): array
     {
-        return [
-            self::CAN_ACCESS_ACCOUNT => self::RIGHT_NONE,
+        $default = [
+            self::RIGHT_CAN_ACCESS_ACCOUNT => self::NO_ACCESS,
         ];
-    }
 
-    /**
-     * @param int      $right
-     * @param int|null $userId
-     *
-     * @return bool
-     * @throws waException
-     */
-    public function userCan($right, $userId = null)
-    {
-        if (!$userId) {
-            $userId = wa()->getUser()->getId();
+        $categories = cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact(wa()->getUser());
+        /** @var cashCategory $category */
+        foreach ($categories as $category) {
+            $default[self::RIGHT_CAN_ACCESS_CATEGORY . '.' . $category->getId()] = self::CATEGORY_FULL_ACCESS;
         }
 
-        if ($this->isAdmin($userId)) {
-            return true;
-        }
-
-        return in_array($this->accesses[$userId][$right]);
-    }
-
-    /**
-     * @return array
-     */
-    public function getUserIdsWithAccess()
-    {
-        return $this->model->getUsers(cashConfig::APP_ID);
-    }
-
-    /**
-     * @param int|null $user
-     *
-     * @return bool
-     * @throws waException
-     */
-    public function isAdmin($user = null)
-    {
-        if ($user === null) {
-            $user = wa()->getUser()->getId();
-        }
-//        if ($user instanceof cashUser) {
-//            $user = $user->getContactId();
-//        }
-
-        $this->loadRightsForContactId($user);
-
-        return isset($this->accesses[$user]['backend']) && $this->accesses[$user]['backend'] == PHP_INT_MAX;
-    }
-
-    /**
-     * @param int|null $user
-     *
-     * @return bool
-     * @throws waException
-     */
-    public function hasAccessToApp($user = null)
-    {
-        if ($user === null) {
-            $user = wa()->getUser()->getId();
-        }
-
-        $this->loadRightsForContactId($user);
-
-        if ($this->isAdmin($user)) {
-            return true;
-        }
-
-        return !empty($this->accesses[$user]['backend']);
-    }
-
-    /**
-     * @param int $contactId
-     *
-     * @throws waException
-     */
-    private function loadRightsForContactId($contactId)
-    {
-        if (isset($this->accesses[$contactId])) {
-            return;
-        }
-
-        $contact = new waContact($contactId);
-
-        $this->accesses[$contactId] = $contact->getRights(cashConfig::APP_ID);
+        return $default;
     }
 }

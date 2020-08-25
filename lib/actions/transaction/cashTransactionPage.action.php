@@ -98,7 +98,9 @@ class cashTransactionPageAction extends cashViewAction
             ->setStart(waRequest::get('start', 0, waRequest::TYPE_INT) ?: 0)
             ->setLimit(waRequest::get('limit', 0, waRequest::TYPE_INT) ?: cashPagination::LIMIT);
 
-        cash()->getEventDispatcher()->dispatch(new cashEvent(cashEventStorage::TRANSACTION_PAGE_PREEXECUTE, $this->endDate));
+        cash()->getEventDispatcher()->dispatch(
+            new cashEvent(cashEventStorage::TRANSACTION_PAGE_PREEXECUTE, $this->endDate)
+        );
     }
 
     /**
@@ -115,13 +117,21 @@ class cashTransactionPageAction extends cashViewAction
         // cash on hand today
         $onHandsToday = [];
         if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
-            $onHandsToday = $calcService->getOnHandOnDate($this->today, $this->filterDto->entity);
+            $onHandsToday = $calcService->getOnHandOnDate(
+                $this->today,
+                $this->filterDto->contact,
+                $this->filterDto->entity
+            );
         }
 
         $settings = new cashTransactionListSettingsDto($this->filterDto, $this->periodForecast);
 
         // cash on hand end day
-        $onHandsEndday = $calcService->getOnHandOnDate($this->endDate, $this->filterDto->entity);
+        $onHandsEndday = $calcService->getOnHandOnDate(
+            $this->endDate,
+            $this->filterDto->contact,
+            $this->filterDto->entity
+        );
 
         // total on hand
 //        $farFarFuture = (new DateTime())->modify('+100 years');

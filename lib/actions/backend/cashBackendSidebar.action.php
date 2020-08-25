@@ -13,10 +13,15 @@ class cashBackendSidebarAction extends cashViewAction
      */
     public function runAction($params = null)
     {
-        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActive();
-        $accountDtos = cashAccountDtoAssembler::createFromEntitiesWithStat($accounts, new DateTime());
+        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
+        $accountDtos = cashAccountDtoAssembler::createFromEntitiesWithStat(
+            $accounts,
+            wa()->getUser(),
+            new DateTime(),
+            new DateTime('1970-01-01')
+        );
 
-        $incomes = cash()->getEntityRepository(cashCategory::class)->findAllByType(cashCategory::TYPE_INCOME);
+        $incomes = cash()->getEntityRepository(cashCategory::class)->findAllByTypeForContact(cashCategory::TYPE_INCOME);
         $incomeDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $incomes);
 
         if (cash()->getModel(cashTransaction::class)->hasNoCategoryIncomes()) {
@@ -26,7 +31,7 @@ class cashBackendSidebarAction extends cashViewAction
             );
         }
 
-        $expenses = cash()->getEntityRepository(cashCategory::class)->findAllByType(cashCategory::TYPE_EXPENSE);
+        $expenses = cash()->getEntityRepository(cashCategory::class)->findAllByTypeForContact(cashCategory::TYPE_EXPENSE);
         $expenseDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $expenses);
 
         if (cash()->getModel(cashTransaction::class)->hasNoCategoryExpenses()) {
@@ -36,8 +41,13 @@ class cashBackendSidebarAction extends cashViewAction
             );
         }
 
-        $imports = cash()->getEntityRepository(cashImport::class)->findLastN(3);
-        $importDtos = cashDtoFromEntityFactory::fromEntities(cashImportDto::class, $imports);
+        $importDtos = [];
+        if (cash()->getUser()->canImport()) {
+            $imports = cash()->getEntityRepository(cashImport::class)->findLastN(3);
+            $importDtos = cashDtoFromEntityFactory::fromEntities(cashImportDto::class, $imports);
+        }
+
+        $hasTransfers = (bool) cash()->getModel(cashTransaction::class)->countTransfers(wa()->getUser());
 
         /**
          * UI in main sidebar
@@ -58,6 +68,7 @@ class cashBackendSidebarAction extends cashViewAction
                 'expenses' => $expenseDtos,
                 'imports' => $importDtos,
                 'backend_sidebar' => $eventResult,
+                'hasTransfers' => $hasTransfers,
             ]
         );
     }

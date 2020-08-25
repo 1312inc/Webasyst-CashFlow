@@ -30,7 +30,7 @@ class cashTransactionBulkMoveDialogAction extends cashViewAction
 
         $accountDtos = cashDtoFromEntityFactory::fromEntities(
             cashAccountDto::class,
-            cash()->getEntityRepository(cashAccount::class)->findAllActive()
+            cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact()
         );
 
         /** @var cashCategoryRepository $categoryRep */
@@ -41,7 +41,7 @@ class cashTransactionBulkMoveDialogAction extends cashViewAction
         );
         $categoryDtosIncome = cashDtoFromEntityFactory::fromEntities(
             cashCategoryDto::class,
-            $categoryRep->findAllIncome()
+            $categoryRep->findAllIncomeForContact()
         );
 
         $this->view->assign(

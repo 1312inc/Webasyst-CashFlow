@@ -6,6 +6,7 @@
 final class cashCalculationService
 {
     /**
+     * @param waContact     $contact
      * @param DateTime      $endDate
      * @param DateTime|null $startDate
      *
@@ -13,13 +14,16 @@ final class cashCalculationService
      * @throws waException
      * @todo: cache?
      */
-    public function getAccountStatsForDates(DateTime $endDate, DateTime $startDate = null)
+    public function getAccountStatsForDates(waContact $contact, DateTime $endDate, DateTime $startDate): array
     {
         /** @var cashAccountModel $model */
         $model = cash()->getModel(cashAccount::class);
 
-        $startDate = ifset($startDate, new DateTime('1970-01-01'));
-        $data = $model->getStatDataForAccounts($startDate->format('Y-m-d 00:00:00'), $endDate->format('Y-m-d H:i:s'));
+        $data = $model->getStatDataForAccounts(
+            $startDate->format('Y-m-d 00:00:00'),
+            $endDate->format('Y-m-d H:i:s'),
+            $contact
+        );
 
         $dtos = [];
         foreach ($data as $datum) {
@@ -36,6 +40,7 @@ final class cashCalculationService
 
     /**
      * @param DateTime                                    $onDate
+     * @param waContact                                   $contact
      * @param cashAccount|cashCategory|cashAbstractEntity $entity
      * @param DateTime|null                               $startDate
      *
@@ -43,8 +48,12 @@ final class cashCalculationService
      * @throws kmwaLogicException
      * @throws waException
      */
-    public function getOnHandOnDate(DateTime $onDate, cashAbstractEntity $entity, DateTime $startDate = null)
-    {
+    public function getOnHandOnDate(
+        DateTime $onDate,
+        waContact $contact,
+        cashAbstractEntity $entity,
+        DateTime $startDate = null
+    ): array {
         if (!$startDate instanceof DateTime) {
             $startDate = new DateTime('1970-01-01 00:00:00');
         }
@@ -57,26 +66,29 @@ final class cashCalculationService
         }
 
         switch (true) {
-            case $entity instanceOf cashAccount:
+            case $entity instanceof cashAccount:
                 $data = $model->getStatDataForAccounts(
                     $startDate->format('Y-m-d H:i:s'),
                     $onDate->format('Y-m-d H:i:s'),
+                    $contact,
                     $filterIds
                 );
                 break;
 
-            case $entity instanceOf cashCategory:
+            case $entity instanceof cashCategory:
                 $data = $model->getStatDataForCategories(
                     $startDate->format('Y-m-d H:i:s'),
                     $onDate->format('Y-m-d H:i:s'),
+                    $contact,
                     $filterIds
                 );
                 break;
 
-            case $entity instanceOf cashImport:
+            case $entity instanceof cashImport:
                 $data = $model->getStatDataForImport(
                     $startDate->format('Y-m-d H:i:s'),
                     $onDate->format('Y-m-d H:i:s'),
+                    $contact,
                     $entity->getId()
                 );
                 break;
@@ -93,7 +105,7 @@ final class cashCalculationService
                     'income' => 0,
                     'expense' => 0,
                     'currency' => cashCurrencyVO::fromWaCurrency($datum['currency']),
-                    'ids' => []
+                    'ids' => [],
                 ];
             }
             $summaryData[$datum['currency']]['summary'] += $datum['summary'];
@@ -124,6 +136,7 @@ final class cashCalculationService
     /**
      * @param DateTime           $startDate
      * @param DateTime           $endDate
+     * @param waContact          $contact
      * @param cashAbstractEntity $entity
      * @param string             $filterType
      *
@@ -133,10 +146,10 @@ final class cashCalculationService
     public function getOnHandDetailedCategories(
         DateTime $startDate,
         DateTime $endDate,
+        waContact $contact,
         cashAbstractEntity $entity,
         $filterType = cashTransactionPageFilterDto::FILTER_ACCOUNT
-    )
-    {
+    ): array {
         /** @var cashAccountModel $model */
         $model = cash()->getModel(cashAccount::class);
         $filterIds = [];
@@ -147,6 +160,7 @@ final class cashCalculationService
         $data = $model->getStatDetailedCategoryData(
             $startDate->format('Y-m-d H:i:s'),
             $endDate->format('Y-m-d H:i:s'),
+            $contact,
             $filterType,
             $filterIds
         );

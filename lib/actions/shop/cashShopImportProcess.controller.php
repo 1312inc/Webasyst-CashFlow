@@ -13,6 +13,10 @@ class cashShopImportProcessController extends waLongActionController
     public function execute()
     {
         try {
+            if (!cash()->getUser()->isAdmin()) {
+                throw new kmwaForbiddenException();
+            }
+
             parent::execute();
         } catch (Exception $ex) {
             cash()->getLogger()->error($ex->getMessage(), $ex, 'shop/import');
@@ -47,14 +51,14 @@ class cashShopImportProcessController extends waLongActionController
             $info->period === 'all' ? null : $info->periodAfter
         );
 
-        $account = cash()->getEntityRepository(cashAccount::class)->findAllActive();
+        $account = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
         if (!$account) {
             throw new kmwaRuntimeException('No Cash accounts');
         }
         /** @var cashAccount $account */
         $account = reset($account);
 
-        $categories = cash()->getEntityRepository(cashCategory::class)->findAllIncome();
+        $categories = cash()->getEntityRepository(cashCategory::class)->findAllIncomeForContact();
         if (!$categories) {
             throw new kmwaRuntimeException('No Cash categories');
         }

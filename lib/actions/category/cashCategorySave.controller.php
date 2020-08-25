@@ -14,7 +14,16 @@ class cashCategorySaveController extends cashJsonController
 
         if (!empty($data['id'])) {
             $category = cash()->getEntityRepository(cashCategory::class)->findById($data['id']);
+            kmwaAssert::instance($category, cashCategory::class);
+
+            if (!cash()->getContactRights()->hasFullAccessToCategory(wa()->getUser(), $category)) {
+                throw new kmwaForbiddenException(_w('You have no access to this category'));
+            }
         } else {
+            if (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
+                throw new kmwaForbiddenException(_w('You can not create any category at all'));
+            }
+
             $category = cash()->getEntityFactory(cashCategory::class)->createNew();
         }
 

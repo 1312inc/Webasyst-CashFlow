@@ -12,7 +12,7 @@ class cashDebugResetAction extends cashViewAction
      */
     public function runAction($params = null)
     {
-        if (!$this->getUser()->isAdmin()) {
+        if (!cash()->getUser()->isRoot()) {
             throw new kmwaForbiddenException();
         }
 

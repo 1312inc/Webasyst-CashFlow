@@ -94,7 +94,7 @@ SQL;
             new cashReportDdsEntity(_w('All income'), cashReportDds::ALL_INCOME_KEY, false, true, '', true),
             $rawData[cashCategory::TYPE_INCOME] ?? []
         );
-        foreach ($this->categoryRep->findAllIncome() as $category) {
+        foreach ($this->categoryRep->findAllIncomeForContact() as $category) {
             $statData[] = new cashReportDdsStatDto(
                 new cashReportDdsEntity(
                     $category->getName(),

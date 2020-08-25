@@ -6,6 +6,17 @@
 class cashReportDdsAction extends cashViewAction
 {
     /**
+     * @throws kmwaForbiddenException
+     * @throws waException
+     */
+    protected function preExecute()
+    {
+        if (!cash()->getUser()->canImport()) {
+            throw new kmwaForbiddenException();
+        }
+    }
+
+    /**
      * @param null $params
      *
      * @return mixed|void

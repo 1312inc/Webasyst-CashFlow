@@ -44,6 +44,7 @@ class kmwaWaConfigHelper
             'lib/vendor/kmwa/Wa' => [
                 'kmwaWaCacheAdapter',
                 'kmwaWaListenerProviderAbstract',
+                'kmwaWaUserTrait',
             ],
             'lib/vendor/kmwa/Trait' => [
                 'kmwaEntityDatetimeTrait',
