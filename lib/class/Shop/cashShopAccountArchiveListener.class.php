@@ -18,7 +18,7 @@ class cashShopAccountArchiveListener
 
         $shopIntegration = new cashShopIntegration();
         if ($shopIntegration->getSettings()->getAccountId() === $account->getId()) {
-            $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActive();
+            $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
             if (!$accounts) {
                 throw new kmwaRuntimeException('No active accounts');
             }

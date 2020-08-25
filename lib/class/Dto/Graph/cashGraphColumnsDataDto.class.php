@@ -63,10 +63,10 @@ class cashGraphColumnsDataDto extends cashAbstractDto
     /**
      * cashGraphColumnsDataDto constructor.
      *
-     * @param DateTime                     $startDate
-     * @param DateTime                     $endDate
+     * @param DateTime $startDate
+     * @param DateTime $endDate
      * @param cashTransactionPageFilterDto $filterDto
-     * @param int                          $grouping
+     * @param int $grouping
      *
      * @throws waException
      */
@@ -89,12 +89,14 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 $existingCategories = $model->getCategoriesAndCurrenciesHashByAccount(
                     $startDate->format('Y-m-d 00:00:00'),
                     $endDate->format('Y-m-d 23:59:59'),
+                    $this->filterDto->contact,
                     $this->filterDto->id
                 );
                 if (empty($this->filterDto->id)) {
                     $this->accounts = $model->getExistingAccountsBetweenDates(
                         $startDate->format('Y-m-d 00:00:00'),
-                        $endDate->format('Y-m-d 23:59:59')
+                        $endDate->format('Y-m-d 23:59:59'),
+                        $this->filterDto->contact
                     );
                 } else {
                     $this->accounts = [$this->filterDto->id];
@@ -105,6 +107,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 $existingCategories = $model->getCategoriesAndCurrenciesHashByImport(
                     $startDate->format('Y-m-d 00:00:00'),
                     $endDate->format('Y-m-d 23:59:59'),
+                    $this->filterDto->contact,
                     $this->filterDto->id
                 );
                 break;
@@ -113,6 +116,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 $existingCategories = $model->getCategoriesAndCurrenciesHashByCategory(
                     $startDate->format('Y-m-d 00:00:00'),
                     $endDate->format('Y-m-d 23:59:59'),
+                    $this->filterDto->contact,
                     $this->filterDto->id
                 );
                 $this->accounts = [];
@@ -209,7 +213,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             $columns[] = array_values(array_merge([$name], $data));
         }
 
-        $categories = cash()->getModel(cashCategory::class)->getAllActive();
+        $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
         foreach ($this->categories as $hash => $category) {
             if ($category['id'] && isset($categories[$category['id']])) {
                 $names[$hash] = $categories[$category['id']]['name'];
@@ -373,7 +377,12 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                         $extremum['columns']['min'] = min($extremum['columns']['min'], min($notNullData));
                         $extremum['columns']['max'] = max($extremum['columns']['max'], max($notNullData));
                         if (in_array($columnName, $expenseCategories, true)) {
-                            $notNullData = array_map(function ($v) { return -$v; }, $notNullData);
+                            $notNullData = array_map(
+                                function ($v) {
+                                    return -$v;
+                                },
+                                $notNullData
+                            );
                             $extremum['columns']['min'] = min($extremum['columns']['min'], min($notNullData));
                         }
                     }
@@ -385,7 +394,9 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                         : 1,
                     'maxs' => $extremum['lines']['max'] / $extremum['columns']['max'],
 
-                    'abs' => (abs($extremum['lines']['min']) + abs($extremum['lines']['max'])) / (abs($extremum['columns']['min']) + abs( $extremum['columns']['max'])),
+                    'abs' => (abs($extremum['lines']['min']) + abs($extremum['lines']['max'])) / (abs(
+                                $extremum['columns']['min']
+                            ) + abs($extremum['columns']['max'])),
 
                     'lines' => $extremum['lines']['min']
                         ? abs($extremum['lines']['max']) / abs($extremum['lines']['min'])
@@ -408,7 +419,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                     $data['axis']['y2']['min'] = $extremum['lines']['min'];
                     $data['axis']['y2']['max'] = $extremum['columns']['max'];
                 } else {
-                    $data['axis']['y']['min'] = -abs($extremum['lines']['min']/$ration['maxs']);
+                    $data['axis']['y']['min'] = -abs($extremum['lines']['min'] / $ration['maxs']);
                     $data['axis']['y']['max'] = $extremum['columns']['max'];
 
                     $data['axis']['y2']['min'] = $extremum['lines']['min'];

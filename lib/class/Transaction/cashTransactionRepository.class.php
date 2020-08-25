@@ -29,7 +29,7 @@ class cashTransactionRepository extends cashBaseRepository
         $model = cash()->getModel(cashTransaction::class);
 
         $accountDtos = [];
-        foreach (cash()->getEntityRepository(cashAccount::class)->findAllActive() as $a) {
+        foreach (cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact($filterDto->contact) as $a) {
             $accountDtos[$a->getId()] = cashAccountDto::fromEntity($a);
         }
 
@@ -47,6 +47,7 @@ class cashTransactionRepository extends cashBaseRepository
                 $data = $model->getByDateBoundsAndAccount(
                     $startDate->format('Y-m-d 00:00:00'),
                     $endDate->format('Y-m-d 23:59:59'),
+                    $filterDto->contact,
                     $filterDto->id,
                     false,
                     $start,
@@ -58,6 +59,7 @@ class cashTransactionRepository extends cashBaseRepository
                         $model->countByDateBoundsAndAccount(
                             $startDate->format('Y-m-d 00:00:00'),
                             $endDate->format('Y-m-d 23:59:59'),
+                            $filterDto->contact,
                             $filterDto->id
                         )
                     );
@@ -67,6 +69,7 @@ class cashTransactionRepository extends cashBaseRepository
                     $initialBalance = cash()->getModel(cashAccount::class)->getStatDataForAccounts(
                         '1970-01-01 00:00:00',
                         $endDate->format('Y-m-d 23:59:59'),
+                        $filterDto->contact,
                         $filterDto->id
                     );
                     $initialBalance = (float)ifset($initialBalance, $filterDto->id, 'summary', 0.0);
@@ -77,6 +80,7 @@ class cashTransactionRepository extends cashBaseRepository
                 $data = $model->getByDateBoundsAndCategory(
                     $startDate->format('Y-m-d 00:00:00'),
                     $endDate->format('Y-m-d 23:59:59'),
+                    $filterDto->contact,
                     $filterDto->id,
                     false,
                     $start,
@@ -88,6 +92,7 @@ class cashTransactionRepository extends cashBaseRepository
                         $model->countByDateBoundsAndCategory(
                             $startDate->format('Y-m-d 00:00:00'),
                             $endDate->format('Y-m-d 23:59:59'),
+                            $filterDto->contact,
                             $filterDto->id
                         )
                     );
@@ -98,6 +103,7 @@ class cashTransactionRepository extends cashBaseRepository
                 $data = $model->getByDateBoundsAndImport(
                     $startDate->format('Y-m-d 00:00:00'),
                     $endDate->format('Y-m-d 23:59:59'),
+                    $filterDto->contact,
                     $filterDto->id
                 );
 

@@ -32,11 +32,11 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
         $template = wa()->getAppPath('./templates/actions/import/csv/form.html', cashConfig::APP_ID);
 
         /** @var cashAccount[] $accounts */
-        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActive();
+        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
         /** @var cashAccountDto[] $accountDtos */
         $accountDtos = cashDtoFromEntityFactory::fromEntities(cashAccountDto::class, $accounts);
 
-        $categoriesIncome = cash()->getEntityRepository(cashCategory::class)->findAllIncome();
+        $categoriesIncome = cash()->getEntityRepository(cashCategory::class)->findAllIncomeForContact();
         /** @var cashCategoryDto[] $categoryIncomeDtos */
         $categoryIncomeDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $categoriesIncome);
         array_unshift(

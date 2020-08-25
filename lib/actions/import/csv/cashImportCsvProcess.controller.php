@@ -35,6 +35,10 @@ class cashImportCsvProcessController extends waLongActionController
     public function execute()
     {
         try {
+            if (!cash()->getUser()->canImport()) {
+                throw new kmwaForbiddenException();
+            }
+
             parent::execute();
         } catch (Exception $ex) {
             cash()->getLogger()->error($ex->getMessage(), $ex, 'import/error');
@@ -102,11 +106,11 @@ LOG
 
         $this->info->accounts = cashDtoFromEntityFactory::fromEntities(
             cashAccountDto::class,
-            cash()->getEntityRepository(cashAccount::class)->findAllActive()
+            cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact()
         );
         $this->info->categories = cashDtoFromEntityFactory::fromEntities(
             cashCategoryDto::class,
-            cash()->getEntityRepository(cashCategory::class)->findAllActive()
+            cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact()
         );
 
         $this->data['info'] = $this->info;

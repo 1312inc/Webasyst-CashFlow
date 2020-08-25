@@ -11,7 +11,7 @@ class cashAccountSortController extends cashJsonController
      */
     public function preExecute()
     {
-        if (!cash()->getRightConfig()->isAdmin()) {
+        if (!cash()->getUser()->isAdmin()) {
             throw new kmwaForbiddenException();
         }
     }

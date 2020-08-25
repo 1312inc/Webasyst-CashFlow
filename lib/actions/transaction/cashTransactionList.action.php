@@ -22,12 +22,14 @@ class cashTransactionListAction extends cashTransactionPageAction
         $upcomingOnDate = $calcService->getOnHandDetailedCategories(
             $tomorrow,
             $this->endDate,
+            $this->filterDto->contact,
             $this->filterDto->entity,
             $this->filterDto->type
         );
         $completedOnDate = $calcService->getOnHandDetailedCategories(
             $this->startDate,
             $this->today,
+            $this->filterDto->contact,
             $this->filterDto->entity,
             $this->filterDto->type
         );

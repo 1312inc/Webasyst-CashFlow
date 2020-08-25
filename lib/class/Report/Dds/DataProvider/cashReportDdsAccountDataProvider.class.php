@@ -118,7 +118,7 @@ SQL;
             $rawData[cashCategory::TYPE_EXPENSE][cashReportDds::ALL_EXPENSE_KEY] ?? []
         );
 
-        foreach ($this->accountRep->findAllActive() as $account) {
+        foreach ($this->accountRep->findAllActiveForContact() as $account) {
             $data = $rawData[cashCategory::TYPE_INCOME][$account->getId()] ?? [];
             if ($data) {
                 $statDataIncome[] = new cashReportDdsStatDto(

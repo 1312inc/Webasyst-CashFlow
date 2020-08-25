@@ -29,20 +29,20 @@ class cashTransactionBulkMoveController extends cashJsonController
         }
 
         if (isset($moveData['category_id'])) {
-            if ($moveData['category_id']) {
-                /** @var cashAccount $category */
-                $category = cash()->getEntityRepository(cashCategory::class)->findById($moveData['category_id']);
-                kmwaAssert::instance($category, cashCategory::class);
+            /** @var cashAccount $category */
+            $category = cash()->getEntityRepository(cashCategory::class)->findById($moveData['category_id']);
+            kmwaAssert::instance($category, cashCategory::class);
 
-                $updateData['category_id'] = $category->getId();
-            } else {
-                $updateData['category_id'] = null;
-            }
+            $updateData['category_id'] = $category->getId();
         }
 
         $fields = cash()->getModel(cashTransaction::class)->getMetadata();
         $params = new cashTransactionSaveParamsDto();
         foreach ($transactions as $transaction) {
+            if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
+                throw new kmwaForbiddenException(_w('You can not edit transaction'));
+            }
+
             $transactionData = cash()->getHydrator()->extract($transaction, [], $fields);
             $saver->saveFromArray($transaction, array_merge($transactionData, $updateData), $params);
         }

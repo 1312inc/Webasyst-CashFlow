@@ -11,6 +11,17 @@ class cashImportUploadAction extends cashViewAction
     protected $errors = [];
 
     /**
+     * @throws kmwaForbiddenException
+     * @throws waException
+     */
+    protected function preExecute()
+    {
+        if (!cash()->getUser()->canImport()) {
+            throw new kmwaForbiddenException();
+        }
+    }
+
+    /**
      * @param null $params
      */
     public function runAction($params = null)

@@ -11,7 +11,7 @@ abstract class cashViewAction extends kmwaWaViewAction
      */
     protected function preExecute()
     {
-        if (!cash()->getRightConfig()->hasAccessToApp()) {
+        if (!cash()->getUser()->hasAccessToApp()) {
             throw new kmwaForbiddenException(_w('No app access'));
         }
     }
@@ -23,7 +23,8 @@ abstract class cashViewAction extends kmwaWaViewAction
     {
         return [
             'cash' => cash(),
-            'isAdmin' => (int)wa()->getUser()->isAdmin(cashConfig::APP_ID),
+            'isAdmin' => (int)cash()->getUser()->canImport(),
+            'contextUser' => cash()->getUser(),
             'serverTimezone' => date_default_timezone_get(),
         ];
     }

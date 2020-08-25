@@ -16,10 +16,18 @@ class cashAccountDialogAction extends cashViewAction
     {
         $id = waRequest::get('account_id', 0, waRequest::TYPE_INT);
         if (empty($id)) {
+            if (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
+                throw new kmwaForbiddenException(_w('You can not create any account'));
+            }
+
             $account = cash()->getEntityFactory(cashAccount::class)->createNew();
         } else {
             $account = cash()->getEntityRepository(cashAccount::class)->findById($id);
             kmwaAssert::instance($account, cashAccount::class);
+
+            if (!cash()->getContactRights()->hasFullAccessToAccount(wa()->getUser(), $account)) {
+                throw new kmwaForbiddenException(_w('You have no access to this account'));
+            }
         }
 
         $currencies = [];

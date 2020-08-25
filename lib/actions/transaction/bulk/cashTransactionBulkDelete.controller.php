@@ -18,6 +18,10 @@ class cashTransactionBulkDeleteController extends cashJsonController
 
         /** @var cashTransaction $transaction */
         foreach ($transactions as $transaction) {
+            if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
+                throw new kmwaForbiddenException(_w('You can not delete this transaction'));
+            }
+
             $transaction->setIsArchived(1);
             cash()->getEntityPersister()->update($transaction);
         }

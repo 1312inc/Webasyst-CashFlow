@@ -174,6 +174,7 @@ class cashGraphService
                 $data = $model->getSummaryByDateBoundsAndAccountGroupByDay(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->contact,
                     $graphData->filterDto->id
                 );
                 break;
@@ -182,6 +183,7 @@ class cashGraphService
                 $data = $model->getSummaryByDateBoundsAndAccountGroupByMonth(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->contact,
                     $graphData->filterDto->id
                 );
                 break;
@@ -197,7 +199,6 @@ class cashGraphService
      * @param cashGraphColumnsDataDto $graphData
      *
      * @throws waException
-     * @throws kmwaLogicException
      */
     public function fillColumnCategoriesDataForImport(cashGraphColumnsDataDto $graphData)
     {
@@ -207,6 +208,7 @@ class cashGraphService
         $data = $model->getSummaryByDateBoundsAndImportGroupByDay(
             $graphData->startDate->format('Y-m-d 00:00:00'),
             $graphData->endDate->format('Y-m-d 23:59:59'),
+            $graphData->filterDto->contact,
             $graphData->filterDto->id
         );
 
@@ -229,6 +231,7 @@ class cashGraphService
                 $data = $model->getSummaryByDateBoundsAndCategoryGroupByDay(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->contact,
                     $graphData->filterDto->id
                 );
                 break;
@@ -237,6 +240,7 @@ class cashGraphService
                 $data = $model->getSummaryByDateBoundsAndCategoryGroupByMonth(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->contact,
                     $graphData->filterDto->id
                 );
                 break;
@@ -264,6 +268,7 @@ class cashGraphService
                 $data = $model->getBalanceByDateBoundsAndAccountGroupByDay(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->contact,
                     $graphData->filterDto->id
                 );
                 break;
@@ -272,6 +277,7 @@ class cashGraphService
                 $data = $model->getBalanceByDateBoundsAndAccountGroupByMonth(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->contact,
                     $graphData->filterDto->id
                 );
                 break;
@@ -287,6 +293,7 @@ class cashGraphService
             $initialBalance = $accountModel->getStatDataForAccounts(
                 '1970-01-01 00:00:00',
                 $graphData->startDate->format('Y-m-d 23:59:59'),
+                $graphData->filterDto->contact,
                 $graphData->filterDto->id
             );
         }
@@ -339,6 +346,7 @@ class cashGraphService
                 $data = $model->getBalanceByDateBoundsAndAccountGroupByDay(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->contact,
                     [$graphData->filterDto->id]
                 );
                 break;
@@ -347,6 +355,7 @@ class cashGraphService
                 $data = $model->getBalanceByDateBoundsAndAccountGroupByMonth(
                     $graphData->startDate->format('Y-m-d 00:00:00'),
                     $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->contact,
                     [$graphData->filterDto->id]
                 );
                 break;

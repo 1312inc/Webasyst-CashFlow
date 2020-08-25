@@ -35,18 +35,30 @@ class cashTransactionPageFilterDto implements JsonSerializable
     public $entity;
 
     /**
+     * @var waContact
+     */
+    public $contact;
+
+    /**
      * self constructor.
      *
-     * @param string $filterType
-     * @param string $identifier
+     * @param string         $filterType
+     * @param string         $identifier
+     * @param waContact|null $contact
      *
+     * @throws kmwaAssertException
      * @throws kmwaLogicException
      * @throws kmwaNotFoundException
      * @throws waException
      */
-    public function __construct($filterType, $identifier = '')
+    public function __construct($filterType, $identifier = '', waContact $contact = null)
     {
         $this->type = $filterType;
+        if (!$contact) {
+            $this->contact = wa()->getUser();
+        } else {
+            $this->contact = $contact;
+        }
 
         switch ($this->type) {
             case self::FILTER_ACCOUNT:

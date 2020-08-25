@@ -10,41 +10,64 @@ class cashCategoryRepository extends cashBaseRepository
     protected $entity = cashCategory::class;
 
     /**
-     * @param $type
+     * @param                $type
+     * @param waContact|null $contact
      *
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllByType($type): array
+    public function findAllByTypeForContact($type, waContact $contact = null): array
     {
-        return $this->generateWithData($this->getModel()->getByType($type), true);
+        if (!$contact) {
+            $contact = wa()->getUser();
+        }
+
+        return $this->generateWithData($this->getModel()->getByTypeForContact($type, $contact), true);
     }
 
     /**
+     * @param waContact|null $contact
+     *
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllActive(): array
+    public function findAllActiveForContact(waContact $contact = null): array
     {
-        return $this->generateWithData($this->getModel()->getAllActive(), true);
+        if (!$contact) {
+            $contact = wa()->getUser();
+        }
+
+        return $this->generateWithData($this->getModel()->getAllActiveForContact($contact), true);
     }
 
     /**
+     * @param waContact|null $contact
+     *
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllIncome(): array
+    public function findAllIncomeForContact(waContact $contact = null): array
     {
-        return $this->findAllByType(cashCategory::TYPE_INCOME);
+        if (!$contact) {
+            $contact = wa()->getUser();
+        }
+
+        return $this->findAllByTypeForContact(cashCategory::TYPE_INCOME, $contact);
     }
 
     /**
+     * @param waContact|null $contact
+     *
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllExpense(): array
+    public function findAllExpense(waContact $contact = null): array
     {
-        return $this->findAllByType(cashCategory::TYPE_EXPENSE);
+        if (!$contact) {
+            $contact = wa()->getUser();
+        }
+
+        return $this->findAllByTypeForContact(cashCategory::TYPE_EXPENSE, $contact);
     }
 
     /**

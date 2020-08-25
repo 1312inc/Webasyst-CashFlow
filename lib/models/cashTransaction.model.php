@@ -8,18 +8,20 @@ class cashTransactionModel extends cashModel
     protected $table = 'cash_transaction';
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $account
-     * @param bool     $returnResult
-     * @param int|null $start
-     * @param int|null $limit
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $account
+     * @param bool      $returnResult
+     * @param int|null  $start
+     * @param int|null  $limit
      *
      * @return waDbResultIterator|array
      */
     public function getByDateBoundsAndAccount(
         $startDate,
         $endDate,
+        waContact $contact,
         $account = null,
         $returnResult = false,
         $start = null,
@@ -35,6 +37,13 @@ class cashTransactionModel extends cashModel
             $limits = 'limit i:start, i:limit';
         }
 
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         $sql = <<<SQL
 select ct.*
 from cash_transaction ct
@@ -43,6 +52,8 @@ left join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
       {$whereAccountSql}
+      and {$accountAccessSql}
+      and {$categoryAccessSql}
 order by ct.date desc, ct.id desc
 {$limits}
 SQL;
@@ -62,18 +73,26 @@ SQL;
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $account
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $account
      *
      * @return int
      */
-    public function countByDateBoundsAndAccount($startDate, $endDate, $account = null)
+    public function countByDateBoundsAndAccount($startDate, $endDate, waContact $contact, $account = null): int
     {
         $whereAccountSql = '';
         if ($account) {
             $whereAccountSql = ' and ct.account_id = i:account_id';
         }
+
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL
 select count(ct.id)
@@ -82,6 +101,8 @@ join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
       {$whereAccountSql}
+      and {$accountAccessSql}
+      and {$categoryAccessSql}
 SQL;
 
         $query = $this->query(
@@ -89,31 +110,40 @@ SQL;
             [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'account_id' => $account
+                'account_id' => $account,
             ]
         );
 
-        return (int) $query->fetchField();
+        return (int)$query->fetchField();
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $category
-     * @param bool     $returnResult
-     * @param int|null      $start
-     * @param int|null      $limit
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $category
+     * @param bool      $returnResult
+     * @param int|null  $start
+     * @param int|null  $limit
      *
      * @return waDbResultIterator|array
      */
     public function getByDateBoundsAndCategory(
         $startDate,
         $endDate,
+        waContact $contact,
         $category = null,
         $returnResult = false,
         $start = null,
         $limit = null
     ) {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         switch (true) {
             case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
                 $whereAccountSql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
@@ -138,6 +168,8 @@ join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
       {$whereAccountSql}
+      and {$accountAccessSql}
+      and {$categoryAccessSql}
 order by ct.date desc, ct.id desc
 {$limits}
 SQL;
@@ -157,14 +189,22 @@ SQL;
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $category
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $category
      *
      * @return int
      */
-    public function countByDateBoundsAndCategory($startDate, $endDate, $category = null)
+    public function countByDateBoundsAndCategory($startDate, $endDate, waContact $contact, $category = null): int
     {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         switch (true) {
             case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
                 $whereAccountSql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
@@ -187,6 +227,8 @@ join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
       {$whereAccountSql}
+      and {$accountAccessSql}
+      and {$categoryAccessSql}
 SQL;
 
         $query = $this->query(
@@ -194,23 +236,31 @@ SQL;
             [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'category_id' => $category
+                'category_id' => $category,
             ]
         );
 
-        return (int) $query->fetchField();
+        return (int)$query->fetchField();
     }
 
     /**
-     * @param string $startDate
-     * @param string $endDate
-     * @param int    $import
-     * @param bool   $returnResult
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int       $import
+     * @param bool      $returnResult
      *
      * @return waDbResultIterator|array
      */
-    public function getByDateBoundsAndImport($startDate, $endDate, $import, $returnResult = false)
+    public function getByDateBoundsAndImport($startDate, $endDate, waContact $contact, $import, $returnResult = false)
     {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         $sql = <<<SQL
 select ct.*,
        (@balance := @balance + ct.amount) as balance
@@ -221,6 +271,8 @@ left join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
     and ct.import_id = i:import_id
     and ct.is_archived = 0
+    and {$accountAccessSql}
+    and {$categoryAccessSql}
 order by ct.date, ct.id
 SQL;
 
@@ -237,14 +289,19 @@ SQL;
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $account
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $account
      *
      * @return array
      */
-    public function getSummaryByDateBoundsAndAccountGroupByDay($startDate, $endDate, $account = null)
-    {
+    public function getSummaryByDateBoundsAndAccountGroupByDay(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $account = null
+    ): array {
         $sql = <<<SQL
 select ca.currency,
        concat(
@@ -260,6 +317,8 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     %s
+    and %s
+    and %s
     and ct.is_archived = 0
 group by ct.date, concat(
            ca.currency,
@@ -273,19 +332,32 @@ SQL;
             $sql,
             $startDate,
             $endDate,
+            $contact,
             $account ? [$account] : []
         );
     }
 
     /**
-     * @param string $startDate
-     * @param string $endDate
-     * @param int    $importId
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int       $importId
      *
      * @return array
      */
-    public function getSummaryByDateBoundsAndImportGroupByDay($startDate, $endDate, $importId)
-    {
+    public function getSummaryByDateBoundsAndImportGroupByDay(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $importId
+    ): array {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         $sql = <<<SQL
 select ca.currency,
        concat(
@@ -300,6 +372,8 @@ select ca.currency,
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
+    and {$accountAccessSql}
+    and {$categoryAccessSql}
     and ct.import_id = i:import_id
     and ct.is_archived = 0
 group by ct.date, concat(
@@ -323,14 +397,19 @@ SQL;
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $category
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $category
      *
      * @return array
      */
-    public function getSummaryByDateBoundsAndCategoryGroupByDay($startDate, $endDate, $category = null)
-    {
+    public function getSummaryByDateBoundsAndCategoryGroupByDay(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $category = null
+    ) {
         $sql = <<<SQL
 select ca.currency,
        concat(
@@ -346,6 +425,8 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     %s
+    and %s
+    and %s
     and ct.is_archived = 0
 group by ct.date, concat(
            ca.currency,
@@ -355,7 +436,7 @@ group by ct.date, concat(
 order by ct.date
 SQL;
 
-        return $this->querySummaryByDateBoundsAndCategory($sql, $startDate, $endDate, $category);
+        return $this->querySummaryByDateBoundsAndCategory($sql, $startDate, $endDate, $contact, $category);
     }
 
     /**
@@ -425,14 +506,19 @@ SQL;
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $accounts
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $accounts
      *
      * @return array
      */
-    public function getSummaryByDateBoundsAndAccountGroupByMonth($startDate, $endDate, $accounts = null)
-    {
+    public function getSummaryByDateBoundsAndAccountGroupByMonth(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $accounts = null
+    ): array {
         $sql = <<<SQL
 select ca.currency,
        concat(
@@ -448,6 +534,8 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     %s
+    and %s
+    and %s
     and ct.is_archived = 0
 group by YEAR(ct.date), MONTH(ct.date), concat(
            ca.currency,
@@ -457,18 +545,23 @@ group by YEAR(ct.date), MONTH(ct.date), concat(
 order by YEAR(ct.date), MONTH(ct.date)
 SQL;
 
-        return $this->querySummaryByDateBoundsAndAccount($sql, $startDate, $endDate, (array)$accounts);
+        return $this->querySummaryByDateBoundsAndAccount($sql, $startDate, $endDate, $contact, (array)$accounts);
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $category
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $category
      *
      * @return array
      */
-    public function getSummaryByDateBoundsAndCategoryGroupByMonth($startDate, $endDate, $category = null)
-    {
+    public function getSummaryByDateBoundsAndCategoryGroupByMonth(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $category = null
+    ): array {
         $sql = <<<SQL
 select ca.currency,
        concat(
@@ -484,6 +577,8 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     %s
+    and %s
+    and %s
     and ct.is_archived = 0
 group by YEAR(ct.date), MONTH(ct.date), concat(
            ca.currency,
@@ -493,18 +588,23 @@ group by YEAR(ct.date), MONTH(ct.date), concat(
 order by YEAR(ct.date), MONTH(ct.date)
 SQL;
 
-        return $this->querySummaryByDateBoundsAndCategory($sql, $startDate, $endDate, $category);
+        return $this->querySummaryByDateBoundsAndCategory($sql, $startDate, $endDate, $contact, $category);
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $account
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $account
      *
      * @return array
      */
-    public function getBalanceByDateBoundsAndAccountGroupByDay($startDate, $endDate, $account = null)
-    {
+    public function getBalanceByDateBoundsAndAccountGroupByDay(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $account = null
+    ): array {
         $sql = <<<SQL
 select ct.date,
        ca.id category_id,
@@ -513,12 +613,14 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     %s
+    and %s
+    and %s
     and ct.is_archived = 0
 group by ct.date, ca.id
 order by ct.date
 SQL;
 
-        return $this->querySummaryByDateBoundsAndAccount($sql, $startDate, $endDate, $account);
+        return $this->querySummaryByDateBoundsAndAccount($sql, $startDate, $endDate, $contact, $account);
     }
 
     /**
@@ -528,7 +630,7 @@ SQL;
      *
      * @return array
      */
-    public function getBalanceByDateBoundsAndImportGroupByDay($startDate, $endDate, $importId)
+    public function getBalanceByDateBoundsAndImportGroupByDay($startDate, $endDate, $importId): array
     {
         $sql = <<<SQL
 select ct.date,
@@ -556,14 +658,26 @@ SQL;
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $accounts
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $accounts
      *
      * @return array
      */
-    public function getCategoriesAndCurrenciesHashByAccount($startDate, $endDate, $accounts = null)
-    {
+    public function getCategoriesAndCurrenciesHashByAccount(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $accounts = null
+    ): array {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         $accountsSql = $accounts ? ' and ct.account_id in (i:account_ids)' : '';
         $sql = <<<SQL
 select /*concat(ca.currency,'_',ifnull(ct.category_id,if(ct.amount < 0, 'expense', 'income'))) hash,*/
@@ -577,6 +691,8 @@ join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     {$accountsSql}
     and ct.is_archived = 0
+    and {$accountAccessSql}
+    and {$categoryAccessSql}
 group by concat(
            ca.currency,
            ifnull(ct.category_id, '_'),
@@ -599,14 +715,23 @@ SQL;
     }
 
     /**
-     * @param string $startDate
-     * @param string $endDate
-     * @param int    $importId
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int       $importId
      *
      * @return array
+     * @throws waException
      */
-    public function getCategoriesAndCurrenciesHashByImport($startDate, $endDate, $importId)
+    public function getCategoriesAndCurrenciesHashByImport($startDate, $endDate, waContact $contact, $importId): array
     {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         $sql = <<<SQL
 select concat(
            ca.currency,
@@ -618,6 +743,8 @@ join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
     and ct.import_id = i:import_id
     and ct.is_archived = 0
+    and {$accountAccessSql}
+    and {$categoryAccessSql}
 group by concat(
            ca.currency,
            ifnull(ct.category_id, '_'),
@@ -640,20 +767,29 @@ SQL;
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $accounts
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
      *
      * @return array
      */
-    public function getExistingAccountsBetweenDates($startDate, $endDate)
+    public function getExistingAccountsBetweenDates($startDate, $endDate, waContact $contact): array
     {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         $sql = <<<SQL
 select ct.account_id
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
     and ct.is_archived = 0
+    and {$accountAccessSql}
+    and {$categoryAccessSql}
 group by ct.account_id
 SQL;
 
@@ -671,14 +807,26 @@ SQL;
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $category
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $category
      *
      * @return array
      */
-    public function getCategoriesAndCurrenciesHashByCategory($startDate, $endDate, $category = null)
-    {
+    public function getCategoriesAndCurrenciesHashByCategory(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $category = null
+    ): array {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         switch (true) {
             case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
                 $categorySql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
@@ -699,6 +847,8 @@ join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     {$categorySql}
     and ct.is_archived = 0
+    and {$accountAccessSql}
+    and {$categoryAccessSql}
 group by concat(
            ca.currency,
            ifnull(ct.category_id, '_'),
@@ -721,14 +871,19 @@ SQL;
     }
 
     /**
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $accounts
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $accounts
      *
      * @return array
      */
-    public function getBalanceByDateBoundsAndAccountGroupByMonth($startDate, $endDate, $accounts = null)
-    {
+    public function getBalanceByDateBoundsAndAccountGroupByMonth(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $accounts = null
+    ): array {
         $sql = <<<SQL
 select DATE_FORMAT(ct.date, '%%Y-%%m') date,
        ca.id category_id,
@@ -737,6 +892,8 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     %s
+    and %s
+    and %s
     and ct.is_archived = 0
 group by YEAR(ct.date), MONTH(ct.date), ca.id
 order by YEAR(ct.date), MONTH(ct.date)
@@ -746,6 +903,7 @@ SQL;
             $sql,
             $startDate,
             $endDate,
+            $contact,
             $accounts ? [$accounts] : []
         );
     }
@@ -756,7 +914,7 @@ SQL;
      *
      * @return int
      */
-    public function countRepeatingTransactionsFromDate($repeatingId, $date)
+    public function countRepeatingTransactionsFromDate($repeatingId, $date): int
     {
         return (int)$this->select('count(id)')->where(
             'repeating_id = i:id and date >= s:date and is_archived = 0',
@@ -913,17 +1071,30 @@ SQL;
     }
 
     /**
-     * @param string $sql
-     * @param string $startDate
-     * @param string $endDate
-     * @param array  $accounts
+     * @param string    $sql
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param array     $accounts
      *
      * @return array
      */
-    private function querySummaryByDateBoundsAndAccount($sql, $startDate, $endDate, $accounts = [])
-    {
+    private function querySummaryByDateBoundsAndAccount(
+        $sql,
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $accounts = []
+    ): array {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         $accountsSql = $accounts ? ' and ct.account_id in (i:account_ids)' : '';
-        $sql = sprintf($sql, $accountsSql, $accountsSql);
+        $sql = sprintf($sql, $accountsSql, $accountAccessSql, $categoryAccessSql);
 
         return $this
             ->query(
@@ -938,15 +1109,28 @@ SQL;
     }
 
     /**
-     * @param string   $sql
-     * @param string   $startDate
-     * @param string   $endDate
-     * @param int|null $category
+     * @param string    $sql
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $category
      *
      * @return array
      */
-    private function querySummaryByDateBoundsAndCategory($sql, $startDate, $endDate, $category)
-    {
+    private function querySummaryByDateBoundsAndCategory(
+        $sql,
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $category
+    ): array {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
         switch (true) {
             case $category == cashCategoryFactory::TRANSFER_CATEGORY_ID:
                 $categoriesSql = sprintf(' and ct.category_id = %d', cashCategoryFactory::TRANSFER_CATEGORY_ID);
@@ -956,7 +1140,7 @@ SQL;
                 $categoriesSql = ' and ct.category_id = i:category_id';
         }
 
-        $sql = sprintf($sql, $categoriesSql);
+        $sql = sprintf($sql, $categoriesSql, $accountAccessSql, $categoryAccessSql);
 
         return $this
             ->query(
@@ -1005,5 +1189,24 @@ SQL;
             )->fetchAll(),
             'transaction_year'
         );
+    }
+
+    /**
+     * @param waContact $contact
+     *
+     * @return int
+     */
+    public function countTransfers(waContact $contact)
+    {
+        try {
+            return $this->countByField(
+                [
+                    'category_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,
+                    'create_contact_id' => $contact->getId(),
+                ]
+            );
+        } catch (Exception $exception) {
+            return 0;
+        }
     }
 }
