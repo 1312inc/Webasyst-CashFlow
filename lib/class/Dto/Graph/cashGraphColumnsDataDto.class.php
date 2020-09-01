@@ -92,6 +92,7 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                     $this->filterDto->contact,
                     $this->filterDto->id
                 );
+
                 if (empty($this->filterDto->id)) {
                     $this->accounts = $model->getExistingAccountsBetweenDates(
                         $startDate->format('Y-m-d 00:00:00'),
@@ -123,12 +124,6 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 break;
         }
 
-//        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
-//            $accounts =  empty($this->filterDto->id) ? ['All accounts'] : [$this->filterDto->id];
-//        if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT && !empty($this->filterDto->id)) {
-//            $accounts = [$this->filterDto->id];
-//        }
-
         $this->currentDate = date('Y-m-d');
         $iterateDate = clone $startDate;
         while ($iterateDate <= $endDate) {
@@ -145,19 +140,18 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             );
         }
 
-//        foreach ($existingCategories as $category) {
-//            $this->types[$category] = 'bar';
-//        }
-//        foreach ($this->accounts as $account) {
-//            $this->types[$account] = 'line';
-//        }
+        foreach ($this->accounts as $account) {
+            if (!cash()->getContactRights()->hasFullAccessToAccount($this->filterDto->contact, $account)) {
+                unset($this->lines[$account]);
+            }
+        }
     }
 
     /**
      * @return array
      * @throws waException
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $colors = $names = $regions = $lineIds = $columns = $currencies = $types = $expenseCategories = $incomeCategories = [];
 
@@ -183,9 +177,6 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                             $linesGroupedByCurrency[$account['currency']][$date] = 0;
                         }
                         $linesGroupedByCurrency[$account['currency']][$date] += $value;
-//                        if ($linesGroupedByCurrency[$account['currency']][$date] == 0) {
-//                            $linesGroupedByCurrency[$account['currency']][$date] = null;
-//                        }
                     }
                 }
             }
@@ -430,10 +421,6 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 $data['helpers']['ratio'] = $ration;
             }
         }
-
-//        if (empty($this->columns)) {
-//            $data['empty'] = true;
-//        }
 
         $data['legend'] = ['hide' => array_keys($this->columns)];
 

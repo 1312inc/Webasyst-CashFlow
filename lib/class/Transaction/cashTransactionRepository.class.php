@@ -24,7 +24,7 @@ class cashTransactionRepository extends cashBaseRepository
         DateTime $endDate,
         cashTransactionPageFilterDto $filterDto,
         cashPagination $pagination = null
-    ) {
+    ): array {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
 
@@ -70,7 +70,7 @@ class cashTransactionRepository extends cashBaseRepository
                         '1970-01-01 00:00:00',
                         $endDate->format('Y-m-d 23:59:59'),
                         $filterDto->contact,
-                        $filterDto->id
+                        [$filterDto->id]
                     );
                     $initialBalance = (float)ifset($initialBalance, $filterDto->id, 'summary', 0.0);
                 }
@@ -135,7 +135,7 @@ class cashTransactionRepository extends cashBaseRepository
      * @return cashTransaction[]
      * @throws waException
      */
-    public function findAllByRepeatingIdAndAfterDate($repeatingId, $date)
+    public function findAllByRepeatingIdAndAfterDate($repeatingId, $date): array
     {
         return $this->findByQuery(
             $this->getModel()->select('*')->where(
@@ -151,7 +151,7 @@ class cashTransactionRepository extends cashBaseRepository
      * @return cashTransaction
      * @throws waException
      */
-    public function findLastByRepeatingId($repeatingId)
+    public function findLastByRepeatingId($repeatingId): cashTransaction
     {
         return $this->findByQuery(
             $this->getModel()
