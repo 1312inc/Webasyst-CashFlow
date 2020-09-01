@@ -294,36 +294,41 @@ class cashGraphService
                 '1970-01-01 00:00:00',
                 $graphData->startDate->format('Y-m-d 23:59:59'),
                 $graphData->filterDto->contact,
-                $graphData->filterDto->id
+                [$graphData->filterDto->id]
             );
         }
 
-//        $firstDot = true;
         foreach ($graphData->dates as $date) {
             if (!isset($data[$date])) {
-//                if ($firstDot) {
                 foreach ($graphData->accounts as $accountId) {
-                    $graphData->lines[$accountId][$date] += (float)$initialBalance[$accountId]['summary'];
+                    if (!isset($initialBalance[$accountId])) {
+                        continue;
+                    }
+
+                    $graphData->lines[$accountId][$date] += (float) $initialBalance[$accountId]['summary'];
                 }
-//                    $firstDot = false;
-//                }
 
                 continue;
             }
 
             foreach ($graphData->accounts as $accountId) {
-                $graphData->lines[$accountId][$date] = (float)$initialBalance[$accountId]['summary'];
+                if (!isset($initialBalance[$accountId])) {
+                    continue;
+                }
+
+                $graphData->lines[$accountId][$date] = (float) $initialBalance[$accountId]['summary'];
             }
 
             foreach ($data[$date] as $datum) {
                 $accountId = $datum['category_id'];
+
+                if (!isset($initialBalance[$accountId])) {
+                    continue;
+                }
+
                 if (!isset($graphData->lines[$accountId])) {
                     $graphData->lines[$accountId] = [];
                 }
-//                if (!$graphData->filterDto->id) {
-//                    $accountId = 'All accounts';
-//                    continue;
-//                }
                 $graphData->lines[$accountId][$date] += (float)$datum['summary'];
                 $initialBalance[$datum['category_id']]['summary'] = $graphData->lines[$accountId][$date];
             }
@@ -379,7 +384,7 @@ class cashGraphService
 
             foreach ($data[$date] as $datum) {
                 $categoryId = $datum['category_id'];
-                $graphData->lines[$categoryId][$date] += ((float)$datum['summary'] + (float)$initialBalance[$datum['category_id']]['summary']);
+                $graphData->lines[$categoryId][$date] += ((float) $datum['summary'] + (float) $initialBalance[$datum['category_id']]['summary']);
             }
         }
     }
@@ -408,7 +413,7 @@ class cashGraphService
 
             foreach ($data[$date] as $datum) {
                 $categoryId = $datum['category_id'];
-                $graphData->lines[$categoryId][$date] += ((float)$datum['summary'] + 0);
+                $graphData->lines[$categoryId][$date] += ((float) $datum['summary'] + 0);
             }
         }
     }
@@ -481,9 +486,9 @@ class cashGraphService
 
                 // для славной категории трансферов надо суммировать, потому что нет отдельно expense и income
                 if ($dateDatum['category_id'] == cashCategoryFactory::TRANSFER_CATEGORY_ID) {
-                    $graphData->columns[$dateDatum['hash']][$date] += (float)abs($dateDatum['summary']);
+                    $graphData->columns[$dateDatum['hash']][$date] += (float) abs($dateDatum['summary']);
                 } else {
-                    $graphData->columns[$dateDatum['hash']][$date] = (float)abs($dateDatum['summary']);
+                    $graphData->columns[$dateDatum['hash']][$date] = (float) abs($dateDatum['summary']);
                 }
             }
         }

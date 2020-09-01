@@ -16,7 +16,7 @@ class cashTransactionGraphDataController extends cashTransactionPageAction
     private $response = [];
 
     /**
-     * @throws Exception
+     * @param null $params
      */
     public function runAction($params = null)
     {

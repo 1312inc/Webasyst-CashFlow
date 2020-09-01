@@ -81,4 +81,14 @@ class cashUser
     {
         return cash()->getContactRights()->canSeeReport($this->contact);
     }
+
+    /**
+     * @param cashAccount $account
+     *
+     * @return bool
+     */
+    public function canSeeBalance(cashAccount $account): bool
+    {
+        return cash()->getContactRights()->hasFullAccessToAccount($this->contact, $account->getId());
+    }
 }

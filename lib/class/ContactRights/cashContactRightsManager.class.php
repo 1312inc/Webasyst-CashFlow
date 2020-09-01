@@ -16,6 +16,11 @@ class cashContactRightsManager
     private $accesses = [];
 
     /**
+     * @var array
+     */
+    private $cache = [];
+
+    /**
      * cashContactRightsService constructor.
      */
     public function __construct()
@@ -113,6 +118,16 @@ class cashContactRightsManager
      * @return bool
      */
     public function canSeeReport(waContact $contact): bool
+    {
+        return $this->getContactAccess($contact)->canSeeReport();
+    }
+
+    /**
+     * @param waContact $contact
+     *
+     * @return bool
+     */
+    public function canSeeAccountBalance(waContact $contact): bool
     {
         return $this->getContactAccess($contact)->canSeeReport();
     }
@@ -269,15 +284,21 @@ class cashContactRightsManager
      */
     public function getSqlForCategoryJoin(waContact $contact, $alias = 'cc', $field = 'id'): string
     {
+        $key = sprintf('%s|%s|%s', $contact->getId(), $alias, $field);
+        $value = $this->getFromCache($key);
+        if ($value !== null) {
+            return $value;
+        }
+
         if ($this->isAdmin($contact)) {
-            return ' 1 /* categories access */';
+            return $this->cacheValue($key, ' 1 /* categories access */');
         }
 
         $ids = $this->getCategoryIdsForContact($contact);
         $query = $this->model->prepare(sprintf(' %s.%s in (i:ids) /* categories access */', $alias, $field));
         $query->bindArray(['ids' => $ids]);
 
-        return $query->getQuery();
+        return $this->cacheValue($key, $query->getQuery());
     }
 
     /**
@@ -295,6 +316,66 @@ class cashContactRightsManager
             $alias,
             $field,
             cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
+        );
+    }
+
+    /**
+     * @param waContact $contact
+     * @param int|array $accountIds
+     * @param string    $transactionAlias
+     *
+     * @return string
+     * @throws waException
+     */
+    public function getSqlForFilterTransactionsByAccount(
+        waContact $contact,
+        $accountIds = null,
+        $transactionAlias = 'ct'
+    ): string {
+        $segments = [];
+        if ($accountIds && !is_array($accountIds)) {
+            $accountIds = [$accountIds];
+        }
+        $key = sprintf('%s|%s|%s', $contact->getId(), $accountIds ? implode(',', $accountIds) : '', $transactionAlias);
+        $value = $this->getFromCache($key);
+        if ($value !== null) {
+            return $value;
+        }
+
+        $accountAccesses = $this->getContactAccess($contact)
+            ->getAccountIdsGroupedByAccess();
+        foreach ($accountAccesses as $access => $accounts) {
+            if ($accountIds && !array_intersect($accountIds, $accounts)) {
+                continue;
+            }
+
+            switch ($access) {
+                case cashRightConfig::ACCOUNT_FULL_ACCESS:
+                case cashRightConfig::ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS:
+                    $query = $this->model->prepare(sprintf(' (%s.account_id in (i:account_ids)) ', $transactionAlias));
+                    $query->bindArray(['account_ids' => $accounts]);
+                    $segments[] = $query->getQuery();
+
+                    break;
+
+                case cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY:
+                    $query = $this->model->prepare(
+                        sprintf(
+                            ' (%s.account_id in (i:account_ids) and %s.create_contact_id = i:id) ',
+                            $transactionAlias,
+                            $transactionAlias
+                        )
+                    );
+                    $query->bindArray(['account_ids' => $accounts, 'id' => $contact->getId()]);
+
+                    $segments[] = $query->getQuery();
+                    break;
+            }
+        }
+
+        return $this->cacheValue(
+            $key,
+            sprintf('( %s /* account transactions access */ )', $segments ? implode(' or ', $segments) : '1')
         );
     }
 
@@ -341,15 +422,21 @@ class cashContactRightsManager
         $field = 'id',
         $access = cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
     ): string {
+        $key = sprintf('%s|%s|%s|%s', $contact->getId(), $alias, $field, $access);
+        $value = $this->getFromCache($key);
+        if ($value !== null) {
+            return $value;
+        }
+
         if ($this->isAdmin($contact)) {
-            return ' 1 /* account access */';
+            return $this->cacheValue($key, ' 1 /* account access */');
         }
 
         $ids = $this->getAccountIdsForContact($contact, $access);
         $query = $this->model->prepare(sprintf(' %s.%s in (i:ids)  /* account access */', $alias, $field));
         $query->bindArray(['ids' => $ids]);
 
-        return $query->getQuery();
+        return $this->cacheValue($key, $query->getQuery());
     }
 
     /**
@@ -364,5 +451,32 @@ class cashContactRightsManager
         }
 
         return $this->accesses[$contact->getId()];
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return mixed|null
+     */
+    private function getFromCache($key)
+    {
+        if (isset($this->cache[$key])) {
+            return $this->cache[$key];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $key
+     * @param        $value
+     *
+     * @return mixed|null
+     */
+    private function cacheValue($key, $value)
+    {
+        $this->cache[$key] = $value;
+
+        return $value;
     }
 }

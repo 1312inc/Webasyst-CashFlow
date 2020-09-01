@@ -4,6 +4,7 @@
 {** @var cashGraphPeriodVO $selectedForecastPeriod **}
 {** @var string $currentDate **}
 {** @var cashStatOnDateDto[] $onHandsToday **}
+{** @var cashStatOnDateDto $onHand **}
 <div class="content left200px">
     <div id="content">
         <div class="block">
@@ -16,20 +17,20 @@
                     {$filter->name|escape}
                 {/if}
 
-                {if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT}
+                {if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $contextUser->canSeeBalance($filter->entity)}
                 <span class="small" title="[`Cash on hand today`]">
                     {foreach $onHandsToday as $onHand}
                         <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
                         {if !$onHand@last}+{/if}
-                        {foreachelse}
-                        <strong class="c-balance large">0 {$onHand->currency->getSign()}</strong>
+                    {foreachelse}
+                        {if $onHand}<strong class="c-balance large">0 {$onHand->stat->currency->getSign()}</strong>{/if}
                     {/foreach}
                     <span class="hint" style="vertical-align: bottom;">{date('Y-m-d H:i:s', $smarty.now)|wa_date:humandate}</span>
                 </span>
                 {/if}
 
             </h1>
-            {if $filter->id}
+            {if $filter->id && $hasAccessToEdit}
                 <div class="block half-padded" style="position: relative; left: 1rem;">
                     <ul class="menu-h">
                         <li>
@@ -99,8 +100,10 @@
                     {sprintf('[`<b>Cash on hand in %s</b> (%s):`]', $selectedForecastPeriod->getName(), $endDate|wa_date:humandate )}
 
                     {foreach $onHandsEndday as $onHand}
+                        {if $onHand->stat}
                         <strong class="c-balance{if $onHand->stat->summary < 0} c-negative{/if} large">{round($onHand->stat->summary,2)|wa_format_number:false} {$onHand->currency->getSign()}</strong>
                         {if !$onHand@last}+{/if}
+                        {/if}
                         {foreachelse}
                         <strong class="c-balance large">0</strong>
                     {/foreach}

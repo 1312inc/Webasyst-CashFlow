@@ -132,7 +132,7 @@ class cashContactRights
                     return $min ? $value >= $access : $value == $access;
                 }
             )
-        );
+        ) ?: [0];
     }
 
     /**
@@ -150,7 +150,30 @@ class cashContactRights
                     return $min ? $value >= $access : $value == $access;
                 }
             )
-        );
+        ) ?: [0];
+    }
+
+    /**
+     * @param string $access Access level
+     *
+     * @return array[]
+     */
+    public function getAccountIdsGroupedByAccess($access = null): array
+    {
+        $grouped = [];
+
+        foreach ($this->accounts as $accountId => $value) {
+            if ($access !== null && $access != $value) {
+                continue;
+            }
+
+            if (!isset($grouped[$value])) {
+                $grouped[$value] = [];
+            }
+            $grouped[$value][] = $accountId;
+        }
+
+        return $grouped;
     }
 
     /**
@@ -160,6 +183,7 @@ class cashContactRights
     {
         return $this->canImport;
     }
+
     /**
      * @return bool
      */
@@ -174,5 +198,15 @@ class cashContactRights
     public function isRoot(): bool
     {
         return $this->isRoot;
+    }
+
+    /**
+     * @param int $accountId
+     *
+     * @return int
+     */
+    public function getAccountAccess($accountId): int
+    {
+        return $this->accounts[$accountId] ?? cashRightConfig::NO_ACCESS;
     }
 }

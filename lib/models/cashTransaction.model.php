@@ -37,11 +37,7 @@ class cashTransactionModel extends cashModel
             $limits = 'limit i:start, i:limit';
         }
 
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $account);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL
@@ -87,11 +83,7 @@ SQL;
             $whereAccountSql = ' and ct.account_id = i:account_id';
         }
 
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $account);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL
@@ -351,11 +343,7 @@ SQL;
         waContact $contact,
         $importId
     ): array {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess($contact);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL
@@ -671,11 +659,7 @@ SQL;
         waContact $contact,
         $accounts = null
     ): array {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $accounts);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $accountsSql = $accounts ? ' and ct.account_id in (i:account_ids)' : '';
@@ -725,11 +709,7 @@ SQL;
      */
     public function getCategoriesAndCurrenciesHashByImport($startDate, $endDate, waContact $contact, $importId): array
     {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL
@@ -775,11 +755,8 @@ SQL;
      */
     public function getExistingAccountsBetweenDates($startDate, $endDate, waContact $contact): array
     {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountTransactionAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithFullAccess($contact);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL
@@ -788,8 +765,9 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate
     and ct.is_archived = 0
-    and {$accountAccessSql}
+    and {$accountTransactionAccessSql}
     and {$categoryAccessSql}
+    and {$accountAccessSql}
 group by ct.account_id
 SQL;
 
@@ -820,11 +798,7 @@ SQL;
         waContact $contact,
         $category = null
     ): array {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         switch (true) {
@@ -1086,11 +1060,7 @@ SQL;
         waContact $contact,
         $accounts = []
     ): array {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $accounts);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $accountsSql = $accounts ? ' and ct.account_id in (i:account_ids)' : '';
@@ -1124,11 +1094,7 @@ SQL;
         waContact $contact,
         $category
     ): array {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         switch (true) {

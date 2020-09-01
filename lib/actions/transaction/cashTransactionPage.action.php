@@ -116,12 +116,20 @@ class cashTransactionPageAction extends cashViewAction
 
         // cash on hand today
         $onHandsToday = [];
+        $onHand = null;
         if ($this->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
             $onHandsToday = $calcService->getOnHandOnDate(
                 $this->today,
                 $this->filterDto->contact,
                 $this->filterDto->entity
             );
+
+            if (!$onHandsToday && $this->filterDto->id) {
+                $onHand = new cashStatOnHandDto(
+                    cashCurrencyVO::fromWaCurrency($this->filterDto->entity->getCurrency()),
+                    new cashStatOnDateDto(0,0,0)
+                );
+            }
         }
 
         $settings = new cashTransactionListSettingsDto($this->filterDto, $this->periodForecast);
@@ -141,6 +149,7 @@ class cashTransactionPageAction extends cashViewAction
             [
                 'filter' => $this->filterDto,
                 'onHandsToday' => $onHandsToday,
+                'onHand' => $onHand,
 //                'onHandsTotal' => $onHandsTotal,
                 'startDate' => $this->startDate->format('Y-m-d'),
                 'endDate' => $this->endDate->format('Y-m-d'),
@@ -151,6 +160,9 @@ class cashTransactionPageAction extends cashViewAction
                 'onHandsEndday' => $onHandsEndday,
                 'pagination' => $this->pagination,
                 'fromShopScriptImport' => false,
+                'hasAccessToEdit' => $this->filterDto->type ===cashTransactionPageFilterDto::FILTER_ACCOUNT
+                    ? cash()->getContactRights()->hasFullAccessToAccount(wa()->getUser(), $this->filterDto->id)
+                    : cash()->getContactRights()->hasFullAccessToCategory(wa()->getUser(), $this->filterDto->id),
             ]
         );
 

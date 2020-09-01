@@ -25,20 +25,22 @@ class cashAccountModel extends cashModel
     }
 
     /**
-     * @param string    $startDate
-     * @param string    $endDate
-     * @param waContact $contact
-     * @param int|null  $accounts
+     * @param string     $startDate
+     * @param string     $endDate
+     * @param waContact  $contact
+     * @param array<int> $accounts
      *
      * @return array
+     * @throws waException
      */
-    public function getStatDataForAccounts($startDate, $endDate, waContact $contact, $accounts = null): array
+    public function getStatDataForAccounts($startDate, $endDate, waContact $contact, array $accounts = []): array
     {
         $accountFilterSql = '';
         if ($accounts) {
             $accountFilterSql = ' and ca.id in (i:accounts)';
         }
 
+        $accountTransactionRights = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $accounts);
         $accountRights = cash()->getContactRights()->getSqlForAccountJoinWithFullAccess($contact);
         $categoryRights = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
@@ -59,16 +61,16 @@ from cash_account ca
              left join cash_category cc on ct.category_id = cc.id
     where ct.date between s:startDate and s:endDate
           and ca.is_archived = 0
-          and {$accountRights}
-          and {$categoryRights}
           {$accountFilterSql}
+          and {$accountTransactionRights}
+          and {$categoryRights}
     group by ca.id
 ) t on ca.id = t.id 
 where {$accountRights}
 SQL;
 
         return $this
-            ->query($sql, ['startDate' => $startDate, 'endDate' => $endDate, 'accounts' => (array)$accounts])
+            ->query($sql, ['startDate' => $startDate, 'endDate' => $endDate, 'accounts' => $accounts])
             ->fetchAll('id');
     }
 
@@ -88,7 +90,11 @@ SQL;
         $filterType = cashTransactionPageFilterDto::FILTER_ACCOUNT,
         $filterIds = null
     ): array {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess($contact, 'ct', 'account_id');
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $filterSql = '';
@@ -186,7 +192,11 @@ SQL;
      */
     public function getStatDataForImport($startDate, $endDate, waContact $contact, $importId): array
     {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess($contact, 'ca', 'account_id');
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithFullAccess(
+            $contact,
+            'ca',
+            'account_id'
+        );
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL
