@@ -116,12 +116,58 @@ class cashTransactionRepository extends cashBaseRepository
         /** @var cashCategoryDto[] $categoryDtos */
         $categoryDtos = cashDtoFromEntityFactory::fromEntities(
             cashCategoryDto::class,
-            cash()->getEntityRepository(cashCategory::class)->findAll()
+            cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact($filterDto->contact)
         );
 
         $dtoAssembler = new cashTransactionDtoAssembler();
         $dtos = [];
         foreach ($dtoAssembler->generateFromIterator($data, $accountDtos, $categoryDtos, $initialBalance) as $id => $dto) {
+            $dtos[$id] = $dto;
+        }
+
+        return $dtos;
+    }
+
+    /**
+     * @param DateTime                     $startDate
+     * @param DateTime                     $endDate
+     * @param waContact                    $forContact
+     * @param cashTransactionPageFilterDto $filterDto
+     *
+     * @return array
+     * @throws waException
+     */
+    public function findForContact(
+        DateTime $startDate,
+        DateTime $endDate,
+        waContact $forContact,
+        cashTransactionPageFilterDto $filterDto
+    ): array {
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
+
+        $accountDtos = [];
+        foreach (cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact($filterDto->contact) as $a) {
+            $accountDtos[$a->getId()] = cashAccountDto::fromEntity($a);
+        }
+
+        $data = $model->getContactTransactionsByDateBounds(
+            $startDate->format('Y-m-d 00:00:00'),
+            $endDate->format('Y-m-d 23:59:59'),
+            $forContact,
+            $filterDto->contact,
+            false
+        );
+
+        /** @var cashCategoryDto[] $categoryDtos */
+        $categoryDtos = cashDtoFromEntityFactory::fromEntities(
+            cashCategoryDto::class,
+            cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact($filterDto->contact)
+        );
+
+        $dtoAssembler = new cashTransactionDtoAssembler();
+        $dtos = [];
+        foreach ($dtoAssembler->generateFromIterator($data, $accountDtos, $categoryDtos) as $id => $dto) {
             $dtos[$id] = $dto;
         }
 

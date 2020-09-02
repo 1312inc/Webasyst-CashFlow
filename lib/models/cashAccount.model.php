@@ -143,6 +143,57 @@ SQL;
     /**
      * @param string    $startDate
      * @param string    $endDate
+     * @param waContact $forContact
+     * @param waContact $contact
+     *
+     * @return array
+     * @throws waException
+     */
+    public function getStatDetailedCategoryDataForContact(
+        $startDate,
+        $endDate,
+        waContact $forContact,
+        waContact $contact
+    ): array {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $contact,
+            'ct',
+            'account_id'
+        );
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
+        $sql = <<<SQL
+select cc.name,
+       cc.color,
+       ct.category_id id,
+       ca.currency,
+       sum(if(ct.amount > 0, ct.amount, 0)) income,
+       sum(if(ct.amount < 0, ct.amount, 0)) expense,
+       sum(ct.amount)                       summary
+from cash_transaction ct
+         join cash_account ca on ct.account_id = ca.id
+         left join cash_category cc on ct.category_id = cc.id
+         left join cash_import ci on ct.import_id = ci.id
+where ct.date between s:startDate and s:endDate
+      and ca.is_archived = 0
+      and ct.is_archived = 0
+      and ct.create_contact_id = i:create_contact_id
+      and {$accountAccessSql}
+      and {$categoryAccessSql}
+group by ct.category_id, ca.currency
+SQL;
+
+        return $this
+            ->query(
+                $sql,
+                ['startDate' => $startDate, 'endDate' => $endDate, 'create_contact_id' => $forContact->getId()]
+            )
+            ->fetchAll();
+    }
+
+    /**
+     * @param string    $startDate
+     * @param string    $endDate
      * @param waContact $contact
      * @param array     $categories
      *
