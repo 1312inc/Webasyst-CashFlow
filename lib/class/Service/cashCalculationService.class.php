@@ -165,6 +165,44 @@ final class cashCalculationService
             $filterIds
         );
 
+        return $this->generateSummaryOnHandDtos($data);
+    }
+
+    /**
+     * @param DateTime  $startDate
+     * @param DateTime  $endDate
+     * @param waContact $forContact
+     * @param waContact $contact
+     *
+     * @return array
+     * @throws waException
+     */
+    public function getOnHandDetailedCategoriesForContact(
+        DateTime $startDate,
+        DateTime $endDate,
+        waContact $forContact,
+        waContact $contact
+    ): array {
+        /** @var cashAccountModel $model */
+        $model = cash()->getModel(cashAccount::class);
+
+        $data = $model->getStatDetailedCategoryDataForContact(
+            $startDate->format('Y-m-d H:i:s'),
+            $endDate->format('Y-m-d H:i:s'),
+            $forContact,
+            $contact
+        );
+
+        return $this->generateSummaryOnHandDtos($data);
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array|cashStatOnHandDto[]
+     */
+    private function generateSummaryOnHandDtos(array $data): array
+    {
         $summary = [];
         foreach ($data as $datum) {
             if (!isset($summary[$datum['id']])) {

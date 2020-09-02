@@ -71,6 +71,54 @@ SQL;
     /**
      * @param string    $startDate
      * @param string    $endDate
+     * @param waContact $forContact
+     * @param waContact $contact
+     * @param bool      $returnResult
+     *
+     * @return waDbResultIterator|array
+     * @throws waException
+     */
+    public function getContactTransactionsByDateBounds(
+        $startDate,
+        $endDate,
+        waContact $forContact,
+        waContact $contact,
+        $returnResult = false
+    ) {
+        $whereAccountSql = '';
+
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
+        $sql = <<<SQL
+select ct.*
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+left join cash_category cc on ct.category_id = cc.id
+where ct.date between s:startDate and s:endDate
+      and ct.is_archived = 0
+      and ct.create_contact_id = i:create_contact_id
+      {$whereAccountSql}
+      and {$accountAccessSql}
+      and {$categoryAccessSql}
+order by ct.date desc, ct.id desc
+SQL;
+
+        $query = $this->query(
+            $sql,
+            [
+                'create_contact_id' => $forContact->getId(),
+                'startDate' => $startDate,
+                'endDate' => $endDate
+            ]
+        );
+
+        return $returnResult ? $query->fetchAll() : $query->getIterator();
+    }
+
+    /**
+     * @param string    $startDate
+     * @param string    $endDate
      * @param waContact $contact
      * @param int|null  $account
      *
@@ -106,7 +154,7 @@ SQL;
             ]
         );
 
-        return (int)$query->fetchField();
+        return (int) $query->fetchField();
     }
 
     /**
@@ -232,7 +280,7 @@ SQL;
             ]
         );
 
-        return (int)$query->fetchField();
+        return (int) $query->fetchField();
     }
 
     /**
@@ -533,7 +581,7 @@ group by YEAR(ct.date), MONTH(ct.date), concat(
 order by YEAR(ct.date), MONTH(ct.date)
 SQL;
 
-        return $this->querySummaryByDateBoundsAndAccount($sql, $startDate, $endDate, $contact, (array)$accounts);
+        return $this->querySummaryByDateBoundsAndAccount($sql, $startDate, $endDate, $contact, (array) $accounts);
     }
 
     /**
@@ -890,7 +938,7 @@ SQL;
      */
     public function countRepeatingTransactionsFromDate($repeatingId, $date): int
     {
-        return (int)$this->select('count(id)')->where(
+        return (int) $this->select('count(id)')->where(
             'repeating_id = i:id and date >= s:date and is_archived = 0',
             ['id' => $repeatingId, 'date' => $date]
         )->fetchField();
@@ -954,7 +1002,7 @@ SQL;
      */
     public function hasNoCategoryExpenses()
     {
-        return (int)$this
+        return (int) $this
             ->select('count(*)')
             ->where('category_id is null and amount < 0 and is_archived = 0')
             ->fetchField();
@@ -1038,7 +1086,7 @@ SQL;
      */
     public function hasNoCategoryIncomes()
     {
-        return (int)$this
+        return (int) $this
             ->select('count(*)')
             ->where('category_id is null and amount > 0 and is_archived = 0')
             ->fetchField();

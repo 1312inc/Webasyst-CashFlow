@@ -32,6 +32,12 @@ return [
         'method' => ['links'],
     ],
     [
+        'event_app_id' => 'contacts',
+        'event' => 'profile.tab',
+        'class' => 'cashContactsProfileTabListener',
+        'method' => ['execute'],
+    ],
+    [
         'event_app_id' => 'webasyst',
         'event' => 'backend_header',
         'class' => 'cashWebasystBackendHeaderListener',
