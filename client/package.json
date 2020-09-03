@@ -3,17 +3,11 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build && npm run copycss && npm run copyjs",
-    "lint": "vue-cli-service lint",
-    "copycss": "copyfiles dist/css/*.css ../css --flat",
-    "copyjs": "copyfiles dist/js/*.js ../js --flat"
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@amcharts/amcharts4": "^4.10.2",
-    "axios": "^0.20.0",
     "core-js": "^3.6.5",
-    "moment": "^2.28.0",
-    "numeral": "^2.0.6",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuex": "^3.4.0"
