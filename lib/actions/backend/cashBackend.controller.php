@@ -3,7 +3,7 @@
 /**
  * Class cashBackendController
  */
-class cashBackendController extends waViewController
+class cashBackendController extends cashViewController
 {
     public function execute()
     {

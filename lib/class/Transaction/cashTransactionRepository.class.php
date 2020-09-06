@@ -19,7 +19,7 @@ class cashTransactionRepository extends cashBaseRepository
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function findByDates(
+    public function findByDatesAndFilter(
         DateTime $startDate,
         DateTime $endDate,
         cashTransactionPageFilterDto $filterDto,
@@ -65,7 +65,7 @@ class cashTransactionRepository extends cashBaseRepository
                     );
                 }
 
-                if ($data->count() && $filterDto->id) {
+                if ($filterDto->id && $data->count()) {
                     $initialBalance = cash()->getModel(cashAccount::class)->getStatDataForAccounts(
                         '1970-01-01 00:00:00',
                         $endDate->format('Y-m-d 23:59:59'),
