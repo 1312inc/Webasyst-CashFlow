@@ -16,8 +16,8 @@ class cashTransactionListAction extends cashTransactionPageAction
         $tomorrow = new DateTime('tomorrow');
         $calcService = new cashCalculationService();
 
-        $upcoming = $repository->findByDates($tomorrow, $this->endDate, $this->filterDto);
-        $completed = $repository->findByDates($this->startDate, $this->today, $this->filterDto, $this->pagination);
+        $upcoming = $repository->findByDatesAndFilter($tomorrow, $this->endDate, $this->filterDto);
+        $completed = $repository->findByDatesAndFilter($this->startDate, $this->today, $this->filterDto, $this->pagination);
 
         $upcomingOnDate = $calcService->getOnHandDetailedCategories(
             $tomorrow,
