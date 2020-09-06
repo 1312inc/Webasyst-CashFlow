@@ -5,10 +5,8 @@
  */
 abstract class cashApiAbstractMethod extends waAPIMethod
 {
-    const METHOD_GET    = 'GET';
-    const METHOD_POST   = 'POST';
-    const METHOD_DELETE = 'DELETE';
-    const METHOD_PUT    = 'PUT';
+    const METHOD_GET  = 'GET';
+    const METHOD_POST = 'POST';
 
     /**
      * @var array
@@ -34,7 +32,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
      * @param bool   $required
      *
      * @return array|int|mixed|null
-     * @throws cashApiMissingParamException
+     * @throws waAPIException
      */
     public function get($name, $required = false)
     {
@@ -42,11 +40,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
             return $this->jsonParams[$name];
         }
 
-        try {
-            return parent::get($name, $required);
-        } catch (waAPIException $exception) {
-            throw new cashApiMissingParamException(sprintf('Missing required param: %s', $name));
-        }
+        return parent::get($name, $required);
     }
 
     /**
@@ -54,7 +48,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
      * @param bool   $required
      *
      * @return array|int|mixed|null
-     * @throws cashApiMissingParamException
+     * @throws waAPIException
      */
     public function post($name, $required = false)
     {
@@ -62,37 +56,15 @@ abstract class cashApiAbstractMethod extends waAPIMethod
             return $this->jsonParams[$name];
         }
 
-        try {
-            return parent::post($name, $required);
-        } catch (waAPIException $exception) {
-            throw new cashApiMissingParamException(sprintf('Missing required param: %s', $name));
-        }
+        return parent::post($name, $required);
     }
-
-    public function execute()
-    {
-        try {
-            $handlerResult = $this->run();
-
-            $this->response = $handlerResult->getResponseBody();
-            wa()->getResponse()->setStatus($handlerResult->getStatus());
-        } catch (Exception $exception) {
-            $this->response = cashApiErrorResponse::fromException($exception);
-            wa()->getResponse()->setStatus($this->response->getStatus());
-        }
-    }
-
-    /**
-     * @return cashApiResponseInterface
-     */
-    abstract function run(): cashApiResponseInterface;
 
     /**
      * @param string $name
      * @param bool   $required
      *
      * @return array|int|mixed|null
-     * @throws cashApiMissingParamException
+     * @throws waAPIException
      */
     protected function param($name, $required = false)
     {
@@ -110,11 +82,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
             return $param;
         }
 
-        try {
-            return parent::get($name, $required);
-        } catch (waAPIException $exception) {
-            throw new cashApiMissingParamException(sprintf('Missing required param: %s', $name));
-        }
+        return parent::get($name, $required);
     }
 
     /**

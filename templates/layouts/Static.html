@@ -8,7 +8,7 @@
     <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/c3.min.css?v{$wa->version()}">
     <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/cash.css{if !waSystemConfig::isDebug()}?v{$wa->version()}{/if}">
     <link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.css?v={$wa->version()}">
-    
+    <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/app.css">
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery/jquery-1.8.2.min.js"></script>
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-plugins/jquery.tmpl.min.js"></script>
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-wa/wa.core.js{if !waSystemConfig::isDebug()}?v={$wa->version()}{/if}"></script>
@@ -25,22 +25,18 @@
     <script type="text/javascript" src="?action=loc{if !waSystemConfig::isDebug()}&v={$wa->version()}{/if}"></script>
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.js"></script>
     
-    
+    <link href="{$wa_app_static_url}js/app.js" rel="preload" as="script">
+    <link href="{$wa_app_static_url}js/chunk-vendors.js" rel="preload" as="script">
 </head>
 <body>
 <div id="wa">
     {$wa->header()}
+    <h1>templates/layouts/Static.html</h1>
 
-    <div style="padding: 4rem"> 
-        <h1>Static Page</h1>
+    <div id="app"></div>
 
-        <a href="/webasyst/cash/">Go to Homepage</a>
 
-        <br /><br />or<br /><br />
-
-        <a href="javascript:history.back()">Go Back</a>
-        
-    </div>
-
+    <script type="text/javascript" src="{$wa_app_static_url}js/chunk-vendors.js"></script>
+    <script type="text/javascript" src="{$wa_app_static_url}js/app.js"></script>
 </body>
 </html>
