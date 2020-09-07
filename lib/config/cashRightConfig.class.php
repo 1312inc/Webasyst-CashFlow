@@ -54,12 +54,12 @@ class cashRightConfig extends waRightConfig
                 'options' => [
                     self::NO_ACCESS => _w('No access'),
                     self::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY => _w(
-                        'Add & edit self-created transactions only'
+                        'Contributor: can view & manage self-created transactions only'
                     ),
                     self::ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS => _w(
-                        'Add, edit & view transactions created by others'
+                        'Accountant: can view & manage transactions created by others'
                     ),
-                    self::ACCOUNT_FULL_ACCESS => _w('Full access: see the account balance & manage settings'),
+                    self::ACCOUNT_FULL_ACCESS => _w('Full access: can see the account balance & manage all transactions'),
                 ],
             ]
         );

@@ -652,14 +652,14 @@ msgstr "Счета"
 msgid "No access"
 msgstr "Нет доступа"
 
-msgid "Add & edit self-created transactions only"
-msgstr "Только свои операции (добавление, редактирование)"
+msgid "Contributor: can view & manage self-created transactions only"
+msgstr "Помощник: просмотр и редактирование только своих операций"
 
-msgid "Add, edit & view transactions created by others"
-msgstr "Свои и чужие операции (просмотр, добавление, редактирование)"
+msgid "Accountant: can view & manage transactions created by others"
+msgstr "Бухгалтер: просмотр и редактирование своих и чужих операций"
 
-msgid "Full access: see the account balance & manage settings"
-msgstr "Полный доступ: остаток на счете, управление настройками счета"
+msgid "Full access: can see the account balance & manage all transactions"
+msgstr "Полный доступ: остаток на счете, управление всеми операциями"
 
 msgid "Error while deleting transaction"
 msgstr "Ошибка удаления операции"
@@ -929,7 +929,7 @@ msgid "New expense category:"
 msgstr "Новая статья расходов:"
 
 msgid "Enter format"
-msgstr ""
+msgstr "Ввести формат"
 
 msgid "transactions"
 msgstr "операций"
@@ -1074,30 +1074,6 @@ msgstr "Может просматривать отчеты"
 msgid "Can import transactions"
 msgstr "Может импортировать операции"
 
-msgid "You can not edit or add new transaction"
-msgstr ""
-
-msgid "You can not edit transaction"
-msgstr ""
-
-msgid "You can not delete this transaction"
-msgstr ""
-
-msgid "You can not add new transaction"
-msgstr ""
-
-msgid "You have no access to this category"
-msgstr ""
-
-msgid "You can not create any category at all"
-msgstr ""
-
-msgid "You have no access to this account"
-msgstr ""
-
-msgid "You can not create any account"
-msgstr ""
-
 msgid "Cash"
 msgstr "Деньги"
 
@@ -1115,3 +1091,30 @@ msgstr "Скачать журнал ошибок"
 
 msgid "Remove from history"
 msgstr "Удалить из истории"
+
+msgid "You are not allowed to edit or create new transactions"
+msgstr "У вас нет доступа к редактированию и созданию новых операций"
+
+msgid "You are not allowed to edit this transaction"
+msgstr "У вас нет доступа к редактированию этой операции"
+
+msgid "You are not allowed to create new transactions"
+msgstr "У вас нет доступа к созданию новых операций"
+
+msgid "You are not allowed to access this category"
+msgstr "У вас нет доступа к этой статье операций"
+
+msgid "You are not allowed to create new categories"
+msgstr "У вас нет доступа к созданию новых статей операций"
+
+msgid "You are not allowed to do anything with system categories"
+msgstr "У вас нет доступа к управлению системными статьями операций"
+
+msgid "An error occurred while saving the category"
+msgstr "При сохранении статьи операций произошла какая-то ошибка"
+
+msgid "You are not allowed to access this account"
+msgstr "У вас нет доступа к этому счету"
+
+msgid "You are not allowed to create new accounts"
+msgstr "У вас нет доступа к созданию новых счетов"

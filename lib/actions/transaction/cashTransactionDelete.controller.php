@@ -16,7 +16,7 @@ class cashTransactionDeleteController extends cashJsonController
         kmwaAssert::instance($transaction, cashTransaction::class);
 
         if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-            throw new kmwaForbiddenException(_w('You can not delete this transaction'));
+            throw new kmwaForbiddenException(_w('You are not allowed to edit this transaction'));
         }
 
         if (!cash()->getEntityPersister()->delete($transaction)) {

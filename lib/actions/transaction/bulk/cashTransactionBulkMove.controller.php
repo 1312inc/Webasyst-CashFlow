@@ -40,7 +40,7 @@ class cashTransactionBulkMoveController extends cashJsonController
         $params = new cashTransactionSaveParamsDto();
         foreach ($transactions as $transaction) {
             if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-                throw new kmwaForbiddenException(_w('You can not edit transaction'));
+                throw new kmwaForbiddenException(_w('You are not allowed to edit this transaction'));
             }
 
             $transactionData = cash()->getHydrator()->extract($transaction, [], $fields);
