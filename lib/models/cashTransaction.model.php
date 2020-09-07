@@ -177,11 +177,7 @@ SQL;
         $start = null,
         $limit = null
     ) {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         switch (true) {
@@ -294,11 +290,7 @@ SQL;
      */
     public function getByDateBoundsAndImport($startDate, $endDate, waContact $contact, $import, $returnResult = false)
     {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL
