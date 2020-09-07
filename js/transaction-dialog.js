@@ -30,7 +30,7 @@ var CashTransactionDialog = (function ($) {
                         }
 
                         var id = $dialogWrapper.find('form input[name="transaction[id]"]').val(),
-                            all = $dialogWrapper.find('form [name="repeating[apply_to_all_in_future]"]').val();
+                            all = $dialogWrapper.find('form [name="repeating[apply_to_all_in_future]"]:checked').val();
                         $.post(
                             '?module=transaction&action=delete',
                             {id: id, all: all},
