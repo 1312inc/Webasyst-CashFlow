@@ -18,24 +18,24 @@ class cashCrmAction extends cashViewAction
             throw new kmwaForbiddenException();
         }
 
-        $contact = new waContact(waRequest::get('contact', 0, waRequest::TYPE_INT));
-        if (!$contact->exists()) {
+        $contractor = new waContact(waRequest::get('contact', 0, waRequest::TYPE_INT));
+        if (!$contractor->exists()) {
             throw new kmwaNotFoundException('Contact not found');
         }
 
         $filterDto = new cashTransactionPageFilterDto(cashTransactionPageFilterDto::FILTER_ACCOUNT, '');
-        $startDate = DateTime::createFromFormat('Y-m-d|', date('Y-m-d', strtotime('-1 month')));
+        $startDate = DateTime::createFromFormat('Y-m-d|', date('Y-m-d', strtotime('-1312 years')));
         $today = DateTime::createFromFormat('Y-m-d|', date('Y-m-d'));
-        $selectedChartPeriod = new cashGraphPeriodVO(cashGraphPeriodVO::DAYS_PERIOD, 30);
+        $selectedChartPeriod = new cashGraphPeriodVO(cashGraphPeriodVO::YEARS_PERIOD, 1312);
 
         $repository = cash()->getEntityRepository(cashTransaction::class);
         $calcService = new cashCalculationService();
 
-        $contactTransactions = $repository->findForContact($startDate, $today, $contact, $filterDto);
-        $completedOnDate = $calcService->getOnHandDetailedCategoriesForContact(
+        $contactTransactions = $repository->findForContractor($startDate, $today, $contractor, $filterDto);
+        $completedOnDate = $calcService->getOnHandDetailedCategoriesForContractor(
             $startDate,
             $today,
-            $contact,
+            $contractor,
             $filterDto->contact
         );
         $pagination = new cashPagination('#/');

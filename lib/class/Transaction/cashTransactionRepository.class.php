@@ -131,16 +131,16 @@ class cashTransactionRepository extends cashBaseRepository
     /**
      * @param DateTime                     $startDate
      * @param DateTime                     $endDate
-     * @param waContact                    $forContact
+     * @param waContact                    $contractor
      * @param cashTransactionPageFilterDto $filterDto
      *
      * @return array
      * @throws waException
      */
-    public function findForContact(
+    public function findForContractor(
         DateTime $startDate,
         DateTime $endDate,
-        waContact $forContact,
+        waContact $contractor,
         cashTransactionPageFilterDto $filterDto
     ): array {
         /** @var cashTransactionModel $model */
@@ -151,10 +151,10 @@ class cashTransactionRepository extends cashBaseRepository
             $accountDtos[$a->getId()] = cashAccountDto::fromEntity($a);
         }
 
-        $data = $model->getContactTransactionsByDateBounds(
+        $data = $model->getContractorTransactionsByDateBounds(
             $startDate->format('Y-m-d 00:00:00'),
             $endDate->format('Y-m-d 23:59:59'),
-            $forContact,
+            $contractor,
             $filterDto->contact,
             false
         );
