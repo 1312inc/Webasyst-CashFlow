@@ -57,7 +57,7 @@ class cashTransactionSaveController extends cashJsonController
         }
 
         if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-            throw new kmwaForbiddenException(_w('You can not edit or add new transaction'));
+            throw new kmwaForbiddenException(_w('You are not allowed to edit or create new transactions'));
         }
 
         if ($paramsDto->transfer) {

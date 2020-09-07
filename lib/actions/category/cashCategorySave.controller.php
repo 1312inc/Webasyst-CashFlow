@@ -17,18 +17,18 @@ class cashCategorySaveController extends cashJsonController
             kmwaAssert::instance($category, cashCategory::class);
 
             if (!cash()->getContactRights()->hasFullAccessToCategory(wa()->getUser(), $category)) {
-                throw new kmwaForbiddenException(_w('You have no access to this category'));
+                throw new kmwaForbiddenException(_w('You are not allowed to access this category'));
             }
         } else {
             if (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
-                throw new kmwaForbiddenException(_w('You can not create any category at all'));
+                throw new kmwaForbiddenException(_w('You are not allowed to create new categories'));
             }
 
             $category = cash()->getEntityFactory(cashCategory::class)->createNew();
         }
 
         if ($category->isSystem()) {
-            throw new kmwaRuntimeException(_w('You can`t do anything with system categories'));
+            throw new kmwaRuntimeException(_w('You are not allowed to do anything with system categories'));
         }
 
         $saver = new cashCategorySaver();
@@ -37,7 +37,7 @@ class cashCategorySaveController extends cashJsonController
             $categoryDto = cashDtoFromEntityFactory::fromEntity(cashCategoryDto::class, $category);
             $this->response = $categoryDto;
         } else {
-            $this->errors[] = _w('Some error on category save');
+            $this->errors[] = _w('An error occurred while saving the category');
         }
     }
 }

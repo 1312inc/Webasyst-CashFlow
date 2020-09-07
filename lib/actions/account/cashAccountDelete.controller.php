@@ -15,7 +15,7 @@ class cashAccountDeleteController extends cashJsonController
         kmwaAssert::instance($account, cashAccount::class);
 
         if (!cash()->getContactRights()->hasFullAccessToAccount(wa()->getUser(), $account)) {
-            throw new kmwaForbiddenException(_w('You have no access to this account'));
+            throw new kmwaForbiddenException(_w('You are not allowed to access this account'));
         }
 
         /** @var cashTransactionModel $model */

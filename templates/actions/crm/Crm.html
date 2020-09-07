@@ -21,7 +21,7 @@
     <tr class="white c-table-divider">
         <td colspan="8">
             <h5 class="heading nowrap">
-                {if $selectedChartPeriod}{$selectedChartPeriod->getName()}{else}[`Contact transactions`]{/if},
+                {if $selectedChartPeriod}{$selectedChartPeriod->getName()}{else}[`Transactions related to this contractor`]{/if},
                 {sprintf('[`%d transactions`]', $pagination->getTotalRows())}
             </h5>
         </td>
