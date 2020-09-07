@@ -69,7 +69,7 @@ final class cashReportDdsPeriod
                     $from = clone $this->start;
                     while ($from < $this->end) {
                         $this->grouping[$from->format('n')] = new cashReportDdsPeriodGroupingDto(
-                            _w($from->format('F Y')),
+                            _w($from->format('M')),
                             $from->format('Y-m-d'),
                             $from->format('n')
                         );
