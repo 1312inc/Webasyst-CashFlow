@@ -138,4 +138,16 @@ final class cashReportDdsPeriod
 
         return new self($year, $start->format('Y'), $start, $end, self::GROUPING_MONTH);
     }
+
+    /**
+     * @param cashReportDdsPeriod $period
+     *
+     * @return bool
+     */
+    public function isEqual(cashReportDdsPeriod $period): bool
+    {
+        return $this->value === $period->getValue()
+            && $this->start == $period->getStart()
+            && $this->end == $period->getEnd();
+    }
 }

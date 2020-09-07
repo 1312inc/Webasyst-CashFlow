@@ -16,7 +16,7 @@
                 <a href="javascript:void(0);" class="inline-link"><b><i><strong>{$currentPeriod->getName()}</strong></i></b> <i class="icon10 darr"></i></a>
                 <ul class="menu-v" style="min-width: 100px;">
                     {foreach $reportPeriods as $reportPeriod}
-                    <li>
+                    <li {if $currentPeriod->isEqual($reportPeriod)}class="selected"{/if}>
                         <a href="#/report/dds/{$type->id}/{$reportPeriod->getValue()}"
                            data-cash-period-value="{$reportPeriod->getValue()}"
                            data-cash-period-start="{$reportPeriod->getStartDate()}"
