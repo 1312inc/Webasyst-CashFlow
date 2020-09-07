@@ -108,7 +108,7 @@ SQL;
         }
 
         $statData[] = new cashReportDdsStatDto(
-            new cashReportDdsEntity(_w('All expense'), cashReportDds::ALL_EXPENSE_KEY, true, false, '', true),
+            new cashReportDdsEntity(_w('All expenses'), cashReportDds::ALL_EXPENSE_KEY, true, false, '', true),
             $rawData[cashCategory::TYPE_EXPENSE] ?? []
         );
         foreach ($this->categoryRep->findAllExpense() as $category) {

@@ -113,7 +113,7 @@ SQL;
         );
         $statDataExpense[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(
-                _w('All expense'), cashReportDds::ALL_EXPENSE_KEY, true, false, '', true
+                _w('All expenses'), cashReportDds::ALL_EXPENSE_KEY, true, false, '', true
             ),
             $rawData[cashCategory::TYPE_EXPENSE][cashReportDds::ALL_EXPENSE_KEY] ?? []
         );
