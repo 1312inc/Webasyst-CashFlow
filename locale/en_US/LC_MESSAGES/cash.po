@@ -193,7 +193,7 @@ msgstr ""
 msgid "Unselect all"
 msgstr ""
 
-msgid "No activity in the selected period. Create a transaction to get started!"
+msgid "Transaction list is empty"
 msgstr ""
 
 msgid "Summary"
@@ -1104,4 +1104,10 @@ msgid "All expenses"
 msgstr ""
 
 msgid "All income"
+msgstr ""
+
+msgid "Download error log"
+msgstr ""
+
+msgid "Remove from history"
 msgstr ""

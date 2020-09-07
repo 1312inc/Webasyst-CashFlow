@@ -193,8 +193,8 @@ msgstr "Удалить"
 msgid "Unselect all"
 msgstr "Снять выделение"
 
-msgid "No activity in the selected period. Create a transaction to get started!"
-msgstr "В указанный период операций не производилось. Добавьте операцию для начала работы!"
+msgid "Transaction list is empty"
+msgstr "Список операций пуст"
 
 msgid "Summary"
 msgstr "Краткое описание"
@@ -1109,3 +1109,9 @@ msgstr "Все расходы"
 
 msgid "All income"
 msgstr "Все доходы"
+
+msgid "Download error log"
+msgstr "Скачать журнал ошибок"
+
+msgid "Remove from history"
+msgstr "Удалить из истории"
