@@ -274,7 +274,6 @@
                                 {if $transaction->category->id == cashCategoryFactory::TRANSFER_CATEGORY_ID}
                                 <option selected>{$transaction->category->name|escape|truncate:42}</option>
                                 {else}
-                                <option value="0" data-cash-category-color="{cashCategoryFactory::NO_CATEGORY_COLOR}">[`No category`]</option>
                                 {foreach $categories as $category}
                                 <option value="{$category->id}"
                                         {if $category->id == $transaction->category->id}selected{/if}
