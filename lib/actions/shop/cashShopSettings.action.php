@@ -78,7 +78,7 @@ class cashShopSettingsAction extends cashViewAction
                 $settings->getAccountId()
             );
         } else {
-            $account = cash()->getEntityRepository(cashAccount::class)->findFirst();
+            $account = cash()->getEntityRepository(cashAccount::class)->findFirstForContact();
             $settings->setAccountId($account->getId());
         }
 
