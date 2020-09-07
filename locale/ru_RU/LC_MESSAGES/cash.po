@@ -1052,3 +1052,60 @@ msgstr "Расходы на доставку по заказу %s"
 
 msgid "Taxes for order %s"
 msgstr "Налоги по заказу %s"
+
+msgid "No linked transactions yet"
+msgstr "Нет связанных операций"
+
+msgid "To link a transaction to a contact in the Cash app, simply find and select an appropriate contact when adding/editing a transaction."
+msgstr "Чтобы связать операцию с контактом в приложении «Деньги», просто найдите и выберите контакт при создании или редактировании операции."
+
+msgid "Contact transactions"
+msgstr ""
+
+msgid "Reports"
+msgstr "Отчеты"
+
+msgid "Cash flow report"
+msgstr "Отчет о движении средств"
+
+msgid "Can see reports"
+msgstr "Может просматривать отчеты"
+
+msgid "Can import transactions"
+msgstr "Может импортировать операции"
+
+msgid "You can not edit or add new transaction"
+msgstr ""
+
+msgid "You can not edit transaction"
+msgstr ""
+
+msgid "You can not delete this transaction"
+msgstr ""
+
+msgid "You can not add new transaction"
+msgstr ""
+
+msgid "You have no access to this category"
+msgstr ""
+
+msgid "You can not create any category at all"
+msgstr ""
+
+msgid "You have no access to this account"
+msgstr ""
+
+msgid "You can not create any account"
+msgstr ""
+
+msgid "Cash"
+msgstr "Деньги"
+
+msgid "Contractors"
+msgstr "Контрагенты"
+
+msgid "All expenses"
+msgstr "Все расходы"
+
+msgid "All income"
+msgstr "Все доходы"

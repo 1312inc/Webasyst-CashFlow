@@ -32,11 +32,11 @@ class cashContactsProfileTabListener extends waEventHandler
 
             $result[] = [
                 'id' => 'cashapp',
-                'title' => _w('Cash app'),
+                'title' => _w('Cash'),
                 'url' => sprintf('%scash/?module=crm&contact=%s&external=1', $backend_url, $contact_id),
             ];
         } catch (waException $ex) {
-            waLog::log(sprintf('Something goes wrong: %s. %s', $ex->getMessage(), $ex->getTraceAsString()));
+            waLog::log(sprintf('Something went wrong: %s. %s', $ex->getMessage(), $ex->getTraceAsString()));
         } finally {
             wa($old_app, 1);
         }
