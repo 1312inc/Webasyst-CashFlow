@@ -36,6 +36,10 @@ class cashBackendLocAction extends cashViewAction
             _w('Search for existing contact or enter any new contact name.'),
             _w('Skip rows with this value'),
             _w('Import %d paid orders'),
+            _w('Expense'),
+            _w('Income'),
+            _w('Skip rows with this value'),
+            _w('transactions'),
         ];
 
         $this->view->assign(

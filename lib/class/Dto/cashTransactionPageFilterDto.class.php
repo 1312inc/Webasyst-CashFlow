@@ -108,7 +108,10 @@ class cashTransactionPageFilterDto implements JsonSerializable
                 $this->entity = cash()->getEntityRepository(cashImport::class)->findById($identifier);
                 kmwaAssert::instance($this->entity, cashImport::class);
 
-                $this->name = sprintf_wp('Import #%s', $this->entity->getId());
+                $this->name = sprintf_wp(
+                    'Import #%s',
+                    waDateTime::format('humandatetime', $this->entity->getCreateDatetime())
+                );
 
                 break;
 

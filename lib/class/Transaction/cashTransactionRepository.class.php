@@ -107,6 +107,10 @@ class cashTransactionRepository extends cashBaseRepository
                     $filterDto->id
                 );
 
+                if ($pagination) {
+                    $pagination->setTotalRows($data->count());
+                }
+
                 break;
 
             default:
