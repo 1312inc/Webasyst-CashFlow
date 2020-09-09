@@ -983,7 +983,7 @@ msgid "This will flush all Shop-Script import settings so you can restart the im
 msgstr "Интеграция с Shop-Script будет перезапущена с нуля, и вы сможете заново импортировать все операции. Все операции, ранее импортированные из Shop-Script, будут удалены. Перезапустить?"
 
 msgid "Cash Flow"
-msgstr "Деньги"
+msgstr "Cash Flow"
 
 msgid "From account"
 msgstr "Со счета"
@@ -1074,9 +1074,6 @@ msgstr "Может просматривать отчеты"
 msgid "Can import transactions"
 msgstr "Может импортировать операции"
 
-msgid "Cash"
-msgstr "Деньги"
-
 msgid "Contractors"
 msgstr "Контрагенты"
 
@@ -1118,3 +1115,9 @@ msgstr "У вас нет доступа к этому счету"
 
 msgid "You are not allowed to create new accounts"
 msgstr "У вас нет доступа к созданию новых счетов"
+
+msgid "Transactions related to this contractor"
+msgstr "Операции, связанные с этим контрагентом"
+
+msgid "Imported on %s"
+msgstr "Импорт %s"
