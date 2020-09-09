@@ -13,22 +13,22 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    items: []
+    listItems: []
   },
   mutations: {
     'SET_ITEMS' (store, data) {
-      store.items = data
+      store.listItems = data
     }
   },
   actions: {
-    async get ({ commit }, params) {
+    async getList ({ commit }, params) {
       const { data } = await api.get('cash.transaction.getList', {
         params: {
           from: params.from,
           to: params.to
         }
       })
-      commit('SET_ITEMS', data.reverse())
+      commit('SET_ITEMS', data)
     }
   },
   modules: {
