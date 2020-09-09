@@ -1070,9 +1070,6 @@ msgstr ""
 msgid "Can import transactions"
 msgstr ""
 
-msgid "Cash"
-msgstr ""
-
 msgid "Contractors"
 msgstr ""
 
@@ -1113,4 +1110,13 @@ msgid "You are not allowed to access this account"
 msgstr ""
 
 msgid "You are not allowed to create new accounts"
+msgstr ""
+
+msgid "Transactions related to this contractor"
+msgstr ""
+
+msgid "Imported on %s"
+msgstr ""
+
+msgid "Cash Flow"
 msgstr ""
