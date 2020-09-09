@@ -21,14 +21,14 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async get ({ commit }) {
+    async get ({ commit }, params) {
       const { data } = await api.get('cash.transaction.getList', {
         params: {
-          from: '2020-09-09',
-          to: '2020-09-09'
+          from: params.from,
+          to: params.to
         }
       })
-      commit('SET_ITEMS', data)
+      commit('SET_ITEMS', data.reverse())
     }
   },
   modules: {
