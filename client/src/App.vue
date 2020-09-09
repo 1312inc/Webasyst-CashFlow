@@ -5,7 +5,9 @@
       <router-link to="/about">About</router-link> |
       <a href="/webasyst/cash/?module=static">Static page</a>
     </div>
-    <router-view/>
+    <keep-alive>
+      <router-view/>
+    </keep-alive>
   </div>
 </template>
 
