@@ -7,6 +7,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
 {
     const METHOD_GET  = 'GET';
     const METHOD_POST = 'POST';
+    const METHOD_PUT = 'PUT';
 
     /**
      * @var array
@@ -58,6 +59,20 @@ abstract class cashApiAbstractMethod extends waAPIMethod
 
         return parent::post($name, $required);
     }
+
+    public function execute()
+    {
+        try {
+            $this->response = $this->run();
+        } catch (Exception $exception) {
+            $this->response = cashApiErrorResponse::fromException($exception);
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    abstract function run();
 
     /**
      * @param string $name

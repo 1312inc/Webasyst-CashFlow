@@ -10,5 +10,5 @@ interface cashApiHandlerInterface
      *
      * @return array
      */
-    public function handle($request): array;
+    public function handle($request);
 }
