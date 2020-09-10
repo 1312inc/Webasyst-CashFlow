@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Class cashApiTransactionsGetListHandler
+ * Class cashApiTransactionGetListHandler
  */
 class cashApiTransactionGetListHandler implements cashApiHandlerInterface
 {
     /**
-     * @param cashApiTransactionGetListRequest $request
+     * @param cashApiTransactionGetListRequest        $request
      *
-     * @return array|cashApiTransactionDto[]
+     * @return array|cashApiTransactionResponse[]
      * @throws waException
      */
     public function handle($request): array
@@ -27,12 +27,12 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
             false
         );
 
-        $dtos = [];
+        $response = [];
         foreach ($this->generateResponse($data) as $item) {
-            $dtos[] = $item;
+            $response[] = $item;
         }
 
-        return $dtos;
+        return $response;
     }
 
     /**
@@ -43,7 +43,7 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
     private function generateResponse(Iterator $transactionData)
     {
         foreach ($transactionData as $transactionDatum) {
-            yield new cashApiTransactionDto($transactionDatum);
+            yield new cashApiTransactionResponse($transactionDatum);
         }
     }
 }
