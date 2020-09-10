@@ -44,9 +44,9 @@ class cashStatOnDateDto
      */
     public function __construct($income, $expense, $summary)
     {
-        $this->income = (float)$income;
-        $this->expense = (float)abs($expense);
-        $this->summary = (float)$summary;
+        $this->income = (float) $income;
+        $this->expense = (float) abs($expense);
+        $this->summary = (float) $summary;
         $this->incomeShorten = cashShorteningService::money($this->income);
         $this->expenseShorten = cashShorteningService::money($this->expense);
         $this->summaryShorten = cashShorteningService::money($this->summary);
