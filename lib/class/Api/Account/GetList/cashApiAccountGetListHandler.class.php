@@ -6,9 +6,10 @@
 class cashApiAccountGetListHandler implements cashApiHandlerInterface
 {
     /**
-     * @param $request
+     * @param                                        $request
+     * @param cashApiResponseDecoratorInterface|null $decorator
      *
-     * @return array|cashApiAccountResponseDto[]
+     * @return array|cashApiAccountResponse[]
      * @throws waException
      */
     public function handle($request): array
@@ -27,7 +28,7 @@ class cashApiAccountGetListHandler implements cashApiHandlerInterface
 
         $response = [];
         foreach ($accounts as $account) {
-            $accountResponse = cashApiAccountResponseDto::fromAccount($account);
+            $accountResponse = cashApiAccountResponse::fromAccount($account);
             $response[] = $accountResponse;
         }
 

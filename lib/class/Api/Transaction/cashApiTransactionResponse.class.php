@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class cashTransactionDto
+ * Class cashApiTransactionResponse
  */
-class cashApiTransactionDto extends cashAbstractDto
+class cashApiTransactionResponse extends cashAbstractDto
 {
     /**
      * @var int
@@ -39,11 +39,6 @@ class cashApiTransactionDto extends cashAbstractDto
      * @var string
      */
     public $balanceShorten = '0';
-
-    /**
-     * @var string
-     */
-    public $currency;
 
     /**
      * @var string
@@ -111,13 +106,25 @@ class cashApiTransactionDto extends cashAbstractDto
     public $contractor_contact_id;
 
     /**
-     * cashApiTransactionDto constructor.
+     * cashApiTransactionResponse constructor.
      *
      * @param array $data
      */
     public function __construct(array $data)
     {
         $this->initializeWithArray($data);
+
+        $this->id = (int) $this->id;
+        $this->external_data = $this->external_data ? json_decode($this->external_data, true) : null;
+        $this->amount = (float) $this->amount;
+        $this->balance = (float) $this->balance;
+        $this->repeating_id = $this->repeating_id ? (int) $this->repeating_id : null;
+        $this->contractor_contact_id = $this->contractor_contact_id ? (int) $this->contractor_contact_id : null;
+        $this->create_contact_id = (int) $this->create_contact_id;
+        $this->category_id = (int) $this->category_id;
+        $this->account_id = (int) $this->account_id;
+        $this->account_id = (int) $this->account_id;
+        $this->is_archived = $this->is_archived ? true : false;
 
         $this->planned = $this->date > date('Y-m-d');
         $this->amountShorten = cashShorteningService::money($this->amount);

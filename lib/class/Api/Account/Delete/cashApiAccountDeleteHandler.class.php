@@ -8,45 +8,41 @@ class cashApiAccountDeleteHandler implements cashApiHandlerInterface
     /**
      * @param cashApiAccountDeleteRequest $request
      *
-     * @return bool
+     * @return array|cashApiAccountDeleteResponse|cashApiErrorResponse
      * @throws waException
-     * @throws kmwaNotFoundException
-     * @throws kmwaForbiddenException
      * @throws kmwaRuntimeException
      */
     public function handle($request)
     {
         /** @var cashAccountRepository $repository */
         $repository = cash()->getEntityRepository(cashAccount::class);
-
-        /** @var cashAccount $account */
         $account = $repository->findById($request->id);
-        if (!$account || $account->getIsArchived()) {
-            throw new kmwaNotFoundException(_w('No account'));
+        if (!$account) {
+            return new cashApiErrorResponse(_w('No account'));
         }
 
         if (!cash()->getContactRights()->hasFullAccessToAccount(wa()->getUser(), $account)) {
-            throw new kmwaForbiddenException(_w('You have no access to this account'));
+            return new cashApiErrorResponse(_w('You have no access to this account'));
         }
 
-        /** @var cashTransactionModel $transactionModel */
-        $transactionModel = cash()->getModel(cashTransaction::class);
-        $transactionModel->startTransaction();
+        /** @var cashTransactionModel $model */
+        $model = $repository->getModel();
+        $model->startTransaction();
         try {
-            $transactionModel->archiveByAccountId($account->getId());
+            $model->archiveByAccountId($account->getId());
             $account->setIsArchived(true);
 
             if (!cash()->getEntityPersister()->update($account)) {
-                $transactionModel->rollback();
+                $model->rollback();
 
-                throw new kmwaRuntimeException(_w('Error while updating account'));
+                return new cashApiErrorResponse(_w('Error while updating account'));
             }
 
-            $transactionModel->commit();
+            $model->commit();
 
-            return true;
+            return new cashApiAccountDeleteResponse();
         } catch (Exception $ex) {
-            $transactionModel->rollback();
+            $model->rollback();
 
             throw $ex;
         }

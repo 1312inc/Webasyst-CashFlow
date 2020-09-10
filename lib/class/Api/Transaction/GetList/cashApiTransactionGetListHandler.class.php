@@ -6,46 +6,44 @@
 class cashApiTransactionGetListHandler implements cashApiHandlerInterface
 {
     /**
-     * @param cashApiTransactionGetListRequest $request
+     * @param cashApiTransactionGetListRequest        $request
      *
-     * @return array|cashApiTransactionResponseDto[]
+     * @return array|cashApiTransactionResponse[]
      * @throws waException
-     * @throws kmwaForbiddenException
      */
-    public function handle($request)
+    public function handle($request): array
     {
-        $filterDto = new cashTransactionFilterParamsDto(
-            $request->account_id,
-            $request->category_id,
-            $request->create_contact_id,
-            $request->contractor_contact_id,
-            $request->import_id,
-            DateTime::createFromFormat('Y-m-d', $request->from),
-            DateTime::createFromFormat('Y-m-d', $request->to),
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
+
+        $startDate = DateTime::createFromFormat('Y-m-d', $request->from);
+        $endDate = DateTime::createFromFormat('Y-m-d', $request->to);
+
+        $data = $model->getByDateBoundsAndAccount(
+            $startDate->format('Y-m-d 00:00:00'),
+            $endDate->format('Y-m-d 23:59:59'),
             wa()->getUser(),
-            $request->start,
-            $request->limit
+            null,
+            false
         );
 
-        $data = (new cashTransactionFilterService())->getResults($filterDto);
-
-        $initialBalance = null;
-        if ($filterDto->accountId && cash()->getContactRights()->hasFullAccessToAccount($filterDto->contact, $filterDto->accountId)) {
-            $initialBalance = cash()->getModel(cashAccount::class)->getStatDataForAccounts(
-                '1970-01-01 00:00:00',
-                $filterDto->endDate->format('Y-m-d 23:59:59'),
-                $filterDto->contact,
-                [$filterDto->accountId]
-            );
-            $initialBalance = (float) ifset($initialBalance, $filterDto->accountId, 'summary', 0.0);
-        }
-
         $response = [];
-        $iterator = cashApiTransactionResponseDtoAssembler::fromModelIteratorWithInitialBalance($data, $initialBalance, $filterDto->reverse);
-        foreach ($iterator as $item) {
+        foreach ($this->generateResponse($data) as $item) {
             $response[] = $item;
         }
 
         return $response;
+    }
+
+    /**
+     * @param Iterator $transactionData
+     *
+     * @return Generator
+     */
+    private function generateResponse(Iterator $transactionData)
+    {
+        foreach ($transactionData as $transactionDatum) {
+            yield new cashApiTransactionResponse($transactionDatum);
+        }
     }
 }

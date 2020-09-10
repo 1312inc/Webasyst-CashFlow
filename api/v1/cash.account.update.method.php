@@ -7,21 +7,11 @@ class cashAccountUpdateMethod extends cashApiAbstractMethod
 {
     protected $method = self::METHOD_POST;
 
-    /**
-     * @return cashApiAccountUpdateResponse
-     * @throws kmwaForbiddenException
-     * @throws kmwaNotFoundException
-     * @throws kmwaRuntimeException
-     * @throws waAPIException
-     * @throws waException
-     */
-    public function run(): cashApiResponseInterface
+    public function run()
     {
-        /** @var cashApiAccountUpdateRequest $request */
+        /** @var cashApiAccountCreateRequest $request */
         $request = $this->fillRequestWithParams(new cashApiAccountUpdateRequest());
 
-        $account = (new cashApiAccountUpdateHandler())->handle($request);
-
-        return new cashApiAccountUpdateResponse($account);
+        return (new cashApiAccountUpdateHandler())->handle($request);
     }
 }

@@ -3,6 +3,10 @@
 /**
  * Class cashApiAccountDeleteResponse
  */
-class cashApiAccountDeleteResponse extends cashApiAbstractResponse
+class cashApiAccountDeleteResponse
 {
+    /**
+     * @var string
+     */
+    public $status = 'ok';
 }
