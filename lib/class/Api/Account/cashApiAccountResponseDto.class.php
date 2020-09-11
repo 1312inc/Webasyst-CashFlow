@@ -75,6 +75,7 @@ class cashApiAccountResponseDto
         $dto->currency = $account->getCurrency();
         $dto->customer_contact_id = $account->getCustomerContactId() ? (int) $account->getCustomerContactId() : null;
         $dto->is_archived = $account->getIsArchived() ? true : false;
+        $dto->sort = (int) $account->getSort();
         $dto->create_datetime = $account->getCreateDatetime();
         $dto->update_datetime = $account->getUpdateDatetime();
 
