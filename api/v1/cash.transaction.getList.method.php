@@ -7,11 +7,18 @@ class cashTransactionGetListMethod extends cashApiAbstractMethod
 {
     protected $method = self::METHOD_GET;
 
-    public function run()
+    /**
+     * @return cashApiTransactionGetListResponse
+     * @throws waAPIException
+     * @throws waException
+     */
+    public function run(): cashApiResponseInterface
     {
         /** @var cashApiTransactionGetListRequest $request */
         $request = $this->fillRequestWithParams(new cashApiTransactionGetListRequest());
 
-        return (new cashApiTransactionGetListHandler())->handle($request);
+        $transactions = (new cashApiTransactionGetListHandler())->handle($request);
+
+        return new cashApiTransactionGetListResponse($transactions);
     }
 }
