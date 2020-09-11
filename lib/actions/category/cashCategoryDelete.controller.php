@@ -19,6 +19,10 @@ class cashCategoryDeleteController extends cashJsonController
             throw new kmwaForbiddenException(_w('You are not allowed to access this category'));
         }
 
+        if ($category->isSystem()) {
+            throw new kmwaRuntimeException(_w('You can`t do anything with system categories'));
+        }
+
         $remover = new cashCategoryRemover(cash()->getEntityRepository(cashCategory::class));
         if (!$remover->removeCategory($category)) {
             $this->setError($remover->getError());
