@@ -8,9 +8,11 @@ class cashApiAccountUpdateHandler implements cashApiHandlerInterface
     /**
      * @param cashApiAccountUpdateRequest $request
      *
-     * @return cashAccount|cashApiAccountResponse|cashApiErrorResponse
-     * @throws waException
+     * @return array|cashApiAccountResponseDto
+     * @throws kmwaForbiddenException
+     * @throws kmwaNotFoundException
      * @throws kmwaRuntimeException
+     * @throws waException
      */
     public function handle($request)
     {
@@ -18,19 +20,19 @@ class cashApiAccountUpdateHandler implements cashApiHandlerInterface
         $repository = cash()->getEntityRepository(cashAccount::class);
         $account = $repository->findById($request->id);
         if (!$account) {
-            return new cashApiErrorResponse(_w('No account'));
+            throw new kmwaNotFoundException(_w('No account'));
         }
 
         if (!cash()->getContactRights()->hasFullAccessToAccount(wa()->getUser(), $account)) {
-            return new cashApiErrorResponse(_w('You have no access to this account'));
+            throw new kmwaForbiddenException(_w('You have no access to this account'));
         }
 
         $saver = new cashAccountSaver();
         $data = (array) $request;
         if ($saver->saveFromArray($account, $data)) {
-            return cashApiAccountResponse::fromAccount($account);
+            return cashApiAccountResponseDto::fromAccount($account);
         }
 
-        return new cashApiErrorResponse($saver->getError());
+        throw new kmwaRuntimeException($saver->getError());
     }
 }

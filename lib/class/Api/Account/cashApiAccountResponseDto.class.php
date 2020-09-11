@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class cashApiAccountResponse
+ * Class cashApiAccountResponseDto
  */
-class cashApiAccountResponse extends cashAbstractDto
+class cashApiAccountResponseDto
 {
     /**
      * @var int
@@ -61,21 +61,11 @@ class cashApiAccountResponse extends cashAbstractDto
     public $stat;
 
     /**
-     * cashApiTransactionDto constructor.
-     *
-     * @param array $data
-     */
-    public function __construct(array $data = [])
-    {
-        $this->initializeWithArray($data);
-    }
-
-    /**
      * @param cashAccount $account
      *
-     * @return cashApiAccountResponse
+     * @return cashApiAccountResponseDto
      */
-    public static function fromAccount(cashAccount $account): cashApiAccountResponse
+    public static function fromAccount(cashAccount $account): cashApiAccountResponseDto
     {
         $dto = new self();
         $dto->id = (int) $account->getId();

@@ -3,17 +3,17 @@
 /**
  * Class cashApiErrorResponse
  */
-class cashApiErrorResponse implements JsonSerializable
+class cashApiErrorResponse extends cashApiAbstractResponse implements JsonSerializable
 {
     /**
      * @var string
      */
-    private $status;
+    private $error;
 
     /**
      * @var string
      */
-    private $message;
+    private $errorMessage;
 
     /**
      * @var null|string
@@ -23,13 +23,16 @@ class cashApiErrorResponse implements JsonSerializable
     /**
      * cashApiErrorResponse constructor.
      *
-     * @param string $message
-     * @param string $status
+     * @param string $errorMessage
+     * @param string $error
+     * @param int    $status
      */
-    public function __construct($message, $status = 'fail')
+    public function __construct($errorMessage, $error = 'fail', $status = 400)
     {
-        $this->message = $message;
-        $this->status = $status;
+        parent::__construct($status);
+
+        $this->errorMessage = $errorMessage;
+        $this->error = $error;
     }
 
     /**
@@ -39,7 +42,7 @@ class cashApiErrorResponse implements JsonSerializable
      */
     public static function fromException(Exception $ex): cashApiErrorResponse
     {
-        $response = new self($ex->getMessage(), 'error');
+        $response = new self($ex->getMessage(), 'error', $ex->getCode());
         $response->trace = $ex->getTrace();
 
         return $response;
@@ -51,8 +54,8 @@ class cashApiErrorResponse implements JsonSerializable
     public function jsonSerialize()
     {
         $data = [
-            'status' => $this->status,
-            'message' => $this->message,
+            'error' => $this->error,
+            'error_message' => $this->errorMessage,
         ];
 
         if ($this->trace && waSystemConfig::isDebug()) {

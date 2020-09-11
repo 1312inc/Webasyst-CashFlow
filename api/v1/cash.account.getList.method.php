@@ -7,8 +7,14 @@ class cashAccountGetListMethod extends cashApiAbstractMethod
 {
     protected $method = self::METHOD_GET;
 
-    public function run()
+    /**
+     * @return cashApiAccountGetListResponse
+     * @throws waException
+     */
+    public function run(): cashApiResponseInterface
     {
-        return (new cashApiAccountGetListHandler())->handle(null);
+        $response = (new cashApiAccountGetListHandler())->handle(null);
+
+        return new cashApiAccountGetListResponse($response);
     }
 }

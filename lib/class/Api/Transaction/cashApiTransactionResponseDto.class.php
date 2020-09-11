@@ -3,7 +3,7 @@
 /**
  * Class cashApiTransactionResponse
  */
-class cashApiTransactionResponse extends cashAbstractDto
+class cashApiTransactionResponseDto extends cashAbstractDto
 {
     /**
      * @var int
