@@ -63,16 +63,20 @@ abstract class cashApiAbstractMethod extends waAPIMethod
     public function execute()
     {
         try {
-            $this->response = $this->run();
+            $handlerResult = $this->run();
+
+            $this->response = $handlerResult->getResponseBody();
+            wa()->getResponse()->setStatus($handlerResult->getStatus());
         } catch (Exception $exception) {
             $this->response = cashApiErrorResponse::fromException($exception);
+            wa()->getResponse()->setStatus($this->response->getStatus());
         }
     }
 
     /**
-     * @return mixed
+     * @return cashApiResponseInterface
      */
-    abstract function run();
+    abstract function run(): cashApiResponseInterface;
 
     /**
      * @param string $name
