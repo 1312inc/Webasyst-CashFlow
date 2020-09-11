@@ -11,6 +11,14 @@
   </div>
 </template>
 
+<script>
+export default {
+  mounted () {
+    this.$store.dispatch('getList', { from: '2019-01-01', to: '2020-09-08' })
+  }
+}
+</script>
+
 <style lang="scss" scoped>
   #app {
     text-align: center;
