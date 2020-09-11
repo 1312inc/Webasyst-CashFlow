@@ -7,11 +7,19 @@ class cashAccountCreateMethod extends cashApiAbstractMethod
 {
     protected $method = self::METHOD_POST;
 
-    public function run()
+    /**
+     * @return cashApiAccountCreateResponse
+     * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
+     * @throws waAPIException
+     */
+    public function run(): cashApiResponseInterface
     {
         /** @var cashApiAccountCreateRequest $request */
         $request = $this->fillRequestWithParams(new cashApiAccountCreateRequest());
 
-        return (new cashApiAccountCreateHandler())->handle($request);
+        $response = (new cashApiAccountCreateHandler())->handle($request);
+
+        return new cashApiAccountCreateResponse($response);
     }
 }

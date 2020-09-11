@@ -8,14 +8,14 @@ class cashApiAccountCreateHandler implements cashApiHandlerInterface
     /**
      * @param cashApiAccountCreateRequest $request
      *
-     * @return cashAccount|cashApiAccountResponse|cashApiErrorResponse
-     * @throws waException
+     * @return cashApiAccountResponseDto
+     * @throws kmwaForbiddenException
      * @throws kmwaRuntimeException
      */
     public function handle($request)
     {
         if (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
-            return new cashApiErrorResponse(_w('You can not create any account'));
+            throw new kmwaForbiddenException(_w('You can not create any account'));
         }
 
         /** @var cashAccountFactory $repository */
@@ -27,9 +27,9 @@ class cashApiAccountCreateHandler implements cashApiHandlerInterface
         $data['customer_contact_id'] = wa()->getUser()->getId();
 
         if ($saver->saveFromArray($account, $data)) {
-            return cashApiAccountResponse::fromAccount($account);
+            return cashApiAccountResponseDto::fromAccount($account);
         }
 
-        return new cashApiErrorResponse($saver->getError());
+        throw new kmwaRuntimeException($saver->getError());
     }
 }

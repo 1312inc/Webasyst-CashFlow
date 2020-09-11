@@ -8,10 +8,10 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
     /**
      * @param cashApiTransactionGetListRequest        $request
      *
-     * @return array|cashApiTransactionResponse[]
+     * @return array|cashApiTransactionResponseDto[]
      * @throws waException
      */
-    public function handle($request): array
+    public function handle($request)
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
@@ -43,7 +43,7 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
     private function generateResponse(Iterator $transactionData)
     {
         foreach ($transactionData as $transactionDatum) {
-            yield new cashApiTransactionResponse($transactionDatum);
+            yield new cashApiTransactionResponseDto($transactionDatum);
         }
     }
 }
