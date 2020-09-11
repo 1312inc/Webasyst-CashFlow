@@ -19,9 +19,6 @@ class cashCategorySaver extends cashEntitySaver
         }
 
         try {
-            /** @var cashCategoryModel $model */
-            $model = cash()->getModel(cashCategory::class);
-
             unset($data['id']);
             kmwaAssert::instance($category, cashCategory::class);
 
