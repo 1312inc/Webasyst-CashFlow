@@ -9,6 +9,7 @@
     "copyjs": "copyfiles dist/js/*.js ../js --flat"
   },
   "dependencies": {
+    "@amcharts/amcharts4": "^4.10.2",
     "axios": "^0.20.0",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.5",
