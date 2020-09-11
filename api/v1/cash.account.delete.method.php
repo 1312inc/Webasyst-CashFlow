@@ -5,7 +5,7 @@
  */
 class cashAccountDeleteMethod extends cashApiAbstractMethod
 {
-    protected $method = self::METHOD_POST;
+    protected $method = [self::METHOD_POST, self::METHOD_DELETE];
 
     /**
      * @return cashApiAccountDeleteResponse|cashApiErrorResponse
