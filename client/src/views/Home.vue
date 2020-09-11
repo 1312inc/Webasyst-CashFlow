@@ -1,7 +1,7 @@
 <template>
-  <div class="home">
+  <div>
 
-    <Chart></Chart>
+    <AmChart></AmChart>
 
     <table>
       <thead>
@@ -28,19 +28,13 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import Chart from '@/components/Chart'
+import { mapState } from 'vuex'
+import AmChart from '@/components/AmChart'
 
 export default {
   components: {
-    Chart
+    AmChart
   },
-  computed: mapState(['listItems']),
-  mounted () {
-    this.getList({ from: '2019-01-01', to: '2020-09-08' })
-  },
-  methods: {
-    ...mapActions(['getList'])
-  }
+  computed: mapState(['listItems'])
 }
 </script>
