@@ -29,12 +29,12 @@
 
 <script>
 import { mapState } from 'vuex'
-import AmChart from '@/components/AmChart'
+import AmChart from '@/components/AmChartFake'
 
 export default {
   components: {
     AmChart
   },
-  computed: mapState(['listItems'])
+  computed: mapState('transaction', ['listItems'])
 }
 </script>

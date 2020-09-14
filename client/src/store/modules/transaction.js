@@ -1,33 +1,19 @@
 import api from '@/plugins/api'
-import dumpDataByDay from '@/plugins/dumpDataByDay'
+import dumpData from '@/plugins/dumpData'
 
 export default {
   namespaced: true,
 
   state: () => ({
     listItems: [],
-    fakeData: [],
-    detailsDate: null,
-    detailsDateIntervalUnit: null
+    fakeData: []
   }),
-
-  getters: {
-    getDetailsDateInterval: state => {
-      // return state.detailsDateIntervalUnit === 'day' ? state.detailsDate : 'month'
-      return state.detailsDate
-    }
-  },
-
   mutations: {
-    setItems (state, data) {
-      state.listItems = data.reverse()
+    'SET_ITEMS' (state, data) {
+      state.listItems = data
     },
-    setFakeItems (state, data) {
+    'SET_FAKE_ITEMS' (state, data) {
       state.fakeData = data
-    },
-    setDetailsDate (state, { date, interval = null }) {
-      state.detailsDate = date
-      state.detailsDateIntervalUnit = interval
     }
   },
   actions: {
@@ -38,8 +24,8 @@ export default {
           to: params.to
         }
       })
-      commit('setItems', data)
-      commit('setFakeItems', dumpDataByDay('2018-08-15', '2020-08-15'))
+      commit('SET_ITEMS', data)
+      commit('SET_FAKE_ITEMS', dumpData)
     }
   }
 }
