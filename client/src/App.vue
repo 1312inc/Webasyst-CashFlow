@@ -14,7 +14,7 @@
 <script>
 export default {
   mounted () {
-    this.$store.dispatch('getList', { from: '2019-01-01', to: '2020-09-08' })
+    this.$store.dispatch('transaction/getList', { from: '2019-01-01', to: '2020-09-08' })
   }
 }
 </script>
