@@ -25,7 +25,7 @@ export default {
   },
 
   computed: {
-    ...mapState(['listItems']),
+    ...mapState('transaction', ['listItems']),
 
     categoriesInData () {
       return this.listItems.reduce((categories, item) => {
@@ -91,7 +91,7 @@ export default {
           series.dataFields.valueY = 'amount'
           series.dataFields.dateX = 'date'
           // series.stacked = true
-          series.columns.template.tooltipText = '[bold]{name}[/]\n[font-size:14px]{dateX}: {valueY}'
+          series.tooltipText = '[bold]{name}[/]\n[font-size:14px]{dateX}: {valueY}'
 
           // Set up tooltip
           // series.adapter.add('tooltipText', (ev) => {
