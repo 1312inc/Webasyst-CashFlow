@@ -143,7 +143,7 @@ class cashConfig extends waAppConfig
     /**
      * @param $entity
      *
-     * @return cashBaseFactory|cashAccountFactory|cashCategoryFactory|cashTransactionFactory
+     * @return cashBaseFactory
      */
     public function getEntityFactory($entity)
     {
@@ -166,7 +166,7 @@ class cashConfig extends waAppConfig
     /**
      * @param string $entity
      *
-     * @return cashAccountModel|cashTransactionModel|cashCategoryModel
+     * @return cashModel
      * @throws waException
      */
     public function getModel($entity = false)
@@ -193,7 +193,7 @@ class cashConfig extends waAppConfig
     /**
      * @param string $entity
      *
-     * @return cashBaseRepository|cashAccountRepository|cashCategoryRepository|cashTransactionRepository|cashRepeatingTransactionRepository
+     * @return cashBaseRepository
      * @throws waException
      */
     public function getEntityRepository($entity)

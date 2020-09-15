@@ -57,12 +57,4 @@ class cashRepeatingTransactionSettingsDto
             $this->loaded = true;
         }
     }
-
-    /**
-     * @return bool
-     */
-    public function isLoaded()
-    {
-        return $this->loaded;
-    }
 }
