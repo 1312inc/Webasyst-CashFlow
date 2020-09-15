@@ -1223,4 +1223,15 @@ SQL;
             return 0;
         }
     }
+
+    /**
+     * @param array $ids
+     *
+     * @return waDbResultIterator
+     */
+    public function getAllIteratorByIds(array $ids)
+    {
+        return $this->query(sprintf('select * from %s where id in (i:ids)', $this->table), ['ids' => $ids])
+            ->getIterator();
+    }
 }
