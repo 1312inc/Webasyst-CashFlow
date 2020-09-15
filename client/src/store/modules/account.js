@@ -7,14 +7,14 @@ export default {
     accounts: []
   }),
   mutations: {
-    setAccounts (state, data) {
+    'SET_ITEMS' (state, data) {
       state.accounts = data
     }
   },
   actions: {
     async getList ({ commit }, params) {
       const { data } = await api.get('cash.account.getList')
-      commit('setAccounts', data)
+      commit('SET_ITEMS', data)
     }
   }
 }
