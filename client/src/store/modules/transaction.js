@@ -1,5 +1,5 @@
 import api from '@/plugins/api'
-import dumpData from '@/plugins/dumpData'
+import dumpDataByDay from '@/plugins/dumpDataByDay'
 
 export default {
   namespaced: true,
@@ -25,7 +25,7 @@ export default {
         }
       })
       commit('SET_ITEMS', data)
-      commit('SET_FAKE_ITEMS', dumpData)
+      commit('SET_FAKE_ITEMS', dumpDataByDay(params.from, params.to))
     }
   }
 }

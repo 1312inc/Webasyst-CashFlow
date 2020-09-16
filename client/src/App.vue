@@ -26,7 +26,7 @@ export default {
     Sidebar
   },
   mounted () {
-    this.$store.dispatch('transaction/getList', { from: '2019-01-01', to: '2020-09-08' })
+    this.$store.dispatch('transaction/getList', { from: '2016-01-01', to: '2020-09-01' })
     this.$store.dispatch('category/getList')
     this.$store.dispatch('account/getList')
   }
