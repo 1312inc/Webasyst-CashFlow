@@ -23,5 +23,8 @@ export default (start, end) => {
     }
   })
 
+  console.log('data by month')
+  console.log(result)
+
   return result
 }

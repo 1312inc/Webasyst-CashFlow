@@ -30,7 +30,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import AmChart from '@/components/AmChartFake'
+import AmChart from '@/components/AmChart'
 
 export default {
   components: {
