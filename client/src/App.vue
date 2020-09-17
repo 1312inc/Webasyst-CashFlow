@@ -26,19 +26,18 @@ export default {
     Sidebar
   },
   mounted () {
-    this.$store.dispatch('transaction/getList', { from: '2016-01-01', to: '2020-09-01' })
+    this.$store.dispatch('transaction/getList', { from: '2020-07-15', to: '2020-09-15' })
     this.$store.dispatch('category/getList')
     this.$store.dispatch('account/getList')
   }
 }
 </script>
 
-<style lang="scss" scoped>
-  #app {
-    text-align: center;
-    padding-top: 4rem;
-  }
-  h2 {
-    margin-bottom: 4rem;
-  }
+<style lang="scss">
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 </style>
