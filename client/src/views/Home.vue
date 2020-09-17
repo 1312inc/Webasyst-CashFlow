@@ -3,6 +3,10 @@
 
     <AmChart></AmChart>
 
+    <transition name="fade" mode="out-in">
+      <DetailsDashboard v-if="detailsDate"></DetailsDashboard>
+    </transition>
+
     <table class="table-auto w-full">
       <thead>
         <tr>
@@ -31,13 +35,15 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import AmChart from '@/components/AmChart'
+import DetailsDashboard from '@/components/DetailsDashboard'
 
 export default {
   components: {
-    AmChart
+    AmChart,
+    DetailsDashboard
   },
   computed: {
-    ...mapState('transaction', ['listItems']),
+    ...mapState('transaction', ['detailsDate', 'listItems']),
     ...mapGetters('category', ['getCategoryNameById'])
   }
 }

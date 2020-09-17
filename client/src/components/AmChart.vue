@@ -6,7 +6,7 @@
 
 <script>
 
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
@@ -93,7 +93,7 @@ export default {
       chart.series.each((item) => {
         text += '<div class="text-sm"><span style="color:' + item.stroke.hex + '">●</span> ' + item.name + ': ' + this.$numeral(item.tooltipDataItem.valueY).format('0,0 $') + '</div>'
       })
-      text += '<button class="bg-blue-500 hover:bg-blue-700 text-sm text-white font-bold py-2 px-4 rounded my-2">Подробнее</a>'
+      text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + dateAxis.gridInterval.timeUnit + '\')" class="bg-blue-500 hover:bg-blue-700 text-sm text-white font-bold py-2 px-4 rounded my-2">Подробнее</a>'
       return text
     })
     series3.tooltip.getFillFromObject = false
@@ -133,9 +133,17 @@ export default {
     range2.contents.fill = '#ff604a'
 
     this.chart = chart
+
+    window.toggleDateForDetails = (date, interval) => {
+      this.setDetailsDate({ date, interval })
+    }
   },
 
   methods: {
+    ...mapMutations({
+      setDetailsDate: 'transaction/setDetailsDate'
+    }),
+
     renderChart () {
       this.chart.data = this.listItems
     }
@@ -148,7 +156,7 @@ export default {
 #chartdiv {
   width: 100%;
   height: 500px;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 }
 
 </style>
