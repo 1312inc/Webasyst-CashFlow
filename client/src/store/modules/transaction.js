@@ -20,7 +20,7 @@ export default {
 
   mutations: {
     setItems (state, data) {
-      state.listItems = data
+      state.listItems = data.reverse()
     },
     setFakeItems (state, data) {
       state.fakeData = data
