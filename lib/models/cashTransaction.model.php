@@ -71,9 +71,133 @@ SQL;
     /**
      * @param string    $startDate
      * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $createContactId
+     * @param bool      $returnResult
+     * @param int|null  $start
+     * @param int|null  $limit
+     *
+     * @return waDbResultIterator|array
+     */
+    public function getByDateBoundsAndCreateContactId(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $createContactId = null,
+        $returnResult = false,
+        $start = null,
+        $limit = null
+    ) {
+        $whereContactSql = '';
+        if ($createContactId) {
+            $whereContactSql = ' and ct.create_contact_id = i:create_contact_id';
+        }
+
+        $limits = '';
+        if ($start !== null && $limit !== null) {
+            $limits = 'limit i:start, i:limit';
+        }
+
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $createContactId);
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
+        $sql = <<<SQL
+select ct.*
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+left join cash_category cc on ct.category_id = cc.id
+where ct.date between s:startDate and s:endDate
+      and ct.is_archived = 0
+      {$whereContactSql}
+      and {$accountAccessSql}
+      and {$categoryAccessSql}
+order by ct.date desc, ct.id desc
+{$limits}
+SQL;
+
+        $query = $this->query(
+            $sql,
+            [
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'create_contact_id' => $createContactId,
+                'start' => $start,
+                'limit' => $limit,
+            ]
+        );
+
+        return $returnResult ? $query->fetchAll() : $query->getIterator();
+    }
+
+    /**
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
+     * @param int|null  $contractorContactId
+     * @param bool      $returnResult
+     * @param int|null  $start
+     * @param int|null  $limit
+     *
+     * @return waDbResultIterator|array
+     */
+    public function getByDateBoundsAndContractorContactId(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $contractorContactId = null,
+        $returnResult = false,
+        $start = null,
+        $limit = null
+    ) {
+        $whereContactSql = '';
+        if ($contractorContactId) {
+            $whereContactSql = ' and ct.contractor_contact_id = i:contractor_contact_id';
+        }
+
+        $limits = '';
+        if ($start !== null && $limit !== null) {
+            $limits = 'limit i:start, i:limit';
+        }
+
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $contractorContactId);
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
+        $sql = <<<SQL
+select ct.*
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+left join cash_category cc on ct.category_id = cc.id
+where ct.date between s:startDate and s:endDate
+      and ct.is_archived = 0
+      {$whereContactSql}
+      and {$accountAccessSql}
+      and {$categoryAccessSql}
+order by ct.date desc, ct.id desc
+{$limits}
+SQL;
+
+        $query = $this->query(
+            $sql,
+            [
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'contractor_contact_id' => $contractorContactId,
+                'start' => $start,
+                'limit' => $limit,
+            ]
+        );
+
+        return $returnResult ? $query->fetchAll() : $query->getIterator();
+    }
+
+    /**
+     * @param string    $startDate
+     * @param string    $endDate
      * @param waContact $forContact
      * @param waContact $contact
      * @param bool      $returnResult
+     * @param int|null  $start
+     * @param int|null  $limit
      *
      * @return waDbResultIterator|array
      * @throws waException
@@ -83,9 +207,16 @@ SQL;
         $endDate,
         waContact $forContact,
         waContact $contact,
-        $returnResult = false
+        $returnResult = false,
+        $start = null,
+        $limit = null
     ) {
         $whereAccountSql = '';
+
+        $limits = '';
+        if ($start !== null && $limit !== null) {
+            $limits = 'limit i:start, i:limit';
+        }
 
         $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
@@ -102,6 +233,7 @@ where ct.date between s:startDate and s:endDate
       and {$accountAccessSql}
       and {$categoryAccessSql}
 order by ct.date desc, ct.id desc
+{$limits}
 SQL;
 
         $query = $this->query(
@@ -109,7 +241,9 @@ SQL;
             [
                 'create_contact_id' => $forContact->getId(),
                 'startDate' => $startDate,
-                'endDate' => $endDate
+                'endDate' => $endDate,
+                'start' => $start,
+                'limit' => $limit,
             ]
         );
 
@@ -289,11 +423,25 @@ SQL;
      * @param waContact $contact
      * @param int       $import
      * @param bool      $returnResult
+     * @param int|null  $start
+     * @param int|null  $limit
      *
      * @return waDbResultIterator|array
      */
-    public function getByDateBoundsAndImport($startDate, $endDate, waContact $contact, $import, $returnResult = false)
-    {
+    public function getByDateBoundsAndImport(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        $import,
+        $returnResult = false,
+        $start = null,
+        $limit = null
+    ) {
+        $limits = '';
+        if ($start !== null && $limit !== null) {
+            $limits = 'limit i:start, i:limit';
+        }
+
         $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
             $contact,
             'ct',
@@ -314,6 +462,7 @@ where ct.date between s:startDate and s:endDate
     and {$accountAccessSql}
     and {$categoryAccessSql}
 order by ct.date, ct.id
+{$limits}
 SQL;
 
         $query = $this->query(
@@ -322,6 +471,8 @@ SQL;
                 'startDate' => $startDate,
                 'endDate' => $endDate,
                 'import_id' => $import,
+                'start' => $start,
+                'limit' => $limit,
             ]
         );
 
@@ -445,7 +596,7 @@ SQL;
         $endDate,
         waContact $contact,
         $category = null
-    ) {
+    ): array {
         $sql = <<<SQL
 select ca.currency,
        concat(
@@ -482,7 +633,7 @@ SQL;
      *
      * @return array
      */
-    public function getDateBoundsByAccounts($startDate, $endDate, $account = null)
+    public function getDateBoundsByAccounts($startDate, $endDate, $account = null): array
     {
         $accountsSql = $account ? ' and ct.account_id in (i:account_id)' : '';
 
@@ -515,7 +666,7 @@ SQL;
      *
      * @return array
      */
-    public function getDateBoundsByCategories($startDate, $endDate, $category = null)
+    public function getDateBoundsByCategories($startDate, $endDate, $category = null): array
     {
         $categorySql = $category ? ' and ct.category_id = i:category_id' : '';
 
