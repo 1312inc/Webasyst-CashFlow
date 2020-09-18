@@ -145,21 +145,6 @@ class cashContactRightsManager
 
     /**
      * @param waContact $contact
-     * @param           $accountId
-     *
-     * @return bool
-     */
-    public function hasMinimumAccessToAccount(waContact $contact, $accountId): bool
-    {
-        return $this->hasAccessToAccount(
-            $contact,
-            $accountId,
-            cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
-        );
-    }
-
-    /**
-     * @param waContact $contact
      * @param int       $accountId
      *
      * @return bool
@@ -192,6 +177,45 @@ class cashContactRightsManager
             true
         );
     }
+
+    /**
+     * @param waContact $contact
+     * @param           $categoryId
+     *
+     * @return bool
+     */
+    public function hasMinimumAccessToCategory(waContact $contact, $categoryId): bool
+    {
+        if ($this->getContactAccess($contact)->isAdmin()) {
+            return true;
+        }
+
+        return in_array(
+            (int) $categoryId,
+            $this->getContactAccess($contact)->getCategoriesIdsWithAccess(cashRightConfig::RIGHT_CAN_ACCESS_CATEGORY),
+            true
+        );
+    }
+
+    /**
+     * @param waContact $contact
+     * @param           $accountId
+     *
+     * @return bool
+     */
+    public function hasMinimumAccessToAccount(waContact $contact, $accountId): bool
+    {
+        if ($this->getContactAccess($contact)->isAdmin()) {
+            return true;
+        }
+
+        return in_array(
+            (int) $accountId,
+            $this->getContactAccess($contact)->getAccountIdsWithAccess(cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY),
+            true
+        );
+    }
+
 
     /**
      * @param waContact $contact

@@ -93,7 +93,7 @@ class cashTransactionFilterParamsDto
         int $start = null,
         int $limit = null,
         bool $returnIterator = true,
-        bool $reverse = true
+        bool $reverse = false
     ) {
         $this->accountId = $accountId;
         $this->categoryId = $categoryId;
