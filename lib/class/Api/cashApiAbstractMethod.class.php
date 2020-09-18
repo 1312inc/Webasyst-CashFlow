@@ -34,7 +34,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
      * @param bool   $required
      *
      * @return array|int|mixed|null
-     * @throws waAPIException
+     * @throws cashApiMissingParamException
      */
     public function get($name, $required = false)
     {
@@ -42,7 +42,11 @@ abstract class cashApiAbstractMethod extends waAPIMethod
             return $this->jsonParams[$name];
         }
 
-        return parent::get($name, $required);
+        try {
+            return parent::get($name, $required);
+        } catch (waAPIException $exception) {
+            throw new cashApiMissingParamException(sprintf('Missing required param: %s', $name));
+        }
     }
 
     /**
@@ -50,7 +54,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
      * @param bool   $required
      *
      * @return array|int|mixed|null
-     * @throws waAPIException
+     * @throws cashApiMissingParamException
      */
     public function post($name, $required = false)
     {
@@ -58,7 +62,11 @@ abstract class cashApiAbstractMethod extends waAPIMethod
             return $this->jsonParams[$name];
         }
 
-        return parent::post($name, $required);
+        try {
+            return parent::post($name, $required);
+        } catch (waAPIException $exception) {
+            throw new cashApiMissingParamException(sprintf('Missing required param: %s', $name));
+        }
     }
 
     public function execute()
@@ -84,7 +92,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
      * @param bool   $required
      *
      * @return array|int|mixed|null
-     * @throws waAPIException
+     * @throws cashApiMissingParamException
      */
     protected function param($name, $required = false)
     {
@@ -102,7 +110,11 @@ abstract class cashApiAbstractMethod extends waAPIMethod
             return $param;
         }
 
-        return parent::get($name, $required);
+        try {
+            return parent::get($name, $required);
+        } catch (waAPIException $exception) {
+            throw new cashApiMissingParamException(sprintf('Missing required param: %s', $name));
+        }
     }
 
     /**
