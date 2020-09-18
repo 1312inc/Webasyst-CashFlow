@@ -45,7 +45,7 @@ final class cashTransactionFilterService
         if ($dto->reverse) {
             $order = 'order by ct.date desc, ct.id desc';
         } else {
-            $order = 'order by ct.id';
+            $order = 'order by ct.date, ct.id';
         }
 
         $sqlParams = [
