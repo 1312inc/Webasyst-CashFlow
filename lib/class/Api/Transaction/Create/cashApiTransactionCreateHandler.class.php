@@ -120,7 +120,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
         $transactionModel = cash()->getModel(cashTransaction::class);
         $data = $transactionModel->getAllIteratorByIds($newTransactionIds);
         $response = [];
-        foreach (cashApiTransactionResponseDtoAssembler::generateResponseFromModelIterator($data) as $item) {
+        foreach (cashApiTransactionResponseDtoAssembler::fromModelIterator($data) as $item) {
             $response[] = $item;
         }
 

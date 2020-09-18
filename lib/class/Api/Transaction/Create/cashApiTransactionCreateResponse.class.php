@@ -6,7 +6,7 @@
 class cashApiTransactionCreateResponse extends cashApiAbstractResponse
 {
     /**
-     * cashApiTransactionGetListResponse constructor.
+     * cashApiTransactionCreateResponse constructor.
      *
      * @param array|cashApiTransactionResponseDto[] $transactions
      */

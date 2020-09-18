@@ -16,6 +16,10 @@ class cashTransactionGetListMethod extends cashApiAbstractMethod
     {
         /** @var cashApiTransactionGetListRequest $request */
         $request = $this->fillRequestWithParams(new cashApiTransactionGetListRequest());
+        $request->start = (int) $request->start;
+        if ($request->limit > 500) {
+            $request->limit = 500;
+        }
 
         $transactions = (new cashApiTransactionGetListHandler())->handle($request);
 

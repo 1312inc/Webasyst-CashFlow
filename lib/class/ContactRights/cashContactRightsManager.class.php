@@ -140,59 +140,13 @@ class cashContactRightsManager
      */
     public function hasFullAccessToAccount(waContact $contact, $accountId): bool
     {
-        return $this->hasAccessToAccount($contact, $accountId, cashRightConfig::ACCOUNT_FULL_ACCESS);
-    }
-
-    /**
-     * @param waContact $contact
-     * @param int       $accountId
-     *
-     * @return bool
-     */
-    public function canViewBalanceLine(waContact $contact, $accountId): bool
-    {
-        return $this->hasAccessToAccount(
-            $contact,
-            $accountId,
-            cashRightConfig::ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS
-        );
-    }
-
-    /**
-     * @param waContact $contact
-     * @param int       $accountId
-     * @param int       $access
-     *
-     * @return bool
-     */
-    private function hasAccessToAccount(waContact $contact, $accountId, $access): bool
-    {
         if ($this->getContactAccess($contact)->isAdmin()) {
             return true;
         }
 
         return in_array(
             (int) $accountId,
-            $this->getContactAccess($contact)->getAccountIdsWithAccess($access),
-            true
-        );
-    }
-
-    /**
-     * @param waContact $contact
-     * @param           $categoryId
-     *
-     * @return bool
-     */
-    public function hasMinimumAccessToCategory(waContact $contact, $categoryId): bool
-    {
-        if ($this->getContactAccess($contact)->isAdmin()) {
-            return true;
-        }
-
-        return in_array(
-            (int) $categoryId,
-            $this->getContactAccess($contact)->getCategoriesIdsWithAccess(cashRightConfig::RIGHT_CAN_ACCESS_CATEGORY),
+            $this->getContactAccess($contact)->getAccountIdsWithAccess(cashRightConfig::ACCOUNT_FULL_ACCESS),
             true
         );
     }
@@ -376,7 +330,7 @@ class cashContactRightsManager
         }
 
         if ($this->isAdmin($contact)) {
-            return $this->cacheValue($key, '( 1 /* categories access */)');
+            return $this->cacheValue($key, ' 1 /* categories access */');
         }
 
         $ids = $this->getCategoryIdsForContact($contact);

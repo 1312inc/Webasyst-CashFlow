@@ -193,128 +193,6 @@ SQL;
     /**
      * @param string    $startDate
      * @param string    $endDate
-     * @param waContact $contact
-     * @param int|null  $createContactId
-     * @param bool      $returnResult
-     * @param int|null  $start
-     * @param int|null  $limit
-     *
-     * @return waDbResultIterator|array
-     */
-    public function getByDateBoundsAndCreateContactId(
-        $startDate,
-        $endDate,
-        waContact $contact,
-        $createContactId = null,
-        $returnResult = false,
-        $start = null,
-        $limit = null
-    ) {
-        $whereContactSql = '';
-        if ($createContactId) {
-            $whereContactSql = ' and ct.create_contact_id = i:create_contact_id';
-        }
-
-        $limits = '';
-        if ($start !== null && $limit !== null) {
-            $limits = 'limit i:start, i:limit';
-        }
-
-        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $createContactId);
-        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
-
-        $sql = <<<SQL
-select ct.*
-from cash_transaction ct
-join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-left join cash_category cc on ct.category_id = cc.id
-where ct.date between s:startDate and s:endDate
-      and ct.is_archived = 0
-      {$whereContactSql}
-      and {$accountAccessSql}
-      and {$categoryAccessSql}
-order by ct.date desc, ct.id desc
-{$limits}
-SQL;
-
-        $query = $this->query(
-            $sql,
-            [
-                'startDate' => $startDate,
-                'endDate' => $endDate,
-                'create_contact_id' => $createContactId,
-                'start' => $start,
-                'limit' => $limit,
-            ]
-        );
-
-        return $returnResult ? $query->fetchAll() : $query->getIterator();
-    }
-
-    /**
-     * @param string    $startDate
-     * @param string    $endDate
-     * @param waContact $contact
-     * @param int|null  $contractorContactId
-     * @param bool      $returnResult
-     * @param int|null  $start
-     * @param int|null  $limit
-     *
-     * @return waDbResultIterator|array
-     */
-    public function getByDateBoundsAndContractorContactId(
-        $startDate,
-        $endDate,
-        waContact $contact,
-        $contractorContactId = null,
-        $returnResult = false,
-        $start = null,
-        $limit = null
-    ) {
-        $whereContactSql = '';
-        if ($contractorContactId) {
-            $whereContactSql = ' and ct.contractor_contact_id = i:contractor_contact_id';
-        }
-
-        $limits = '';
-        if ($start !== null && $limit !== null) {
-            $limits = 'limit i:start, i:limit';
-        }
-
-        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $contractorContactId);
-        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
-
-        $sql = <<<SQL
-select ct.*
-from cash_transaction ct
-join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-left join cash_category cc on ct.category_id = cc.id
-where ct.date between s:startDate and s:endDate
-      and ct.is_archived = 0
-      {$whereContactSql}
-      and {$accountAccessSql}
-      and {$categoryAccessSql}
-order by ct.date desc, ct.id desc
-{$limits}
-SQL;
-
-        $query = $this->query(
-            $sql,
-            [
-                'startDate' => $startDate,
-                'endDate' => $endDate,
-                'contractor_contact_id' => $contractorContactId,
-                'start' => $start,
-                'limit' => $limit,
-            ]
-        );
-
-        return $returnResult ? $query->fetchAll() : $query->getIterator();
-    }
-
-    /**
-     * @param string    $startDate
-     * @param string    $endDate
      * @param waContact $contractor
      * @param waContact $contact
      * @param bool      $returnResult
@@ -407,45 +285,6 @@ SQL;
                 'startDate' => $startDate,
                 'endDate' => $endDate,
                 'account_id' => $account,
-            ]
-        );
-
-        return (int) $query->fetchField();
-    }
-
-    /**
-     * @param string    $startDate
-     * @param string    $endDate
-     * @param waContact $contact
-     * @param int       $importId
-     *
-     * @return int
-     * @throws waException
-     */
-    public function countByDateBoundsAndImport($startDate, $endDate, waContact $contact, $importId): int
-    {
-        $whereImportSql = ' and ct.import_id = i:import_id';
-
-        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
-        $transactionAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
-
-        $sql = <<<SQL
-select count(ct.id)
-from cash_transaction ct
-join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-where ct.date between s:startDate and s:endDate
-      and ct.is_archived = 0
-      {$whereImportSql}
-      and {$transactionAccessSql}
-      and {$categoryAccessSql}
-SQL;
-
-        $query = $this->query(
-            $sql,
-            [
-                'startDate' => $startDate,
-                'endDate' => $endDate,
-                'import_id' => $importId,
             ]
         );
 
@@ -953,8 +792,8 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     %s
-    -- and %s
-    -- and %s
+    and %s
+    and %s
     and ct.is_archived = 0
 group by ct.date, ca.id
 order by ct.date
@@ -1218,8 +1057,8 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     %s
-    -- and %s
-    -- and %s
+    and %s
+    and %s
     and ct.is_archived = 0
 group by YEAR(ct.date), MONTH(ct.date), ca.id
 order by YEAR(ct.date), MONTH(ct.date)
@@ -1308,7 +1147,7 @@ SQL;
     {
         return (int) $this
             ->select('count(*)')
-            ->where('category_id = ? and is_archived = 0', [ cashCategoryFactory::NO_CATEGORY_EXPENSE_ID ])
+            ->where('category_id is null and amount < 0 and is_archived = 0')
             ->fetchField();
     }
 
@@ -1392,7 +1231,7 @@ SQL;
     {
         return (int) $this
             ->select('count(*)')
-            ->where('category_id = ? and is_archived = 0', [cashCategoryFactory::NO_CATEGORY_INCOME_ID])
+            ->where('category_id is null and amount > 0 and is_archived = 0')
             ->fetchField();
     }
 
