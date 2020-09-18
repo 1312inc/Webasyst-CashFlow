@@ -145,8 +145,47 @@ class cashContactRightsManager
         }
 
         return in_array(
-            (int)$accountId,
+            (int) $accountId,
             $this->getContactAccess($contact)->getAccountIdsWithAccess(cashRightConfig::ACCOUNT_FULL_ACCESS),
+            true
+        );
+    }
+
+    /**
+     * @param waContact $contact
+     * @param           $accountId
+     *
+     * @return bool
+     */
+    public function hasMinimumAccessToAccount(waContact $contact, $accountId): bool
+    {
+        if ($this->getContactAccess($contact)->isAdmin()) {
+            return true;
+        }
+
+        return in_array(
+            (int) $accountId,
+            $this->getContactAccess($contact)->getAccountIdsWithAccess(cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY),
+            true
+        );
+    }
+
+
+    /**
+     * @param waContact $contact
+     * @param           $categoryId
+     *
+     * @return bool
+     */
+    public function hasMinimumAccessToCategory(waContact $contact, $categoryId): bool
+    {
+        if ($this->getContactAccess($contact)->isAdmin()) {
+            return true;
+        }
+
+        return in_array(
+            (int) $categoryId,
+            $this->getContactAccess($contact)->getCategoriesIdsWithAccess(cashRightConfig::RIGHT_CAN_ACCESS_CATEGORY),
             true
         );
     }
@@ -164,7 +203,7 @@ class cashContactRightsManager
         }
 
         return in_array(
-            (int)$accountId,
+            (int) $accountId,
             $this->getContactAccess($contact)->getAccountIdsWithAccess(
                 cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
             ),
@@ -185,7 +224,7 @@ class cashContactRightsManager
         }
 
         if (!in_array(
-            (int)$transaction->getCategoryId(),
+            (int) $transaction->getCategoryId(),
             $this->getContactAccess($contact)->getCategoriesIdsWithAccess(cashRightConfig::CATEGORY_FULL_ACCESS),
             true
         )) {
@@ -194,7 +233,7 @@ class cashContactRightsManager
 
         if ($transaction->getCreateContactId() != $contact->getId()) {
             return in_array(
-                (int)$transaction->getAccountId(),
+                (int) $transaction->getAccountId(),
                 $this->getContactAccess($contact)->getAccountIdsWithAccess(
                     cashRightConfig::ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS
                 ),
@@ -203,7 +242,7 @@ class cashContactRightsManager
         }
 
         return in_array(
-            (int)$transaction->getAccountId(),
+            (int) $transaction->getAccountId(),
             $this->getContactAccess($contact)->getAccountIdsWithAccess(
                 cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
             ),
@@ -224,7 +263,7 @@ class cashContactRightsManager
         }
 
         if ($transaction->getCategoryId() && !in_array(
-                (int)$transaction->getCategoryId(),
+                (int) $transaction->getCategoryId(),
                 $this->getContactAccess($contact)->getCategoriesIdsWithAccess(cashRightConfig::CATEGORY_FULL_ACCESS),
                 true
             )) {
@@ -232,7 +271,7 @@ class cashContactRightsManager
         }
 
         if ($transaction->getAccountId() && !in_array(
-                (int)$transaction->getAccountId(),
+                (int) $transaction->getAccountId(),
                 $this->getContactAccess($contact)->getAccountIdsWithAccess(
                     cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
                 ),
@@ -257,7 +296,7 @@ class cashContactRightsManager
         }
 
         return in_array(
-            (int)$categoryId,
+            (int) $categoryId,
             $this->getContactAccess($contact)->getCategoriesIdsWithAccess(cashRightConfig::CATEGORY_FULL_ACCESS),
             true
         );

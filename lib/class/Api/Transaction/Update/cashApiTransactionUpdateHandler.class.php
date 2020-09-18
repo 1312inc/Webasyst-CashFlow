@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Class cashApiTransactionCreateHandler
+ * Class cashApiTransactionUpdateHandler
  */
-class cashApiTransactionCreateHandler implements cashApiHandlerInterface
+class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
 {
     /**
-     * @param cashApiTransactionCreateRequest $request
+     * @param cashApiTransactionUpdateRequest $request
      *
      * @return array|cashApiTransactionResponseDto[]
      * @throws ReflectionException
@@ -23,13 +23,20 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
         $repeatingDto->end_type = $request->repeating_end_type;
         $repeatingDto->interval = $request->repeating_interval;
         $repeatingDto->frequency = $request->repeating_frequency;
+        $repeatingDto->apply_to_all_in_future = $request->apply_to_all_in_future;
         $repeatingDto->end = [
             'after' => $request->repeating_end_after,
             'ondate' => $request->repeating_end_ondate,
         ];
 
-        $factory = cash()->getEntityFactory(cashTransaction::class);
-        $transaction = $factory->createNew();
+        $transaction = cash()->getEntityRepository(cashTransaction::class)->findById($request->id);
+        if (!$transaction) {
+            throw new kmwaNotFoundException(_w('No transaction'));
+        }
+
+        if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
+            throw new kmwaForbiddenException(_w('You can not edit transaction'));
+        }
 
         $paramsDto = new cashTransactionSaveParamsDto();
         if ($request->transfer_account_id) {
@@ -68,47 +75,42 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
         }
 
         if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-            throw new kmwaForbiddenException(_w('You can not edit or add new transaction'));
-        }
-
-        if ($paramsDto->transfer) {
-            $transferTransaction = $saver->createTransfer($transaction, $paramsDto);
+            throw new kmwaForbiddenException(_w('You can not edit transaction'));
         }
 
         $newTransactionIds = [];
 
-        if ($request->is_repeating) {
-            $repeatTransactionSaver = new cashRepeatingTransactionSaver();
-            $transactionRepeater = new cashTransactionRepeater();
+        if ($request->is_repeating || $repeatingDto->apply_to_all_in_future) {
+            /** @var cashRepeatingTransaction $repeatingTransaction */
+            $repeatingTransaction = $transaction->getRepeatingTransaction();
+            kmwaAssert::instance($repeatingTransaction, cashRepeatingTransaction::class);
 
-            $repeatingSaveResult = $repeatTransactionSaver->saveFromTransaction(
-                $transaction,
-                $repeatingDto
+            $repeatingTransaction
+                ->setAccountId($transaction->getAccountId())
+                ->setCategoryId($transaction->getCategoryId())
+                ->setDescription($transaction->getDescription())
+                ->setAmount($transaction->getAmount())
+                ->setContractorContactId($transaction->getContractorContactId());
+            $saver->addToPersist($repeatingTransaction);
+
+            $transactions = cash()->getEntityRepository(cashTransaction::class)->findAllByRepeatingIdAndAfterDate(
+                $repeatingTransaction->getId(),
+                $transaction->getDate()
             );
+            foreach ($transactions as $t) {
+                $t->setAccountId($transaction->getAccountId())
+                    ->setCategoryId($transaction->getCategoryId())
+                    ->setDescription($transaction->getDescription())
+                    ->setAmount($transaction->getAmount())
+                    ->setContractorContactId($transaction->getContractorContactId());
 
-            if ($repeatingSaveResult->ok) {
-                $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
-                if ($newTransactions) {
-                    foreach ($newTransactions as $newTransaction) {
-                        $newTransactionIds[] = $newTransaction->getId();
-                    }
-                }
+                $saver->addToPersist($t);
             }
 
-            if (isset($transferTransaction)) {
-                $repeatingSaveResult = $repeatTransactionSaver->saveFromTransaction(
-                    $transferTransaction,
-                    $repeatingDto
-                );
-
-                $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
-                if ($newTransactions) {
-                    foreach ($newTransactions as $newTransaction) {
-                        $newTransactionIds[] = $newTransaction->getId();
-                    }
-                }
+            $saved = $saver->persistTransactions();
+            foreach ($saved as $item) {
+                $newTransactionIds[$item->getId()] = true;
             }
-
         } else {
             $saver->addToPersist($transaction);
             $saved = $saver->persistTransactions();
