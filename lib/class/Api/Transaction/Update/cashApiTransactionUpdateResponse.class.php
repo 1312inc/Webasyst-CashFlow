@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Class cashApiTransactionCreateResponse
+ * Class cashApiTransactionUpdateResponse
  */
-class cashApiTransactionCreateResponse extends cashApiAbstractResponse
+class cashApiTransactionUpdateResponse extends cashApiAbstractResponse
 {
     /**
-     * cashApiTransactionCreateResponse constructor.
+     * cashApiTransactionUpdateResponse constructor.
      *
      * @param array|cashApiTransactionResponseDto[] $transactions
      */
