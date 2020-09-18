@@ -38,9 +38,12 @@ class cashBackendLocAction extends cashViewAction
             _w('Import %d paid orders'),
             _w('Expense'),
             _w('Income'),
-            _w('Skip rows with this value'),
             _w('transactions'),
         ];
+
+        foreach ($translates as $s) {
+            $strings[$s] = _w($s);
+        }
 
         $this->view->assign(
             'strings',
