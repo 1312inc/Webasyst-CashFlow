@@ -42,7 +42,7 @@ class cashAccountModel extends cashModel
 
         $accountTransactionRights = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $accounts);
         $accountRights = cash()->getContactRights()->getSqlForAccountJoinWithFullAccess($contact);
-        $categoryRights = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+//        $categoryRights = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL
 select ca.id,
@@ -63,7 +63,6 @@ from cash_account ca
           and ca.is_archived = 0
           {$accountFilterSql}
           and {$accountTransactionRights}
-          and {$categoryRights}
     group by ca.id
 ) t on ca.id = t.id 
 where {$accountRights}
