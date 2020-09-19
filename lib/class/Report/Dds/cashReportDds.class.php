@@ -23,7 +23,9 @@ class cashReportDds
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
         foreach ($model->getYearsWithTransactions() as $yearsWithTransaction) {
-            $periods[] = cashReportDdsPeriod::createForYear($yearsWithTransaction);
+            if ($yearsWithTransaction > 1900) {
+                $periods[] = cashReportDdsPeriod::createForYear($yearsWithTransaction);
+            }
         }
 
         return $periods;
