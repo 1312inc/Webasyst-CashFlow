@@ -62,6 +62,26 @@ class cashTransactionPageAction extends cashViewAction
         $this->graphService = new cashGraphService();
         $this->filterDto = new cashTransactionPageFilterDto($filterType, $id);
 
+        switch ($this->filterDto->type) {
+            case cashTransactionPageFilterDto::FILTER_ACCOUNT:
+                if (!cash()->getContactRights()->hasMinimumAccessToAccount($this->filterDto->contact, $this->filterDto->id)) {
+                    throw new kmwaForbiddenException(_w('You are not allowed to access this account'));
+                }
+                break;
+
+            case cashTransactionPageFilterDto::FILTER_CATEGORY:
+                if (!cash()->getContactRights()->hasMinimumAccessToCategory($this->filterDto->contact, $this->filterDto->id)) {
+                    throw new kmwaForbiddenException(_w('You are not allowed to access this category'));
+                }
+                break;
+
+            case cashTransactionPageFilterDto::FILTER_IMPORT:
+                if (!cash()->getContactRights()->canImport($this->filterDto->contact)) {
+                    throw new kmwaForbiddenException(_w('You are not allowed to access this import'));
+                }
+                break;
+        }
+
         $startDate = waRequest::get('start_date', [], waRequest::TYPE_STRING_TRIM);
         $endDate = waRequest::get('end_date', [], waRequest::TYPE_STRING_TRIM);
         if (!$startDate) {
