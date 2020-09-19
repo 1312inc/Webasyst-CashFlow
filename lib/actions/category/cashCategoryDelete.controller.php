@@ -16,7 +16,7 @@ class cashCategoryDeleteController extends cashJsonController
         kmwaAssert::instance($category, cashCategory::class);
 
         if (!cash()->getContactRights()->hasFullAccessToCategory(wa()->getUser(), $category)) {
-            throw new kmwaForbiddenException(_w('You are not allowed to access this account'));
+            throw new kmwaForbiddenException(_w('You are not allowed to access this category'));
         }
 
         $remover = new cashCategoryRemover(cash()->getEntityFactory(cashCategory::class));
