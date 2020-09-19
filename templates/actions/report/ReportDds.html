@@ -29,10 +29,8 @@
                 </ul>
             </li>
             {foreach $ddsTypes as $ddsType}
-            <li>
-                <a href="#/report/dds/{$ddsType->id}/{$currentPeriod->getValue()}"
-                   {if $type->id == $ddsType->id}class="selected"{/if}
-                >
+            <li {if $type->id == $ddsType->id}class="selected"{/if}>
+                <a href="#/report/dds/{$ddsType->id}/{$currentPeriod->getValue()}">
                     {$ddsType->name|escape}
                 </a>
             </li>
