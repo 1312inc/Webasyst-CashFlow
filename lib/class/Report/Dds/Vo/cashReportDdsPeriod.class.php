@@ -69,7 +69,7 @@ final class cashReportDdsPeriod
                     $from = clone $this->start;
                     while ($from < $this->end) {
                         $this->grouping[$from->format('n')] = new cashReportDdsPeriodGroupingDto(
-                            _w($from->format('F Y')),
+                            _w($from->format('M')),
                             $from->format('Y-m-d'),
                             $from->format('n')
                         );
@@ -137,5 +137,17 @@ final class cashReportDdsPeriod
         $end->modify('next year');
 
         return new self($year, $start->format('Y'), $start, $end, self::GROUPING_MONTH);
+    }
+
+    /**
+     * @param cashReportDdsPeriod $period
+     *
+     * @return bool
+     */
+    public function isEqual(cashReportDdsPeriod $period): bool
+    {
+        return $this->value === $period->getValue()
+            && $this->start == $period->getStart()
+            && $this->end == $period->getEnd();
     }
 }

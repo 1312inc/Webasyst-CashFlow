@@ -17,7 +17,7 @@ class cashCategoryDialogAction extends cashViewAction
         $id = waRequest::get('category_id', 0, waRequest::TYPE_INT);
         if (empty($id)) {
             if (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
-                throw new kmwaForbiddenException(_w('You can not create any category at all'));
+                throw new kmwaForbiddenException(_w('You are not allowed to create new categories'));
             }
 
             $category = cash()->getEntityFactory(cashCategory::class)->createNew();
@@ -26,7 +26,7 @@ class cashCategoryDialogAction extends cashViewAction
             kmwaAssert::instance($category, cashCategory::class);
 
             if (!cash()->getContactRights()->hasFullAccessToCategory(wa()->getUser(), $category)) {
-                throw new kmwaForbiddenException(_w('You have no access to this category'));
+                throw new kmwaForbiddenException(_w('You are not allowed to access this category'));
             }
         }
 

@@ -193,7 +193,7 @@ SQL;
     /**
      * @param string    $startDate
      * @param string    $endDate
-     * @param waContact $forContact
+     * @param waContact $contractor
      * @param waContact $contact
      * @param bool      $returnResult
      * @param int|null  $start
@@ -202,10 +202,10 @@ SQL;
      * @return waDbResultIterator|array
      * @throws waException
      */
-    public function getContactTransactionsByDateBounds(
+    public function getContractorTransactionsByDateBounds(
         $startDate,
         $endDate,
-        waContact $forContact,
+        waContact $contractor,
         waContact $contact,
         $returnResult = false,
         $start = null,
@@ -228,7 +228,7 @@ join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 left join cash_category cc on ct.category_id = cc.id
 where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
-      and ct.create_contact_id = i:create_contact_id
+      and ct.contractor_contact_id = i:contractor_contact_id
       {$whereAccountSql}
       and {$accountAccessSql}
       and {$categoryAccessSql}
@@ -239,7 +239,7 @@ SQL;
         $query = $this->query(
             $sql,
             [
-                'create_contact_id' => $forContact->getId(),
+                'contractor_contact_id' => $contractor->getId(),
                 'startDate' => $startDate,
                 'endDate' => $endDate,
                 'start' => $start,
@@ -311,11 +311,7 @@ SQL;
         $start = null,
         $limit = null
     ) {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         switch (true) {
@@ -442,11 +438,7 @@ SQL;
             $limits = 'limit i:start, i:limit';
         }
 
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $contact,
-            'ct',
-            'account_id'
-        );
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL

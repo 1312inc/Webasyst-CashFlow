@@ -6,10 +6,12 @@
 
 <section id="cash-transaction-list">
 
+<div class="block double-padded">
+
 {if empty($contactTransactions)}
 
-<h3>[`No linked cash flow transactions`]</h3>
-<p>[`To link transactions to a contact, simply select an appropriate contact when adding/editing a transaction in the Cash app.`]</p>
+<h3>[`No linked transactions yet`]</h3>
+<p>[`To link a transaction to a contact in the Cash app, simply find and select an appropriate contact when adding/editing a transaction.`]</p>
 
 {/if}
 
@@ -19,7 +21,7 @@
     <tr class="white c-table-divider">
         <td colspan="8">
             <h5 class="heading nowrap">
-                {if $selectedChartPeriod}{$selectedChartPeriod->getName()}{else}[`Contact transactions`]{/if},
+                {if $selectedChartPeriod}{$selectedChartPeriod->getName()}{else}[`Transactions related to this contractor`]{/if},
                 {sprintf('[`%d transactions`]', $pagination->getTotalRows())}
             </h5>
         </td>
@@ -69,5 +71,6 @@
 
 </table>
 
+</div>
 
 </section>

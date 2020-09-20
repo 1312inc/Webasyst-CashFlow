@@ -82,7 +82,7 @@
 {if empty($upcoming) && empty($completed)}
 
 <div class="c-empty-chart-placeholder">
-    [`No activity in the selected period. Create a transaction to get started!`]
+    [`Transaction list is empty`]
 </div>
 
 {/if}
@@ -189,7 +189,7 @@
         <td colspan="2" class="align-right">
             <ul class="menu-h dropdown float-right">
                 <li>
-                    <a href="#" class="inline-link gray"><b><i>[`Export transactions`]</i></b><i class="icon10 darr"></i></a>
+                    <a href="#" class="inline-link gray"><b><i>[`Export`]</i></b><i class="icon10 darr"></i></a>
                     <ul class="menu-v">
                         <!-- plugin hook: 'backend_transactions_export' -->
                         {* @event backend_transactions_export.%plugin_id% *}

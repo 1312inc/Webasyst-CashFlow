@@ -149,7 +149,7 @@ SQL;
      * @return array
      * @throws waException
      */
-    public function getStatDetailedCategoryDataForContact(
+    public function getStatDetailedCategoryDataForContractor(
         $startDate,
         $endDate,
         waContact $forContact,
@@ -177,7 +177,7 @@ from cash_transaction ct
 where ct.date between s:startDate and s:endDate
       and ca.is_archived = 0
       and ct.is_archived = 0
-      and ct.create_contact_id = i:create_contact_id
+      and ct.contractor_contact_id = i:contractor_contact_id
       and {$accountAccessSql}
       and {$categoryAccessSql}
 group by ct.category_id, ca.currency
@@ -186,7 +186,7 @@ SQL;
         return $this
             ->query(
                 $sql,
-                ['startDate' => $startDate, 'endDate' => $endDate, 'create_contact_id' => $forContact->getId()]
+                ['startDate' => $startDate, 'endDate' => $endDate, 'contractor_contact_id' => $forContact->getId()]
             )
             ->fetchAll();
     }
