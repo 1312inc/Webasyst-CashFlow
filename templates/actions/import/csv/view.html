@@ -1,14 +1,17 @@
 {** @var cashTransactionPageFilterDto $filter **}
 <div class="content left200px" id="cash-imports-page">
-    <h1{if $filter->id} class="float-left"{/if}>
+
+    <div class="block half-padded float-right" style="position: relative; left: 1rem;">
+        <ul class="menu-h">
+            {if $filter->entity->getErrors()}<li><a href="?module=import&action=csvDownloadErrors&id={$filter->identifier}" target="_blank"><i class="icon16 download"></i>[`Download error log`]</a></li>{/if}
+            <li><a href="#" data-csv-import-action="delete" class="gray"><i class="icon16 broom-bw"></i>[`Remove from history`]</a></li>
+        </ul>
+        <div class="clear-right"></div>
+    </div>
+    
+    <h1>
         {$filter->name|escape}
     </h1>
-    <div class="block half-padded" style="position: relative; left: 1rem;">
-        <a href="?module=import&action=csvDownloadErrors&id={$filter->identifier}" target="_blank">эррорс</a>
-    </div>
-    <div class="block half-padded" style="position: relative; left: 1rem;">
-        <a href="#" data-csv-import-action="delete">delete</a>
-    </div>
 
     <div class="c-transactions" data-cash-wrapper="transaction-list">
     </div>

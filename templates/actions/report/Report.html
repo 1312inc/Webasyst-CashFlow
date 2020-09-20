@@ -2,22 +2,24 @@
 
 <div class="content left200px">
 
-    <div class="block" id="c-reports-menu">
-        <ul class="menu-h with-icons">
-        {foreach $reportsMenu as $reportsMenus}
-            {foreach $reportsMenus as $reportMenu}
-            <li>
-                <a href="#/report/{$reportMenu->getIdentifier()}" class="bold">
-                    <i class="icon16 {$reportMenu->getIcon()|escape}"></i>{$reportMenu->getName()|escape}
-                </a>
-            </li>
+    <div class="block">
+
+        <div id="c-reports-menu">
+            <ul class="menu-h with-icons">
+            {foreach $reportsMenu as $reportsMenus}
+                {foreach $reportsMenus as $reportMenu}
+                <li>
+                    <a href="#/report/{$reportMenu->getIdentifier()}" class="bold">
+                        <i class="icon16 {$reportMenu->getIcon()|escape}"></i>{$reportMenu->getName()|escape}
+                    </a>
+                </li>
+                {/foreach}
             {/foreach}
-        {/foreach}
-        </ul>
+            </ul>
+        </div>
+
+        <section id="c-report"></section>
+        
     </div>
-
-    <section id="c-report">
-
-    </section>
 
 </div>

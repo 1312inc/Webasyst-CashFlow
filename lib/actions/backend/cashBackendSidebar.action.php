@@ -43,7 +43,7 @@ class cashBackendSidebarAction extends cashViewAction
 
         $importDtos = [];
         if (cash()->getUser()->canImport()) {
-            $imports = cash()->getEntityRepository(cashImport::class)->findLastN(3);
+            $imports = cash()->getEntityRepository(cashImport::class)->findLastN(10);
             $importDtos = cashDtoFromEntityFactory::fromEntities(cashImportDto::class, $imports);
         }
 

@@ -336,10 +336,6 @@
 
                 $button.prop('disabled', true).hide();
 
-                $('#cash-import-page').trigger('stepChange.cash', 3);
-                $form.slideUp(131.2);
-                $('html, body').animate({ scrollTop: 0 }, 131.2);
-
                 var long = $.wa.kmLongAction();
                 long.start({
                     process_url: $form.attr('action'),
@@ -353,12 +349,17 @@
                         },
                         onSuccess: function (r) {
                             $progress.show().find('.progressbar-inner').css('width', '0%');
+                            $('#cash-import-page').trigger('stepChange.cash', 3);
+                            $form.slideUp(131.2);
+                            $('html, body').animate({ scrollTop: 0 }, 131.2);
+
                             // $transactionStat.show();
                         },
                         onError: function (r) {
                             $progressError.show().siblings().hide();
                             $progressError.find('span').text(r.error);
                             $button.prop('disabled', false).show();
+                            $form.slideDown(131.2);
                             // $transactionStat.hide();
                         }
                     },
@@ -439,10 +440,10 @@
                     newCatName = '',
                     type = '';
 
-                if (val == -1) {
+                if (val == {cashCategoryFactory::NO_CATEGORY_INCOME_ID}) {
                     newCatName = prompt($_('New income category: '));
                     type = '{cashCategory::TYPE_INCOME}';
-                } else if (val == -2) {
+                } else if (val == {cashCategoryFactory::NO_CATEGORY_EXPENSE_ID}) {
                     newCatName = prompt($_('New expense category: '));
                     type = '{cashCategory::TYPE_EXPENSE}';
                 }

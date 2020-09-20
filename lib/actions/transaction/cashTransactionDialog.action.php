@@ -30,7 +30,7 @@ class cashTransactionDialogAction extends cashViewAction
             $categoryType = $transaction->getCategoryType();
 
             if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-                throw new kmwaForbiddenException(_w('You can not edit transaction'));
+                throw new kmwaForbiddenException(_w('You are not allowed to edit this transaction'));
             }
         } else {
             $transaction = cash()->getEntityFactory(cashTransaction::class)->createNew();
@@ -41,7 +41,7 @@ class cashTransactionDialogAction extends cashViewAction
             }
 
             if (!cash()->getContactRights()->canAddTransaction(wa()->getUser(), $transaction)) {
-                throw new kmwaForbiddenException(_w('You can not add new transaction'));
+                throw new kmwaForbiddenException(_w('You are not allowed to create new transactions'));
             }
         }
 

@@ -193,7 +193,7 @@ msgstr ""
 msgid "Unselect all"
 msgstr ""
 
-msgid "No activity in the selected period. Create a transaction to get started!"
+msgid "Transaction list is empty"
 msgstr ""
 
 msgid "Summary"
@@ -652,13 +652,13 @@ msgstr ""
 msgid "No access"
 msgstr ""
 
-msgid "Add & edit self-created transactions only"
+msgid "Contributor: can view & manage self-created transactions only"
 msgstr ""
 
-msgid "Add, edit & view transactions created by others"
+msgid "Accountant: can view & manage transactions created by others"
 msgstr ""
 
-msgid "Full access: see the account balance & manage settings"
+msgid "Full access: can see the account balance & manage all transactions"
 msgstr ""
 
 msgid "Error while deleting transaction"
@@ -767,6 +767,7 @@ msgid "day"
 msgid_plural "days"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
 
 msgid "week"
 msgstr ""
@@ -775,11 +776,13 @@ msgid "month"
 msgid_plural "months"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
 
 msgid "year"
 msgid_plural "years"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
 
 msgid "Every day"
 msgstr ""
@@ -988,8 +991,7 @@ msgstr ""
 msgid "<strong class=\"highlighted\">%s</strong> (see above) — this is how much cash you <i>would</i> have on hand right now if there were only sales (income), but no business expenses such as salaries, office rent, marketing, purchase & supplies, and so on."
 msgstr ""
 
-msgid ""
-"<strong>Add (or import from a CSV file) your historical expenses now</strong> to get to know your real cash on hand forecast. It’s easy — try clicking on %s button below.<br>\n"
+msgid "<strong>Add (or import from a CSV file) your historical expenses now</strong> to get to know your real cash on hand forecast. It’s easy — try clicking on %s button below.<br>\n"
 "                Only both income &amp; expense transactions together will show you the real picture of how your business finances work."
 msgstr ""
 
@@ -1045,4 +1047,70 @@ msgid "Shipping costs for order %s"
 msgstr ""
 
 msgid "Taxes for order %s"
+msgstr ""
+
+msgid "No linked transactions yet"
+msgstr ""
+
+msgid "To link a transaction to a contact in the Cash app, simply find and select an appropriate contact when adding/editing a transaction."
+msgstr ""
+
+msgid "Contact transactions"
+msgstr ""
+
+msgid "Reports"
+msgstr ""
+
+msgid "Cash flow report"
+msgstr ""
+
+msgid "Can see reports"
+msgstr ""
+
+msgid "Can import transactions"
+msgstr ""
+
+msgid "Cash"
+msgstr ""
+
+msgid "Contractors"
+msgstr ""
+
+msgid "All expenses"
+msgstr ""
+
+msgid "All income"
+msgstr ""
+
+msgid "Download error log"
+msgstr ""
+
+msgid "Remove from history"
+msgstr ""
+
+msgid "You are not allowed to edit or create new transactions"
+msgstr ""
+
+msgid "You are not allowed to edit this transaction"
+msgstr ""
+
+msgid "You are not allowed to create new transactions"
+msgstr ""
+
+msgid "You are not allowed to access this category"
+msgstr ""
+
+msgid "You are not allowed to create new categories"
+msgstr ""
+
+msgid "You are not allowed to do anything with system categories"
+msgstr ""
+
+msgid "An error occurred while saving the category"
+msgstr ""
+
+msgid "You are not allowed to access this account"
+msgstr ""
+
+msgid "You are not allowed to create new accounts"
 msgstr ""

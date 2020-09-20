@@ -193,8 +193,8 @@ msgstr "Удалить"
 msgid "Unselect all"
 msgstr "Снять выделение"
 
-msgid "No activity in the selected period. Create a transaction to get started!"
-msgstr "В указанный период операций не производилось. Добавьте операцию для начала работы!"
+msgid "Transaction list is empty"
+msgstr "Список операций пуст"
 
 msgid "Summary"
 msgstr "Краткое описание"
@@ -652,14 +652,14 @@ msgstr "Счета"
 msgid "No access"
 msgstr "Нет доступа"
 
-msgid "Add & edit self-created transactions only"
-msgstr "Только свои операции (добавление, редактирование)"
+msgid "Contributor: can view & manage self-created transactions only"
+msgstr "Помощник: просмотр и редактирование только своих операций"
 
-msgid "Add, edit & view transactions created by others"
-msgstr "Свои и чужие операции (просмотр, добавление, редактирование)"
+msgid "Accountant: can view & manage transactions created by others"
+msgstr "Бухгалтер: просмотр и редактирование своих и чужих операций"
 
-msgid "Full access: see the account balance & manage settings"
-msgstr "Полный доступ: остаток на счете, управление настройками счета"
+msgid "Full access: can see the account balance & manage all transactions"
+msgstr "Полный доступ: остаток на счете, управление всеми операциями"
 
 msgid "Error while deleting transaction"
 msgstr "Ошибка удаления операции"
@@ -929,7 +929,7 @@ msgid "New expense category:"
 msgstr "Новая статья расходов:"
 
 msgid "Enter format"
-msgstr ""
+msgstr "Ввести формат"
 
 msgid "transactions"
 msgstr "операций"
@@ -1052,3 +1052,69 @@ msgstr "Расходы на доставку по заказу %s"
 
 msgid "Taxes for order %s"
 msgstr "Налоги по заказу %s"
+
+msgid "No linked transactions yet"
+msgstr "Нет связанных операций"
+
+msgid "To link a transaction to a contact in the Cash app, simply find and select an appropriate contact when adding/editing a transaction."
+msgstr "Чтобы связать операцию с контактом в приложении «Деньги», просто найдите и выберите контакт при создании или редактировании операции."
+
+msgid "Contact transactions"
+msgstr ""
+
+msgid "Reports"
+msgstr "Отчеты"
+
+msgid "Cash flow report"
+msgstr "Отчет о движении средств"
+
+msgid "Can see reports"
+msgstr "Может просматривать отчеты"
+
+msgid "Can import transactions"
+msgstr "Может импортировать операции"
+
+msgid "Cash"
+msgstr "Деньги"
+
+msgid "Contractors"
+msgstr "Контрагенты"
+
+msgid "All expenses"
+msgstr "Все расходы"
+
+msgid "All income"
+msgstr "Все доходы"
+
+msgid "Download error log"
+msgstr "Скачать журнал ошибок"
+
+msgid "Remove from history"
+msgstr "Удалить из истории"
+
+msgid "You are not allowed to edit or create new transactions"
+msgstr "У вас нет доступа к редактированию и созданию новых операций"
+
+msgid "You are not allowed to edit this transaction"
+msgstr "У вас нет доступа к редактированию этой операции"
+
+msgid "You are not allowed to create new transactions"
+msgstr "У вас нет доступа к созданию новых операций"
+
+msgid "You are not allowed to access this category"
+msgstr "У вас нет доступа к этой статье операций"
+
+msgid "You are not allowed to create new categories"
+msgstr "У вас нет доступа к созданию новых статей операций"
+
+msgid "You are not allowed to do anything with system categories"
+msgstr "У вас нет доступа к управлению системными статьями операций"
+
+msgid "An error occurred while saving the category"
+msgstr "При сохранении статьи операций произошла какая-то ошибка"
+
+msgid "You are not allowed to access this account"
+msgstr "У вас нет доступа к этому счету"
+
+msgid "You are not allowed to create new accounts"
+msgstr "У вас нет доступа к созданию новых счетов"

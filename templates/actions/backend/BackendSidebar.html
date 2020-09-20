@@ -115,29 +115,20 @@
         <hr>
         <ul class="menu-v with-icons">
             <!-- plugin hook -->
-            {if $contextUser->isAdmin()}
-            <li>
-                <a href="#/cashflow/"><i class="icon16 c-table"></i>[`Cash flow`]</a>
+
+            {if $contextUser->canSeeReport()}
+            <li class="bottom-padded">
+                <a href="#/report/"><i class="icon16 c-table"></i>[`Reports`]</a>
             </li>
-            <!-- <li>
-                <a href="#"><i class="icon16 calendar"></i>[`Calendar`]</a>
-            </li> -->
-            <!-- <li>
-                <a href="#"><i class="icon16 contact"></i>[`Customers`]</a>
-            </li> -->
             {/if}
+
             {if $contextUser->canImport()}
             <li>
                 <a href="#/import/"><i class="icon16 upload"></i>[`Import`]</a>
             </li>
             {/if}
-            {if $contextUser->canSeeReport()}
-            <li>
-                <a href="#/report/"><i class="icon16 reports"></i>[`Reports`]</a>
-            </li>
-            {/if}
             {if $contextUser->isAdmin() && $wa->shop}
-            <li class="top-padded">
+            <li>
                 <!-- <a href="#/settings/"><i class="icon16 settings"></i>[`Settings`]</a> -->
                 <a href="#/shopscript/"><i class="icon16" style="background-image: url('/wa-apps/shop/img/shop.png'); background-size: 16px 16px;"></i>Shop-Script</a>
             </li>

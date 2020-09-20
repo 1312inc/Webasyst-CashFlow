@@ -30,7 +30,7 @@ var CashTransactionDialog = (function ($) {
                         }
 
                         var id = $dialogWrapper.find('form input[name="transaction[id]"]').val(),
-                            all = $dialogWrapper.find('form [name="repeating[apply_to_all_in_future]"]').val();
+                            all = $dialogWrapper.find('form [name="repeating[apply_to_all_in_future]"]:checked').val();
                         $.post(
                             '?module=transaction&action=delete',
                             {id: id, all: all},
@@ -158,6 +158,7 @@ var CashTransactionDialog = (function ($) {
                         select: selectItem,
                         focus: selectItem
                     });
+
                     $contractorAutocomplete.on('keyup.cash, change.cash', function (e) {
                         var val = $(this).val().trim();
 
@@ -170,10 +171,13 @@ var CashTransactionDialog = (function ($) {
                         }
 
                         if (!val) {
+                            selectedContact = '';
                             newContact = false;
+                            $contractor.val(0);
                             $hint.text(searchContactHint);
                         }
                     });
+
                     $contractorAutocomplete.data('ui-autocomplete')._renderItem = function (ul, item) {
                         return $('<li class="c-autocomplete-item">')
                             .append(item.label)

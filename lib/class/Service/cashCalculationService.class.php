@@ -171,25 +171,25 @@ final class cashCalculationService
     /**
      * @param DateTime  $startDate
      * @param DateTime  $endDate
-     * @param waContact $forContact
+     * @param waContact $contractor
      * @param waContact $contact
      *
      * @return array
      * @throws waException
      */
-    public function getOnHandDetailedCategoriesForContact(
+    public function getOnHandDetailedCategoriesForContractor(
         DateTime $startDate,
         DateTime $endDate,
-        waContact $forContact,
+        waContact $contractor,
         waContact $contact
     ): array {
         /** @var cashAccountModel $model */
         $model = cash()->getModel(cashAccount::class);
 
-        $data = $model->getStatDetailedCategoryDataForContact(
+        $data = $model->getStatDetailedCategoryDataForContractor(
             $startDate->format('Y-m-d H:i:s'),
             $endDate->format('Y-m-d H:i:s'),
-            $forContact,
+            $contractor,
             $contact
         );
 
