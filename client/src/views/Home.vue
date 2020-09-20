@@ -3,9 +3,7 @@
 
     <AmChart></AmChart>
 
-    <transition name="fade" mode="out-in">
-      <DetailsDashboard v-if="detailsDate"></DetailsDashboard>
-    </transition>
+    <DetailsDashboard v-if="detailsDate"></DetailsDashboard>
 
     <table class="table-auto w-full">
       <thead>
