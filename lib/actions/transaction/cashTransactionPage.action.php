@@ -64,7 +64,9 @@ class cashTransactionPageAction extends cashViewAction
 
         switch ($this->filterDto->type) {
             case cashTransactionPageFilterDto::FILTER_ACCOUNT:
-                if (!cash()->getContactRights()->hasMinimumAccessToAccount($this->filterDto->contact, $this->filterDto->id)) {
+                if ($this->filterDto->id
+                    && !cash()->getContactRights()->hasMinimumAccessToAccount($this->filterDto->contact, $this->filterDto->id)
+                ) {
                     throw new kmwaForbiddenException(_w('You are not allowed to access this account'));
                 }
                 break;
