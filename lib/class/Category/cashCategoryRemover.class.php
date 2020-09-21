@@ -6,9 +6,9 @@
 class cashCategoryRemover
 {
     /**
-     * @var cashCategoryFactory
+     * @var cashCategoryRepository
      */
-    private $categoryFactory;
+    private $categoryRepository;
 
     /**
      * @var string
@@ -18,11 +18,11 @@ class cashCategoryRemover
     /**
      * cashCategoryRemover constructor.
      *
-     * @param cashCategoryFactory $categoryFactory
+     * @param cashCategoryRepository $categoryRepository
      */
-    public function __construct(cashCategoryFactory $categoryFactory)
+    public function __construct(cashCategoryRepository $categoryRepository)
     {
-        $this->categoryFactory = $categoryFactory;
+        $this->categoryRepository = $categoryRepository;
     }
 
     /**
@@ -54,8 +54,8 @@ class cashCategoryRemover
             $transactionModel->changeCategoryId(
                 $category->getId(),
                 $category->isExpense()
-                    ? $this->categoryFactory->createNewNoCategoryExpense()->getId()
-                    : $this->categoryFactory->createNewNoCategoryIncome()->getId()
+                    ? $this->categoryRepository->findNoCategoryExpense()->getId()
+                    : $this->categoryRepository->findNoCategoryIncome()->getId()
             );
 
             $transactionModel->commit();

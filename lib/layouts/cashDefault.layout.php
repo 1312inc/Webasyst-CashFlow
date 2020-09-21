@@ -11,14 +11,17 @@ class cashDefaultLayout extends waLayout
     public function execute()
     {
         $this->executeAction('sidebar', new cashBackendSidebarAction());
-        $showReviewWidget = cash()->getModel(cashTransaction::class)->select('count(id)')->limit(30)->fetchField() == 30;
+        $showReviewWidget = cash()->getModel(cashTransaction::class)
+                ->select('count(id)')
+                ->limit(30)
+                ->fetchField() == 30;
 
         $this->view->assign(
             [
                 'content' => '<i class="icon16 loading"></i>',
-                'isAdmin' => (int)cash()->getUser()->canImport(),
+                'isAdmin' => (int) cash()->getUser()->isAdmin(),
                 'contextUser' => cash()->getUser(),
-                'userId' => (int)wa()->getUser()->getId(),
+                'userId' => (int) wa()->getUser()->getId(),
                 'show_review_widget' => $showReviewWidget,
             ]
         );

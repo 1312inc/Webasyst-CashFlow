@@ -43,8 +43,8 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
             $categoryIncomeDtos,
             cashDtoFromEntityFactory::fromEntity(
                 cashCategoryDto::class,
-                cash()->getEntityFactory(cashCategory::class)
-                    ->createNewNoCategoryIncome()
+                cash()->getEntityRepository(cashCategory::class)
+                    ->findNoCategoryIncome()
                     ->setName(_w('New income category'))
             )
         );
@@ -56,8 +56,8 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
             $categoryExpenseDtos,
             cashDtoFromEntityFactory::fromEntity(
                 cashCategoryDto::class,
-                cash()->getEntityFactory(cashCategory::class)
-                    ->createNewNoCategoryExpense()
+                cash()->getEntityRepository(cashCategory::class)
+                    ->findNoCategoryExpense()
                     ->setName(_w('New expense category'))
             )
         );
