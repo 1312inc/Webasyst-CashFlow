@@ -4,7 +4,7 @@
       <div class="flex justify-between mb-6">
         <div>
           <h3 class="text-2xl">
-            {{ $moment(getDetailsDateInterval).format("LL") }}
+            {{ $moment(detailsDate).format("LL") }}
           </h3>
         </div>
         <div>
@@ -72,7 +72,7 @@ export default {
     ChartPie
   },
   computed: {
-    ...mapState('transaction', ['detailsDate']),
+    ...mapState('transaction', ['detailsDate', 'detailsDateIntervalUnit']),
     ...mapGetters('category', ['detailsDataGenerator']),
     ...mapGetters('transaction', ['getDetailsDateInterval'])
   },

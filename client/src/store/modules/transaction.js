@@ -11,16 +11,9 @@ export default {
     detailsDateIntervalUnit: null
   }),
 
-  getters: {
-    getDetailsDateInterval: state => {
-      // return state.detailsDateIntervalUnit === 'day' ? state.detailsDate : 'month'
-      return state.detailsDate
-    }
-  },
-
   mutations: {
     setItems (state, data) {
-      state.listItems = data.reverse()
+      state.listItems = data
     },
     setFakeItems (state, data) {
       state.fakeData = data
@@ -30,16 +23,19 @@ export default {
       state.detailsDateIntervalUnit = interval
     }
   },
+
   actions: {
     async getList ({ commit }, params) {
-      const { data } = await api.get('cash.transaction.getList', {
-        params: {
-          from: params.from,
-          to: params.to
-        }
-      })
-      commit('setItems', data)
-      commit('setFakeItems', dumpDataByDay('2018-08-15', '2020-08-15'))
+      try {
+        const { data } = await api.get('cash.transaction.getList', {
+          params: {
+            from: params.from,
+            to: params.to
+          }
+        })
+        commit('setItems', data)
+      } catch (e) {}
+      commit('setFakeItems', dumpDataByDay('2018-08-15', '2021-02-15'))
     }
   }
 }
