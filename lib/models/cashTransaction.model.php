@@ -1147,7 +1147,7 @@ SQL;
     {
         return (int) $this
             ->select('count(*)')
-            ->where('category_id is null and amount < 0 and is_archived = 0')
+            ->where('category_id = ? and is_archived = 0', [ cashCategoryFactory::NO_CATEGORY_EXPENSE_ID ])
             ->fetchField();
     }
 
@@ -1231,7 +1231,7 @@ SQL;
     {
         return (int) $this
             ->select('count(*)')
-            ->where('category_id is null and amount > 0 and is_archived = 0')
+            ->where('category_id = ? and is_archived = 0', [cashCategoryFactory::NO_CATEGORY_INCOME_ID])
             ->fetchField();
     }
 

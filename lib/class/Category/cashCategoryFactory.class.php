@@ -26,10 +26,9 @@ class cashCategoryFactory extends cashBaseFactory
      * @return cashCategory
      * @throws Exception
      */
-    public function createNew()
+    public function createNew(): cashCategory
     {
-        return (new cashCategory)
-            ->setCreateDatetime(date('Y-m-d H:i:s'));
+        return (new cashCategory)->setCreateDatetime(date('Y-m-d H:i:s'));
     }
 
     /**

@@ -651,7 +651,7 @@ class cashShopSettings implements JsonSerializable
      * @return cashCategory
      * @throws waException
      */
-    private function findCategoryOrCreateNoCategory($id)
+    private function findCategoryOrCreateNoCategory($id): cashCategory
     {
         return $this->categoryRepository->findById($id) ?: $this->categoryFactory->createNewNoCategory();
     }
