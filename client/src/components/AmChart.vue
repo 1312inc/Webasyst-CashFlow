@@ -32,6 +32,9 @@ export default {
     const chart = am4core.create('chartdiv', am4charts.XYChart)
     chart.language.locale = am4langRU
 
+    chart.leftAxesContainer.layout = 'vertical'
+    chart.seriesContainer.zIndex = -1
+
     // Create axes
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
     dateAxis.groupData = true
@@ -44,8 +47,24 @@ export default {
     dateAxis.renderer.grid.template.location = 0
     dateAxis.renderer.grid.template.disabled = true
 
+    dateAxis.events.on('globalscalechanged', () => {
+      console.log('d')
+    })
+
     const valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
     valueAxis.cursorTooltipEnabled = false
+    valueAxis.zIndex = 1
+    valueAxis.height = am4core.percent(35)
+    valueAxis.renderer.grid.template.disabled = true
+    valueAxis.renderer.labels.template.disabled = true
+
+    const valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis())
+    valueAxis2.cursorTooltipEnabled = false
+    valueAxis2.zIndex = 3
+    valueAxis2.height = am4core.percent(65)
+    valueAxis2.marginTop = 30
+    valueAxis2.renderer.gridContainer.background.fill = am4core.color('#000000')
+    valueAxis2.renderer.gridContainer.background.fillOpacity = 0.01
 
     chart.legend = new am4charts.Legend()
 
@@ -59,6 +78,7 @@ export default {
 
     var series = chart.series.push(new am4charts.ColumnSeries())
     series.name = 'Приход'
+    series.yAxis = valueAxis2
     series.dataFields.valueY = 'income'
     series.dataFields.dateX = 'date'
     series.groupFields.valueY = 'sum'
@@ -66,9 +86,11 @@ export default {
     series.columns.template.stroke = am4core.color('#19ffa3')
     series.columns.template.fill = am4core.color('#19ffa3')
     series.columns.template.fillOpacity = 0.5
+    series.defaultState.transitionDuration = 0
 
     var series2 = chart.series.push(new am4charts.ColumnSeries())
     series2.name = 'Расход'
+    series2.yAxis = valueAxis2
     series2.dataFields.valueY = 'expense'
     series2.dataFields.dateX = 'date'
     series2.groupFields.valueY = 'sum'
@@ -76,24 +98,30 @@ export default {
     series2.columns.template.stroke = am4core.color('#ff604a')
     series2.columns.template.fill = am4core.color('#ff604a')
     series2.columns.template.fillOpacity = 0.5
+    series2.defaultState.transitionDuration = 0
 
     var series3 = chart.series.push(new am4charts.LineSeries())
     series3.name = 'Баланс'
+    series3.yAxis = valueAxis
     series3.dataFields.valueY = 'balance'
     series3.dataFields.dateX = 'date'
     series3.groupFields.valueY = 'sum'
-    series3.stroke = am4core.color('#000')
-    series3.fill = am4core.color('#19ffa3')
+    series3.stroke = am4core.color('#19ffa3')
     series3.strokeWidth = 3
-    series3.fillOpacity = 0.3
     series3.strokeOpacity = 0.8
+    series3.defaultState.transitionDuration = 0
 
     series3.adapter.add('tooltipHTML', (ev) => {
       var text = '<div class="mb-2"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
-      chart.series.each((item) => {
+      let timeUnit
+      chart.series.each((item, i) => {
         text += '<div class="text-sm"><span style="color:' + item.stroke.hex + '">●</span> ' + item.name + ': ' + this.$numeral(item.tooltipDataItem.valueY).format('0,0 $') + '</div>'
+        if (i === 2) {
+          timeUnit = item.tooltipDataItem.groupDataItems ? 'month' : 'day'
+        }
       })
-      text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + dateAxis.gridInterval.timeUnit + '\')" class="bg-blue-500 hover:bg-blue-700 text-sm text-white font-bold py-2 px-4 rounded my-2">Подробнее</a>'
+
+      text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + timeUnit + '\')" class="bg-blue-500 hover:bg-blue-700 text-sm text-white font-bold py-2 px-4 rounded my-2">Подробнее</a>'
       return text
     })
     series3.tooltip.getFillFromObject = false
@@ -110,20 +138,34 @@ export default {
     range.value = 0
     range.endValue = -10000000
     range.contents.stroke = am4core.color('#ff604a')
-    range.contents.fill = range.contents.stroke
     range.contents.strokeOpacity = 0.7
-    range.contents.fillOpacity = 0.1
+
+    // Currend day line
+    const dateBorder = dateAxis.axisRanges.create()
+    dateBorder.date = new Date(2020, 0, 3)
+    dateBorder.grid.stroke = am4core.color('#000000')
+    dateBorder.grid.strokeWidth = 1
+    dateBorder.grid.strokeOpacity = 0.6
+
+    // Future dates hover
+    const range3 = dateAxis.axisRanges.create()
+    range3.date = new Date(2020, 0, 3)
+    range3.endDate = new Date(2022, 0, 3)
+    range3.grid.disabled = true
+    range3.axisFill.fillOpacity = 0.6
+    range3.axisFill.fill = '#FFFFFF'
 
     const scrollbarX = new am4charts.XYChartScrollbar()
     scrollbarX.series.push(series3)
+    scrollbarX.marginTop = 20
     scrollbarX.marginBottom = 20
     chart.scrollbarX = scrollbarX
     chart.scrollbarX.scrollbarChart.plotContainer.filters.clear()
+    chart.scrollbarX.parent = chart.bottomAxesContainer
 
     var scrollSeries1 = chart.scrollbarX.scrollbarChart.series.getIndex(0)
     scrollSeries1.strokeWidth = 1
     scrollSeries1.strokeOpacity = 0.4
-    scrollSeries1.fillOpacity = 0
 
     var scrollAxisX = chart.scrollbarX.scrollbarChart.yAxes.getIndex(0)
     var range2 = scrollAxisX.createSeriesRange(chart.scrollbarX.scrollbarChart.series.getIndex(0))
@@ -155,7 +197,7 @@ export default {
 <style>
 #chartdiv {
   width: 100%;
-  height: 500px;
+  height: 600px;
   margin-bottom: 2rem;
 }
 
