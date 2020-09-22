@@ -3,7 +3,7 @@
 
     <AmChart></AmChart>
 
-    <DetailsDashboard v-if="detailsDate"></DetailsDashboard>
+    <DetailsDashboard v-if="detailsDate.from"></DetailsDashboard>
 
     <table class="table-auto w-full">
       <thead>
@@ -16,7 +16,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="(transaction, i) in listItems"
+          v-for="(transaction, i) in cuttedList"
           :key="transaction.id"
           :class="{'bg-gray-100': i % 2 === 0}"
         >
@@ -42,7 +42,11 @@ export default {
   },
   computed: {
     ...mapState('transaction', ['detailsDate', 'listItems']),
-    ...mapGetters('category', ['getCategoryNameById'])
+    ...mapGetters('category', ['getCategoryNameById']),
+
+    cuttedList () {
+      return this.listItems.slice(0, 30)
+    }
   }
 }
 </script>

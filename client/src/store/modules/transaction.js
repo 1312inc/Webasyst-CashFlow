@@ -6,21 +6,22 @@ export default {
 
   state: () => ({
     listItems: [],
-    fakeData: [],
-    detailsDate: null,
-    detailsDateIntervalUnit: null
+    chartData: [],
+    detailsDate: {
+      from: null,
+      to: null
+    }
   }),
 
   mutations: {
     setItems (state, data) {
       state.listItems = data
     },
-    setFakeItems (state, data) {
-      state.fakeData = data
+    setChartData (state, data) {
+      state.chartData = data
     },
-    setDetailsDate (state, { date, interval = null }) {
-      state.detailsDate = date
-      state.detailsDateIntervalUnit = interval
+    setDetailsDate (state, data) {
+      state.detailsDate = data
     }
   },
 
@@ -35,7 +36,15 @@ export default {
         })
         commit('setItems', data)
       } catch (e) {}
-      commit('setFakeItems', dumpDataByDay('2018-08-15', '2021-02-15'))
+    },
+
+    async getChartData ({ commit }) {
+      commit('setChartData', dumpDataByDay('2018-08-15', '2021-02-15'))
+    },
+
+    async setDetailsDate ({ dispatch, commit }, dates) {
+      dispatch('getList', dates)
+      commit('setDetailsDate', dates)
     }
   }
 }
