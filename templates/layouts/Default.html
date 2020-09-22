@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>{$wa->appName()} &mdash; {$wa->accountName()}</title>
-    <meta name="token" content="{$token}">
+
     {$wa->css()}
     <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/jquery-ui.min.css">
     <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/c3.min.css?v{$wa->version()}">
@@ -30,6 +30,10 @@
     
     <link href="{$wa_app_static_url}js/app.js" rel="preload" as="script">
     <link href="{$wa_app_static_url}js/chunk-vendors.js" rel="preload" as="script">
+    
+    <script>
+        window.appState = {ldelim}"lang":"ru","baseUrl":"{wa_url()}","token":"{$token}"{rdelim};
+      </script>
 </head>
 <body>
 <div id="wa">
