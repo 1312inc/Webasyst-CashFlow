@@ -4,7 +4,7 @@
       <div class="flex justify-between mb-6">
         <div>
           <h3 class="text-2xl">
-            {{ $moment(detailsDate).format("LL") }}
+            {{ dates }}
           </h3>
         </div>
         <div>
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import ChartPie from '@/components/AmChartPie'
 
 export default {
@@ -72,17 +72,18 @@ export default {
     ChartPie
   },
   computed: {
-    ...mapState('transaction', ['detailsDate', 'detailsDateIntervalUnit']),
+    ...mapState('transaction', ['detailsDate']),
     ...mapGetters('category', ['detailsDataGenerator']),
-    ...mapGetters('transaction', ['getDetailsDateInterval'])
+
+    dates () {
+      return this.detailsDate.from !== this.detailsDate.to ? `${this.$moment(this.detailsDate.from).format('LL')} – ${this.$moment(this.detailsDate.to).format('LL')}` : `${this.$moment(this.detailsDate.from).format('LL')}`
+    }
   },
   methods: {
-    ...mapMutations({
-      setDetailsDate: 'transaction/setDetailsDate'
-    }),
+    ...mapActions('transaction', ['setDetailsDate']),
 
     close () {
-      this.setDetailsDate({ date: null })
+      this.setDetailsDate({ from: null, to: null })
     }
   }
 }
