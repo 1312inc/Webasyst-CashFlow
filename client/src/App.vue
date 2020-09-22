@@ -27,6 +27,7 @@ export default {
   },
   mounted () {
     this.$store.dispatch('transaction/getList', { from: '2020-07-15', to: '2020-09-15' })
+    this.$store.dispatch('transaction/getChartData')
     this.$store.dispatch('category/getList')
     this.$store.dispatch('account/getList')
   }

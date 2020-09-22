@@ -6,7 +6,7 @@
 
 <script>
 
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
@@ -17,15 +17,13 @@ am4core.useTheme(am4themesAnimated)
 export default {
 
   watch: {
-    listItems () {
+    chartData () {
       this.renderChart()
     }
   },
 
   computed: {
-    ...mapState('transaction', {
-      listItems: state => state.fakeData
-    })
+    ...mapState('transaction', ['chartData'])
   },
 
   mounted () {
@@ -47,9 +45,18 @@ export default {
     dateAxis.renderer.grid.template.location = 0
     dateAxis.renderer.grid.template.disabled = true
 
-    dateAxis.events.on('globalscalechanged', () => {
-      console.log('d')
-    })
+    const dateAxisChanged = ({ target }) => {
+      const from = this.$moment(target.minZoomed).format('YYYY-MM-DD')
+      const to = this.$moment(target.maxZoomed).format('YYYY-MM-DD')
+      setTimeout(() => {
+        if (!target.isInTransition()) {
+          this.setDetailsDate({ from, to })
+        }
+      }, 0)
+    }
+
+    dateAxis.events.on('startchanged', dateAxisChanged)
+    dateAxis.events.on('endchanged', dateAxisChanged)
 
     const valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
     valueAxis.cursorTooltipEnabled = false
@@ -177,17 +184,20 @@ export default {
     this.chart = chart
 
     window.toggleDateForDetails = (date, interval) => {
-      this.setDetailsDate({ date, interval })
+      const from = date
+      let to = date
+      if (interval === 'month') {
+        to = this.$moment(from).add(1, 'M').format('YYYY-MM-DD')
+      }
+      this.setDetailsDate({ from, to })
     }
   },
 
   methods: {
-    ...mapMutations({
-      setDetailsDate: 'transaction/setDetailsDate'
-    }),
+    ...mapActions('transaction', ['setDetailsDate']),
 
     renderChart () {
-      this.chart.data = this.listItems
+      this.chart.data = this.chartData
     }
   }
 
