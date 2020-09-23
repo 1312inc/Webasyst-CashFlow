@@ -36,6 +36,11 @@ class cashReportDdsEntity
     private $income = false;
 
     /**
+     * @var null|string
+     */
+    private $color;
+
+    /**
      * cashReportDdsEntity constructor.
      *
      * @param        $name
@@ -44,15 +49,24 @@ class cashReportDdsEntity
      * @param bool   $income
      * @param string $icon
      * @param bool   $isHeader
+     * @param null   $color
      */
-    public function __construct($name, $id, $expense = false, $income = false, $icon = '', $isHeader = false)
-    {
+    public function __construct(
+        $name,
+        $id,
+        $expense = false,
+        $income = false,
+        $icon = '',
+        $isHeader = false,
+        $color = null
+    ) {
         $this->name = $name;
         $this->id = $id;
         $this->icon = $icon;
         $this->isHeader = $isHeader;
         $this->expense = $expense;
         $this->income = $income;
+        $this->color = $color;
     }
 
     /**
@@ -101,5 +115,13 @@ class cashReportDdsEntity
     public function isIncome(): bool
     {
         return $this->income;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getColor(): ?string
+    {
+        return $this->color;
     }
 }

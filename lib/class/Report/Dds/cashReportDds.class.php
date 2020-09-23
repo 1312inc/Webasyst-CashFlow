@@ -66,7 +66,6 @@ class cashReportDds
      * @param cashReportDdsPeriod  $period
      *
      * @return array
-     * @throws waException
      */
     public function formatDataForPie(array $data, cashReportDdsTypeDto $type, cashReportDdsPeriod $period): array
     {
@@ -90,6 +89,11 @@ class cashReportDds
                     $chartData[$incOrExp][$currencyCode] = new cashReportDdsPieDto($currency);
                 }
                 $chartData[$incOrExp][$currencyCode]->columns[$id] = [$datum->entity->getName()];
+                if ($datum->entity->getColor()) {
+                    $chartData[$incOrExp][$currencyCode]->colors[$datum->entity->getName()] = [
+                        $datum->entity->getColor()
+                    ];
+                }
             }
 
             foreach ($datum->valuesPerPeriods as $valuesPerPeriod) {
@@ -110,7 +114,7 @@ class cashReportDds
         return [
             self::TYPE_CATEGORY => new cashReportDdsTypeDto(self::TYPE_CATEGORY, _w('Categories'), true),
             self::TYPE_ACCOUNT => new cashReportDdsTypeDto(self::TYPE_ACCOUNT, _w('Accounts'), true),
-            self::TYPE_CONTRACTOR => new cashReportDdsTypeDto(self::TYPE_CONTRACTOR, _w('Contractors'), true),
+//            self::TYPE_CONTRACTOR => new cashReportDdsTypeDto(self::TYPE_CONTRACTOR, _w('Contractors'), true),
         ];
     }
 }

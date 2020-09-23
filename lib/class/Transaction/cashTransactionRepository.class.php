@@ -72,7 +72,7 @@ class cashTransactionRepository extends cashBaseRepository
                         $filterDto->contact,
                         [$filterDto->id]
                     );
-                    $initialBalance = (float)ifset($initialBalance, $filterDto->id, 'summary', 0.0);
+                    $initialBalance = (float) ifset($initialBalance, $filterDto->id, 'summary', 0.0);
                 }
                 break;
 
@@ -125,7 +125,12 @@ class cashTransactionRepository extends cashBaseRepository
 
         $dtoAssembler = new cashTransactionDtoAssembler();
         $dtos = [];
-        foreach ($dtoAssembler->generateFromIterator($data, $accountDtos, $categoryDtos, $initialBalance) as $id => $dto) {
+        foreach ($dtoAssembler->generateFromIterator(
+            $data,
+            $accountDtos,
+            $categoryDtos,
+            $initialBalance
+        ) as $id => $dto) {
             $dtos[$id] = $dto;
         }
 
@@ -198,12 +203,12 @@ class cashTransactionRepository extends cashBaseRepository
     /**
      * @param $repeatingId
      *
-     * @return cashTransaction
+     * @return cashTransaction|null
      * @throws waException
      */
-    public function findLastByRepeatingId($repeatingId): cashTransaction
+    public function findLastByRepeatingId($repeatingId): ?cashTransaction
     {
-        return $this->findByQuery(
+        $last = $this->findByQuery(
             $this->getModel()
                 ->query(
                     'select * from cash_transaction where repeating_id = i:repeating_id and is_archived = 0 order by id desc limit 1',
@@ -211,5 +216,7 @@ class cashTransactionRepository extends cashBaseRepository
                 ),
             false
         );
+
+        return $last instanceof cashTransaction ? $last : null;
     }
 }
