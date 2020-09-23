@@ -338,7 +338,7 @@ SQL;
             // запишем в лог заказа
             if ($this->settings->isWriteToOrderLog() && !empty($dto->params['order_id'])) {
                 $message = sprintf(
-                    "%d transactions created in the Cash app:%s%s",
+                    _w('%d transactions created in the Cash Flow app:').'%s%s',
                     count($transactionListMessage),
                     '<br>',
                     implode('<br>', $transactionListMessage)

@@ -1121,3 +1121,6 @@ msgstr "Операции, связанные с этим контрагенто�
 
 msgid "Imported on %s"
 msgstr "Импорт %s"
+
+msgid "%d transactions created in the Cash Flow app:"
+msgstr "Создано %d операций в приложении Cash Flow:"
