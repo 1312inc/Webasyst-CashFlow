@@ -66,7 +66,10 @@
                     {foreach $datum->valuesPerPeriods as $values}
                     <td>
                     {foreach $values as $value}
-                        <div class="nowrap align-right">{$value.per_month} {$datum->currencies[$value.currency]->getSign()}</div>
+                        <div class="nowrap align-right">
+                            {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false}
+                            {$datum->currencies[$value.currency]->getSign()}
+                        </div>
                     {/foreach}
                     </td>
                     {/foreach}
