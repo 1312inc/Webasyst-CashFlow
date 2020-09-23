@@ -34,20 +34,22 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
      */
     public function getDataForPeriod(cashReportDdsPeriod $period): array
     {
-        $sql = <<<SQL
-select ct.category_id id,
-       cc.type type,
-       ca.currency currency,
-       MONTH(ct.date) month,
-       sum(ct.amount) per_month
-from cash_transaction ct
-         join cash_account ca on ct.account_id = ca.id
-         join cash_category cc on ct.category_id = cc.id
-where ct.date between s:start and s:end
-  and ca.is_archived = 0
-  and ct.is_archived = 0
-group by ct.category_id, ca.currency, MONTH(ct.date)
-SQL;
+        $sql = sprintf(
+            "select ct.category_id id,
+           if (cc.type < 0, '%s', '%s') type,
+           ca.currency currency,
+           MONTH(ct.date) month,
+           sum(ct.amount) per_month
+    from cash_transaction ct
+             join cash_account ca on ct.account_id = ca.id
+             join cash_category cc on ct.category_id = cc.id
+    where ct.date between s:start and s:end
+      and ca.is_archived = 0
+      and ct.is_archived = 0
+    group by ct.category_id, ca.currency, MONTH(ct.date)",
+            cashCategory::TYPE_EXPENSE,
+            cashCategory::TYPE_INCOME
+        );
 
         $data = $this->transactionModel->query(
             $sql,
@@ -101,7 +103,9 @@ SQL;
                     $category->getId(),
                     $category->isExpense(),
                     $category->isIncome(),
-                    sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor())
+                    sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor()),
+                    false,
+                    $category->getColor()
                 ),
                 $rawData[$category->getId()] ?? []
             );
@@ -118,7 +122,9 @@ SQL;
                     $category->getId(),
                     $category->isExpense(),
                     $category->isIncome(),
-                    sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor())
+                    sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor()),
+                    false,
+                    $category->getColor()
                 ),
                 $rawData[$category->getId()] ?? []
             );
