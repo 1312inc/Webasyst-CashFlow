@@ -865,13 +865,13 @@ msgstr ""
 msgid "Tab"
 msgstr ""
 
-msgid "No amount column"
+msgid "No amount column selected"
 msgstr ""
 
-msgid "No account column"
+msgid "No account column selected"
 msgstr ""
 
-msgid "No date column"
+msgid "No date column selected"
 msgstr ""
 
 msgid "Expected %s. Got %s"

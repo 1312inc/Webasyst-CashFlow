@@ -865,14 +865,14 @@ msgstr "Запятая"
 msgid "Tab"
 msgstr "Табуляция"
 
-msgid "No amount column"
-msgstr ""
+msgid "No amount column selected"
+msgstr "Не выбран столбец суммы операций"
 
-msgid "No account column"
-msgstr ""
+msgid "No account column selected"
+msgstr "Не выбран столбец счета"
 
-msgid "No date column"
-msgstr ""
+msgid "No date column selected"
+msgstr "Не выбран столбец даты"
 
 msgid "Expected %s. Got %s"
 msgstr ""
