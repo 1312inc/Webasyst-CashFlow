@@ -77,6 +77,22 @@ export default {
   mutations: {
     setCategories (state, data) {
       state.categories = data
+    },
+
+    updateItem (state, data) {
+      const itemIndex = state.categories.findIndex(e => e.id === data.id)
+      if (itemIndex > -1) {
+        state.categories.splice(itemIndex, 1, data)
+      } else {
+        state.categories.push(data)
+      }
+    },
+
+    deleteItem (state, id) {
+      const itemIndex = state.categories.findIndex(e => e.id === id)
+      if (itemIndex > -1) {
+        state.categories.splice(itemIndex, 1)
+      }
     }
   },
 
@@ -88,11 +104,23 @@ export default {
 
     async update ({ commit }, params) {
       const method = params.id ? 'update' : 'create'
-      const { data } = await api.post(`cash.category.${method}`, {
-        ...params
+
+      const formData = new FormData()
+      for (const key in params) {
+        formData.append(key, params[key])
+      }
+
+      const { data } = await api.post(`cash.category.${method}`, formData)
+
+      commit('updateItem', data)
+    },
+
+    async delete ({ commit }, id) {
+      await api.delete('cash.category.delete', {
+        params: { id }
       })
-      console.log(data)
-      // commit('setAccounts', data)
+
+      commit('deleteItem', id)
     }
   }
 }

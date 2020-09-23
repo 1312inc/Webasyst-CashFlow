@@ -65,6 +65,20 @@
           class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
           for="inline-full-name"
         >
+          Иконка
+        </label>
+      </div>
+      <div class="md:w-2/3">
+        <AccountIcons />
+      </div>
+    </div>
+
+    <div class="md:flex md:items-center mb-6">
+      <div class="md:w-1/3">
+        <label
+          class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+          for="inline-full-name"
+        >
           Описание
         </label>
       </div>
@@ -76,18 +90,25 @@
       </div>
     </div>
 
-    <button class="button" @click="close">
-      Отменить
-    </button>
-    <button class="button" @click="submit">
-      {{ isModeUpdate ? "Обновить" : "Добавить" }}
-    </button>
+    <div class="flex justify-between">
+      <div>
+        <button class="button" @click="close">Отменить</button>
+      </div>
+      <div>
+        <button v-if="isModeUpdate" class="button mr-4" @click="remove">
+          Удалить
+        </button>
+        <button class="button" @click="submit">
+          {{ isModeUpdate ? "Обновить" : "Добавить" }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
 import { required } from 'vuelidate/lib/validators'
+import AccountIcons from '@/components/AccountIcons'
 export default {
   props: {
     id: {
@@ -98,12 +119,17 @@ export default {
     }
   },
 
+  components: {
+    AccountIcons
+  },
+
   data () {
     return {
       model: {
         id: null,
         name: '',
         currency: '',
+        icon: 'test',
         description: ''
       }
     }
@@ -121,10 +147,8 @@ export default {
   },
 
   computed: {
-    ...mapGetters('account', ['getAccountById']),
-
     accountToEdit () {
-      return this.getAccountById(this.id)
+      return this.$store.getters['account/getAccountById'](this.id)
     },
 
     isModeUpdate () {
@@ -134,26 +158,37 @@ export default {
 
   created () {
     if (this.accountToEdit) {
-      const { id, name, currency, description } = this.accountToEdit
-      this.model = { id, name, currency, description }
+      const { id, name, currency, icon, description } = this.accountToEdit
+      this.model = { id, name, currency, icon, description }
     }
   },
 
   methods: {
-    ...mapActions('account', ['update']),
-
     submit () {
       this.$v.$touch()
       if (!this.$v.$invalid) {
-        this.update(this.model)
+        this.$store
+          .dispatch('account/update', this.model)
           .then(() => {
-            this.$noty.success('Success!')
+            this.$noty.success('Аккаунт успешно обновлен')
             this.$parent.$emit('close')
           })
           .catch(() => {
             this.$noty.error('Oops, something went wrong!')
           })
       }
+    },
+
+    remove () {
+      this.$store
+        .dispatch('account/delete', this.model.id)
+        .then(() => {
+          this.$noty.success('Аккаунт успешно удален')
+          this.$parent.$emit('close')
+        })
+        .catch(() => {
+          this.$noty.error('Oops, something went wrong!')
+        })
     },
 
     close () {

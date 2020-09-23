@@ -5,8 +5,8 @@ import 'noty/src/themes/relax.scss'
 const defaults = {
   layout: 'topCenter',
   theme: 'relax',
-  timeout: 5000,
-  progressBar: true,
+  timeout: 1000,
+  progressBar: false,
   closeWith: ['click']
 }
 
@@ -54,6 +54,5 @@ export default {
   install: function (Vue, opts) {
     const noty = VueNoty.setOptions(opts)
     Vue.prototype.$noty = noty
-    Vue.noty = noty
   }
 }

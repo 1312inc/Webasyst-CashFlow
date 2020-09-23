@@ -65,6 +65,20 @@
           class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
           for="inline-full-name"
         >
+          Цвет
+        </label>
+      </div>
+      <div class="md:w-2/3">
+        <CategoryColors />
+      </div>
+    </div>
+
+    <div class="md:flex md:items-center mb-6">
+      <div class="md:w-1/3">
+        <label
+          class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+          for="inline-full-name"
+        >
           Описание
         </label>
       </div>
@@ -76,18 +90,25 @@
       </div>
     </div>
 
-    <button class="button" @click="close">
-      Отменить
-    </button>
-    <button class="button" @click="submit">
-      {{ isModeUpdate ? "Изменить" : "Добавить" }}
-    </button>
+    <div class="flex justify-between">
+      <div>
+        <button class="button" @click="close">Отменить</button>
+      </div>
+      <div>
+        <button v-if="isModeUpdate" class="button mr-4" @click="remove">
+          Удалить
+        </button>
+        <button class="button" @click="submit">
+          {{ isModeUpdate ? "Изменить" : "Добавить" }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
 import { required } from 'vuelidate/lib/validators'
+import CategoryColors from '@/components/CategoryColors'
 export default {
   props: {
     id: {
@@ -98,13 +119,17 @@ export default {
     }
   },
 
+  components: {
+    CategoryColors
+  },
+
   data () {
     return {
       model: {
         id: null,
         name: '',
         type: '',
-        color: '',
+        color: '#000000',
         description: ''
       }
     }
@@ -122,10 +147,8 @@ export default {
   },
 
   computed: {
-    ...mapGetters('category', ['getCategoryById']),
-
     categoryToEdit () {
-      return this.getCategoryById(this.id)
+      return this.$store.getters['category/getCategoryById'](this.id)
     },
 
     isModeUpdate () {
@@ -141,20 +164,31 @@ export default {
   },
 
   methods: {
-    ...mapActions('category', ['update']),
-
     submit () {
       this.$v.$touch()
       if (!this.$v.$invalid) {
-        this.update(this.model)
+        this.$store
+          .dispatch('category/update', this.model)
           .then(() => {
-            this.$noty.success('Success!')
+            this.$noty.success('Категория успешно обновлена')
             this.$parent.$emit('close')
           })
           .catch(() => {
             this.$noty.error('Oops, something went wrong!')
           })
       }
+    },
+
+    remove () {
+      this.$store
+        .dispatch('category/delete', this.model.id)
+        .then(() => {
+          this.$noty.success('Категория успешно удалена')
+          this.$parent.$emit('close')
+        })
+        .catch((e) => {
+          this.$noty.error('Oops, something went wrong!')
+        })
     },
 
     close () {
