@@ -188,10 +188,12 @@
                         </div>
                         <div class="value no-shift">
                             {$account = reset($accounts)}
+                            {if !empty($account)}
                             <i class="icon16 {$account->icon}"
                                data-cash-transaction-account-icon
                                {if $account->iconLink}style="background-image: url('{$account->iconLink}'); background-size: 16px 16px;"{/if}
                             ></i>
+                            {/if}
                             <select name="transaction[account_id]"
                                     data-cash-element-account-with-sign="data-cash-transaction-account-amount-currency"
                                     data-cash-element-account-with-icon

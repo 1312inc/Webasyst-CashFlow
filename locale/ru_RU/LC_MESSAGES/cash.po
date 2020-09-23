@@ -734,10 +734,10 @@ msgid "No transaction date specified"
 msgstr ""
 
 msgid "No amount specified"
-msgstr ""
+msgstr "Не введена сумма"
 
 msgid "No account selected"
-msgstr ""
+msgstr "Не выбран счет"
 
 msgid "Order %s"
 msgstr "Заказ %s"
