@@ -6,6 +6,19 @@
 class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
 {
     /**
+     * @var cashTransactionSaver
+     */
+    private $saver;
+
+    /**
+     * cashApiTransactionUpdateHandler constructor.
+     */
+    public function __construct()
+    {
+        $this->saver = new cashTransactionSaver();
+    }
+
+    /**
      * @param cashApiTransactionUpdateRequest $request
      *
      * @return array|cashApiTransactionResponseDto[]
@@ -29,6 +42,7 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
             'ondate' => $request->repeating_end_ondate,
         ];
 
+        /** @var cashTransaction $transaction */
         $transaction = cash()->getEntityRepository(cashTransaction::class)->findById($request->id);
         if (!$transaction) {
             throw new kmwaNotFoundException(_w('No transaction'));
@@ -69,18 +83,14 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
         }
 
         $data = (array) $request;
-        $saver = new cashTransactionSaver();
-        if (!$saver->populateFromArray($transaction, $data, $paramsDto)) {
-            throw new kmwaRuntimeException($saver->getError());
-        }
-
-        if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-            throw new kmwaForbiddenException(_w('You can not edit transaction'));
-        }
-
         $newTransactionIds = [];
 
-        if ($request->is_repeating || $repeatingDto->apply_to_all_in_future) {
+        if ($repeatingDto->apply_to_all_in_future) {
+            $data['date'] = $transaction->getDate();
+            $data['datetime'] = $transaction->getDatetime();
+
+            $transaction = $this->populateTransaction($transaction, $data, $paramsDto);
+
             /** @var cashRepeatingTransaction $repeatingTransaction */
             $repeatingTransaction = $transaction->getRepeatingTransaction();
             kmwaAssert::instance($repeatingTransaction, cashRepeatingTransaction::class);
@@ -91,7 +101,7 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
                 ->setDescription($transaction->getDescription())
                 ->setAmount($transaction->getAmount())
                 ->setContractorContactId($transaction->getContractorContactId());
-            $saver->addToPersist($repeatingTransaction);
+            $this->saver->addToPersist($repeatingTransaction);
 
             $transactions = cash()->getEntityRepository(cashTransaction::class)->findAllByRepeatingIdAndAfterDate(
                 $repeatingTransaction->getId(),
@@ -104,16 +114,18 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
                     ->setAmount($transaction->getAmount())
                     ->setContractorContactId($transaction->getContractorContactId());
 
-                $saver->addToPersist($t);
+                $this->saver->addToPersist($t);
             }
 
-            $saved = $saver->persistTransactions();
+            $saved = $this->saver->persistTransactions();
             foreach ($saved as $item) {
-                $newTransactionIds[$item->getId()] = true;
+                $newTransactionIds[] = $item->getId();
             }
         } else {
-            $saver->addToPersist($transaction);
-            $saved = $saver->persistTransactions();
+            $transaction = $this->populateTransaction($transaction, $data, $paramsDto);
+
+            $this->saver->addToPersist($transaction);
+            $saved = $this->saver->persistTransactions();
             foreach ($saved as $item) {
                 $newTransactionIds[] = $item->getId();
             }
@@ -127,5 +139,33 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
         }
 
         return $response;
+    }
+
+    /**
+     * @param cashTransaction              $transaction
+     * @param array                        $data
+     * @param cashTransactionSaveParamsDto $paramsDto
+     *
+     * @return cashTransaction
+     * @throws ReflectionException
+     * @throws kmwaAssertException
+     * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
+     * @throws waException
+     */
+    private function populateTransaction(
+        cashTransaction $transaction,
+        array $data,
+        cashTransactionSaveParamsDto $paramsDto
+    ): cashTransaction {
+        if (!$this->saver->populateFromArray($transaction, $data, $paramsDto)) {
+            throw new kmwaRuntimeException($this->saver->getError());
+        }
+
+        if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
+            throw new kmwaForbiddenException(_w('You can not edit transaction'));
+        }
+
+        return $transaction;
     }
 }

@@ -45,7 +45,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
         try {
             return parent::get($name, $required);
         } catch (waAPIException $exception) {
-            throw new cashApiMissingParamException(sprintf('Missing required param: %s', $name));
+            throw new cashApiMissingParamException($name);
         }
     }
 
@@ -65,7 +65,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
         try {
             return parent::post($name, $required);
         } catch (waAPIException $exception) {
-            throw new cashApiMissingParamException(sprintf('Missing required param: %s', $name));
+            throw new cashApiMissingParamException($name);
         }
     }
 
@@ -113,7 +113,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
         try {
             return parent::get($name, $required);
         } catch (waAPIException $exception) {
-            throw new cashApiMissingParamException(sprintf('Missing required param: %s', $name));
+            throw new cashApiMissingParamException($name);
         }
     }
 
