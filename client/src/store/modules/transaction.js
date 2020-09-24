@@ -13,6 +13,12 @@ export default {
     }
   }),
 
+  getters: {
+    getTransactionById: state => id => {
+      return state.listItems.find(t => t.id === id)
+    }
+  },
+
   mutations: {
     setItems (state, data) {
       state.listItems = data
@@ -22,6 +28,24 @@ export default {
     },
     setDetailsDate (state, data) {
       state.detailsDate = data
+    },
+
+    updateItem (state, data) {
+      data.forEach(transaction => {
+        const itemIndex = state.listItems.findIndex(e => e.id === transaction.id)
+        if (itemIndex > -1) {
+          state.listItems.splice(itemIndex, 1, transaction)
+        } else {
+          state.listItems.push(transaction)
+        }
+      })
+    },
+
+    deleteItem (state, id) {
+      const itemIndex = state.listItems.findIndex(e => e.id === id)
+      if (itemIndex > -1) {
+        state.listItems.splice(itemIndex, 1)
+      }
     }
   },
 
@@ -45,6 +69,27 @@ export default {
     async setDetailsDate ({ dispatch, commit }, dates) {
       dispatch('getList', dates)
       commit('setDetailsDate', dates)
+    },
+
+    async update ({ commit }, params) {
+      const method = params.id ? 'update' : 'create'
+
+      const formData = new FormData()
+      for (const key in params) {
+        formData.append(key, params[key])
+      }
+
+      const { data } = await api.post(`cash.transaction.${method}`, formData)
+
+      commit('updateItem', data)
+    },
+
+    async delete ({ commit }, id) {
+      await api.delete('cash.transaction.delete', {
+        params: { id }
+      })
+
+      commit('deleteItem', id)
     }
   }
 }
