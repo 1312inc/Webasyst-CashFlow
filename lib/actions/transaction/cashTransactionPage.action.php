@@ -184,7 +184,7 @@ class cashTransactionPageAction extends cashViewAction
                 'fromShopScriptImport' => false,
                 'hasAccessToEdit' => $this->filterDto->type ===cashTransactionPageFilterDto::FILTER_ACCOUNT
                     ? cash()->getContactRights()->hasFullAccessToAccount(wa()->getUser(), $this->filterDto->id)
-                    : cash()->getContactRights()->hasFullAccessToCategory(wa()->getUser(), $this->filterDto->id),
+                    : cash()->getContactRights()->isAdmin(wa()->getUser()),
             ]
         );
 
