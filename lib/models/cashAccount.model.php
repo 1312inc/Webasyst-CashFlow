@@ -66,6 +66,7 @@ from cash_account ca
     group by ca.id
 ) t on ca.id = t.id 
 where {$accountRights}
+and ca.is_archived = 0
 SQL;
 
         return $this
