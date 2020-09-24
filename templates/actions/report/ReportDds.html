@@ -48,6 +48,7 @@
                 {foreach $grouping as $group}
                     <th class="align-right">{$group->name|escape}</th>
                 {/foreach}
+                <th class="align-right bold">[`Total`]</th>
                 {if $type->hasChart}
                     <th class="c-report-pie-header"></th>
                 {/if}
@@ -63,18 +64,24 @@
                     {if $datum->entity->isHeader()}</b>{/if}
                 </td>
                 {if !empty($datum->valuesPerPeriods)}
+                    {$_total = 0}
                     {foreach $datum->valuesPerPeriods as $values}
-                    <td>
-                    {foreach $values as $value}
-                        <div class="nowrap align-right">
-                            {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false}
-                            {$datum->currencies[$value.currency]->getSign()}
-                        </div>
+                        <td>
+                            {foreach $values as $value}
+                                <div class="nowrap align-right">
+                                    {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false}
+                                    {$datum->currencies[$value.currency]->getSign()}
+                                    {$_total = $_total + $value.per_month}
+                                </div>
+                            {/foreach}
+                        </td>
                     {/foreach}
+                    <td class="nowrap align-right bold">
+                        {if $_total<0}&minus;{/if} {round(abs($_total),2)|wa_format_number:false}
+                        {$datum->currencies[$value.currency]->getSign()}
                     </td>
-                    {/foreach}
                 {else}
-                    <td colspan="12" class="align-center gray">—</td>
+                    <td colspan="{count($grouping) + 1}" class="align-center gray">—</td>
                 {/if}
                 {if $datum->entity->isHeader() && $type->hasChart}
                 <td rowspan="{if $datum->entity->isExpense()}{$type->expenseEntities}{/if}{if $datum->entity->isIncome()}{$type->incomeEntities}{/if}" class="c-report-pie-column">
