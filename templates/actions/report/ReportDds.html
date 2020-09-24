@@ -115,7 +115,14 @@
 
                 chart[incOrExp+'-'+currency] = c3.generate({
                     bindto: '#cash-chart-' + incOrExp + '-' + currency,
-                    data: chartData[incOrExp][currency]
+                    data: chartData[incOrExp][currency].data,
+                    tooltip: {
+                        format: {
+                            value: function (value, ratio, id) {
+                                return d3.format(".1%")(ratio) + ' / ' + ('' + d3.format(',')(value)).replace(',',' ') + ' ' + chartData[incOrExp][currency].helpers.currencySign;
+                            }
+                        }
+                    }
                 });
                 charts.push(chart);
             }

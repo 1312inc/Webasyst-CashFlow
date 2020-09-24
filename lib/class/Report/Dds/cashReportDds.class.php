@@ -98,7 +98,15 @@ class cashReportDds
 
             foreach ($datum->valuesPerPeriods as $valuesPerPeriod) {
                 foreach ($valuesPerPeriod as $currency => $value) {
-                    $chartData[$incOrExp][$currency]->columns[$id][] = (float) abs($value['per_month']);
+                    /** @var cashReportDdsPieDto $statIncomeOrExpenseForCurrency */
+                    $statIncomeOrExpenseForCurrency = $chartData[$incOrExp][$currency];
+
+                    $statIncomeOrExpenseForCurrency->columns[$id][] = (float) abs($value['per_month']);
+
+                    if (!isset($statIncomeOrExpenseForCurrency->total[$id])) {
+                        $statIncomeOrExpenseForCurrency->total[$id] = 0;
+                    }
+                    $statIncomeOrExpenseForCurrency->total[$id] += (float) abs($value['per_month']);
                 }
             }
         }
