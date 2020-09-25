@@ -58,7 +58,7 @@ class cashShopSettings implements JsonSerializable
     /**
      * @var bool
      */
-    private $writeToOrderLog = 1;
+    private $writeToOrderLog = 0;
 
     /**
      * @var array
