@@ -12,11 +12,6 @@ export default {
       return state.categories.find(category => category.id === id)
     },
 
-    getCategoryNameById: state => id => {
-      const cat = state.categories.find(category => category.id === id)
-      return cat ? cat.name : ''
-    },
-
     detailsDataGenerator: state => {
       function randomInteger (min, max, count = 0) {
         if (count > 20) {
