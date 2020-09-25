@@ -330,7 +330,7 @@ class cashContactRightsManager
         }
 
         if ($this->isAdmin($contact)) {
-            return $this->cacheValue($key, ' 1 /* categories access */');
+            return $this->cacheValue($key, '( 1 /* categories access */)');
         }
 
         $ids = $this->getCategoryIdsForContact($contact);

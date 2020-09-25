@@ -792,8 +792,8 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     %s
-    and %s
-    and %s
+    -- and %s
+    -- and %s
     and ct.is_archived = 0
 group by ct.date, ca.id
 order by ct.date
@@ -1057,8 +1057,8 @@ from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
 where ct.date between s:startDate and s:endDate 
     %s
-    and %s
-    and %s
+    -- and %s
+    -- and %s
     and ct.is_archived = 0
 group by YEAR(ct.date), MONTH(ct.date), ca.id
 order by YEAR(ct.date), MONTH(ct.date)

@@ -126,8 +126,9 @@ class cashGraphColumnsDataDto extends cashAbstractDto
 
         $this->currentDate = date('Y-m-d');
         $iterateDate = clone $startDate;
-        while ($iterateDate <= $endDate) {
-            $date = $iterateDate->format($this->grouping === cashGraphService::GROUP_BY_DAY ? 'Y-m-d' : 'Y-m');
+        $format = $this->grouping === cashGraphService::GROUP_BY_DAY ? 'Y-m-d' : 'Y-m';
+        while ($iterateDate->format($format) <= $endDate->format($format)) {
+            $date = $iterateDate->format($format);
             $this->dates[] = $date;
             foreach ($existingCategories as $category) {
                 $this->columns[$category][$date] = null;
@@ -135,9 +136,12 @@ class cashGraphColumnsDataDto extends cashAbstractDto
             foreach ($this->accounts as $account) {
                 $this->lines[$account][$date] = null;
             }
-            $iterateDate->modify(
-                sprintf('+1 %s', $this->grouping === cashGraphService::GROUP_BY_DAY ? 'day' : 'month')
-            );
+
+            if ($this->grouping === cashGraphService::GROUP_BY_DAY) {
+                $iterateDate->modify('+1 day');
+            } else {
+                cashDatetimeHelper::addMonthToDate($iterateDate);
+            }
         }
 
         foreach ($this->accounts as $account) {

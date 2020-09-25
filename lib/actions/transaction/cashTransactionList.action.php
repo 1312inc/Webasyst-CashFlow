@@ -63,13 +63,11 @@ class cashTransactionListAction extends cashTransactionPageAction
                 'startDate' => $this->startDate->format('Y-m-d'),
                 'endDate' => $this->endDate->format('Y-m-d'),
                 'listSettings' => $settings,
-
                 'backend_transactions_export' => $eventResult,
-
                 'justSavedTransactions' => $justSavedTransactions,
-
                 'paginationHtml' => $this->pagination->prepare()->render($this->view),
                 'pagination' => $this->pagination,
+                'canSeeBalance' => cash()->getContactRights()->isAdmin(wa()->getUser()),
             ]
         );
     }
