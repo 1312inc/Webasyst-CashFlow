@@ -23,9 +23,11 @@ export default {
     setItems (state, data) {
       state.listItems = data
     },
+
     setChartData (state, data) {
       state.chartData = data
     },
+
     setDetailsDate (state, data) {
       state.detailsDate = data
     },
@@ -76,7 +78,13 @@ export default {
 
       const formData = new FormData()
       for (const key in params) {
-        formData.append(key, params[key])
+        if (typeof params[key] === 'object' && params[key] !== null) {
+          for (const p in params[key]) {
+            formData.append(`${key}[${p}]`, params[key][p])
+          }
+        } else {
+          formData.append(key, params[key])
+        }
       }
 
       const { data } = await api.post(`cash.transaction.${method}`, formData)

@@ -2,10 +2,10 @@
   <div>
     <div class="flex">
       <div>
-        <button @click="open = true" class="button">Добавить приход</button>
+        <button @click="addTransaction('income')" class="button">Добавить приход</button>
       </div>
       <div>
-        <button @click="open = true" class="button">Добавить расход</button>
+        <button @click="addTransaction('expense')" class="button">Добавить расход</button>
       </div>
     </div>
     <table class="table-auto w-full">
@@ -27,7 +27,7 @@
       </tbody>
     </table>
     <Modal v-if="open" @close="open = false">
-        <AddTransaction />
+        <AddTransaction :defaultCategoryType="categoryType" />
     </Modal>
   </div>
 </template>
@@ -46,7 +46,8 @@ export default {
 
   data () {
     return {
-      open: false
+      open: false,
+      categoryType: ''
     }
   },
 
@@ -54,6 +55,13 @@ export default {
     TransactionListRow,
     Modal,
     AddTransaction
+  },
+
+  methods: {
+    addTransaction (type) {
+      this.open = true
+      this.categoryType = type
+    }
   }
 }
 </script>
