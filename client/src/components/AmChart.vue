@@ -119,16 +119,18 @@ export default {
     series3.defaultState.transitionDuration = 0
 
     series3.adapter.add('tooltipHTML', (ev) => {
-      var text = '<div class="mb-2"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
+      var text = '<div class="p-2">'
+      text += '<div class="mb-4"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
       let timeUnit
       chart.series.each((item, i) => {
-        text += '<div class="text-sm"><span style="color:' + item.stroke.hex + '">●</span> ' + item.name + ': ' + this.$numeral(item.tooltipDataItem.valueY).format('0,0 $') + '</div>'
+        text += '<div class="text-sm mb-2"><span style="color:' + item.stroke.hex + '">●</span> ' + item.name + ': ' + this.$numeral(item.tooltipDataItem.valueY).format('0,0 $') + '</div>'
         if (i === 2) {
           timeUnit = item.tooltipDataItem.groupDataItems ? 'month' : 'day'
         }
       })
 
       text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + timeUnit + '\')" class="bg-blue-500 hover:bg-blue-700 text-sm text-white font-bold py-2 px-4 rounded my-2">Подробнее</a>'
+      text += '</div>'
       return text
     })
     series3.tooltip.getFillFromObject = false
