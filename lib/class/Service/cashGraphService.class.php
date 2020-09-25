@@ -164,7 +164,7 @@ class cashGraphService
      * @throws waException
      * @throws kmwaLogicException
      */
-    public function fillColumnCategoriesDataForAccounts(cashGraphColumnsDataDto $graphData)
+    public function fillColumnCategoriesDataForAccounts(cashGraphColumnsDataDto $graphData): void
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
@@ -258,7 +258,7 @@ class cashGraphService
      * @throws waException
      * @throws kmwaLogicException
      */
-    public function fillBalanceDataForAccounts(cashGraphColumnsDataDto $graphData)
+    public function fillBalanceDataForAccounts(cashGraphColumnsDataDto $graphData): void
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
@@ -341,7 +341,7 @@ class cashGraphService
      * @throws waException
      * @throws kmwaLogicException
      */
-    public function fillBalanceDataForCategories(cashGraphColumnsDataDto $graphData)
+    public function fillBalanceDataForCategories(cashGraphColumnsDataDto $graphData): void
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
