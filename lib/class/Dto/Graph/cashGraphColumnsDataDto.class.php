@@ -94,11 +94,14 @@ class cashGraphColumnsDataDto extends cashAbstractDto
                 );
 
                 if (empty($this->filterDto->id)) {
-                    $this->accounts = $model->getExistingAccountsBetweenDates(
-                        $startDate->format('Y-m-d 00:00:00'),
-                        $endDate->format('Y-m-d 23:59:59'),
-                        $this->filterDto->contact
-                    );
+                    $this->accounts = [];
+                    if (cash()->getContactRights()->isAdmin($this->filterDto->contact)) {
+                        $this->accounts = $model->getExistingAccountsBetweenDates(
+                            $startDate->format('Y-m-d 00:00:00'),
+                            $endDate->format('Y-m-d 23:59:59'),
+                            $this->filterDto->contact
+                        );
+                    }
                 } else {
                     $this->accounts = [$this->filterDto->id];
                 }

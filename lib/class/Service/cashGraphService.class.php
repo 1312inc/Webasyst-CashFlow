@@ -286,17 +286,14 @@ class cashGraphService
                 throw new kmwaLogicException('No graph grouping');
         }
 
-        $initialBalance = 0;
-        if ($graphData->filterDto->type === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
-            /** @var cashAccountModel $accountModel */
-            $accountModel = cash()->getModel(cashAccount::class);
-            $initialBalance = $accountModel->getStatDataForAccounts(
-                '1970-01-01 00:00:00',
-                $graphData->startDate->format('Y-m-d 23:59:59'),
-                $graphData->filterDto->contact,
-                [$graphData->filterDto->id]
-            );
-        }
+        /** @var cashAccountModel $accountModel */
+        $accountModel = cash()->getModel(cashAccount::class);
+        $initialBalance = $accountModel->getStatDataForAccounts(
+            '1970-01-01 00:00:00',
+            $graphData->startDate->format('Y-m-d 23:59:59'),
+            $graphData->filterDto->contact,
+            [$graphData->filterDto->id]
+        );
 
         foreach ($graphData->dates as $date) {
             if (!isset($data[$date])) {
