@@ -39,6 +39,15 @@ export default {
           state.listItems.splice(itemIndex, 1, transaction)
         } else {
           state.listItems.push(transaction)
+          state.listItems.sort((a, b) => {
+            if (a.date > b.date) {
+              return -1
+            }
+            if (a.date < b.date) {
+              return 1
+            }
+            return 0
+          })
         }
       })
     },
