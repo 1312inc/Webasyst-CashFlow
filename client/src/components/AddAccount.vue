@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="mb-6 text-xl">
+    <div class="mb-6 text-2xl">
       {{ isModeUpdate ? "Обновить аккаунт" : "Добавить аккаунт" }}
     </div>
 
@@ -92,14 +92,15 @@
 
     <div class="flex justify-between">
       <div>
-        <button class="button" @click="close">Отменить</button>
+        <button @click="submit" type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white text-base bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out">
+          {{ isModeUpdate ? "Обновить" : "Добавить" }}
+        </button>
+        или
+        <a href="#" @click.prevent="close" class="border-b text-indigo">отменить</a>
       </div>
       <div>
-        <button v-if="isModeUpdate" class="button mr-4" @click="remove">
+        <button v-if="isModeUpdate" @click="remove" type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-indigo-600 text-base border border-indigo-600 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out">
           Удалить
-        </button>
-        <button class="button" @click="submit">
-          {{ isModeUpdate ? "Обновить" : "Добавить" }}
         </button>
       </div>
     </div>
@@ -111,11 +112,8 @@ import { required } from 'vuelidate/lib/validators'
 import AccountIcons from '@/components/AccountIcons'
 export default {
   props: {
-    id: {
-      type: Number,
-      default () {
-        return null
-      }
+    editedItem: {
+      type: Object
     }
   },
 
@@ -147,19 +145,16 @@ export default {
   },
 
   computed: {
-    accountToEdit () {
-      return this.$store.getters['account/getAccountById'](this.id)
-    },
-
     isModeUpdate () {
-      return this.accountToEdit
+      return this.editedItem
     }
   },
 
   created () {
-    if (this.accountToEdit) {
-      const { id, name, currency, icon, description } = this.accountToEdit
-      this.model = { id, name, currency, icon, description }
+    if (this.editedItem) {
+      for (const prop in this.model) {
+        this.model[prop] = this.editedItem[prop] || this.model[prop]
+      }
     }
   },
 

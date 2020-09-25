@@ -2,7 +2,7 @@
   <div>
     <div class="flex items-center justify-between mb-10">
       <div>
-        <div class="text-xl">
+        <div class="text-2xl">
           {{ isModeUpdate ? "Обновить транзакцию" : "Добавить транзакцию" }}
         </div>
       </div>
@@ -208,6 +208,7 @@
         <div class="relative">
           <select
             v-model="model.account_id"
+            :class="{ 'border-red-500': $v.model.account_id.$error }"
             class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
           >
             <option
@@ -247,6 +248,7 @@
         <div class="relative">
           <select
             v-model="model.category_id"
+            :class="{ 'border-red-500': $v.model.category_id.$error }"
             class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
           >
             <option
@@ -309,14 +311,15 @@
 
     <div class="flex justify-between">
       <div>
-        <button class="button" @click="close">Отменить</button>
+        <button @click="submit" type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white text-base bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out">
+          {{ isModeUpdate ? "Изменить" : "Добавить" }}
+        </button>
+        или
+        <a href="#" @click.prevent="close" class="border-b text-indigo">отменить</a>
       </div>
       <div>
-        <button v-if="isModeUpdate" class="button mr-4" @click="remove">
+        <button v-if="isModeUpdate" @click="remove" type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-indigo-600 text-base border border-indigo-600 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out">
           Удалить
-        </button>
-        <button class="button" @click="submit">
-          {{ isModeUpdate ? "Изменить" : "Добавить" }}
         </button>
       </div>
     </div>
@@ -350,7 +353,7 @@ export default {
           frequency: false,
           interval: 'month',
           end_type: 'never',
-          end_after: null,
+          end_after: 0,
           end_ondate: ''
         },
         apply_to_all_in_future: false
@@ -364,6 +367,12 @@ export default {
         required
       },
       date: {
+        required
+      },
+      account_id: {
+        required
+      },
+      category_id: {
         required
       }
     }
