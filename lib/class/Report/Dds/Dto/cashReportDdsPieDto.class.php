@@ -52,7 +52,7 @@ class cashReportDdsPieDto implements JsonSerializable
         ];
 
         if ($this->colors) {
-            $data['colors'] = $this->colors;
+            $data['data']['colors'] = $this->colors;
         }
 
         return $data;
