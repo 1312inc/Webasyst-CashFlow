@@ -482,17 +482,23 @@
                         $progressLoading = $progress.find('[data-cash-shop-import-progress-icon="loading"]'),
                         $progressCounts = $progressLoading.find('[data-cash-shop-import-progress-counts]'),
                         $progressSuccess = $progress.find('[data-cash-shop-import-progress-icon="success"]'),
-                        $progressError = $progress.find('[data-cash-shop-import-progress-icon="error"]');
+                        $progressError = $progress.find('[data-cash-shop-import-progress-icon="error"]'),
+                        $errors = $ssform.find('[data-cash-shop-errors]');
 
-                    $.post('?module=shop&action=settings', $ssform.serialize(), function (html) {
-                        var $html = $(html);
+                    $button.prop('disabled', true);
+                    $errors.hide();
+                    $.post('?module=shop&action=settings', $ssform.serialize())
+                        .done(function (html) {
+                            var $html = $(html);
 
-                        $ssform.find('[data-cash-shop-errors]').remove();
-                        $button.prop('disabled', true).hide();
+                            $button.hide();
+                            $errors.remove();
+                            if ($html.find('[data-cash-shop-errors]').length) {
+                                $('#cash-settings').html(html);
 
-                        if ($html.find('[data-cash-shop-errors]').length) {
-                            $('#cash-settings').html(html);
-                        } else {
+                                return;
+                            }
+
                             var long = $.wa.kmLongAction();
                             long.start({
                                 process_url: '?module=shop&action=importProcess',
@@ -510,6 +516,7 @@
                                     },
                                     onSuccess: function (r) {
                                         $progressBar.find('.progressbar-inner').css('width', '0%');
+                                        $progressCounts.text(r.passed_orders + ' / ' + r.total_orders)
                                         // $transactionStat.show();
                                     },
                                     onError: function (r) {
@@ -544,8 +551,11 @@
                                     }
                                 }
                             });
-                        }
-                    });
+                        })
+                        .fail(function (r) {
+                            $button.prop('disabled', false);
+                            $errors.show();
+                        });
                 })
             }
         }
