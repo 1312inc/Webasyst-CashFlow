@@ -73,23 +73,6 @@
       </div>
     </div>
 
-    <div class="md:flex md:items-center mb-6">
-      <div class="md:w-1/3">
-        <label
-          class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-          for="inline-full-name"
-        >
-          Описание
-        </label>
-      </div>
-      <div class="md:w-2/3">
-        <textarea
-          v-model="model.description"
-          class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-        ></textarea>
-      </div>
-    </div>
-
     <div class="flex justify-between">
       <div>
         <button @click="submit" type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white text-base bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out">
@@ -127,8 +110,7 @@ export default {
         id: null,
         name: '',
         type: '',
-        color: '#000000',
-        description: ''
+        color: '#000000'
       }
     }
   },
