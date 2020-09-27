@@ -295,6 +295,45 @@ SQL;
      * @param string    $startDate
      * @param string    $endDate
      * @param waContact $contact
+     * @param int       $importId
+     *
+     * @return int
+     * @throws waException
+     */
+    public function countByDateBoundsAndImport($startDate, $endDate, waContact $contact, $importId): int
+    {
+        $whereImportSql = ' and ct.import_id = i:import_id';
+
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+        $transactionAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
+
+        $sql = <<<SQL
+select count(ct.id)
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+where ct.date between s:startDate and s:endDate
+      and ct.is_archived = 0
+      {$whereImportSql}
+      and {$transactionAccessSql}
+      and {$categoryAccessSql}
+SQL;
+
+        $query = $this->query(
+            $sql,
+            [
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'import_id' => $importId,
+            ]
+        );
+
+        return (int) $query->fetchField();
+    }
+
+    /**
+     * @param string    $startDate
+     * @param string    $endDate
+     * @param waContact $contact
      * @param int|null  $category
      * @param bool      $returnResult
      * @param int|null  $start

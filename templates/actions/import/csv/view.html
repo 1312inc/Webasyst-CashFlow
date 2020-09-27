@@ -33,9 +33,11 @@
             filterId = '{$filter->identifier}',
             filterType = '{$filter->type}',
             startDate = '{$startDate}',
-            endDate = '{$endDate}';
+            endDate = '{$endDate}',
+            start = {$pagination->getStart()},
+            limit = {$pagination->getLimit()};
 
-        $.cash.loadTransactions(startDate, endDate, filterId, filterType, $transactionList);
+        $.cash.loadTransactions(startDate, endDate, filterId, filterType, $transactionList, start, limit);
         // $.cash.loadGraphData(startDate, endDate, filterId, filterType, '#cash-chart');
 
         $w.on('click', '[data-csv-import-action="delete"]', function (e) {
