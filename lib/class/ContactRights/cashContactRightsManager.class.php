@@ -140,15 +140,7 @@ class cashContactRightsManager
      */
     public function hasFullAccessToAccount(waContact $contact, $accountId): bool
     {
-        if ($this->getContactAccess($contact)->isAdmin()) {
-            return true;
-        }
-
-        return in_array(
-            (int) $accountId,
-            $this->getContactAccess($contact)->getAccountIdsWithAccess(cashRightConfig::ACCOUNT_FULL_ACCESS),
-            true
-        );
+        return $this->hasAccessToAccount($contact, $accountId, cashRightConfig::ACCOUNT_FULL_ACCESS);
     }
 
     /**
@@ -159,17 +151,47 @@ class cashContactRightsManager
      */
     public function hasMinimumAccessToAccount(waContact $contact, $accountId): bool
     {
+        return $this->hasAccessToAccount(
+            $contact,
+            $accountId,
+            cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
+        );
+    }
+
+    /**
+     * @param waContact $contact
+     * @param int       $accountId
+     *
+     * @return bool
+     */
+    public function canViewBalanceLine(waContact $contact, $accountId): bool
+    {
+        return $this->hasAccessToAccount(
+            $contact,
+            $accountId,
+            cashRightConfig::ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS
+        );
+    }
+
+    /**
+     * @param waContact $contact
+     * @param int       $accountId
+     * @param int       $access
+     *
+     * @return bool
+     */
+    private function hasAccessToAccount(waContact $contact, $accountId, $access): bool
+    {
         if ($this->getContactAccess($contact)->isAdmin()) {
             return true;
         }
 
         return in_array(
             (int) $accountId,
-            $this->getContactAccess($contact)->getAccountIdsWithAccess(cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY),
+            $this->getContactAccess($contact)->getAccountIdsWithAccess($access),
             true
         );
     }
-
 
     /**
      * @param waContact $contact
