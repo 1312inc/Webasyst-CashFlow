@@ -1,9 +1,25 @@
+var webpack = require('webpack')
+
 module.exports = {
   publicPath: '/webasyst/cash/',
   productionSourceMap: false,
   filenameHashing: false,
   devServer: {
     proxy: 'http://localhost:8888'
+  },
+
+  configureWebpack: {
+    plugins: [
+      new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en|ru/)
+      // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+    ],
+    externals: function (context, request, callback) {
+      if (/xlsx|canvg|pdfmake/.test(request)) {
+        return callback(null, 'commonjs ' + request)
+      }
+      callback()
+    }
+
   },
 
   // configureWebpack: {
@@ -23,6 +39,11 @@ module.exports = {
   //     }
   //   }
   // },
+  pluginOptions: {
+    webpackBundleAnalyzer: {
+      openAnalyzer: true
+    }
+  },
 
   chainWebpack: config => {
     config.optimization.delete('splitChunks')

@@ -4,16 +4,22 @@
       <h4 class="font-bold mb-6">Аккаунты</h4>
 
       <div v-for="account in accounts" :key="account.id" class="mb-3">
-        <div class="flex items-center">
-          <div>
-            <div
-              class="w-2 h-2 rounded-full mr-1"
-              :style="`background-color:${account.color};`"
-            ></div>
-          </div>
-          <div @click="update('Account', account)" class="text-sm cursor-pointer">
+        <div class="flex items-center justify-between">
+          <div
+            @click="update('Account', account)"
+            class="text-sm cursor-pointer"
+          >
             {{ account.name }}
           </div>
+          <div
+            v-if="account.stat"
+            class="text-sm text-gray-500"
+            v-html="
+              `${account.stat.summaryShorten}&nbsp;${$helper.currToSymbol(
+                account.currency
+              )}`
+            "
+          ></div>
         </div>
       </div>
       <button
@@ -36,7 +42,10 @@
             :style="`background-color:${category.color};`"
           ></div>
         </div>
-        <div @click="update('Category', category)" class="text-sm cursor-pointer">
+        <div
+          @click="update('Category', category)"
+          class="text-sm cursor-pointer"
+        >
           {{ category.name }}
         </div>
       </div>
@@ -58,7 +67,10 @@
             :style="`background-color:${category.color};`"
           ></div>
         </div>
-        <div @click="update('Category', category)" class="text-sm cursor-pointer">
+        <div
+          @click="update('Category', category)"
+          class="text-sm cursor-pointer"
+        >
           {{ category.name }}
         </div>
       </div>
