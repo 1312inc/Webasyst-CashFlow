@@ -75,12 +75,16 @@ export default {
     },
 
     updateItem (state, data) {
+      let start = 0
+      let deleteCount = 0
+
       const itemIndex = state.categories.findIndex(e => e.id === data.id)
       if (itemIndex > -1) {
-        state.categories.splice(itemIndex, 1, data)
-      } else {
-        state.categories.push(data)
+        start = itemIndex
+        deleteCount = 1
       }
+
+      state.categories.splice(start, deleteCount, data)
     },
 
     deleteItem (state, id) {
