@@ -41,6 +41,19 @@ class cashImportCsvViewAction extends cashViewAction
         $startDate = new DateTime($startDate);
         $endDate = new DateTime($endDate);
 
+        $pagination = new cashPagination(
+            sprintf(
+                '#/%s/%d/%s/%s',
+                $filterDto->type,
+                $filterDto->id,
+                $startDate->format('Y-m-d'),
+                $endDate->format('Y-m-d')
+            )
+        );
+        $pagination
+            ->setStart(waRequest::get('start', 0, waRequest::TYPE_INT) ?: 0)
+            ->setLimit(waRequest::get('limit', 0, waRequest::TYPE_INT) ?: cashPagination::LIMIT);
+
         $this->view->assign(
             [
                 'filter' => $filterDto,
@@ -50,6 +63,7 @@ class cashImportCsvViewAction extends cashViewAction
 //                'completedOnDate' => $completedOnDate,
                 'startDate' => $startDate->format('Y-m-d'),
                 'endDate' => $endDate->format('Y-m-d'),
+                'pagination' => $pagination,
             ]
         );
 

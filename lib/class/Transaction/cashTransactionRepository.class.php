@@ -104,11 +104,21 @@ class cashTransactionRepository extends cashBaseRepository
                     $startDate->format('Y-m-d 00:00:00'),
                     $endDate->format('Y-m-d 23:59:59'),
                     $filterDto->contact,
-                    $filterDto->id
+                    $filterDto->id,
+                    false,
+                    $start,
+                    $limit
                 );
 
                 if ($pagination) {
-                    $pagination->setTotalRows($data->count());
+                    $pagination->setTotalRows(
+                        $model->countByDateBoundsAndImport(
+                            $startDate->format('Y-m-d 00:00:00'),
+                            $endDate->format('Y-m-d 23:59:59'),
+                            $filterDto->contact,
+                            $filterDto->id
+                        )
+                    );
                 }
 
                 break;

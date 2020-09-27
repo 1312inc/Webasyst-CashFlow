@@ -202,11 +202,17 @@
                     that.setContent(html);
                 });
         },
-        importViewAction: function (provider ,id) {
+        importViewAction: function (provider, id, start, limit) {
             var that = this;
-            $.get('?module=import&action=' + provider + 'View&id=' + id, function (html) {
-                that.setContent(html);
-            });
+            start = start || '';
+            limit = limit || '';
+            $.get('?module=import&action=' + provider + 'View', {
+                    id: id,
+                    start: start,
+                    limit: limit
+                }, function (html) {
+                    that.setContent(html);
+                });
         },
         sourceAction: function (id) {
             var that = this;
