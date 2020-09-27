@@ -101,7 +101,11 @@ SQL;
         if ($filterIds) {
             switch ($filterType) {
                 case cashTransactionPageFilterDto::FILTER_ACCOUNT:
-                    $filterSql = ' and ca.id in (i:filter_ids)';
+                    $transactionAccessSql = ' and ' . cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+                        $contact,
+                        $filterIds
+                    );
+                    $filterSql = ' and ca.id in (i:filter_ids)' . $transactionAccessSql;
                     break;
 
                 case cashTransactionPageFilterDto::FILTER_CATEGORY:
