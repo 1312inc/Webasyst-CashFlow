@@ -62,11 +62,11 @@ from cash_account ca
     where ct.date between s:startDate and s:endDate
           and ca.is_archived = 0
           {$accountFilterSql}
-          -- and {$accountTransactionRights}
+          and {$accountTransactionRights}
     group by ca.id
 ) t on ca.id = t.id 
 where ca.is_archived = 0
-    -- and {$accountRights}
+    and {$accountRights}
 SQL;
 
         return $this
