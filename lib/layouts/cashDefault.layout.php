@@ -13,8 +13,8 @@ class cashDefaultLayout extends waLayout
         $this->executeAction('sidebar', new cashBackendSidebarAction());
         $showReviewWidget = cash()->getModel(cashTransaction::class)
                 ->select('count(id)')
-                ->limit(30)
-                ->fetchField() == 30;
+                ->limit(500)
+                ->fetchField() == 500;
 
         $this->view->assign(
             [
