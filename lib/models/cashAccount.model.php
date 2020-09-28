@@ -40,7 +40,10 @@ class cashAccountModel extends cashModel
             $accountFilterSql = ' and ca.id in (i:accounts)';
         }
 
-        $accountTransactionRights = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $accounts);
+        $accountTransactionRights = cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+            $contact,
+            $accounts
+        );
         $accountRights = cash()->getContactRights()->getSqlForAccountJoinWithFullAccess($contact);
 //        $categoryRights = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
@@ -96,14 +99,10 @@ SQL;
             'account_id'
         );
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
-
-        $transactionAccessSql = '';
-        if ($filterType === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
-            $transactionAccessSql = ' and ' . cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
-                    $contact,
-                    $filterIds
-                );
-        }
+        $transactionAccessSql = ' and ' . cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+            $contact,
+            $filterType === cashTransactionPageFilterDto::FILTER_ACCOUNT ? $filterIds : null
+        );
 
         $filterSql = '';
         if ($filterIds) {
@@ -145,7 +144,7 @@ group by ct.category_id, ca.currency
 SQL;
 
         return $this
-            ->query($sql, ['startDate' => $startDate, 'endDate' => $endDate, 'filter_ids' => (array)$filterIds])
+            ->query($sql, ['startDate' => $startDate, 'endDate' => $endDate, 'filter_ids' => (array) $filterIds])
             ->fetchAll();
     }
 
