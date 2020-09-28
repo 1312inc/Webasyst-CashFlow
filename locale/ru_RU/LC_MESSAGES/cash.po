@@ -631,6 +631,9 @@ msgstr "Хостинг"
 msgid "Loan payouts"
 msgstr "Выплаты по кредитам"
 
+msgid "Loan payout"
+msgstr "Выплата по кредиту"
+
 msgid "Commissions & fees"
 msgstr "Комиссии банков"
 
@@ -701,10 +704,10 @@ msgid "No import found"
 msgstr ""
 
 msgid "Account not found"
-msgstr ""
+msgstr "Счет не найден"
 
 msgid "Category not found"
-msgstr ""
+msgstr "Статья операций не найдена"
 
 msgid "Import not found"
 msgstr ""
