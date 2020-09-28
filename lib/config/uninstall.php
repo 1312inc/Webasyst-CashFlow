@@ -6,7 +6,7 @@ $db = require wa('cash')->getConfig()->getAppConfigPath('db');
 $innodb = 1;
 foreach ($db as $table => $info) {
     try {
-        $m->exec('SET FOREIGN_KEY_CHECKS = 1');
+        $m->exec('SET FOREIGN_KEY_CHECKS = 0');
         $innodb = 1;
         foreach ($db as $tableName => $tableInfo) {
             $m->exec('drop table if exists ' . $tableName);
@@ -16,7 +16,7 @@ foreach ($db as $table => $info) {
         waLog::log($ex->getTraceAsString());
     } finally {
         if ($innodb) {
-            $m->exec('SET FOREIGN_KEY_CHECKS = 0');
+            $m->exec('SET FOREIGN_KEY_CHECKS = 1');
         }
     }
 }
