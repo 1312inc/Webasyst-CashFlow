@@ -15,6 +15,7 @@
     "moment": "^2.28.0",
     "noty": "^3.2.0-beta",
     "numeral": "^2.0.6",
+    "v-click-outside": "^3.1.2",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuelidate": "^0.7.5",
@@ -36,7 +37,6 @@
     "eslint-plugin-vue": "^6.2.2",
     "node-sass": "^4.12.0",
     "sass-loader": "^8.0.2",
-    "vue-cli-plugin-webpack-bundle-analyzer": "^2.0.0",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {

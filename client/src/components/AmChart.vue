@@ -1,5 +1,21 @@
 <template>
-    <div>
+    <div class="mt-10">
+      <div class="flex justify-between">
+        <div>
+          <div v-if="dates.from" class="text-xl">
+            {{$moment(dates.from).format("LL")}} – {{$moment(dates.to).format("LL")}}
+          </div>
+        </div>
+        <div class="flex justify-end">
+          <div class="w-64 mr-4">
+            <Dropdown :items=pastIntervals :defaultSelectedIndex=0 title="Past" @selected="setIntervalFrom" />
+          </div>
+          <div class="w-64">
+            <Dropdown :items=futureIntervals :defaultSelectedIndex=0 title="Future" @selected="setIntervalTo" />
+          </div>
+        </div>
+      </div>
+
         <div id="chartdiv"></div>
     </div>
 </template>
@@ -12,9 +28,85 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
+import Dropdown from '@/components/Dropdown'
+
 am4core.useTheme(am4themesAnimated)
 
 export default {
+
+  components: {
+    Dropdown
+  },
+
+  data () {
+    return {
+      dates: {
+        from: '',
+        to: ''
+      },
+      pastIntervals: [
+        {
+          title: 'Last 30 days',
+          value: this.setIntervalDate(-1, 'M')
+        },
+        {
+          title: 'Last 90 days',
+          value: this.setIntervalDate(-3, 'M')
+        },
+        {
+          title: 'Last 180 days',
+          value: this.setIntervalDate(-6, 'M')
+        },
+        {
+          title: 'Last 365 days',
+          value: this.setIntervalDate(-1, 'Y')
+        },
+        {
+          title: 'Last 3 years',
+          value: this.setIntervalDate(-3, 'Y')
+        },
+        {
+          title: 'Last 5 years',
+          value: this.setIntervalDate(-5, 'Y')
+        },
+        {
+          title: 'Last 10 years',
+          value: this.setIntervalDate(-10, 'Y')
+        }
+
+      ],
+      futureIntervals: [
+        {
+          title: 'None',
+          value: this.setIntervalDate(0, 'd')
+        },
+        {
+          title: 'Last 30 days',
+          value: this.setIntervalDate(1, 'M')
+        },
+        {
+          title: 'Last 90 days',
+          value: this.setIntervalDate(3, 'M')
+        },
+        {
+          title: 'Last 180 days',
+          value: this.setIntervalDate(6, 'M')
+        },
+        {
+          title: 'Last 365 days',
+          value: this.setIntervalDate(1, 'Y')
+        },
+        {
+          title: 'Last 2 years',
+          value: this.setIntervalDate(2, 'Y')
+        },
+        {
+          title: 'Last 3 years',
+          value: this.setIntervalDate(3, 'Y')
+        }
+      ]
+    }
+  },
 
   watch: {
     chartData () {
@@ -46,17 +138,21 @@ export default {
     dateAxis.renderer.grid.template.disabled = true
 
     const dateAxisChanged = ({ target }) => {
-      const from = this.$moment(target.minZoomed).format('YYYY-MM-DD')
-      const to = this.$moment(target.maxZoomed).format('YYYY-MM-DD')
       setTimeout(() => {
         if (!target.isInTransition()) {
-          this.setDetailsDate({ from, to })
+          this.dates.from = this.$moment(target.minZoomed).format('YYYY-MM-DD')
+          this.dates.to = this.$moment(target.maxZoomed).format('YYYY-MM-DD')
+          this.setdetailsInterval({ from: this.dates.from, to: this.dates.to })
         }
       }, 0)
     }
 
     dateAxis.events.on('startchanged', dateAxisChanged)
     dateAxis.events.on('endchanged', dateAxisChanged)
+    dateAxis.events.on('datarangechanged', ({ target }) => {
+      this.dates.from = this.$moment(target.minZoomed).format('YYYY-MM-DD')
+      this.dates.to = this.$moment(target.maxZoomed).format('YYYY-MM-DD')
+    })
 
     const valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
     valueAxis.cursorTooltipEnabled = false
@@ -151,15 +247,15 @@ export default {
 
     // Currend day line
     const dateBorder = dateAxis.axisRanges.create()
-    dateBorder.date = new Date(2020, 0, 3)
+    dateBorder.date = new Date()
     dateBorder.grid.stroke = am4core.color('#000000')
     dateBorder.grid.strokeWidth = 1
     dateBorder.grid.strokeOpacity = 0.6
 
     // Future dates hover
     const range3 = dateAxis.axisRanges.create()
-    range3.date = new Date(2020, 0, 3)
-    range3.endDate = new Date(2022, 0, 3)
+    range3.date = new Date()
+    range3.endDate = new Date(2100, 0, 3)
     range3.grid.disabled = true
     range3.axisFill.fillOpacity = 0.6
     range3.axisFill.fill = '#FFFFFF'
@@ -191,15 +287,27 @@ export default {
       if (interval === 'month') {
         to = this.$moment(from).add(1, 'M').format('YYYY-MM-DD')
       }
-      this.setDetailsDate({ from, to })
+      this.setdetailsInterval({ from, to })
     }
   },
 
   methods: {
-    ...mapActions('transaction', ['setDetailsDate']),
+    ...mapActions('transaction', ['setdetailsInterval']),
 
     renderChart () {
       this.chart.data = this.chartData
+    },
+
+    setIntervalFrom (index, value) {
+      this.$store.dispatch('transaction/resetAllDataToInterval', { from: value })
+    },
+
+    setIntervalTo (index, value) {
+      this.$store.dispatch('transaction/resetAllDataToInterval', { to: value })
+    },
+
+    setIntervalDate (days, interval) {
+      return this.$moment().add(days, interval).format('YYYY-MM-DD')
     }
   }
 

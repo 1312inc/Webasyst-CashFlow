@@ -1,5 +1,5 @@
 <template>
-  <transition name="fade" mode="out-in">
+  <transition name="fade" appear>
     <div class="p-6 bg-gray-100 mb-10 rounded border">
       <div class="flex justify-between mb-6">
         <div>
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import ChartPie from '@/components/AmChartPie'
 
 export default {
@@ -72,18 +72,16 @@ export default {
     ChartPie
   },
   computed: {
-    ...mapState('transaction', ['detailsDate']),
+    ...mapState('transaction', ['interval', 'detailsInterval']),
     ...mapGetters('category', ['detailsDataGenerator']),
 
     dates () {
-      return this.detailsDate.from !== this.detailsDate.to ? `${this.$moment(this.detailsDate.from).format('LL')} – ${this.$moment(this.detailsDate.to).format('LL')}` : `${this.$moment(this.detailsDate.from).format('LL')}`
+      return this.detailsInterval.from !== this.detailsInterval.to ? `${this.$moment(this.detailsInterval.from).format('LL')} – ${this.$moment(this.detailsInterval.to).format('LL')}` : `${this.$moment(this.detailsInterval.from).format('LL')}`
     }
   },
   methods: {
-    ...mapActions('transaction', ['setDetailsDate']),
-
     close () {
-      this.setDetailsDate({ from: null, to: null })
+      this.$store.dispatch('transaction/setdetailsInterval', { from: '', to: '' })
     }
   }
 }
