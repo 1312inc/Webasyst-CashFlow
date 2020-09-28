@@ -10,5 +10,4 @@ return array (
   'vendor'  => '1021997',
   'rights'  => true,
   'sash_color'     => '#3be56c',
-    'plugins' => true,
 );
