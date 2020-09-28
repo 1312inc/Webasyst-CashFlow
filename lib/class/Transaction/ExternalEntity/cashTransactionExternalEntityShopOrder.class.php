@@ -5,7 +5,7 @@
  */
 class cashTransactionExternalEntityShopOrder implements cashTransactionExternalEntityInterface
 {
-    const APP_ID = 'shop';
+    private const APP_ID = 'shop';
 
     /**
      * @var string
