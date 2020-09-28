@@ -295,7 +295,7 @@
                     if ($h1.length) {
                         title = $h1.text().trim() + ' &mdash; ' + self.options.accountName;
                     }
-                    $('title').html(title);
+                    $('title').text(title);
                 })
             ;
 

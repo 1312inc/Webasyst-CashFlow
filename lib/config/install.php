@@ -55,6 +55,9 @@ if ($innodb) {
 }
 
 $installing = new cashFixtures();
-
-$installing->createAccountsAndCategories();
-$installing->createDemo();
+try {
+    $installing->createAccountsAndCategories();
+    $installing->createDemo();
+} catch (Exception $ex) {
+    cash()->getLogger()->error('Error on demo create', $ex);
+}

@@ -47,7 +47,7 @@ class cashShopIntegration
      * @return bool
      * @throws waException
      */
-    public function shopExists()
+    public function shopExists(): bool
     {
         if (!wa()->appExists('shop')) {
             return false;
@@ -66,7 +66,7 @@ class cashShopIntegration
      * @return bool
      * @throws waException
      */
-    public function shopIsOld()
+    public function shopIsOld(): bool
     {
         return (bool)version_compare(wa()->getVersion('shop'), '8.0.0.0', '<');
     }
@@ -74,7 +74,7 @@ class cashShopIntegration
     /**
      * @throws waException
      */
-    public function turnedOff()
+    public function turnedOff(): void
     {
         $this->deleteFutureForecastTransactions();
         $this->settings
@@ -87,7 +87,7 @@ class cashShopIntegration
      * @throws waException
      * @throws kmwaRuntimeException
      */
-    public function turnedOn()
+    public function turnedOn(): void
     {
         if ($this->settings->isEnableForecast()) {
             $this->enableForecast();
@@ -97,7 +97,7 @@ class cashShopIntegration
     /**
      * @throws waException
      */
-    public function disableForecast()
+    public function disableForecast(): void
     {
         $this->deleteFutureForecastTransactions();
         $this->settings
@@ -106,22 +106,27 @@ class cashShopIntegration
     }
 
     /**
+     * @return bool
      * @throws kmwaAssertException
      * @throws waException
      * @throws kmwaRuntimeException
      */
-    public function enableForecast()
+    public function enableForecast(): bool
     {
         $this->deleteFutureForecastTransactions();
 
         /** @var cashAccount $account */
         $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
-        kmwaAssert::instance($account, cashAccount::class);
+        if (!$account) {
+            return false;
+        }
 
         $amount = $this->settings->isAutoForecast() ? $this->getShopAvgAmount() : $this->settings->getManualForecast();
 
         $category = cash()->getEntityRepository(cashCategory::class)->findById($this->settings->getCategoryIncomeId());
-        kmwaAssert::instance($category, cashCategory::class);
+        if (!$category) {
+            return false;
+        }
 
         $transaction = $this->getTransactionFactory()->createForecastTransaction($amount, $account, $category);
 
@@ -134,7 +139,7 @@ class cashShopIntegration
 
         (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction , new DateTime('tomorrow'));
 
-        return $transaction;
+        return true;
     }
 
     /**
@@ -144,7 +149,7 @@ class cashShopIntegration
      * @throws waException
      * @throws kmwaRuntimeException
      */
-    public function changeForecastType()
+    public function changeForecastType(): void
     {
         $transaction = $this->getForecastRepeatingTransaction();
         if (!$transaction instanceof cashRepeatingTransaction) {
@@ -166,7 +171,7 @@ class cashShopIntegration
     /**
      * @return cashShopSettings
      */
-    public function getSettings()
+    public function getSettings(): cashShopSettings
     {
         return $this->settings;
     }
@@ -229,8 +234,12 @@ SQL;
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function actualizeForecastTransaction()
+    public function actualizeForecastTransaction(): void
     {
+        if (!$this->settings->isEnabled()) {
+            return;
+        }
+
         if (!$this->settings->isEnableForecast()) {
             return;
         }
@@ -248,7 +257,7 @@ SQL;
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function saveTransactions(cashShopCreateTransactionDto $dto)
+    public function saveTransactions(cashShopCreateTransactionDto $dto): void
     {
         cash()->getModel()->startTransaction();
         try {
@@ -376,7 +385,7 @@ SQL;
      * @return cashTransaction|null
      * @throws waException
      */
-    public function getForecastTransactionForDate(DateTime $dateTime)
+    public function getForecastTransactionForDate(DateTime $dateTime): ?cashTransaction
     {
         return cash()->getEntityRepository(cashTransaction::class)->findByFields(
             [
@@ -391,7 +400,7 @@ SQL;
      * @return cashRepeatingTransaction|null
      * @throws waException
      */
-    public function getForecastRepeatingTransaction()
+    public function getForecastRepeatingTransaction(): ?cashRepeatingTransaction
     {
         return cash()->getEntityRepository(cashRepeatingTransaction::class)->findByFields(
             [

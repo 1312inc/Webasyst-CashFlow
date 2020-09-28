@@ -47,6 +47,11 @@ class cashBackendSidebarAction extends cashViewAction
         $event = new cashEvent(cashEventStorage::WA_BACKEND_SIDEBAR);
         $eventResult = cash()->waDispatchEvent($event);
 
+        $shopStatic = '';
+        if (wa()->appExists('shop')) {
+            $shopStatic = wa()->getAppStaticUrl('shop');
+        }
+
         $this->view->assign(
             [
                 'accounts' => $accountDtos,
@@ -55,6 +60,7 @@ class cashBackendSidebarAction extends cashViewAction
                 'imports' => $importDtos,
                 'backend_sidebar' => $eventResult,
                 'hasTransfers' => $hasTransfers,
+                'shopStatic' => $shopStatic,
             ]
         );
     }

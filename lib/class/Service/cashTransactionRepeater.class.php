@@ -45,14 +45,20 @@ final class cashTransactionRepeater
             case cashRepeatingTransaction::REPEATING_END_ONDATE:
                 $endDate = new DateTime($endSettings['ondate']);
                 while ($startDate <= $endDate) {
-                    $t[] = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
+                    $newT = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
+                    if ($newT) {
+                        $t[] = $newT;
+                    }
                 }
                 break;
 
             case cashRepeatingTransaction::REPEATING_END_AFTER:
                 $counter = 0;
                 while ($counter++ < $endSettings['after']) {
-                    $t[] = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
+                    $newT = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
+                    if ($newT) {
+                        $t[] = $newT;
+                    }
                 }
 
                 break;
@@ -60,7 +66,10 @@ final class cashTransactionRepeater
             case cashRepeatingTransaction::REPEATING_END_NEVER:
                 $endDate = $this->getEndDateForNeverEndByDefault($repeatingTransaction, $startDate);
                 while ($startDate <= $endDate) {
-                    $t[] = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
+                    $newT = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
+                    if ($newT) {
+                        $t[] = $newT;
+                    }
                 }
                 break;
 
@@ -80,19 +89,26 @@ final class cashTransactionRepeater
      * @param array                    $data
      * @param DateTime                 $startDate
      *
-     * @return cashTransaction
+     * @return cashTransaction|null
      * @throws ReflectionException
      * @throws kmwaAssertException
      * @throws waException
      */
-    private function createNextTransaction(cashRepeatingTransaction $transaction, array $data, DateTime $startDate): cashTransaction
-    {
+    private function createNextTransaction(
+        cashRepeatingTransaction $transaction,
+        array $data,
+        DateTime $startDate
+    ): ?cashTransaction {
         $data['date'] = $startDate->format('Y-m-d H:i:s');
         $t = $this->transactionSaver->populateFromArray(
             $this->transactionFactory->createNew(),
             $data,
             new cashTransactionSaveParamsDto()
         );
+
+        if (!$t) {
+            return null;
+        }
 
         if ($transaction->getRepeatingInterval() === cashRepeatingTransaction::INTERVAL_MONTH) {
             cashDatetimeHelper::addMonthToDate(
@@ -115,8 +131,10 @@ final class cashTransactionRepeater
      *
      * @return DateTime
      */
-    private function getEndDateForNeverEndByDefault(cashRepeatingTransaction $transaction, DateTime $startDate): DateTime
-    {
+    private function getEndDateForNeverEndByDefault(
+        cashRepeatingTransaction $transaction,
+        DateTime $startDate
+    ): DateTime {
         $date = max(new DateTime(), clone $startDate);
         switch ($transaction->getRepeatingInterval()) {
             case cashRepeatingTransaction::INTERVAL_DAY:
