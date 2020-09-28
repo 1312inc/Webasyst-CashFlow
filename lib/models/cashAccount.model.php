@@ -97,15 +97,19 @@ SQL;
         );
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
+        $transactionAccessSql = '';
+        if ($filterType === cashTransactionPageFilterDto::FILTER_ACCOUNT) {
+            $transactionAccessSql = ' and ' . cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+                    $contact,
+                    $filterIds
+                );
+        }
+
         $filterSql = '';
         if ($filterIds) {
             switch ($filterType) {
                 case cashTransactionPageFilterDto::FILTER_ACCOUNT:
-                    $transactionAccessSql = ' and ' . cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
-                        $contact,
-                        $filterIds
-                    );
-                    $filterSql = ' and ca.id in (i:filter_ids)' . $transactionAccessSql;
+                    $filterSql = ' and ca.id in (i:filter_ids)';
                     break;
 
                 case cashTransactionPageFilterDto::FILTER_CATEGORY:
@@ -134,6 +138,7 @@ where ct.date between s:startDate and s:endDate
       and ca.is_archived = 0
       and ct.is_archived = 0
       {$filterSql}
+      {$transactionAccessSql}
       and {$accountAccessSql}
       and {$categoryAccessSql}
 group by ct.category_id, ca.currency
