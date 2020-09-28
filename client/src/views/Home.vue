@@ -3,7 +3,7 @@
 
     <AmChart></AmChart>
 
-    <DetailsDashboard v-if="detailsDate.from"></DetailsDashboard>
+    <DetailsDashboard v-if="showDetailsDashboard"></DetailsDashboard>
 
     <TransactionList :listItems="cuttedList" />
 
@@ -24,10 +24,14 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['detailsDate', 'listItems']),
+    ...mapState('transaction', ['interval', 'detailsInterval', 'transactions']),
+
+    showDetailsDashboard () {
+      return this.detailsInterval.from
+    },
 
     cuttedList () {
-      return this.listItems.slice(0, 30)
+      return this.transactions.slice(0, 30)
     }
   }
 }
