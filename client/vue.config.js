@@ -39,11 +39,11 @@ module.exports = {
   //     }
   //   }
   // },
-  pluginOptions: {
-    webpackBundleAnalyzer: {
-      openAnalyzer: true
-    }
-  },
+  // pluginOptions: {
+  //   webpackBundleAnalyzer: {
+  //     openAnalyzer: true
+  //   }
+  // },
 
   chainWebpack: config => {
     config.optimization.delete('splitChunks')

@@ -5,41 +5,49 @@ export default {
   namespaced: true,
 
   state: () => ({
-    listItems: [],
+    transactions: [],
     chartData: [],
-    detailsDate: {
-      from: null,
-      to: null
+    interval: {
+      from: '',
+      to: ''
+    },
+    detailsInterval: {
+      from: '',
+      to: ''
     }
   }),
 
   getters: {
     getTransactionById: state => id => {
-      return state.listItems.find(t => t.id === id)
+      return state.transactions.find(t => t.id === id)
     }
   },
 
   mutations: {
     setItems (state, data) {
-      state.listItems = data
+      state.transactions = data
+    },
+
+    setInterval (state, interval) {
+      state.interval = interval
     },
 
     setChartData (state, data) {
       state.chartData = data
     },
 
-    setDetailsDate (state, data) {
-      state.detailsDate = data
+    setdetailsInterval (state, data) {
+      state.detailsInterval = data
     },
 
     updateItem (state, data) {
       data.forEach(transaction => {
-        const itemIndex = state.listItems.findIndex(e => e.id === transaction.id)
+        const itemIndex = state.transactions.findIndex(e => e.id === transaction.id)
         if (itemIndex > -1) {
-          state.listItems.splice(itemIndex, 1, transaction)
+          state.transactions.splice(itemIndex, 1, transaction)
         } else {
-          state.listItems.push(transaction)
-          state.listItems.sort((a, b) => {
+          state.transactions.push(transaction)
+          state.transactions.sort((a, b) => {
             if (a.date > b.date) {
               return -1
             }
@@ -53,33 +61,45 @@ export default {
     },
 
     deleteItem (state, id) {
-      const itemIndex = state.listItems.findIndex(e => e.id === id)
+      const itemIndex = state.transactions.findIndex(e => e.id === id)
       if (itemIndex > -1) {
-        state.listItems.splice(itemIndex, 1)
+        state.transactions.splice(itemIndex, 1)
       }
     }
   },
 
   actions: {
-    async getList ({ commit }, params) {
+    resetAllDataToInterval ({ state, dispatch, commit }, interval) {
+      const from = interval.from || state.interval.from
+      const to = interval.to || state.interval.to
+
+      commit('setInterval', { from, to })
+      commit('setdetailsInterval', { from: '', to: '' })
+      dispatch('getList', state.interval)
+      dispatch('getChartData', state.interval)
+    },
+
+    async getList ({ commit }, interval) {
       try {
         const { data } = await api.get('cash.transaction.getList', {
           params: {
-            from: params.from,
-            to: params.to
+            from: interval.from,
+            to: interval.to
           }
         })
         commit('setItems', data)
       } catch (e) {}
     },
 
-    async getChartData ({ commit }) {
-      commit('setChartData', dumpDataByDay('2018-08-15', '2021-02-15'))
+    async getChartData ({ commit }, interval) {
+      commit('setChartData', dumpDataByDay(interval.from, interval.to))
     },
 
-    async setDetailsDate ({ dispatch, commit }, dates) {
-      dispatch('getList', dates)
-      commit('setDetailsDate', dates)
+    async setdetailsInterval ({ state, dispatch, commit }, interval) {
+      commit('setdetailsInterval', interval)
+      const from = interval.from || state.interval.from
+      const to = interval.to || state.interval.to
+      dispatch('getList', { from, to })
     },
 
     async update ({ commit }, params) {
