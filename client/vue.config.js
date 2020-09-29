@@ -1,7 +1,6 @@
 var webpack = require('webpack')
 
 module.exports = {
-  publicPath: '/webasyst/cash/',
   productionSourceMap: false,
   filenameHashing: false,
   devServer: {
