@@ -1,0 +1,360 @@
+{** @var cashTransactionDto $transaction **}
+{** @var cashAccountDto[] $accounts **}
+{** @var cashCategoryDto[] $categories **}
+{** @var cashTransactionPageFilterDto $filter **}
+{** @var string $categoryType **}
+{** @var cashRepeatingTransactionDto $repeatingTransaction **}
+<section>
+    <div class="dialog-content">
+        <div data-cash-wrapper="transaction-add-dialog">
+            <input type="hidden" name="transaction[id]" value="{$transaction->id|default:0}"/>
+            <input type="hidden" name="category_type" value="{$categoryType}"/>
+
+            <h1>
+                {if $transaction->id}
+                    <span class="hint float-right">ID: {$transaction->id}</span>
+                    [`Edit transaction`]
+                    {if $repeatingTransaction->id && ($repeatingTransaction->occurrences_in_future || $repeatingTransaction->repeating_end_type == cashRepeatingTransaction::REPEATING_END_NEVER)}
+                        <i class="icon16 c-repeating" title="Repeating transaction"></i>
+                    {/if}
+                {else}
+                    {if $categoryType == cashCategory::TYPE_INCOME}
+                        [`New income`]
+                    {elseif $categoryType == cashCategory::TYPE_EXPENSE}
+                        [`New expense`]
+                    {else}
+                        [`New transfer`]
+                    {/if}
+                {/if}
+            </h1>
+            <div class="fields form">
+                {if $repeatingTransaction->id && ($repeatingTransaction->occurrences_in_future || $repeatingTransaction->repeating_end_type == cashRepeatingTransaction::REPEATING_END_NEVER) && $repeatingTransaction->occurrences_in_future > 1}
+                    {* editing existing transaction *}
+                    <div class="field-group">
+                        <div class="field">
+                            <div class="name">
+                                [`Apply changes to`]
+                            </div>
+                            <div class="value no-shift">
+                                <label>
+                                    <input type="radio" checked name="repeating[apply_to_all_in_future]" value="0"/>
+                                    [`This transaction only`]
+                                </label>
+                                <span class="hint"></span>
+                            </div>
+                            <div class="value no-shift">
+                                <label>
+                                    <input type="radio" name="repeating[apply_to_all_in_future]" value="1"/>
+                                    {sprintf('[`This & all related future recurring transactions (%d)`]', $repeatingTransaction->occurrences_in_future - 1)}
+                                </label>
+                                <span class="hint"></span>
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+
+                <div class="field-group">
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Amount`]
+                        </div>
+                        <div class="value">
+                            <strong>{if $categoryType == cashCategory::TYPE_EXPENSE}&minus;{elseif $categoryType == cashCategory::TYPE_INCOME}+{/if}</strong>
+                            <input class="large bold numerical"
+                                   name="transaction[amount]"
+                                   placeholder="0"
+                                   style="width: 130px !important; min-width: 0;"
+                                   {if $transaction->amount|abs}value="{$transaction->amount|abs}"{/if} />
+                            <strong data-cash-transaction-account-amount-currency-sign>
+                                {if $filter->type === cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}
+                                {$accounts[$transaction->account->id]->currency->getSign()|escape}
+                                {/if}
+                            </strong>
+                        </div>
+                    </div>
+
+                    {if !$transaction->id}
+                    <div class="field" style="padding-top: 6px;">
+                        <div class="name">[`Repeat`]</div>
+                        <div class="value">
+                            <ul class="menu-h c-onetime-repeating-toggle">
+                                <li><span>[`One time`]</span></li>
+                                <li>
+                                    <input type="hidden" name="is_repeating" value="0"/>
+                                    <input type="checkbox" id="c-transaction-type" name="is_repeating" value="1"/>
+                                </li>
+                                <li><span class="gray">[`Repeating`]</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    {/if}
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Date`]
+                        </div>
+                        <div class="value">
+                            <input type="text"
+                                   name="transaction[date]"
+                                   value="{$transaction->date}"
+                                   data-cash-date="{$transaction->date}"
+                            />
+                            <i class="icon16 calendar"></i>
+                            <span class="hint"></span>
+                        </div>
+                    </div>
+
+                    <section data-cash-repeating-settings style="display: none">
+                    <div class="field" style="{if $repeatingTransaction->id}display: none{/if}">
+                        <div class="name nowrap">
+                            [`How often`]
+                        </div>
+                        <div class="value no-shift">
+                            <input type="hidden"
+                                    {if $repeatingTransaction->id}readonly{/if}
+                                   value="{$repeatingTransaction->repeating_frequency}"
+                                   name="repeating[frequency]">
+                            <select name="repeating[interval]"
+                                    {if $repeatingTransaction->id}readonly{/if}
+                            >
+                                {foreach cashRepeatingTransaction::getRepeatingEveryIntervals() as $interval => $label}
+                                    <option value="{$interval}"
+                                            {if $repeatingTransaction->repeating_interval == $interval}selected{/if}
+                                    >{$label}</option>
+                                {/foreach}
+                                <option data-cash-repeating-transaction-interval="custom">[`Custom...`]</option>
+                            </select>
+
+                            <div style="display: none" data-cash-repeating-transaction-frequency-custom>
+                            [`Every`]
+                                <input type="text"
+                                       class="numerical short"
+                                       {if $repeatingTransaction->id}readonly{/if}
+                                       value="{$repeatingTransaction->repeating_frequency}"
+                                       name="repeating[frequency]"
+                                >
+                                <select {if $repeatingTransaction->id}readonly{/if}
+                                        name="repeating[interval]"
+                                >
+                                    {foreach cashRepeatingTransaction::getRepeatingIntervals() as $interval => $label}
+                                        <option value="{$interval}"
+                                                {if $repeatingTransaction->repeating_interval == $interval}selected{/if}
+                                        >{$label}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`End repeat`]
+                        </div>
+                        <div class="value no-shift">
+                            <select {if $repeatingTransaction->id}readonly{/if}
+                                    name="repeating[end_type]"
+                            >
+                                {foreach cashRepeatingTransaction::getRepeatingEndTypes() as $type => $label}
+                                <option data-cash-repeating-transaction-end="{$type}"
+                                        {if $repeatingTransaction->repeating_end_type == $type}selected{/if}
+                                        value="{$type}"
+                                >{$label}</option>
+                                {/foreach}
+                            </select>
+                            <div style="display: none" data-cash-repeating-transaction-end-never></div>
+                            <div style="display: none" data-cash-repeating-transaction-end-after>
+                                <input type="text"
+                                       {if $repeatingTransaction->id}readonly{/if}
+                                       class="numerical short"
+                                       value="{$repeatingTransaction->repeating_end_conditions.after}"
+                                       name="repeating[end][after]"
+                                > [`occurrences`]
+                            </div>
+                            <div style="display: none" data-cash-repeating-transaction-end-ondate>
+                                <input type="text"
+                                       name="repeating[end][ondate]"
+                                       {if $repeatingTransaction->id}readonly{/if}
+                                       value="{$repeatingTransaction->repeating_end_conditions.ondate}"
+                                > <i class="icon16 calendar"></i>
+                            </div>
+                        </div>
+                    </div>
+                    </section>
+                </div>
+                <div class="field-group">
+                    <div class="field">
+                        <div class="name nowrap">
+                            {if $categoryType == cashCategory::TYPE_TRANSFER}[`From account`]{else}[`Account`]{/if}
+                        </div>
+                        <div class="value no-shift">
+                            {$account = reset($accounts)}
+                            {if !empty($account)}
+                            <i class="icon16 {$account->icon}"
+                               data-cash-transaction-account-icon
+                               {if $account->iconLink}style="background-image: url('{$account->iconLink}'); background-size: 16px 16px;"{/if}
+                            ></i>
+                            {/if}
+                            <select name="transaction[account_id]"
+                                    data-cash-element-account-with-sign="data-cash-transaction-account-amount-currency"
+                                    data-cash-element-account-with-icon
+                            >
+                                {foreach $accounts as $account}
+                                    <option value="{$account->id}"
+                                            {if $account->id == $transaction->account->id}selected{/if}
+                                            data-cash-account-currency-sign="{$account->currency->getSign()|escape}"
+                                            data-cash-account-currency-code="{$account->currency->getCode()|escape}"
+                                            data-cash-account-icon="{$account->icon}"
+                                            data-cash-account-icon-link="{$account->iconLink}"
+                                    >
+                                        {$account->currency->getCode()|escape} - {$account->name|escape|truncate:42} ({$account->currency->getSign()|escape})
+                                    </option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    {if $categoryType == cashCategory::TYPE_TRANSFER}
+                        <div class="field">
+                            <div class="name nowrap">
+                                [`To account`]
+                            </div>
+                            <div class="value">
+                                {$account = reset($accounts)}
+                                <i class="icon16 {$account->icon}"
+                                   data-cash-transaction-account-icon
+                                   {if $account->iconLink}style="background-image: url('{$account->iconLink}'); background-size: 16px 16px;"{/if}
+                                ></i>
+                                <select name="transfer[account_id]"
+                                        data-cash-element-account-with-sign="data-cash-transaction-account-transfer-currency"
+                                        data-cash-element-account-with-icon
+                                >
+                                    {foreach $accounts as $account}
+                                        <option value="{$account->id}"
+                                                data-cash-account-currency-sign="{$account->currency->getSign()|escape}"
+                                                data-cash-account-currency-code="{$account->currency->getCode()|escape}"
+                                                data-cash-account-icon="{$account->icon}"
+                                                data-cash-account-icon-link="{$account->iconLink}"
+
+                                        >
+                                            {$account->currency->getCode()|escape} - {$account->name|escape|truncate:42} ({$account->currency->getSign()|escape})
+                                        </option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field" style="display:none;" data-cash-transaction-dialog-transfer-amount>
+                            <div class="name nowrap">
+                                [`Incoming amount`]
+                            </div>
+                            <div class="value">
+                                <input type="text" name="transfer[incoming_amount]" placeholder="0" class="numerical bold"  style="width: 130px !important; min-width: 0;">
+                                <strong data-cash-transaction-account-transfer-currency-sign></strong>
+                                <p class="small">
+                                    <i class="icon10 exclamation"></i>
+                                    <strong><span data-cash-transaction-account-amount-currency-code>USD</span> &rarr; <span data-cash-transaction-account-transfer-currency-code>RUB</span>.</strong>
+                                    <span class="gray">[`You are about to make a transfer from one currency to another. Please enter the right incoming amount to make sure the conversion rate is right.`]</span>
+                                </p>
+                            </div>
+                        </div>
+                    {/if}
+
+                    {if $categoryType == cashCategory::TYPE_TRANSFER}
+                    <input type="hidden" name="transaction[category_id]" value="{cashCategoryFactory::TRANSFER_CATEGORY_ID}">
+                    {else}
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Category`]
+                        </div>
+                        <div class="value no-shift">
+                            <i class="icon16 color"
+                               data-cash-transaction-category
+                               style="background: {$transaction->category->color};"
+                            ></i>
+                            <select name="transaction[category_id]"
+                                    data-cash-element-category-with-color
+                                    {if $transaction->category->id == cashCategoryFactory::TRANSFER_CATEGORY_ID}disabled{/if}
+                            >
+                                {if $transaction->category->id == cashCategoryFactory::TRANSFER_CATEGORY_ID}
+                                <option selected>{$transaction->category->name|escape|truncate:42}</option>
+                                {else}
+                                {foreach $categories as $category}
+                                <option value="{$category->id}"
+                                        {if $category->id == $transaction->category->id}selected{/if}
+                                        data-cash-category-color="{$category->color}">
+                                    {$category->name|escape|truncate:42}
+                                </option>
+                                {/foreach}
+                                {/if}
+                            </select>
+                        </div>
+                    </div>
+                    {/if}
+
+                    {if $categoryType != cashCategory::TYPE_TRANSFER && $transaction->category->id != cashCategoryFactory::TRANSFER_CATEGORY_ID}
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Contractor`]
+                        </div>
+                        <div class="value">
+                            <i class="icon16 userpic20"
+                               style="background-image: url({$wa_url}wa-content/img/userpic20.jpg);"
+                               data-cash-default-url="{$wa_url}wa-content/img/userpic20.jpg"
+                            ></i>
+                            <input type="text" name="contractor" data-cash-contractor value="{$transaction->contractor->getName()|escape}">
+                            <input type="hidden" name="transaction[contractor_contact_id]" value="{$transaction->contractor->getId()|default:0}">
+                            <br>
+                            <span class="hint">[`Search for existing contact or enter any new contact name.`]</span>
+                        </div>
+                    </div>
+                    {/if}
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Description`]
+                        </div>
+                        <div class="value no-shift">
+                            <textarea name="transaction[description]"
+                                      cols="30"
+                                      rows="10"
+                                      placeholder="[`Optional`]"
+                            >{$transaction->description|escape}</textarea>
+                        </div>
+                        {if $transaction->external_entity}
+                        <div class="value no-shift">
+                            {$transaction->external_entity->getHtml()}
+                        </div>
+                        {/if}
+                    </div>
+                </div>
+
+                <!-- plugin hook: 'backend_transaction_dialog' -->
+                {* @event backend_transaction_dialog.%plugin_id% *}
+                {if !empty($backend_transaction_dialog)}{foreach $backend_transaction_dialog as $_}{ifset($_)}{/foreach}{/if}
+
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-buttons">
+        {if $transaction->id}
+            <div class="block half-padded float-right">
+                <ul class="menu-h">
+                    <li>
+                        <a href="#"
+                           data-cash-action="delete-transaction"
+                           data-cash-transaction-id="{$transaction->id}"
+                           data-cash-transaction-text="[`Delete transaction`]"
+                           data-cash-repeating-transaction-text="{sprintf('[`Delete %s transactions`]', $repeatingTransaction->occurrences_in_future)}"
+                        ><i class="icon16 delete"></i> <span>[`Delete transaction`]</span></a>
+                    </li>
+                </ul>
+            </div>
+        {/if}
+        <input type="submit"
+               value="[`Save`]"
+               class="button green"
+               data-cash-transaction-text="[`Save`]"
+               data-cash-repeating-transaction-text="{sprintf('[`Save %d transactions`]', $repeatingTransaction->occurrences_in_future)}"
+        /> [`or`] <a class="cancel" href="#">[`cancel`]</a>
+        <div class="block errormsg" style="display: none; float: right;"></div>
+    </div>
+</section>

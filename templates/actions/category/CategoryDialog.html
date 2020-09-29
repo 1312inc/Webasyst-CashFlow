@@ -1,0 +1,85 @@
+{** @var cashCategoryDto $category **}
+<section>
+    <div class="dialog-content">
+        <div>
+            <input type="hidden" name="category[id]" value="{$category->id}"/>
+            <h1>{$category->name|escape}</h1>
+
+            <div class="fields form">
+                <div class="field-group">
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Category name`]
+                        </div>
+                        <div class="value">
+                            <input type="text" class="bold large" name="category[name]" placeholder="[`Category name`]" value="{$category->name|escape}"/>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Category type`]
+                        </div>
+                        <div class="value no-shift">
+                            <select name="category[type]">
+                                <option value="{cashCategory::TYPE_INCOME}" {if $category->type === cashCategory::TYPE_INCOME}selected{/if}>[`Income`]</option>
+                                <option value="{cashCategory::TYPE_EXPENSE}" {if $category->type === cashCategory::TYPE_EXPENSE}selected{/if}>[`Expense`]</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Color`]
+                        </div>
+                        <div class="value no-shift" id="cash-category-color">
+                            <input type="hidden" name="category[color]" value="{$category->color}"/>
+                            <div class="c-category-color">
+                                <div data-cash-category-colors="income"
+                                     {if $category->type !== cashCategory::TYPE_INCOME}style="display:none"{/if}
+                                >
+                                {foreach cashColorStorage::getColorsByType(cashCategory::TYPE_INCOME) as $color}
+                                    <a href="#"
+                                       data-cash-category-color="{$color}"
+                                       {if $category->color == $color}class="selected"{/if}
+                                    >
+                                        <i class="icon16 color" style="background-color: {$color}"></i>
+                                    </a>
+                                {/foreach}
+                                </div>
+                                <div data-cash-category-colors="expense"
+                                     {if $category->type !== cashCategory::TYPE_EXPENSE}style="display:none"{/if}
+                                >
+                                {foreach cashColorStorage::getColorsByType(cashCategory::TYPE_EXPENSE) as $color}
+                                    <a href="#"
+                                       data-cash-category-color="{$color}"
+                                       {if $category->color == $color}class="selected"{/if}
+                                    >
+                                        <i class="icon16 color" style="background-color: {$color}"></i>
+                                    </a>
+                                {/foreach}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-buttons">
+        {if $category->id}
+            <div class="float-right block half-padded">
+                <ul class="menu-h">
+                    <li>
+                        <a href="#" data-cash-action="delete-category" data-cash-category-id="{$category->id}"><i class="icon16 delete"></i>[`Delete category`]</a>
+                    </li>
+                </ul>
+            </div>
+        {/if}
+        <input type="submit" value="[`Save`]" class="button green"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
+        <div class="errormsg" style="display: none"></div>
+    </div>
+</section>

@@ -1,0 +1,471 @@
+{** @var cashTransactionDto[] $upcoming **}
+{** @var cashTransactionDto[] $completed **}
+{** @var cashTransactionPageFilterDto $filter **}
+{** @var cashGraphPeriodVO $selectedChartPeriod **}
+{** @var cashGraphPeriodVO $selectedForecastPeriod **}
+{** @var cashStatCategoryDetailedDto $completedOnDate **}
+{** @var cashStatCategoryDetailedDto $upcomingOnDate **}
+{** @var cashStatOnDateDto[] $onHandsEndday **}
+{** @var cashTransactionListSettingsDto $listSettings **}
+{** @var cashPagination $pagination **}
+
+{capture name="cash_transaction_list_pagination"}
+<section data-cash-transaction-pagination>
+    {$paginationHtml}
+</section>
+{/capture}
+
+<section id="cash-transaction-list">
+<div class="c-table-header">
+
+    <div data-cash-fixed-header>
+    <ul class="menu-h dropdown c-actions-menu" data-cash-transaction-list-actions>
+
+        {if $upcoming && !empty($completed)}
+        <li class="float-right c-upcoming-toggle">
+            <a href="#" class="inline-link nowrap" data-cash-action="show-upcoming-transactions"><b><i><em>{sprintf( '[`Show next %s (%d transactions)`]', $selectedForecastPeriod->getName(), count($upcoming) )}</em></i></b></a>
+        </li>
+        {/if}
+
+        {if $listSettings->addIncome}
+            <li><a href="#"
+                   class="c-action-add-income"
+                   data-cash-action="add-transaction"
+                   data-cash-category-type="{cashCategory::TYPE_INCOME}"
+                ><i class="icon16 add"></i><strong>[`Add income`]</strong></a></li>
+        {/if}
+        {if $listSettings->addExpense}
+            <li><a href="#"
+                   class="c-action-add-expense"
+                   data-cash-action="add-transaction"
+                   data-cash-category-type="{cashCategory::TYPE_EXPENSE}"
+                ><i class="icon16 delete"></i><strong>[`Add expense`]</strong></a></li>
+        {/if}
+        {if $listSettings->addTransfer}
+        <li><a href="#"
+               class="c-action-add-transfer"
+               data-cash-action="add-transaction"
+               data-cash-category-type="{cashCategory::TYPE_TRANSFER}"
+            ><i class="icon16 move"></i><strong>[`Transfer`]</strong></a></li>
+        {/if}
+        {*
+
+            TRANSACTION TEMPLATES: some day
+
+        <li>
+            <a href="#" class="inline-link gray"><b><i>[`Select template`]</i></b><i class="icon10 darr"></i></a>
+            <ul class="menu-v">
+                <li><a href="#"><i class="icon16 color"></i>Аренда офиса</a></li>
+                <li><a href="#"><i class="icon16 color"></i>Оплата хостинга</a></li>
+                <li><a href="#"><i class="icon16 color"></i>Подписка на сторонние сервисы</a></li>
+                <li><a href="#"><i class="icon16 color"></i>Комиссия банка</a></li>
+                <li class="bordered-top"><a href="#" class="gray"><i class="icon16 settings"></i>[`Manage templates`]</a></li>
+            </ul>
+        </li> *}
+
+        <li>
+            <input type="search" placeholder="[`Filter`]" data-cash-action="filter-transactions"/>
+        </li>
+    </ul>
+
+    {if $listSettings->bulkActions}
+    <ul class="menu-h dropdown c-actions-menu c-bulk-actions-menu" data-cash-transaction-list-bulk-actions>
+        <li class="c-bulk-action"><a href="#" data-cash-bulk-action="move"><i class="icon16 move"></i>[`Move`]&nbsp; <strong class="count indicator red">(N)</strong></a></li>
+        <li class="c-bulk-action"><a href="#" data-cash-bulk-action="delete"><i class="icon16 delete"></i>[`Delete`]&nbsp; <strong class="count indicator red">(N)</strong></a></li>
+        <li class="c-bulk-action"><a href="#" data-cash-bulk-action="unselectall" class="gray inline-link"><b><i>[`Unselect all`]</i></b></a></li>
+        {/if}
+    </ul>
+    </div>
+
+</div>
+
+{if empty($upcoming) && empty($completed)}
+
+<div class="c-empty-chart-placeholder">
+    [`Transaction list is empty`]
+</div>
+
+{/if}
+
+
+    <table class="zebra single-lined" data-cash-planned-transactions{if !empty($completed)} style="display: none;"{/if}>
+    <!-- <tr>
+        <th>[`Date`]</th>
+        <th>[`Account`]</th>
+        <th>[`Category`]</th>
+        <th>[`Summary`]</th>
+        <th>[`Amount`]</th>
+        <th>[`Balance`]</th>
+        <th></th>
+    </tr> -->
+
+{if $upcoming}
+    <tr class="white c-table-divider c-planned">
+        <td class="min-width"><input type="checkbox" value="0"></td>
+        <td colspan="3">
+            <h5 class="heading nowrap">
+                [`Upcoming`]
+                {if $selectedForecastPeriod}<span class="hint">{$selectedForecastPeriod->getName()}</span>{/if}
+            </h5>
+        </td>
+        <td colspan="5" class="align-right">
+            <ul class="menu-h dropdown float-right">
+                <li>
+                    <a href="#" class="inline-link gray"><b><i>[`Export upcoming`]</i></b><i class="icon10 darr"></i></a>
+                    <ul class="menu-v">
+                        <!-- plugin hook: 'backend_transactions_export' -->
+                        {* @event backend_transactions_export.%plugin_id% *}
+                        {if !empty($backend_transactions_export)}
+                            <li>{foreach $backend_transactions_export as $_}{ifset($_.upcoming)}{/foreach}</li>
+                        {/if}
+                    </ul>
+                </li>
+            </ul>
+        </td>
+    </tr>
+
+    {foreach $upcoming as $t}
+        <tr class="c-planned{if isset($justSavedTransactions[$t->id])} highlighted{/if}"
+            data-cash-transaction-id="{$t->id}"
+        >
+            <td class="min-width"><input value="{$t->id}" type="checkbox"></td>
+            <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
+            <td>
+                <div>
+                    <span>
+                        {if $t->category}
+                            <i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}
+                        {else}
+                            <i class="icon16 color" style="background: rgba(0,0,0,0.13);"></i><span class="gray">[`No category`]</span>
+                        {/if}
+                        {if $t->repeating_id}<i class="icon16 c-repeating" title="[`Repeating transaction`]"></i>{/if}
+                        {$_days_diff = round( (strtotime($t->date|cat:' 12:00:00')-strtotime(date('Y-m-d')|cat:' 12:00:00') )/(24*3600) )}
+                    </span>
+                    <i class="shortener"></i>
+                </div>
+            </td>
+            <td class="min-width">{if $t->contractor->getId()}<i class="icon16 userpic20" title="{$t->contractor->getName()|escape}" style="background-image: url({$t->contractor->getPhoto(20)});"></i>{/if}</td>
+            <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
+            <td class="align-right"><em class="hint nowrap">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %d days`]', $_days_diff)}{/if}</em>&nbsp;<strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if} title="[`Amount`]">{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
+            <td class="min-width">{if $t->external_entity}{$t->external_entity->getIcon()}{/if}</td>
+            <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $canSeeBalance && $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id && $contextUser->canSeeBalance($filter->entity)}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
+            <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
+        </tr>
+    {/foreach}
+
+    {if $upcomingOnDate}
+    <tr class="white c-planned c-totals">
+        <td colspan="9" class="align-center">
+            {if $selectedForecastPeriod}<p>{sprintf('[`Total for the next %s (until %s):`]', {$selectedForecastPeriod->getName()}, {$selectedForecastPeriod->getDateAsString()|wa_date:humandate})}</p>{/if}
+            {foreach $upcomingOnDate as $onDateStat}
+            <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
+                {foreach $onDateStat->stat as $statOnDate}
+                <strong class="nowrap" style="color: {$onDateStat->category->color};">{if $statOnDate->stat->summary>0}+{elseif $statOnDate->stat->summary<0}&minus;{/if} {round(abs($statOnDate->stat->summary),2)|wa_format_number:false} {$statOnDate->currency->getSign()}</strong>
+                {if !$statOnDate@last}+{/if}
+                {/foreach}
+            </span>
+            {/foreach}
+        </td>
+    </tr>
+    {/if}
+
+{/if}
+</table>
+
+<table class="zebra single-lined">
+
+{if $completed}
+    <tr class="white c-table-divider">
+        <td class="min-width"><input type="checkbox" value="0"></td>
+        <td colspan="3">
+            <h5 class="heading nowrap">
+                {if $selectedChartPeriod}{$selectedChartPeriod->getName()}{else}[`Completed`]{/if},
+                {sprintf('[`%d transactions`]', $pagination->getTotalRows())}
+            </h5>
+        </td>
+        <td colspan="3">
+            {$smarty.capture.cash_transaction_list_pagination}
+        </td>
+        <td colspan="2" class="align-right">
+            <ul class="menu-h dropdown float-right">
+                <li>
+                    <a href="#" class="inline-link gray"><b><i>[`Export`]</i></b><i class="icon10 darr"></i></a>
+                    <ul class="menu-v">
+                        <!-- plugin hook: 'backend_transactions_export' -->
+                        {* @event backend_transactions_export.%plugin_id% *}
+                        {if !empty($backend_transactions_export)}
+                            <li>{foreach $backend_transactions_export as $_}{ifset($_.completed)}{/foreach}</li>
+                        {/if}
+                    </ul>
+                </li>
+            </ul>
+        </td>
+    </tr>
+{/if}
+
+{foreach $completed as $t}
+    <tr data-cash-transaction-id="{$t->id}" class="{if isset($justSavedTransactions[$t->id])}highlighted{/if}">
+        <td class="min-width"><input value="{$t->id}" type="checkbox"></td>
+        <td><span class="nowrap">{$t->date|wa_datetime:humandate:$serverTimezone}</span></td>
+        <td>
+            <div>
+                <span>
+                    {if $t->category}
+                        <i class="icon16 color" style="background: {$t->category->color};"></i>{$t->category->name|escape}
+                    {else}
+                        <i class="icon16 color" style="background: rgba(0,0,0,0.13);"></i><span class="gray">[`No category`]</span>
+                    {/if}
+                    {if $t->repeating_id}<i class="icon16 c-repeating" title="[`Repeating transaction`]"></i>{/if}
+                </span>
+                <i class="shortener"></i>
+            </div>
+        </td>
+        <td class="min-width">{if $t->contractor->getId()}<i class="icon16 userpic20" title="{$t->contractor->getName()|escape}" style="background-image: url({$t->contractor->getPhoto(20)});"></i>{/if}</td>
+        <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
+        <td class="align-right"><strong class="nowrap" title="[`Amount`]"{if $t->category} style="color: {$t->category->color};"{/if}>{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
+        <td class="min-width">{if $t->external_entity}{$t->external_entity->getIcon()}{/if}</td>
+        <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $canSeeBalance && $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id && $contextUser->canSeeBalance($filter->entity)}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
+        <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
+    </tr>
+{/foreach}
+
+{if $completedOnDate}
+    <tr class="white c-totals">
+        <td colspan="9" class="align-center">
+            <p>{sprintf('[`Total for the selected period (%s, %d transactions):`]', $selectedChartPeriod->getName(), $pagination->getTotalRows() )}</p>
+            {foreach $completedOnDate as $onDateStat}
+            <span class="c-category-total"><i class="icon16 color" style="background-color: {$onDateStat->category->color};"></i>{$onDateStat->category->name|escape}
+                {foreach $onDateStat->stat as $statOnDate}
+                <strong class="nowrap" style="color: {$onDateStat->category->color};">{if $statOnDate->stat->summary>0}+{elseif $statOnDate->stat->summary<0}&minus;{/if} {round(abs($statOnDate->stat->summary),2)|wa_format_number:false} {$statOnDate->currency->getSign()}</strong>
+                {if !$statOnDate@last}+{/if}
+                {/foreach}
+            </span>
+            {/foreach}
+        </td>
+    </tr>
+{/if}
+
+</table>
+
+<div class="block double-padded">
+    {$smarty.capture.cash_transaction_list_pagination}
+    {if $pagination->getTotalRows() > $pagination->getLimit()}
+        <p class="hint align-center"><br>{sprintf('[`%d transactions per page`]', $pagination->getLimit())}</p>
+    {/if}
+</div>
+
+</section>
+
+<script type="text/javascript" src="{$wa_app_static_url}js/transaction-dialog.js{if !waSystemConfig::isDebug()}?v{$wa->version()}{/if}"></script>
+
+<script>
+    'use strict';
+    (function () {
+        var filterId = '{$filter->identifier}',
+            filterType = '{$filter->type}',
+            $transactionList = $('#cash-transaction-list'),
+            settings = {$listSettings|json_encode};
+
+        var $allDescriptions = $transactionList.find('[data-cash-transaction-field="description"]');
+        $transactionList
+            .on('click.cash', '[data-cash-action="show-upcoming-transactions"]', function (e) {
+                e.preventDefault();
+                var $this = $(this),
+                    $l = $('<i class="icon16 loading"></i>');
+
+                $this.prepend($l);
+                $transactionList.find('[data-cash-planned-transactions]').slideDown(131.2, function () {
+                    $this.hide();
+                    $l.remove();
+                });
+            })
+            .on('keyup.cash paste.cash', '[data-cash-action="filter-transactions"]', $.cash.throttle(function () {
+                var text = $.trim($(this).val()),
+                    textToSearch = text.toLowerCase(),
+                    highlighted = ['<span class="highlighted">', '</span>'];
+
+                $.cash.log('filter transactions by text:' + text);
+
+                $allDescriptions.closest('[data-cash-transaction-id]').show();
+                $allDescriptions.each(function () {
+                    var $desc = $(this),
+                        html = $desc.html(),
+                        startPos = html.indexOf(highlighted[0]),
+                        endPost = html.indexOf(highlighted[1]);
+
+                    if (startPos !== -1) {
+                        var description = $desc.html();
+                        description = description.slice(0, startPos)
+                            + description.slice(startPos + highlighted[0].length, endPost)
+                            + description.slice(endPost + highlighted[1].length)
+                        ;
+                        $desc.html(description);
+                    }
+                });
+
+                if (text) {
+                    $allDescriptions.each(function () {
+                        var $desc = $(this),
+                            startPos = $desc.html().toLowerCase().indexOf("" + textToSearch + "");
+
+                        if (startPos === -1) {
+                            $desc.closest('[data-cash-transaction-id]').hide();
+                        } else {
+                            var description = $desc.html();
+                            description = description.slice(0, startPos)
+                                + highlighted[0]
+                                + description.slice(startPos, startPos + text.length)
+                                + highlighted[1]
+                                + description.slice(startPos + text.length)
+                            ;
+                            $desc.html(description);
+                        }
+                    });
+                }
+
+                $transactionList.trigger('updateSelectedCount.cash');
+            }, 50))
+        ;
+
+        /*{if $listSettings->addHandler}*/
+        $transactionList
+            .on('click.cash', '[data-cash-action="add-transaction"]', function (e) {
+                e.preventDefault();
+                CashTransactionDialog(0, filterType, filterId, $(this).data('cash-category-type'))
+            })
+        ;
+        /*{/if}*/
+
+        /*{if $listSettings->allowEdit}*/
+        $transactionList
+            .on('click.cash', '[data-cash-transaction-id]', function (e) {
+                if ($(e.target).is('[type="checkbox"]')) {
+                    return true;
+                }
+
+                e.preventDefault();
+                CashTransactionDialog($(this).data('cash-transaction-id'), filterType, filterId, '')
+            })
+        ;
+        /*{/if}*/
+
+        /*{if $listSettings->bulkActions}*/
+        $transactionList
+            .on('click.cash', '[type="checkbox"]', function (e) {
+                var $this = $(this),
+                    $w = $this.closest('tr'),
+                    isPlanned = $w.is('.c-planned'),
+                    isTransaction = !!$this.closest('[data-cash-transaction-id]').length,
+                    checked = $this.is(':checked');
+
+                if (!isTransaction) {
+                    $w.siblings()
+                        .filter(isPlanned ? '.c-planned' : ':not(.c-planned)')
+                        .find('[type="checkbox"]:visible').prop('checked', checked);
+                }
+
+                $transactionList.trigger('updateSelectedCount.cash');
+            })
+            .on('updateSelectedCount.cash', function (e) {
+                var total =  $transactionList.find('[type="checkbox"][value]:visible').length,
+                    selectedCount = $transactionList.find('[type="checkbox"][value]:visible:checked').length;
+
+                if (total == selectedCount) {
+                    selectedCount--;
+                }
+
+                if (selectedCount > 0) {
+                    $transactionList
+                        .find('[data-cash-transaction-list-actions]').hide()
+                        .end()
+                        .find('[data-cash-transaction-list-bulk-actions]').show()
+                        .find('.indicator').text(selectedCount);
+                } else {
+                    selectedCount = 0;
+                    $transactionList
+                        .find('[data-cash-transaction-list-actions]').show()
+                        .end()
+                        .find('[data-cash-transaction-list-bulk-actions]').hide()
+                        .find('.indicator').text(selectedCount);
+                }
+            })
+            .on('click.cash', '[data-cash-bulk-action]', function (e) {
+                e.preventDefault();
+
+                var $this = $(this),
+                    action = $this.data('cash-bulk-action'),
+                    ids = JSON.stringify($transactionList.find('[type="checkbox"][value]:visible:checked').map(function() { return $(this).val(); }).get());
+
+                switch (action) {
+                    case 'unselectall':
+                        $transactionList.find('[type="checkbox"][value]:visible:checked').prop('checked', false);
+                        $transactionList.trigger('updateSelectedCount.cash');
+                        break;
+
+                    default:
+                        $.post(
+                            '?module=transaction&action=bulk' + $.cash.capitalizeFirstLetter(action) + 'Dialog',
+                            {
+                                transaction_ids: ids,
+                                filterId: filterId,
+                                filterType: filterType
+                            },
+                            function (html) {
+                                $(html).waDialog({
+                                    'height': '250px',
+                                    'width': '450px',
+                                    onLoad: function () {
+                                        var d = this,
+                                            $dialogWrapper = $(d);
+                                    },
+                                    onSubmit: function (d) {
+                                        var $errormsg = d.find('.errormsg');
+
+                                        $errormsg.hide();
+                                        d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
+                                        $.post('?module=transaction&action=bulk' + $.cash.capitalizeFirstLetter(action), d.find('form').serialize(), function (r) {
+                                            $.cash.$loading.remove();
+                                            if (r.status === 'ok') {
+                                                d.trigger('close');
+                                                $.cash_routing.redispatch();
+                                                $.cash.reloadSidebar();
+                                            } else {
+                                                $errormsg
+                                                    .show()
+                                                    .text(r.errors.join('<br>'));
+                                            }
+                                        }, 'json');
+                                        return false;
+                                    },
+                                    onClose: function() {
+                                        $(this).remove();
+                                    }
+                                });
+                            }
+                        );
+                        break;
+                }
+            })
+        ;
+        /*{/if}*/
+
+        $transactionList.on('click', '[data-cash-transaction-pagination] a', function (e) {
+            e.preventDefault();
+            var filterId = '{$filter->identifier}',
+                filterType = '{$filter->type}',
+                startDate = '{$startDate}',
+                endDate = '{$endDate}',
+                $this = $(this),
+                $pagination = $this.closest('[data-cash-transaction-pagination]'),
+                start = $this.data('pagination-start'),
+                limit = $this.data('pagination-limit'),
+                $transactionList = $('[data-cash-wrapper="transaction-list"]'),
+                baseUrl = '{$pagination->getBaseUrl()}';
+
+            $pagination.find('div:first').append('<i class="icon16 loading" style="display: inline-block;margin: 0;"></i>');
+            $.cash.loadTransactions(startDate, endDate, filterId, filterType, $transactionList, start, limit);
+            $.cash_routing.stopDispatch(1);
+            window.location.hash = baseUrl + '/' + start + '/' + limit;
+        })
+    })()
+</script>
