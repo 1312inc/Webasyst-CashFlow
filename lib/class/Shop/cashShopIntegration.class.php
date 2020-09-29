@@ -29,6 +29,7 @@ class cashShopIntegration
     public function __construct()
     {
         $this->settings = new cashShopSettings();
+        $this->shopExists();
     }
 
     /**
