@@ -1,0 +1,79 @@
+<section>
+    <div class="dialog-content">
+        <div>
+            <input type="hidden" name="account[id]" value="{$account->id}"/>
+            <h1>{$account->name|default:'[`New account`]'|escape}</h1>
+
+            <div class="fields form">
+                <div class="field-group">
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Account name`]
+                        </div>
+                        <div class="value">
+                            <input type="text" class="bold large" name="account[name]" placeholder="[`Account name`]" value="{$account->name|escape}"/>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Currency`]
+                        </div>
+                        <div class="value no-shift">
+                            <select name="account[currency]">
+                            {foreach $currencies as $currency}
+                                <option value="{$currency->getCode()}"
+                                        {if $account->currency->getCode() == $currency->getCode()}selected{/if}
+                                >
+                                    {$currency->getCode()} - {$currency->getTitle()} ({$currency->getSign()})
+                                </option>
+                            {/foreach}
+                            </select>
+                            {if $account->id}
+                                <div class="hint" style="margin: 5px 0 15px;">
+                                    [`Changing currency will automatically convert all transactions to the new currency (no exchange rate will be applied).`]<br>
+                                </div>
+                            {/if}
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name nowrap">
+                            [`Icon`]
+                        </div>
+                        <div class="value no-shift" id="cash-account-icon">
+                            <input type="hidden" name="account[icon]" value="{$account->icon}"/>
+                            <div class="c-account-icon-list">
+                                {foreach cashIconStorage::getIcons() as $icon}
+                                <a href="#"
+                                   {if $account->icon == $icon}class="selected"{/if}
+                                   data-cash-account-icon="{$icon}"
+                                >
+                                    <i class="icon16 {$icon}"></i>
+                                </a>
+                                {/foreach}
+                            </div>
+                            <span class="small">[`Or enter any icon image URL (an image will be scaled to 16x16 pixels in size):`]</span>
+                            <br>
+                            <input type="text" name="account[icon_link]" value="{$account->iconLink|escape}" style="width: 80%; margin-top: 8px;" placeholder="https://" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-buttons">
+        {if $account->id}
+            <div class="float-right block half-padded">
+                <ul class="menu-h">
+                    <li>
+                        <a href="#" data-cash-action="delete-account" data-cash-account-id="{$account->id}"><i class="icon16 delete"></i>[`Delete account`]</a>
+                    </li>
+                </ul>
+            </div>
+        {/if}
+        <input type="submit" value="[`Save`]" class="button green"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
+        <div class="errormsg" style="display: none"></div>
+    </div>
+</section>

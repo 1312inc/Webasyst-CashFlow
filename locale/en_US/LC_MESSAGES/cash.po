@@ -1,0 +1,1126 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cash\n"
+"POT-Creation-Date: 2020-07-30 10:21+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: cash\n"
+"Language-Team: cash\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 2.3\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: .\n"
+
+msgid "Total"
+msgstr ""
+
+msgid "prev"
+msgstr ""
+
+msgid "next"
+msgstr ""
+
+msgid "Show"
+msgstr ""
+
+msgid "at page"
+msgstr ""
+
+msgid "Sorry. You are not allowed to see anything on this page."
+msgstr ""
+
+msgid "Move %d transactions"
+msgstr ""
+
+msgid "Account"
+msgstr ""
+
+msgid "Don’t change"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "No category"
+msgstr ""
+
+msgid "Income"
+msgstr ""
+
+msgid "Expense"
+msgstr ""
+
+msgid "Please be sure to select <b>the right account and the right category type applicable to all selected transactions</b> to avoid wrong currency conversion effects."
+msgstr ""
+
+msgid "Update %d transactions"
+msgstr ""
+
+msgid "or"
+msgstr ""
+
+msgid "cancel"
+msgstr ""
+
+msgid "Edit transaction"
+msgstr ""
+
+msgid "New income"
+msgstr ""
+
+msgid "New expense"
+msgstr ""
+
+msgid "New transfer"
+msgstr ""
+
+msgid "Apply changes to"
+msgstr ""
+
+msgid "This transaction only"
+msgstr ""
+
+msgid "This & all related future recurring transactions (%d)"
+msgstr ""
+
+msgid "Amount"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "One time"
+msgstr ""
+
+msgid "Repeating"
+msgstr ""
+
+msgid "Apply changes to all %d future recurring transactions"
+msgstr ""
+
+msgid "Repeat"
+msgstr ""
+
+msgid "Custom..."
+msgstr ""
+
+msgid "Every"
+msgstr ""
+
+msgid "End repeat"
+msgstr ""
+
+msgid "occurrences"
+msgstr ""
+
+msgid "From"
+msgstr ""
+
+msgid "To"
+msgstr ""
+
+msgid "Incoming amount"
+msgstr ""
+
+msgid "You are about to make a transfer from one currency to another. Please enter the right incoming amount to make sure the conversion rate is right."
+msgstr ""
+
+msgid "Contractor"
+msgstr ""
+
+msgid "Search for existing contact or enter any new contact name."
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Optional"
+msgstr ""
+
+msgid "Delete transaction"
+msgstr ""
+
+msgid "Delete %s transactions"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Save %d transactions"
+msgstr ""
+
+msgid "Delete %d transactions"
+msgstr ""
+
+msgid "Transactions will be permanently deleted without the ability to restore. Are you sure?"
+msgstr ""
+
+msgid "Show next %s (%d transactions)"
+msgstr ""
+
+msgid "Add income"
+msgstr ""
+
+msgid "Add expense"
+msgstr ""
+
+msgid "Transfer"
+msgstr ""
+
+msgid "Select template"
+msgstr ""
+
+msgid "Manage templates"
+msgstr ""
+
+msgid "Filter"
+msgstr ""
+
+msgid "Move"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Unselect all"
+msgstr ""
+
+msgid "Transaction list is empty"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "Balance"
+msgstr ""
+
+msgid "Upcoming"
+msgstr ""
+
+msgid "Export upcoming"
+msgstr ""
+
+msgid "Repeating transaction"
+msgstr ""
+
+msgid "Tomorrow"
+msgstr ""
+
+msgid "In %d days"
+msgstr ""
+
+msgid "Account balance"
+msgstr ""
+
+msgid "Total for the next %s (until %s):"
+msgstr ""
+
+msgid "Completed"
+msgstr ""
+
+msgid "%d transactions"
+msgstr ""
+
+msgid "Export transactions"
+msgstr ""
+
+msgid "Total for the selected period (%s, %d transactions):"
+msgstr ""
+
+msgid "%d transactions per page"
+msgstr ""
+
+msgid "No category (income)"
+msgstr ""
+
+msgid "No category (expense)"
+msgstr ""
+
+msgid "Cash on hand today"
+msgstr ""
+
+msgid "Account settings"
+msgstr ""
+
+msgid "Category settings"
+msgstr ""
+
+msgid "Past"
+msgstr ""
+
+msgid "Select dates..."
+msgstr ""
+
+msgid "Future"
+msgstr ""
+
+msgid "<b>Cash on hand in %s</b> (%s):"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Shop-Script &rarr; Cash"
+msgstr ""
+
+msgid "Shop-Script 8.0 or newer is required. Please install the latest Shop-Script update via the Installer app to enable sales import and Shop-Script &times; Cash integration."
+msgstr ""
+
+msgid "Enabling Shop-Script integration allows you to automatically import sales (paid orders) data into the Cash app and to forecast your future cash balance."
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "In case of different currencies for orders and the account, an order amount will be converted to the selected account currency according to the conversion rate defined <a href=\"%s\">in Shop-Script settings</a>."
+msgstr ""
+
+msgid "The currency of the selected account is not defined in Shop-Script settings. Conversion won’t work well."
+msgstr ""
+
+msgid "Categories"
+msgstr ""
+
+msgid "Sales (paid orders)"
+msgstr ""
+
+msgid "Configure pay actions"
+msgstr ""
+
+msgid "Select Shop-Script order actions which are directly associated with marking orders as paid. The Cash app will listen only to the selected list of order actions for importing sales:"
+msgstr ""
+
+msgid "For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options."
+msgstr ""
+
+msgid "Refunds"
+msgstr ""
+
+msgid "Configure refund actions"
+msgstr ""
+
+msgid "Select Shop-Script order actions which are related with issueing refunds (cancelling orders that had been paid in the past):"
+msgstr ""
+
+msgid "Product purchases"
+msgstr ""
+
+msgid "Don’t import"
+msgstr ""
+
+msgid "Enabling the setting will automatically add expense transactions based on purchase price of all ordered products. Useful if you have 'purchase price' field defined for most products in Shop-Script and you don't wish to manually add product purchase transations in the Cash app."
+msgstr ""
+
+msgid "Shipping costs"
+msgstr ""
+
+msgid "Enabling the setting will automatically add expense transactions based on shipping costs for each order."
+msgstr ""
+
+msgid "Taxes"
+msgstr ""
+
+msgid "Enabling the setting will automatically add expense transactions based on tax amount for each order."
+msgstr ""
+
+msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then <a href=\"%s\">re-start the integration from scratch</a>."
+msgstr ""
+
+msgid "Forecasted sales"
+msgstr ""
+
+msgid "Enable average forecasted sales (recommended)"
+msgstr ""
+
+msgid "<b>Works like magic!</b> Average daily sales will be automatically added as planned transactions for better budget forecasting. When a new day comes, forecasted sales for this day will be cleared automatically and replaced with real sales (paid orders) data."
+msgstr ""
+
+msgid "Calculate average daily sales automatically (≈{$avg}/day based on the data for the last 30 days)"
+msgstr ""
+
+msgid "Enter manually:"
+msgstr ""
+
+msgid "%s/day"
+msgstr ""
+
+msgid "Order log"
+msgstr ""
+
+msgid "Record logged transactions in Shop-Script order log"
+msgstr ""
+
+msgid "Category name"
+msgstr ""
+
+msgid "Category type"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+msgid "Delete category"
+msgstr ""
+
+msgid "Cash on hand"
+msgstr ""
+
+msgid "New account"
+msgstr ""
+
+msgid "New income category"
+msgstr ""
+
+msgid "Expenses"
+msgstr ""
+
+msgid "New expense category"
+msgstr ""
+
+msgid "Other"
+msgstr ""
+
+msgid "Transfers"
+msgstr ""
+
+msgid "Clear import history"
+msgstr ""
+
+msgid "Import history"
+msgstr ""
+
+msgid "Cash flow"
+msgstr ""
+
+msgid "Calendar"
+msgstr ""
+
+msgid "Customers"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "All accounts"
+msgstr ""
+
+msgid "Chart"
+msgstr ""
+
+msgid "Last 365 days"
+msgstr ""
+
+msgid "Last %d days"
+msgstr ""
+
+msgid "Last 3 years"
+msgstr ""
+
+msgid "All time"
+msgstr ""
+
+msgid "Forecast"
+msgstr ""
+
+msgid "3 months"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "1 month"
+msgstr ""
+
+msgid "6 months"
+msgstr ""
+
+msgid "12 months"
+msgstr ""
+
+msgid "Export"
+msgstr ""
+
+msgid "CSV"
+msgstr ""
+
+msgid "Cash on hand on %s"
+msgstr ""
+
+msgid "Total income: <b>%s</b> / Total expense: <b>%s</b>"
+msgstr ""
+
+msgid "Let the cash flow!"
+msgstr ""
+
+msgid "Start forecasting your cash flow by importing sales data from Shop-Script and setting your average expenses categories — and the app will do the rest."
+msgstr ""
+
+msgid "Import from Shop-Script"
+msgstr ""
+
+msgid "<strong>You have %d paid orders</strong> in your Shop-Script online store beginning on %s."
+msgstr ""
+
+msgid "Import them into the Cash Flow app to quickly understand and forecast your cash flow."
+msgstr ""
+
+msgid "Enter average income manually"
+msgstr ""
+
+msgid "%s / mo"
+msgstr ""
+
+msgid "Set your average monthly recurring expenses to initially make the financial model more precise:"
+msgstr ""
+
+msgid "Don’t worry — you’ll be able to add, edit, delete, or finetune income and expenses later."
+msgstr ""
+
+msgid "Import all %d paid orders data from Shop-Script"
+msgstr ""
+
+msgid "skip the import and start with a simple demo account"
+msgstr ""
+
+msgid "Importing 1K+ orders may take few minutes to complete."
+msgstr ""
+
+msgid "You'll be able to import sales data from Shop-Script or a CSV file any time later."
+msgstr ""
+
+msgid "Importing..."
+msgstr ""
+
+msgid "Finalizing..."
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "Account name"
+msgstr ""
+
+msgid "Currency"
+msgstr ""
+
+msgid "Changing currency will automatically convert all transactions to the new currency (no exchange rate will be applied)."
+msgstr ""
+
+msgid "Icon"
+msgstr ""
+
+msgid "Or enter any icon image URL (an image will be scaled to 16x16 pixels in size):"
+msgstr ""
+
+msgid "Delete account"
+msgstr ""
+
+msgid "We’ve recognized <b>%d rows</b> in the uploaded CSV file. Here is the preview:"
+msgstr ""
+
+msgid "Looks like something was not properly recognized in the uploaded file. To try another encoding or a delimeter, please reload the page."
+msgstr ""
+
+msgid "Showing all rows"
+msgstr ""
+
+msgid "Showing first %d rows only"
+msgstr ""
+
+msgid "Configure how these rows should be imported as transactions:"
+msgstr ""
+
+msgid "Account & currency"
+msgstr ""
+
+msgid "All imported transactions:"
+msgstr ""
+
+msgid "Set according to the value in the following column:"
+msgstr ""
+
+msgid "Detect automatically"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "From the single column:"
+msgstr ""
+
+msgid "From two different columns:"
+msgstr ""
+
+msgid "Set depending on the amount:"
+msgstr ""
+
+msgid "Income (amount > 0)"
+msgstr ""
+
+msgid "Expenses (amount < 0)"
+msgstr ""
+
+msgid "Duplicates"
+msgstr ""
+
+msgid "Skip a row if same ACCOUNT && CATEGORY && DATE && AMOUNT pair already exist"
+msgstr ""
+
+msgid "Recommended to be on just to make sure all obvious duplicates will be skipped. Though, this depends on the data you are about to import."
+msgstr ""
+
+msgid "Import %s transactions"
+msgstr ""
+
+msgid "Select a file."
+msgstr ""
+
+msgid "Preview & configure."
+msgstr ""
+
+msgid "Import!"
+msgstr ""
+
+msgid "Encoding"
+msgstr ""
+
+msgid "Delimeter"
+msgstr ""
+
+msgid "Select file"
+msgstr ""
+
+msgid "Supported file formats: <b>%s</b>"
+msgstr ""
+
+msgid "Sales"
+msgstr ""
+
+msgid "Investment"
+msgstr ""
+
+msgid "Took a loan"
+msgstr ""
+
+msgid "Cashback"
+msgstr ""
+
+msgid "Unexpected profit"
+msgstr ""
+
+msgid "Salaries"
+msgstr ""
+
+msgid "Office rent"
+msgstr ""
+
+msgid "Marketing"
+msgstr ""
+
+msgid "Purchasing & supply"
+msgstr ""
+
+msgid "Shipping"
+msgstr ""
+
+msgid "Hosting"
+msgstr ""
+
+msgid "Loan payouts"
+msgstr ""
+
+msgid "Loan payout"
+msgstr ""
+
+msgid "Commissions & fees"
+msgstr ""
+
+msgid "Dividend payouts"
+msgstr ""
+
+msgid "Unexpected loss"
+msgstr ""
+
+msgid "Accounts"
+msgstr ""
+
+msgid "No access"
+msgstr ""
+
+msgid "Contributor: can view & manage self-created transactions only"
+msgstr ""
+
+msgid "Accountant: can view & manage transactions created by others"
+msgstr ""
+
+msgid "Full access: can see the account balance & manage all transactions"
+msgstr ""
+
+msgid "Error while deleting transaction"
+msgstr ""
+
+msgid "You can`t do anything with system categories"
+msgstr ""
+
+msgid "Some error on category save"
+msgstr ""
+
+msgid "Error while deleting category"
+msgstr ""
+
+msgid "Today"
+msgstr ""
+
+msgid "Yesterday"
+msgstr ""
+
+msgid "Any date in the past or in the future"
+msgstr ""
+
+msgid "No account"
+msgstr ""
+
+msgid "%d days ago"
+msgstr ""
+
+msgid "No settings to export CSV"
+msgstr ""
+
+msgid "Error while updating account"
+msgstr ""
+
+msgid "No import id"
+msgstr ""
+
+msgid "No import found"
+msgstr ""
+
+msgid "Account not found"
+msgstr ""
+
+msgid "Category not found"
+msgstr ""
+
+msgid "Import not found"
+msgstr ""
+
+msgid "Import #%s"
+msgstr ""
+
+msgid "expense"
+msgstr ""
+
+msgid "income"
+msgstr ""
+
+msgid "Account balance zero"
+msgstr ""
+
+msgid "Wrong filter type"
+msgstr ""
+
+msgid "No amount"
+msgstr ""
+
+msgid "No incoming transfer amount specified"
+msgstr ""
+
+msgid "No transaction date specified"
+msgstr ""
+
+msgid "No amount specified"
+msgstr ""
+
+msgid "No account selected"
+msgstr ""
+
+msgid "Order %s"
+msgstr ""
+
+msgid "Last"
+msgstr ""
+
+msgid "%d %s"
+msgstr ""
+
+msgid "Transaction contractor"
+msgstr ""
+
+msgid "Transaction author"
+msgstr ""
+
+msgid "Empty category name"
+msgstr ""
+
+msgid "New category"
+msgstr ""
+
+msgid "Order %s by %s"
+msgstr ""
+
+msgid "day"
+msgid_plural "days"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "week"
+msgstr ""
+
+msgid "month"
+msgid_plural "months"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "year"
+msgid_plural "years"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Every day"
+msgstr ""
+
+msgid "Every week"
+msgstr ""
+
+msgid "Every month"
+msgstr ""
+
+msgid "Every year"
+msgstr ""
+
+msgid "Never"
+msgstr ""
+
+msgid "After"
+msgstr ""
+
+msgid "On date"
+msgstr ""
+
+msgid "No app access"
+msgstr ""
+
+msgid "No account name"
+msgstr ""
+
+msgid "Empty account name"
+msgstr ""
+
+msgid "No account currency"
+msgstr ""
+
+msgid "Files with extension .%s are not allowed to security considerations."
+msgstr ""
+
+msgid "File is image."
+msgstr ""
+
+msgid "Failed to upload file %s."
+msgstr ""
+
+msgid "Temp path is not writable"
+msgstr ""
+
+msgid "Some rows seem to contain non-numerical data"
+msgstr ""
+
+msgid "This column has too many unique values, so that import conditions setup seems not applicable here"
+msgstr ""
+
+msgid "This column has no unique values, so that import conditions setup seems not applicable here"
+msgstr ""
+
+msgid "<b>Only %d out of %d rows in the file have this column defined.</b> Remaining <span class=\"highlighted\">%d rows have an undefined value</span> and thus will be skipped. Please make sure the right column is selected."
+msgstr ""
+
+msgid "Some dates do not have proper delimiter"
+msgstr ""
+
+msgid "Some dates might be in the wrong format"
+msgstr ""
+
+msgid "The column %s contains no dates in the selected format"
+msgstr ""
+
+msgid "Error on csv processing"
+msgstr ""
+
+msgid "No data columns were located in the uploaded file. Make sure right separator and encoding were chosen for this upload."
+msgstr ""
+
+msgid "Semicolon"
+msgstr ""
+
+msgid "Comma"
+msgstr ""
+
+msgid "Tab"
+msgstr ""
+
+msgid "No amount column selected"
+msgstr ""
+
+msgid "No account column selected"
+msgstr ""
+
+msgid "No date column selected"
+msgstr ""
+
+msgid "Expected %s. Got %s"
+msgstr ""
+
+msgid "Variable %s should be greater then %s"
+msgstr ""
+
+msgid "Variable %s should be greater or equal then %s"
+msgstr ""
+
+msgid "Not found"
+msgstr ""
+
+msgid "Not implemented for now"
+msgstr ""
+
+msgid "Access denied"
+msgstr ""
+
+msgid "Last %d"
+msgstr ""
+
+msgid "Last %d %s"
+msgstr ""
+
+msgid "How often"
+msgstr ""
+
+msgid "The transaction will be permanently deleted. Are you sure?"
+msgstr ""
+
+msgid "DANGER: This will permanently delete the entire account and ALL TRANSACTIONS without the ability to restore. Are you sure?"
+msgstr ""
+
+msgid "DANGER: This will permanently delete the entire category and ALL TRANSACTIONS without the ability to restore. Are you sure?"
+msgstr ""
+
+msgid "Save all"
+msgstr ""
+
+msgid "Delete transactions?"
+msgstr ""
+
+msgid "Delete transaction?"
+msgstr ""
+
+msgid "Clear import history (don’t worry, imported transactions will not be affected)?"
+msgstr ""
+
+msgid "New income category:"
+msgstr ""
+
+msgid "New expense category:"
+msgstr ""
+
+msgid "Enter format"
+msgstr ""
+
+msgid "transactions"
+msgstr ""
+
+msgid "Start repeat"
+msgstr ""
+
+msgid "New contact will be created"
+msgstr ""
+
+msgid "Limit the number of occurrences"
+msgstr ""
+
+msgid "Until the date"
+msgstr ""
+
+msgid "Skip rows with this value"
+msgstr ""
+
+msgid "Demo account"
+msgstr ""
+
+msgid "Initial investment"
+msgstr ""
+
+msgid "Import %d paid orders"
+msgstr ""
+
+msgid "Took a loan in the bank"
+msgstr ""
+
+msgid "Product purchase"
+msgstr ""
+
+msgid "Sales team"
+msgstr ""
+
+msgid "Pop-up store time-limited sale"
+msgstr ""
+
+msgid "All changes to the order import setup will be applied to new orders only. To update data for existing orders and transactions that had been imported already, delete all existing transactions manually and then <a href=\"%s\" data-cash-shop-action=\"rerun-import\">re-start the integration from scratch</a>."
+msgstr ""
+
+msgid "Enable Shop-Script integration"
+msgstr ""
+
+msgid "Planned online store sales"
+msgstr ""
+
+msgid "From account"
+msgstr ""
+
+msgid "To account"
+msgstr ""
+
+msgid "Hooray! <strong>Created %d income &amp; %d expense transactions</strong> based on your historical Shop-Script sales data."
+msgstr ""
+
+msgid "<strong class=\"highlighted\">%s</strong> (see above) — this is how much cash you <i>would</i> have on hand right now if there were only sales (income), but no business expenses such as salaries, office rent, marketing, purchase & supplies, and so on."
+msgstr ""
+
+msgid ""
+"<strong>Add (or import from a CSV file) your historical expenses now</strong> to get to know your real cash on hand forecast. It’s easy — try clicking on %s button below.<br>\n"
+"                Only both income &amp; expense transactions together will show you the real picture of how your business finances work."
+msgstr ""
+
+msgid "Ok, got that!"
+msgstr ""
+
+msgid "Import orders"
+msgstr ""
+
+msgid "Only orders paid after"
+msgstr ""
+
+msgid "Importing"
+msgstr ""
+
+msgid "Sales category must be set"
+msgstr ""
+
+msgid "Refund category must be set"
+msgstr ""
+
+msgid "Purchases & Supplies"
+msgstr ""
+
+msgid "Delete Shop-Script related data?"
+msgstr ""
+
+msgid "This will flush all Shop-Script import settings so you can restart the import from scratch. All transactions imported from Shop-Script will be deleted. Restart the integration?"
+msgstr ""
+
+msgid "Type in the code"
+msgstr ""
+
+msgid "Restart the integration"
+msgstr ""
+
+msgid "Salary"
+msgstr ""
+
+msgid "Tax"
+msgstr ""
+
+msgid "Invalid code"
+msgstr ""
+
+msgid "Refund for order %s by %s"
+msgstr ""
+
+msgid "Purchase costs for order %s"
+msgstr ""
+
+msgid "Shipping costs for order %s"
+msgstr ""
+
+msgid "Taxes for order %s"
+msgstr ""
+
+msgid "No linked transactions yet"
+msgstr ""
+
+msgid "To link a transaction to a contact in the Cash app, simply find and select an appropriate contact when adding/editing a transaction."
+msgstr ""
+
+msgid "Contact transactions"
+msgstr ""
+
+msgid "Reports"
+msgstr ""
+
+msgid "Cash flow report"
+msgstr ""
+
+msgid "Can see reports"
+msgstr ""
+
+msgid "Can import transactions"
+msgstr ""
+
+msgid "Contractors"
+msgstr ""
+
+msgid "All expenses"
+msgstr ""
+
+msgid "All income"
+msgstr ""
+
+msgid "Download error log"
+msgstr ""
+
+msgid "Remove from history"
+msgstr ""
+
+msgid "You are not allowed to edit or create new transactions"
+msgstr ""
+
+msgid "You are not allowed to edit this transaction"
+msgstr ""
+
+msgid "You are not allowed to create new transactions"
+msgstr ""
+
+msgid "You are not allowed to access this category"
+msgstr ""
+
+msgid "You are not allowed to create new categories"
+msgstr ""
+
+msgid "You are not allowed to do anything with system categories"
+msgstr ""
+
+msgid "An error occurred while saving the category"
+msgstr ""
+
+msgid "You are not allowed to access this account"
+msgstr ""
+
+msgid "You are not allowed to create new accounts"
+msgstr ""
+
+msgid "Transactions related to this contractor"
+msgstr ""
+
+msgid "Imported on %s"
+msgstr ""
+
+msgid "Cash Flow"
+msgstr ""
+
+msgid "%d transactions created in the Cash Flow app:"
+msgstr ""
