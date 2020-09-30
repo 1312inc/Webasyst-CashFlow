@@ -90,7 +90,7 @@ final class cashImportCsv
     {
         $cashInfoDto = cash()->getCache()->get(self::getCacheKeyForUser());
         if (!$cashInfoDto instanceof cashCsvImportInfoDto) {
-            throw new kmwaLogicException('No current import in progress');
+            throw new kmwaLogicException('Failed to create temporary cache files');
         }
 
         return new static(
