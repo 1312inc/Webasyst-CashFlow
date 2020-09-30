@@ -301,7 +301,7 @@
                         {if !empty($errors)}
                         <div class="field" data-cash-shop-errors>
                             <div class="value no-shift errormsg">
-                                {$errors|implode:'<br>'}
+                                {implode('<br>', $errors)}
                             </div>
                         </div>
                         {/if}
