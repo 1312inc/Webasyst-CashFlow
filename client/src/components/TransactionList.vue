@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex my-6 justify-between mb-6">
+    <div class="md:flex my-6 justify-between mb-6">
       <div v-if="checkedRows.length">
         <button
           type="button"

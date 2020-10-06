@@ -7,7 +7,7 @@
             {{$moment(dates.from).format("LL")}} – {{$moment(dates.to).format("LL")}}
           </div>
         </div>
-        <div class="flex justify-end">
+        <div class="md:flex justify-end">
           <div class="w-64 mr-4">
             <Dropdown :items=pastIntervals :defaultSelectedIndex=0 title="Past" @selected="setIntervalFrom" />
           </div>
