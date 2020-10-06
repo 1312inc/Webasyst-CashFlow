@@ -8,7 +8,7 @@ export default {
   }),
 
   getters: {
-    getCategoryById: state => id => {
+    getById: state => id => {
       return state.categories.find(category => category.id === id)
     },
 

@@ -8,7 +8,7 @@ export default {
   }),
 
   getters: {
-    getAccountById: state => id => {
+    getById: state => id => {
       return state.accounts.find(account => account.id === id)
     }
   },

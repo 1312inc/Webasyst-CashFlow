@@ -2,6 +2,7 @@
     <div class="mt-10">
       <div class="flex justify-between">
         <div>
+          <ChartHeader></ChartHeader>
           <div v-if="dates.from" class="text-xl">
             {{$moment(dates.from).format("LL")}} – {{$moment(dates.to).format("LL")}}
           </div>
@@ -27,7 +28,7 @@ import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
-
+import ChartHeader from '@/components/ChartHeader'
 import Dropdown from '@/components/Dropdown'
 
 am4core.useTheme(am4themesAnimated)
@@ -35,6 +36,7 @@ am4core.useTheme(am4themesAnimated)
 export default {
 
   components: {
+    ChartHeader,
     Dropdown
   },
 
