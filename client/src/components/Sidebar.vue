@@ -5,12 +5,11 @@
 
       <div v-for="account in accounts" :key="account.id" class="mb-3">
         <div class="flex items-center justify-between">
-          <div
-            @click="update('Account', account)"
-            class="text-sm cursor-pointer"
-          >
+
+          <router-link :to="{name: 'Account', params: {id: account.id}}">
             {{ account.name }}
-          </div>
+          </router-link>
+
           <div
             v-if="account.stat"
             class="text-sm text-gray-500"
@@ -42,12 +41,9 @@
             :style="`background-color:${category.color};`"
           ></div>
         </div>
-        <div
-          @click="update('Category', category)"
-          class="text-sm cursor-pointer"
-        >
+        <router-link :to="{name: 'Category', params: {id: category.id}}">
           {{ category.name }}
-        </div>
+        </router-link>
       </div>
     </div>
     <button
@@ -67,12 +63,9 @@
             :style="`background-color:${category.color};`"
           ></div>
         </div>
-        <div
-          @click="update('Category', category)"
-          class="text-sm cursor-pointer"
-        >
+        <router-link :to="{name: 'Category', params: {id: category.id}}">
           {{ category.name }}
-        </div>
+        </router-link>
       </div>
     </div>
 
@@ -84,10 +77,7 @@
     </button>
 
     <Modal v-if="open" @close="close">
-      <component
-        :is="currentComponentInModal"
-        :editedItem="editedItem"
-      ></component>
+      <component :is="currentComponentInModal"></component>
     </Modal>
   </div>
 </template>
@@ -107,8 +97,7 @@ export default {
   data () {
     return {
       open: false,
-      currentComponentInModal: '',
-      editedItem: null
+      currentComponentInModal: ''
     }
   },
   computed: {
@@ -125,16 +114,14 @@ export default {
   },
 
   methods: {
-    update (component, item) {
+    update (component) {
       this.open = true
       this.currentComponentInModal = component
-      this.editedItem = item
     },
 
     close () {
       this.open = false
       this.currentComponentInModal = ''
-      this.editedItem = null
     }
   }
 }

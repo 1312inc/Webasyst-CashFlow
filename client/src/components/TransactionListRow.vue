@@ -31,7 +31,7 @@
       </div>
       <div class="w-1/5 py-3">{{ transaction.description }}</div>
       <div class="w-1/5 py-3">
-        {{ getAccountById(transaction.account_id).name }}
+        {{ accountById(transaction.account_id).name }}
       </div>
     </div>
 
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/AddTransaction'
 
@@ -69,15 +69,16 @@ export default {
   },
 
   computed: {
-    ...mapGetters('account', ['getAccountById']),
-    ...mapGetters('category', ['getCategoryById']),
-
     category () {
-      return this.getCategoryById(this.transaction.category_id)
+      return this.$store.getters['category/getById'](this.transaction.category_id)
     }
   },
 
   methods: {
+    accountById (id) {
+      return this.$store.getters['account/getById'](id)
+    },
+
     openModal ({ target }) {
       if (target.type === 'checkbox') return
       this.open = true

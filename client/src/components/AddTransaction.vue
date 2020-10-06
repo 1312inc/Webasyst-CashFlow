@@ -388,7 +388,7 @@ export default {
     },
 
     categories () {
-      const cat = this.$store.getters['category/getCategoryById'](
+      const cat = this.$store.getters['category/getById'](
         this.model.category_id
       )
       return this.$store.state.category.categories.filter(

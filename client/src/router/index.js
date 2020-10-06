@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store'
 import Home from '../views/Home.vue'
-import About from '../views/About.vue'
 
 Vue.use(VueRouter)
 
@@ -12,9 +12,14 @@ const routes = [
     component: Home
   },
   {
-    path: '/about',
-    name: 'About',
-    component: About
+    path: '/account/:id',
+    name: 'Account',
+    component: Home
+  },
+  {
+    path: '/category/:id',
+    name: 'Category',
+    component: Home
   }
 ]
 
@@ -22,6 +27,23 @@ const router = new VueRouter({
   mode: 'history',
   base: window?.appState?.baseUrl || '/',
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.name === 'Account' || to.name === 'Category') {
+    if (to.params.id < 0) {
+      next({ name: 'Home' })
+    } else {
+      store.commit('setCurrentType', {
+        name: to.name,
+        id: +to.params.id
+      })
+      next()
+    }
+  } else {
+    store.commit('setCurrentType', {})
+    next()
+  }
 })
 
 export default router
