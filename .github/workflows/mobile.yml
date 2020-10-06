@@ -21,7 +21,7 @@ jobs:
         uses: andstor/copycat-action@v3
         with:
           personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
-          src_path: /client/dist/mobile/
+          src_path: /client/dist/mobile/.
           src_branch: webasyst2
           dst_path: /cashflow/src/main/assets/spa/
           filter: '**/!(*.html)'
