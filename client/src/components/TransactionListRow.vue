@@ -80,8 +80,12 @@ export default {
     },
 
     openModal ({ target }) {
-      if (target.type === 'checkbox') return
-      this.open = true
+      if (process.env.VUE_APP_MODE === 'mobile') {
+        window.callAndroidAsync('editTransaction', this.transaction)
+      } else {
+        if (target.type === 'checkbox') return
+        this.open = true
+      }
     },
 
     checkboxSelect () {
