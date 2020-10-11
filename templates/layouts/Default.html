@@ -31,7 +31,7 @@
     <link href="{$wa_app_static_url}js/app.js" rel="preload" as="script">
     
     <script>
-        window.appState = {ldelim}"lang":"ru","baseUrl":"{$wa_app_url}","baseApiUrl":"{wa_url()}api.php","token":"{$token}"{rdelim};
+        window.appState = {ldelim}"lang":"{$wa->locale()}","baseUrl":"{$wa_app_url}","baseApiUrl":"{$wa_url}api.php","token":"{$token}"{rdelim};
       </script>
 </head>
 <body>

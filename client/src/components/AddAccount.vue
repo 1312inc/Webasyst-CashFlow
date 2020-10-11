@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="mb-6 text-2xl">
-      {{ isModeUpdate ? "Обновить аккаунт" : "Добавить аккаунт" }}
+      {{ isModeUpdate ? $t('updateAccount') : $t('addAccount') }}
     </div>
 
     <div class="md:flex md:items-center mb-6">
@@ -10,7 +10,7 @@
           class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
           for="inline-full-name"
         >
-          Название
+          {{ $t('name') }}
         </label>
       </div>
       <div class="md:w-2/3">
@@ -29,7 +29,7 @@
           class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
           for="inline-full-name"
         >
-          Валюта
+          {{ $t('currency') }}
         </label>
       </div>
       <div class="md:w-2/3">
@@ -65,7 +65,7 @@
           class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
           for="inline-full-name"
         >
-          Иконка
+          {{ $t('icon') }}
         </label>
       </div>
       <div class="md:w-2/3">
@@ -79,7 +79,7 @@
           class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
           for="inline-full-name"
         >
-          Описание
+          {{ $t('desc') }}
         </label>
       </div>
       <div class="md:w-2/3">
@@ -93,14 +93,14 @@
     <div class="flex justify-between">
       <div>
         <button @click="submit" type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white text-base bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out">
-          {{ isModeUpdate ? "Обновить" : "Добавить" }}
+          {{ isModeUpdate ? $t('update') : $t('add') }}
         </button>
-        или
-        <a href="#" @click.prevent="close" class="border-b text-indigo">отменить</a>
+        {{ $t('or') }}
+        <a href="#" @click.prevent="close" class="border-b text-indigo">{{ $t('cancel') }}</a>
       </div>
       <div>
         <button v-if="isModeUpdate" @click="remove" type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-indigo-600 text-base border border-indigo-600 focus:outline-none focus:shadow-outline-indigo focus:border-indigo-700 active:bg-indigo-700 transition duration-150 ease-in-out">
-          Удалить
+          {{ $t('delete') }}
         </button>
       </div>
     </div>

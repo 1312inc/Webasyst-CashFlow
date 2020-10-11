@@ -1,0 +1,21 @@
+{
+  "accounts": "Accounts",
+  "categories": "Categories",
+  "expense": "Expense",
+  "income": "Income",
+  "addAccount": "Add Account",
+  "updateAccount": "Update Account",
+  "addCategory": "Add Category",
+  "updateCategory": "Update Category",
+  "add": "Add",
+  "update": "Update",
+  "or": "or",
+  "cancel": "cancel",
+  "delete": "Delete",
+  "name": "Name",
+  "currency": "Currency",
+  "type": "Type",
+  "color": "Color",
+  "icon": "Icon",
+  "desc": "Description"
+}

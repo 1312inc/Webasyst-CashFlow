@@ -1,7 +1,7 @@
 <template>
   <div class="p-10 text-left">
     <div class="mb-10">
-      <h4 class="font-bold mb-6">Аккаунты</h4>
+      <h4 class="font-bold mb-6">{{ $t('accounts') }}</h4>
 
       <div v-for="account in accounts" :key="account.id" class="mb-3">
         <div class="flex items-center justify-between">
@@ -25,13 +25,13 @@
         @click="update('Account')"
         class="text-xs bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-3 border border-blue-500 hover:border-transparent rounded"
       >
-        Добавить аккаунт
+        {{ $t('addAccount') }}
       </button>
     </div>
 
-    <h4 class="font-bold mb-4">Категории</h4>
+    <h4 class="font-bold mb-4">{{ $t('categories') }}</h4>
 
-    <div class="uppercase font-bold text-xs mt-6 mb-4">Income</div>
+    <div class="uppercase font-bold text-xs mt-6 mb-4">{{ $t('income') }}</div>
 
     <div v-for="category in categoriesIncome" :key="category.id" class="mb-3">
       <div class="flex items-center">
@@ -50,10 +50,10 @@
       @click="update('Category')"
       class="text-xs bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-3 border border-blue-500 hover:border-transparent rounded"
     >
-      Добавить категорию
+      {{ $t('addCategory') }}
     </button>
 
-    <div class="uppercase font-bold text-xs mt-6 mb-4">Expense</div>
+    <div class="uppercase font-bold text-xs mt-6 mb-4">{{ $t('expense') }}</div>
 
     <div v-for="category in categoriesExpense" :key="category.id" class="mb-3">
       <div class="flex items-center">
@@ -73,7 +73,7 @@
       @click="update('Category')"
       class="text-xs bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-3 border border-blue-500 hover:border-transparent rounded"
     >
-      Добавить категорию
+      {{ $t('addCategory') }}
     </button>
 
     <Modal v-if="open" @close="close">
