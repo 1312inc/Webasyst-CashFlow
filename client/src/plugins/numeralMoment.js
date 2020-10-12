@@ -1,16 +1,11 @@
+import { locale } from './locale'
 import numeral from 'numeral'
 import moment from 'moment'
-numeral.register('locale', 'ru', {
-  delimiters: {
-    thousands: ' ',
-    decimal: ','
-  },
-  currency: {
-    symbol: '₽'
-  }
-})
-numeral.locale('ru')
-moment.locale('ru')
+import 'numeral/locales/ru'
+
+const localeCode = locale.split('_')[0]
+numeral.locale(localeCode)
+moment.locale(localeCode)
 
 export default {
   install (Vue, options) {

@@ -22,16 +22,13 @@
 </template>
 
 <script>
-
+import { locale } from '@/plugins/locale'
 import { mapState, mapActions } from 'vuex'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
-import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 import ChartHeader from '@/components/ChartHeader'
 import Dropdown from '@/components/Dropdown'
-
-am4core.useTheme(am4themesAnimated)
 
 export default {
 
@@ -122,7 +119,7 @@ export default {
 
   mounted () {
     const chart = am4core.create('chartdiv', am4charts.XYChart)
-    chart.language.locale = am4langRU
+    if (locale === 'ru_RU') chart.language.locale = am4langRU
 
     chart.leftAxesContainer.layout = 'vertical'
     chart.seriesContainer.zIndex = -1
@@ -138,23 +135,6 @@ export default {
     dateAxis.renderer.minGridDistance = 60
     dateAxis.renderer.grid.template.location = 0
     dateAxis.renderer.grid.template.disabled = true
-
-    const dateAxisChanged = ({ target }) => {
-      setTimeout(() => {
-        if (!target.isInTransition()) {
-          this.dates.from = this.$moment(target.minZoomed).format('YYYY-MM-DD')
-          this.dates.to = this.$moment(target.maxZoomed).format('YYYY-MM-DD')
-          this.setdetailsInterval({ from: this.dates.from, to: this.dates.to })
-        }
-      }, 0)
-    }
-
-    dateAxis.events.on('startchanged', dateAxisChanged)
-    dateAxis.events.on('endchanged', dateAxisChanged)
-    dateAxis.events.on('datarangechanged', ({ target }) => {
-      this.dates.from = this.$moment(target.minZoomed).format('YYYY-MM-DD')
-      this.dates.to = this.$moment(target.maxZoomed).format('YYYY-MM-DD')
-    })
 
     const valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
     valueAxis.cursorTooltipEnabled = false
@@ -180,6 +160,7 @@ export default {
     chart.cursor.lineX.fill = am4core.color('#000')
     chart.cursor.lineX.fillOpacity = 0.1
     chart.cursor.lineY.strokeOpacity = 0
+    chart.cursor.behavior = 'none'
 
     var series = chart.series.push(new am4charts.ColumnSeries())
     series.name = 'Приход'
@@ -221,7 +202,7 @@ export default {
       text += '<div class="mb-4"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
       let timeUnit
       chart.series.each((item, i) => {
-        text += '<div class="text-sm mb-2"><span style="color:' + item.stroke.hex + '">●</span> ' + item.name + ': ' + this.$numeral(item.tooltipDataItem.valueY).format('0,0 $') + '</div>'
+        text += '<div class="text-sm mb-2"><span style="color:' + item.stroke.hex + '">●</span> ' + item.name + ': ' + this.$numeral(item.tooltipDataItem.valueY).format() + '</div>'
         if (i === 2) {
           timeUnit = item.tooltipDataItem.groupDataItems ? 'month' : 'day'
         }
@@ -269,6 +250,15 @@ export default {
     chart.scrollbarX = scrollbarX
     chart.scrollbarX.scrollbarChart.plotContainer.filters.clear()
     chart.scrollbarX.parent = chart.bottomAxesContainer
+
+    const dateAxisChanged = () => {
+      this.dates.from = this.$moment(dateAxis.minZoomed).format('YYYY-MM-DD')
+      this.dates.to = this.$moment(dateAxis.maxZoomed).format('YYYY-MM-DD')
+      this.setdetailsInterval({ from: this.dates.from, to: this.dates.to })
+    }
+
+    chart.scrollbarX.startGrip.events.on('dragstop', dateAxisChanged)
+    chart.scrollbarX.endGrip.events.on('dragstop', dateAxisChanged)
 
     var scrollSeries1 = chart.scrollbarX.scrollbarChart.series.getIndex(0)
     scrollSeries1.strokeWidth = 1
