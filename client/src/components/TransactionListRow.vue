@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="w-1/5 py-3">
-        {{ $numeral(transaction.amount).format("0,0 $") }}
+        {{ $numeral(transaction.amount).format() }} {{ $helper.currToSymbol(accountById(transaction.account_id).currency) }}
       </div>
       <div class="w-1/5 py-3">
         <div class="flex items-center">
