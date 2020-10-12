@@ -1,11 +1,7 @@
 <?php
 return array (
   'name' => 'Cash Flow',
-  'icon' =>
-  array (
-    48 => 'img/cash48.png',
-    96 => 'img/cash96.png',
-  ),
+  'icon' => 'img/cash.png',
   'version' => '1.0.0',
   'vendor'  => '1021997',
   'rights'  => true,
