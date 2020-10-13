@@ -135,7 +135,7 @@ class cashTransactionDto extends cashAbstractDto
             !empty($data['contractor_contact_id']) ? $data['contractor_contact_id'] : null
         );
         if (!empty($data['contractor_contact_id'])
-            && (!$this->contractor->exists() || $this->contact->get('is_user') != -1)
+            && (!$this->contractor->exists() || $this->contractor->get('is_user') != -1)
         ) {
             $this->contractor = new waContact();
         }
