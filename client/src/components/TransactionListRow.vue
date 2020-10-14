@@ -1,48 +1,30 @@
 <template>
-  <div>
-    <div
-      @click="openModal"
-      class="flex w-full cursor-pointer hover:bg-gray-200 border-b border-solid border-gray-300"
-    >
-      <div class="w-1/5 py-3">
-        <div class="inline-flex items-center">
-          <input
-            type="checkbox"
-            class="mr-2"
-            @click="checkboxSelect"
-            :checked="isChecked"
-          />
-          {{ $moment(transaction.date).format("LL") }}
-        </div>
-      </div>
-      <div class="w-1/5 py-3">
-        {{ $numeral(transaction.amount).format() }} {{ $helper.currToSymbol(accountById(transaction.account_id).currency) }}
-      </div>
-      <div class="w-1/5 py-3">
-        <div class="flex items-center">
-          <div
-            class="w-3 h-3 rounded-full mr-2"
-            :style="`background-color:${category.color};`"
-          ></div>
-          <div>
-            {{ category.name }}
-          </div>
-        </div>
-      </div>
-      <div class="w-1/5 py-3">{{ transaction.description }}</div>
-      <div class="w-1/5 py-3">
-        {{ accountById(transaction.account_id).name }}
-      </div>
-    </div>
+  <tr>
+    <td class="min-width">
+      <input type="checkbox" @click="checkboxSelect" :checked="isChecked" />
+    </td>
+    <td @click="openModal">
+      {{ $moment(transaction.date).format("LL") }}
+    </td>
+    <td @click="openModal">
+      {{ $numeral(transaction.amount).format() }}
+      {{ $helper.currToSymbol(accountById(transaction.account_id).currency) }}
+    </td>
+    <td @click="openModal">
+      {{ category.name }}
+    </td>
+    <td @click="openModal">{{ transaction.description }}</td>
+    <td @click="openModal">
+      {{ accountById(transaction.account_id).name }}
+    </td>
 
     <Modal v-if="open" @close="open = false">
       <AddTransaction :transaction="transaction" />
     </Modal>
-  </div>
+  </tr>
 </template>
 
 <script>
-
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/AddTransaction'
 
@@ -70,7 +52,9 @@ export default {
 
   computed: {
     category () {
-      return this.$store.getters['category/getById'](this.transaction.category_id)
+      return this.$store.getters['category/getById'](
+        this.transaction.category_id
+      )
     }
   },
 

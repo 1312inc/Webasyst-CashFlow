@@ -1,17 +1,16 @@
 <template>
-  <div v-if="currentCategory" class="mb-4">
-    <div class="flex items-center">
-      <div class="text-2xl">{{ currentCategory.name }}</div>
+  <div v-if="currentCategory">
+    <div class="flexbox middle space-1rem">
+      <div class="h2" style="margin-bottom:0;">{{ currentCategory.name }}</div>
       <div
         v-if="currentCategory.stat && currentCategory.stat.summary"
-        class="text-2xl rounded p-2 ml-4"
-        :class="`bg-${currentCategory.stat.summary > 0 ? 'green' : 'red'}-300`"
+        class="larger"
       >
         {{ $numeral(currentCategory.stat.summary).format() }}
         {{ $helper.currToSymbol(currentCategory.currency) }}
       </div>
-      <div class="ml-4">
-        <button @click="update(currentCategory)" class="text-indigo-500">
+      <div>
+        <button @click="update(currentCategory)" class="button nobutton small">
           изменить настройки
         </button>
       </div>

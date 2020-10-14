@@ -1,10 +1,10 @@
 <template>
-  <div class="grid grid-cols-9">
-    <div v-for="(color, i) in colors[type]" :key="i" class="mb-2">
+  <div class="colors flexbox">
+    <div v-for="(color, i) in colors[type]" :key="i">
       <div
-        class="color-item w-6 h-6 rounded-full"
+        class="colors__item"
         :class="{ active: color === active }"
-        :style="`background-color:${color};`"
+        :style="`background-color: ${color};`"
         @click="click(color)"
       ></div>
     </div>
@@ -121,12 +121,23 @@ export default {
 </script>
 
 <style lang="scss">
-.color-item {
-  cursor: pointer;
-  border: 2px solid #fff;
+.colors {
+  flex-wrap: wrap;
 
-  &.active {
-    border-color: #000;
+  & > div {
+    flex: 1 0 11%;
+  }
+
+  &__item {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+
+    &.active {
+      border-color: #000;
+    }
   }
 }
 </style>

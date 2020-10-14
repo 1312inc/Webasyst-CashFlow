@@ -1,13 +1,15 @@
 <template>
-  <div id="app">
-    <div class="flex">
-      <div class="w-1/6 bg-gray-100">
+  <div id="wa-app">
+    <div class="flexbox">
+      <div class="sidebar">
         <Sidebar />
       </div>
-      <div class="w-5/6 mx-10">
+      <div class="content blank">
+        <div class="box contentbox">
         <keep-alive>
           <router-view />
         </keep-alive>
+        </div>
       </div>
     </div>
   </div>

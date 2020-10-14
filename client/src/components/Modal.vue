@@ -1,11 +1,16 @@
 <template>
-  <transition name="modal" appear>
-    <div class="modal-mask">
-      <div class="modal-wrapper">
-        <div class="modal-container">
-          <slot></slot>
+  <transition name="fade">
+    <div class="dialog">
+      <transition name="fade" appear>
+        <div class="dialog-background"></div>
+      </transition>
+      <transition name="slide-fade" appear>
+        <div class="dialog-body">
+          <div class="dialog-content">
+            <slot></slot>
+          </div>
         </div>
-      </div>
+      </transition>
     </div>
   </transition>
 </template>
@@ -15,66 +20,22 @@ export default {}
 </script>
 
 <style>
-.modal-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: table;
-  transition: opacity 0.3s ease;
+.dialog {
+  display: block;
 }
 
-.modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
+.dialog .dialog-body {
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
 }
 
-.modal-container {
-  width: 560px;
-  margin: 0px auto;
-  padding: 40px 40px;
-  background-color: #fff;
-  border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
-  transition: all 0.3s ease;
-  font-family: Helvetica, Arial, sans-serif;
+.slide-fade-enter-active {
+  transition: all 0.2s;
 }
 
-.modal-header h3 {
-  margin-top: 0;
-  color: #42b983;
-}
-
-.modal-body {
-  margin: 20px 0;
-}
-
-.modal-default-button {
-  float: right;
-}
-
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
-
-.modal-enter {
+.slide-fade-enter, .slide-fade-leave-to {
+  transform: translateX(-50%) translateY(-44%) !important;
   opacity: 0;
-}
-
-.modal-leave-active {
-  opacity: 0;
-}
-
-.modal-enter .modal-container,
-.modal-leave-active .modal-container {
-  transform: scale(1.1);
 }
 </style>
