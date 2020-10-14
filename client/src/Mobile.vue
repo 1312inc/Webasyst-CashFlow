@@ -1,13 +1,40 @@
 <template>
   <div id="wa-app">
-    <router-view />
+    <div class="content blank" style="overflow:hidden;">
+      <div class="box contentbox">
+        <router-view />
+      </div>
+      <Modal v-if="open" @close="close">
+        <component :is="currentComponentInModal"></component>
+      </Modal>
+    </div>
   </div>
 </template>
 
 <script>
+import Modal from '@/components/Modal'
+import Account from '@/components/AddAccount'
+import Category from '@/components/AddCategory'
 
 export default {
+  components: {
+    Modal,
+    Account,
+    Category
+  },
+
+  data () {
+    return {
+      open: false,
+      currentComponentInModal: ''
+    }
+  },
+
   async mounted () {
+    window.eventBus.$on('openDialog', (type = 'Category') => {
+      this.update(type)
+    })
+
     await Promise.all([
       this.$store.dispatch('account/getList'),
       this.$store.dispatch('category/getList')
@@ -22,6 +49,18 @@ export default {
       from: this.$moment().add(-1, 'M').format('YYYY-MM-DD'),
       to: this.$moment().format('YYYY-MM-DD')
     })
+  },
+
+  methods: {
+    update (component) {
+      this.open = true
+      this.currentComponentInModal = component
+    },
+
+    close () {
+      this.open = false
+      this.currentComponentInModal = ''
+    }
   }
 }
 </script>

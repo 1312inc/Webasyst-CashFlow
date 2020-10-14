@@ -7,6 +7,7 @@ import { i18n } from './plugins/locale'
 import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
 import Noty from './plugins/noty'
+import './assets/styles/wa-2.0.css'
 
 Vue.config.productionTip = false
 
@@ -14,6 +15,8 @@ Vue.use(Numeral)
 Vue.use(Noty)
 Vue.use(Vuelidate)
 Vue.use(Helpers)
+
+window.eventBus = new Vue()
 
 new Vue({
   router,
