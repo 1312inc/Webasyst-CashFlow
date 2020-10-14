@@ -73,6 +73,8 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                     $rawData[cashCategory::TYPE_INCOME][$groupingDto->key][$datum['currency']] = $initVals;
                     $rawData[cashCategory::TYPE_EXPENSE][$groupingDto->key][$datum['currency']] = $initVals;
                 }
+                $rawData[cashCategory::TYPE_INCOME]['total'][$datum['currency']]['per_month'] = .0;
+                $rawData[cashCategory::TYPE_EXPENSE]['total'][$datum['currency']]['per_month'] = .0;
             }
 
             if (!isset($rawData[$datum['id']][$datum['month']][$datum['currency']])) {
@@ -84,10 +86,14 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                         'per_month' => .0,
                     ];
                 }
+                $rawData[$datum['id']]['total'][$datum['currency']]['per_month'] = .0;
             }
 
             $rawData[$datum['id']][$datum['month']][$datum['currency']]['per_month'] = (float) $datum['per_month'];
+            $rawData[$datum['id']]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+
             $rawData[$datum['type']][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+            $rawData[$datum['type']]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
         }
 
         $statData = [];
