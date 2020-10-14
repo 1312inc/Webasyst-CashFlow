@@ -1,23 +1,23 @@
 <template>
-    <div class="mt-10">
-      <div class="flex justify-between">
-        <div>
+    <div>
+      <div class="flexbox">
+        <div class="wide">
           <ChartHeader></ChartHeader>
-          <div v-if="dates.from" class="text-xl">
+          <div v-if="dates.from">
             {{$moment(dates.from).format("LL")}} – {{$moment(dates.to).format("LL")}}
           </div>
         </div>
-        <div class="md:flex justify-end">
-          <div class="w-64 mr-4">
-            <Dropdown :items=pastIntervals :defaultSelectedIndex=0 title="Past" @selected="setIntervalFrom" />
+        <div class="flexbox space-1rem">
+          <div>
+            <Dropdown :items=pastIntervals @selected="setIntervalFrom" />
           </div>
-          <div class="w-64">
-            <Dropdown :items=futureIntervals :defaultSelectedIndex=0 title="Future" @selected="setIntervalTo" />
+          <div>
+            <Dropdown :items=futureIntervals @selected="setIntervalTo" />
           </div>
         </div>
       </div>
 
-        <div id="chartdiv"></div>
+      <div id="chartdiv" class="smaller"></div>
     </div>
 </template>
 
@@ -198,17 +198,17 @@ export default {
     series3.defaultState.transitionDuration = 0
 
     series3.adapter.add('tooltipHTML', (ev) => {
-      var text = '<div class="p-2">'
-      text += '<div class="mb-4"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
+      var text = '<div style="padding:.2rem 0;">'
+      text += '<div style="margin-bottom:.5rem;"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
       let timeUnit
       chart.series.each((item, i) => {
-        text += '<div class="text-sm mb-2"><span style="color:' + item.stroke.hex + '">●</span> ' + item.name + ': ' + this.$numeral(item.tooltipDataItem.valueY).format() + '</div>'
+        text += '<div style="margin-bottom:.25rem;"><span style="color:' + item.stroke.hex + '">●</span> ' + item.name + ': ' + this.$numeral(item.tooltipDataItem.valueY).format() + '</div>'
         if (i === 2) {
           timeUnit = item.tooltipDataItem.groupDataItems ? 'month' : 'day'
         }
       })
 
-      text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + timeUnit + '\')" class="bg-blue-500 hover:bg-blue-700 text-sm text-white font-bold py-2 px-4 rounded my-2">Подробнее</a>'
+      text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + timeUnit + '\')" class="button small" style="margin:.2rem 0;">Подробнее</button>'
       text += '</div>'
       return text
     })
@@ -290,11 +290,11 @@ export default {
       this.chart.data = this.chartData
     },
 
-    setIntervalFrom (index, value) {
+    setIntervalFrom (value) {
       this.$store.dispatch('transaction/resetAllDataToInterval', { from: value })
     },
 
-    setIntervalTo (index, value) {
+    setIntervalTo (value) {
       this.$store.dispatch('transaction/resetAllDataToInterval', { to: value })
     },
 
@@ -307,10 +307,9 @@ export default {
 </script>
 
 <style>
-#chartdiv {
-  width: 100%;
-  height: 600px;
-  margin-bottom: 2rem;
-}
-
+  #chartdiv {
+    width: 100%;
+    height: 600px;
+    margin-bottom: 2rem;
+  }
 </style>

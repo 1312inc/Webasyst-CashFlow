@@ -1,80 +1,71 @@
 <template>
-  <div class="p-10 text-left">
-    <div class="mb-10">
-      <h4 class="font-bold mb-6">{{ $t('accounts') }}</h4>
-
-      <div v-for="account in accounts" :key="account.id" class="mb-3">
-        <div class="flex items-center justify-between">
-
-          <router-link :to="{name: 'Account', params: {id: account.id}}">
-            {{ account.name }}
+  <div>
+    <div class="box">
+      <h5>{{ $t("accounts") }}</h5>
+      <ul class="menu-v">
+        <li v-for="account in accounts" :key="account.id">
+          <router-link :to="{ name: 'Account', params: { id: account.id } }">
+            <span>{{ account.name }}</span>
+            <span
+              v-if="account.stat"
+              class="count"
+              v-html="
+                `${account.stat.summaryShorten}&nbsp;${$helper.currToSymbol(
+                  account.currency
+                )}`
+              "
+            ></span>
           </router-link>
+        </li>
+      </ul>
 
-          <div
-            v-if="account.stat"
-            class="text-sm text-gray-500"
-            v-html="
-              `${account.stat.summaryShorten}&nbsp;${$helper.currToSymbol(
-                account.currency
-              )}`
-            "
-          ></div>
-        </div>
-      </div>
-      <button
-        @click="update('Account')"
-        class="text-xs bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-3 border border-blue-500 hover:border-transparent rounded"
-      >
-        {{ $t('addAccount') }}
+      <button @click="update('Account')" class="button rounded smaller">
+        <i class="fas fa-plus"></i> {{ $t("addAccount") }}
       </button>
     </div>
 
-    <h4 class="font-bold mb-4">{{ $t('categories') }}</h4>
+    <div class="box">
+      <h5>{{ $t("categories") }}</h5>
+      <h6 class="heading black">{{ $t("income") }}</h6>
 
-    <div class="uppercase font-bold text-xs mt-6 mb-4">{{ $t('income') }}</div>
+      <ul class="menu-v">
+        <li v-for="category in categoriesIncome" :key="category.id">
+          <router-link :to="{ name: 'Category', params: { id: category.id } }" class="flexbox middle">
+            <span class="icon"
+              ><i
+                class="rounded"
+                :style="`background-color:${category.color};`"
+              ></i
+            ></span>
+            <span>{{ category.name }}</span>
+          </router-link>
+        </li>
+      </ul>
 
-    <div v-for="category in categoriesIncome" :key="category.id" class="mb-3">
-      <div class="flex items-center">
-        <div>
-          <div
-            class="w-2 h-2 rounded-full mr-1"
-            :style="`background-color:${category.color};`"
-          ></div>
-        </div>
-        <router-link :to="{name: 'Category', params: {id: category.id}}">
-          {{ category.name }}
-        </router-link>
-      </div>
+      <!-- <button @click="update('Category')" class="button rounded smaller">
+        <i class="fas fa-plus"></i> {{ $t("addCategory") }}
+      </button> -->
+
+      <h6 class="heading black">{{ $t("expense") }}</h6>
+
+      <ul class="menu-v">
+        <li v-for="category in categoriesExpense" :key="category.id">
+          <router-link :to="{ name: 'Category', params: { id: category.id } }" class="flexbox middle">
+            <span class="icon"
+              ><i
+                class="rounded"
+                :style="`background-color:${category.color};`"
+              ></i
+            ></span>
+            <span>{{ category.name }}</span>
+          </router-link>
+        </li>
+      </ul>
+
+      <button @click="update('Category')" class="button rounded smaller">
+        <i class="fas fa-plus"></i> {{ $t("addCategory") }}
+      </button>
     </div>
-    <button
-      @click="update('Category')"
-      class="text-xs bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-3 border border-blue-500 hover:border-transparent rounded"
-    >
-      {{ $t('addCategory') }}
-    </button>
-
-    <div class="uppercase font-bold text-xs mt-6 mb-4">{{ $t('expense') }}</div>
-
-    <div v-for="category in categoriesExpense" :key="category.id" class="mb-3">
-      <div class="flex items-center">
-        <div>
-          <div
-            class="w-2 h-2 rounded-full mr-1"
-            :style="`background-color:${category.color};`"
-          ></div>
-        </div>
-        <router-link :to="{name: 'Category', params: {id: category.id}}">
-          {{ category.name }}
-        </router-link>
-      </div>
-    </div>
-
-    <button
-      @click="update('Category')"
-      class="text-xs bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-3 border border-blue-500 hover:border-transparent rounded"
-    >
-      {{ $t('addCategory') }}
-    </button>
 
     <Modal v-if="open" @close="close">
       <component :is="currentComponentInModal"></component>
@@ -105,11 +96,11 @@ export default {
     ...mapState('category', ['categories']),
 
     categoriesIncome () {
-      return this.categories.filter(e => e.type === 'income')
+      return this.categories.filter((e) => e.type === 'income')
     },
 
     categoriesExpense () {
-      return this.categories.filter(e => e.type === 'expense')
+      return this.categories.filter((e) => e.type === 'expense')
     }
   },
 

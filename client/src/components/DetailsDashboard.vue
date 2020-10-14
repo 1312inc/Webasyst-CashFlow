@@ -1,64 +1,47 @@
 <template>
   <transition name="fade" appear>
-    <div class="p-6 bg-gray-100 mb-10 rounded border">
-      <div class="flex justify-between mb-6">
-        <div>
-          <h3 class="text-2xl">
-            {{ dates }}
-          </h3>
-        </div>
-        <div>
-          <div @click="close" class="cursor-pointer border-gray-900 border-b">
-            Закрыть
+    <div>
+        <div class="flexbox">
+          <div class="wide">
+            <h3>
+              {{ dates }}
+            </h3>
+          </div>
+          <div>
+            <button @click="close" class="smaller">
+              Закрыть
+            </button>
           </div>
         </div>
-      </div>
 
-      <div class="flex">
-        <div class="w-2/5 pr-6">
-          <div class="flex items-center">
-            <div class="mr-6">
-              <div class="text-xl">Приход:</div>
-            </div>
-            <div>
-              <div
-                class="text-2xl border px-3 rounded bg-green-100 border-green-300 text-green-900"
-              >
-                {{
-                  $numeral(detailsDataGenerator.income.total).format("0,0 $")
-                }}
+        <div class="flexbox fixed">
+          <div>
+            <div class="flexbox middle">
+              <div>Приход:</div>
+              <div>
+                {{ $numeral(detailsDataGenerator.income.total).format() }}
               </div>
             </div>
+            <ChartPie :data="detailsDataGenerator.income.items" />
           </div>
 
-          <ChartPie :data="detailsDataGenerator.income.items" />
-        </div>
-        <div class="w-2/5 pr-6">
-          <div class="flex items-center">
-            <div class="mr-6">
-              <div class="text-xl">Расход:</div>
-            </div>
-            <div>
-              <div
-                class="text-2xl border px-3 rounded bg-red-100 border-red-300 text-red-900"
-              >
-                {{
-                  $numeral(-detailsDataGenerator.expense.total).format("0,0 $")
-                }}
+          <div>
+            <div class="flexbox middle">
+              <div>Расход:</div>
+              <div>
+                {{ $numeral(-detailsDataGenerator.expense.total).format() }}
               </div>
             </div>
+            <ChartPie :data="detailsDataGenerator.expense.items" />
           </div>
-          <ChartPie :data="detailsDataGenerator.expense.items" />
-        </div>
-        <div class="w-1/5">
-          <div class="text-xl mb-6">Баланс</div>
-          <div
-            class="text-2xl border px-3 rounded bg-green-100 border-green-300 inline-block"
-          >
-            {{ $numeral(detailsDataGenerator.balance.total).format("0,0 $") }}
+
+          <div>
+            <div class="text-xl mb-6">Баланс</div>
+            <div>
+              {{ $numeral(detailsDataGenerator.balance.total).format() }}
+            </div>
           </div>
         </div>
-      </div>
     </div>
   </transition>
 </template>
@@ -76,12 +59,19 @@ export default {
     ...mapGetters('category', ['detailsDataGenerator']),
 
     dates () {
-      return this.detailsInterval.from !== this.detailsInterval.to ? `${this.$moment(this.detailsInterval.from).format('LL')} – ${this.$moment(this.detailsInterval.to).format('LL')}` : `${this.$moment(this.detailsInterval.from).format('LL')}`
+      return this.detailsInterval.from !== this.detailsInterval.to
+        ? `${this.$moment(this.detailsInterval.from).format(
+            'LL'
+          )} – ${this.$moment(this.detailsInterval.to).format('LL')}`
+        : `${this.$moment(this.detailsInterval.from).format('LL')}`
     }
   },
   methods: {
     close () {
-      this.$store.dispatch('transaction/setdetailsInterval', { from: '', to: '' })
+      this.$store.dispatch('transaction/setdetailsInterval', {
+        from: '',
+        to: ''
+      })
     }
   }
 }

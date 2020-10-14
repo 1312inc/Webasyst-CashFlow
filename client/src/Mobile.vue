@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="p-4">
+  <div id="wa-app">
     <router-view />
   </div>
 </template>

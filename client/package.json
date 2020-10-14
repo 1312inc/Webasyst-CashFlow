@@ -17,7 +17,6 @@
     "moment": "^2.28.0",
     "noty": "^3.2.0-beta",
     "numeral": "^2.0.6",
-    "v-click-outside": "^3.1.2",
     "vue": "^2.6.11",
     "vue-i18n": "^8.22.0",
     "vue-router": "^3.2.0",
