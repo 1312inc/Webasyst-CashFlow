@@ -4,7 +4,9 @@
       <h5>{{ $t("accounts") }}</h5>
       <ul class="menu-v">
         <li v-for="account in accounts" :key="account.id">
-          <router-link :to="{ name: 'Account', params: { id: account.id } }">
+          <router-link :to="{ name: 'Account', params: { id: account.id } }" class="flexbox middle">
+            <span v-if="account.icon.indexOf('wa-apps') > -1" class="icon"><img :src="account.icon" alt="" /></span>
+            <i v-else class="fas fa-star"></i>
             <span>{{ account.name }}</span>
             <span
               v-if="account.stat"
