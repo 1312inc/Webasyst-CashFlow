@@ -306,10 +306,15 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
   #chartdiv {
     width: 100%;
     height: 600px;
     margin-bottom: 2rem;
+
+    @media (max-width: 768px) {
+      height: 300px;
+    }
+
   }
 </style>

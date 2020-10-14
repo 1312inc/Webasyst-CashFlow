@@ -19,7 +19,7 @@
 export default {}
 </script>
 
-<style>
+<style scoped>
 .dialog {
   display: block;
 }

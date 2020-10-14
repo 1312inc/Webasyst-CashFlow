@@ -6,6 +6,13 @@ module.exports = {
   devServer: {
     proxy: 'http://localhost:8888'
   },
+  css: {
+    loaderOptions: {
+      css: {
+        url: false
+      }
+    }
+  },
   configureWebpack: {
     plugins: [
       new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en|ru/)
