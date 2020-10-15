@@ -10,12 +10,12 @@ class cashTransactionExternalEntityShopOrder implements cashTransactionExternalE
     /**
      * @var string
      */
-    private $html;
+    private $html = '';
 
     /**
      * @var string
      */
-    private $icon;
+    private $icon = '';
 
     /**
      * cashTransactionExternalEntityShopOrder constructor.

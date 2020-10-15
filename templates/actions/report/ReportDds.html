@@ -64,22 +64,17 @@
                     {if $datum->entity->isHeader()}</b>{/if}
                 </td>
                 {if !empty($datum->valuesPerPeriods)}
-                    {$_total = 0}
-                    {foreach $datum->valuesPerPeriods as $values}
-                        <td>
-                            {foreach $values as $value}
+                    {$_total = []}
+                    {foreach $datum->valuesPerPeriods as $valuesKey => $values}
+                        <td{if $valuesKey == 'total'} class="nowrap align-right bold"{/if}>
+                            {foreach $values as $currencyCode => $value}
                                 <div class="nowrap align-right">
                                     {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false}
-                                    {$datum->currencies[$value.currency]->getSign()}
-                                    {$_total = $_total + $value.per_month}
+                                    {$datum->currencies[$currencyCode]->getSign()}
                                 </div>
                             {/foreach}
                         </td>
                     {/foreach}
-                    <td class="nowrap align-right bold">
-                        {if $_total<0}&minus;{/if} {round(abs($_total),2)|wa_format_number:false}
-                        {$datum->currencies[$value.currency]->getSign()}
-                    </td>
                 {else}
                     <td colspan="{count($grouping) + 1}" class="align-center gray">—</td>
                 {/if}
