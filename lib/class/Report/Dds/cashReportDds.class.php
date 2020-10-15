@@ -35,8 +35,9 @@ class cashReportDds
      * @param cashReportDdsTypeDto $type
      * @param cashReportDdsPeriod  $period
      *
-     * @return array
+     * @return cashReportDdsStatDto[]
      * @throws waException
+     * @throws kmwaRuntimeException
      */
     public function getDataForTypeAndPeriod(cashReportDdsTypeDto $type, cashReportDdsPeriod $period): array
     {
@@ -55,6 +56,9 @@ class cashReportDds
                 $data = (new cashReportDdsContractorDataProvider())->getDataForPeriod($period);
 
                 break;
+
+            default:
+                throw new kmwaRuntimeException(sprintf('Wrong dds report type %s', $type->id));
         }
 
         return $data;

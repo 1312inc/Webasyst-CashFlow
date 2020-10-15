@@ -82,7 +82,7 @@
                             </div>
                             <div class="value" style="display: none" data-cash-shop-configure-actions-income>
                                 <div>[`Select Shop-Script order actions which are directly associated with marking orders as paid. The Cash app will listen only to the selected list of order actions for importing sales:`]</div>
-                                <select name="shopscript_settings[actions][income]" multiple style="min-height: 250px;">
+                                <select name="shopscript_settings[incomeActions][]" multiple style="min-height: 250px;">
                                     {foreach $actions as $action}
                                         <option value="{$action->getId()}"
                                                 {if in_array($action->getId(), $shopScriptSettings->getIncomeActions())}selected{/if}
@@ -111,7 +111,7 @@
                             </div>
                             <div class="value" style="display: none" data-cash-shop-configure-actions-expense>
                                 <div>[`Select Shop-Script order actions which are related with issueing refunds (cancelling orders that had been paid in the past):`]</div>
-                                <select name="shopscript_settings[actions][expense]" multiple style="min-height: 130px;">
+                                <select name="shopscript_settings[expenseActions][]" multiple style="min-height: 130px;">
                                     {foreach $actions as $action}
                                         <option value="{$action->getId()}"
                                                 {if in_array($action->getId(), $shopScriptSettings->getExpenseActions())}selected{/if}
