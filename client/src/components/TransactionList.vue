@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <table>
+    <table class="small zebra">
       <tr>
         <th class="min-width">
           <input type="checkbox" @click="checkAll" />

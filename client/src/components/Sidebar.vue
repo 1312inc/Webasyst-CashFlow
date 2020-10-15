@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <div class="box">
-      <h5>{{ $t("accounts") }}</h5>
+  <div class="tw-pt-6">
+    <div class="tw-mb-6">
+      <div class="tw-mx-4">
+        <h5>{{ $t("accounts") }}</h5>
+      </div>
       <ul class="menu-v">
         <li v-for="account in accounts" :key="account.id">
           <router-link :to="{ name: 'Account', params: { id: account.id } }" class="flexbox middle">
@@ -21,13 +23,17 @@
         </li>
       </ul>
 
-      <button @click="update('Account')" class="button rounded smaller">
-        <i class="fas fa-plus"></i> {{ $t("addAccount") }}
-      </button>
+      <div class="tw-mx-4">
+        <button @click="update('Account')" class="button rounded smaller">
+          <i class="fas fa-plus"></i> {{ $t("addAccount") }}
+        </button>
+      </div>
     </div>
 
-    <div class="box">
-      <h5>{{ $t("categories") }}</h5>
+    <div class="tw-mb-10">
+      <div class="tw-mx-4">
+        <h5>{{ $t("categories") }}</h5>
+      </div>
       <h6 class="heading black">{{ $t("income") }}</h6>
 
       <ul class="menu-v">
@@ -64,9 +70,12 @@
         </li>
       </ul>
 
-      <button @click="update('Category')" class="button rounded smaller">
-        <i class="fas fa-plus"></i> {{ $t("addCategory") }}
-      </button>
+      <div class="tw-mx-4">
+        <button @click="update('Category')" class="button rounded smaller">
+          <i class="fas fa-plus"></i> {{ $t("addCategory") }}
+        </button>
+      </div>
+
     </div>
 
     <Modal v-if="open" @close="close">

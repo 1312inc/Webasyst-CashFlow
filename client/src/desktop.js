@@ -7,6 +7,7 @@ import { i18n } from './plugins/locale'
 import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
 import Noty from './plugins/noty'
+import './assets/styles/tailwindcss.css'
 
 Vue.config.productionTip = false
 
