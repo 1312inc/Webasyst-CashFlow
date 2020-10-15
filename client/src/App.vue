@@ -1,7 +1,7 @@
 <template>
   <div id="wa-app">
     <div class="flexbox">
-      <div class="sidebar">
+      <div class="sidebar width-16rem tw-z-30">
         <Sidebar />
       </div>
       <div class="content blank">
