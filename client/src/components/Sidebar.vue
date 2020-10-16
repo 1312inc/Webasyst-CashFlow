@@ -8,7 +8,9 @@
         <li v-for="account in accounts" :key="account.id">
           <router-link :to="{ name: 'Account', params: { id: account.id } }" class="flexbox middle">
             <span v-if="isValidHttpUrl(account.icon)" class="icon"><img :src="account.icon" alt="" /></span>
-            <i v-else class="fas fa-star"></i>
+            <span v-show="!isValidHttpUrl(account.icon)" class="icon">
+              <i class="fas fa-star"></i>
+            </span>
             <span>{{ account.name }}</span>
             <span
               v-if="account.stat"

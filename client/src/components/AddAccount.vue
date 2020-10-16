@@ -40,7 +40,11 @@
           {{ $t("icon") }}
         </div>
         <div class="value">
-          <AccountIcons />
+          <input
+            v-model="model.icon"
+            type="text"
+            class="wide"
+          />
         </div>
       </div>
 
@@ -75,16 +79,11 @@
 
 <script>
 import { required } from 'vuelidate/lib/validators'
-import AccountIcons from '@/components/AccountIcons'
 export default {
   props: {
     editedItem: {
       type: Object
     }
-  },
-
-  components: {
-    AccountIcons
   },
 
   data () {
@@ -93,7 +92,7 @@ export default {
         id: null,
         name: '',
         currency: '',
-        icon: 'test',
+        icon: '',
         description: ''
       }
     }
