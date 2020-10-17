@@ -15,7 +15,7 @@ class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterface
      */
     public function handle($request)
     {
-        $paramsDto = new cashAggregateFilterParamsDto(
+        $paramsDto = new cashAggregateChartDataFilterParamsDto(
             wa()->getUser(),
             $request->account_id,
             $request->category_id,

@@ -18,7 +18,7 @@ class cashApiAggregateGetChartDataRequest
     /**
      * @var string
      */
-    public $group_by = cashAggregateFilterParamsDto::GROUP_BY_DAY;
+    public $group_by = cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY;
 
     /**
      * @var int

@@ -495,12 +495,12 @@ class cashGraphService
     }
 
     /**
-     * @param cashAggregateFilterParamsDto $paramsDto
+     * @param cashAggregateChartDataFilterParamsDto $paramsDto
      *
      * @return array
      * @throws waException
      */
-    public function getAggregateChartData(cashAggregateFilterParamsDto $paramsDto)
+    public function getAggregateChartData(cashAggregateChartDataFilterParamsDto $paramsDto): array
     {
         $model = cash()->getModel(cashTransaction::class);
         $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($paramsDto->contact);
@@ -511,6 +511,7 @@ select
 __SELECT__
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id
+join cash_category cc on ct.category_id = cc.id
 where 
 __WHERE__
 __GROUP_BY__
@@ -561,7 +562,7 @@ SQL;
         }
 
         switch ($paramsDto->groupBy) {
-            case cashAggregateFilterParamsDto::GROUP_BY_DAY:
+            case cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY:
                 $grouping = 'ct.date';
                 $whereAnd[] = 'ct.date between s:from and s:to';
                 $queryParams['from'] = $paramsDto->from->format('Y-m-d');
@@ -569,7 +570,7 @@ SQL;
 
                 break;
 
-            case cashAggregateFilterParamsDto::GROUP_BY_YEAR:
+            case cashAggregateChartDataFilterParamsDto::GROUP_BY_YEAR:
                 $grouping = "date_format(ct.date, '%Y')";
                 $whereAnd[] = "date_format(ct.date, '%Y') between s:from and s:to";
                 $queryParams['from'] = $paramsDto->from->format('Y');
@@ -577,7 +578,7 @@ SQL;
 
                 break;
 
-            case cashAggregateFilterParamsDto::GROUP_BY_MONTH:
+            case cashAggregateChartDataFilterParamsDto::GROUP_BY_MONTH:
             default:
                 $grouping = "date_format(ct.date, '%Y-%m')";
                 $whereAnd[] = "date_format(ct.date, '%Y-%m') between s:from and s:to";
@@ -600,6 +601,114 @@ SQL;
                 implode(' and ', $whereAnd),
                 'group by groupkey',
                 'order by groupkey',
+            ],
+            $basicSql
+        );
+
+        $data = $model->query($dataSql, $queryParams)->fetchAll();
+
+        return $data;
+    }
+    /**
+     * @param cashAggregateGetBreakDownFilterParamsDto $paramsDto
+     *
+     * @return array
+     * @throws waException
+     */
+    public function getAggregateBreakDownData(cashAggregateGetBreakDownFilterParamsDto $paramsDto): array
+    {
+        $model = cash()->getModel(cashTransaction::class);
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($paramsDto->contact);
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($paramsDto->contact, 'ct', 'category_id');
+
+        $basicSql = <<<SQL
+select
+__SELECT__
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id
+join cash_category cc on ct.category_id = cc.id
+where 
+__WHERE__
+__GROUP_BY__
+__ORDER_BY__
+SQL;
+
+        $sqlWhereAnd = [$accountAccessSql, $categoryAccessSql, 'ct.is_archived = 0', 'ca.is_archived = 0'];
+        $queryParams = [];
+
+        $calculateBalance = false;
+//        switch ($paramsDto->groupBy) {
+//            case cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY:
+//                $grouping = 'ct.date';
+//                $queryParams['from'] = $paramsDto->from->format('Y-m-d');
+//                $queryParams['to'] = $paramsDto->to->format('Y-m-d');
+//
+//                break;
+//
+//            case cashAggregateChartDataFilterParamsDto::GROUP_BY_YEAR:
+//                $grouping = "date_format(ct.date, '%Y')";
+//                $queryParams['from'] = $paramsDto->from->format('Y');
+//                $queryParams['to'] = $paramsDto->to->format('Y');
+//
+//                break;
+//
+//            case cashAggregateChartDataFilterParamsDto::GROUP_BY_MONTH:
+//            default:
+//                $grouping = "date_format(ct.date, '%Y-%m')";
+//
+//
+//                break;
+//        }
+        $sqlWhereAnd[] = "ct.date between s:from and s:to";
+        $queryParams['from'] = $paramsDto->from->format('Y-m-d');
+        $queryParams['to'] = $paramsDto->to->format('Y-m-d');
+
+        $detailing = '';
+        switch ($paramsDto->detailsBy) {
+            case cashAggregateGetBreakDownFilterParamsDto::DETAILS_BY_CATEGORY:
+                $detailing = 'ct.category_id';
+
+                break;
+
+            case cashAggregateGetBreakDownFilterParamsDto::DETAILS_BY_CONTACT:
+                $detailing = 'ct.contractor_contact_id';
+                break;
+
+//            case null !== $paramsDto->currency:
+//                $sqlWhereAnd[] = 'ca.currency = s:currency';
+//                $queryParams['currency'] = $paramsDto->currency;
+//
+//                $accountsSql = str_replace(
+//                    ['__SELECT__', '__WHERE__', '__GROUP_BY__', '__ORDER_BY__'],
+//                    ['ct.account_id', implode(' and ', $sqlWhereAnd), 'group by ct.account_id', ''],
+//                    $basicSql
+//                );
+//
+//                $accounts = $model->query($accountsSql, $queryParams)->fetchAll('account_id');
+//                foreach ($accounts as $accountId) {
+//                    if (cash()->getContactRights()->canSeeAccountBalance($paramsDto->contact, $accountId)) {
+//                        $calculateBalance = true;
+//                    } else {
+//                        $calculateBalance = false;
+//                        break;
+//                    }
+//                }
+//                break;
+        }
+
+        $sqlSelect = [
+            "if(ct.amount < 0, 'expense', 'income') direction",
+            "{$detailing} detailed",
+            'sum(ct.amount) amount',
+        ];
+
+        $dataSql = str_replace(
+            ['__SELECT__', '__WHERE__', '__GROUP_BY__', '__ORDER_BY__'],
+            [
+                implode(',', $sqlSelect),
+                implode(' and ', $sqlWhereAnd),
+                'group by direction, detailed',
+                '',
             ],
             $basicSql
         );

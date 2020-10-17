@@ -1,7 +1,9 @@
 <?php
 
-
-class cashAggregateFilterParamsDto
+/**
+ * Class cashAggregateChartDataFilterParamsDto
+ */
+final class cashAggregateChartDataFilterParamsDto
 {
     public const GROUP_BY_DAY   = 'day';
     public const GROUP_BY_MONTH = 'month';
