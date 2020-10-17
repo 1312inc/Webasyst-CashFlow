@@ -124,12 +124,13 @@ class cashContactRightsManager
 
     /**
      * @param waContact $contact
+     * @param int       $accountId
      *
      * @return bool
      */
-    public function canSeeAccountBalance(waContact $contact): bool
+    public function canSeeAccountBalance(waContact $contact, $accountId): bool
     {
-        return $this->getContactAccess($contact)->canSeeReport();
+        return $this->hasFullAccessToAccount($contact, $accountId);
     }
 
     /**
