@@ -329,7 +329,7 @@ class cashGraphService
                 if (!isset($graphData->lines[$accountId])) {
                     $graphData->lines[$accountId] = [];
                 }
-                $graphData->lines[$accountId][$date] += (float)$datum['summary'];
+                $graphData->lines[$accountId][$date] += (float) $datum['summary'];
                 $initialBalance[$datum['category_id']]['summary'] = $graphData->lines[$accountId][$date];
             }
         }
@@ -504,7 +504,11 @@ class cashGraphService
     {
         $model = cash()->getModel(cashTransaction::class);
         $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($paramsDto->contact);
-        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($paramsDto->contact, 'ct', 'category_id');
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin(
+            $paramsDto->contact,
+            'ct',
+            'category_id'
+        );
 
         $basicSql = <<<SQL
 select
@@ -525,23 +529,31 @@ SQL;
 
         $calculateBalance = false;
         switch (true) {
-            case null !== $paramsDto->accountId:
+            case null !== $paramsDto->filter->getAccountId():
                 $whereAnd[] = 'ct.account_id = i:account_id';
-                $queryParams['account_id'] = $paramsDto->accountId;
-                if (cash()->getContactRights()->canSeeAccountBalance($paramsDto->contact, $paramsDto->accountId)) {
+                $queryParams['account_id'] = $paramsDto->filter->getAccountId();
+                if (cash()->getContactRights()->canSeeAccountBalance(
+                    $paramsDto->contact,
+                    $paramsDto->filter->getAccountId()
+                )) {
                     $calculateBalance = true;
                 }
 
                 break;
 
-            case null !== $paramsDto->categoryId:
+            case null !== $paramsDto->filter->getCategoryId():
                 $whereAnd[] = 'ct.category_id = i:category_id';
-                $queryParams['category_id'] = $paramsDto->categoryId;
+                $queryParams['category_id'] = $paramsDto->filter->getCategoryId();
                 break;
 
-            case null !== $paramsDto->currency:
+            case null !== $paramsDto->filter->getContractorContactId():
+                $whereAnd[] = 'ct.contractor_contact_id = i:contractor_contact_id';
+                $queryParams['contractor_contact_id'] = $paramsDto->filter->getContractorContactId();
+                break;
+
+            case null !== $paramsDto->filter->getCurrency():
                 $whereAnd[] = 'ca.currency = s:currency';
-                $queryParams['currency'] = $paramsDto->currency;
+                $queryParams['currency'] = $paramsDto->filter->getCurrency();
 
                 $accountsSql = str_replace(
                     ['__SELECT__', '__WHERE__', '__GROUP_BY__', '__ORDER_BY__'],
@@ -609,6 +621,7 @@ SQL;
 
         return $data;
     }
+
     /**
      * @param cashAggregateGetBreakDownFilterParamsDto $paramsDto
      *
@@ -619,7 +632,11 @@ SQL;
     {
         $model = cash()->getModel(cashTransaction::class);
         $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($paramsDto->contact);
-        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($paramsDto->contact, 'ct', 'category_id');
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin(
+            $paramsDto->contact,
+            'ct',
+            'category_id'
+        );
 
         $basicSql = <<<SQL
 select
@@ -637,28 +654,51 @@ SQL;
         $queryParams = [];
 
         $calculateBalance = false;
-//        switch ($paramsDto->groupBy) {
-//            case cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY:
-//                $grouping = 'ct.date';
-//                $queryParams['from'] = $paramsDto->from->format('Y-m-d');
-//                $queryParams['to'] = $paramsDto->to->format('Y-m-d');
-//
-//                break;
-//
-//            case cashAggregateChartDataFilterParamsDto::GROUP_BY_YEAR:
-//                $grouping = "date_format(ct.date, '%Y')";
-//                $queryParams['from'] = $paramsDto->from->format('Y');
-//                $queryParams['to'] = $paramsDto->to->format('Y');
-//
-//                break;
-//
-//            case cashAggregateChartDataFilterParamsDto::GROUP_BY_MONTH:
-//            default:
-//                $grouping = "date_format(ct.date, '%Y-%m')";
-//
-//
-//                break;
-//        }
+        switch (true) {
+            case null !== $paramsDto->filter->getAccountId():
+                $sqlWhereAnd[] = 'ct.account_id = i:account_id';
+                $queryParams['account_id'] = $paramsDto->filter->getAccountId();
+                if (cash()->getContactRights()->canSeeAccountBalance(
+                    $paramsDto->contact,
+                    $paramsDto->filter->getAccountId()
+                )) {
+                    $calculateBalance = true;
+                }
+
+                break;
+
+            case null !== $paramsDto->filter->getCategoryId():
+                $sqlWhereAnd[] = 'ct.category_id = i:category_id';
+                $queryParams['category_id'] = $paramsDto->filter->getCategoryId();
+                break;
+
+            case null !== $paramsDto->filter->getContractorContactId():
+                $sqlWhereAnd[] = 'ct.contractor_contact_id = i:contractor_contact_id';
+                $queryParams['contractor_contact_id'] = $paramsDto->filter->getContractorContactId();
+                break;
+
+            case null !== $paramsDto->filter->getCurrency():
+                $sqlWhereAnd[] = 'ca.currency = s:currency';
+                $queryParams['currency'] = $paramsDto->filter->getCurrency();
+
+                $accountsSql = str_replace(
+                    ['__SELECT__', '__WHERE__', '__GROUP_BY__', '__ORDER_BY__'],
+                    ['ct.account_id', implode(' and ', $sqlWhereAnd), 'group by ct.account_id', ''],
+                    $basicSql
+                );
+
+                $accounts = $model->query($accountsSql, $queryParams)->fetchAll('account_id');
+                foreach ($accounts as $accountId) {
+                    if (cash()->getContactRights()->canSeeAccountBalance($paramsDto->contact, $accountId)) {
+                        $calculateBalance = true;
+                    } else {
+                        $calculateBalance = false;
+                        break;
+                    }
+                }
+                break;
+        }
+
         $sqlWhereAnd[] = "ct.date between s:from and s:to";
         $queryParams['from'] = $paramsDto->from->format('Y-m-d');
         $queryParams['to'] = $paramsDto->to->format('Y-m-d');

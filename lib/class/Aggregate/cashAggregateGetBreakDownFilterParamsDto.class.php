@@ -9,12 +9,13 @@ final class cashAggregateGetBreakDownFilterParamsDto
     public const GROUP_BY_MONTH = 'month';
     public const GROUP_BY_YEAR  = 'year';
 
-    public const DETAILS_BY_CONTACT = 'contact';
+    public const DETAILS_BY_CONTACT  = 'contact';
     public const DETAILS_BY_CATEGORY = 'category';
 
-    public $accountId;
-
-    public $categoryId;
+    /**
+     * @var cashAggregateFilter
+     */
+    public $filter;
 
     /**
      * @var DateTimeImmutable
@@ -26,21 +27,31 @@ final class cashAggregateGetBreakDownFilterParamsDto
      */
     public $to;
 
-    public $groupBy;
-
     /**
      * @var waContact
      */
-    public  $contact;
+    public $contact;
 
+    /**
+     * @var string
+     */
     public $detailsBy;
 
-    public function __construct($contact, $from, $to, $groupBy, $detailsBy)
+    /**
+     * cashAggregateGetBreakDownFilterParamsDto constructor.
+     *
+     * @param                     $contact
+     * @param                     $from
+     * @param                     $to
+     * @param                     $detailsBy
+     * @param cashAggregateFilter $filter
+     */
+    public function __construct($contact, $from, $to, $detailsBy, cashAggregateFilter $filter)
     {
         $this->from = $from;
         $this->to = $to;
-        $this->groupBy = $groupBy;
         $this->contact = $contact;
         $this->detailsBy = $detailsBy;
+        $this->filter = $filter;
     }
 }

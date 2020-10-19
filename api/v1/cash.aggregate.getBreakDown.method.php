@@ -8,7 +8,7 @@ class cashAggregateGetBreakDownMethod extends cashApiAbstractMethod
     protected $method = self::METHOD_POST;
 
     /**
-     * @return cashApiAccountCreateResponse
+     * @return cashApiAggregateGetBreakDownResponse
      * @throws kmwaForbiddenException
      * @throws kmwaRuntimeException
      * @throws waAPIException
@@ -22,6 +22,6 @@ class cashAggregateGetBreakDownMethod extends cashApiAbstractMethod
 
         $response = (new cashApiAggregateGetBreakDownHandler())->handle($request);
 
-        return new cashApiAggregateGetChartDataResponse($response);
+        return new cashApiAggregateGetBreakDownResponse($response);
     }
 }

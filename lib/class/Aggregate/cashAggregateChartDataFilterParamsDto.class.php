@@ -9,9 +9,10 @@ final class cashAggregateChartDataFilterParamsDto
     public const GROUP_BY_MONTH = 'month';
     public const GROUP_BY_YEAR  = 'year';
 
-    public $accountId;
-
-    public $categoryId;
+    /**
+     * @var cashAggregateFilter
+     */
+    public $filter;
 
     /**
      * @var DateTimeImmutable
@@ -23,6 +24,9 @@ final class cashAggregateChartDataFilterParamsDto
      */
     public $to;
 
+    /**
+     * @var string
+     */
     public $groupBy;
 
     /**
@@ -30,16 +34,21 @@ final class cashAggregateChartDataFilterParamsDto
      */
     public $contact;
 
-    public $currency;
-
-    public function __construct($contact, $accountId, $categoryId, $from, $to, $groupBy, $currency)
+    /**
+     * cashAggregateChartDataFilterParamsDto constructor.
+     *
+     * @param                     $contact
+     * @param                     $from
+     * @param                     $to
+     * @param                     $groupBy
+     * @param cashAggregateFilter $filter
+     */
+    public function __construct($contact, $from, $to, $groupBy, cashAggregateFilter $filter)
     {
-        $this->accountId = $accountId;
-        $this->categoryId = $categoryId;
         $this->from = $from;
         $this->to = $to;
         $this->groupBy = $groupBy;
         $this->contact = $contact;
-        $this->currency = $currency;
+        $this->filter = $filter;
     }
 }

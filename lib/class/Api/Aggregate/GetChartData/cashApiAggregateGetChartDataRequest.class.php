@@ -21,17 +21,7 @@ class cashApiAggregateGetChartDataRequest
     public $group_by = cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY;
 
     /**
-     * @var int
+     * @var string
      */
-    public $account_id;
-
-    /**
-     * @var int
-     */
-    public $category_id;
-
-    /**
-     * @var string|cashCurrencyVO
-     */
-    public $currency;
+    public $filter;
 }

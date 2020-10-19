@@ -17,12 +17,10 @@ class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterface
     {
         $paramsDto = new cashAggregateChartDataFilterParamsDto(
             wa()->getUser(),
-            $request->account_id,
-            $request->category_id,
             $request->from,
             $request->to,
             $request->group_by,
-            $request->currency->getCode()
+            cashAggregateFilter::createFromHash($request->filter)
         );
 
         $graphService = new cashGraphService();
