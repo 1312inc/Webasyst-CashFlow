@@ -9,7 +9,7 @@
         </button>
       </div>
 
-      <div v-else class="flexbox space-1rem wide">
+      <div v-if="!checkedRows.length && $isDesktopEnv" class="flexbox space-1rem wide">
         <div>
           <button
             @click="addTransaction('income')"
@@ -40,6 +40,25 @@
         </ul>
       </div>
     </div>
+
+  <!-- <div class="skeleton tw-mt-10">
+    <table class="small">
+      <tr v-for="i in 10" :key="i">
+        <td>
+          <span class="skeleton-line" style="margin-bottom:0;"></span>
+        </td>
+        <td>
+          <span class="skeleton-line" style="margin-bottom:0;"></span>
+        </td>
+        <td>
+          <span class="skeleton-line" style="margin-bottom:0;"></span>
+        </td>
+        <td>
+          <span class="skeleton-line" style="margin-bottom:0;"></span>
+        </td>
+      </tr>
+    </table>
+  </div> -->
 
     <table class="small zebra">
       <tr>
