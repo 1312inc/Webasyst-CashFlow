@@ -4,8 +4,10 @@
   "scripts": {
     "serve-desktop": "vue-cli-service serve src/desktop.js --mode desktop.development",
     "serve-mobile": "vue-cli-service serve src/mobile.js --mode mobile.development",
-    "build-desktop": "vue-cli-service build src/desktop.js --dest dist/desktop --mode desktop.production --report && npm run copycss && npm run copyjs",
+    "serve-sidebar": "vue-cli-service serve src/sidebar.js --mode desktop.development",
+    "build-desktop": "vue-cli-service build src/desktop.js --dest dist/desktop --mode desktop.production --report && npm run build-sidebar && npm run copycss && npm run copyjs",
     "build-mobile": "vue-cli-service build src/mobile.js --dest dist/mobile --mode mobile.production --report",
+    "build-sidebar": "vue-cli-service build src/sidebar.js --dest dist/sidebar --mode desktop.production",
     "lint": "vue-cli-service lint",
     "copycss": "copyfiles dist/desktop/css/*.css ../css --flat",
     "copyjs": "copyfiles dist/desktop/js/*.js ../js --flat"
