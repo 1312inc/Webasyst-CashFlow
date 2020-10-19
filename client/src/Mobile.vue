@@ -4,10 +4,10 @@
       <div class="box contentbox">
         <router-view />
       </div>
-      <Modal v-if="open" @close="close">
-        <component :is="currentComponentInModal"></component>
-      </Modal>
     </div>
+    <Modal v-if="open" @close="close">
+      <component :is="currentComponentInModal" :editedItem="item"></component>
+    </Modal>
   </div>
 </template>
 
@@ -26,13 +26,14 @@ export default {
   data () {
     return {
       open: false,
-      currentComponentInModal: ''
+      currentComponentInModal: '',
+      item: null
     }
   },
 
   async mounted () {
-    window.eventBus.$on('openDialog', (type = 'Category') => {
-      this.update(type)
+    window.eventBus.$on('openDialog', (type = 'Category', editedItem = null) => {
+      this.update(type, editedItem)
     })
 
     await Promise.all([
@@ -47,19 +48,19 @@ export default {
 
     this.$store.dispatch('transaction/resetAllDataToInterval', {
       from: this.$moment().add(-1, 'M').format('YYYY-MM-DD'),
-      to: this.$moment().format('YYYY-MM-DD')
+      to: this.$moment().add(1, 'M').format('YYYY-MM-DD')
     })
   },
 
   methods: {
-    update (component) {
+    update (component, editedItem) {
       this.open = true
       this.currentComponentInModal = component
+      this.item = editedItem
     },
 
     close () {
-      this.open = false
-      this.currentComponentInModal = ''
+      window.android.goBack()
     }
   }
 }
