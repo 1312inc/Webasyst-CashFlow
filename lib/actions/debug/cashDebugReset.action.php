@@ -12,7 +12,7 @@ class cashDebugResetAction extends cashViewAction
      */
     public function runAction($params = null)
     {
-        if (!cash()->getUser()->isRoot()) {
+        if (!cash()->getUser()->isRoot() && wa()->getEnv() !== 'cli') {
             throw new kmwaForbiddenException();
         }
 

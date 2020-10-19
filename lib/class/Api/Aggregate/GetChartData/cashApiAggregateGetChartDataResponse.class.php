@@ -14,14 +14,6 @@ class cashApiAggregateGetChartDataResponse extends cashApiAbstractResponse
     {
         parent::__construct(200);
 
-        $this->response = [
-            'income' => ['total' => 0.0, 'data' => []],
-            'expense' => ['total' => 0.0, 'data' => []],
-        ];
-
-        foreach ($data as $datum) {
-            $this->response[$datum->direction]['data'][] = $datum;
-            $this->response[$datum->direction]['total'] += $datum->amount;
-        }
+        $this->response = $data;
     }
 }

@@ -22,8 +22,8 @@ class cashApiAggregateGetBreakDownHandler implements cashApiHandlerInterface
             $this->user,
             $request->from,
             $request->to,
-            $request->group_by,
-            $request->details_by
+            $request->details_by,
+            cashAggregateFilter::createFromHash($request->filter)
         );
 
         $graphService = new cashGraphService();

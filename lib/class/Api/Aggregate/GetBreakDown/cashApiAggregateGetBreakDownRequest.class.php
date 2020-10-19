@@ -18,10 +18,10 @@ class cashApiAggregateGetBreakDownRequest
     /**
      * @var string
      */
-    public $group_by = cashAggregateGetBreakDownFilterParamsDto::GROUP_BY_DAY;
+    public $details_by = cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY;
 
     /**
      * @var string
      */
-    public $details_by = cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY;
+    public $filter;
 }
