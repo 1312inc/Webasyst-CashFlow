@@ -12,7 +12,7 @@
             <Dropdown :items=pastIntervals @selected="setIntervalFrom" />
           </div>
           <div>
-            <Dropdown :items=futureIntervals @selected="setIntervalTo" />
+            <Dropdown :items=futureIntervals :defaultSelectedIndex=1 @selected="setIntervalTo" />
           </div>
         </div>
       </div>
@@ -245,8 +245,6 @@ export default {
 
     const scrollbarX = new am4charts.XYChartScrollbar()
     scrollbarX.series.push(series3)
-    scrollbarX.marginTop = 20
-    scrollbarX.marginBottom = 20
     chart.scrollbarX = scrollbarX
     chart.scrollbarX.scrollbarChart.plotContainer.filters.clear()
     chart.scrollbarX.parent = chart.bottomAxesContainer
@@ -270,6 +268,54 @@ export default {
     range2.endValue = -10000000
     range2.contents.stroke = '#ff604a'
     range2.contents.fill = '#ff604a'
+
+    /**
+   * ========================================================
+   * Enabling responsive features
+   * ========================================================
+   */
+
+    chart.responsive.useDefault = false
+    chart.responsive.enabled = true
+
+    chart.responsive.rules.push({
+      relevant: function (target) {
+        if (target.pixelWidth <= 400) {
+          return true
+        }
+
+        return false
+      },
+      state: function (target, stateId) {
+        if (target instanceof am4charts.Chart) {
+          var state = target.states.create(stateId)
+          state.properties.paddingTop = 5
+          state.properties.paddingRight = 0
+          state.properties.paddingBottom = 0
+          state.properties.paddingLeft = 0
+          return state
+        }
+
+        // if (target instanceof am4core.Scrollbar) {
+        //   // eslint-disable-next-line no-redeclare
+        //   var state = target.states.create(stateId)
+        //   state.properties.paddingTop = 0
+        //   state.properties.paddingRight = 12
+        //   state.properties.paddingBottom = 0
+        //   state.properties.paddingLeft = 30
+        //   return state
+        // }
+
+        if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
+          // eslint-disable-next-line no-redeclare
+          var state = target.states.create(stateId)
+          state.properties.inside = true
+          state.properties.maxLabelPosition = 0.99
+          return state
+        }
+        return null
+      }
+    })
 
     this.chart = chart
 
@@ -313,7 +359,7 @@ export default {
     margin-bottom: 2rem;
 
     @media (max-width: 768px) {
-      height: 300px;
+      height: 400px;
     }
 
   }

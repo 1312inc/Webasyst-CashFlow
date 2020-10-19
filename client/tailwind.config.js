@@ -1,6 +1,11 @@
 module.exports = {
   prefix: 'tw-',
-  future: {},
+  future: {
+    removeDeprecatedGapUtilities: true,
+    purgeLayersByDefault: true,
+    defaultLineHeights: true,
+    standardFontWeights: true
+  },
   purge: [
     './src/**/*.vue'
   ],
