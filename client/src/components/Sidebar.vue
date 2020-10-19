@@ -6,7 +6,7 @@
       </div>
       <ul class="menu-v">
         <li v-for="account in accounts" :key="account.id">
-          <router-link :to="{ name: 'Account', params: { id: account.id } }" class="flexbox middle">
+          <router-link :to="`/account/${account.id}`" class="flexbox middle">
             <span v-if="isValidHttpUrl(account.icon)" class="icon"><img :src="account.icon" alt="" /></span>
             <span v-show="!isValidHttpUrl(account.icon)" class="icon">
               <i class="fas fa-star"></i>
@@ -40,7 +40,7 @@
 
       <ul class="menu-v">
         <li v-for="category in categoriesIncome" :key="category.id">
-          <router-link :to="{ name: 'Category', params: { id: category.id } }" class="flexbox middle">
+          <router-link :to="`/category/${category.id}`" class="flexbox middle">
             <span class="icon"
               ><i
                 class="rounded"
@@ -60,7 +60,7 @@
 
       <ul class="menu-v">
         <li v-for="category in categoriesExpense" :key="category.id">
-          <router-link :to="{ name: 'Category', params: { id: category.id } }" class="flexbox middle">
+          <router-link :to="`/category/${category.id}`" class="flexbox middle">
             <span class="icon"
               ><i
                 class="rounded"
