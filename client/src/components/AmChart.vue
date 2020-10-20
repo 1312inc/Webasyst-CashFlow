@@ -163,7 +163,7 @@ export default {
     chart.cursor.behavior = 'none'
 
     var series = chart.series.push(new am4charts.ColumnSeries())
-    series.name = 'Приход'
+    series.name = this.$t('income')
     series.yAxis = valueAxis2
     series.dataFields.valueY = 'income'
     series.dataFields.dateX = 'date'
@@ -175,7 +175,7 @@ export default {
     series.defaultState.transitionDuration = 0
 
     var series2 = chart.series.push(new am4charts.ColumnSeries())
-    series2.name = 'Расход'
+    series2.name = this.$t('expense')
     series2.yAxis = valueAxis2
     series2.dataFields.valueY = 'expense'
     series2.dataFields.dateX = 'date'
@@ -187,7 +187,7 @@ export default {
     series2.defaultState.transitionDuration = 0
 
     var series3 = chart.series.push(new am4charts.LineSeries())
-    series3.name = 'Баланс'
+    series3.name = this.$t('balance')
     series3.yAxis = valueAxis
     series3.dataFields.valueY = 'balance'
     series3.dataFields.dateX = 'date'
@@ -198,17 +198,17 @@ export default {
     series3.defaultState.transitionDuration = 0
 
     series3.adapter.add('tooltipHTML', (ev) => {
-      var text = '<div style="padding:.2rem 0;">'
-      text += '<div style="margin-bottom:.5rem;"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
+      var text = '<div>'
+      text += '<div class="custom-my-8"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
       let timeUnit
       chart.series.each((item, i) => {
-        text += '<div style="margin-bottom:.25rem;"><span style="color:' + item.stroke.hex + '">●</span> ' + item.name + ': ' + this.$numeral(item.tooltipDataItem.valueY).format() + '</div>'
+        text += '<div class="custom-mb-4"><span style="color:' + item.stroke.hex + '">●</span> ' + item.name + ': ' + this.$numeral(item.tooltipDataItem.valueY).format() + '</div>'
         if (i === 2) {
           timeUnit = item.tooltipDataItem.groupDataItems ? 'month' : 'day'
         }
       })
 
-      text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + timeUnit + '\')" class="button small" style="margin:.2rem 0;">Подробнее</button>'
+      text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + timeUnit + '\')" class="button small custom-my-8">' + this.$t('details') + '</button>'
       text += '</div>'
       return text
     })

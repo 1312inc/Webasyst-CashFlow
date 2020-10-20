@@ -3,6 +3,7 @@
   "categories": "Categories",
   "expense": "Expense",
   "income": "Income",
+  "balance": "Balance",
   "addAccount": "Add Account",
   "updateAccount": "Update Account",
   "addCategory": "Add Category",
@@ -17,5 +18,52 @@
   "type": "Type",
   "color": "Color",
   "icon": "Icon",
-  "desc": "Description"
+  "desc": "Description",
+  "addTransaction": "Add Transaction",
+  "updateTransaction": "Update Transaction",
+  "applyTo": {
+    "name": "Apply changes to",
+    "list": [
+      "This transaction only",
+      "This & all related future recurring transactions {count}"
+    ]
+  },
+  "ammount": "Ammount",
+  "repeat": "Repeat",
+  "date": "Date",
+  "repeatFrom": "Start repeat",
+  "howOften": {
+    "name": "How often",
+    "list": [
+      "Every month",
+      "Every day",
+      "Every week",
+      "Every year",
+      "Custom..."
+    ],
+    "list_short": [
+      "month",
+      "day",
+      "week",
+      "year"
+    ]
+  },
+  "endRepeat": {
+    "name": "End repeat",
+    "list": [
+      "Never",
+      "Limit the number of occurrences",
+      "Until the date"
+    ],
+    "occurrences": "occurrences"
+  },
+  "account": "Account",
+  "category": "Category",
+  "contractor": "Contractor",
+  "addIncome": "Add Income",
+  "addExpense": "Add Expense",
+  "changeSettings": "change settings",
+  "details": "View Details",
+  "optional": "Optional",
+  "transactionsListCount": "LAST {days} DAYS, {count} TRANSACTIONS"
 }
