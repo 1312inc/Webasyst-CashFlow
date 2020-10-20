@@ -15,7 +15,7 @@
             @click="addTransaction('income')"
             class="button green"
           >
-            <i class="fas fa-plus"></i> Добавить приход
+            <i class="fas fa-plus"></i> {{ $t("addIncome") }}
           </button>
         </div>
         <div>
@@ -23,7 +23,7 @@
             @click="addTransaction('expense')"
             class="button orange"
           >
-            <i class="fas fa-minus"></i> Добавить расход
+            <i class="fas fa-minus"></i> {{ $t("addExpense") }}
           </button>
         </div>
       </div>
@@ -62,11 +62,11 @@
 
     <table class="small zebra">
       <tr>
-        <th class="min-width">
+        <th class="min-width tw-border-0 tw-border-b tw-border-solid">
           <input type="checkbox" @click="checkAll" />
         </th>
-        <th colspan="5">
-          Последние 30 дней, {{ listItems.length }} транзакций
+        <th colspan="5" class=" tw-border-0 tw-border-b tw-border-solid">
+          {{ $t('transactionsListCount', {days: 30, count: listItems.length}) }}
         </th>
       </tr>
       <TransactionListRow

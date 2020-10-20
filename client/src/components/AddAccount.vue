@@ -1,10 +1,10 @@
 <template>
   <div>
-    <h2 style="margin-bottom:2rem;">
+    <h2 class="custom-mb-32">
       {{ isModeUpdate ? $t("updateAccount") : $t("addAccount") }}
     </h2>
 
-    <div class="fields" style="margin-bottom:2rem;">
+    <div class="fields custom-mb-32">
       <div class="field">
         <div class="name for-input">
           {{ $t("name") }}
@@ -42,9 +42,11 @@
         <div class="value">
           <input
             v-model="model.icon"
+            :class="{ 'state-error': $v.model.icon.$error }"
             type="text"
             class="wide"
           />
+          <p class="hint" v-if="!$v.model.icon.url">Accepts only URLs</p>
         </div>
       </div>
 
@@ -56,6 +58,7 @@
           <textarea
             v-model="model.description"
             class="wide" rows="4" style="resize:none;height:auto;"
+            :placeholder="$t('optional')"
           ></textarea>
         </div>
       </div>
@@ -78,7 +81,7 @@
 </template>
 
 <script>
-import { required } from 'vuelidate/lib/validators'
+import { required, url } from 'vuelidate/lib/validators'
 export default {
   props: {
     editedItem: {
@@ -105,6 +108,9 @@ export default {
       },
       currency: {
         required
+      },
+      icon: {
+        url
       }
     }
   },

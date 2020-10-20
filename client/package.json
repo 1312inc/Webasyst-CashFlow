@@ -14,6 +14,7 @@
     "@amcharts/amcharts4": "^4.10.2",
     "axios": "^0.20.0",
     "core-js": "^3.6.5",
+    "flatpickr": "^4.6.6",
     "moment": "^2.28.0",
     "noty": "^3.2.0-beta",
     "numeral": "^2.0.6",

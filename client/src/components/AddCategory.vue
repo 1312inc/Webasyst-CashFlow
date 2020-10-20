@@ -1,10 +1,10 @@
 <template>
   <div>
-    <h2 style="margin-bottom:2rem;">
+    <h2 class="custom-mb-32">
       {{ isModeUpdate ? $t("updateCategory") : $t("addCategory") }}
     </h2>
 
-    <div class="fields" style="margin-bottom:2rem;">
+    <div class="fields custom-mb-32">
       <div class="field">
         <div class="name for-input">
           {{ $t("name") }}

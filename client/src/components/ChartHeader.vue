@@ -1,7 +1,7 @@
 <template>
   <div v-if="currentCategory">
     <div class="flexbox middle space-1rem">
-      <div class="h2" style="margin-bottom:0;">{{ currentCategory.name }}</div>
+      <div class="h2 custom-mb-0">{{ currentCategory.name }}</div>
       <div
         v-if="currentCategory.stat && currentCategory.stat.summary"
         class="larger"
@@ -11,7 +11,7 @@
       </div>
       <div>
         <button @click="update(currentCategory)" class="button nobutton small">
-          изменить настройки
+          {{ $t("changeSettings") }}
         </button>
       </div>
     </div>
