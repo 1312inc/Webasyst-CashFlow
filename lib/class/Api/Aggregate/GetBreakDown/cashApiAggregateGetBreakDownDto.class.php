@@ -36,8 +36,8 @@ class cashApiAggregateGetBreakDownDto
     public function __construct($type, $amount, $balance, $info)
     {
         $this->direction = $type;
-        $this->amount = (float) $amount;
-        $this->balance = (float) $balance;
+        $this->amount = round($amount, 2);
+        $this->balance = round($balance, 2);
         $this->info = $info;
     }
 }
