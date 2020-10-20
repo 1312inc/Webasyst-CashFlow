@@ -99,6 +99,9 @@ return array(
             'cash_transaction_is_archived_index' => 'is_archived',
             'cash_transaction_external_hash_index' => 'external_hash',
             'cash_transaction_external_source_index' => 'external_source',
+            'cash_transaction_date_account_id_index' => array('date', 'account_id'),
+            'cash_transaction_date_category_id_index' => array('date', 'category_id'),
+            'cash_transaction_date_contractor_contact_id_index' => array('date', 'contractor_contact_id'),
         ),
     ),
 );

@@ -35,9 +35,9 @@ class cashApiAggregateGetChartDataDto
      */
     public function __construct($period, $amountIncome, $amountExpense, $balance)
     {
-        $this->amountIncome = (float) $amountIncome;
-        $this->amountExpense = (float) $amountExpense;
-        $this->balance = (float) $balance;
+        $this->amountIncome = round($amountIncome, 2);
+        $this->amountExpense = round($amountExpense, 2);
+        $this->balance = round($balance, 2);
         $this->period = $period;
     }
 }
