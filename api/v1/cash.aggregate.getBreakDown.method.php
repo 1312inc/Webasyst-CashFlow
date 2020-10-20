@@ -5,7 +5,7 @@
  */
 class cashAggregateGetBreakDownMethod extends cashApiAbstractMethod
 {
-    protected $method = self::METHOD_POST;
+    protected $method = self::METHOD_GET;
 
     /**
      * @return cashApiAggregateGetBreakDownResponse
