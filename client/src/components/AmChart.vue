@@ -14,7 +14,14 @@
         </div>
       </div>
 
-      <div id="chartdiv" class="smaller"></div>
+      <div class="chart-container">
+        <transition name="fade">
+          <div v-show="showChart">
+            <div id="chartdiv" class="smaller"></div>
+          </div>
+        </transition>
+      </div>
+
     </div>
 </template>
 
@@ -36,6 +43,12 @@ export default {
 
   computed: {
     ...mapState('transaction', ['chartData'])
+  },
+
+  data () {
+    return {
+      showChart: false
+    }
   },
 
   watch: {
@@ -246,6 +259,10 @@ export default {
       }
     })
 
+    chart.events.on('ready', () => {
+      this.showChart = true
+    })
+
     this.chart = chart
 
     window.toggleDateForDetails = (date, interval) => {
@@ -271,10 +288,14 @@ export default {
 </script>
 
 <style lang="scss">
+  .chart-container {
+    height: 600px;
+    margin-bottom: 2rem;
+  }
+
   #chartdiv {
     width: 100%;
     height: 600px;
-    margin-bottom: 2rem;
 
     @media (max-width: 768px) {
       height: 400px;
