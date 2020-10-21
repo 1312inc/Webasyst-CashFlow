@@ -69,7 +69,7 @@ export default {
   },
 
   actions: {
-    resetAllDataToInterval ({ state, dispatch, commit }, interval) {
+    resetAllDataToInterval ({ state, dispatch, commit }, interval = {}) {
       const from = interval.from || state.interval.from
       const to = interval.to || state.interval.to
 
@@ -77,6 +77,14 @@ export default {
       commit('setdetailsInterval', { from: '', to: '' })
       dispatch('getList', state.interval)
       dispatch('getChartData', state.interval)
+    },
+
+    setdetailsInterval ({ state, dispatch, commit }, interval = {}) {
+      const from = interval.from || state.detailsInterval.from
+      const to = interval.to || state.detailsInterval.to
+
+      commit('setdetailsInterval', { from, to })
+      dispatch('getList', state.detailsInterval)
     },
 
     async getList ({ commit }, interval) {
@@ -93,13 +101,6 @@ export default {
 
     async getChartData ({ commit }, interval) {
       commit('setChartData', dumpDataByDay(interval.from, interval.to))
-    },
-
-    async setdetailsInterval ({ state, dispatch, commit }, interval) {
-      commit('setdetailsInterval', interval)
-      const from = interval.from || state.interval.from
-      const to = interval.to || state.interval.to
-      dispatch('getList', { from, to })
     },
 
     async update ({ commit }, params) {

@@ -3,16 +3,13 @@
       <div class="flexbox">
         <div class="wide">
           <ChartHeader></ChartHeader>
-          <div v-if="dates.from">
-            {{$moment(dates.from).format("LL")}} – {{$moment(dates.to).format("LL")}}
-          </div>
         </div>
         <div class="flexbox space-1rem">
           <div>
-            <Dropdown :items=pastIntervals @selected="setIntervalFrom" />
+            <Dropdown type="from" />
           </div>
           <div>
-            <Dropdown :items=futureIntervals :defaultSelectedIndex=1 @selected="setIntervalTo" />
+            <Dropdown type="to" />
           </div>
         </div>
       </div>
@@ -37,84 +34,14 @@ export default {
     Dropdown
   },
 
-  data () {
-    return {
-      dates: {
-        from: '',
-        to: ''
-      },
-      pastIntervals: [
-        {
-          title: 'Last 30 days',
-          value: this.setIntervalDate(-1, 'M')
-        },
-        {
-          title: 'Last 90 days',
-          value: this.setIntervalDate(-3, 'M')
-        },
-        {
-          title: 'Last 180 days',
-          value: this.setIntervalDate(-6, 'M')
-        },
-        {
-          title: 'Last 365 days',
-          value: this.setIntervalDate(-1, 'Y')
-        },
-        {
-          title: 'Last 3 years',
-          value: this.setIntervalDate(-3, 'Y')
-        },
-        {
-          title: 'Last 5 years',
-          value: this.setIntervalDate(-5, 'Y')
-        },
-        {
-          title: 'Last 10 years',
-          value: this.setIntervalDate(-10, 'Y')
-        }
-
-      ],
-      futureIntervals: [
-        {
-          title: 'None',
-          value: this.setIntervalDate(0, 'd')
-        },
-        {
-          title: 'Last 30 days',
-          value: this.setIntervalDate(1, 'M')
-        },
-        {
-          title: 'Last 90 days',
-          value: this.setIntervalDate(3, 'M')
-        },
-        {
-          title: 'Last 180 days',
-          value: this.setIntervalDate(6, 'M')
-        },
-        {
-          title: 'Last 365 days',
-          value: this.setIntervalDate(1, 'Y')
-        },
-        {
-          title: 'Last 2 years',
-          value: this.setIntervalDate(2, 'Y')
-        },
-        {
-          title: 'Last 3 years',
-          value: this.setIntervalDate(3, 'Y')
-        }
-      ]
-    }
+  computed: {
+    ...mapState('transaction', ['chartData'])
   },
 
   watch: {
     chartData () {
       this.renderChart()
     }
-  },
-
-  computed: {
-    ...mapState('transaction', ['chartData'])
   },
 
   mounted () {
@@ -150,6 +77,8 @@ export default {
     valueAxis2.marginTop = 30
     valueAxis2.renderer.gridContainer.background.fill = am4core.color('#000000')
     valueAxis2.renderer.gridContainer.background.fillOpacity = 0.01
+    valueAxis2.renderer.grid.template.strokeOpacity = 0.09
+    valueAxis2.renderer.grid.template.strokeWidth = 1
 
     chart.legend = new am4charts.Legend()
 
@@ -250,9 +179,9 @@ export default {
     chart.scrollbarX.parent = chart.bottomAxesContainer
 
     const dateAxisChanged = () => {
-      this.dates.from = this.$moment(dateAxis.minZoomed).format('YYYY-MM-DD')
-      this.dates.to = this.$moment(dateAxis.maxZoomed).format('YYYY-MM-DD')
-      this.setdetailsInterval({ from: this.dates.from, to: this.dates.to })
+      const from = this.$moment(dateAxis.minZoomed).format('YYYY-MM-DD')
+      const to = this.$moment(dateAxis.maxZoomed).format('YYYY-MM-DD')
+      this.setdetailsInterval({ from, to })
     }
 
     chart.scrollbarX.startGrip.events.on('dragstop', dateAxisChanged)
@@ -334,19 +263,8 @@ export default {
 
     renderChart () {
       this.chart.data = this.chartData
-    },
-
-    setIntervalFrom (value) {
-      this.$store.dispatch('transaction/resetAllDataToInterval', { from: value })
-    },
-
-    setIntervalTo (value) {
-      this.$store.dispatch('transaction/resetAllDataToInterval', { to: value })
-    },
-
-    setIntervalDate (days, interval) {
-      return this.$moment().add(days, interval).format('YYYY-MM-DD')
     }
+
   }
 
 }
