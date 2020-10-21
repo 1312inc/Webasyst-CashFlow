@@ -1,48 +1,43 @@
 <template>
-  <div>
-    <label v-if="title">
-      {{ title }}
-    </label>
-    <div class="wa-select">
-        <select v-model="value" @change="onChange($event)">
-            <option v-for="(item, i) in items" :key="i" :value="item.value">{{ item.title }}</option>
-        </select>
-    </div>
+  <div class="wa-select">
+    <select v-model="value">
+      <option v-for="(item, i) in items" :key="i" :value="item.value">
+        {{ item.title }}
+      </option>
+    </select>
   </div>
 </template>
 
 <script>
 export default {
   props: {
-    items: {
-      type: Array
+    type: {
+      type: String,
+      required: true
+    }
+  },
+
+  computed: {
+    items () {
+      return this.$store.state.intervals[this.type]
     },
 
-    defaultSelectedIndex: {
-      type: Number,
-      default () {
-        return 0
+    value: {
+      get () {
+        return this.$store.state.transaction.interval[this.type]
+      },
+      set (value) {
+        localStorage.setItem(`interval_${this.type}`, this.getNameByValue(value))
+        this.$store.dispatch('transaction/resetAllDataToInterval', {
+          [this.type]: value
+        })
       }
-    },
-
-    title: {
-      type: String
     }
-  },
-
-  data () {
-    return {
-      value: ''
-    }
-  },
-
-  created () {
-    this.value = this.items[this.defaultSelectedIndex].value
   },
 
   methods: {
-    onChange (event) {
-      this.$emit('selected', event.target.value)
+    getNameByValue (value) {
+      return this.items.find(e => e.value === value).title
     }
   }
 }

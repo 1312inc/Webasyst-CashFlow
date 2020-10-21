@@ -28,15 +28,17 @@ export default {
       this.$store.dispatch('category/getList')
     ])
 
-    this.$store.commit('setCurrentType', {
-      name: this.$route.name,
-      id: +this.$route.params.id
-    })
+    let from = this.$moment().add(-1, 'Y').format('YYYY-MM-DD')
+    if (localStorage.getItem('interval_from')) {
+      from = this.$store.state.intervals.from.find(e => e.title === localStorage.getItem('interval_from'))?.value || from
+    }
 
-    this.$store.dispatch('transaction/resetAllDataToInterval', {
-      from: this.$moment().add(-1, 'M').format('YYYY-MM-DD'),
-      to: this.$moment().format('YYYY-MM-DD')
-    })
+    let to = this.$moment().add(6, 'M').format('YYYY-MM-DD')
+    if (localStorage.getItem('interval_to')) {
+      to = this.$store.state.intervals.to.find(e => e.title === localStorage.getItem('interval_to'))?.value || to
+    }
+
+    this.$store.dispatch('transaction/resetAllDataToInterval', { from, to })
   }
 }
 </script>

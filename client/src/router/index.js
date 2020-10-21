@@ -31,6 +31,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.name === 'Account' || to.name === 'Category') {
+    // if no Category
     if (to.params.id < 0) {
       next({ name: 'Home' })
     } else {
@@ -41,7 +42,7 @@ router.beforeEach((to, from, next) => {
       next()
     }
   } else {
-    store.commit('setCurrentType', {})
+    store.commit('setCurrentType', { name: '', id: null })
     next()
   }
 })
