@@ -1,6 +1,6 @@
 <template>
     <div>
-      <div class="flexbox">
+      <div class="flexbox custom-mb-12">
         <div class="wide">
           <ChartHeader></ChartHeader>
         </div>
@@ -15,9 +15,14 @@
       </div>
 
       <div class="chart-container">
-        <transition name="fade">
+        <div v-if="!showChart" style="opacity:.6">
+          <div class="skeleton">
+            <span class="skeleton-custom-box chart-container"></span>
+          </div>
+        </div>
+        <transition name="fade-appear">
           <div v-show="showChart">
-            <div id="chartdiv" class="smaller"></div>
+            <div id="chartdiv" class="chart-container smaller"></div>
           </div>
         </transition>
       </div>
@@ -287,19 +292,18 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .chart-container {
     height: 600px;
     margin-bottom: 2rem;
-  }
-
-  #chartdiv {
-    width: 100%;
-    height: 600px;
+    overflow: hidden;
 
     @media (max-width: 768px) {
       height: 400px;
     }
+  }
 
+  #chartdiv {
+    width: 100%;
   }
 </style>
