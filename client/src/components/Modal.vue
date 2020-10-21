@@ -29,13 +29,4 @@ export default {}
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
 }
-
-.slide-fade-enter-active {
-  transition: all 0.2s;
-}
-
-.slide-fade-enter, .slide-fade-leave-to {
-  transform: translateX(-50%) translateY(-44%) !important;
-  opacity: 0;
-}
 </style>

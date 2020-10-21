@@ -1,0 +1,24 @@
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.fade-appear-enter-active {
+  transition: opacity 0.3s;
+}
+.fade-appear-enter, .fade-appear-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+.slide-fade-enter-active {
+  transition: all 0.2s;
+}
+
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateX(-50%) translateY(-44%) !important;
+  opacity: 0;
+}

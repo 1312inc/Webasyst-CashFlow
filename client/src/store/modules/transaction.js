@@ -7,6 +7,7 @@ export default {
   state: () => ({
     transactions: [],
     chartData: [],
+    loading: true,
     interval: {
       from: '',
       to: ''
@@ -38,6 +39,10 @@ export default {
 
     setdetailsInterval (state, data) {
       state.detailsInterval = data
+    },
+
+    setLoading (state, data) {
+      state.loading = data
     },
 
     updateItem (state, data) {
@@ -88,6 +93,7 @@ export default {
     },
 
     async getList ({ commit }, interval) {
+      commit('setLoading', true)
       try {
         const { data } = await api.get('cash.transaction.getList', {
           params: {
@@ -96,6 +102,9 @@ export default {
           }
         })
         commit('setItems', data)
+        setTimeout(() => {
+          commit('setLoading', false)
+        }, 1000)
       } catch (e) {}
     },
 

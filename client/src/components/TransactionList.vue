@@ -2,27 +2,20 @@
   <div>
     <div class="flexbox">
       <div v-if="checkedRows.length" class="wide">
-        <button
-          class="button red"
-        >
-          Удалить
-        </button>
+        <button class="button red">Удалить</button>
       </div>
 
-      <div v-if="!checkedRows.length && $isDesktopEnv" class="flexbox space-1rem wide">
+      <div
+        v-if="!checkedRows.length && $isDesktopEnv"
+        class="flexbox space-1rem wide"
+      >
         <div>
-          <button
-            @click="addTransaction('income')"
-            class="button green"
-          >
+          <button @click="addTransaction('income')" class="button green">
             <i class="fas fa-plus"></i> {{ $t("addIncome") }}
           </button>
         </div>
         <div>
-          <button
-            @click="addTransaction('expense')"
-            class="button orange"
-          >
+          <button @click="addTransaction('expense')" class="button orange">
             <i class="fas fa-minus"></i> {{ $t("addExpense") }}
           </button>
         </div>
@@ -30,53 +23,62 @@
 
       <div>
         <ul class="paging">
-            <li><a href="javascript:void(0);">←</a></li>
-            <li><a href="javascript:void(0);">1</a></li>
-            <li><a href="javascript:void(0);">2</a></li>
-            <li class="selected"><a href="javascript:void(0);">3</a></li>
-            <li><span>...</span></li>
-            <li><a href="javascript:void(0);">21</a></li>
-            <li><a href="javascript:void(0);">→</a></li>
+          <li><a href="javascript:void(0);">←</a></li>
+          <li><a href="javascript:void(0);">1</a></li>
+          <li><a href="javascript:void(0);">2</a></li>
+          <li class="selected"><a href="javascript:void(0);">3</a></li>
+          <li><span>...</span></li>
+          <li><a href="javascript:void(0);">21</a></li>
+          <li><a href="javascript:void(0);">→</a></li>
         </ul>
       </div>
     </div>
 
-  <!-- <div class="skeleton tw-mt-10">
-    <table class="small">
-      <tr v-for="i in 10" :key="i">
-        <td>
-          <span class="skeleton-line" style="margin-bottom:0;"></span>
-        </td>
-        <td>
-          <span class="skeleton-line" style="margin-bottom:0;"></span>
-        </td>
-        <td>
-          <span class="skeleton-line" style="margin-bottom:0;"></span>
-        </td>
-        <td>
-          <span class="skeleton-line" style="margin-bottom:0;"></span>
-        </td>
-      </tr>
-    </table>
-  </div> -->
+    <div v-if="$store.state.transaction.loading">
+      <div class="skeleton tw-mt-10">
+        <table class="small">
+          <tr v-for="i in listItems.length" :key="i">
+            <td>
+              <span class="skeleton-line" style="margin-bottom: 0"></span>
+            </td>
+            <td>
+              <span class="skeleton-line" style="margin-bottom: 0"></span>
+            </td>
+            <td>
+              <span class="skeleton-line" style="margin-bottom: 0"></span>
+            </td>
+            <td>
+              <span class="skeleton-line" style="margin-bottom: 0"></span>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
 
-    <table class="small zebra">
-      <tr>
-        <th class="min-width tw-border-0 tw-border-b tw-border-solid">
-          <input type="checkbox" @click="checkAll" />
-        </th>
-        <th colspan="5" class=" tw-border-0 tw-border-b tw-border-solid">
-          {{ $t('transactionsListCount', {days: 30, count: listItems.length}) }}
-        </th>
-      </tr>
-      <TransactionListRow
-        v-for="transaction in listItems"
-        :key="transaction.id"
-        :transaction="transaction"
-        :is-checked="checkedRows.includes(transaction.id)"
-        @checkboxUpdate="onTransactionListRowUpdate(transaction.id)"
-      />
-    </table>
+    <transition name="fade-appear">
+      <table
+        class="small zebra"
+        v-if="!$store.state.transaction.loading && listItems.length"
+      >
+        <tr>
+          <th class="min-width tw-border-0 tw-border-b tw-border-solid">
+            <input type="checkbox" @click="checkAll" />
+          </th>
+          <th colspan="5" class="tw-border-0 tw-border-b tw-border-solid">
+            {{
+              $t("transactionsListCount", { days: 30, count: listItems.length })
+            }}
+          </th>
+        </tr>
+        <TransactionListRow
+          v-for="transaction in listItems"
+          :key="transaction.id"
+          :transaction="transaction"
+          :is-checked="checkedRows.includes(transaction.id)"
+          @checkboxUpdate="onTransactionListRowUpdate(transaction.id)"
+        />
+      </table>
+    </transition>
 
     <Modal v-if="open" @close="open = false">
       <AddTransaction :defaultCategoryType="categoryType" />
