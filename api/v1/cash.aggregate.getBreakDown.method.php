@@ -21,20 +21,6 @@ class cashAggregateGetBreakDownMethod extends cashApiAbstractMethod
         $request->to = DateTimeImmutable::createFromFormat('Y-m-d', $request->to);
         $request->from = DateTimeImmutable::createFromFormat('Y-m-d', $request->from);
 
-
-        if ($request->group_by === cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY
-            && $request->from->diff($request->to)->days > 1000
-        ) {
-            return new cashApiErrorResponse(
-                sprintf_wp(
-                    'For %s+ days, only "%s" & "%s" grouping is available',
-                    self::MAX_DAYS,
-                    cashAggregateChartDataFilterParamsDto::GROUP_BY_MONTH,
-                    cashAggregateChartDataFilterParamsDto::GROUP_BY_YEAR
-                )
-            );
-        }
-
         $response = (new cashApiAggregateGetBreakDownHandler())->handle($request);
 
         return new cashApiAggregateGetBreakDownResponse($response);
