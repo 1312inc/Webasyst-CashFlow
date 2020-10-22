@@ -25,6 +25,22 @@ class cashAccountRepository extends cashBaseRepository
     }
 
     /**
+     * @param int            $id
+     * @param waContact|null $contact
+     *
+     * @return cashAccount|null
+     * @throws waException
+     */
+    public function findByIdForContact($id, waContact $contact = null): ?cashAccount
+    {
+        if (!$contact) {
+            $contact = wa()->getUser();
+        }
+
+        return $this->generateWithData($this->getModel()->getByIdForContact($id, $contact));
+    }
+
+    /**
      * @param waContact|null $contact
      *
      * @return cashAccount

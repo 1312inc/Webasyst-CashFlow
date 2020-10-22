@@ -25,6 +25,26 @@ class cashAccountModel extends cashModel
     }
 
     /**
+     * @param int       $id
+     * @param waContact $contact
+     *
+     * @return array|null
+     * @throws waException
+     */
+    public function getByIdForContact($id, waContact $contact): ?array
+    {
+        $account = cash()->getContactRights()->filterQueryAccountsForContact(
+            $this
+                ->select('*')
+                ->where('is_archived = 0 and id = i:id', ['id' => $id])
+                ->order('sort ASC, id DESC'),
+            $contact
+        )->fetchAll();
+
+        return $account ? reset($account) : null;
+    }
+
+    /**
      * @param string     $startDate
      * @param string     $endDate
      * @param waContact  $contact
