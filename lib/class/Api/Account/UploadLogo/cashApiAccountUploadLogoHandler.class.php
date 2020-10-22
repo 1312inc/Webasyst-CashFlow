@@ -9,7 +9,7 @@ class cashApiAccountUploadLogoHandler implements cashApiHandlerInterface
      * @param cashApiAccountUploadLogoRequest $request
      *
      * @return string
-     * @throws kmwaForbiddenException
+     * @throws kmwaNotFoundException
      * @throws kmwaRuntimeException
      * @throws waException
      */
