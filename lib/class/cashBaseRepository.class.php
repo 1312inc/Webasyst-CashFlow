@@ -195,12 +195,12 @@ class cashBaseRepository
      * @param array $data
      * @param bool  $all
      *
-     * @return array
+     * @return array|null
      */
     public function generateWithData($data, $all = false)
     {
         if (empty($data)) {
-            return [];
+            return $all ? [] : null;
         }
 
         if ($all === false) {
