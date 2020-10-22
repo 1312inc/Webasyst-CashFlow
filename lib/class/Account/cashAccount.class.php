@@ -112,10 +112,6 @@ class cashAccount extends cashAbstractEntity
      */
     public function getIcon()
     {
-        if (strpos($this->icon, cashLogoUploader::ACCOUNT_LOGOS_PATH.'/') === 0) {
-            return cashLogoUploader::getUrlToAccountLogo($this->icon);
-        }
-
         return $this->icon;
     }
 
