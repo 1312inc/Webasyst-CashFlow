@@ -3,7 +3,7 @@
 /**
  * Class cashApiErrorResponse
  */
-class cashApiErrorResponse extends cashApiAbstractResponse implements JsonSerializable
+class cashApiErrorResponse implements cashApiResponseInterface, JsonSerializable
 {
     /**
      * @var string
@@ -21,6 +21,11 @@ class cashApiErrorResponse extends cashApiAbstractResponse implements JsonSerial
     private $trace;
 
     /**
+     * @var int
+     */
+    private $status;
+
+    /**
      * cashApiErrorResponse constructor.
      *
      * @param string $errorMessage
@@ -29,10 +34,9 @@ class cashApiErrorResponse extends cashApiAbstractResponse implements JsonSerial
      */
     public function __construct($errorMessage, $error = 'fail', $status = 400)
     {
-        parent::__construct($status);
-
         $this->errorMessage = $errorMessage;
         $this->error = $error;
+        $this->status = $status;
     }
 
     /**
@@ -63,5 +67,21 @@ class cashApiErrorResponse extends cashApiAbstractResponse implements JsonSerial
         }
 
         return $data;
+    }
+
+    /**
+     * @return $this
+     */
+    public function getResponseBody()
+    {
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatus(): int
+    {
+        return (int) $this->status;
     }
 }
