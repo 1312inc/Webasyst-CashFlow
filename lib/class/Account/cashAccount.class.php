@@ -112,6 +112,10 @@ class cashAccount extends cashAbstractEntity
      */
     public function getIcon()
     {
+        if (strpos($this->icon, cashLogoUploader::ACCOUNT_LOGOS_PATH.'/') === 0) {
+            return cashLogoUploader::getUrlToAccountLogo($this->icon);
+        }
+
         return $this->icon;
     }
 
@@ -137,7 +141,7 @@ class cashAccount extends cashAbstractEntity
                 '<i class="icon16" style="background-image: url(%s); background-size: 16px 16px;"></i>',
                 $this->icon
             );
-        } elseif (strpos($this->icon, cashLogoUploader::ACCOUNT_LOGOS_PATH.'/') !== false) {
+        } elseif (strpos($this->icon, cashLogoUploader::ACCOUNT_LOGOS_PATH.'/') === 0) {
             $html = sprintf(
                 '<i class="icon16" style="background-image: url(%s); background-size: 16px 16px;"></i>',
                 cashLogoUploader::getUrlToAccountLogo($this->icon)
