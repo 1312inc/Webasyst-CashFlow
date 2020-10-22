@@ -9,6 +9,7 @@ import Vuelidate from 'vuelidate'
 import Noty from './plugins/noty'
 import './assets/styles/tailwindcss.css'
 import './assets/styles/wa-2.0.css'
+import './assets/styles/transitions.css'
 
 Vue.config.productionTip = false
 
