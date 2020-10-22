@@ -5,8 +5,6 @@
  */
 class cashAggregateGetBreakDownMethod extends cashApiAbstractMethod
 {
-    const MAX_DAYS = 1000;
-
     protected $method = self::METHOD_GET;
 
     /**
