@@ -738,6 +738,7 @@ SQL;
 
         $sqlSelect = [
             "if(ct.amount < 0, 'expense', 'income') direction",
+            'ca.currency currency',
             "{$detailing} detailed",
             'sum(ct.amount) amount',
         ];
@@ -747,7 +748,7 @@ SQL;
             [
                 implode(',', $sqlSelect),
                 implode(' and ', $sqlWhereAnd),
-                'group by direction, detailed',
+                'group by direction, ca.currency, detailed',
                 '',
             ],
             $basicSql

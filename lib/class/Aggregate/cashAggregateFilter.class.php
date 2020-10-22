@@ -26,20 +26,22 @@ class cashAggregateFilter
     private $contractorContact;
 
     /**
-     * @param string $hash
+     * @param string|null $hash
      *
      * @return cashAggregateFilter
      */
-    public static function createFromHash(string $hash): cashAggregateFilter
+    public static function createFromHash(?string $hash): cashAggregateFilter
     {
         $self = new self;
 
-        [$filter, $identifier] = explode('/', $hash);
+        if ($hash) {
+            [$filter, $identifier] = explode('/', $hash);
 
-        if (property_exists($self, $filter)) {
-            $self->$filter = in_array($filter, ['account', 'category', 'contractorContact'])
-                ? (int) $identifier
-                : (string) $filter;
+            if (property_exists($self, $filter)) {
+                $self->$filter = in_array($filter, ['account', 'category', 'contractorContact'])
+                    ? (int) $identifier
+                    : (string) $filter;
+            }
         }
 
         return $self;

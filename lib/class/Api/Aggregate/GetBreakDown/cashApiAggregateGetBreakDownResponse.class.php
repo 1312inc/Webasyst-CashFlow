@@ -15,13 +15,18 @@ class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
         parent::__construct(200);
 
         $this->response = [
-            'income' => ['total' => 0.0, 'data' => []],
-            'expense' => ['total' => 0.0, 'data' => []],
+            'income' => [],
+            'expense' => [],
         ];
 
         foreach ($data as $datum) {
-            $this->response[$datum->direction]['data'][] = $datum;
-            $this->response[$datum->direction]['total'] += $datum->amount;
+            foreach ($datum as $item) {
+                if (!isset($this->response[$item->direction][$item->currency])) {
+                    $this->response[$item->direction][$item->currency] = ['total' => 0.0, 'data' => []];
+                }
+                $this->response[$item->direction][$item->currency]['data'][] = $item;
+                $this->response[$item->direction][$item->currency]['total'] += $item->amount;
+            }
         }
     }
 }
