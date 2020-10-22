@@ -292,14 +292,14 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   .chart-container {
-    height: 600px;
-    margin-bottom: 2rem;
+    height: 600px !important;
+    margin-bottom: 1rem;
     overflow: hidden;
 
     @media (max-width: 768px) {
-      height: 400px;
+      height: 400px !important;
     }
   }
 

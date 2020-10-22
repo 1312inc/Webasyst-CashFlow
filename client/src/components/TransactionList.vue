@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flexbox">
+    <div v-if="!$store.state.transaction.loading" class="flexbox">
       <div v-if="checkedRows.length" class="wide">
         <button class="button red">Удалить</button>
       </div>
@@ -35,20 +35,26 @@
     </div>
 
     <div v-if="$store.state.transaction.loading">
-      <div class="skeleton tw-mt-10">
-        <table class="small">
-          <tr v-for="i in listItems.length" :key="i">
+      <div class="skeleton">
+        <span class="skeleton-custom-box" style="height: 36px"></span>
+      </div>
+    </div>
+
+    <div v-if="$store.state.transaction.loading">
+      <div class="skeleton">
+        <table>
+          <tr v-for="i in listItems.length || 20" :key="i">
             <td>
-              <span class="skeleton-line" style="margin-bottom: 0"></span>
+              <span class="skeleton-line custom-mb-0"></span>
             </td>
             <td>
-              <span class="skeleton-line" style="margin-bottom: 0"></span>
+              <span class="skeleton-line custom-mb-0"></span>
             </td>
             <td>
-              <span class="skeleton-line" style="margin-bottom: 0"></span>
+              <span class="skeleton-line custom-mb-0"></span>
             </td>
             <td>
-              <span class="skeleton-line" style="margin-bottom: 0"></span>
+              <span class="skeleton-line custom-mb-0"></span>
             </td>
           </tr>
         </table>
@@ -61,10 +67,13 @@
         v-if="!$store.state.transaction.loading && listItems.length"
       >
         <tr>
-          <th class="min-width tw-border-0 tw-border-b tw-border-solid">
+          <th class="min-width tw-border-0 tw-border-b tw-border-solid tw-border-gray-400">
             <input type="checkbox" @click="checkAll" />
           </th>
-          <th colspan="5" class="tw-border-0 tw-border-b tw-border-solid">
+          <th
+            colspan="5"
+            class="tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
+          >
             {{
               $t("transactionsListCount", { days: 30, count: listItems.length })
             }}
