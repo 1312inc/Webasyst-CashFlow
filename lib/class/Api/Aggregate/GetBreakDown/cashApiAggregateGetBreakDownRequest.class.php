@@ -23,5 +23,5 @@ class cashApiAggregateGetBreakDownRequest
     /**
      * @var string
      */
-    public $filter;
+    public $filter = '';
 }

@@ -17,9 +17,9 @@ class cashApiAggregateGetBreakDownHandler implements cashApiHandlerInterface
      */
     public function handle($request)
     {
-        $this->user = wa()->getUser();
+        $user = wa()->getUser();
         $paramsDto = new cashAggregateGetBreakDownFilterParamsDto(
-            $this->user,
+            $user,
             $request->from,
             $request->to,
             $request->details_by,

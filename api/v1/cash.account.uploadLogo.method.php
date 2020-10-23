@@ -9,8 +9,8 @@ class cashAccountUploadLogoMethod extends cashApiAbstractMethod
 
     /**
      * @return cashApiAccountUploadLogoResponse
-     * @throws kmwaForbiddenException
      * @throws kmwaRuntimeException
+     * @throws waException
      */
     public function run(): cashApiResponseInterface
     {
@@ -19,8 +19,7 @@ class cashAccountUploadLogoMethod extends cashApiAbstractMethod
             return new cashApiErrorResponse(sprintf('File upload error: %s %s.', $file->error_code, $file->error));
         }
 
-        $request = $this->fillRequestWithParams(new cashApiAccountUploadLogoRequest());
-
+        $request = new cashApiAccountUploadLogoRequest();
         $request->file = $file;
 
         $response = (new cashApiAccountUploadLogoHandler())->handle($request);
