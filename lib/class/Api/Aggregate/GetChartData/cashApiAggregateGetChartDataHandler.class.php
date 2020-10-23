@@ -30,7 +30,7 @@ class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterface
                 $graphDatum['groupkey'],
                 $graphDatum['incomeAmount'],
                 $graphDatum['expenseAmount'],
-                0
+                $graphDatum['balance']
             );
         }
 
