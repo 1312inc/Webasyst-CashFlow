@@ -6,9 +6,9 @@
       </div>
       <div class="content blank">
         <div class="box contentbox">
-        <keep-alive>
-          <router-view />
-        </keep-alive>
+          <keep-alive>
+            <router-view />
+          </keep-alive>
         </div>
       </div>
     </div>
@@ -22,23 +22,42 @@ export default {
     Sidebar
   },
 
-  async mounted () {
+  async created () {
+    this.$store.watch(
+      (state) => state.transaction.queryParams,
+      () => {
+        this.$store.dispatch('transaction/getList')
+        this.$store.dispatch('transaction/getChartData')
+      }
+    )
+
     await Promise.all([
       this.$store.dispatch('account/getList'),
       this.$store.dispatch('category/getList')
     ])
 
-    let from = this.$moment().add(-1, 'Y').format('YYYY-MM-DD')
-    if (localStorage.getItem('interval_from')) {
-      from = this.$store.state.intervals.from.find(e => e.title === localStorage.getItem('interval_from'))?.value || from
-    }
+    const from = this.getDate(
+      'from',
+      this.$moment().add(-1, 'Y').format('YYYY-MM-DD')
+    )
 
-    let to = this.$moment().add(6, 'M').format('YYYY-MM-DD')
-    if (localStorage.getItem('interval_to')) {
-      to = this.$store.state.intervals.to.find(e => e.title === localStorage.getItem('interval_to'))?.value || to
-    }
+    const to = this.getDate(
+      'to',
+      this.$moment().add(6, 'M').format('YYYY-MM-DD')
+    )
 
-    this.$store.dispatch('transaction/resetAllDataToInterval', { from, to })
+    this.$store.commit('transaction/updateQueryParams', { from, to })
+  },
+
+  methods: {
+    getDate (type, defaultDate) {
+      let result = defaultDate
+      const lsValue = localStorage.getItem(`interval_${type}`)
+      if (lsValue) {
+        result = this.$store.state.intervals[type].find((e) => e.title === lsValue)?.value || defaultDate
+      }
+      return result
+    }
   }
 }
 </script>

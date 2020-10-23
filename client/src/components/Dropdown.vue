@@ -24,11 +24,11 @@ export default {
 
     value: {
       get () {
-        return this.$store.state.transaction.interval[this.type]
+        return this.$store.state.transaction.queryParams[this.type]
       },
       set (value) {
         localStorage.setItem(`interval_${this.type}`, this.getNameByValue(value))
-        this.$store.dispatch('transaction/resetAllDataToInterval', {
+        this.$store.commit('transaction/updateQueryParams', {
           [this.type]: value
         })
       }

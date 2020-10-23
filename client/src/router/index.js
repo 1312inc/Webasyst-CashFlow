@@ -35,14 +35,14 @@ router.beforeEach((to, from, next) => {
     if (to.params.id < 0) {
       next({ name: 'Home' })
     } else {
-      store.commit('setCurrentType', {
-        name: to.name,
+      store.dispatch('updateCurrentType', {
+        name: to.name.toLowerCase(),
         id: +to.params.id
       })
       next()
     }
   } else {
-    store.commit('setCurrentType', { name: '', id: null })
+    store.dispatch('updateCurrentType', { name: '', id: null })
     next()
   }
 })
