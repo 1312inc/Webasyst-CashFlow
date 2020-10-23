@@ -573,6 +573,23 @@ SQL;
                 break;
         }
 
+        $initialBalance = 0;
+        if ($calculateBalance) {
+            $initialBalanceSql = str_replace(
+                ['__SELECT__', '__WHERE__', '__GROUP_BY__', '__ORDER_BY__'],
+                [
+                    'sum(ct.amount) balance',
+                    implode(' and ', $whereAnd + ['ct.data < s:from']),
+                    '',
+                    '',
+                ],
+                $basicSql
+            );
+
+            $initialData = $model->query($initialBalanceSql, $queryParams)->fetchAll();
+            $initialBalance = (float) $initialData[0]['balance'];
+        }
+
         switch ($paramsDto->groupBy) {
             case cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY:
                 $grouping = 'ct.date';
@@ -604,6 +621,7 @@ SQL;
             "{$grouping} groupkey",
             'sum(if(ct.amount < 0, 0, ct.amount)) incomeAmount',
             'sum(if(ct.amount < 0, ct.amount, 0)) expenseAmount',
+            '0 balance',
         ];
 
         $dataSql = str_replace(
@@ -618,6 +636,13 @@ SQL;
         );
 
         $data = $model->query($dataSql, $queryParams)->fetchAll();
+        if ($calculateBalance) {
+            foreach ($data as $i => $datum) {
+                $data[$i]['balance'] = (float) $data[$i]['incomeAmount']
+                    + (float) $data[$i]['expenseAmount']
+                    + $initialBalance;
+            }
+        }
 
         return $data;
     }
@@ -755,6 +780,144 @@ SQL;
         );
 
         $data = $model->query($dataSql, $queryParams)->fetchAll();
+
+        return $data;
+    }
+
+    /**
+     * @param cashAggregateChartDataFilterParamsDto $paramsDto
+     *
+     * @return array
+     * @throws waException
+     */
+    public function getAggregateChartBalance(cashAggregateChartDataFilterParamsDto $paramsDto): array
+    {
+        $model = cash()->getModel(cashTransaction::class);
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($paramsDto->contact);
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin(
+            $paramsDto->contact,
+            'ct',
+            'category_id'
+        );
+
+        $basicSql = <<<SQL
+select
+__SELECT__
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id
+join cash_category cc on ct.category_id = cc.id
+where 
+__WHERE__
+__GROUP_BY__
+__ORDER_BY__
+SQL;
+
+        $whereAnd = [$accountAccessSql, $categoryAccessSql, 'ct.is_archived = 0', 'ca.is_archived = 0'];
+        $select = [];
+
+        $queryParams = [];
+
+        $calculateBalance = false;
+        switch (true) {
+            case null !== $paramsDto->filter->getAccountId():
+                $whereAnd[] = 'ct.account_id = i:account_id';
+                $queryParams['account_id'] = $paramsDto->filter->getAccountId();
+                if (cash()->getContactRights()->canSeeAccountBalance(
+                    $paramsDto->contact,
+                    $paramsDto->filter->getAccountId()
+                )) {
+                    $calculateBalance = true;
+                }
+
+                break;
+
+            case null !== $paramsDto->filter->getCurrency():
+                $whereAnd[] = 'ca.currency = s:currency';
+                $queryParams['currency'] = $paramsDto->filter->getCurrency();
+
+                $accountsSql = str_replace(
+                    ['__SELECT__', '__WHERE__', '__GROUP_BY__', '__ORDER_BY__'],
+                    ['ct.account_id', implode(' and ', $whereAnd), 'group by ct.account_id', ''],
+                    $basicSql
+                );
+
+                $accounts = $model->query($accountsSql, $queryParams)->fetchAll('account_id');
+                foreach ($accounts as $accountId) {
+                    if (cash()->getContactRights()->canSeeAccountBalance($paramsDto->contact, $accountId)) {
+                        $calculateBalance = true;
+                    } else {
+                        $calculateBalance = false;
+                        break;
+                    }
+                }
+                break;
+        }
+
+        if (!$calculateBalance) {
+            return [];
+        }
+
+        $initialBalanceSql = str_replace(
+            ['__SELECT__', '__WHERE__', '__GROUP_BY__', '__ORDER_BY__'],
+            [
+                'sum(ct.amount) balance',
+                implode(' and ', $whereAnd + ['ct.data < s:from']),
+                '',
+                '',
+            ],
+            $basicSql
+        );
+
+        $initialData = $model->query($initialBalanceSql, $queryParams)->fetchAll();
+        $initialBalance = (float) $initialData[0]['balance'];
+
+        switch ($paramsDto->groupBy) {
+            case cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY:
+                $grouping = 'ct.date';
+                $whereAnd[] = 'ct.date between s:from and s:to';
+                $queryParams['from'] = $paramsDto->from->format('Y-m-d');
+                $queryParams['to'] = $paramsDto->to->format('Y-m-d');
+
+                break;
+
+            case cashAggregateChartDataFilterParamsDto::GROUP_BY_YEAR:
+                $grouping = "date_format(ct.date, '%Y')";
+                $whereAnd[] = "date_format(ct.date, '%Y') between s:from and s:to";
+                $queryParams['from'] = $paramsDto->from->format('Y');
+                $queryParams['to'] = $paramsDto->to->format('Y');
+
+                break;
+
+            case cashAggregateChartDataFilterParamsDto::GROUP_BY_MONTH:
+            default:
+                $grouping = "date_format(ct.date, '%Y-%m')";
+                $whereAnd[] = "date_format(ct.date, '%Y-%m') between s:from and s:to";
+                $queryParams['from'] = $paramsDto->from->format('Y-m');
+                $queryParams['to'] = $paramsDto->to->format('Y-m');
+
+                break;
+        }
+
+        $select = [
+            "{$grouping} groupkey",
+            'sum(ct.amount) balance',
+        ];
+
+        $dataSql = str_replace(
+            ['__SELECT__', '__WHERE__', '__GROUP_BY__', '__ORDER_BY__'],
+            [
+                implode(',', $select),
+                implode(' and ', $whereAnd),
+                'group by groupkey',
+                'order by groupkey',
+            ],
+            $basicSql
+        );
+
+        $data = $model->query($dataSql, $queryParams)->fetchAll();
+        foreach ($data as $i => $datum) {
+            $data[$i]['balance'] = (float) $data[$i]['balance'] + $initialBalance;
+        }
 
         return $data;
     }
