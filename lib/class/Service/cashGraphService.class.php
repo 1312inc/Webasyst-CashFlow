@@ -523,8 +523,6 @@ __ORDER_BY__
 SQL;
 
         $whereAnd = [$accountAccessSql, $categoryAccessSql, 'ct.is_archived = 0', 'ca.is_archived = 0'];
-        $select = [];
-
         $queryParams = [];
 
         $calculateBalance = false;
@@ -562,7 +560,7 @@ SQL;
                 );
 
                 $accounts = $model->query($accountsSql, $queryParams)->fetchAll('account_id');
-                foreach ($accounts as $accountId) {
+                foreach ($accounts as $accountId => $accountIds) {
                     if (cash()->getContactRights()->canSeeAccountBalance($paramsDto->contact, $accountId)) {
                         $calculateBalance = true;
                     } else {
@@ -619,6 +617,7 @@ SQL;
 
         $select = [
             "{$grouping} groupkey",
+            'ca.currency currency',
             'sum(if(ct.amount < 0, 0, ct.amount)) incomeAmount',
             'sum(if(ct.amount < 0, ct.amount, 0)) expenseAmount',
             '0 balance',
@@ -629,7 +628,7 @@ SQL;
             [
                 implode(',', $select),
                 implode(' and ', $whereAnd),
-                'group by groupkey',
+                'group by groupkey, currency',
                 'order by groupkey',
             ],
             $basicSql

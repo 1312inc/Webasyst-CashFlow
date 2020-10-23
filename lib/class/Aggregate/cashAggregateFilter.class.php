@@ -40,7 +40,7 @@ class cashAggregateFilter
             if (property_exists($self, $filter)) {
                 $self->$filter = in_array($filter, ['account', 'category', 'contractorContact'])
                     ? (int) $identifier
-                    : (string) $filter;
+                    : (string) $identifier;
             }
         }
 

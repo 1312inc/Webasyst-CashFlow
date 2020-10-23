@@ -23,5 +23,5 @@ class cashApiAggregateGetChartDataRequest
     /**
      * @var string
      */
-    public $filter;
+    public $filter = '';
 }
