@@ -5,7 +5,7 @@
 
     <DetailsDashboard v-if="showDetailsDashboard"></DetailsDashboard>
 
-    <TransactionList :listItems="cuttedList" />
+    <TransactionList :listItems="transactions" />
 
   </div>
 </template>
@@ -24,14 +24,10 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['interval', 'detailsInterval', 'transactions']),
+    ...mapState('transaction', ['detailsInterval', 'transactions']),
 
     showDetailsDashboard () {
       return this.detailsInterval.from
-    },
-
-    cuttedList () {
-      return this.transactions.slice(0, 30)
     }
   }
 }
