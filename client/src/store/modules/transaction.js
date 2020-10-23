@@ -8,9 +8,12 @@ export default {
     transactions: [],
     chartData: [],
     loading: true,
-    interval: {
+    queryParams: {
       from: '',
-      to: ''
+      to: '',
+      limit: 10,
+      offset: 0,
+      filter: ''
     },
     detailsInterval: {
       from: '',
@@ -45,6 +48,14 @@ export default {
       state.loading = data
     },
 
+    updateQueryParams (state, data) {
+      const newData = { ...state.queryParams }
+      for (const key in data) {
+        if (key in newData) newData[key] = data[key]
+      }
+      state.queryParams = newData
+    },
+
     updateItem (state, data) {
       data.forEach(transaction => {
         const itemIndex = state.transactions.findIndex(e => e.id === transaction.id)
@@ -74,32 +85,19 @@ export default {
   },
 
   actions: {
-    resetAllDataToInterval ({ state, dispatch, commit }, interval = {}) {
-      const from = interval.from || state.interval.from
-      const to = interval.to || state.interval.to
-
-      commit('setInterval', { from, to })
-      commit('setdetailsInterval', { from: '', to: '' })
-      dispatch('getList', state.interval)
-      dispatch('getChartData', state.interval)
-    },
-
     setdetailsInterval ({ state, dispatch, commit }, interval = {}) {
-      const from = interval.from || state.detailsInterval.from
-      const to = interval.to || state.detailsInterval.to
+      // const from = interval.from || state.detailsInterval.from
+      // const to = interval.to || state.detailsInterval.to
 
-      commit('setdetailsInterval', { from, to })
-      dispatch('getList', state.detailsInterval)
+      // commit('setdetailsInterval', { from, to })
+      // dispatch('getList', state.detailsInterval)
     },
 
-    async getList ({ commit }, interval) {
+    async getList ({ commit, state }) {
       commit('setLoading', true)
       try {
         const { data } = await api.get('cash.transaction.getList', {
-          params: {
-            from: interval.from,
-            to: interval.to
-          }
+          params: state.queryParams
         })
         commit('setItems', data)
         setTimeout(() => {
@@ -108,8 +106,8 @@ export default {
       } catch (e) {}
     },
 
-    async getChartData ({ commit }, interval) {
-      commit('setChartData', dumpDataByDay(interval.from, interval.to))
+    async getChartData ({ commit, state }) {
+      commit('setChartData', dumpDataByDay(state.queryParams.from, state.queryParams.to))
     },
 
     async update ({ commit }, params) {

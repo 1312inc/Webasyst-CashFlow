@@ -82,7 +82,7 @@ export default new Vuex.Store({
 
   getters: {
     getCurrentType (state, getters) {
-      const getter = getters[`${state.currentType.toLowerCase()}/getById`]
+      const getter = getters[`${state.currentType}/getById`]
       return getter ? getter(state.currentTypeId) : undefined
     }
   },
@@ -91,6 +91,16 @@ export default new Vuex.Store({
     setCurrentType (state, { name, id }) {
       state.currentType = name
       state.currentTypeId = id
+    }
+  },
+
+  actions: {
+    updateCurrentType ({ commit }, { name, id }) {
+      commit('setCurrentType', { name, id })
+      if (name && id) {
+        const filter = `${name}/${id}`
+        commit('transaction/updateQueryParams', { filter })
+      }
     }
   },
 
