@@ -36,7 +36,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
     {
         $sql = sprintf(
             "select ct.category_id id,
-           if (cc.type < 0, '%s', '%s') type,
+           if (ct.amount < 0, '%s', '%s') type,
            ca.currency currency,
            MONTH(ct.date) month,
            sum(ct.amount) per_month

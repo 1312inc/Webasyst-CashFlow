@@ -46,22 +46,12 @@ class cashReportDdsAction extends cashViewAction
         $data = $reportService->getDataForTypeAndPeriod($type, $currentPeriod);
         $chartData = $reportService->formatDataForPie($data, $type, $currentPeriod);
 
-        $total = [];
-        $type = array_reduce($data, static function ($type, cashReportDdsStatDto $dto) use ($total) {
+        $type = array_reduce($data, static function ($type, cashReportDdsStatDto $dto) {
             if ($dto->entity->isIncome()) {
                 $type->incomeEntities++;
             }
             if ($dto->entity->isExpense()) {
                 $type->expenseEntities++;
-            }
-
-            foreach ($dto->valuesPerPeriods as $valuePerPeriod) {
-                foreach ($valuePerPeriod as $currencyCode => $value) {
-                    if (!isset($total[$currencyCode])) {
-                        $total[$currencyCode] = 0;
-                    }
-                    $total[$currencyCode] += $value['per_month'];
-                }
             }
 
             return $type;
