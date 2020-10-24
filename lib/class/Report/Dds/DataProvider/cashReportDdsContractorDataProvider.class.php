@@ -30,7 +30,7 @@ class cashReportDdsContractorDataProvider implements cashReportDdsDataProviderIn
     {
         $sql = <<<SQL
 select ct.contractor_contact_id id,
-       cc.type type,
+       if (ct.amount < 0, '%s', '%s') type,
        ca.currency currency,
        MONTH(ct.date) month,
        sum(ct.amount) per_month
