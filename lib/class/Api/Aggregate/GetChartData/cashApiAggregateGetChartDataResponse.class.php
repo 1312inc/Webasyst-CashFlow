@@ -8,7 +8,7 @@ class cashApiAggregateGetChartDataResponse extends cashApiAbstractResponse
     /**
      * cashApiCategoryCreateResponse constructor.
      *
-     * @param cashApiAggregateGetBreakDownDto[] $data
+     * @param cashApiAggregateGetChartDataDto[] $data
      */
     public function __construct(array $data)
     {

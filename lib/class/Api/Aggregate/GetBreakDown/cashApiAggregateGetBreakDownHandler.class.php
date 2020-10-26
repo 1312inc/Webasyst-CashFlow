@@ -31,11 +31,7 @@ class cashApiAggregateGetBreakDownHandler implements cashApiHandlerInterface
 
         $response = [];
         foreach ($graphData as $graphDatum) {
-            if (!isset($response[$graphDatum['currency']])) {
-                $response[$graphDatum['currency']] = [];
-            }
-
-            $response[$graphDatum['currency']][] = new cashApiAggregateGetBreakDownDto(
+            $response[] = new cashApiAggregateGetBreakDownDto(
                 $graphDatum['direction'],
                 $graphDatum['amount'],
                 0,

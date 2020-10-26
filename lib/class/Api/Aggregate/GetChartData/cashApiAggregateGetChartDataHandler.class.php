@@ -26,11 +26,7 @@ class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterface
 
         $response = [];
         foreach ($graphData as $graphDatum) {
-            if (!isset($response[$graphDatum['currency']])) {
-                $response[$graphDatum['currency']] = [];
-            }
-
-            $response[$graphDatum['currency']][] = new cashApiAggregateGetChartDataDto(
+            $response[] = new cashApiAggregateGetChartDataDto(
                 $graphDatum['groupkey'],
                 abs($graphDatum['incomeAmount']),
                 abs($graphDatum['expenseAmount']),
