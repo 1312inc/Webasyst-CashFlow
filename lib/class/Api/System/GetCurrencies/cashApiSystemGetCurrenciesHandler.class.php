@@ -12,6 +12,6 @@ class cashApiSystemGetCurrenciesHandler implements cashApiHandlerInterface
      */
     public function handle($request)
     {
-        return waCurrency::getAll(true);
+        return array_values(waCurrency::getAll(true));
     }
 }
