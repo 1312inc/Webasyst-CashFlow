@@ -14,6 +14,6 @@ class cashApiAccountUploadLogoResponse extends cashApiAbstractResponse
     {
         parent::__construct(200);
 
-        $this->response = $logoPath;
+        $this->response = sprintf('%s%s', rtrim(wa()->getRootUrl(true), '/'), $logoPath);
     }
 }
