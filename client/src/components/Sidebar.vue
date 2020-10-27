@@ -1,14 +1,14 @@
 <template>
   <div class="tw-pt-6">
     <div class="tw-mb-6">
-      <div class="tw-mx-4">
+      <!-- <div class="tw-mx-4">
         <h5>{{ $t("accounts") }}</h5>
-      </div>
+      </div> -->
       <ul class="menu-v">
         <li v-for="account in accounts" :key="account.id">
           <router-link :to="{ name: 'Account', params: { id: account.id } }" class="flexbox middle">
-            <span v-if="isValidHttpUrl(account.icon)" class="icon"><img :src="account.icon" alt="" /></span>
-            <span v-show="!isValidHttpUrl(account.icon)" class="icon">
+            <span v-if="$helper.isValidHttpUrl(account.icon)" class="icon"><img :src="account.icon" alt="" /></span>
+            <span v-show="!$helper.isValidHttpUrl(account.icon)" class="icon">
               <i class="fas fa-star"></i>
             </span>
             <span>{{ account.name }}</span>
@@ -16,9 +16,7 @@
               v-if="account.stat"
               class="count"
               v-html="
-                `${account.stat.summaryShorten}&nbsp;${$helper.currToSymbol(
-                  account.currency
-                )}`
+                `${account.stat.summaryShorten}&nbsp;${getCurrencySignByCode(account.currency)}`
               "
             ></span>
           </router-link>
@@ -87,7 +85,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import Account from '@/components/AddAccount'
 import Category from '@/components/AddCategory'
@@ -108,6 +106,8 @@ export default {
     ...mapState('account', ['accounts']),
     ...mapState('category', ['categories']),
 
+    ...mapGetters('system', ['getCurrencySignByCode']),
+
     categoriesIncome () {
       return this.categories.filter((e) => e.type === 'income')
     },
@@ -126,18 +126,6 @@ export default {
     close () {
       this.open = false
       this.currentComponentInModal = ''
-    },
-
-    isValidHttpUrl (string) {
-      let url
-
-      try {
-        url = new URL(string)
-      } catch (_) {
-        return false
-      }
-
-      return url.protocol === 'http:' || url.protocol === 'https:'
     }
   }
 }

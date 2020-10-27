@@ -1,9 +1,14 @@
 import axios from 'axios'
 
+const baseApiUrl = window?.appState?.baseApiUrl || '/api.php'
+const accessToken = process.env.VUE_APP_API_TOKEN || window?.appState?.token || ''
+
+export { baseApiUrl, accessToken }
+
 export default axios.create({
-  baseURL: window?.appState?.baseApiUrl || '/api.php',
+  baseURL: baseApiUrl,
   params: {
-    access_token: process.env.VUE_APP_API_TOKEN || window?.appState?.token || ''
+    access_token: accessToken
   },
   headers: {
     'Content-Type': 'multipart/form-data'
