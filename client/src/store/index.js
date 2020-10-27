@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import transaction from './modules/transaction'
 import category from './modules/category'
 import account from './modules/account'
+import system from './modules/system'
 import moment from 'moment'
 
 Vue.use(Vuex)
@@ -107,6 +108,7 @@ export default new Vuex.Store({
   modules: {
     transaction,
     category,
-    account
+    account,
+    system
   }
 })

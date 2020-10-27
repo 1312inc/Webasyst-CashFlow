@@ -1,16 +1,17 @@
 export default {
   install (Vue) {
-    Vue.prototype.$isDesktopEnv = process.env.VUE_APP_MODE === 'desktop'
-
     Vue.prototype.$helper = {
-      currToSymbol: (currency) => {
-        if (currency === 'USD') {
-          return '$'
+      isDesktopEnv: process.env.VUE_APP_MODE === 'desktop',
+      isValidHttpUrl: (string) => {
+        let url
+
+        try {
+          url = new URL(string)
+        } catch (_) {
+          return false
         }
-        if (currency === 'RUB') {
-          return '₽'
-        }
-        return currency
+
+        return url.protocol === 'http:' || url.protocol === 'https:'
       }
     }
   }

@@ -7,7 +7,6 @@
         class="larger"
       >
         {{ $numeral(currentCategory.stat.summary).format() }}
-        {{ $helper.currToSymbol(currentCategory.currency) }}
       </div>
       <div>
         <button @click="update(currentCategory)" class="button nobutton small">

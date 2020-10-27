@@ -31,6 +31,8 @@ export default {
       }
     )
 
+    await this.$store.dispatch('system/getCurrencies')
+
     await Promise.all([
       this.$store.dispatch('account/getList'),
       this.$store.dispatch('category/getList')
