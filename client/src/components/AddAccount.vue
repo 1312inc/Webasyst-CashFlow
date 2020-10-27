@@ -26,10 +26,10 @@
           <div class="wa-select">
             <select
               v-model="model.currency"
+              class="wide"
               :class="{ 'state-error': $v.model.currency.$error }"
             >
-              <option>RUB</option>
-              <option>USD</option>
+              <option :value="c.code" v-for="c in $store.state.system.currencies" :key="c.code">{{c.code}} – {{c.title}} ({{c.sign}})</option>
             </select>
           </div>
         </div>
@@ -40,13 +40,19 @@
           {{ $t("icon") }}
         </div>
         <div class="value">
-          <input
-            v-model="model.icon"
-            :class="{ 'state-error': $v.model.icon.$error }"
-            type="text"
-            class="wide"
-          />
-          <p class="hint" v-if="!$v.model.icon.url">Accepts only URLs</p>
+          <div class="icon-uploader">
+            <div v-if="!model.icon">
+              <IconUploader @uploaded="setIcon" />
+            </div>
+            <div v-if="model.icon" class="flexbox middle">
+              <div class="icon-uploader-image">
+                <img :src="model.icon" class="wide tw-rounded" alt="">
+              </div>
+              <div>
+                <a href="#" @click.prevent="model.icon = ''" class="button nobutton smaller">Remove</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -81,12 +87,17 @@
 </template>
 
 <script>
-import { required, url } from 'vuelidate/lib/validators'
+import { required } from 'vuelidate/lib/validators'
+import IconUploader from '@/components/IconUploader'
 export default {
   props: {
     editedItem: {
       type: Object
     }
+  },
+
+  components: {
+    IconUploader
   },
 
   data () {
@@ -108,9 +119,6 @@ export default {
       },
       currency: {
         required
-      },
-      icon: {
-        url
       }
     }
   },
@@ -159,7 +167,23 @@ export default {
 
     close () {
       this.$parent.$emit('close')
+    },
+
+    setIcon (url) {
+      this.model.icon = url
     }
   }
 }
 </script>
+
+<style lang="scss">
+.icon-uploader {
+  height: 40px;
+  position: relative;
+
+  &-image {
+    width: 40px;
+    height: 40px;
+  }
+}
+</style>

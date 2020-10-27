@@ -8,7 +8,7 @@
     </td>
     <td @click="openModal">
       {{ $numeral(transaction.amount).format() }}
-      {{ $helper.currToSymbol(accountById(transaction.account_id).currency) }}
+      {{ getCurrencySignByCode(accountById(transaction.account_id).currency) }}
     </td>
     <td @click="openModal">
       {{ category.name }}
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/AddTransaction'
 
@@ -51,6 +52,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters('system', ['getCurrencySignByCode']),
     category () {
       return this.$store.getters['category/getById'](
         this.transaction.category_id

@@ -6,7 +6,7 @@
       </div>
 
       <div
-        v-if="!checkedRows.length && $isDesktopEnv"
+        v-if="!checkedRows.length && $helper.isDesktopEnv"
         class="flexbox space-1rem wide"
       >
         <div>
