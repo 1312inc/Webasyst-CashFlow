@@ -19,11 +19,13 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
             DateTime::createFromFormat('Y-m-d', $request->from),
             DateTime::createFromFormat('Y-m-d', $request->to),
             wa()->getUser(),
-            $request->start,
+            $request->offset * $request->limit,
             $request->limit
         );
 
-        $data = (new cashTransactionFilterService())->getResults($filterDto);
+        $transactionFilter = new cashTransactionFilterService();
+        $total = $transactionFilter->getResults($filterDto, true);
+        $data = $transactionFilter->getResults($filterDto);
 
         $initialBalance = null;
         if ($filterDto->filter->getAccountId()
@@ -51,6 +53,9 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
             $response[] = $item;
         }
 
-        return $response;
+        return [
+            'data' => $response,
+            'total' => $total,
+        ];
     }
 }

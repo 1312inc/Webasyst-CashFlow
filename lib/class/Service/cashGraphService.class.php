@@ -544,9 +544,9 @@ SQL;
                 $queryParams['category_id'] = $paramsDto->filter->getCategoryId();
                 break;
 
-            case null !== $paramsDto->filter->getContractorContactId():
+            case null !== $paramsDto->filter->getContractorId():
                 $whereAnd[] = 'ct.contractor_contact_id = i:contractor_contact_id';
-                $queryParams['contractor_contact_id'] = $paramsDto->filter->getContractorContactId();
+                $queryParams['contractor_contact_id'] = $paramsDto->filter->getContractorId();
                 break;
 
             case null !== $paramsDto->filter->getCurrency():
@@ -696,9 +696,9 @@ SQL;
                 $queryParams['category_id'] = $paramsDto->filter->getCategoryId();
                 break;
 
-            case null !== $paramsDto->filter->getContractorContactId():
+            case null !== $paramsDto->filter->getContractorId():
                 $sqlWhereAnd[] = 'ct.contractor_contact_id = i:contractor_contact_id';
-                $queryParams['contractor_contact_id'] = $paramsDto->filter->getContractorContactId();
+                $queryParams['contractor_contact_id'] = $paramsDto->filter->getContractorId();
                 break;
 
             case null !== $paramsDto->filter->getCurrency():
