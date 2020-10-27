@@ -5,10 +5,10 @@
  */
 abstract class cashApiAbstractMethod extends waAPIMethod
 {
-    const METHOD_GET    = 'GET';
-    const METHOD_POST   = 'POST';
-    const METHOD_DELETE = 'DELETE';
-    const METHOD_PUT    = 'PUT';
+    public const METHOD_GET    = 'GET';
+    public const METHOD_POST   = 'POST';
+    public const METHOD_DELETE = 'DELETE';
+    public const METHOD_PUT    = 'PUT';
 
     /**
      * @var array
@@ -130,5 +130,13 @@ abstract class cashApiAbstractMethod extends waAPIMethod
         }
 
         return $requestDto;
+    }
+
+    /**
+     * @return cashApiResponseInterface
+     */
+    public function __invoke()
+    {
+        return $this->run();
     }
 }

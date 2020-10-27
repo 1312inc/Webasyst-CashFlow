@@ -26,27 +26,7 @@ class cashApiTransactionGetListRequest
     public $limit;
 
     /**
-     * @var int
+     * @var string Hash to filter transactions, can be "category/X", "account/X", "contractor/X", "currency/XXX"
      */
-    public $account_id;
-
-    /**
-     * @var int
-     */
-    public $category_id;
-
-    /**
-     * @var int
-     */
-    public $contractor_contact_id;
-
-    /**
-     * @var int
-     */
-    public $create_contact_id;
-
-    /**
-     * @var int
-     */
-    public $import_id;
+    public $filter = '';
 }

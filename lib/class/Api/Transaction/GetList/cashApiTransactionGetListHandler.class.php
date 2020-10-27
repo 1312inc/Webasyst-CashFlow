@@ -15,11 +15,7 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
     public function handle($request)
     {
         $filterDto = new cashTransactionFilterParamsDto(
-            $request->account_id,
-            $request->category_id,
-            $request->create_contact_id,
-            $request->contractor_contact_id,
-            $request->import_id,
+            cashAggregateFilter::createFromHash($request->filter),
             DateTime::createFromFormat('Y-m-d', $request->from),
             DateTime::createFromFormat('Y-m-d', $request->to),
             wa()->getUser(),
@@ -30,18 +26,27 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
         $data = (new cashTransactionFilterService())->getResults($filterDto);
 
         $initialBalance = null;
-        if ($filterDto->accountId && cash()->getContactRights()->hasFullAccessToAccount($filterDto->contact, $filterDto->accountId)) {
+        if ($filterDto->filter->getAccountId()
+            && cash()->getContactRights()->hasFullAccessToAccount(
+                $filterDto->contact,
+                $filterDto->filter->getAccountId()
+            )
+        ) {
             $initialBalance = cash()->getModel(cashAccount::class)->getStatDataForAccounts(
                 '1970-01-01 00:00:00',
                 $filterDto->endDate->format('Y-m-d 23:59:59'),
                 $filterDto->contact,
-                [$filterDto->accountId]
+                [$filterDto->filter->getAccountId()]
             );
-            $initialBalance = (float) ifset($initialBalance, $filterDto->accountId, 'summary', 0.0);
+            $initialBalance = (float) ifset($initialBalance, $filterDto->filter->getAccountId(), 'summary', 0.0);
         }
 
         $response = [];
-        $iterator = cashApiTransactionResponseDtoAssembler::fromModelIteratorWithInitialBalance($data, $initialBalance, $filterDto->reverse);
+        $iterator = cashApiTransactionResponseDtoAssembler::fromModelIteratorWithInitialBalance(
+            $data,
+            $initialBalance,
+            $filterDto->reverse
+        );
         foreach ($iterator as $item) {
             $response[] = $item;
         }
