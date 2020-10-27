@@ -33,7 +33,7 @@ final class cashTransactionFilterService
 
         $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
             $dto->contact,
-            $dto->accountId
+            $dto->filter->getCategoryId()
         );
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($dto->contact, 'ct', 'category_id');
 
@@ -56,8 +56,8 @@ final class cashTransactionFilterService
         ];
 
         switch (true) {
-            case $dto->accountId:
-                if (!$rights->hasMinimumAccessToAccount($dto->contact, $dto->accountId)) {
+            case null !== $dto->filter->getAccountId():
+                if (!$rights->hasMinimumAccessToAccount($dto->contact, $dto->filter->getAccountId())) {
                     throw new kmwaForbiddenException(_w('You have no access to this account'));
                 }
 
@@ -75,12 +75,12 @@ where ct.date between s:startDate and s:endDate
 {$order}
 {$limits}
 SQL;
-                $sqlParams['account_id'] = $dto->accountId;
+                $sqlParams['account_id'] = $dto->filter->getAccountId();
 
                 break;
 
-            case $dto->categoryId:
-                if (!$rights->hasMinimumAccessToCategory($dto->contact, $dto->categoryId)) {
+            case null !== $dto->filter->getCategoryId():
+                if (!$rights->hasMinimumAccessToCategory($dto->contact, $dto->filter->getCategoryId())) {
                     throw new kmwaForbiddenException(_w('You have no access to this category'));
                 }
 
@@ -105,34 +105,60 @@ where ct.date between s:startDate and s:endDate
 {$order}
 {$limits}
 SQL;
-                $sqlParams['category_id'] = $dto->categoryId;
+                $sqlParams['category_id'] = $dto->filter->getCategoryId();
 
                 break;
 
-            case $dto->createContactId:
-                if (!$rights->isAdmin($dto->contact)) {
-                    throw new kmwaForbiddenException(_w('You have no access to this contact'));
-                }
+            case null !== $dto->filter->getCurrency():
+                $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+                    $dto->contact,
+                    'ct',
+                    'account_id'
+                );
 
-                $whereContactSql = ' and ct.create_contact_id = i:create_contact_id';
+                $whereCurrencySql = ' and ca.currency = s:currency';
+                $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
                 $sql = <<<SQL
 select ct.*
 from cash_transaction ct
 join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-left join cash_category cc on ct.category_id = cc.id
+{$joinCategory}
 where ct.date between s:startDate and s:endDate
       and ct.is_archived = 0
-      {$whereContactSql}
+      {$whereCurrencySql}
       and {$accountAccessSql}
       and {$categoryAccessSql}
 {$order}
 {$limits}
 SQL;
-                $sqlParams['create_contact_id'] = $dto->createContactId;
+                $sqlParams['currency'] = $dto->filter->getCurrency();
 
                 break;
 
-            case $dto->contractorContactId:
+//            case $dto->createContactId:
+//                if (!$rights->isAdmin($dto->contact)) {
+//                    throw new kmwaForbiddenException(_w('You have no access to this contact'));
+//                }
+//
+//                $whereContactSql = ' and ct.create_contact_id = i:create_contact_id';
+//                $sql = <<<SQL
+//select ct.*
+//from cash_transaction ct
+//join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+//left join cash_category cc on ct.category_id = cc.id
+//where ct.date between s:startDate and s:endDate
+//      and ct.is_archived = 0
+//      {$whereContactSql}
+//      and {$accountAccessSql}
+//      and {$categoryAccessSql}
+//{$order}
+//{$limits}
+//SQL;
+//                $sqlParams['create_contact_id'] = $dto->createContactId;
+//
+//                break;
+
+            case null !== $dto->filter->getContractorContactId():
                 if (!$rights->isAdmin($dto->contact)) {
                     throw new kmwaForbiddenException(_w('You have no access to this contractor'));
                 }
@@ -151,34 +177,34 @@ where ct.date between s:startDate and s:endDate
 {$order}
 {$limits}
 SQL;
-                $sqlParams['contractor_contact_id'] = $dto->contractorContactId;
+                $sqlParams['contractor_contact_id'] = $dto->filter->getContractorContactId();
 
 
                 break;
 
-            case $dto->importId:
-                if (!$rights->isAdmin($dto->contact)) {
-                    throw new kmwaForbiddenException(_w('You have no access to this contractor'));
-                }
-
-                $sql = <<<SQL
-select ct.*,
-       (@balance := @balance + ct.amount) as balance
-from cash_transaction ct
-join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate)) b
-join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-left join cash_category cc on ct.category_id = cc.id
-where ct.date between s:startDate and s:endDate
-    and ct.import_id = i:import_id
-    and ct.is_archived = 0
-    and {$accountAccessSql}
-    and {$categoryAccessSql}
-{$order}
-{$limits}
-SQL;
-                $sqlParams['import_id'] = $dto->importId;
-
-                break;
+//            case $dto->importId:
+//                if (!$rights->isAdmin($dto->contact)) {
+//                    throw new kmwaForbiddenException(_w('You have no access to this contractor'));
+//                }
+//
+//                $sql = <<<SQL
+//select ct.*,
+//       (@balance := @balance + ct.amount) as balance
+//from cash_transaction ct
+//join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate)) b
+//join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+//left join cash_category cc on ct.category_id = cc.id
+//where ct.date between s:startDate and s:endDate
+//    and ct.import_id = i:import_id
+//    and ct.is_archived = 0
+//    and {$accountAccessSql}
+//    and {$categoryAccessSql}
+//{$order}
+//{$limits}
+//SQL;
+//                $sqlParams['import_id'] = $dto->importId;
+//
+//                break;
 
             default:
                 $whereAccountSql = '';
