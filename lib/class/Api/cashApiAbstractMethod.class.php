@@ -43,7 +43,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
         }
 
         try {
-            return parent::get($name, $required);
+            return $this->fromGet($name, $required);
         } catch (waAPIException $exception) {
             throw new cashApiMissingParamException($name);
         }
@@ -63,7 +63,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
         }
 
         try {
-            return parent::post($name, $required);
+            return $this->fromPost($name, $required);
         } catch (waAPIException $exception) {
             throw new cashApiMissingParamException($name);
         }
@@ -102,7 +102,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
 
         $param = null;
         try {
-            $param = parent::post($name, $required);
+            $param = $this->fromPost($name, $required);
         } catch (waAPIException $exception) {
         }
 
@@ -111,10 +111,30 @@ abstract class cashApiAbstractMethod extends waAPIMethod
         }
 
         try {
-            return parent::get($name, $required);
+            return $this->fromGet($name, $required);
         } catch (waAPIException $exception) {
             throw new cashApiMissingParamException($name);
         }
+    }
+
+    private function fromGet($name, $required = false)
+    {
+        $v = waRequest::get($name);
+        if ($required && $v === null) {
+            throw new waAPIException('invalid_param', 'Required parameter is missing: ' . $name, 400);
+        }
+
+        return $v;
+    }
+
+    private function fromPost($name, $required = false)
+    {
+        $v = waRequest::post($name);
+        if ($required && $v === null) {
+            throw new waAPIException('invalid_param', 'Required parameter is missing: ' . $name, 400);
+        }
+
+        return $v;
     }
 
     /**

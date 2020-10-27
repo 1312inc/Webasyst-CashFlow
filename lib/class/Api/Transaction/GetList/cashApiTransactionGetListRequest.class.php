@@ -18,7 +18,7 @@ class cashApiTransactionGetListRequest
     /**
      * @var int
      */
-    public $start;
+    public $offset;
 
     /**
      * @var int

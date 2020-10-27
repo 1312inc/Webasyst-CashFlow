@@ -23,7 +23,7 @@ class cashAggregateFilter
     /**
      * @var int|null
      */
-    private $contractorContact;
+    private $contractor;
 
     /**
      * @param string|null $hash
@@ -38,7 +38,7 @@ class cashAggregateFilter
             [$filter, $identifier] = explode('/', $hash);
 
             if (property_exists($self, $filter)) {
-                $self->$filter = in_array($filter, ['account', 'category', 'contractorContact'])
+                $self->$filter = in_array($filter, ['account', 'category', 'contractor'])
                     ? (int) $identifier
                     : (string) $identifier;
             }
@@ -74,8 +74,8 @@ class cashAggregateFilter
     /**
      * @return int|null
      */
-    public function getContractorContactId(): ?int
+    public function getContractorId(): ?int
     {
-        return $this->contractorContact;
+        return $this->contractor;
     }
 }
