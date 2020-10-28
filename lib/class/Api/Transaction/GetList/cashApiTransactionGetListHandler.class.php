@@ -25,13 +25,8 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
 
         $transactionFilter = new cashTransactionFilterService();
 
-        if ($request->shrink) {
-            $total = $transactionFilter->getShrinkResults($filterDto, true);
-            $data = $transactionFilter->getShrinkResults($filterDto);
-        } else {
-            $total = $transactionFilter->getResults($filterDto, true);
-            $data = $transactionFilter->getResults($filterDto);
-        }
+        $total = $transactionFilter->getResultsCount($filterDto);
+        $data = $transactionFilter->getResults($filterDto);
 
         $initialBalance = null;
         if ($filterDto->filter->getAccountId()
