@@ -41,16 +41,14 @@
         </div>
         <div class="value">
           <div class="icon-uploader">
-            <div v-if="!model.icon">
-              <IconUploader @uploaded="setIcon" />
-            </div>
-            <div v-if="model.icon" class="flexbox middle">
-              <div class="icon-uploader-image">
-                <img :src="model.icon" class="wide tw-rounded" alt="">
-              </div>
+            <div v-if="$helper.isValidHttpUrl(model.icon)" class="flexbox middle">
+              <div class="icon-uploader-image tw-rounded" :style="`background-image:url(${model.icon})`"></div>
               <div>
                 <a href="#" @click.prevent="model.icon = ''" class="button nobutton smaller">Remove</a>
               </div>
+            </div>
+            <div v-else>
+              <IconUploader @uploaded="setIcon" />
             </div>
           </div>
         </div>
@@ -184,6 +182,10 @@ export default {
   &-image {
     width: 40px;
     height: 40px;
+    background: {
+      position: center center;
+      size: cover;
+    }
   }
 }
 </style>
