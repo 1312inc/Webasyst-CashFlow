@@ -65,5 +65,8 @@
   "changeSettings": "Настройки статьи",
   "details": "Подробнее",
   "optional": "Опционально",
-  "transactionsListCount": "ПОСЛЕДНИЕ {days} ДНЕЙ, {count} ОПЕРАЦИЙ"
+  "transactionsListCount": "ПОСЛЕДНИЕ {days} ДНЕЙ, {count} ОПЕРАЦИЙ",
+  "cashOnHand": "Деньги",
+  "cashToday": "Деньги сегодня",
+  "today": "Сегодня"
 }

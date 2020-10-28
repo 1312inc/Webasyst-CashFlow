@@ -20,6 +20,11 @@ const routes = [
     path: '/category/:id',
     name: 'Category',
     component: Home
+  },
+  {
+    path: '/currency/:id',
+    name: 'Currency',
+    component: Home
   }
 ]
 
@@ -30,14 +35,14 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.name === 'Account' || to.name === 'Category') {
+  if (to.name === 'Account' || to.name === 'Category' || to.name === 'Currency') {
     // if no Category
     if (to.params.id < 0) {
       next({ name: 'Home' })
     } else {
       store.dispatch('updateCurrentType', {
         name: to.name.toLowerCase(),
-        id: +to.params.id
+        id: +to.params.id || to.params.id
       })
       next()
     }

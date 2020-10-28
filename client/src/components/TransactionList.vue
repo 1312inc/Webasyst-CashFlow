@@ -43,7 +43,7 @@
     <div v-if="$store.state.transaction.loading">
       <div class="skeleton">
         <table>
-          <tr v-for="i in listItems.length || 20" :key="i">
+          <tr v-for="i in listItems.data.length || 20" :key="i">
             <td>
               <span class="skeleton-line custom-mb-0"></span>
             </td>
@@ -64,7 +64,7 @@
     <transition name="fade-appear">
       <table
         class="small zebra"
-        v-if="!$store.state.transaction.loading && listItems.length"
+        v-if="!$store.state.transaction.loading && listItems.data.length"
       >
         <tr>
           <th class="min-width tw-border-0 tw-border-b tw-border-solid tw-border-gray-400">
@@ -75,12 +75,12 @@
             class="tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
           >
             {{
-              $t("transactionsListCount", { days: 30, count: listItems.length })
+              $t("transactionsListCount", { days: 30, count: listItems.data.length })
             }}
           </th>
         </tr>
         <TransactionListRow
-          v-for="transaction in listItems"
+          v-for="transaction in listItems.data"
           :key="transaction.id"
           :transaction="transaction"
           :is-checked="checkedRows.includes(transaction.id)"
@@ -103,7 +103,7 @@ import AddTransaction from '@/components/AddTransaction'
 export default {
   props: {
     listItems: {
-      type: Array
+      type: Object
     }
   },
 
@@ -128,7 +128,7 @@ export default {
     },
 
     checkAll ({ target }) {
-      this.checkedRows = target.checked ? this.listItems.map((r) => r.id) : []
+      this.checkedRows = target.checked ? this.listItems.data.map((r) => r.id) : []
     },
 
     onTransactionListRowUpdate (id) {

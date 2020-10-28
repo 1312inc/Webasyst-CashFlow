@@ -10,6 +10,13 @@ export default {
   getters: {
     getById: state => id => {
       return state.accounts.find(account => account.id === id)
+    },
+
+    currenciesInAccounts: state => {
+      return state.accounts.reduce((acc, { currency }) => {
+        if (!acc.includes(currency)) acc.push(currency)
+        return acc
+      }, [])
     }
   },
 
@@ -48,14 +55,7 @@ export default {
 
     async update ({ commit }, params) {
       const method = params.id ? 'update' : 'create'
-
-      const formData = new FormData()
-      for (const key in params) {
-        formData.append(key, params[key])
-      }
-
-      const { data } = await api.post(`cash.account.${method}`, formData)
-
+      const { data } = await api.post(`cash.account.${method}`, params)
       commit('updateItem', data)
     },
 

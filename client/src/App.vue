@@ -23,14 +23,6 @@ export default {
   },
 
   async created () {
-    this.$store.watch(
-      (state) => state.transaction.queryParams,
-      () => {
-        this.$store.dispatch('transaction/getList')
-        this.$store.dispatch('transaction/getChartData')
-      }
-    )
-
     await this.$store.dispatch('system/getCurrencies')
 
     await Promise.all([
@@ -48,7 +40,17 @@ export default {
       this.$moment().add(6, 'M').format('YYYY-MM-DD')
     )
 
-    this.$store.commit('transaction/updateQueryParams', { from, to })
+    const filter = this.$store.state.transaction.queryParams.filter || `currency/${this.$store.getters['account/currenciesInAccounts'][0]}`
+
+    this.$store.watch(
+      (state) => state.transaction.queryParams,
+      () => {
+        this.$store.dispatch('transaction/getList')
+        this.$store.dispatch('transaction/getChartData')
+      }
+    )
+
+    this.$store.commit('transaction/updateQueryParams', { from, to, filter })
   },
 
   methods: {

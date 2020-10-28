@@ -11,6 +11,6 @@ export default axios.create({
     access_token: accessToken
   },
   headers: {
-    'Content-Type': 'multipart/form-data'
+    'Content-Type': 'application/json'
   }
 })
