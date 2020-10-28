@@ -18,6 +18,11 @@ final class cashSelectQueryParts
     /**
      * @var array
      */
+    private $groupBy = [];
+
+    /**
+     * @var array
+     */
     private $select = [];
 
     /**
@@ -56,6 +61,11 @@ final class cashSelectQueryParts
     private $model;
 
     /**
+     * @var string
+     */
+    private $alias;
+
+    /**
      * cashSelectQueryParts constructor.
      *
      * @param cashModel $model
@@ -64,11 +74,12 @@ final class cashSelectQueryParts
     {
         $this->model = $model;
         $this->baseSql = <<<SQL
-select __SELECT_PART__
-from __FROM_PART__
+__SELECT_PART__
+__FROM_PART__
 __JOIN_PART__
 __WHERE_PART__
-__ORDER_PART__
+__GROUP_BY_PART__
+__ORDER_BY_PART__
 SQL;
 
     }
@@ -80,6 +91,16 @@ SQL;
      */
     public function query($baseSql = '')
     {
+        return $this->model->query($this->getSql($baseSql), $this->params);
+    }
+
+    /**
+     * @param string $baseSql
+     *
+     * @return string
+     */
+    public function getSql($baseSql = '')
+    {
         if (!$baseSql) {
             $baseSql = $this->baseSql;
         }
@@ -90,14 +111,16 @@ SQL;
                 '__FROM_PART__',
                 '__JOIN_PART__',
                 '__WHERE_PART__',
-                '__ORDER_PART__',
+                '__GROUP_BY_PART__',
+                '__ORDER_BY_PART__',
             ],
             [
-                implode(",\n", $this->select),
-                $this->from,
-                $this->join ? implode("\n", $this->join) : '',
-                $this->andWhere ? sprintf('where (%s)', implode(") \n and (", $this->andWhere)) : '',
-                $this->orderBy ? sprintf('order by %s', implode(",\n", $this->orderBy)) : '',
+                sprintf('select %s', implode(', ', $this->select)),
+                sprintf('from %s %s', $this->from, $this->alias),
+                $this->join ? implode(' ', $this->join) : '',
+                $this->andWhere ? sprintf('where (%s)', implode(') and (', $this->andWhere)) : '',
+                $this->groupBy ? sprintf('group by (%s)', implode(') and (', $this->groupBy)) : '',
+                $this->orderBy ? sprintf('order by %s', implode(', ', $this->orderBy)) : '',
             ],
             $baseSql
         );
@@ -106,7 +129,7 @@ SQL;
             $sql = sprintf('%s limit %d, %d', $sql, $this->offset, $this->limit);
         }
 
-        return $this->model->query($sql, $this->params);
+        return $sql;
     }
 
     /**
@@ -127,7 +150,7 @@ SQL;
     }
 
     /**
-     * @param string $join
+     * @param string      $join
      * @param null|string $key
      *
      * @return cashSelectQueryParts
@@ -144,7 +167,7 @@ SQL;
     }
 
     /**
-     * @param string $select
+     * @param string      $select
      * @param null|string $key
      *
      * @return cashSelectQueryParts
@@ -161,7 +184,7 @@ SQL;
     }
 
     /**
-     * @param string $orderBy
+     * @param string      $orderBy
      * @param null|string $key
      *
      * @return cashSelectQueryParts
@@ -172,6 +195,23 @@ SQL;
             $this->orderBy[(string) $key] = $orderBy;
         } else {
             $this->orderBy[] = $orderBy;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string      $groupBy
+     * @param null|string $key
+     *
+     * @return cashSelectQueryParts
+     */
+    public function addGroupBy($groupBy, $key = null): cashSelectQueryParts
+    {
+        if ($key !== null) {
+            $this->groupBy[(string) $key] = $groupBy;
+        } else {
+            $this->groupBy[] = $groupBy;
         }
 
         return $this;
@@ -192,12 +232,14 @@ SQL;
 
     /**
      * @param string $from
+     * @param string $alias
      *
      * @return cashSelectQueryParts
      */
-    public function from(string $from): cashSelectQueryParts
+    public function from($from, $alias): cashSelectQueryParts
     {
         $this->from = $from;
+        $this->alias = $alias;
 
         return $this;
     }
@@ -308,5 +350,140 @@ SQL;
         $this->model = $model;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAndWhere(): array
+    {
+        return $this->andWhere;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrderBy(): array
+    {
+        return $this->orderBy;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSelect(): array
+    {
+        return $this->select;
+    }
+
+    /**
+     * @return array
+     */
+    public function getJoin(): array
+    {
+        return $this->join;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFrom(): string
+    {
+        return $this->from;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getLimit(): ?int
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getOffset(): ?int
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseSql(): string
+    {
+        return $this->baseSql;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParams(): array
+    {
+        return $this->params;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGroupBy(): array
+    {
+        return $this->groupBy;
+    }
+
+    /**
+     * @param array $groupBy
+     *
+     * @return cashSelectQueryParts
+     */
+    public function groupBy(array $groupBy): cashSelectQueryParts
+    {
+        $this->groupBy = $groupBy;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAlias(): string
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @param cashSelectQueryParts $selectQueryParts
+     * @param cashSelectQueryParts $selectQueryParts2
+     *
+     * @return cashSelectQueryParts
+     * @throws waException
+     */
+    public static function union(
+        cashSelectQueryParts $selectQueryParts,
+        cashSelectQueryParts $selectQueryParts2
+    ): cashSelectQueryParts {
+        $unionSql = sprintf(
+            '__SELECT_PART__  from ((%s)  union  (%s)) as union_table  __ORDER_BY_PART__',
+            $selectQueryParts->getSql(),
+            $selectQueryParts2->getSql()
+        );
+        $unionParts = new self(cash()->getModel());
+        $unionParts
+            ->setBaseSql($unionSql)
+            ->select(['union_table.*'])
+            ->limit($selectQueryParts->getLimit())
+            ->offset($selectQueryParts->getOffset())
+            ->orderBy(
+                array_map(
+                    static function ($order) use ($selectQueryParts) {
+                        return str_replace($selectQueryParts->getAlias() . '.', 'union_table.', $order);
+                    },
+                    $selectQueryParts->getOrderBy()
+                )
+            )
+            ->setParams(array_merge($selectQueryParts2->getParams(), $selectQueryParts->getParams()));
+
+        return $unionParts;
     }
 }
