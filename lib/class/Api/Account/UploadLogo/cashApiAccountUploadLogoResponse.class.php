@@ -8,12 +8,12 @@ class cashApiAccountUploadLogoResponse extends cashApiAbstractResponse
     /**
      * cashApiAccountUploadLogoResponse constructor.
      *
-     * @param string $logoPath
+     * @param string $logoUrl
      */
-    public function __construct($logoPath)
+    public function __construct($logoUrl)
     {
         parent::__construct(200);
 
-        $this->response = sprintf('%s%s', rtrim(wa()->getRootUrl(true), '/'), $logoPath);
+        $this->response = $logoUrl;
     }
 }
