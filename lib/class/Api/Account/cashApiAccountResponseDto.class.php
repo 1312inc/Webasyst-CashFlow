@@ -72,9 +72,6 @@ class cashApiAccountResponseDto
         $dto->name = $account->getName();
         $dto->description = $account->getDescription();
         $dto->icon = $account->getIcon();
-        if (strpos($dto->icon, cashLogoUploader::USER_ACCOUNT_LOGOS_PATH.'/') !== false) {
-            $dto->icon = cashLogoUploader::getUrlToAccountLogo($dto->icon);
-        }
         $dto->currency = $account->getCurrency();
         $dto->customer_contact_id = $account->getCustomerContactId() ? (int) $account->getCustomerContactId() : null;
         $dto->is_archived = $account->getIsArchived() ? true : false;
