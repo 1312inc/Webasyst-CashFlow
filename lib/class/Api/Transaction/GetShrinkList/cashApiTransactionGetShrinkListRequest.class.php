@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class cashApiTransactionsGetListRequest
+ * Class cashApiTransactionGetShrinkListRequest
  */
-class cashApiTransactionGetListRequest
+class cashApiTransactionGetShrinkListRequest
 {
     /**
      * @var string
@@ -29,4 +29,9 @@ class cashApiTransactionGetListRequest
      * @var string Hash to filter transactions, can be "category/X", "account/X", "contractor/X", "currency/XXX"
      */
     public $filter = '';
+
+    /**
+     * @var bool
+     */
+    public $shrink = true;
 }

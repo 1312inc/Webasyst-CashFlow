@@ -28,24 +28,15 @@ final class cashTransactionFilterService
 
     /**
      * @param cashTransactionFilterParamsDto $dto
-     * @param bool                           $count
      *
      * @return array|waDbResultIterator|int
      * @throws kmwaForbiddenException
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function getResults(cashTransactionFilterParamsDto $dto, $count = false)
+    public function getResults(cashTransactionFilterParamsDto $dto)
     {
         $sqlParts = $this->getResultsSqlParts($dto);
-
-        if ($count) {
-            $sqlParts->select(['count(ct.id) cnt'])
-                ->limit(null)
-                ->offset(null);
-
-            return (int) $sqlParts->query()->fetchField();
-        }
 
         $query = $sqlParts->query();
 
@@ -54,14 +45,32 @@ final class cashTransactionFilterService
 
     /**
      * @param cashTransactionFilterParamsDto $dto
-     * @param bool                           $count
      *
      * @return array|waDbResultIterator|int
      * @throws kmwaForbiddenException
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function getShrinkResults(cashTransactionFilterParamsDto $dto, $count = false)
+    public function getResultsCount(cashTransactionFilterParamsDto $dto)
+    {
+        $sqlParts = $this->getResultsSqlParts($dto);
+
+        $sqlParts->select(['count(ct.id) cnt'])
+            ->limit(null)
+            ->offset(null);
+
+        return (int) $sqlParts->query()->fetchField();
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     *
+     * @return array|waDbResultIterator|int
+     * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
+     * @throws waException
+     */
+    public function getShrinkResultsCount(cashTransactionFilterParamsDto $dto)
     {
         $sqlParts = $this->getResultsSqlParts($dto);
 
@@ -72,13 +81,31 @@ final class cashTransactionFilterService
 
         $unionSql = cashSelectQueryParts::union($sqlParts, $sqlRepeatingParts);
 
-        if ($count) {
-            $unionSql->select(['count(union_table.id) cnt'])
-                ->limit(null)
-                ->offset(null);
+        $unionSql->select(['count(union_table.id) cnt'])
+            ->limit(null)
+            ->offset(null);
 
-            return (int) $unionSql->query()->fetchField();
-        }
+        return (int) $unionSql->query()->fetchField();
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     *
+     * @return array|waDbResultIterator|int
+     * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
+     * @throws waException
+     */
+    public function getShrinkResults(cashTransactionFilterParamsDto $dto)
+    {
+        $sqlParts = $this->getResultsSqlParts($dto);
+
+        $sqlRepeatingParts = clone $sqlParts;
+
+        $sqlParts->addAndWhere('ct.repeating_id is null');
+        $sqlRepeatingParts->groupBy(['ct.repeating_id']);
+
+        $unionSql = cashSelectQueryParts::union($sqlParts, $sqlRepeatingParts);
 
         $query = $unionSql->query();
 
