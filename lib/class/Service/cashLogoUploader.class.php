@@ -81,7 +81,7 @@ final class cashLogoUploader
      */
     public static function getUrlToAccountLogo($logoPath): string
     {
-        return wa()->getDataUrl($logoPath, false, cashConfig::APP_ID);
+        return wa()->getDataUrl($logoPath, true, cashConfig::APP_ID, true);
     }
 
     /**
@@ -92,7 +92,7 @@ final class cashLogoUploader
      */
     private function getDataFolder($path): string
     {
-        return wa()->getDataPath($path, false, cashConfig::APP_ID, true);
+        return wa()->getDataPath($path, true, cashConfig::APP_ID, true);
     }
 
     /**
