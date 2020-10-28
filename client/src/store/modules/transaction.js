@@ -1,11 +1,15 @@
 import api from '@/plugins/api'
-import dumpDataByDay from '@/plugins/dumpDataByDay'
 
 export default {
   namespaced: true,
 
   state: () => ({
-    transactions: [],
+    transactions: {
+      limit: null,
+      offset: null,
+      total: null,
+      data: []
+    },
     chartData: [],
     loading: true,
     queryParams: {
@@ -107,7 +111,14 @@ export default {
     },
 
     async getChartData ({ commit, state }) {
-      commit('setChartData', dumpDataByDay(state.queryParams.from, state.queryParams.to))
+      const params = { ...state.queryParams }
+      params.group_by = 'day'
+      try {
+        const { data } = await api.get('cash.aggregate.getChartData', {
+          params
+        })
+        commit('setChartData', data)
+      } catch (e) {}
     },
 
     async update ({ commit }, params) {

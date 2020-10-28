@@ -96,11 +96,14 @@ export default new Vuex.Store({
   },
 
   actions: {
-    updateCurrentType ({ commit }, { name, id }) {
+    updateCurrentType ({ commit, getters }, { name, id }) {
       commit('setCurrentType', { name, id })
       if (name && id) {
-        const filter = `${name}/${id}`
-        commit('transaction/updateQueryParams', { filter })
+        commit('transaction/updateQueryParams', { filter: `${name}/${id}` })
+      } else {
+        if (getters['account/currenciesInAccounts'][0]) {
+          commit('transaction/updateQueryParams', { filter: `currency/${getters['account/currenciesInAccounts'][0]}` })
+        }
       }
     }
   },

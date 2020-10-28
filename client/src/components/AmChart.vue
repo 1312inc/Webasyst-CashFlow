@@ -112,8 +112,8 @@ export default {
     var series = chart.series.push(new am4charts.ColumnSeries())
     series.name = this.$t('income')
     series.yAxis = valueAxis2
-    series.dataFields.valueY = 'income'
-    series.dataFields.dateX = 'date'
+    series.dataFields.valueY = 'amountIncome'
+    series.dataFields.dateX = 'period'
     series.groupFields.valueY = 'sum'
     series.stroke = am4core.color('#19ffa3')
     series.columns.template.stroke = am4core.color('#19ffa3')
@@ -124,8 +124,8 @@ export default {
     var series2 = chart.series.push(new am4charts.ColumnSeries())
     series2.name = this.$t('expense')
     series2.yAxis = valueAxis2
-    series2.dataFields.valueY = 'expense'
-    series2.dataFields.dateX = 'date'
+    series2.dataFields.valueY = 'amountExpense'
+    series2.dataFields.dateX = 'period'
     series2.groupFields.valueY = 'sum'
     series2.stroke = am4core.color('#ff604a')
     series2.columns.template.stroke = am4core.color('#ff604a')
@@ -137,7 +137,7 @@ export default {
     series3.name = this.$t('balance')
     series3.yAxis = valueAxis
     series3.dataFields.valueY = 'balance'
-    series3.dataFields.dateX = 'date'
+    series3.dataFields.dateX = 'period'
     series3.groupFields.valueY = 'sum'
     series3.stroke = am4core.color('#19ffa3')
     series3.strokeWidth = 3
@@ -178,9 +178,16 @@ export default {
     // Currend day line
     const dateBorder = dateAxis.axisRanges.create()
     dateBorder.date = new Date()
-    dateBorder.grid.stroke = am4core.color('#000000')
+    dateBorder.grid.stroke = am4core.color('#333333')
     dateBorder.grid.strokeWidth = 1
     dateBorder.grid.strokeOpacity = 0.6
+    dateBorder.label.inside = true
+    dateBorder.label.valign = 'middle'
+    dateBorder.label.text = this.$t('today')
+    dateBorder.label.fill = dateBorder.grid.stroke
+    dateBorder.label.rotation = -90
+    dateBorder.label.verticalCenter = 'middle'
+    dateBorder.label.dx = -10
 
     // Future dates hover
     const range3 = dateAxis.axisRanges.create()

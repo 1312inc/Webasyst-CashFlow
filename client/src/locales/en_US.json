@@ -65,5 +65,8 @@
   "changeSettings": "change settings",
   "details": "View Details",
   "optional": "Optional",
-  "transactionsListCount": "LAST {days} DAYS, {count} TRANSACTIONS"
+  "transactionsListCount": "LAST {days} DAYS, {count} TRANSACTIONS",
+  "cashOnHand": "Cash on hand",
+  "cashToday": "Cash on hand today",
+  "today": "Today"
 }

@@ -1,22 +1,53 @@
 <template>
   <div class="tw-pt-6">
     <div class="tw-mb-6">
-      <!-- <div class="tw-mx-4">
-        <h5>{{ $t("accounts") }}</h5>
-      </div> -->
+      <div class="tw-mx-4">
+        <h5>{{ $t("cashOnHand") }}</h5>
+      </div>
       <ul class="menu-v">
-        <li v-for="account in accounts" :key="account.id">
-          <router-link :to="{ name: 'Account', params: { id: account.id } }" class="flexbox middle">
-            <span v-if="$helper.isValidHttpUrl(account.icon)" class="icon"><img :src="account.icon" alt="" /></span>
-            <span v-show="!$helper.isValidHttpUrl(account.icon)" class="icon">
-              <i class="fas fa-star"></i>
-            </span>
+        <li
+          v-for="(currency, i) in currenciesInAccounts"
+          :key="i"
+          :class="{ selected: isActive('Currency', currency) }"
+        >
+          <router-link :to="{ name: 'Currency', params: { id: currency } }">{{
+            currency
+          }}</router-link>
+        </li>
+      </ul>
+    </div>
+    <div class="tw-mb-6">
+      <div class="tw-mx-4">
+        <h5>{{ $t("accounts") }}</h5>
+      </div>
+      <ul class="menu-v">
+        <li
+          v-for="account in accounts"
+          :key="account.id"
+          :class="{ selected: isActive('Account', account.id) }"
+        >
+          <router-link
+            :to="{ name: 'Account', params: { id: account.id } }"
+            class="flexbox middle"
+          >
+            <div class="icon">
+              <img
+                v-if="$helper.isValidHttpUrl(account.icon)"
+                :src="account.icon"
+                alt=""
+              />
+              <span v-else>
+                <i class="fas fa-star"></i>
+              </span>
+            </div>
             <span>{{ account.name }}</span>
             <span
               v-if="account.stat"
               class="count"
               v-html="
-                `${account.stat.summaryShorten}&nbsp;${getCurrencySignByCode(account.currency)}`
+                `${account.stat.summaryShorten}&nbsp;${getCurrencySignByCode(
+                  account.currency
+                )}`
               "
             ></span>
           </router-link>
@@ -37,8 +68,15 @@
       <h6 class="heading black">{{ $t("income") }}</h6>
 
       <ul class="menu-v">
-        <li v-for="category in categoriesIncome" :key="category.id">
-          <router-link :to="{ name: 'Category', params: { id: category.id } }" class="flexbox middle">
+        <li
+          v-for="category in categoriesIncome"
+          :key="category.id"
+          :class="{ selected: isActive('Category', category.id) }"
+        >
+          <router-link
+            :to="{ name: 'Category', params: { id: category.id } }"
+            class="flexbox middle"
+          >
             <span class="icon"
               ><i
                 class="rounded"
@@ -58,7 +96,10 @@
 
       <ul class="menu-v">
         <li v-for="category in categoriesExpense" :key="category.id">
-          <router-link :to="{ name: 'Category', params: { id: category.id } }" class="flexbox middle">
+          <router-link
+            :to="{ name: 'Category', params: { id: category.id } }"
+            class="flexbox middle"
+          >
             <span class="icon"
               ><i
                 class="rounded"
@@ -75,7 +116,6 @@
           <i class="fas fa-plus"></i> {{ $t("addCategory") }}
         </button>
       </div>
-
     </div>
 
     <Modal v-if="open" @close="close">
@@ -107,6 +147,7 @@ export default {
     ...mapState('category', ['categories']),
 
     ...mapGetters('system', ['getCurrencySignByCode']),
+    ...mapGetters('account', ['currenciesInAccounts']),
 
     categoriesIncome () {
       return this.categories.filter((e) => e.type === 'income')
@@ -126,6 +167,16 @@ export default {
     close () {
       this.open = false
       this.currentComponentInModal = ''
+    },
+
+    isActive (name, id) {
+      if (this.$route.name === 'Home' && id === this.currenciesInAccounts[0]) {
+        return true
+      }
+      return (
+        this.$route.name === name &&
+        (+this.$route.params.id || this.$route.params.id) === id
+      )
     }
   }
 }
