@@ -25,6 +25,7 @@ export default {
     })
     uppy.use(XHRUpload, {
       endpoint: `${baseApiUrl}/cash.account.uploadLogo`,
+      limit: 1,
       fieldName: 'logo'
     })
     uppy.on('upload-success', (file, response) => {
