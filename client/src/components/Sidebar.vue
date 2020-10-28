@@ -1,7 +1,7 @@
 <template>
   <div class="tw-pt-6">
     <div class="tw-mb-6">
-      <div class="tw-mx-4">
+      <div v-if="currenciesInAccounts.length > 1" class="tw-mx-4">
         <h5>{{ $t("cashOnHand") }}</h5>
       </div>
       <ul class="menu-v">
@@ -10,8 +10,8 @@
           :key="i"
           :class="{ selected: isActive('Currency', currency) }"
         >
-          <router-link :to="{ name: 'Currency', params: { id: currency } }">{{
-            currency
+          <router-link :to="{ name: 'Currency', params: { id: currency } }" :class="{'bold': currenciesInAccounts.length === 1}">{{
+            currenciesInAccounts.length > 1 ? currency : $t("cashOnHand")
           }}</router-link>
         </li>
       </ul>
