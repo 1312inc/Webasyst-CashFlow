@@ -1,6 +1,6 @@
 <template>
   <div class="tw-pt-6">
-    <div class="tw-mb-6">
+    <div v-if="accounts.length > 1" class="tw-mb-6">
       <div v-if="currenciesInAccounts.length > 1" class="tw-mx-4">
         <h5>{{ $t("cashOnHand") }}</h5>
       </div>
