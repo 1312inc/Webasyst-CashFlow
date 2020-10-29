@@ -5,8 +5,8 @@ export default {
 
   state: () => ({
     transactions: {
-      limit: null,
-      offset: null,
+      limit: 30,
+      offset: 0,
       total: null,
       data: []
     },
@@ -15,7 +15,7 @@ export default {
     queryParams: {
       from: '',
       to: '',
-      limit: 10,
+      limit: 30,
       offset: 0,
       filter: ''
     },
