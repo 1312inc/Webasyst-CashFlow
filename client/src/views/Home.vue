@@ -1,12 +1,10 @@
 <template>
   <div>
-
-    <AmChart></AmChart>
+    <AmChart />
 
     <DetailsDashboard v-if="showDetailsDashboard"></DetailsDashboard>
 
-    <TransactionList :listItems="transactions" />
-
+    <TransactionList />
   </div>
 </template>
 
@@ -24,7 +22,7 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['detailsInterval', 'transactions']),
+    ...mapState('transaction', ['detailsInterval']),
 
     showDetailsDashboard () {
       return this.detailsInterval.from

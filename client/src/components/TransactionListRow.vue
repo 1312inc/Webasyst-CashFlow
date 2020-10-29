@@ -6,12 +6,20 @@
     <td @click="openModal">
       {{ $moment(transaction.date).format("LL") }}
     </td>
-    <td @click="openModal">
+    <td @click="openModal" class="tw-text-right" :style="`color: ${category.color}`">
       {{ $numeral(transaction.amount).format() }}
       {{ getCurrencySignByCode(accountById(transaction.account_id).currency) }}
     </td>
     <td @click="openModal">
-      {{ category.name }}
+      <div class="flexbox middle">
+        <span class="icon smaller custom-mr-8">
+          <i class="rounded" :style="`background-color:${category.color};`"></i>
+        </span>
+        {{ category.name }}
+        <span v-if="transaction.repeating_id" class="tooltip custom-ml-8" data-title="Repeating transaction">
+          <i class="fas fa-redo-alt tw-opacity-50"></i>
+        </span>
+      </div>
     </td>
     <td @click="openModal">{{ transaction.description }}</td>
     <td @click="openModal">
