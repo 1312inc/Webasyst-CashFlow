@@ -34,6 +34,7 @@
   "repeatFrom": "Start repeat",
   "howOften": {
     "name": "How often",
+    "every": "every",
     "list": [
       "Every month",
       "Every day",
@@ -68,5 +69,6 @@
   "transactionsListCount": "LAST {days} DAYS, {count} TRANSACTIONS",
   "cashOnHand": "Cash on hand",
   "cashToday": "Cash on hand today",
-  "today": "Today"
+  "today": "Today",
+  "repeatingTran": "Repeating transaction"
 }

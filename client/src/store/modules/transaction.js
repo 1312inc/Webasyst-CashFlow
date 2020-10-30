@@ -58,34 +58,8 @@ export default {
         if (key in newData) newData[key] = data[key]
       }
       state.queryParams = newData
-    },
-
-    updateItem (state, data) {
-      data.forEach(transaction => {
-        const itemIndex = state.transactions.findIndex(e => e.id === transaction.id)
-        if (itemIndex > -1) {
-          state.transactions.splice(itemIndex, 1, transaction)
-        } else {
-          state.transactions.push(transaction)
-          state.transactions.sort((a, b) => {
-            if (a.date > b.date) {
-              return -1
-            }
-            if (a.date < b.date) {
-              return 1
-            }
-            return 0
-          })
-        }
-      })
-    },
-
-    deleteItem (state, id) {
-      const itemIndex = state.transactions.findIndex(e => e.id === id)
-      if (itemIndex > -1) {
-        state.transactions.splice(itemIndex, 1)
-      }
     }
+
   },
 
   actions: {
@@ -106,7 +80,7 @@ export default {
         commit('setItems', data)
         setTimeout(() => {
           commit('setLoading', false)
-        }, 1000)
+        }, 800)
       } catch (e) {}
     },
 
@@ -121,31 +95,19 @@ export default {
       } catch (e) {}
     },
 
-    async update ({ commit }, params) {
+    async update ({ dispatch }, params) {
       const method = params.id ? 'update' : 'create'
-
-      const formData = new FormData()
-      for (const key in params) {
-        if (typeof params[key] === 'object' && params[key] !== null) {
-          for (const p in params[key]) {
-            formData.append(`${key}[${p}]`, params[key][p])
-          }
-        } else {
-          formData.append(key, params[key])
-        }
-      }
-
-      const { data } = await api.post(`cash.transaction.${method}`, formData)
-
-      commit('updateItem', data)
+      await api.post(`cash.transaction.${method}`, params)
+      dispatch('transaction/getList', null, { root: true })
+      dispatch('transaction/getChartData', null, { root: true })
     },
 
-    async delete ({ commit }, id) {
+    async delete ({ dispatch }, id) {
       await api.delete('cash.transaction.delete', {
         params: { id }
       })
-
-      commit('deleteItem', id)
+      dispatch('transaction/getList', null, { root: true })
+      dispatch('transaction/getChartData', null, { root: true })
     }
   }
 }
