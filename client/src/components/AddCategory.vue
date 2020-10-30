@@ -103,7 +103,7 @@ export default {
 
   computed: {
     isModeUpdate () {
-      return this.editedItem
+      return !!this.editedItem
     }
   },
 
@@ -123,7 +123,7 @@ export default {
           .dispatch('category/update', this.model)
           .then(() => {
             this.$noty.success('Категория успешно обновлена')
-            this.$parent.$emit('close')
+            this.close()
           })
           .catch(() => {
             this.$noty.error('Oops, something went wrong!')
@@ -136,7 +136,7 @@ export default {
         .dispatch('category/delete', this.model.id)
         .then(() => {
           this.$noty.success('Категория успешно удалена')
-          this.$parent.$emit('close')
+          this.close()
         })
         .catch((e) => {
           this.$noty.error('Oops, something went wrong!')

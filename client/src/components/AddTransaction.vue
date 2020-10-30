@@ -1,16 +1,19 @@
 <template>
   <div>
-    <div class="flexbox custom-mb-32">
-      <div class="wide">
-        <h2>
+    <div class="flexbox middle custom-mb-32">
+      <div class="wide flexbox middle">
+        <h2 class="custom-mb-0">
           {{ isModeUpdate ? $t("updateTransaction") : $t("addTransaction") }}
         </h2>
+        <span v-if="isModeUpdate && transaction.repeating_id" class="tooltip custom-ml-8 large" :data-title="$t('repeatingTran')">
+          <i class="fas fa-redo-alt tw-opacity-50"></i>
+        </span>
       </div>
-      <div v-if="isModeUpdate">#{{ transaction.id }}</div>
+      <div v-if="isModeUpdate" class="large">#{{ transaction.id }}</div>
     </div>
 
     <div class="fields custom-mb-32">
-      <div v-if="isModeUpdate" class="field">
+      <div v-if="isModeUpdate && transaction.repeating_id" class="field">
         <div class="name for-input">
           {{ $t("applyTo.name") }}
         </div>
@@ -25,7 +28,7 @@
                 />
                 <span></span>
               </span>
-              {{ $t("applyTo.list[0]") }}
+              <span class="small custom-ml-4">{{ $t("applyTo.list[0]") }}</span>
             </label>
           </div>
           <label>
@@ -37,7 +40,7 @@
               />
               <span></span>
             </span>
-            {{ $t("applyTo.list[1]") }}
+            <span class="small custom-ml-4">{{ $t("applyTo.list[1]") }}</span>
           </label>
         </div>
       </div>
@@ -47,11 +50,20 @@
           {{ $t("ammount") }}
         </div>
         <div class="value">
-          <input
-            v-model="model.amount"
-            :class="{ 'state-error': $v.model.amount.$error }"
-            type="text"
-          />
+          <div class="input-with-inner-icon left">
+            <input
+              v-model.number="model.amount"
+              :class="{ 'state-error': $v.model.amount.$error }"
+              type="text"
+            />
+            <span class="icon">
+              <i v-if="transactionType === 'expense'" class="fas fa-minus"></i>
+              <i v-if="transactionType === 'income'" class="fas fa-plus"></i>
+            </span>
+          </div>
+          <span v-if="selectedAccount" class="custom-ml-8">{{
+            getCurrencySignByCode(selectedAccount.currency)
+          }}</span>
         </div>
       </div>
 
@@ -61,11 +73,9 @@
         </div>
         <div class="value">
           <span
-            @click="
-              model.repeating.frequency = model.repeating.frequency ? 0 : 1
-            "
+            @click="model.is_repeating = !model.is_repeating"
             class="switch"
-            :class="{ 'is-active': model.repeating.frequency }"
+            :class="{ 'is-active': model.is_repeating }"
           >
             <span class="switch-toggle"></span>
           </span>
@@ -74,28 +84,26 @@
 
       <div class="field">
         <div class="name for-input">
-          {{ model.repeating.frequency ? $t("repeatFrom") : $t("date") }}
+          {{ model.is_repeating ? $t("repeatFrom") : $t("date") }}
         </div>
         <div class="value">
           <div class="input-with-inner-icon left">
-            <input
+            <DateField
               v-model="model.date"
               :class="{ 'state-error': $v.model.date.$error }"
-              type="text"
-              ref="date"
             />
             <span class="icon"><i class="fas fa-calendar"></i></span>
           </div>
         </div>
       </div>
 
-      <div v-if="!isModeUpdate && model.repeating.frequency" class="field">
+      <div v-if="!isModeUpdate && model.is_repeating" class="field">
         <div class="name for-input">
           {{ $t("howOften.name") }}
         </div>
         <div class="value">
           <div class="wa-select">
-            <select v-model="model.repeating.interval">
+            <select v-model="model.repeating_interval">
               <option value="month">{{ $t("howOften.list[0]") }}</option>
               <option value="day">{{ $t("howOften.list[1]") }}</option>
               <option value="week">{{ $t("howOften.list[2]") }}</option>
@@ -104,10 +112,10 @@
             </select>
           </div>
 
-          <div v-if="model.repeating.interval === 'custom'" class="tw-mt-4">
-            every
+          <div v-if="model.repeating_interval === 'custom'" class="tw-mt-4">
+            {{ $t("howOften.every") }}
             <input
-              v-model.number="model.repeating.frequency"
+              v-model.number="model.repeating_frequency"
               type="text"
               class="shorter custom-ml-8"
             />
@@ -125,36 +133,32 @@
         </div>
       </div>
 
-      <div v-if="!isModeUpdate && model.repeating.frequency" class="field">
+      <div v-if="!isModeUpdate && model.is_repeating" class="field">
         <div class="name for-input">
           {{ $t("endRepeat.name") }}
         </div>
         <div class="value">
           <div class="wa-select">
-            <select v-model="model.repeating.end_type">
+            <select v-model="model.repeating_end_type">
               <option value="never">{{ $t("endRepeat.list[0]") }}</option>
               <option value="after">{{ $t("endRepeat.list[1]") }}</option>
               <option value="ondate">{{ $t("endRepeat.list[2]") }}</option>
             </select>
           </div>
 
-          <div v-if="model.repeating.end_type === 'ondate'" class="tw-mt-4">
+          <div v-if="model.repeating_end_type === 'ondate'" class="tw-mt-4">
             <div class="input-with-inner-icon left">
-              <input
-                v-model="model.repeating.end_ondate"
-                type="text"
-                ref="endDate"
-              />
+              <DateField v-model="model.repeating_end_ondate" />
               <span class="icon"><i class="fas fa-calendar"></i></span>
             </div>
           </div>
 
-          <div v-if="model.repeating.end_type === 'after'" class="tw-mt-4">
+          <div v-if="model.repeating_end_type === 'after'" class="tw-mt-4">
             <input
-              v-model.number="model.repeating.end_after"
+              v-model.number="model.repeating_end_after"
               type="text"
               class="shorter"
-              :class="{ 'state-error': $v.model.repeating.end_after.$error }"
+              :class="{ 'state-error': $v.model.repeating_end_after.$error }"
             />
             <span class="tw-ml-2">{{ $t("endRepeat.occurrences") }}</span>
           </div>
@@ -167,6 +171,13 @@
         </div>
         <div class="value">
           <div class="wa-select">
+            <div v-if="selectedAccount" class="icon custom-ml-8">
+              <img
+                v-if="$helper.isValidHttpUrl(selectedAccount.icon)"
+                :src="selectedAccount.icon"
+                alt=""
+              />
+            </div>
             <select
               v-model="model.account_id"
               :class="{ 'state-error': $v.model.account_id.$error }"
@@ -176,7 +187,9 @@
                 v-for="account in accounts"
                 :key="account.id"
               >
-                {{ account.name }}
+                {{ account.currency }} – {{ account.name }} ({{
+                  getCurrencySignByCode(account.currency)
+                }})
               </option>
             </select>
           </div>
@@ -189,13 +202,19 @@
         </div>
         <div class="value">
           <div class="wa-select">
+            <span v-if="selectedCategory" class="icon custom-ml-8"
+              ><i
+                class="rounded"
+                :style="`background-color:${selectedCategory.color};`"
+              ></i
+            ></span>
             <select
               v-model="model.category_id"
               :class="{ 'state-error': $v.model.category_id.$error }"
             >
               <option
                 :value="category.id"
-                v-for="category in categories"
+                v-for="category in categoriesInSelect"
                 :key="category.id"
               >
                 {{ category.name }}
@@ -210,7 +229,10 @@
           {{ $t("contractor") }}
         </div>
         <div class="value">
-          <input v-model="model.contractor_contact_id" type="text" />
+          <div class="input-with-inner-icon left">
+            <input v-model="model.contractor_contact_id" type="text" />
+            <span class="icon"><i class="fas fa-user"></i></span>
+          </div>
         </div>
       </div>
 
@@ -247,10 +269,9 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
 import { required, integer, numeric } from 'vuelidate/lib/validators'
-import { locale } from '@/plugins/locale'
-import flatpickr from 'flatpickr'
-import { Russian } from 'flatpickr/dist/l10n/ru.js'
+import DateField from '@/components/DateField'
 export default {
   props: {
     transaction: {
@@ -262,6 +283,10 @@ export default {
     }
   },
 
+  components: {
+    DateField
+  },
+
   data () {
     return {
       model: {
@@ -271,14 +296,15 @@ export default {
         account_id: null,
         category_id: null,
         contractor_contact_id: null,
+        contractor: null,
         description: '',
-        repeating: {
-          frequency: 0,
-          interval: 'month',
-          end_type: 'never',
-          end_after: 0,
-          end_ondate: ''
-        },
+        is_repeating: false,
+        repeating_frequency: 1,
+        repeating_interval: 'month',
+        repeating_end_type: 'never',
+        repeating_end_after: null,
+        repeating_end_ondate: '',
+        transfer_account_id: null,
         apply_to_all_in_future: false
       },
       custom_interval: 'month'
@@ -300,67 +326,60 @@ export default {
       category_id: {
         required
       },
-      repeating: {
-        end_after: {
-          integer
-        }
+      repeating_frequency: {
+        integer
+      },
+      repeating_end_after: {
+        integer
       }
     }
   },
 
   computed: {
+    ...mapState('account', ['accounts']),
+    ...mapState('category', ['categories']),
+    ...mapGetters('system', ['getCurrencySignByCode']),
+    ...mapGetters({
+      getAccountById: 'account/getById'
+    }),
+    ...mapGetters({
+      getCategoryById: 'category/getById'
+    }),
+
     isModeUpdate () {
-      return this.transaction
+      return !!this.transaction
     },
 
-    accounts () {
-      return this.$store.state.account.accounts
+    transactionType () {
+      return this.selectedCategory?.type || this.defaultCategoryType
     },
 
-    categories () {
-      const cat = this.$store.getters['category/getById'](
-        this.model.category_id
-      )
-      return this.$store.state.category.categories.filter(
-        (c) => c.type === (cat ? cat.type : this.defaultCategoryType)
-      )
+    selectedAccount () {
+      return this.getAccountById(this.model.account_id)
+    },
+
+    selectedCategory () {
+      return this.getCategoryById(this.model.category_id)
+    },
+
+    categoriesInSelect () {
+      return this.categories.filter((c) => c.type === this.transactionType)
     }
   },
 
   watch: {
-    'model.repeating.end_type' () {
-      if (this.flatpickr2) this.flatpickr2.destroy()
-      this.$nextTick(() => {
-        if (this.$refs.endDate) {
-          this.flatpickr2 = flatpickr(this.$refs.endDate, {
-            locale: locale === 'ru_RU' ? Russian : 'en'
-          })
-        }
-      })
-    },
-
-    'model.repeating.interval' (val) {
-      if (val !== 'custom') this.model.repeating.frequency = 1
+    'model.repeating_interval' (val) {
+      if (val !== 'custom') this.model.repeating_frequency = 1
     }
   },
 
   created () {
-    if (this.transaction) {
+    if (this.isModeUpdate) {
       for (const prop in this.model) {
         this.model[prop] = this.transaction[prop] || this.model[prop]
       }
+      this.model.amount = Math.abs(this.model.amount)
     }
-  },
-
-  mounted () {
-    this.flatpickr = flatpickr(this.$refs.date, {
-      locale: locale === 'ru_RU' ? Russian : 'en'
-    })
-  },
-
-  destroyed () {
-    if (this.flatpickr) this.flatpickr.destroy()
-    if (this.flatpickr2) this.flatpickr2.destroy()
   },
 
   methods: {
@@ -368,15 +387,15 @@ export default {
       this.$v.$touch()
       if (!this.$v.$invalid) {
         const model = { ...this.model }
-        if (model.repeating.interval === 'custom') {
-          model.repeating.interval = this.custom_interval
+        if (model.repeating_interval === 'custom') {
+          model.repeating_interval = this.custom_interval
         }
 
         this.$store
           .dispatch('transaction/update', model)
           .then(() => {
             this.$noty.success('Транзакция успешно обновлена')
-            this.$parent.$emit('close')
+            this.close()
           })
           .catch(() => {
             this.$noty.error('Oops, something went wrong!')
@@ -389,7 +408,7 @@ export default {
         .dispatch('transaction/delete', this.model.id)
         .then(() => {
           this.$noty.success('Транзакция успешно удалена')
-          this.$parent.$emit('close')
+          this.close()
         })
         .catch(() => {
           this.$noty.error('Oops, something went wrong!')
@@ -402,7 +421,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-@import "~flatpickr/dist/flatpickr.css";
-</style>

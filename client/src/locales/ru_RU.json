@@ -34,6 +34,7 @@
   "repeatFrom": "Первая операция",
   "howOften": {
     "name": "Как часто",
+    "every": "каждый",
     "list": [
       "Каждый месяц",
       "Каждый день",
@@ -68,5 +69,6 @@
   "transactionsListCount": "ПОСЛЕДНИЕ {days} ДНЕЙ, {count} ОПЕРАЦИЙ",
   "cashOnHand": "Деньги",
   "cashToday": "Деньги сегодня",
-  "today": "Сегодня"
+  "today": "Сегодня",
+  "repeatingTran": "Повторяющаяся операция"
 }
