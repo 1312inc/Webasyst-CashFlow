@@ -47,11 +47,20 @@
           {{ $t("ammount") }}
         </div>
         <div class="value">
-          <input
-            v-model.number="model.amount"
-            :class="{ 'state-error': $v.model.amount.$error }"
-            type="text"
-          /> <span v-if="currentAccount">{{ getCurrencySignByCode(currentAccount.currency) }}</span>
+          <div class="input-with-inner-icon left">
+            <input
+              v-model.number="model.amount"
+              :class="{ 'state-error': $v.model.amount.$error }"
+              type="text"
+            />
+            <span class="icon">
+              <i v-if="transactionType === 'expense'" class="fas fa-minus"></i>
+              <i v-if="transactionType === 'income'" class="fas fa-plus"></i>
+            </span>
+          </div>
+          <span v-if="selectedAccount" class="custom-ml-8">{{
+            getCurrencySignByCode(selectedAccount.currency)
+          }}</span>
         </div>
       </div>
 
@@ -61,9 +70,7 @@
         </div>
         <div class="value">
           <span
-            @click="
-              model.is_repeating = !model.is_repeating
-            "
+            @click="model.is_repeating = !model.is_repeating"
             class="switch"
             :class="{ 'is-active': model.is_repeating }"
           >
@@ -78,7 +85,10 @@
         </div>
         <div class="value">
           <div class="input-with-inner-icon left">
-            <DateField v-model="model.date" :class="{ 'state-error': $v.model.date.$error }" />
+            <DateField
+              v-model="model.date"
+              :class="{ 'state-error': $v.model.date.$error }"
+            />
             <span class="icon"><i class="fas fa-calendar"></i></span>
           </div>
         </div>
@@ -100,7 +110,7 @@
           </div>
 
           <div v-if="model.repeating_interval === 'custom'" class="tw-mt-4">
-            {{ $t('howOften.every') }}
+            {{ $t("howOften.every") }}
             <input
               v-model.number="model.repeating_frequency"
               type="text"
@@ -158,6 +168,13 @@
         </div>
         <div class="value">
           <div class="wa-select">
+            <div v-if="selectedAccount" class="icon custom-ml-8">
+              <img
+                v-if="$helper.isValidHttpUrl(selectedAccount.icon)"
+                :src="selectedAccount.icon"
+                alt=""
+              />
+            </div>
             <select
               v-model="model.account_id"
               :class="{ 'state-error': $v.model.account_id.$error }"
@@ -167,7 +184,9 @@
                 v-for="account in accounts"
                 :key="account.id"
               >
-                {{ account.name }}
+                {{ account.currency }} – {{ account.name }} ({{
+                  getCurrencySignByCode(account.currency)
+                }})
               </option>
             </select>
           </div>
@@ -180,13 +199,19 @@
         </div>
         <div class="value">
           <div class="wa-select">
+            <span v-if="selectedCategory" class="icon custom-ml-8"
+              ><i
+                class="rounded"
+                :style="`background-color:${selectedCategory.color};`"
+              ></i
+            ></span>
             <select
               v-model="model.category_id"
               :class="{ 'state-error': $v.model.category_id.$error }"
             >
               <option
                 :value="category.id"
-                v-for="category in categories"
+                v-for="category in categoriesInSelect"
                 :key="category.id"
               >
                 {{ category.name }}
@@ -201,7 +226,10 @@
           {{ $t("contractor") }}
         </div>
         <div class="value">
-          <input v-model="model.contractor_contact_id" type="text" />
+          <div class="input-with-inner-icon left">
+            <input v-model="model.contractor_contact_id" type="text" />
+            <span class="icon"><i class="fas fa-user"></i></span>
+          </div>
         </div>
       </div>
 
@@ -238,7 +266,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { required, integer, numeric } from 'vuelidate/lib/validators'
 import DateField from '@/components/DateField'
 export default {
@@ -305,27 +333,34 @@ export default {
   },
 
   computed: {
+    ...mapState('account', ['accounts']),
+    ...mapState('category', ['categories']),
     ...mapGetters('system', ['getCurrencySignByCode']),
+    ...mapGetters({
+      getAccountById: 'account/getById'
+    }),
+    ...mapGetters({
+      getCategoryById: 'category/getById'
+    }),
 
     isModeUpdate () {
       return !!this.transaction
     },
 
-    accounts () {
-      return this.$store.state.account.accounts
+    transactionType () {
+      return this.selectedCategory?.type || this.defaultCategoryType
     },
 
-    currentAccount () {
-      return this.accounts.find(a => a.id === this.model.account_id)
+    selectedAccount () {
+      return this.getAccountById(this.model.account_id)
     },
 
-    categories () {
-      const cat = this.$store.getters['category/getById'](
-        this.model.category_id
-      )
-      return this.$store.state.category.categories.filter(
-        (c) => c.type === (cat?.type || this.defaultCategoryType)
-      )
+    selectedCategory () {
+      return this.getCategoryById(this.model.category_id)
+    },
+
+    categoriesInSelect () {
+      return this.categories.filter((c) => c.type === this.transactionType)
     }
   },
 
@@ -340,6 +375,7 @@ export default {
       for (const prop in this.model) {
         this.model[prop] = this.transaction[prop] || this.model[prop]
       }
+      this.model.amount = Math.abs(this.model.amount)
     }
   },
 
