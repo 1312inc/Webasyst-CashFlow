@@ -16,7 +16,7 @@
           <i class="rounded" :style="`background-color:${category.color};`"></i>
         </span>
         {{ category.name }}
-        <span v-if="transaction.repeating_id" class="tooltip custom-ml-8" data-title="Repeating transaction">
+        <span v-if="transaction.repeating_id" class="tooltip custom-ml-8" :data-title="$t('repeatingTran')">
           <i class="fas fa-redo-alt tw-opacity-50"></i>
         </span>
       </div>
