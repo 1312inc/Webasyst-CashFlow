@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div v-if="!$store.state.transaction.loading" class="flexbox">
+
+    <div v-if="!loading" class="flexbox">
       <div v-if="checkedRows.length" class="wide">
         <button class="button red">Удалить</button>
       </div>
@@ -9,12 +10,12 @@
         v-if="!checkedRows.length && $helper.isDesktopEnv"
         class="flexbox space-1rem wide"
       >
-        <div>
+        <div v-if="currentType.type !== 'expense'">
           <button @click="addTransaction('income')" class="button green">
             <i class="fas fa-plus"></i> {{ $t("addIncome") }}
           </button>
         </div>
-        <div>
+        <div v-if="currentType.type !== 'income'">
           <button @click="addTransaction('expense')" class="button orange">
             <i class="fas fa-minus"></i> {{ $t("addExpense") }}
           </button>
@@ -22,28 +23,20 @@
       </div>
 
       <div>
-        <ul class="paging">
-          <li><a href="javascript:void(0);">←</a></li>
-          <li><a href="javascript:void(0);">1</a></li>
-          <li><a href="javascript:void(0);">2</a></li>
-          <li class="selected"><a href="javascript:void(0);">3</a></li>
-          <li><span>...</span></li>
-          <li><a href="javascript:void(0);">21</a></li>
-          <li><a href="javascript:void(0);">→</a></li>
-        </ul>
+        <NumPages />
       </div>
     </div>
 
-    <div v-if="$store.state.transaction.loading">
+    <div v-if="loading">
       <div class="skeleton">
         <span class="skeleton-custom-box" style="height: 36px"></span>
       </div>
     </div>
 
-    <div v-if="$store.state.transaction.loading">
+    <div v-if="loading">
       <div class="skeleton">
         <table>
-          <tr v-for="i in listItems.data.length || 20" :key="i">
+          <tr v-for="i in transactions.data.length || transactions.limit" :key="i">
             <td>
               <span class="skeleton-line custom-mb-0"></span>
             </td>
@@ -64,7 +57,7 @@
     <transition name="fade-appear">
       <table
         class="small zebra"
-        v-if="!$store.state.transaction.loading && listItems.data.length"
+        v-if="!loading && transactions.data.length"
       >
         <tr>
           <th class="min-width tw-border-0 tw-border-b tw-border-solid tw-border-gray-400">
@@ -75,12 +68,12 @@
             class="tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
           >
             {{
-              $t("transactionsListCount", { days: 30, count: listItems.data.length })
+              $t("transactionsListCount", { days: 30, count: transactions.total })
             }}
           </th>
         </tr>
         <TransactionListRow
-          v-for="transaction in listItems.data"
+          v-for="transaction in transactions.data"
           :key="transaction.id"
           :transaction="transaction"
           :is-checked="checkedRows.includes(transaction.id)"
@@ -96,17 +89,13 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
 import TransactionListRow from '@/components/TransactionListRow'
 import Modal from '@/components/Modal'
+import NumPages from '@/components/NumPages'
 import AddTransaction from '@/components/AddTransaction'
 
 export default {
-  props: {
-    listItems: {
-      type: Object
-    }
-  },
-
   data () {
     return {
       open: false,
@@ -118,7 +107,15 @@ export default {
   components: {
     TransactionListRow,
     Modal,
+    NumPages,
     AddTransaction
+  },
+
+  computed: {
+    ...mapState('transaction', ['transactions', 'loading']),
+    ...mapGetters({
+      currentType: 'getCurrentType'
+    })
   },
 
   methods: {
@@ -128,7 +125,7 @@ export default {
     },
 
     checkAll ({ target }) {
-      this.checkedRows = target.checked ? this.listItems.data.map((r) => r.id) : []
+      this.checkedRows = target.checked ? this.transactions.data.map((r) => r.id) : []
     },
 
     onTransactionListRowUpdate (id) {

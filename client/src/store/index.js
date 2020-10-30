@@ -84,7 +84,7 @@ export default new Vuex.Store({
   getters: {
     getCurrentType (state, getters) {
       const getter = getters[`${state.currentType}/getById`]
-      return getter ? getter(state.currentTypeId) : undefined
+      return getter ? getter(state.currentTypeId) : {}
     }
   },
 
