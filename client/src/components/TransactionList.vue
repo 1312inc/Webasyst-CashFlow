@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <div v-if="!loading" class="flexbox">
       <div v-if="checkedRows.length" class="wide">
         <button class="button red">Удалить</button>
@@ -9,12 +10,12 @@
         v-if="!checkedRows.length && $helper.isDesktopEnv"
         class="flexbox space-1rem wide"
       >
-        <div>
+        <div v-if="currentType.type !== 'expense'">
           <button @click="addTransaction('income')" class="button green">
             <i class="fas fa-plus"></i> {{ $t("addIncome") }}
           </button>
         </div>
-        <div>
+        <div v-if="currentType.type !== 'income'">
           <button @click="addTransaction('expense')" class="button orange">
             <i class="fas fa-minus"></i> {{ $t("addExpense") }}
           </button>
@@ -88,7 +89,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import TransactionListRow from '@/components/TransactionListRow'
 import Modal from '@/components/Modal'
 import NumPages from '@/components/NumPages'
@@ -111,7 +112,10 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['transactions', 'loading'])
+    ...mapState('transaction', ['transactions', 'loading']),
+    ...mapGetters({
+      currentType: 'getCurrentType'
+    })
   },
 
   methods: {

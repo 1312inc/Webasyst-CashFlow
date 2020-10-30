@@ -15,16 +15,12 @@
       </div>
 
       <div class="chart-container">
-        <div v-if="!showChart" style="opacity:.6">
+        <div v-if="loading" class="skeleton-container">
           <div class="skeleton">
-            <span class="skeleton-custom-box chart-container"></span>
+            <span class="skeleton-custom-box"></span>
           </div>
         </div>
-        <transition name="fade-appear">
-          <div v-show="showChart">
-            <div id="chartdiv" class="chart-container smaller"></div>
-          </div>
-        </transition>
+        <div id="chartdiv" class="smaller"></div>
       </div>
 
     </div>
@@ -47,13 +43,7 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['chartData'])
-  },
-
-  data () {
-    return {
-      showChart: false
-    }
+    ...mapState('transaction', ['chartData', 'loading'])
   },
 
   watch: {
@@ -229,51 +219,37 @@ export default {
    * ========================================================
    */
 
-    chart.responsive.useDefault = false
-    chart.responsive.enabled = true
+    // chart.responsive.useDefault = false
+    // chart.responsive.enabled = true
 
-    chart.responsive.rules.push({
-      relevant: function (target) {
-        if (target.pixelWidth <= 400) {
-          return true
-        }
+    // chart.responsive.rules.push({
+    //   relevant: function (target) {
+    //     if (target.pixelWidth <= 400) {
+    //       return true
+    //     }
 
-        return false
-      },
-      state: function (target, stateId) {
-        if (target instanceof am4charts.Chart) {
-          var state = target.states.create(stateId)
-          state.properties.paddingTop = 5
-          state.properties.paddingRight = 0
-          state.properties.paddingBottom = 0
-          state.properties.paddingLeft = 0
-          return state
-        }
+    //     return false
+    //   },
+    //   state: function (target, stateId) {
+    //     if (target instanceof am4charts.Chart) {
+    //       var state = target.states.create(stateId)
+    //       state.properties.paddingTop = 5
+    //       state.properties.paddingRight = 0
+    //       state.properties.paddingBottom = 0
+    //       state.properties.paddingLeft = 0
+    //       return state
+    //     }
 
-        // if (target instanceof am4core.Scrollbar) {
-        //   // eslint-disable-next-line no-redeclare
-        //   var state = target.states.create(stateId)
-        //   state.properties.paddingTop = 0
-        //   state.properties.paddingRight = 12
-        //   state.properties.paddingBottom = 0
-        //   state.properties.paddingLeft = 30
-        //   return state
-        // }
-
-        if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
-          // eslint-disable-next-line no-redeclare
-          var state = target.states.create(stateId)
-          state.properties.inside = true
-          state.properties.maxLabelPosition = 0.99
-          return state
-        }
-        return null
-      }
-    })
-
-    chart.events.on('ready', () => {
-      this.showChart = true
-    })
+    //     if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
+    //       // eslint-disable-next-line no-redeclare
+    //       var state = target.states.create(stateId)
+    //       state.properties.inside = true
+    //       state.properties.maxLabelPosition = 0.99
+    //       return state
+    //     }
+    //     return null
+    //   }
+    // })
 
     this.chart = chart
 
@@ -301,9 +277,30 @@ export default {
 
 <style lang="scss">
   .chart-container {
-    height: 600px !important;
+    position: relative;
+    height: 600px;
     margin-bottom: 1rem;
     overflow: hidden;
+
+    .skeleton-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      z-index: 50;
+
+      .skeleton {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+
+      .skeleton-custom-box {
+        height: 100%;
+      }
+    }
 
     @media (max-width: 768px) {
       height: 400px !important;
@@ -311,6 +308,11 @@ export default {
   }
 
   #chartdiv {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    z-index: 30;
   }
 </style>

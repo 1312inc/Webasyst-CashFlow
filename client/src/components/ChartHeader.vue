@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div v-if="!currentCategory">
+    <div v-if="currentCategory && !currentCategory.name">
       <div class="h2 custom-mb-0">{{ $t('cashToday') }}</div>
     </div>
-    <div v-if="currentCategory">
+    <div v-if="currentCategory && currentCategory.name">
       <div class="flexbox middle space-1rem">
         <div class="h2 custom-mb-0">{{ currentCategory.name }}</div>
         <div
@@ -18,7 +18,7 @@
             @click="update(currentCategory)"
             class="button nobutton smaller"
           >
-            {{ $t("changeSettings") }}
+            <i class="fas fa-sliders-h"></i> {{ $t("changeSettings") }}
           </button>
         </div>
       </div>

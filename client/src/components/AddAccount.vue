@@ -123,7 +123,7 @@ export default {
 
   computed: {
     isModeUpdate () {
-      return this.editedItem
+      return !!this.editedItem
     }
   },
 
@@ -143,7 +143,7 @@ export default {
           .dispatch('account/update', this.model)
           .then(() => {
             this.$noty.success('Аккаунт успешно обновлен')
-            this.$parent.$emit('close')
+            this.close()
           })
           .catch(() => {
             this.$noty.error('Oops, something went wrong!')
@@ -156,7 +156,7 @@ export default {
         .dispatch('account/delete', this.model.id)
         .then(() => {
           this.$noty.success('Аккаунт успешно удален')
-          this.$parent.$emit('close')
+          this.close()
         })
         .catch(() => {
           this.$noty.error('Oops, something went wrong!')

@@ -1,5 +1,7 @@
 <template>
   <div class="tw-pt-6">
+
+    <transition name="fade-appear">
     <div v-if="accounts.length > 1" class="tw-mb-6">
       <div v-if="currenciesInAccounts.length > 1" class="tw-mx-4">
         <h5>{{ $t("cashOnHand") }}</h5>
@@ -16,7 +18,10 @@
         </li>
       </ul>
     </div>
-    <div class="tw-mb-6">
+    </transition>
+
+    <transition name="fade-appear">
+    <div v-if="accounts.length" class="tw-mb-6">
       <div class="tw-mx-4">
         <h5>{{ $t("accounts") }}</h5>
       </div>
@@ -60,8 +65,10 @@
         </button>
       </div>
     </div>
+    </transition>
 
-    <div class="tw-mb-10">
+    <transition name="fade-appear">
+    <div v-if="categories.length" class="tw-mb-10">
       <div class="tw-mx-4">
         <h5>{{ $t("categories") }}</h5>
       </div>
@@ -117,6 +124,7 @@
         </button>
       </div>
     </div>
+    </transition>
 
     <Modal v-if="open" @close="close">
       <component :is="currentComponentInModal"></component>

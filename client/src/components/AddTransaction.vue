@@ -1,12 +1,15 @@
 <template>
   <div>
-    <div class="flexbox custom-mb-32">
-      <div class="wide">
-        <h2>
+    <div class="flexbox middle custom-mb-32">
+      <div class="wide flexbox middle">
+        <h2 class="custom-mb-0">
           {{ isModeUpdate ? $t("updateTransaction") : $t("addTransaction") }}
         </h2>
+        <span v-if="isModeUpdate && transaction.repeating_id" class="tooltip custom-ml-8 large" :data-title="$t('repeatingTran')">
+          <i class="fas fa-redo-alt tw-opacity-50"></i>
+        </span>
       </div>
-      <div v-if="isModeUpdate">#{{ transaction.id }}</div>
+      <div v-if="isModeUpdate" class="large">#{{ transaction.id }}</div>
     </div>
 
     <div class="fields custom-mb-32">
