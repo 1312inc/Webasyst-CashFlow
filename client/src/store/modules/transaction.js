@@ -80,7 +80,7 @@ export default {
         commit('setItems', data)
         setTimeout(() => {
           commit('setLoading', false)
-        }, 800)
+        }, 400)
       } catch (e) {}
     },
 
@@ -98,16 +98,16 @@ export default {
     async update ({ dispatch }, params) {
       const method = params.id ? 'update' : 'create'
       await api.post(`cash.transaction.${method}`, params)
-      dispatch('transaction/getList', null, { root: true })
-      dispatch('transaction/getChartData', null, { root: true })
+      dispatch('getList')
+      dispatch('getChartData')
     },
 
     async delete ({ dispatch }, id) {
       await api.delete('cash.transaction.delete', {
         params: { id }
       })
-      dispatch('transaction/getList', null, { root: true })
-      dispatch('transaction/getChartData', null, { root: true })
+      dispatch('getList')
+      dispatch('getChartData')
     }
   }
 }
