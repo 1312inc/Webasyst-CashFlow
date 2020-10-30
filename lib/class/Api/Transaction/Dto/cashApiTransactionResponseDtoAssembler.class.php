@@ -10,7 +10,7 @@ class cashApiTransactionResponseDtoAssembler
      * @param float    $initialBalance
      * @param bool     $reverseOrder
      *
-     * @return Generator
+     * @return Generator<cashApiTransactionResponseDto>
      */
     public static function fromModelIteratorWithInitialBalance(Iterator $transactionData, $initialBalance, $reverseOrder = false)
     {

@@ -10,7 +10,6 @@ class cashApiTransactionGetShrinkListHandler implements cashApiHandlerInterface
      *
      * @return array|cashApiTransactionResponseDto[]
      * @throws waException
-     * @throws kmwaForbiddenException
      */
     public function handle($request)
     {
@@ -19,28 +18,20 @@ class cashApiTransactionGetShrinkListHandler implements cashApiHandlerInterface
             DateTime::createFromFormat('Y-m-d', $request->from),
             DateTime::createFromFormat('Y-m-d', $request->to),
             wa()->getUser(),
-            $request->offset * $request->limit,
-            $request->limit
+            0,
+            13
         );
 
         $transactionFilter = new cashTransactionFilterService();
 
-        $total = $transactionFilter->getShrinkResultsCount($filterDto);
         $data = $transactionFilter->getShrinkResults($filterDto);
 
         $response = [];
-        $iterator = cashApiTransactionResponseDtoAssembler::fromModelIteratorWithInitialBalance(
-            $data,
-            0.0,
-            $filterDto->reverse
-        );
+        $iterator = cashApiShrinkTransactionResponseDtoAssembler::fromModelIterator($data);
         foreach ($iterator as $item) {
             $response[] = $item;
         }
 
-        return [
-            'data' => $response,
-            'total' => $total,
-        ];
+        return $response;
     }
 }
