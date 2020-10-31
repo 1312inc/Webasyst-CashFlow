@@ -177,6 +177,29 @@ class cashContactRights
     }
 
     /**
+     * @param string $access Access level
+     *
+     * @return array[]
+     */
+    public function getCategoryIdsGroupedByAccess($access = null): array
+    {
+        $grouped = [];
+
+        foreach ($this->categories as $categoryId => $value) {
+            if ($access !== null && $access != $value) {
+                continue;
+            }
+
+            if (!isset($grouped[$value])) {
+                $grouped[$value] = [];
+            }
+            $grouped[$value][] = $categoryId;
+        }
+
+        return $grouped;
+    }
+
+    /**
      * @return bool
      */
     public function canImport(): bool
