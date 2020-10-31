@@ -3,7 +3,7 @@
 /**
  * Class cashApiAggregateGetBreakDownResponse
  */
-class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
+final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
 {
     /**
      * cashApiAggregateGetBreakDownResponse constructor.

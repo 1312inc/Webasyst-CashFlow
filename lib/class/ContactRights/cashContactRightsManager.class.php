@@ -434,7 +434,6 @@ class cashContactRightsManager
 
     /**
      * @param waContact $contact
-     *
      * @param int       $access
      *
      * @return array
@@ -473,6 +472,10 @@ class cashContactRightsManager
         }
 
         $ids = $this->getAccountIdsForContact($contact, $access);
+        if (!$ids) {
+            return $this->cacheValue($key, ' 0 /* account access */');
+        }
+
         $query = $this->model->prepare(sprintf(' %s.%s in (i:ids)  /* account access */', $alias, $field));
         $query->bindArray(['ids' => $ids]);
 

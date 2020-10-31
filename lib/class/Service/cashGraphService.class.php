@@ -577,7 +577,7 @@ SQL;
                 ['__SELECT__', '__WHERE__', '__GROUP_BY__', '__ORDER_BY__'],
                 [
                     'sum(ct.amount) balance',
-                    implode(' and ', $whereAnd + ['ct.data < s:from']),
+                    implode(' and ', $whereAnd + ['ct.date < s:from']),
                     '',
                     '',
                 ],
@@ -642,6 +642,104 @@ SQL;
                     + $initialBalance;
             }
         }
+
+        return $data;
+    }
+
+    /**
+     * @param cashAggregateChartDataFilterParamsDto $paramsDto
+     *
+     * @return array
+     * @throws waException
+     */
+    public function getAggregateBalanceFlow(cashAggregateChartDataFilterParamsDto $paramsDto): array
+    {
+//        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact($paramsDto->contact);
+//        $currencies = [];
+//        /** @var cashAccount $account */
+//        foreach ($accounts as $account) {
+//            if (!in_array($account->getId(), $accountIds)) {
+//                continue;
+//            }
+//        }
+
+        $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
+            ->from('cash_transaction', 'ct')
+            ->andWhere(
+                [
+                    'account_access' => cash()->getContactRights()->getSqlForAccountJoinWithFullAccess(
+                        $paramsDto->contact
+                    ),
+//                    'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
+//                        $paramsDto->contact,
+//                        'ct',
+//                        'category_id'
+//                    ),
+                    'ct.is_archived = 0',
+                    'ca.is_archived = 0',
+                ]
+            )
+            ->join(
+                [
+                    'join cash_account ca on ct.account_id = ca.id',
+//                    'join cash_category cc on ct.category_id = cc.id',
+                ]
+            );
+
+        $initialBalanceSql = clone $sqlParts;
+        $initialBalanceSql->select(['ca.currency currency, sum(ct.amount) balance'])
+            ->addAndWhere('ct.date < s:from')
+            ->addParam('from', $paramsDto->from->format('Y-m-d H:i:s'))
+            ->groupBy(['ca.currency']);
+
+        $initialBalance = array_map('floatval', $initialBalanceSql->query()->fetchAll('currency', 1));
+
+        switch ($paramsDto->groupBy) {
+            case cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY:
+                $grouping = 'ct.date';
+                $sqlParts->addParam('from', $paramsDto->from->format('Y-m-d'))
+                    ->addParam('to', $paramsDto->to->format('Y-m-d'));
+
+                break;
+
+            case cashAggregateChartDataFilterParamsDto::GROUP_BY_YEAR:
+                $grouping = "date_format(ct.date, '%Y')";
+                $sqlParts->addParam('from', $paramsDto->from->format('Y'))
+                    ->addParam('to', $paramsDto->to->format('Y'));
+
+                break;
+
+            case cashAggregateChartDataFilterParamsDto::GROUP_BY_MONTH:
+            default:
+                $grouping = "date_format(ct.date, '%Y-%m')";
+                $sqlParts->addParam('from', $paramsDto->from->format('Y-m'))
+                    ->addParam('to', $paramsDto->to->format('Y-m'));
+
+                break;
+        }
+
+        $sqlParts->addAndWhere(sprintf('%s between s:from and s:to', $grouping))
+            ->select(
+                [
+                    'ca.currency currency',
+                    "{$grouping} `date`",
+                    'sum(ct.amount) amount',
+                ]
+            )
+            ->groupBy(['currency', '`date`'])
+            ->orderBy(['currency', '`date`']);
+
+        $data = $sqlParts->query()->fetchAll('currency', 2);
+        foreach ($data as $currency => &$currencyData) {
+            $currencyData = array_map(
+                static function ($datum) use ($currency, $initialBalance) {
+                    $datum['amount'] = (float) $datum['amount'] + ($initialBalance[$currency] ?? 0);
+                    return $datum;
+                },
+                $currencyData
+            );
+        }
+        unset($currencyData);
 
         return $data;
     }

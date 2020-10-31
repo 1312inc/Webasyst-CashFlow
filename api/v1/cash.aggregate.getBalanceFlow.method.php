@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class cashAggregateGetChartDataMethod
+ * Class cashAggregateGetBalanceFlowMethod
  */
-class cashAggregateGetChartDataMethod extends cashApiAbstractMethod
+final class cashAggregateGetBalanceFlowMethod extends cashApiAbstractMethod
 {
     const MAX_DAYS = 1000;
 
@@ -16,10 +16,10 @@ class cashAggregateGetChartDataMethod extends cashApiAbstractMethod
      */
     public function run(): cashApiResponseInterface
     {
-        /** @var cashApiAggregateGetChartDataRequest $request */
-        $request = $this->fillRequestWithParams(new cashApiAggregateGetChartDataRequest());
-        $request->to = DateTimeImmutable::createFromFormat('Y-m-d|', $request->to);
+        /** @var cashApiAggregateGetBalanceFlowRequest $request */
+        $request = $this->fillRequestWithParams(new cashApiAggregateGetBalanceFlowRequest());
         $request->from = DateTimeImmutable::createFromFormat('Y-m-d|', $request->from);
+        $request->to = DateTimeImmutable::createFromFormat('Y-m-d|', $request->to);
 
         if ($request->group_by === cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY
             && $request->from->diff($request->to)->days > 1000
@@ -34,7 +34,8 @@ class cashAggregateGetChartDataMethod extends cashApiAbstractMethod
             );
         }
 
-        $response = (new cashApiAggregateGetChartDataHandler())->handle($request);
+
+        $response = (new cashApiAggregateGetBalanceFlowHandler())->handle($request);
 
         return new cashApiAggregateGetChartDataResponse($response);
     }

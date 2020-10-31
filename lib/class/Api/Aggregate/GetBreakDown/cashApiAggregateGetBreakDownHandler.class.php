@@ -3,7 +3,7 @@
 /**
  * Class cashApiAggregateGetBreakDownHandler
  */
-class cashApiAggregateGetBreakDownHandler implements cashApiHandlerInterface
+final class cashApiAggregateGetBreakDownHandler implements cashApiHandlerInterface
 {
     private $contractContacts = [];
 
