@@ -8,7 +8,7 @@ class cashApiSystemGetCurrenciesResponse extends cashApiAbstractResponse
     /**
      * cashApiCategoryCreateResponse constructor.
      *
-     * @param cashApiAggregateGetBreakDownDto[] $data
+     * @param array $data
      */
     public function __construct(array $data)
     {

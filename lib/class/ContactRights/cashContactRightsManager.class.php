@@ -29,6 +29,24 @@ class cashContactRightsManager
     }
 
     /**
+     * @param waContact $contact
+     *
+     * @return cashContactRightsDto
+     */
+    public function createContactRightsDto(waContact $contact): cashContactRightsDto
+    {
+        $contactRights = $this->getContactAccess($contact);
+
+        return new cashContactRightsDto(
+            $this->isAdmin($contact),
+            $contactRights->getCategoryIdsGroupedByAccess(),
+            $contactRights->getAccountIdsGroupedByAccess(),
+            $contactRights->canImport(),
+            $contactRights->canSeeReport()
+        );
+    }
+
+    /**
      * @param waDbQuery $query
      * @param waContact $contact
      *
@@ -166,7 +184,9 @@ class cashContactRightsManager
 
         return in_array(
             (int) $accountId,
-            $this->getContactAccess($contact)->getAccountIdsWithAccess(cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY),
+            $this->getContactAccess($contact)->getAccountIdsWithAccess(
+                cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
+            ),
             true
         );
     }
