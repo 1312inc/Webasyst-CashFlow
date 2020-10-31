@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashApiAggregateGetChartDataRequest
- */
-final class cashApiAggregateGetChartDataRequest
+final class cashApiAggregateGetBalanceFlowRequest
 {
     /**
      * @var string|DateTimeImmutable
@@ -19,9 +16,4 @@ final class cashApiAggregateGetChartDataRequest
      * @var string
      */
     public $group_by = cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY;
-
-    /**
-     * @var string
-     */
-    public $filter = '';
 }

@@ -1,14 +1,11 @@
 <?php
 
-/**
- * Class cashApiAggregateGetChartDataResponse
- */
-final class cashApiAggregateGetChartDataResponse extends cashApiAbstractResponse
+final class cashApiAggregateGetBalanceFlowResponse extends cashApiAbstractResponse
 {
     /**
      * cashApiCategoryCreateResponse constructor.
      *
-     * @param cashApiAggregateGetChartDataDto[] $data
+     * @param cashApiAggregateGetBalanceFlowDto[] $data
      */
     public function __construct(array $data)
     {

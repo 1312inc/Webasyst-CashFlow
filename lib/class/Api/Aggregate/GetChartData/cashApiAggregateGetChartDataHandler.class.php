@@ -3,7 +3,7 @@
 /**
  * Class cashApiAggregateGetChartDataHandler
  */
-class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterface
+final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterface
 {
     /**
      * @param cashApiAggregateGetChartDataRequest $request

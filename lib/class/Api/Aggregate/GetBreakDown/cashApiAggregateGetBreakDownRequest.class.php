@@ -3,7 +3,7 @@
 /**
  * Class cashApiAggregateGetBreakDownRequest
  */
-class cashApiAggregateGetBreakDownRequest
+final class cashApiAggregateGetBreakDownRequest
 {
     /**
      * @var string|DateTimeImmutable

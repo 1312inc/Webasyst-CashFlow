@@ -121,7 +121,7 @@ final class cashTransactionFilterService
     private function makeBaseSqlForAccountFilter(
         cashTransactionFilterParamsDto $dto,
         cashSelectQueryParts $selectQueryParts
-    ) {
+    ): void {
         if (!$this->right->hasMinimumAccessToAccount($dto->contact, $dto->filter->getAccountId())) {
             throw new kmwaForbiddenException(_w('You have no access to this account'));
         }
@@ -148,7 +148,7 @@ final class cashTransactionFilterService
     private function makeBaseSqlForCategoryFilter(
         cashTransactionFilterParamsDto $dto,
         cashSelectQueryParts $selectQueryParts
-    ) {
+    ): void {
         if (!$this->right->hasMinimumAccessToCategory($dto->contact, $dto->filter->getCategoryId())) {
             throw new kmwaForbiddenException(_w('You have no access to this category'));
         }
@@ -178,13 +178,12 @@ final class cashTransactionFilterService
      * @param cashTransactionFilterParamsDto $dto
      * @param cashSelectQueryParts           $selectQueryParts
      *
-     * @throws kmwaForbiddenException
      * @throws waException
      */
     private function makeBaseSqlForCurrencyFilter(
         cashTransactionFilterParamsDto $dto,
         cashSelectQueryParts $selectQueryParts
-    ) {
+    ): void {
         $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
             $dto->contact,
             'ct',
@@ -209,12 +208,11 @@ final class cashTransactionFilterService
      * @param cashSelectQueryParts           $selectQueryParts
      *
      * @throws kmwaForbiddenException
-     * @throws waException
      */
     private function makeBaseSqlForContractorFilter(
         cashTransactionFilterParamsDto $dto,
         cashSelectQueryParts $selectQueryParts
-    ) {
+    ): void {
         if (!$this->right->isAdmin($dto->contact)) {
             throw new kmwaForbiddenException(_w('You have no access to this contractor'));
         }
@@ -272,7 +270,7 @@ final class cashTransactionFilterService
             $sqlParts->orderBy(['ct.date', 'ct.id']);
         }
 
-        $sqlParts->setParams(
+        $sqlParts->params(
             [
                 'startDate' => $dto->startDate->format('Y-m-d H:i:s'),
                 'endDate' => $dto->endDate->format('Y-m-d H:i:s'),

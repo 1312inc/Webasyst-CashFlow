@@ -3,7 +3,7 @@
 /**
  * Class cashApiAggregateGetChartDataDto
  */
-class cashApiAggregateGetChartDataDto
+final class cashApiAggregateGetChartDataDto
 {
     /**
      * @var float

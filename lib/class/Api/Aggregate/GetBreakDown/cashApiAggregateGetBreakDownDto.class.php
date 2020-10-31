@@ -3,7 +3,7 @@
 /**
  * Class cashApiAggregateGetBreakDownDto
  */
-class cashApiAggregateGetBreakDownDto
+final class cashApiAggregateGetBreakDownDto
 {
     /**
      * @var float

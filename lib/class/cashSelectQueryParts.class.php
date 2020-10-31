@@ -119,8 +119,8 @@ SQL;
                 sprintf('from %s %s', $this->from, $this->alias),
                 $this->join ? implode(' ', $this->join) : '',
                 $this->andWhere ? sprintf('where (%s)', implode(') and (', $this->andWhere)) : '',
-                $this->groupBy ? sprintf('group by (%s)', implode(') and (', $this->groupBy)) : '',
-                $this->orderBy ? sprintf('order by %s', implode(', ', $this->orderBy)) : '',
+                $this->groupBy ? sprintf('group by (%s)', implode('), (', $this->groupBy)) : '',
+                $this->orderBy ? sprintf('order by (%s)', implode('), (', $this->orderBy)) : '',
             ],
             $baseSql
         );
@@ -333,7 +333,7 @@ SQL;
      *
      * @return cashSelectQueryParts
      */
-    public function setParams(array $params): cashSelectQueryParts
+    public function params(array $params): cashSelectQueryParts
     {
         $this->params = $params;
 
@@ -482,7 +482,7 @@ SQL;
                     $selectQueryParts->getOrderBy()
                 )
             )
-            ->setParams(array_merge($selectQueryParts2->getParams(), $selectQueryParts->getParams()));
+            ->params(array_merge($selectQueryParts2->getParams(), $selectQueryParts->getParams()));
 
         return $unionParts;
     }
