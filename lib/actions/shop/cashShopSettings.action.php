@@ -11,6 +11,8 @@ class cashShopSettingsAction extends cashViewAction
      */
     protected function preExecute()
     {
+        $this->setLayout(new cashStaticLayout());
+
         if (!cash()->getUser()->isAdmin()) {
             throw new kmwaForbiddenException();
         }
