@@ -16,6 +16,12 @@ export default {
   mutations: {
     setCategories (state, data) {
       state.categories = data
+    },
+
+    updateSort (state, data) {
+      data.forEach((element, i) => {
+        state.categories.find(c => c.id === element.id).sort = i
+      })
     }
   },
 
@@ -36,6 +42,10 @@ export default {
         params: { id }
       })
       dispatch('getList')
+    },
+
+    async sort ({ commit }, params) {
+      await api.post('cash.category.sort', params)
     }
   }
 }

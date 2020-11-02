@@ -12,7 +12,7 @@
           :key="i"
           :class="{ selected: isActive('Currency', currency) }"
         >
-          <router-link :to="{ name: 'Currency', params: { id: currency } }" :class="{'bold': currenciesInAccounts.length === 1}">{{
+          <router-link :to="`/currency/${currency}`" :class="{'bold': currenciesInAccounts.length === 1}">{{
             currenciesInAccounts.length > 1 ? currency : $t("cashOnHand")
           }}</router-link>
         </li>
@@ -25,14 +25,15 @@
       <div class="tw-mx-4">
         <h5>{{ $t("accounts") }}</h5>
       </div>
-      <ul class="menu-v">
+
+      <draggable group="accounts" tag="ul" :list="accounts" @update="sortAccounts()" class="menu-v">
         <li
           v-for="account in accounts"
           :key="account.id"
           :class="{ selected: isActive('Account', account.id) }"
         >
           <router-link
-            :to="{ name: 'Account', params: { id: account.id } }"
+            :to="`/account/${account.id}`"
             class="flexbox middle"
           >
             <div class="icon">
@@ -57,7 +58,7 @@
             ></span>
           </router-link>
         </li>
-      </ul>
+      </draggable>
 
       <div class="tw-mx-4">
         <button @click="update('Account')" class="button rounded smaller">
@@ -74,14 +75,14 @@
       </div>
       <h6 class="heading black">{{ $t("income") }}</h6>
 
-      <ul class="menu-v">
+      <draggable group="categoriesIncome" tag="ul" :list="categoriesIncome" @update="sortCategories(categoriesIncome)" class="menu-v">
         <li
           v-for="category in categoriesIncome"
           :key="category.id"
           :class="{ selected: isActive('Category', category.id) }"
         >
           <router-link
-            :to="{ name: 'Category', params: { id: category.id } }"
+            :to="`/category/${category.id}`"
             class="flexbox middle"
           >
             <span class="icon"
@@ -93,18 +94,18 @@
             <span>{{ category.name }}</span>
           </router-link>
         </li>
-      </ul>
-
-      <!-- <button @click="update('Category')" class="button rounded smaller">
-        <i class="fas fa-plus"></i> {{ $t("addCategory") }}
-      </button> -->
+      </draggable>
 
       <h6 class="heading black">{{ $t("expense") }}</h6>
 
-      <ul class="menu-v">
-        <li v-for="category in categoriesExpense" :key="category.id">
+      <draggable group="categoriesExpense" tag="ul" :list="categoriesExpense" @update="sortCategories(categoriesExpense)" class="menu-v">
+        <li
+          v-for="category in categoriesExpense"
+          :key="category.id"
+          :class="{ selected: isActive('Category', category.id) }"
+        >
           <router-link
-            :to="{ name: 'Category', params: { id: category.id } }"
+            :to="`/category/${category.id}`"
             class="flexbox middle"
           >
             <span class="icon"
@@ -116,7 +117,7 @@
             <span>{{ category.name }}</span>
           </router-link>
         </li>
-      </ul>
+      </draggable>
 
       <div class="tw-mx-4">
         <button @click="update('Category')" class="button rounded smaller">
@@ -134,12 +135,14 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import draggable from 'vuedraggable'
 import Modal from '@/components/Modal'
 import Account from '@/components/AddAccount'
 import Category from '@/components/AddCategory'
 
 export default {
   components: {
+    draggable,
     Modal,
     Account,
     Category
@@ -158,11 +161,27 @@ export default {
     ...mapGetters('account', ['currenciesInAccounts']),
 
     categoriesIncome () {
-      return this.categories.filter((e) => e.type === 'income')
+      return this.categories.filter((e) => e.type === 'income').sort((a, b) => {
+        if (a.sort > b.sort) {
+          return 1
+        }
+        if (a.sort < b.sort) {
+          return -1
+        }
+        return 0
+      })
     },
 
     categoriesExpense () {
-      return this.categories.filter((e) => e.type === 'expense')
+      return this.categories.filter((e) => e.type === 'expense').sort((a, b) => {
+        if (a.sort > b.sort) {
+          return 1
+        }
+        if (a.sort < b.sort) {
+          return -1
+        }
+        return 0
+      })
     }
   },
 
@@ -178,13 +197,30 @@ export default {
     },
 
     isActive (name, id) {
-      if (this.$route.name === 'Home' && id === this.currenciesInAccounts[0]) {
-        return true
-      }
-      return (
-        this.$route.name === name &&
+      if (this.$route) {
+        if (this.$route.name === 'Home' && id === this.currenciesInAccounts[0]) {
+          return true
+        }
+        return (
+          this.$route.name === name &&
         (+this.$route.params.id || this.$route.params.id) === id
-      )
+        )
+      }
+    },
+
+    sortAccounts () {
+      const params = this.accounts.map(e => e.id)
+      this.$store.dispatch('account/sort', {
+        order: params
+      })
+    },
+
+    sortCategories (list) {
+      const params = list.map(e => e.id)
+      this.$store.commit('category/updateSort', list)
+      this.$store.dispatch('category/sort', {
+        order: params
+      })
     }
   }
 }
