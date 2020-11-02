@@ -268,6 +268,8 @@ export default {
 
     renderChart () {
       this.chart.data = this.chartData
+      this.chart.xAxes.values[0].min = (new Date(this.$store.state.transaction.queryParams.from)).getTime()
+      this.chart.xAxes.values[0].max = (new Date(this.$store.state.transaction.queryParams.to)).getTime()
     }
 
   }
