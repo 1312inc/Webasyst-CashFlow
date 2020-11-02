@@ -291,7 +291,7 @@ export default {
       width: 100%;
       height: 100%;
       background: #ffffff;
-      z-index: 50;
+      z-index: 40;
 
       .skeleton {
         position: absolute;
