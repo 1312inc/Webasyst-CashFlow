@@ -31,17 +31,17 @@
 <div id="wa">
     {$wa->header()}
 
-    <div style="padding: 4rem"> 
-        <h1>Static Page</h1>
-
-        <a href="/webasyst/cash/">Go to Homepage</a>
-
-        <br /><br />or<br /><br />
-
-        <a href="javascript:history.back()">Go Back</a>
-
-        {$content}
-
+    <div id="wa-app">
+        <div class="flexbox">
+        <div class="sidebar width-16rem tw-z-30">
+            
+        </div>
+        <div class="content blank">
+            <div class="box contentbox">
+                {$content}
+            </div>
+        </div>
+        </div>
     </div>
 
 </body>
