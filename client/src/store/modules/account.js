@@ -43,6 +43,10 @@ export default {
         params: { id }
       })
       dispatch('getList')
+    },
+
+    async sort ({ commit }, params) {
+      await api.post('cash.account.sort', params)
     }
   }
 }
