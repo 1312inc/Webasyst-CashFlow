@@ -81,7 +81,6 @@ __WHERE_PART__
 __GROUP_BY_PART__
 __ORDER_BY_PART__
 SQL;
-
     }
 
     /**
@@ -120,7 +119,7 @@ SQL;
                 $this->join ? implode(' ', $this->join) : '',
                 $this->andWhere ? sprintf('where (%s)', implode(') and (', $this->andWhere)) : '',
                 $this->groupBy ? sprintf('group by (%s)', implode('), (', $this->groupBy)) : '',
-                $this->orderBy ? sprintf('order by (%s)', implode('), (', $this->orderBy)) : '',
+                $this->orderBy ? sprintf('order by %s', implode(', ', $this->orderBy)) : '',
             ],
             $baseSql
         );
