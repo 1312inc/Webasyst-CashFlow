@@ -2,6 +2,7 @@ export default {
   install (Vue) {
     Vue.prototype.$helper = {
       isDesktopEnv: process.env.VUE_APP_MODE === 'desktop',
+      baseUrl: window?.appState?.baseUrl || '/',
       isValidHttpUrl: (string) => {
         let url
 
