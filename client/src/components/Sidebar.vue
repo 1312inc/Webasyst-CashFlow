@@ -154,7 +154,7 @@
     <div class="sidebar-footer">
       <ul class="menu-v">
         <li>
-          <a :href="`${$helper.baseUrl}import`">
+          <a :href="`${$helper.baseUrl}import/`">
             <i class="fas fa-file-import"></i>
             <span>Импорт</span>
           </a>
