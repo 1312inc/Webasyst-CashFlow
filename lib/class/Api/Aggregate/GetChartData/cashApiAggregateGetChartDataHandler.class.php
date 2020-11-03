@@ -22,19 +22,7 @@ final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterfa
         );
 
         $graphService = new cashGraphService();
-        $graphData = $graphService->getAggregateChartData($paramsDto);
 
-        $response = [];
-        foreach ($graphData as $graphDatum) {
-            $response[] = new cashApiAggregateGetChartDataDto(
-                $graphDatum['groupkey'],
-                abs($graphDatum['incomeAmount']),
-                abs($graphDatum['expenseAmount']),
-                $graphDatum['balance'],
-                $graphDatum['currency']
-            );
-        }
-
-        return $response;
+        return $graphService->getAggregateChartData($paramsDto);
     }
 }
