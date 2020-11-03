@@ -8,28 +8,28 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
     /**
      * cashApiAggregateGetBreakDownResponse constructor.
      *
-     * @param cashApiAggregateGetBreakDownDto[] $data
+     * @param array $data
      */
     public function __construct(array $data)
     {
         parent::__construct(200);
 
-        $this->response = [
-            'income' => [],
-            'expense' => [],
-        ];
-
-        foreach ($data as $item) {
-            if (!isset($this->response[$item->direction][$item->currency])) {
-                $this->response[$item->direction][$item->currency] = ['total' => 0.0, 'data' => []];
+        $response = [];
+        foreach ($data as $graphDatum) {
+            $key = sprintf('%s/%s', $graphDatum['type'], $graphDatum['currency']);
+            if (!isset($response[$key])) {
+                $response[$key] = new cashApiAggregateGetBreakDownDto($graphDatum['currency'], $graphDatum['type'], []);
             }
-            $this->response[$item->direction][$item->currency]['data'][] = $item;
-            $this->response[$item->direction][$item->currency]['total'] += $item->amount;
+
+            $dataInfo = new cashApiAggregateGetBreakDownDataDto(
+                $graphDatum['amount'],
+                $graphDatum['detailed']
+            );
+            $response[$key]->data[] = $dataInfo;
+            $response[$key]->totalAmount += abs($dataInfo->amount);
         }
 
-        $this->response = [
-            'income' => array_values($this->response['income']),
-            'expense' => array_values($this->response['expense']),
-        ];
+        ksort($response);
+        $this->response = array_values($response);
     }
 }

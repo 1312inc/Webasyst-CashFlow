@@ -35,7 +35,7 @@ final class cashAggregateGetBreakDownFilterParamsDto
     /**
      * @var string
      */
-    public $detailsBy;
+    public $detailsBy = self::DETAILS_BY_CATEGORY;
 
     /**
      * @var string[]
@@ -48,14 +48,18 @@ final class cashAggregateGetBreakDownFilterParamsDto
      * @param                     $contact
      * @param                     $from
      * @param                     $to
-     * @param                     $detailsBy
      * @param cashAggregateFilter $filter
+     * @param string              $detailsBy
      *
      * @throws kmwaRuntimeException
-     * @throws waException
      */
-    public function __construct($contact, $from, $to, $detailsBy, cashAggregateFilter $filter)
-    {
+    public function __construct(
+        $contact,
+        $from,
+        $to,
+        cashAggregateFilter $filter,
+        $detailsBy = self::DETAILS_BY_CATEGORY
+    ) {
         $this->from = $from;
         $this->to = $to;
         $this->contact = $contact;

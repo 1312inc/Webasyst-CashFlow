@@ -6,24 +6,9 @@
 final class cashApiAggregateGetBreakDownDto
 {
     /**
-     * @var float
-     */
-    public $amount;
-
-    /**
-     * @var float|null
-     */
-    public $balance;
-
-    /**
      * @var string
      */
-    public $direction;
-
-    /**
-     * @var array
-     */
-    public  $info = [];
+    public $type;
 
     /**
      * @var string
@@ -31,20 +16,26 @@ final class cashApiAggregateGetBreakDownDto
     public $currency;
 
     /**
+     * @var float
+     */
+    public $totalAmount = 0.0;
+
+    /**
+     * @var array|cashApiAggregateGetBreakDownDataDto[]
+     */
+    public $data;
+
+    /**
      * cashApiAggregateGetBreakDownDto constructor.
      *
-     * @param $type
-     * @param $amount
-     * @param $balance
-     * @param $currency
-     * @param $info
+     * @param string                                      $currency
+     * @param string                                      $type
+     * @param array|cashApiAggregateGetBreakDownDataDto[] $data
      */
-    public function __construct($type, $amount, $balance, $currency, $info)
+    public function __construct(string $currency, string $type, array $data)
     {
-        $this->direction = $type;
-        $this->amount = round($amount, 2);
-        $this->balance = round($balance, 2);
-        $this->info = $info;
         $this->currency = $currency;
+        $this->data = $data;
+        $this->type = $type;
     }
 }
