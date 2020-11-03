@@ -26,25 +26,18 @@ final class cashApiAggregateGetChartDataDto
     public $period;
 
     /**
-     * @var string
-     */
-    public $currency;
-
-    /**
      * cashApiAggregateGetChartDataDto constructor.
      *
      * @param $period
      * @param $amountIncome
      * @param $amountExpense
      * @param $balance
-     * @param $currency
      */
-    public function __construct($period, $amountIncome, $amountExpense, $balance, $currency)
+    public function __construct($period, $amountIncome, $amountExpense, $balance)
     {
         $this->amountIncome = round($amountIncome, 2);
         $this->amountExpense = round($amountExpense, 2);
         $this->balance = $balance === null ? $balance : round($balance, 2);
         $this->period = $period;
-        $this->currency = $currency;
     }
 }
