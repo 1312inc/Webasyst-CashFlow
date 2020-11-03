@@ -70,5 +70,6 @@
   "cashOnHand": "Cash on hand",
   "cashToday": "Cash on hand today",
   "today": "Today",
-  "repeatingTran": "Repeating transaction"
+  "repeatingTran": "Repeating transaction",
+  "import": "Import"
 }

@@ -10,12 +10,32 @@ export default {
   getters: {
     getById: state => id => {
       return state.categories.find(category => category.id === id)
+    },
+
+    getByType: state => category => {
+      return state.categories
+        .filter(e => e.type === category)
+        .sort((a, b) => {
+          if (a.sort > b.sort) {
+            return 1
+          }
+          if (a.sort < b.sort) {
+            return -1
+          }
+          return 0
+        })
     }
   },
 
   mutations: {
     setCategories (state, data) {
       state.categories = data
+    },
+
+    updateSort (state, data) {
+      data.forEach((element, i) => {
+        state.categories.find(c => c.id === element.id).sort = i
+      })
     }
   },
 
@@ -36,6 +56,10 @@ export default {
         params: { id }
       })
       dispatch('getList')
+    },
+
+    async sort ({ commit }, params) {
+      await api.post('cash.category.sort', params)
     }
   }
 }

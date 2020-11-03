@@ -9,19 +9,11 @@ export default {
     Sidebar
   },
 
-  mounted () {
+  async created () {
+    await this.$store.dispatch('system/getCurrencies')
     this.$store.dispatch('account/getList')
     this.$store.dispatch('category/getList')
   }
+
 }
 </script>
-
-<style lang="scss">
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
-</style>
