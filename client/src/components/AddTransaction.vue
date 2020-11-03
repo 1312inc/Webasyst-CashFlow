@@ -340,10 +340,9 @@ export default {
     ...mapState('category', ['categories']),
     ...mapGetters('system', ['getCurrencySignByCode']),
     ...mapGetters({
-      getAccountById: 'account/getById'
-    }),
-    ...mapGetters({
-      getCategoryById: 'category/getById'
+      getAccountById: 'account/getById',
+      getCategoryById: 'category/getById',
+      getCategoryByType: 'category/getByType'
     }),
 
     isModeUpdate () {
@@ -363,7 +362,7 @@ export default {
     },
 
     categoriesInSelect () {
-      return this.categories.filter((c) => c.type === this.transactionType)
+      return this.getCategoryByType(this.transactionType)
     }
   },
 

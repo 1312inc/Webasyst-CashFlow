@@ -10,6 +10,20 @@ export default {
   getters: {
     getById: state => id => {
       return state.categories.find(category => category.id === id)
+    },
+
+    getByType: state => category => {
+      return state.categories
+        .filter(e => e.type === category)
+        .sort((a, b) => {
+          if (a.sort > b.sort) {
+            return 1
+          }
+          if (a.sort < b.sort) {
+            return -1
+          }
+          return 0
+        })
     }
   },
 
