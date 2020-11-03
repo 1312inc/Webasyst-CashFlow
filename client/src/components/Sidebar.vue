@@ -156,7 +156,13 @@
         <li>
           <a :href="`${$helper.baseUrl}import/`">
             <i class="fas fa-file-import"></i>
-            <span>Импорт</span>
+            <span>{{ $t("import") }}</span>
+          </a>
+        </li>
+        <li>
+          <a :href="`${$helper.baseUrl}shop/settings/`">
+            <i class="fas fa-sliders-h"></i>
+            <span>Shop-Script</span>
           </a>
         </li>
       </ul>
