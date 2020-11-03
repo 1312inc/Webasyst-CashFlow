@@ -43,7 +43,7 @@ final class cashApiAggregateGetChartDataDto
     {
         $this->amountIncome = round($amountIncome, 2);
         $this->amountExpense = round($amountExpense, 2);
-        $this->balance = round($balance, 2);
+        $this->balance = $balance === null ? $balance : round($balance, 2);
         $this->period = $period;
         $this->currency = $currency;
     }
