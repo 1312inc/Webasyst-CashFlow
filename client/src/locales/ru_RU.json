@@ -70,5 +70,6 @@
   "cashOnHand": "Деньги",
   "cashToday": "Деньги сегодня",
   "today": "Сегодня",
-  "repeatingTran": "Повторяющаяся операция"
+  "repeatingTran": "Повторяющаяся операция",
+  "import": "Импорт"
 }

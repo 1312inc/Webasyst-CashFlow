@@ -1,6 +1,7 @@
+import RouterLinkFallback from '../components/RouterLinkFallback.vue'
 
 export default {
   install (Vue) {
-    Vue.component('router-link', () => import('../components/RouterLinkFallback.vue'))
+    Vue.component('router-link', RouterLinkFallback)
   }
 }
