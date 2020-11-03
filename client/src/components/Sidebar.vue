@@ -194,33 +194,14 @@ export default {
 
     ...mapGetters('system', ['getCurrencySignByCode']),
     ...mapGetters('account', ['currenciesInAccounts']),
+    ...mapGetters('category', ['getByType']),
 
     categoriesIncome () {
-      return this.categories
-        .filter((e) => e.type === 'income')
-        .sort((a, b) => {
-          if (a.sort > b.sort) {
-            return 1
-          }
-          if (a.sort < b.sort) {
-            return -1
-          }
-          return 0
-        })
+      return this.getByType('income')
     },
 
     categoriesExpense () {
-      return this.categories
-        .filter((e) => e.type === 'expense')
-        .sort((a, b) => {
-          if (a.sort > b.sort) {
-            return 1
-          }
-          if (a.sort < b.sort) {
-            return -1
-          }
-          return 0
-        })
+      return this.getByType('expense')
     }
   },
 
@@ -251,17 +232,17 @@ export default {
     },
 
     sortAccounts () {
-      const params = this.accounts.map((e) => e.id)
+      const ids = this.accounts.map((e) => e.id)
       this.$store.dispatch('account/sort', {
-        order: params
+        order: ids
       })
     },
 
     sortCategories (list) {
-      const params = list.map((e) => e.id)
+      const ids = list.map((e) => e.id)
       this.$store.commit('category/updateSort', list)
       this.$store.dispatch('category/sort', {
-        order: params
+        order: ids
       })
     }
   }
