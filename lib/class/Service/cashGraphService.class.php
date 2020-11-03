@@ -605,14 +605,14 @@ class cashGraphService
         }
 
         $data = $sqlParts->select(
-                [
-                    "{$grouping} groupkey",
-                    'ca.currency currency',
-                    'sum(if(ct.amount < 0, 0, ct.amount)) incomeAmount',
-                    'sum(if(ct.amount < 0, ct.amount, 0)) expenseAmount',
-                    'null balance',
-                ]
-            )
+            [
+                "{$grouping} groupkey",
+                'ca.currency currency',
+                'sum(if(ct.amount < 0, 0, ct.amount)) incomeAmount',
+                'sum(if(ct.amount < 0, ct.amount, 0)) expenseAmount',
+                'null balance',
+            ]
+        )
             ->addAndWhere(sprintf('%s between s:from and s:to', $grouping))
             ->addParam('from', $paramsDto->from->format($format))
             ->addParam('to', $paramsDto->to->format($format))
@@ -739,79 +739,6 @@ class cashGraphService
      */
     public function getAggregateBreakDownData(cashAggregateGetBreakDownFilterParamsDto $paramsDto): array
     {
-        $model = cash()->getModel(cashTransaction::class);
-        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($paramsDto->contact);
-        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin(
-            $paramsDto->contact,
-            'ct',
-            'category_id'
-        );
-
-        $basicSql = <<<SQL
-select
-__SELECT__
-from cash_transaction ct
-join cash_account ca on ct.account_id = ca.id
-join cash_category cc on ct.category_id = cc.id
-where 
-__WHERE__
-__GROUP_BY__
-__ORDER_BY__
-SQL;
-
-        $sqlWhereAnd = [$accountAccessSql, $categoryAccessSql, 'ct.is_archived = 0', 'ca.is_archived = 0'];
-        $queryParams = [];
-
-        $calculateBalance = false;
-        switch (true) {
-            case null !== $paramsDto->filter->getAccountId():
-                $sqlWhereAnd[] = 'ct.account_id = i:account_id';
-                $queryParams['account_id'] = $paramsDto->filter->getAccountId();
-                if (cash()->getContactRights()->canSeeAccountBalance(
-                    $paramsDto->contact,
-                    $paramsDto->filter->getAccountId()
-                )) {
-                    $calculateBalance = true;
-                }
-
-                break;
-
-            case null !== $paramsDto->filter->getCategoryId():
-                $sqlWhereAnd[] = 'ct.category_id = i:category_id';
-                $queryParams['category_id'] = $paramsDto->filter->getCategoryId();
-                break;
-
-            case null !== $paramsDto->filter->getContractorId():
-                $sqlWhereAnd[] = 'ct.contractor_contact_id = i:contractor_contact_id';
-                $queryParams['contractor_contact_id'] = $paramsDto->filter->getContractorId();
-                break;
-
-            case null !== $paramsDto->filter->getCurrency():
-                $sqlWhereAnd[] = 'ca.currency = s:currency';
-                $queryParams['currency'] = $paramsDto->filter->getCurrency();
-
-                $accountsSql = str_replace(
-                    ['__SELECT__', '__WHERE__', '__GROUP_BY__', '__ORDER_BY__'],
-                    ['ct.account_id', implode(' and ', $sqlWhereAnd), 'group by ct.account_id', ''],
-                    $basicSql
-                );
-
-                $accounts = $model->query($accountsSql, $queryParams)->fetchAll('account_id');
-                foreach ($accounts as $accountId) {
-                    if (cash()->getContactRights()->canSeeAccountBalance($paramsDto->contact, $accountId)) {
-                        $calculateBalance = true;
-                    } else {
-                        $calculateBalance = false;
-                        break;
-                    }
-                }
-                break;
-        }
-
-        $sqlWhereAnd[] = "ct.date between s:from and s:to";
-        $queryParams['from'] = $paramsDto->from->format('Y-m-d');
-        $queryParams['to'] = $paramsDto->to->format('Y-m-d');
-
         $detailing = '';
         switch ($paramsDto->detailsBy) {
             case cashAggregateGetBreakDownFilterParamsDto::DETAILS_BY_CATEGORY:
@@ -845,27 +772,65 @@ SQL;
 //                break;
         }
 
-        $sqlSelect = [
-            "if(ct.amount < 0, 'expense', 'income') direction",
-            'ca.currency currency',
-            "{$detailing} detailed",
-            'sum(ct.amount) amount',
-        ];
+        $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
+            ->select([
+                "if(ct.amount < 0, 'expense', 'income') `type`",
+                'ca.currency currency',
+                "{$detailing} detailed",
+                'sum(ct.amount) amount',
+            ])
+            ->from('cash_transaction', 'ct')
+            ->andWhere(
+                [
+                    'ct.date between s:from and s:to',
+                    'ct.is_archived = 0',
+                    'account_access' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+                        $paramsDto->contact
+                    ),
+                    'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
+                        $paramsDto->contact,
+                        'ct',
+                        'category_id'
+                    ),
+                    'ca.is_archived = 0',
+                ]
+            )
+            ->join(
+                [
+                    'join cash_account ca on ct.account_id = ca.id',
+                    'join cash_category cc on ct.category_id = cc.id',
+                ]
+            )
+            ->groupBy(['`type`', 'ca.currency', 'detailed'])
+            ->params(['from' => $paramsDto->from->format('Y-m-d'), 'to' => $paramsDto->to->format('Y-m-d')]);
 
-        $dataSql = str_replace(
-            ['__SELECT__', '__WHERE__', '__GROUP_BY__', '__ORDER_BY__'],
-            [
-                implode(',', $sqlSelect),
-                implode(' and ', $sqlWhereAnd),
-                'group by direction, ca.currency, detailed',
-                '',
-            ],
-            $basicSql
-        );
+        switch (true) {
+            case null !== $paramsDto->filter->getAccountId():
+                $sqlParts->addAndWhere('ct.account_id = i:account_id')
+                    ->addParam('account_id', $paramsDto->filter->getAccountId());
 
-        $data = $model->query($dataSql, $queryParams)->fetchAll();
+                break;
 
-        return $data;
+            case null !== $paramsDto->filter->getCategoryId():
+                $sqlParts->addAndWhere('ct.category_id = i:category_id')
+                    ->addParam('category_id', $paramsDto->filter->getCategoryId());
+
+                break;
+
+            case null !== $paramsDto->filter->getContractorId():
+                $sqlParts->addAndWhere('ct.contractor_contact_id = i:contractor_contact_id')
+                    ->addParam('contractor_contact_id', $paramsDto->filter->getContractorId());
+
+                break;
+
+            case null !== $paramsDto->filter->getCurrency():
+                $sqlParts->addAndWhere('ca.currency = s:currency')
+                    ->addParam('currency', $paramsDto->filter->getCurrency());
+
+                break;
+        }
+
+        return $sqlParts->query()->fetchAll();
     }
 
     /**
