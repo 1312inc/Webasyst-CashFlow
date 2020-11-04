@@ -73,5 +73,6 @@
   "repeatingTran": "Repeating transaction",
   "import": "Import",
   "emptyList": "Transaction list is empty",
-  "deleteWarning": "DANGER: This will permanently delete the entire {type} and ALL TRANSACTIONS without the ability to restore. Are you sure?"
+  "deleteWarning": "DANGER: This will permanently delete the entire {type} and ALL TRANSACTIONS without the ability to restore. Are you sure?",
+  "offlineMessage": "No Internet Connection"
 }

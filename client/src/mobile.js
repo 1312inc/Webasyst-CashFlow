@@ -7,6 +7,7 @@ import { i18n } from './plugins/locale'
 import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
 import Noty from './plugins/noty'
+import IsOnline from './plugins/isOnline'
 import './assets/styles/tailwindcss.css'
 import './assets/styles/wa-2.0.css'
 import './assets/styles/transitions.css'
@@ -17,6 +18,7 @@ Vue.use(Numeral)
 Vue.use(Noty)
 Vue.use(Vuelidate)
 Vue.use(Helpers)
+Vue.use(IsOnline)
 
 window.eventBus = new Vue()
 
