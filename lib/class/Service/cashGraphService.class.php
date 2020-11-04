@@ -683,23 +683,20 @@ class cashGraphService
         switch ($paramsDto->groupBy) {
             case cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY:
                 $grouping = 'ct.date';
-                $sqlParts->addParam('from', $paramsDto->from->format('Y-m-d'))
-                    ->addParam('to', $paramsDto->to->format('Y-m-d'));
+                $format = 'Y-m-d';
 
                 break;
 
             case cashAggregateChartDataFilterParamsDto::GROUP_BY_YEAR:
                 $grouping = "date_format(ct.date, '%Y')";
-                $sqlParts->addParam('from', $paramsDto->from->format('Y'))
-                    ->addParam('to', $paramsDto->to->format('Y'));
+                $format = 'Y';
 
                 break;
 
             case cashAggregateChartDataFilterParamsDto::GROUP_BY_MONTH:
             default:
                 $grouping = "date_format(ct.date, '%Y-%m')";
-                $sqlParts->addParam('from', $paramsDto->from->format('Y-m'))
-                    ->addParam('to', $paramsDto->to->format('Y-m'));
+                $format = 'Y-m';
 
                 break;
         }
@@ -708,12 +705,14 @@ class cashGraphService
             ->select(
                 [
                     'ca.currency currency',
-                    "{$grouping} `date`",
+                    "{$grouping} period",
                     'sum(ct.amount) amount',
                 ]
             )
-            ->groupBy(['currency', '`date`'])
-            ->orderBy(['currency', '`date`']);
+            ->addParam('from', $paramsDto->from->format($format))
+            ->addParam('to', $paramsDto->to->format($format))
+            ->groupBy(['currency', 'period'])
+            ->orderBy(['currency', 'period']);
 
         $data = $sqlParts->query()->fetchAll('currency', 2);
         foreach ($data as $currency => &$currencyData) {
@@ -729,6 +728,45 @@ class cashGraphService
         unset($currencyData);
 
         return $data;
+    }
+
+    /**
+     * @param cashAggregateChartDataFilterParamsDto $paramsDto
+     * @param DateTimeImmutable                     $date
+     *
+     * @return array
+     * @throws waException
+     */
+    public function getInitialBalanceOnDate(cashAggregateChartDataFilterParamsDto $paramsDto, DateTimeImmutable $date): array
+    {
+        $initialBalanceSql = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
+            ->select(['ca.currency currency, sum(ct.amount) balance'])
+            ->from('cash_transaction', 'ct')
+            ->andWhere(
+                [
+                    'ct.date < s:from',
+                    'account_access' => cash()->getContactRights()->getSqlForAccountJoinWithFullAccess(
+                        $paramsDto->contact
+                    ),
+//                    'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
+//                        $paramsDto->contact,
+//                        'ct',
+//                        'category_id'
+//                    ),
+                    'ct.is_archived = 0',
+                    'ca.is_archived = 0',
+                ]
+            )
+            ->join(
+                [
+                    'join cash_account ca on ct.account_id = ca.id',
+//                    'join cash_category cc on ct.category_id = cc.id',
+                ]
+            )
+            ->addParam('from', $date->format('Y-m-d H:i:s'))
+            ->groupBy(['ca.currency']);
+
+        return array_map('floatval', $initialBalanceSql->query()->fetchAll('currency', 1));
     }
 
     /**

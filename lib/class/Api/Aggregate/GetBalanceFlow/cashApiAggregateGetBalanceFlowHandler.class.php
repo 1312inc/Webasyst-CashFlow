@@ -5,7 +5,8 @@ final class cashApiAggregateGetBalanceFlowHandler implements cashApiHandlerInter
     /**
      * @param cashApiAggregateGetBalanceFlowRequest $request
      *
-     * @return array|void
+     * @return array|cashApiAggregateGetBalanceFlowDto[]
+     * @throws waException
      */
     public function handle($request)
     {
@@ -21,20 +22,31 @@ final class cashApiAggregateGetBalanceFlowHandler implements cashApiHandlerInter
         $graphData = $graphService->getAggregateBalanceFlow($paramsDto);
 
         $response = [];
-        foreach ($graphData as $currency => $data) {
-            $firstDatum = reset($data);
-            $balanceFrom = $firstDatum['amount'];
+        $now = new DateTimeImmutable();
 
-            $lastDatum = end($data);
-            $balanceTo = $lastDatum['amount'];
-            $response[] = new cashApiAggregateGetBalanceFlowDto(
-                $currency,
-                $request->from->format('Y-m-d'),
-                $balanceFrom,
-                $request->to->format('Y-m-d'),
-                $balanceTo,
-                $data
-            );
+        $balanceFrom = $graphService->getInitialBalanceOnDate($paramsDto, $request->from);
+        $balanceTo = $graphService->getInitialBalanceOnDate($paramsDto, $request->to);
+        $balanceNow = $graphService->getInitialBalanceOnDate($paramsDto, $now);
+
+        foreach ($graphData as $currency => $data) {
+            $dto = new cashApiAggregateGetBalanceFlowDto($currency, $data);
+
+            $dto->balances = [
+                'from' => new cashApiAggregateGetBalanceFlowBalanceDto(
+                    $request->from->format('Y-m-d'),
+                    $balanceFrom[$currency] ?? null
+                ),
+                'to' => new cashApiAggregateGetBalanceFlowBalanceDto(
+                    $request->to->format('Y-m-d'),
+                    $balanceTo[$currency] ?? null
+                ),
+                'now' => new cashApiAggregateGetBalanceFlowBalanceDto(
+                    $now->format('Y-m-d'),
+                    $balanceNow[$currency] ?? null
+                ),
+            ];
+
+            $response[] = $dto;
         }
 
         return $response;
