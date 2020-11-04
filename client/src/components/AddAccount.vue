@@ -152,15 +152,17 @@ export default {
     },
 
     remove () {
-      this.$store
-        .dispatch('account/delete', this.model.id)
-        .then(() => {
-          this.$noty.success('Аккаунт успешно удален')
-          this.close()
-        })
-        .catch(() => {
-          this.$noty.error('Oops, something went wrong!')
-        })
+      if (confirm(this.$t('deleteWarning', { type: this.$t('accounts') }))) {
+        this.$store
+          .dispatch('account/delete', this.model.id)
+          .then(() => {
+            this.$noty.success('Аккаунт успешно удален')
+            this.close()
+          })
+          .catch(() => {
+            this.$noty.error('Oops, something went wrong!')
+          })
+      }
     },
 
     close () {

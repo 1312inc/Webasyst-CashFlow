@@ -66,10 +66,12 @@
   "changeSettings": "Настройки статьи",
   "details": "Подробнее",
   "optional": "Опционально",
-  "transactionsListCount": "ПОСЛЕДНИЕ {days} ДНЕЙ, {count} ОПЕРАЦИЙ",
+  "transactionsListCount": "{count} ОПЕРАЦИЙ",
   "cashOnHand": "Деньги",
   "cashToday": "Деньги сегодня",
   "today": "Сегодня",
   "repeatingTran": "Повторяющаяся операция",
-  "import": "Импорт"
+  "import": "Импорт",
+  "emptyList": "Список операций пуст",
+  "deleteWarning": "ВАЖНО: ВСЕ ОПЕРАЦИИ {type} будут удалены без возможности восстановления. Удалить?"
 }
