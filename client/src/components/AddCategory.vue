@@ -28,8 +28,8 @@
               v-model="model.type"
               :class="{ 'state-error': $v.model.type.$error }"
             >
-              <option value="expense">{{ $t("expense") }}</option>
               <option value="income">{{ $t("income") }}</option>
+              <option value="expense">{{ $t("expense") }}</option>
             </select>
           </div>
         </div>
@@ -132,15 +132,17 @@ export default {
     },
 
     remove () {
-      this.$store
-        .dispatch('category/delete', this.model.id)
-        .then(() => {
-          this.$noty.success('Категория успешно удалена')
-          this.close()
-        })
-        .catch((e) => {
-          this.$noty.error('Oops, something went wrong!')
-        })
+      if (confirm(this.$t('deleteWarning', { type: this.$t('categories') }))) {
+        this.$store
+          .dispatch('category/delete', this.model.id)
+          .then(() => {
+            this.$noty.success('Категория успешно удалена')
+            this.close()
+          })
+          .catch((e) => {
+            this.$noty.error('Oops, something went wrong!')
+          })
+      }
     },
 
     close () {

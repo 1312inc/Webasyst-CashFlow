@@ -66,10 +66,12 @@
   "changeSettings": "change settings",
   "details": "View Details",
   "optional": "Optional",
-  "transactionsListCount": "LAST {days} DAYS, {count} TRANSACTIONS",
+  "transactionsListCount": "{count} TRANSACTIONS",
   "cashOnHand": "Cash on hand",
   "cashToday": "Cash on hand today",
   "today": "Today",
   "repeatingTran": "Repeating transaction",
-  "import": "Import"
+  "import": "Import",
+  "emptyList": "Transaction list is empty",
+  "deleteWarning": "DANGER: This will permanently delete the entire {type} and ALL TRANSACTIONS without the ability to restore. Are you sure?"
 }

@@ -1,4 +1,5 @@
 import api from '@/plugins/api'
+import router from '@/router'
 
 export default {
   namespaced: true,
@@ -55,6 +56,7 @@ export default {
       await api.delete('cash.category.delete', {
         params: { id }
       })
+      router.push({ name: 'Home' })
       dispatch('getList')
     },
 

@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <div v-if="!loading" class="flexbox">
+    <div v-if="!loading" class="flexbox custom-mb-16">
       <div v-if="checkedRows.length" class="wide">
         <button class="button red">Удалить</button>
       </div>
@@ -55,31 +55,36 @@
     </div>
 
     <transition name="fade-appear">
-      <table
-        class="small zebra"
-        v-if="!loading && transactions.data.length"
-      >
-        <tr>
-          <th class="min-width tw-border-0 tw-border-b tw-border-solid tw-border-gray-400">
-            <input type="checkbox" @click="checkAll" />
-          </th>
-          <th
-            colspan="5"
-            class="tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
-          >
-            {{
-              $t("transactionsListCount", { days: 30, count: transactions.total })
-            }}
-          </th>
-        </tr>
-        <TransactionListRow
-          v-for="transaction in transactions.data"
-          :key="transaction.id"
-          :transaction="transaction"
-          :is-checked="checkedRows.includes(transaction.id)"
-          @checkboxUpdate="onTransactionListRowUpdate(transaction.id)"
-        />
-      </table>
+      <div v-if="!loading">
+        <table
+          class="small zebra"
+          v-if="transactions.data.length"
+        >
+          <tr>
+            <th class="min-width tw-border-0 tw-border-b tw-border-solid tw-border-gray-400">
+              <input type="checkbox" @click="checkAll" />
+            </th>
+            <th
+              colspan="5"
+              class="tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
+            >
+              {{
+                $t("transactionsListCount", { count: transactions.total })
+              }}
+            </th>
+          </tr>
+          <TransactionListRow
+            v-for="transaction in transactions.data"
+            :key="transaction.id"
+            :transaction="transaction"
+            :is-checked="checkedRows.includes(transaction.id)"
+            @checkboxUpdate="onTransactionListRowUpdate(transaction.id)"
+          />
+        </table>
+        <div v-else class="tw-text-center custom-py-20">
+          {{ $t('emptyList') }}
+        </div>
+      </div>
     </transition>
 
     <Modal v-if="open" @close="open = false">
