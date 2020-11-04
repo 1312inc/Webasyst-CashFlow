@@ -34,9 +34,8 @@ final class cashAggregateGetBalanceFlowMethod extends cashApiAbstractMethod
             );
         }
 
-
         $response = (new cashApiAggregateGetBalanceFlowHandler())->handle($request);
 
-        return new cashApiAggregateGetChartDataResponse($response);
+        return new cashApiAggregateGetBalanceFlowResponse($response);
     }
 }
