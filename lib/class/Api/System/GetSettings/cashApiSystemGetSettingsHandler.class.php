@@ -14,7 +14,6 @@ class cashApiSystemGetSettingsHandler implements cashApiHandlerInterface
     public function handle($request)
     {
         return new cashSystemSettingsDto(
-            cash()->getModel(cashTransaction::class)->select('count(id)')->limit(30)->fetchField() == 30,
             (int) wa()->getUser()->getId(),
             cash()->getContactRights()->createContactRightsDto(wa()->getUser())
         );

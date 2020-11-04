@@ -18,6 +18,8 @@ class cashDefaultLayout extends waLayout
         $this->executeAction('sidebar', new cashBackendSidebarAction());
         $showReviewWidget = cash()->getModel(cashTransaction::class)->select('count(id)')->limit(30)->fetchField() == 30;
 
+        $apiSettings = (new cashApiSystemGetSettingsHandler())->handle(null);
+
         $this->view->assign(
             [
                 'token' => $token,
@@ -26,6 +28,7 @@ class cashDefaultLayout extends waLayout
                 'contextUser' => cash()->getUser(),
                 'userId' => (int) wa()->getUser()->getId(),
                 'show_review_widget' => $showReviewWidget,
+                'api_settings' => $apiSettings,
             ]
         );
     }
