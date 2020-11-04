@@ -61,7 +61,7 @@ class cashContactRights
             $id = 0;
             $value = (int) $value;
             if (strpos($right, '.') !== false) {
-                list($right, $id) = explode('.', $right);
+                [$right, $id] = explode('.', $right);
             }
 
             switch ($right) {
