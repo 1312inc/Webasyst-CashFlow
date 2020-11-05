@@ -160,13 +160,25 @@ class cashContactRightsManager
      */
     public function hasFullAccessToAccount(waContact $contact, $accountId): bool
     {
+        return $this->hasAccessToAccount($contact, $accountId, cashRightConfig::ACCOUNT_FULL_ACCESS);
+    }
+
+    /**
+     * @param waContact $contact
+     * @param           $accountId
+     * @param           $access
+     *
+     * @return bool
+     */
+    public function hasAccessToAccount(waContact $contact, $accountId, $access): bool
+    {
         if ($this->getContactAccess($contact)->isAdmin()) {
             return true;
         }
 
         return in_array(
             (int) $accountId,
-            $this->getContactAccess($contact)->getAccountIdsWithAccess(cashRightConfig::ACCOUNT_FULL_ACCESS),
+            $this->getContactAccess($contact)->getAccountIdsWithAccess($access),
             true
         );
     }
@@ -179,19 +191,12 @@ class cashContactRightsManager
      */
     public function hasMinimumAccessToAccount(waContact $contact, $accountId): bool
     {
-        if ($this->getContactAccess($contact)->isAdmin()) {
-            return true;
-        }
-
-        return in_array(
-            (int) $accountId,
-            $this->getContactAccess($contact)->getAccountIdsWithAccess(
-                cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
-            ),
-            true
+        return $this->hasAccessToAccount(
+            $contact,
+            $accountId,
+            cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
         );
     }
-
 
     /**
      * @param waContact $contact
@@ -220,16 +225,10 @@ class cashContactRightsManager
      */
     public function canAddTransactionToAccount(waContact $contact, $accountId): bool
     {
-        if ($this->getContactAccess($contact)->isAdmin()) {
-            return true;
-        }
-
-        return in_array(
-            (int) $accountId,
-            $this->getContactAccess($contact)->getAccountIdsWithAccess(
-                cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
-            ),
-            true
+        return $this->hasAccessToAccount(
+            $contact,
+            $accountId,
+            cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
         );
     }
 

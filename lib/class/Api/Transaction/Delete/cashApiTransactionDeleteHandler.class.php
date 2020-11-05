@@ -26,7 +26,8 @@ class cashApiTransactionDeleteHandler implements cashApiHandlerInterface
             throw new kmwaForbiddenException(_w('You can not delete this transaction'));
         }
 
-        if (!cash()->getEntityPersister()->delete($transaction)) {
+        $transaction->setIsArchived(true);
+        if (!cash()->getEntityPersister()->update($transaction)) {
             throw new kmwaRuntimeException(_w('Error while deleting transaction'));
         }
 

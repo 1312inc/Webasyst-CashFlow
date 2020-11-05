@@ -36,7 +36,7 @@ class cashTransactionSaver extends cashEntitySaver
             }
         }
 
-        return $this->persistTransactions($toPersist);
+        return $this->persistTransactions($toPersist)[0];
     }
 
     /**
@@ -121,11 +121,11 @@ class cashTransactionSaver extends cashEntitySaver
     /**
      * @param cashTransaction[] $transactions
      *
-     * @return array|bool
+     * @return array
      * @throws waException
      * @throws Exception
      */
-    public function persistTransactions(array $transactions = [])
+    public function persistTransactions(array $transactions = []): array
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
@@ -215,6 +215,9 @@ class cashTransactionSaver extends cashEntitySaver
                 kmwaAssert::instance($category, cashCategory::class);
                 if ($category->isExpense() && $data['amount'] > 0) {
                     $data['amount'] = -$data['amount'];
+                }
+                if ($category->isIncome() && $data['amount'] < 0) {
+                    $data['amount'] = abs($data['amount']);
                 }
             } elseif (!in_array($data['category_id'], cashCategoryFactory::getSystemIds())) {
                 $data['category_id'] = null;
