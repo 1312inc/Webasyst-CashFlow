@@ -42,7 +42,8 @@ class cashContactRightsManager
             $contactRights->getCategoryIdsGroupedByAccess(),
             $contactRights->getAccountIdsGroupedByAccess(),
             $contactRights->canImport(),
-            $contactRights->canSeeReport()
+            $contactRights->canSeeReport(),
+            $contactRights->canAccessTransfers()
         );
     }
 

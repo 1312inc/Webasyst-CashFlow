@@ -41,6 +41,11 @@ class cashContactRights
     private $canSeeReport = false;
 
     /**
+     * @var bool
+     */
+    private $canAccessTransfers = false;
+
+    /**
      * @var array
      */
     private $rights;
@@ -71,6 +76,11 @@ class cashContactRights
 
                 case cashRightConfig::RIGHT_CAN_ACCESS_CATEGORY:
                     $this->categories[(int) $id] = $value;
+                    break;
+
+                case cashRightConfig::RIGHT_ACCESS_TRANSFERS:
+                    $this->categories[cashCategoryFactory::TRANSFER_CATEGORY_ID] = cashRightConfig::CATEGORY_FULL_ACCESS;
+                    $this->canAccessTransfers = true;
                     break;
 
                 case cashRightConfig::RIGHT_BACKEND:
@@ -231,5 +241,13 @@ class cashContactRights
     public function getAccountAccess($accountId): int
     {
         return $this->accounts[$accountId] ?? cashRightConfig::NO_ACCESS;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canAccessTransfers(): bool
+    {
+        return $this->canAccessTransfers;
     }
 }

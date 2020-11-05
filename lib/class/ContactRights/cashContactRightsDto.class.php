@@ -28,6 +28,11 @@ class cashContactRightsDto
     public $canSeeReport;
 
     /**
+     * @var bool
+     */
+    public $canAccessTransfers;
+
+    /**
      * cashContactRightsDto constructor.
      *
      * @param $isAdmin
@@ -35,13 +40,15 @@ class cashContactRightsDto
      * @param $accounts
      * @param $canImport
      * @param $canSeeReport
+     * @param $canAccessTransfers
      */
-    public function __construct($isAdmin, $categories, $accounts, $canImport, $canSeeReport)
+    public function __construct($isAdmin, $categories, $accounts, $canImport, $canSeeReport, $canAccessTransfers)
     {
         $this->isAdmin = $isAdmin;
         $this->categories = $categories;
         $this->accounts = $accounts;
         $this->canImport = $canImport;
         $this->canSeeReport = $canSeeReport;
+        $this->canAccessTransfers = $canAccessTransfers;
     }
 }

@@ -10,6 +10,7 @@ class cashRightConfig extends waRightConfig
     const RIGHT_BACKEND             = 'backend';
     const RIGHT_IMPORT_TRANSACTIONS = 'can_import_transactions';
     const RIGHT_SEE_REPORTS         = 'can_see_reports';
+    const RIGHT_ACCESS_TRANSFERS    = 'can_access_transfers';
 
     const ACCOUNT_FULL_ACCESS                                  = 99;
     const ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS = 2;
@@ -43,6 +44,7 @@ class cashRightConfig extends waRightConfig
 
         $this->addItem(self::RIGHT_SEE_REPORTS, _w('Can see reports'), 'checkbox');
         $this->addItem(self::RIGHT_IMPORT_TRANSACTIONS, _w('Can import transactions'), 'checkbox');
+        $this->addItem(self::RIGHT_ACCESS_TRANSFERS, _w('Can access transfers'), 'checkbox');
 
         $this->addItem(
             self::RIGHT_CAN_ACCESS_ACCOUNT,
@@ -102,6 +104,10 @@ class cashRightConfig extends waRightConfig
         $categories = cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact(wa()->getUser());
         /** @var cashCategory $category */
         foreach ($categories as $category) {
+            if ($category->isTransfer()) {
+                continue;
+            }
+
             $default[self::RIGHT_CAN_ACCESS_CATEGORY . '.' . $category->getId()] = self::CATEGORY_FULL_ACCESS;
         }
 
