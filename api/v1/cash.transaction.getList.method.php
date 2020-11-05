@@ -64,7 +64,7 @@ class cashTransactionGetListMethod extends cashApiAbstractMethod
         /** @var cashApiTransactionGetListRequest $request */
         $request = $this->fillRequestWithParams(new cashApiTransactionGetListRequest());
         $request->offset = (int) $request->offset;
-        if ($request->limit > 500) {
+        if (!$request->limit || $request->limit > 500) {
             $request->limit = 500;
         }
 
