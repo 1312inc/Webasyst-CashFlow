@@ -402,6 +402,10 @@ class cashContactRightsManager
             return $value;
         }
 
+        if ($this->isAdmin($contact)) {
+            return $this->cacheValue($key, '( 1 /* account transactions access */ )');
+        }
+
         $accountAccesses = $this->getContactAccess($contact)
             ->getAccountIdsGroupedByAccess();
         foreach ($accountAccesses as $access => $accounts) {
@@ -435,7 +439,7 @@ class cashContactRightsManager
 
         return $this->cacheValue(
             $key,
-            sprintf('( %s /* account transactions access */ )', $segments ? implode(' or ', $segments) : '1')
+            sprintf('( %s /* account transactions access */ )', $segments ? implode(' or ', $segments) : '0')
         );
     }
 
