@@ -19,7 +19,7 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
             DateTime::createFromFormat('Y-m-d', $request->from),
             DateTime::createFromFormat('Y-m-d', $request->to),
             wa()->getUser(),
-            $request->offset * $request->limit,
+            $request->offset,
             $request->limit
         );
 
