@@ -210,8 +210,8 @@ export default {
       this.removeSeries(this.expenseSeries)
       this.removeSeries(this.balanceSeries)
       if (this.balanceAxis) {
-        // console.log('disposed')
-        this.balanceAxis.dispose()
+        const i = this.chart.yAxes.indexOf(this.balanceAxis)
+        if (i > -1) this.chart.yAxes.removeIndex(i).dispose()
       }
 
       if (this.showIncome) this.addIncomeSeries()
@@ -305,10 +305,10 @@ export default {
     attacheTooltip (series) {
       series.adapter.add('tooltipHTML', () => {
         let text = '<div>'
-        text += '<div class="custom-my-8"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
+        text += '<div class="custom-my-4"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
         let timeUnit
         this.chart.series.each((item, i) => {
-          text += `<div class="custom-mb-4"><span style="color: ${item.stroke.hex}">●</span> ${item.name}: ${this.$numeral(item.tooltipDataItem.valueY).format()} ${this.currency}</div>`
+          text += `<div class="custom-mb-2"><span style="color: ${item.stroke.hex}">●</span> ${item.name}: ${this.$numeral(item.tooltipDataItem.valueY).format()} ${this.currency}</div>`
           if (i === 2) {
             timeUnit = item.tooltipDataItem.groupDataItems ? 'month' : 'day'
           }
