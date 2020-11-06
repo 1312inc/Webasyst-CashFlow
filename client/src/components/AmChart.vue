@@ -15,12 +15,14 @@
       </div>
 
       <div class="chart-container">
-        <div v-if="loading" class="skeleton-container">
-          <div class="skeleton">
-            <span class="skeleton-custom-box"></span>
+        <div id="chartdiv" class="smaller" :class="{'tw-opacity-0': loading}"></div>
+        <!-- <transition name="fade-appear"> -->
+          <div v-if="loading" class="skeleton-container">
+            <div class="skeleton">
+              <span class="skeleton-custom-box"></span>
+            </div>
           </div>
-        </div>
-        <div id="chartdiv" class="smaller"></div>
+        <!-- </transition> -->
       </div>
 
     </div>
@@ -43,7 +45,23 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['chartData', 'loading'])
+    ...mapState('transaction', ['chartData', 'loading']),
+
+    showIncome () {
+      return this.chartData[0].data.filter(e => e.amountIncome === 0).length !== this.chartData[0].data.length
+    },
+
+    showExpense () {
+      return this.chartData[0].data.filter(e => e.amountExpense === 0).length !== this.chartData[0].data.length
+    },
+
+    showBalance () {
+      return !!this.chartData[0].data[0].balance
+    },
+
+    currency () {
+      return this.$store.getters['system/getCurrencySignByCode'](this.chartData[0].currency)
+    }
   },
 
   watch: {
@@ -57,9 +75,8 @@ export default {
     if (locale === 'ru_RU') chart.language.locale = am4langRU
 
     chart.leftAxesContainer.layout = 'vertical'
-    chart.seriesContainer.zIndex = -1
 
-    // Create axes
+    // Date axis
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
     dateAxis.groupData = true
     dateAxis.groupCount = 180
@@ -71,25 +88,17 @@ export default {
     dateAxis.renderer.grid.template.location = 0
     dateAxis.renderer.grid.template.disabled = true
 
-    const valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
-    valueAxis.cursorTooltipEnabled = false
-    valueAxis.zIndex = 1
-    valueAxis.height = am4core.percent(35)
-    valueAxis.renderer.grid.template.disabled = true
-    valueAxis.renderer.labels.template.disabled = true
+    // Cols axis
+    this.colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
+    this.colsAxis.cursorTooltipEnabled = false
+    this.colsAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
+    this.colsAxis.renderer.gridContainer.background.fillOpacity = 0.3
+    this.colsAxis.renderer.grid.template.strokeOpacity = 0.06
 
-    const valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis())
-    valueAxis2.cursorTooltipEnabled = false
-    valueAxis2.zIndex = 3
-    valueAxis2.height = am4core.percent(65)
-    valueAxis2.marginTop = 30
-    valueAxis2.renderer.gridContainer.background.fill = am4core.color('#000000')
-    valueAxis2.renderer.gridContainer.background.fillOpacity = 0.01
-    valueAxis2.renderer.grid.template.strokeOpacity = 0.09
-    valueAxis2.renderer.grid.template.strokeWidth = 1
-
+    // Legend
     chart.legend = new am4charts.Legend()
 
+    // Cursor
     chart.cursor = new am4charts.XYCursor()
     chart.cursor.fullWidthLineX = true
     chart.cursor.xAxis = dateAxis
@@ -98,72 +107,6 @@ export default {
     chart.cursor.lineX.fillOpacity = 0.1
     chart.cursor.lineY.strokeOpacity = 0
     chart.cursor.behavior = 'none'
-
-    var series = chart.series.push(new am4charts.ColumnSeries())
-    series.name = this.$t('income')
-    series.yAxis = valueAxis2
-    series.dataFields.valueY = 'amountIncome'
-    series.dataFields.dateX = 'period'
-    series.groupFields.valueY = 'sum'
-    series.stroke = am4core.color('#19ffa3')
-    series.columns.template.stroke = am4core.color('#19ffa3')
-    series.columns.template.fill = am4core.color('#19ffa3')
-    series.columns.template.fillOpacity = 0.5
-    series.defaultState.transitionDuration = 0
-
-    var series2 = chart.series.push(new am4charts.ColumnSeries())
-    series2.name = this.$t('expense')
-    series2.yAxis = valueAxis2
-    series2.dataFields.valueY = 'amountExpense'
-    series2.dataFields.dateX = 'period'
-    series2.groupFields.valueY = 'sum'
-    series2.stroke = am4core.color('#ff604a')
-    series2.columns.template.stroke = am4core.color('#ff604a')
-    series2.columns.template.fill = am4core.color('#ff604a')
-    series2.columns.template.fillOpacity = 0.5
-    series2.defaultState.transitionDuration = 0
-
-    var series3 = chart.series.push(new am4charts.LineSeries())
-    series3.name = this.$t('balance')
-    series3.yAxis = valueAxis
-    series3.dataFields.valueY = 'balance'
-    series3.dataFields.dateX = 'period'
-    series3.groupFields.valueY = 'sum'
-    series3.stroke = am4core.color('#19ffa3')
-    series3.strokeWidth = 3
-    series3.strokeOpacity = 0.8
-    series3.defaultState.transitionDuration = 0
-
-    series3.adapter.add('tooltipHTML', (ev) => {
-      var text = '<div>'
-      text += '<div class="custom-my-8"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
-      let timeUnit
-      chart.series.each((item, i) => {
-        text += '<div class="custom-mb-4"><span style="color:' + item.stroke.hex + '">●</span> ' + item.name + ': ' + this.$numeral(item.tooltipDataItem.valueY).format() + '</div>'
-        if (i === 2) {
-          timeUnit = item.tooltipDataItem.groupDataItems ? 'month' : 'day'
-        }
-      })
-
-      text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + timeUnit + '\')" class="button small custom-my-8">' + this.$t('details') + '</button>'
-      text += '</div>'
-      return text
-    })
-    series3.tooltip.getFillFromObject = false
-    series3.tooltip.background.filters.clear()
-    series3.tooltip.background.fill = am4core.color('#000')
-    series3.tooltip.background.fillOpacity = 0.8
-    series3.tooltip.background.strokeWidth = 0
-    series3.tooltip.background.cornerRadius = 1
-    series3.tooltip.label.interactionsEnabled = true
-    series3.tooltip.pointerOrientation = 'vertical'
-
-    // Create a range to change stroke for values below 0
-    const range = valueAxis.createSeriesRange(series3)
-    range.value = 0
-    range.endValue = -10000000
-    range.contents.stroke = am4core.color('#ff604a')
-    range.contents.strokeOpacity = 0.7
 
     // Currend day line
     const dateBorder = dateAxis.axisRanges.create()
@@ -180,18 +123,19 @@ export default {
     dateBorder.label.dx = -10
 
     // Future dates hover
-    const range3 = dateAxis.axisRanges.create()
-    range3.date = new Date()
-    range3.endDate = new Date(2100, 0, 3)
-    range3.grid.disabled = true
-    range3.axisFill.fillOpacity = 0.6
-    range3.axisFill.fill = '#FFFFFF'
+    const rangeFututre = dateAxis.axisRanges.create()
+    rangeFututre.date = new Date()
+    rangeFututre.endDate = new Date(2100, 0, 3)
+    rangeFututre.grid.disabled = true
+    rangeFututre.axisFill.fillOpacity = 0.6
+    rangeFututre.axisFill.fill = '#FFFFFF'
 
-    const scrollbarX = new am4charts.XYChartScrollbar()
-    scrollbarX.series.push(series3)
-    chart.scrollbarX = scrollbarX
-    chart.scrollbarX.scrollbarChart.plotContainer.filters.clear()
+    // Scrollbar on the bottom
+    chart.scrollbarX = new am4core.Scrollbar()
     chart.scrollbarX.parent = chart.bottomAxesContainer
+    chart.scrollbarX.background.fill = am4core.color('#f3f3f3')
+    chart.scrollbarX.thumb.background.fill = am4core.color('#f3f3f3')
+    chart.scrollbarX.stroke = am4core.color('#f3f3f3')
 
     const dateAxisChanged = () => {
       const from = this.$moment(dateAxis.minZoomed).format('YYYY-MM-DD')
@@ -201,17 +145,6 @@ export default {
 
     chart.scrollbarX.startGrip.events.on('dragstop', dateAxisChanged)
     chart.scrollbarX.endGrip.events.on('dragstop', dateAxisChanged)
-
-    var scrollSeries1 = chart.scrollbarX.scrollbarChart.series.getIndex(0)
-    scrollSeries1.strokeWidth = 1
-    scrollSeries1.strokeOpacity = 0.4
-
-    var scrollAxisX = chart.scrollbarX.scrollbarChart.yAxes.getIndex(0)
-    var range2 = scrollAxisX.createSeriesRange(chart.scrollbarX.scrollbarChart.series.getIndex(0))
-    range2.value = 0
-    range2.endValue = -10000000
-    range2.contents.stroke = '#ff604a'
-    range2.contents.fill = '#ff604a'
 
     /**
    * ========================================================
@@ -263,13 +196,137 @@ export default {
     }
   },
 
+  beforeDestroy () {
+    if (this.chart) {
+      this.chart.dispose()
+    }
+  },
+
   methods: {
     ...mapActions('transaction', ['setdetailsInterval']),
 
     renderChart () {
-      this.chart.data = this.chartData
+      this.removeSeries(this.incomeSeries)
+      this.removeSeries(this.expenseSeries)
+      this.removeSeries(this.balanceSeries)
+      if (this.balanceAxis) {
+        // console.log('disposed')
+        this.balanceAxis.dispose()
+      }
+
+      if (this.showIncome) this.addIncomeSeries()
+      if (this.showExpense) this.addExpenseSeries()
+      if (this.showBalance) {
+        this.colsAxis.height = am4core.percent(65)
+        this.addBalanceSeries()
+      } else {
+        this.colsAxis.height = am4core.percent(100)
+      }
+
+      this.chart.data = this.chartData[0].data
       this.chart.xAxes.values[0].min = (new Date(this.$store.state.transaction.queryParams.from)).getTime()
       this.chart.xAxes.values[0].max = (new Date(this.$store.state.transaction.queryParams.to)).getTime()
+    },
+
+    addIncomeSeries () {
+      this.incomeSeries = this.chart.series.push(new am4charts.ColumnSeries())
+      this.incomeSeries.name = this.$t('income')
+      this.incomeSeries.yAxis = this.colsAxis
+      this.incomeSeries.dataFields.valueY = 'amountIncome'
+      this.incomeSeries.dataFields.dateX = 'period'
+      this.incomeSeries.groupFields.valueY = 'sum'
+      this.incomeSeries.stroke = am4core.color('#19ffa3')
+      this.incomeSeries.columns.template.stroke = am4core.color('#19ffa3')
+      this.incomeSeries.columns.template.fill = am4core.color('#19ffa3')
+      this.incomeSeries.columns.template.fillOpacity = 0.5
+      this.incomeSeries.defaultState.transitionDuration = 0
+
+      if (!this.showBalance) this.attacheTooltip(this.incomeSeries)
+    },
+
+    addExpenseSeries () {
+      this.expenseSeries = this.chart.series.push(new am4charts.ColumnSeries())
+      this.expenseSeries.name = this.$t('expense')
+      this.expenseSeries.yAxis = this.colsAxis
+      this.expenseSeries.dataFields.valueY = 'amountExpense'
+      this.expenseSeries.dataFields.dateX = 'period'
+      this.expenseSeries.groupFields.valueY = 'sum'
+      this.expenseSeries.stroke = am4core.color('#ff604a')
+      this.expenseSeries.columns.template.stroke = am4core.color('#ff604a')
+      this.expenseSeries.columns.template.fill = am4core.color('#ff604a')
+      this.expenseSeries.columns.template.fillOpacity = 0.5
+      this.expenseSeries.defaultState.transitionDuration = 0
+
+      if (!this.showBalance) this.attacheTooltip(this.expenseSeries)
+    },
+
+    addBalanceSeries () {
+      this.addBalanceAxis().events.on('ready', () => {
+        this.balanceSeries = this.chart.series.push(new am4charts.LineSeries())
+        this.balanceSeries.name = this.$t('balance')
+        this.balanceSeries.yAxis = this.balanceAxis
+        this.balanceSeries.dataFields.valueY = 'balance'
+        this.balanceSeries.dataFields.dateX = 'period'
+        this.balanceSeries.groupFields.valueY = 'sum'
+        this.balanceSeries.stroke = am4core.color('#19ffa3')
+        this.balanceSeries.strokeWidth = 3
+        this.balanceSeries.strokeOpacity = 0.8
+        this.balanceSeries.defaultState.transitionDuration = 0
+
+        this.attacheTooltip(this.balanceSeries)
+
+        // Create a range to change stroke for values below 0
+        const range = this.balanceAxis.createSeriesRange(this.balanceSeries)
+        range.value = 0
+        range.endValue = -10000000
+        range.contents.stroke = am4core.color('#ff604a')
+        range.contents.strokeOpacity = 0.7
+      })
+    },
+
+    addBalanceAxis () {
+      this.balanceAxis = this.chart.yAxes.push(new am4charts.ValueAxis())
+      this.balanceAxis.cursorTooltipEnabled = false
+      this.balanceAxis.height = am4core.percent(35)
+      this.balanceAxis.marginBottom = 30
+      this.balanceAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
+      this.balanceAxis.renderer.gridContainer.background.fillOpacity = 0.3
+      this.balanceAxis.renderer.grid.template.strokeOpacity = 0.06
+      this.balanceAxis.insertBefore(this.colsAxis)
+
+      return this.balanceAxis
+    },
+
+    removeSeries (seriesToRemove) {
+      const i = this.chart.series.indexOf(seriesToRemove)
+      if (i > -1) this.chart.series.removeIndex(i).dispose()
+    },
+
+    attacheTooltip (series) {
+      series.adapter.add('tooltipHTML', () => {
+        let text = '<div>'
+        text += '<div class="custom-my-8"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
+        let timeUnit
+        this.chart.series.each((item, i) => {
+          text += `<div class="custom-mb-4"><span style="color: ${item.stroke.hex}">●</span> ${item.name}: ${this.$numeral(item.tooltipDataItem.valueY).format()} ${this.currency}</div>`
+          if (i === 2) {
+            timeUnit = item.tooltipDataItem.groupDataItems ? 'month' : 'day'
+          }
+        })
+
+        text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + timeUnit + '\')" class="button small custom-my-8">' + this.$t('details') + '</button>'
+        text += '</div>'
+        return text
+      })
+
+      series.tooltip.getFillFromObject = false
+      series.tooltip.background.filters.clear()
+      series.tooltip.background.fill = am4core.color('#333')
+      series.tooltip.background.fillOpacity = 1
+      series.tooltip.background.strokeWidth = 0
+      series.tooltip.background.cornerRadius = 3
+      series.tooltip.label.interactionsEnabled = true
+      series.tooltip.pointerOrientation = 'vertical'
     }
 
   }
@@ -280,7 +337,7 @@ export default {
 <style lang="scss">
   .chart-container {
     position: relative;
-    height: 600px;
+    height: 500px;
     margin-bottom: 1rem;
     overflow: hidden;
 
@@ -290,8 +347,6 @@ export default {
       left: 0;
       width: 100%;
       height: 100%;
-      background: #ffffff;
-      z-index: 40;
 
       .skeleton {
         position: absolute;
@@ -315,6 +370,5 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 30;
   }
 </style>
