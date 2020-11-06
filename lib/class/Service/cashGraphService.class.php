@@ -502,87 +502,6 @@ class cashGraphService
      */
     public function getAggregateChartData(cashAggregateChartDataFilterParamsDto $paramsDto): array
     {
-        $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
-            ->from('cash_transaction', 'ct')
-            ->andWhere(
-                [
-                    'account_access' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
-                        $paramsDto->contact
-                    ),
-                    'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
-                        $paramsDto->contact,
-                        'ct',
-                        'category_id'
-                    ),
-                    'ct.is_archived = 0',
-                    'ca.is_archived = 0',
-                ]
-            )
-            ->join(
-                [
-                    'join cash_account ca on ct.account_id = ca.id',
-                    'join cash_category cc on ct.category_id = cc.id',
-                ]
-            );
-
-        $calculateBalance = false;
-        switch (true) {
-            case null !== $paramsDto->filter->getAccountId():
-                $sqlParts->addAndWhere('ct.account_id = i:account_id')
-                    ->addParam('account_id', $paramsDto->filter->getAccountId());
-
-                if (cash()->getContactRights()->canSeeAccountBalance(
-                    $paramsDto->contact,
-                    $paramsDto->filter->getAccountId()
-                )) {
-                    $calculateBalance = true;
-                }
-
-                break;
-
-            case null !== $paramsDto->filter->getCategoryId():
-                $sqlParts->addAndWhere('ct.category_id = i:category_id')
-                    ->addParam('category_id', $paramsDto->filter->getCategoryId());
-                break;
-
-            case null !== $paramsDto->filter->getContractorId():
-                $sqlParts->addAndWhere('ct.contractor_contact_id = i:contractor_contact_id')
-                    ->addParam('contractor_contact_id', $paramsDto->filter->getContractorId());
-                break;
-
-            case null !== $paramsDto->filter->getCurrency():
-                $sqlParts->addAndWhere('ca.currency = s:currency')
-                    ->addParam('currency', $paramsDto->filter->getCurrency());
-
-                $accountSql = clone $sqlParts;
-                $accounts = $accountSql->select(['ct.account_id'])
-                    ->groupBy(['ct.account_id'])
-                    ->query()
-                    ->fetchAll('account_id');
-
-                foreach ($accounts as $accountId => $accountIds) {
-                    if (cash()->getContactRights()->canSeeAccountBalance($paramsDto->contact, $accountId)) {
-                        $calculateBalance = true;
-                    } else {
-                        $calculateBalance = false;
-                        break;
-                    }
-                }
-                break;
-        }
-
-        $initialBalance = 0;
-        if ($calculateBalance) {
-            $initialSql = clone $sqlParts;
-            $initialData = $initialSql->select(['sum(ct.amount) balance'])
-                ->addAndWhere('ct.date < s:from')
-                ->addParam('from', $paramsDto->from->format('Y-m-d'))
-                ->query()
-                ->fetchAll();
-
-            $initialBalance = (float) $initialData[0]['balance'];
-        }
-
         switch ($paramsDto->groupBy) {
             case cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY:
                 $grouping = 'ct.date';
@@ -604,16 +523,106 @@ class cashGraphService
                 break;
         }
 
-        $data = $sqlParts->select(
-            [
-                "{$grouping} groupkey",
-                'ca.currency currency',
-                'sum(if(ct.amount < 0, 0, ct.amount)) incomeAmount',
-                'sum(if(ct.amount < 0, ct.amount, 0)) expenseAmount',
-                'null balance',
-            ]
-        )
-            ->addAndWhere(sprintf('%s between s:from and s:to', $grouping))
+        $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
+            ->from('cash_transaction', 'ct')
+            ->andWhere(
+                [
+                    'account_access' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+                        $paramsDto->contact
+                    ),
+                    'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
+                        $paramsDto->contact,
+                        'ct',
+                        'category_id'
+                    ),
+                    'ct.is_archived = 0',
+                    'ca.is_archived = 0',
+                ]
+            )
+            ->join(
+                [
+                    'join cash_account ca on ct.account_id = ca.id',
+                    'join cash_category cc on ct.category_id = cc.id',
+                ]
+            )
+            ->select(
+                [
+                    "{$grouping} groupkey",
+                    'ca.currency currency',
+                    'null balance',
+                ]
+            );
+
+        $calculateBalance = false;
+        switch (true) {
+            case null !== $paramsDto->filter->getAccountId():
+                $sqlParts->addAndWhere('ct.account_id = i:account_id')
+                    ->addParam('account_id', $paramsDto->filter->getAccountId())
+                    ->addSelect('sum(if(ct.amount < 0, 0, ct.amount)) incomeAmount')
+                    ->addSelect('sum(if(ct.amount < 0, ct.amount, 0)) expenseAmount');
+
+                if (cash()->getContactRights()->canSeeAccountBalance(
+                    $paramsDto->contact,
+                    $paramsDto->filter->getAccountId()
+                )) {
+                    $calculateBalance = true;
+                }
+
+                break;
+
+            case null !== $paramsDto->filter->getCategoryId():
+                $sqlParts->addAndWhere('ct.category_id = i:category_id')
+                    ->addParam('category_id', $paramsDto->filter->getCategoryId())
+                    ->addSelect('sum(if(ct.amount < 0, null, ct.amount)) incomeAmount')
+                    ->addSelect('sum(if(ct.amount < 0, ct.amount, null)) expenseAmount');
+
+                break;
+
+            case null !== $paramsDto->filter->getContractorId():
+                $sqlParts->addAndWhere('ct.contractor_contact_id = i:contractor_contact_id')
+                    ->addParam('contractor_contact_id', $paramsDto->filter->getContractorId())
+                    ->addSelect('sum(if(ct.amount < 0, 0, ct.amount)) incomeAmount')
+                    ->addSelect('sum(if(ct.amount < 0, ct.amount, 0)) expenseAmount');
+
+                break;
+
+            case null !== $paramsDto->filter->getCurrency():
+                $sqlParts->addAndWhere('ca.currency = s:currency')
+                    ->addParam('currency', $paramsDto->filter->getCurrency())
+                    ->addSelect('sum(if(ct.amount < 0, 0, ct.amount)) incomeAmount')
+                    ->addSelect('sum(if(ct.amount < 0, ct.amount, 0)) expenseAmount');
+
+                $accountSql = clone $sqlParts;
+                $accounts = $accountSql->select(['ct.account_id'])
+                    ->groupBy(['ct.account_id'])
+                    ->query()
+                    ->fetchAll('account_id');
+
+                foreach ($accounts as $accountId => $accountIds) {
+                    if (cash()->getContactRights()->canSeeAccountBalance($paramsDto->contact, $accountId)) {
+                        $calculateBalance = true;
+                    } else {
+                        $calculateBalance = false;
+                        break;
+                    }
+                }
+
+                break;
+        }
+
+        $initialBalance = 0;
+        if ($calculateBalance) {
+            $initialSql = clone $sqlParts;
+            $initialData = $initialSql->select(['sum(ct.amount) balance'])
+                ->addAndWhere('ct.date < s:from')
+                ->addParam('from', $paramsDto->from->format('Y-m-d'))
+                ->query()
+                ->fetchAll();
+
+            $initialBalance = (float) $initialData[0]['balance'];
+        }
+
+        $data = $sqlParts->addAndWhere(sprintf('%s between s:from and s:to', $grouping))
             ->addParam('from', $paramsDto->from->format($format))
             ->addParam('to', $paramsDto->to->format($format))
             ->groupBy(['groupkey', 'currency'])

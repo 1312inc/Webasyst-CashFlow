@@ -6,6 +6,8 @@ final class cashApiAggregateGetBalanceFlowBalanceDto
 
     public $amount;
 
+    public $amountShorten;
+
     /**
      * cashApiAggregateGetBalanceFlowBalanceDto constructor.
      *
@@ -16,5 +18,6 @@ final class cashApiAggregateGetBalanceFlowBalanceDto
     {
         $this->date = $date;
         $this->amount = round($amount, 2);
+        $this->amountShorten = cashShorteningService::money($this->amount);
     }
 }
