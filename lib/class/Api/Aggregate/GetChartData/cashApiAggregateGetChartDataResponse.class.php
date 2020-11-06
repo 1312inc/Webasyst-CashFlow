@@ -23,8 +23,8 @@ final class cashApiAggregateGetChartDataResponse extends cashApiAbstractResponse
 
             $response[$graphDatum['currency']][] = new cashApiAggregateGetChartDataDto(
                 $graphDatum['groupkey'],
-                abs($graphDatum['incomeAmount']),
-                abs($graphDatum['expenseAmount']),
+                $graphDatum['incomeAmount'],
+                $graphDatum['expenseAmount'],
                 $graphDatum['balance']
             );
         }
