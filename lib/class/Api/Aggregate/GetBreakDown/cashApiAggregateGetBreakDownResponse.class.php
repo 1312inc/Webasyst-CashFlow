@@ -5,6 +5,8 @@
  */
 final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
 {
+    private $categories = null;
+
     /**
      * cashApiAggregateGetBreakDownResponse constructor.
      *
@@ -16,20 +18,39 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
 
         $response = [];
         foreach ($data as $graphDatum) {
-            $key = sprintf('%s/%s', $graphDatum['type'], $graphDatum['currency']);
-            if (!isset($response[$key])) {
-                $response[$key] = new cashApiAggregateGetBreakDownDto($graphDatum['currency'], $graphDatum['type'], []);
+            if (!isset($response[$graphDatum['currency']])) {
+                $response[$graphDatum['currency']] = [
+                    'currency' => $graphDatum['currency'],
+                    'income' => new cashApiAggregateGetBreakDownDto(),
+                    'expense' => new cashApiAggregateGetBreakDownDto(),
+                ];
             }
 
             $dataInfo = new cashApiAggregateGetBreakDownDataDto(
                 $graphDatum['amount'],
-                $graphDatum['detailed']
+                $this->getCategory($graphDatum['detailed'])
             );
-            $response[$key]->data[] = $dataInfo;
-            $response[$key]->totalAmount += abs($dataInfo->amount);
+            $response[$graphDatum['currency']][$graphDatum['type']]->data[] = $dataInfo;
+            $response[$graphDatum['currency']][$graphDatum['type']]->totalAmount += abs($dataInfo->amount);
         }
 
-        ksort($response);
         $this->response = array_values($response);
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return cashCategory|null
+     * @throws waException
+     */
+    private function getCategory($id): ?cashCategory
+    {
+        if (null === $this->categories) {
+            foreach (cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact(wa()->getUser()) as $category) {
+                $this->categories[$category->getId()] = $category;
+            }
+        }
+
+        return $this->categories[$id] ?? null;
     }
 }
