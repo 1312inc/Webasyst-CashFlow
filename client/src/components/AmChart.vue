@@ -48,11 +48,11 @@ export default {
     ...mapState('transaction', ['chartData', 'loading']),
 
     showIncome () {
-      return this.chartData[0].data.filter(e => e.amountIncome === 0).length !== this.chartData[0].data.length
+      return !!this.chartData[0].data[0].amountIncome
     },
 
     showExpense () {
-      return this.chartData[0].data.filter(e => e.amountExpense === 0).length !== this.chartData[0].data.length
+      return !!this.chartData[0].data[0].amountExpense
     },
 
     showBalance () {
