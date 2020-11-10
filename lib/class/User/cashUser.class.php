@@ -5,7 +5,9 @@
  */
 class cashUser
 {
-    use kmwaWaUserTrait;
+    use kmwaWaUserTrait {
+        setContact as setContactParent;
+    }
 
     /**
      * @var int
@@ -90,5 +92,13 @@ class cashUser
     public function canSeeBalance(cashAccount $account): bool
     {
         return cash()->getContactRights()->hasFullAccessToAccount($this->contact, $account->getId());
+    }
+
+    public function setContact(waContact $contact)
+    {
+        $this->setContactParent($contact);
+        if ($this->exists) {
+            $this->id = $contact->getId();
+        }
     }
 }

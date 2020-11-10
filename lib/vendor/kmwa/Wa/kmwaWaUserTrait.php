@@ -143,8 +143,9 @@ trait kmwaWaUserTrait
     {
         $this->timezone = date_default_timezone_get();
         if ($this->contact->exists()) {
-            $this->id = $this->contact->getId();
-            $this->me = ($this->contact->getId() == wa()->getUser()->getId());
+            if (wa()->getUser()) {
+                $this->me = ($this->contact->getId() == wa()->getUser()->getId());
+            }
             $this->name = $this->contact->getName();
             $this->username = $this->contact->getName();
             $this->contact_id = $this->contact->getId();
