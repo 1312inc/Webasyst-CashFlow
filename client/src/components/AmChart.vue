@@ -1,30 +1,13 @@
 <template>
-    <div>
-      <div class="flexbox custom-mb-12">
-        <div class="wide">
-          <ChartHeader></ChartHeader>
-        </div>
-        <div class="flexbox space-1rem">
-          <div>
-            <Dropdown type="from" />
-          </div>
-          <div>
-            <Dropdown type="to" />
+    <div class="chart-container">
+      <div id="chartdiv" class="smaller" :class="{'tw-opacity-0': loadingChart}"></div>
+      <!-- <transition name="fade-appear"> -->
+        <div v-if="loadingChart" class="skeleton-container">
+          <div class="skeleton">
+            <span class="skeleton-custom-box"></span>
           </div>
         </div>
-      </div>
-
-      <div class="chart-container">
-        <div id="chartdiv" class="smaller" :class="{'tw-opacity-0': loadingChart}"></div>
-        <!-- <transition name="fade-appear"> -->
-          <div v-if="loadingChart" class="skeleton-container">
-            <div class="skeleton">
-              <span class="skeleton-custom-box"></span>
-            </div>
-          </div>
-        <!-- </transition> -->
-      </div>
-
+      <!-- </transition> -->
     </div>
 </template>
 
@@ -34,38 +17,35 @@ import { mapState, mapMutations } from 'vuex'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
-import ChartHeader from '@/components/ChartHeader'
-import Dropdown from '@/components/Dropdown'
 
 export default {
-
-  components: {
-    ChartHeader,
-    Dropdown
-  },
 
   computed: {
     ...mapState('transaction', ['chartData', 'loadingChart']),
 
+    activeChartData () {
+      return Array.isArray(this.chartData) ? this.chartData[0] : { data: [] }
+    },
+
     showIncome () {
-      return !!this.chartData[0].data[0].amountIncome
+      return !!this.activeChartData.data[0]?.amountIncome
     },
 
     showExpense () {
-      return !!this.chartData[0].data[0].amountExpense
+      return !!this.activeChartData.data[0]?.amountExpense
     },
 
     showBalance () {
-      return !!this.chartData[0].data[0].balance
+      return !!this.activeChartData.data[0]?.balance
     },
 
     currency () {
-      return this.$store.getters['system/getCurrencySignByCode'](this.chartData[0].currency)
+      return this.$store.getters['system/getCurrencySignByCode'](this.activeChartData.currency)
     }
   },
 
   watch: {
-    chartData () {
+    activeChartData () {
       this.renderChart()
     }
   },
@@ -237,7 +217,7 @@ export default {
         this.colsAxis.height = am4core.percent(100)
       }
 
-      this.chart.data = this.chartData[0].data
+      this.chart.data = this.activeChartData.data
       this.chart.xAxes.values[0].min = (new Date(this.$store.state.transaction.queryParams.from)).getTime()
       this.chart.xAxes.values[0].max = (new Date(this.$store.state.transaction.queryParams.to)).getTime()
     },
