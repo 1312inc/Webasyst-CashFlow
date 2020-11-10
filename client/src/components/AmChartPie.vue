@@ -1,5 +1,5 @@
 <template>
-    <div class="chart" ref="chart"></div>
+    <div class="chart smaller" ref="chart"></div>
 </template>
 
 <script>
@@ -27,27 +27,39 @@ export default {
     const chart = am4core.create(this.$refs.chart, am4charts.PieChart)
     chart.language.locale = am4langRU
 
-    chart.data = this.data
-
     // Add and configure Series
     const pieSeries = chart.series.push(new am4charts.PieSeries())
     pieSeries.dataFields.value = 'amount'
     pieSeries.dataFields.category = 'category_name'
-    pieSeries.slices.template.propertyFields.fill = 'category_color'
     pieSeries.innerRadius = am4core.percent(40)
     pieSeries.labels.template.disabled = true
-    pieSeries.slices.template.stroke = am4core.color('#4a2abb')
+    pieSeries.slices.template.propertyFields.fill = 'category_color'
+    pieSeries.slices.template.stroke = am4core.color('#fff')
+    pieSeries.slices.template.strokeOpacity = 0.5
 
+    // Add Legend
     chart.legend = new am4charts.Legend()
-    chart.legend.position = 'right'
+    chart.legend.position = 'bottom'
 
     this.chart = chart
+
+    this.renderChart()
+
+    this.$watch('data', () => {
+      this.renderChart()
+    })
+  },
+
+  methods: {
+    renderChart () {
+      this.chart.data = this.data
+    }
   }
 }
 </script>
 
 <style>
 .chart {
-    height: 300px;
+    height: 600px;
 }
 </style>
