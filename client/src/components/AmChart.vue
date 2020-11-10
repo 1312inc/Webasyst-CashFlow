@@ -15,9 +15,9 @@
       </div>
 
       <div class="chart-container">
-        <div id="chartdiv" class="smaller" :class="{'tw-opacity-0': loading}"></div>
+        <div id="chartdiv" class="smaller" :class="{'tw-opacity-0': loadingChart}"></div>
         <!-- <transition name="fade-appear"> -->
-          <div v-if="loading" class="skeleton-container">
+          <div v-if="loadingChart" class="skeleton-container">
             <div class="skeleton">
               <span class="skeleton-custom-box"></span>
             </div>
@@ -30,7 +30,7 @@
 
 <script>
 import { locale } from '@/plugins/locale'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
@@ -45,7 +45,7 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['chartData', 'loading']),
+    ...mapState('transaction', ['chartData', 'loadingChart']),
 
     showIncome () {
       return !!this.chartData[0].data[0].amountIncome
@@ -140,11 +140,24 @@ export default {
     const dateAxisChanged = () => {
       const from = this.$moment(dateAxis.minZoomed).format('YYYY-MM-DD')
       const to = this.$moment(dateAxis.maxZoomed).format('YYYY-MM-DD')
-      this.setdetailsInterval({ from, to })
+      this.setDetailsInterval({ from, to })
     }
 
     chart.scrollbarX.startGrip.events.on('dragstop', dateAxisChanged)
     chart.scrollbarX.endGrip.events.on('dragstop', dateAxisChanged)
+
+    chart.zoomOutButton.events.on('hit', () => {
+      this.setDetailsInterval({ from: '', to: '' })
+      this.$store.commit('transaction/updateQueryParams', { offset: 0 })
+    })
+
+    this.unsubscribe = this.$store.subscribe((mutation) => {
+      if (mutation.type === 'transaction/setDetailsInterval') {
+        if (mutation.payload.from === '') {
+          dateAxis.zoom({ start: 0, end: 1 })
+        }
+      }
+    })
 
     /**
    * ========================================================
@@ -192,18 +205,19 @@ export default {
       if (interval === 'month') {
         to = this.$moment(from).add(1, 'M').format('YYYY-MM-DD')
       }
-      this.setdetailsInterval({ from, to })
+      this.setDetailsInterval({ from, to })
     }
   },
 
   beforeDestroy () {
+    this.unsubscribe()
     if (this.chart) {
       this.chart.dispose()
     }
   },
 
   methods: {
-    ...mapActions('transaction', ['setdetailsInterval']),
+    ...mapMutations('transaction', ['setDetailsInterval']),
 
     renderChart () {
       this.removeSeries(this.incomeSeries)
