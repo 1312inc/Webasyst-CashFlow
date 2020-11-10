@@ -126,15 +126,7 @@ final class cashTransactionFilterService
             throw new kmwaForbiddenException(_w('You have no access to this account'));
         }
 
-        $selectQueryParts
-            ->select(['ct.*'])
-            ->join(
-                [
-                    'join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0',
-                    'left join cash_category cc on ct.category_id = cc.id',
-                ]
-            )
-            ->addAndWhere('ct.account_id = i:account_id')
+        $selectQueryParts->addAndWhere('ct.account_id = i:account_id')
             ->addParam('account_id', $dto->filter->getAccountId());
     }
 
@@ -161,15 +153,7 @@ final class cashTransactionFilterService
 
         $sqlParams['category_id'] = $dto->filter->getCategoryId();
 
-        $selectQueryParts
-            ->select(['ct.*'])
-            ->join(
-                [
-                    'join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0',
-                    'join cash_category cc on ct.category_id = cc.id',
-                ]
-            )
-            ->addAndWhere('ct.category_id = i:category_id')
+        $selectQueryParts->addAndWhere('ct.category_id = i:category_id')
             ->addAndWhere($accountAccessSql, 'accountAccessSql')
             ->addParam('category_id', $dto->filter->getCategoryId());
     }
@@ -190,15 +174,7 @@ final class cashTransactionFilterService
             'account_id'
         );
 
-        $selectQueryParts
-            ->select(['ct.*'])
-            ->join(
-                [
-                    'join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0',
-                    'join cash_category cc on ct.category_id = cc.id',
-                ]
-            )
-            ->addAndWhere('ca.currency = s:currency')
+        $selectQueryParts->addAndWhere('ca.currency = s:currency')
             ->addAndWhere($accountAccessSql, 'accountAccessSql')
             ->addParam('currency', $dto->filter->getCurrency());
     }
@@ -217,15 +193,7 @@ final class cashTransactionFilterService
             throw new kmwaForbiddenException(_w('You have no access to this contractor'));
         }
 
-        $selectQueryParts
-            ->select(['ct.*'])
-            ->join(
-                [
-                    'join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0',
-                    'left join cash_category cc on ct.category_id = cc.id',
-                ]
-            )
-            ->addAndWhere('ct.contractor_contact_id = i:contractor_contact_id')
+        $selectQueryParts->addAndWhere('ct.contractor_contact_id = i:contractor_contact_id')
             ->addParam('contractor_contact_id', $dto->filter->getContractorId());
     }
 
@@ -241,8 +209,14 @@ final class cashTransactionFilterService
     {
         $sqlParts = new cashSelectQueryParts(cash()->getModel());
 
-        $sqlParts
+        $sqlParts->select(['ct.*'])
             ->from('cash_transaction', 'ct')
+            ->join(
+                [
+                    'join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0',
+                    'left join cash_category cc on ct.category_id = cc.id',
+                ]
+            )
             ->andWhere(
                 [
                     'ct.date between s:startDate and s:endDate',
@@ -299,11 +273,6 @@ final class cashTransactionFilterService
                 $this->makeBaseSqlForContractorFilter($dto, $sqlParts);
 
                 break;
-
-            default:
-                throw new kmwaRuntimeException(
-                    'There should be valid filter (account, category, contractor, currency)'
-                );
         }
 
         return $sqlParts;
