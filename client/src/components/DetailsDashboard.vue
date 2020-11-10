@@ -15,7 +15,7 @@
         </div>
 
         <div v-for="currency in data" :key="currency.currency" class="flexbox fixed">
-          <div>
+          <div v-if="currency.income.data.length">
             <div class="flexbox middle">
               <div class="custom-mr-8">{{ $t('income') }}:</div>
               <div class="larger">
@@ -25,7 +25,7 @@
             <ChartPie :data="currency.income.data" />
           </div>
 
-          <div>
+          <div v-if="currency.expense.data.length">
             <div class="flexbox middle">
               <div class="custom-mr-8">{{ $t('expense') }}:</div>
               <div class="larger">
@@ -35,7 +35,7 @@
             <ChartPie :data="currency.expense.data" />
           </div>
 
-          <div>
+          <div v-if="currency.income.data.length && currency.expense.data.length">
             <div class="text-xl mb-6">{{ $t('balance') }}</div>
             <div class="larger">
               {{ $numeral(currency.income.totalAmount - currency.expense.totalAmount).format() }}
