@@ -108,6 +108,19 @@ export default {
       })
       dispatch('getList')
       dispatch('getChartData')
+    },
+
+    async bulkDelete ({ dispatch }, ids) {
+      await api.post('cash.transaction.bulkDelete', { ids })
+      dispatch('getList')
+      dispatch('getChartData')
+    },
+
+    async bulkMove ({ dispatch }, params) {
+      await api.post('cash.transaction.bulkMove', params)
+      dispatch('getList')
+      dispatch('getChartData')
     }
+
   }
 }
