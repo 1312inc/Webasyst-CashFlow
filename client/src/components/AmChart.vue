@@ -58,13 +58,13 @@ export default {
 
     // Date axis
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
-    dateAxis.groupData = true
-    dateAxis.groupCount = 1000
-    dateAxis.groupIntervals.setAll([
-      { timeUnit: 'day', count: 1 },
-      { timeUnit: 'month', count: 1 }
-    ])
-    dateAxis.renderer.minGridDistance = 60
+    // dateAxis.groupData = true
+    // dateAxis.groupCount = 1000
+    // dateAxis.groupIntervals.setAll([
+    //   { timeUnit: 'day', count: 1 },
+    //   { timeUnit: 'month', count: 1 }
+    // ])
+    // dateAxis.renderer.minGridDistance = 60
     dateAxis.renderer.grid.template.location = 0
     dateAxis.renderer.grid.template.disabled = true
     dateAxis.snapTooltip = false

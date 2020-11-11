@@ -29,7 +29,7 @@ export default {
 
     currentPage: {
       get () {
-        return this.transactions.offset + 1
+        return this.transactions.offset / this.transactions.limit + 1
       },
       set () {
         return false
@@ -40,7 +40,7 @@ export default {
   methods: {
     clickCallback (pageNum) {
       this.$store.commit('transaction/updateQueryParams', {
-        offset: pageNum - 1
+        offset: (pageNum - 1) * this.transactions.limit
       })
     }
   }
