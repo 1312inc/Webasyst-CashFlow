@@ -14,5 +14,7 @@ abstract class cashViewController extends waViewController
         if (!cash()->getUser()->hasAccessToApp()) {
             throw new kmwaForbiddenException(_w('No app access'));
         }
+
+        parent::preExecute();
     }
 }
