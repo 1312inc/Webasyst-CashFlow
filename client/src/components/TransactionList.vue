@@ -2,13 +2,15 @@
   <div>
 
     <div v-if="!loading" class="flexbox custom-mb-16">
-      <div v-if="checkedRows.length" class="wide">
-        <button class="button red">Удалить</button>
+      <div v-if="checkedRows.length" class="flexbox space-1rem middle wide">
+        <button @click="openMove = true" class="yellow red"><i class="fas fa-arrow-right"></i> {{ $t('move') }} {{ checkedRows.length }}</button>
+        <button @click="bulkDelete" class="button red"><i class="fas fa-trash-alt"></i> {{ $t('delete') }} {{ checkedRows.length }}</button>
+        <button @click="checkedRows = []" class="button nobutton smaller">{{ $t('unselectAll') }}</button>
       </div>
 
       <div
         v-if="!checkedRows.length && $helper.isDesktopEnv"
-        class="flexbox space-1rem wide"
+        class="flexbox space-1rem middle wide"
       >
         <div v-if="currentType.type !== 'expense'">
           <button @click="addTransaction('income')" class="button green">
@@ -90,6 +92,10 @@
     <Modal v-if="open" @close="open = false">
       <AddTransaction :defaultCategoryType="categoryType" />
     </Modal>
+
+    <Modal v-if="openMove" @close="openMove = false">
+      <TransactionMove :ids="checkedRows" @success="checkedRows = []" />
+    </Modal>
   </div>
 </template>
 
@@ -99,12 +105,14 @@ import TransactionListRow from '@/components/TransactionListRow'
 import Modal from '@/components/Modal'
 import NumPages from '@/components/NumPages'
 import AddTransaction from '@/components/AddTransaction'
+import TransactionMove from '@/components/TransactionMove'
 
 export default {
   data () {
     return {
       open: false,
       categoryType: '',
+      openMove: false,
       checkedRows: []
     }
   },
@@ -113,7 +121,8 @@ export default {
     TransactionListRow,
     Modal,
     NumPages,
-    AddTransaction
+    AddTransaction,
+    TransactionMove
   },
 
   computed: {
@@ -139,6 +148,16 @@ export default {
         this.checkedRows.splice(index, 1)
       } else {
         this.checkedRows.push(id)
+      }
+    },
+
+    bulkDelete () {
+      if (confirm(this.$t('bulkDeleteWarning'))) {
+        this.$store.dispatch('transaction/bulkDelete', this.checkedRows)
+          .then(() => {
+            this.checkedRows = []
+          })
+          .catch(() => {})
       }
     }
   }

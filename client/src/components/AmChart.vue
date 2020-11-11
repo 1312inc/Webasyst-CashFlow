@@ -59,7 +59,7 @@ export default {
     // Date axis
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
     dateAxis.groupData = true
-    dateAxis.groupCount = 180
+    dateAxis.groupCount = 1000
     dateAxis.groupIntervals.setAll([
       { timeUnit: 'day', count: 1 },
       { timeUnit: 'month', count: 1 }
@@ -67,6 +67,7 @@ export default {
     dateAxis.renderer.minGridDistance = 60
     dateAxis.renderer.grid.template.location = 0
     dateAxis.renderer.grid.template.disabled = true
+    dateAxis.snapTooltip = false
 
     // Cols axis
     this.colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
