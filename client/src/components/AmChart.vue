@@ -58,13 +58,13 @@ export default {
 
     // Date axis
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
-    // dateAxis.groupData = true
-    // dateAxis.groupCount = 1000
-    // dateAxis.groupIntervals.setAll([
-    //   { timeUnit: 'day', count: 1 },
-    //   { timeUnit: 'month', count: 1 }
-    // ])
-    // dateAxis.renderer.minGridDistance = 60
+    dateAxis.groupData = true
+    dateAxis.groupCount = 1000
+    dateAxis.groupIntervals.setAll([
+      { timeUnit: 'day', count: 1 },
+      { timeUnit: 'month', count: 1 }
+    ])
+    dateAxis.baseInterval = { timeUnit: 'day', count: 1 }
     dateAxis.renderer.grid.template.location = 0
     dateAxis.renderer.grid.template.disabled = true
     dateAxis.snapTooltip = false
@@ -87,7 +87,13 @@ export default {
     chart.cursor.lineX.fill = am4core.color('#000')
     chart.cursor.lineX.fillOpacity = 0.1
     chart.cursor.lineY.strokeOpacity = 0
-    chart.cursor.behavior = 'none'
+    chart.cursor.events.on('zoomended', (event) => {
+      if (event.target.behavior === 'none') return
+      const range = event.target.xRange
+      const from = this.$moment(dateAxis.positionToDate(range.start)).format('YYYY-MM-DD')
+      const to = this.$moment(dateAxis.positionToDate(range.end)).format('YYYY-MM-DD')
+      this.setDetailsInterval({ from, to })
+    })
 
     // Currend day line
     const dateBorder = dateAxis.axisRanges.create()
@@ -159,7 +165,7 @@ export default {
       },
       state: function (target, stateId) {
         if (target instanceof am4charts.Chart) {
-          var state = target.states.create(stateId)
+          const state = target.states.create(stateId)
           state.properties.paddingTop = 5
           state.properties.paddingRight = 0
           state.properties.paddingBottom = 0
@@ -167,13 +173,19 @@ export default {
           return state
         }
 
-        if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
-          // eslint-disable-next-line no-redeclare
+        if (target instanceof am4charts.XYCursor) {
           var state = target.states.create(stateId)
-          state.properties.inside = true
-          state.properties.maxLabelPosition = 0.99
+          state.properties.behavior = 'none'
           return state
         }
+
+        // if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
+        //   // eslint-disable-next-line no-redeclare
+        //   var state = target.states.create(stateId)
+        //   state.properties.inside = true
+        //   state.properties.maxLabelPosition = 0.99
+        //   return state
+        // }
         return null
       }
     })
