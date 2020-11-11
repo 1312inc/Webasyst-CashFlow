@@ -13,6 +13,7 @@
   "or": "or",
   "cancel": "Cancel",
   "delete": "Delete",
+  "move": "Move",
   "name": "Name",
   "currency": "Currency",
   "type": "Type",
@@ -74,5 +75,12 @@
   "import": "Import",
   "emptyList": "Transaction list is empty",
   "deleteWarning": "DANGER: This will permanently delete the entire {type} and ALL TRANSACTIONS without the ability to restore. Are you sure?",
-  "offlineMessage": "No Internet Connection"
+  "offlineMessage": "No Internet Connection",
+  "bulkDeleteWarning": "Please be sure to select the right account and the right category type applicable to all selected transactions to avoid wrong currency conversion effects.",
+  "moveTransactions": "Move {count} transactions",
+  "updateTransactions": "Update {count} transactions",
+  "bulkMoveWarning": "Please be sure to select the right account and the right category type applicable to all selected transactions to avoid wrong currency conversion effects.",
+  "dontChange": "Don’t change",
+  "noCategory": "No category",
+  "unselectAll": "Unselect all"
 }
