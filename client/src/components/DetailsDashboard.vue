@@ -90,7 +90,9 @@ export default {
           this.subscribeToQueryParams()
         } else {
           this.data = []
-          this.unsubscribeQuery()
+          if (this.unsubscribeQuery) {
+            this.unsubscribeQuery()
+          }
         }
       }
     })
