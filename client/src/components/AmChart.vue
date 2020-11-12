@@ -59,7 +59,7 @@ export default {
     // Date axis
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
     dateAxis.groupData = true
-    dateAxis.groupCount = 1000
+    dateAxis.groupCount = 360
     dateAxis.groupIntervals.setAll([
       { timeUnit: 'day', count: 1 },
       { timeUnit: 'month', count: 1 }
@@ -67,7 +67,7 @@ export default {
     dateAxis.baseInterval = { timeUnit: 'day', count: 1 }
     dateAxis.renderer.grid.template.location = 0
     dateAxis.renderer.grid.template.disabled = true
-    dateAxis.snapTooltip = false
+    // dateAxis.snapTooltip = false
 
     // Cols axis
     this.colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
@@ -310,16 +310,17 @@ export default {
     },
 
     attacheTooltip (series) {
-      series.adapter.add('tooltipHTML', () => {
+      series.adapter.add('tooltipHTML', (t, target) => {
+        const isGrouped = !!target.tooltipDataItem.groupDataItems
+        const dateFormat = isGrouped ? 'MMM yyyy' : 'd MMMM yyyy'
         let text = '<div>'
-        text += '<div class="custom-my-4"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
-        let timeUnit
-        this.chart.series.each((item, i) => {
+        text += '<div class="custom-my-4"><strong>{dateX.formatDate(\'' + dateFormat + '\')}</strong></div>'
+
+        this.chart.series.each((item) => {
           text += `<div class="custom-mb-2"><span style="color: ${item.stroke.hex}">●</span> ${item.name}: ${this.$numeral(item.tooltipDataItem.valueY).format()} ${this.currency}</div>`
-          if (i === 2) {
-            timeUnit = item.tooltipDataItem.groupDataItems ? 'month' : 'day'
-          }
         })
+
+        const timeUnit = isGrouped ? 'month' : 'day'
 
         text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + timeUnit + '\')" class="button small custom-my-8">' + this.$t('details') + '</button>'
         text += '</div>'
