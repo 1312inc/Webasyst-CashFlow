@@ -152,32 +152,32 @@ export default {
    * ========================================================
    */
 
-    chart.responsive.useDefault = false
     chart.responsive.enabled = true
 
     chart.responsive.rules.push({
-      relevant: function (target) {
+      relevant: (target) => {
         if (target.pixelWidth <= 400) {
+          if (target.cursor.behavior !== 'none') target.cursor.behavior = 'none'
           return true
         }
-
+        if (target.cursor.behavior === 'none') target.cursor.behavior = 'zoomX'
         return false
       },
-      state: function (target, stateId) {
+      state: (target, stateId) => {
         if (target instanceof am4charts.Chart) {
           const state = target.states.create(stateId)
-          state.properties.paddingTop = 5
+          state.properties.paddingTop = 0
           state.properties.paddingRight = 0
           state.properties.paddingBottom = 0
           state.properties.paddingLeft = 0
           return state
         }
 
-        if (target instanceof am4charts.XYCursor) {
-          var state = target.states.create(stateId)
-          state.properties.behavior = 'none'
-          return state
-        }
+        // if (target instanceof am4charts.XYCursor) {
+        //   var state = target.states.create(stateId)
+        //   state.properties.behavior = 'none'
+        //   return state
+        // }
 
         // if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
         //   // eslint-disable-next-line no-redeclare
