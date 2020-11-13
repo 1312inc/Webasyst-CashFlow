@@ -14,31 +14,31 @@
           </div>
         </div>
 
-        <div v-for="currency in data" :key="currency.currency" class="flexbox fixed">
-          <div v-if="currency.income.data.length">
-            <div class="flexbox middle">
-              <div class="custom-mr-8">{{ $t('income') }}:</div>
-              <div class="larger">
-                {{ $numeral(currency.income.totalAmount).format() }}
+        <div v-for="currency in data" :key="currency.currency" class="flexbox">
+          <div v-if="currency.income.data.length" class="tw-w-2/5">
+            <div class="">
+              <div class="smaller tw-uppercase">{{ $t('income') }}</div>
+              <div class="larger tw-text-green-500">
+                {{ $numeral(currency.income.totalAmount).format() }} {{ getCurrencySignByCode(currency.currency) }}
               </div>
             </div>
             <ChartPie :data="currency.income.data" />
           </div>
 
-          <div v-if="currency.expense.data.length">
-            <div class="flexbox middle">
-              <div class="custom-mr-8">{{ $t('expense') }}:</div>
-              <div class="larger">
-                {{ $numeral(currency.expense.totalAmount).format() }}
+          <div v-if="currency.expense.data.length" class="tw-w-2/5">
+            <div class="">
+              <div class="smaller tw-uppercase">{{ $t('expense') }}</div>
+              <div class="larger tw-text-red-500">
+                {{ $numeral(currency.expense.totalAmount).format() }} {{ getCurrencySignByCode(currency.currency) }}
               </div>
             </div>
             <ChartPie :data="currency.expense.data" />
           </div>
 
           <div v-if="currency.income.data.length && currency.expense.data.length">
-            <div class="text-xl mb-6">{{ $t('balance') }}</div>
+            <div class="smaller tw-uppercase">{{ $t('balance') }}</div>
             <div class="larger">
-              {{ $numeral(currency.income.totalAmount - currency.expense.totalAmount).format() }}
+              {{ $numeral(currency.income.totalAmount - currency.expense.totalAmount).format() }} {{ getCurrencySignByCode(currency.currency) }}
             </div>
           </div>
         </div>
@@ -48,7 +48,7 @@
 
 <script>
 import api from '@/plugins/api'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import ChartPie from '@/components/AmChartPie'
 
 export default {
@@ -64,6 +64,7 @@ export default {
 
   computed: {
     ...mapState('transaction', ['queryParams', 'detailsInterval']),
+    ...mapGetters('system', ['getCurrencySignByCode']),
 
     dates () {
       return this.detailsInterval.from !== this.detailsInterval.to
