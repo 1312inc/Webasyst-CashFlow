@@ -22,7 +22,7 @@ final class cashAggregateGetBalanceFlowMethod extends cashApiAbstractMethod
         $request->to = DateTimeImmutable::createFromFormat('Y-m-d|', $request->to);
 
         if ($request->group_by === cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY
-            && $request->from->diff($request->to)->days > 1000
+            && $request->from->diff($request->to)->days > self::MAX_DAYS
         ) {
             return new cashApiErrorResponse(
                 sprintf_wp(

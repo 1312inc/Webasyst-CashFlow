@@ -22,7 +22,7 @@ class cashAggregateGetChartDataMethod extends cashApiAbstractMethod
         $request->from = DateTimeImmutable::createFromFormat('Y-m-d|', $request->from);
 
         if ($request->group_by === cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY
-            && $request->from->diff($request->to)->days > 1000
+            && $request->from->diff($request->to)->days > self::MAX_DAYS
         ) {
             return new cashApiErrorResponse(
                 sprintf_wp(
