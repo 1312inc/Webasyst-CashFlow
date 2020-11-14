@@ -39,7 +39,9 @@ export default {
 
     // Add Legend
     chart.legend = new am4charts.Legend()
-    chart.legend.position = 'bottom'
+    chart.legend.position = 'right'
+    chart.legend.valign = 'top'
+    chart.legend.maxWidth = 160
 
     this.chart = chart
 
@@ -60,6 +62,6 @@ export default {
 
 <style>
 .chart {
-    height: 600px;
+    height: 240px;
 }
 </style>
