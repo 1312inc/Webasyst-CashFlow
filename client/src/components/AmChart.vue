@@ -59,7 +59,7 @@ export default {
     // Date axis
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
     dateAxis.groupData = true
-    dateAxis.groupCount = 1000
+    dateAxis.groupCount = 360
     dateAxis.groupIntervals.setAll([
       { timeUnit: 'day', count: 1 },
       { timeUnit: 'month', count: 1 }
@@ -67,7 +67,7 @@ export default {
     dateAxis.baseInterval = { timeUnit: 'day', count: 1 }
     dateAxis.renderer.grid.template.location = 0
     dateAxis.renderer.grid.template.disabled = true
-    dateAxis.snapTooltip = false
+    // dateAxis.snapTooltip = false
 
     // Cols axis
     this.colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
@@ -152,32 +152,32 @@ export default {
    * ========================================================
    */
 
-    chart.responsive.useDefault = false
     chart.responsive.enabled = true
 
     chart.responsive.rules.push({
-      relevant: function (target) {
+      relevant: (target) => {
         if (target.pixelWidth <= 400) {
+          if (target.cursor.behavior !== 'none') target.cursor.behavior = 'none'
           return true
         }
-
+        if (target.cursor.behavior === 'none') target.cursor.behavior = 'zoomX'
         return false
       },
-      state: function (target, stateId) {
+      state: (target, stateId) => {
         if (target instanceof am4charts.Chart) {
           const state = target.states.create(stateId)
-          state.properties.paddingTop = 5
+          state.properties.paddingTop = 0
           state.properties.paddingRight = 0
           state.properties.paddingBottom = 0
           state.properties.paddingLeft = 0
           return state
         }
 
-        if (target instanceof am4charts.XYCursor) {
-          var state = target.states.create(stateId)
-          state.properties.behavior = 'none'
-          return state
-        }
+        // if (target instanceof am4charts.XYCursor) {
+        //   var state = target.states.create(stateId)
+        //   state.properties.behavior = 'none'
+        //   return state
+        // }
 
         // if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
         //   // eslint-disable-next-line no-redeclare
@@ -230,7 +230,27 @@ export default {
         this.colsAxis.height = am4core.percent(100)
       }
 
-      this.chart.data = this.activeChartData.data
+      const istart = this.$moment(this.$store.state.transaction.queryParams.from)
+      const iend = this.$moment(this.$store.state.transaction.queryParams.to)
+      const daysInInterval = iend.diff(istart, 'days') + 1
+
+      const filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
+        return {
+          period: this.$moment(this.$store.state.transaction.queryParams.from).add(i, 'd').format('YYYY-MM-DD'),
+          amountIncome: null,
+          amountExpense: null,
+          balance: null
+        }
+      })
+
+      this.activeChartData.data.forEach(element => {
+        const i = filledChartData.findIndex(e => e.period === element.period)
+        if (i > -1) {
+          filledChartData.splice(i, 1, element)
+        }
+      })
+
+      this.chart.data = filledChartData
       this.chart.xAxes.values[0].min = (new Date(this.$store.state.transaction.queryParams.from)).getTime()
       this.chart.xAxes.values[0].max = (new Date(this.$store.state.transaction.queryParams.to)).getTime()
     },
@@ -310,16 +330,17 @@ export default {
     },
 
     attacheTooltip (series) {
-      series.adapter.add('tooltipHTML', () => {
+      series.adapter.add('tooltipHTML', (t, target) => {
+        const isGrouped = !!target.tooltipDataItem.groupDataItems
+        const dateFormat = isGrouped ? 'MMM yyyy' : 'd MMMM yyyy'
         let text = '<div>'
-        text += '<div class="custom-my-4"><strong>{dateX.formatDate(\'d MMMM yyyy\')}</strong></div>'
-        let timeUnit
-        this.chart.series.each((item, i) => {
+        text += '<div class="custom-my-4"><strong>{dateX.formatDate(\'' + dateFormat + '\')}</strong></div>'
+
+        this.chart.series.each((item) => {
           text += `<div class="custom-mb-2"><span style="color: ${item.stroke.hex}">●</span> ${item.name}: ${this.$numeral(item.tooltipDataItem.valueY).format()} ${this.currency}</div>`
-          if (i === 2) {
-            timeUnit = item.tooltipDataItem.groupDataItems ? 'month' : 'day'
-          }
         })
+
+        const timeUnit = isGrouped ? 'month' : 'day'
 
         text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + timeUnit + '\')" class="button small custom-my-8">' + this.$t('details') + '</button>'
         text += '</div>'
