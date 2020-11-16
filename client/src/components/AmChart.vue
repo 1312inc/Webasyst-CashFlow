@@ -30,18 +30,6 @@ export default {
       return Array.isArray(this.chartData) ? this.chartData[0] : { data: [] }
     },
 
-    showIncome () {
-      return !!this.activeChartData.data[0]?.amountIncome
-    },
-
-    showExpense () {
-      return !!this.activeChartData.data[0]?.amountExpense
-    },
-
-    showBalance () {
-      return !!this.activeChartData.data[0]?.balance
-    },
-
     currency () {
       return this.$store.getters['system/getCurrencySignByCode'](this.activeChartData.currency)
     }
@@ -231,9 +219,9 @@ export default {
         if (i > -1) this.chart.yAxes.removeIndex(i).dispose()
       }
 
-      if (this.showIncome) this.addIncomeSeries()
-      if (this.showExpense) this.addExpenseSeries()
-      if (this.showBalance) {
+      if (this.showSeries('amountIncome')) this.addIncomeSeries()
+      if (this.showSeries('amountExpense')) this.addExpenseSeries()
+      if (this.showSeries('balance')) {
         this.colsAxis.height = am4core.percent(65)
         this.addBalanceSeries()
       } else {
@@ -412,6 +400,11 @@ export default {
       series.tooltip.background.cornerRadius = 3
       series.tooltip.label.interactionsEnabled = true
       series.tooltip.pointerOrientation = 'vertical'
+    },
+
+    showSeries (series) {
+      return this.activeChartData.data.length &&
+        this.activeChartData.data[0][series] !== null
     }
 
   }
