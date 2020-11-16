@@ -462,7 +462,7 @@ class cashGraphService
      * @param cashGraphColumnsDataDto $graphData
      * @param array                   $data
      */
-    private function fillGraphColumnsWithData(cashGraphColumnsDataDto $graphData, array $data)
+    private function fillGraphColumnsWithData(cashGraphColumnsDataDto $graphData, array $data): void
     {
         foreach ($data as $date => $dateData) {
             foreach ($dateData as $dateDatum) {
@@ -635,6 +635,7 @@ class cashGraphService
                 $data[$i]['balance'] = (float) $data[$i]['incomeAmount']
                     + (float) $data[$i]['expenseAmount']
                     + $initialBalance;
+                $initialBalance = $data[$i]['balance'];
             }
         }
 
@@ -726,15 +727,19 @@ class cashGraphService
         $data = $sqlParts->query()->fetchAll('currency', 2);
         foreach ($data as $currency => &$currencyData) {
             $currencyData = array_map(
-                static function ($datum) use ($currency, $initialBalance) {
-                    $datum['amount'] = (float) $datum['amount'] + ($initialBalance[$currency] ?? 0);
+                static function ($datum) use ($currency, &$initialBalance) {
+                    if (!isset($initialBalance[$currency])) {
+                        $initialBalance[$currency] = 0;
+                    }
+                    $datum['amount'] = (float) $datum['amount'] + $initialBalance[$currency];
+                    $initialBalance[$currency] = (float) $datum['amount'];
 
                     return $datum;
                 },
                 $currencyData
             );
         }
-        unset($currencyData);
+        unset($currencyData, $initialBalance);
 
         return $data;
     }
@@ -746,17 +751,18 @@ class cashGraphService
      * @return array
      * @throws waException
      */
-    public function getInitialBalanceOnDate(cashAggregateChartDataFilterParamsDto $paramsDto, DateTimeImmutable $date): array
-    {
+    public function getInitialBalanceOnDate(
+        cashAggregateChartDataFilterParamsDto $paramsDto,
+        DateTimeImmutable $date
+    ): array {
         $initialBalanceSql = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
             ->select(['ca.currency currency, sum(ct.amount) balance'])
             ->from('cash_transaction', 'ct')
             ->andWhere(
                 [
-                    'ct.date < s:from',
-                    'account_access' => cash()->getContactRights()->getSqlForAccountJoinWithFullAccess(
-                        $paramsDto->contact
-                    ),
+                    'ct.date <= s:from',
+                    'account_access' => cash()->getContactRights()
+                        ->getSqlForAccountJoinWithFullAccess($paramsDto->contact),
 //                    'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
 //                        $paramsDto->contact,
 //                        'ct',
@@ -775,7 +781,29 @@ class cashGraphService
             ->addParam('from', $date->format('Y-m-d H:i:s'))
             ->groupBy(['ca.currency']);
 
-        return array_map('floatval', $initialBalanceSql->query()->fetchAll('currency', 1));
+        switch (true) {
+            case null !== $paramsDto->filter->getAccountId():
+                $initialBalanceSql->addAndWhere('ct.account_id = i:account_id')
+                    ->addParam('account_id', $paramsDto->filter->getAccountId());
+
+                break;
+
+            case null !== $paramsDto->filter->getCurrency():
+                $initialBalanceSql->addAndWhere('ca.currency = s:currency')
+                    ->addParam('currency', $paramsDto->filter->getCurrency());
+
+                break;
+
+            case null !== $paramsDto->filter->getCategoryId():
+            case null !== $paramsDto->filter->getContractorId():
+                $initialBalanceSql->addAndWhere('0');
+
+                break;
+        }
+
+        $data = $initialBalanceSql->query()->fetchAll('currency', 1);
+
+        return array_map('floatval', $data);
     }
 
     /**
@@ -820,12 +848,14 @@ class cashGraphService
         }
 
         $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
-            ->select([
-                "if(ct.amount < 0, 'expense', 'income') `type`",
-                'ca.currency currency',
-                "{$detailing} detailed",
-                'sum(ct.amount) amount',
-            ])
+            ->select(
+                [
+                    "if(ct.amount < 0, 'expense', 'income') `type`",
+                    'ca.currency currency',
+                    "{$detailing} detailed",
+                    'sum(ct.amount) amount',
+                ]
+            )
             ->from('cash_transaction', 'ct')
             ->andWhere(
                 [
