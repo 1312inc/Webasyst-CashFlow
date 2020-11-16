@@ -230,25 +230,29 @@ export default {
         this.colsAxis.height = am4core.percent(100)
       }
 
-      const istart = this.$moment(this.$store.state.transaction.queryParams.from)
-      const iend = this.$moment(this.$store.state.transaction.queryParams.to)
-      const daysInInterval = iend.diff(istart, 'days') + 1
+      let filledChartData = []
 
-      const filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
-        return {
-          period: this.$moment(this.$store.state.transaction.queryParams.from).add(i, 'd').format('YYYY-MM-DD'),
-          amountIncome: null,
-          amountExpense: null,
-          balance: null
-        }
-      })
+      if (this.activeChartData.data.length) {
+        const istart = this.$moment(this.$store.state.transaction.queryParams.from)
+        const iend = this.$moment(this.$store.state.transaction.queryParams.to)
+        const daysInInterval = iend.diff(istart, 'days') + 1
 
-      this.activeChartData.data.forEach(element => {
-        const i = filledChartData.findIndex(e => e.period === element.period)
-        if (i > -1) {
-          filledChartData.splice(i, 1, element)
-        }
-      })
+        filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
+          return {
+            period: this.$moment(this.$store.state.transaction.queryParams.from).add(i, 'd').format('YYYY-MM-DD'),
+            amountIncome: null,
+            amountExpense: null,
+            balance: null
+          }
+        })
+
+        this.activeChartData.data.forEach(element => {
+          const i = filledChartData.findIndex(e => e.period === element.period)
+          if (i > -1) {
+            filledChartData.splice(i, 1, element)
+          }
+        })
+      }
 
       this.chart.data = filledChartData
       this.chart.xAxes.values[0].min = (new Date(this.$store.state.transaction.queryParams.from)).getTime()
