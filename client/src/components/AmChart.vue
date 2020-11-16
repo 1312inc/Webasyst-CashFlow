@@ -247,6 +247,7 @@ export default {
         const iend = this.$moment(this.$store.state.transaction.queryParams.to)
         const daysInInterval = iend.diff(istart, 'days') + 1
 
+        // Filling empty data
         filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
           return {
             period: this.$moment(this.$store.state.transaction.queryParams.from).add(i, 'd').format('YYYY-MM-DD'),
@@ -256,11 +257,24 @@ export default {
           }
         })
 
+        // Merge empty period with days with data
         this.activeChartData.data.forEach(element => {
           const i = filledChartData.findIndex(e => e.period === element.period)
           if (i > -1) {
             filledChartData.splice(i, 1, element)
           }
+        })
+
+        // Filling daily balance
+        let previosValue = null
+        filledChartData.map(e => {
+          if (e.balance !== null) {
+            previosValue = e.balance
+          }
+          if (e.balance === null) {
+            e.balance = previosValue
+          }
+          return e
         })
       }
 
