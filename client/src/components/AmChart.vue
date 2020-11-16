@@ -16,7 +16,10 @@ import { locale } from '@/plugins/locale'
 import { mapState, mapMutations } from 'vuex'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
+import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
+
+am4core.useTheme(am4themesAnimated)
 
 export default {
 
@@ -56,22 +59,29 @@ export default {
 
     chart.leftAxesContainer.layout = 'vertical'
 
-    // Date axis
-    const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
-    dateAxis.groupData = true
-    dateAxis.groupCount = 360
-    dateAxis.groupIntervals.setAll([
+    // Date axis for days
+    this.dateAxis2 = chart.xAxes.push(new am4charts.DateAxis())
+    this.dateAxis2.baseInterval = { timeUnit: 'day', count: 1 }
+    this.dateAxis2.renderer.grid.template.location = 0
+    this.dateAxis2.renderer.grid.template.disabled = true
+
+    // Date axis for groups
+    this.dateAxis = chart.xAxes.push(new am4charts.DateAxis())
+    this.dateAxis.groupData = true
+    this.dateAxis.groupCount = 360
+    this.dateAxis.groupIntervals.setAll([
       { timeUnit: 'day', count: 1 },
       { timeUnit: 'month', count: 1 }
     ])
-    dateAxis.baseInterval = { timeUnit: 'day', count: 1 }
-    dateAxis.renderer.grid.template.location = 0
-    dateAxis.renderer.grid.template.disabled = true
-    // dateAxis.snapTooltip = false
+    this.dateAxis.cursorTooltipEnabled = false
+    this.dateAxis.renderer.grid.template.location = 0
+    this.dateAxis.renderer.grid.template.disabled = true
+    this.dateAxis.renderer.labels.template.disabled = true
+    this.dateAxis.renderer.ticks.template.disabled = true
+    this.dateAxis.height = 0
 
     // Cols axis
     this.colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
-    this.colsAxis.cursorTooltipEnabled = false
     this.colsAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
     this.colsAxis.renderer.gridContainer.background.fillOpacity = 0.3
     this.colsAxis.renderer.grid.template.strokeOpacity = 0.06
@@ -81,22 +91,22 @@ export default {
 
     // Cursor
     chart.cursor = new am4charts.XYCursor()
-    chart.cursor.fullWidthLineX = true
-    chart.cursor.xAxis = dateAxis
-    chart.cursor.lineX.strokeOpacity = 0
-    chart.cursor.lineX.fill = am4core.color('#000')
-    chart.cursor.lineX.fillOpacity = 0.1
-    chart.cursor.lineY.strokeOpacity = 0
+    chart.cursor.xAxis = this.dateAxis2
+    // chart.cursor.fullWidthLineX = true
+    // chart.cursor.lineX.strokeOpacity = 0
+    // chart.cursor.lineX.fill = am4core.color('#000')
+    // chart.cursor.lineX.fillOpacity = 0.1
+    // chart.cursor.lineY.strokeOpacity = 0
     chart.cursor.events.on('zoomended', (event) => {
       if (event.target.behavior === 'none') return
       const range = event.target.xRange
-      const from = this.$moment(dateAxis.positionToDate(range.start)).format('YYYY-MM-DD')
-      const to = this.$moment(dateAxis.positionToDate(range.end)).format('YYYY-MM-DD')
+      const from = this.$moment(this.dateAxis2.positionToDate(range.start)).format('YYYY-MM-DD')
+      const to = this.$moment(this.dateAxis2.positionToDate(range.end)).format('YYYY-MM-DD')
       this.setDetailsInterval({ from, to })
     })
 
     // Currend day line
-    const dateBorder = dateAxis.axisRanges.create()
+    const dateBorder = this.dateAxis2.axisRanges.create()
     dateBorder.date = new Date()
     dateBorder.grid.stroke = am4core.color('#333333')
     dateBorder.grid.strokeWidth = 1
@@ -110,7 +120,7 @@ export default {
     dateBorder.label.dx = -10
 
     // Future dates hover
-    const rangeFututre = dateAxis.axisRanges.create()
+    const rangeFututre = this.dateAxis2.axisRanges.create()
     rangeFututre.date = new Date()
     rangeFututre.endDate = new Date(2100, 0, 3)
     rangeFututre.grid.disabled = true
@@ -125,8 +135,8 @@ export default {
     chart.scrollbarX.stroke = am4core.color('#f3f3f3')
 
     const dateAxisChanged = () => {
-      const from = this.$moment(dateAxis.minZoomed).format('YYYY-MM-DD')
-      const to = this.$moment(dateAxis.maxZoomed).format('YYYY-MM-DD')
+      const from = this.$moment(this.dateAxis2.minZoomed).format('YYYY-MM-DD')
+      const to = this.$moment(this.dateAxis2.maxZoomed).format('YYYY-MM-DD')
       this.setDetailsInterval({ from, to })
     }
 
@@ -141,7 +151,7 @@ export default {
     this.unsubscribe = this.$store.subscribe((mutation) => {
       if (mutation.type === 'transaction/setDetailsInterval') {
         if (mutation.payload.from === '') {
-          dateAxis.zoom({ start: 0, end: 1 })
+          this.dateAxis2.zoom({ start: 0, end: 1 })
         }
       }
     })
@@ -262,7 +272,13 @@ export default {
     addIncomeSeries () {
       this.incomeSeries = this.chart.series.push(new am4charts.ColumnSeries())
       this.incomeSeries.name = this.$t('income')
+      this.incomeSeries.tooltip.background.filters.clear()
+      this.incomeSeries.tooltip.background.strokeWidth = 1
+      this.incomeSeries.tooltip.background.stroke = am4core.color('#000')
+      this.incomeSeries.tooltip.background.strokeOpacity = 0.2
+      this.incomeSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
       this.incomeSeries.yAxis = this.colsAxis
+      this.incomeSeries.xAxis = this.dateAxis
       this.incomeSeries.dataFields.valueY = 'amountIncome'
       this.incomeSeries.dataFields.dateX = 'period'
       this.incomeSeries.groupFields.valueY = 'sum'
@@ -272,13 +288,25 @@ export default {
       this.incomeSeries.columns.template.fillOpacity = 0.5
       this.incomeSeries.defaultState.transitionDuration = 0
 
-      if (!this.showBalance) this.attacheTooltip(this.incomeSeries)
+      this.incomeSeries.adapter.add('tooltipText', (t, target) => {
+        const isGrouped = !!target.tooltipDataItem.groupDataItems
+        const dateFormat = isGrouped ? 'MMM yyyy' : 'd MMMM yyyy'
+        return `{dateX.formatDate('${dateFormat}')}\n{name}: {valueY.value} ${this.currency}`
+      })
+
+      // if (!this.showBalance) this.attacheTooltip(this.incomeSeries)
     },
 
     addExpenseSeries () {
       this.expenseSeries = this.chart.series.push(new am4charts.ColumnSeries())
       this.expenseSeries.name = this.$t('expense')
+      this.expenseSeries.tooltip.background.filters.clear()
+      this.expenseSeries.tooltip.background.strokeWidth = 1
+      this.expenseSeries.tooltip.background.stroke = am4core.color('#000')
+      this.expenseSeries.tooltip.background.strokeOpacity = 0.2
+      this.expenseSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
       this.expenseSeries.yAxis = this.colsAxis
+      this.expenseSeries.xAxis = this.dateAxis
       this.expenseSeries.dataFields.valueY = 'amountExpense'
       this.expenseSeries.dataFields.dateX = 'period'
       this.expenseSeries.groupFields.valueY = 'sum'
@@ -288,14 +316,26 @@ export default {
       this.expenseSeries.columns.template.fillOpacity = 0.5
       this.expenseSeries.defaultState.transitionDuration = 0
 
-      if (!this.showBalance) this.attacheTooltip(this.expenseSeries)
+      this.expenseSeries.adapter.add('tooltipText', (t, target) => {
+        const isGrouped = !!target.tooltipDataItem.groupDataItems
+        const dateFormat = isGrouped ? 'MMM yyyy' : 'd MMMM yyyy'
+        return `{dateX.formatDate('${dateFormat}')}\n{name}: {valueY.value} ${this.currency}`
+      })
+
+      // if (!this.showBalance) this.attacheTooltip(this.expenseSeries)
     },
 
     addBalanceSeries () {
       this.addBalanceAxis().events.on('ready', () => {
         this.balanceSeries = this.chart.series.push(new am4charts.LineSeries())
         this.balanceSeries.name = this.$t('balance')
+        this.balanceSeries.tooltip.background.filters.clear()
+        this.balanceSeries.tooltip.background.strokeWidth = 0
+        this.balanceSeries.tooltip.getFillFromObject = false
+        this.balanceSeries.tooltip.background.fill = am4core.color('#333')
+        this.balanceSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
         this.balanceSeries.yAxis = this.balanceAxis
+        this.balanceSeries.xAxis = this.dateAxis2
         this.balanceSeries.dataFields.valueY = 'balance'
         this.balanceSeries.dataFields.dateX = 'period'
         this.balanceSeries.groupFields.valueY = 'sum'
@@ -304,7 +344,7 @@ export default {
         this.balanceSeries.strokeOpacity = 0.8
         this.balanceSeries.defaultState.transitionDuration = 0
 
-        this.attacheTooltip(this.balanceSeries)
+        // this.attacheTooltip(this.balanceSeries)
 
         // Create a range to change stroke for values below 0
         const range = this.balanceAxis.createSeriesRange(this.balanceSeries)
@@ -317,7 +357,6 @@ export default {
 
     addBalanceAxis () {
       this.balanceAxis = this.chart.yAxes.push(new am4charts.ValueAxis())
-      this.balanceAxis.cursorTooltipEnabled = false
       this.balanceAxis.height = am4core.percent(35)
       this.balanceAxis.marginBottom = 30
       this.balanceAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
