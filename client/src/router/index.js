@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
 import Home from '../views/Home.vue'
+import Transactions from '../views/Transactions.vue'
+import Reports from '../views/Reports.vue'
 
 Vue.use(VueRouter)
 
@@ -25,6 +27,16 @@ const routes = [
     path: '/currency/:id',
     name: 'Currency',
     component: Home
+  },
+  {
+    path: '/transactions',
+    name: 'Transactions',
+    component: Transactions
+  },
+  {
+    path: '/reports',
+    name: 'Reports',
+    component: Reports
   }
 ]
 
