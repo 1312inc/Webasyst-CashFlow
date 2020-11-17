@@ -5,7 +5,7 @@
     </div>
     <div class="content blank" style="overflow:hidden;">
       <div class="box contentbox">
-        <router-view />
+        <router-view v-if="showView" />
       </div>
     </div>
     <Modal v-if="open" @close="close">
@@ -28,6 +28,7 @@ export default {
 
   data () {
     return {
+      showView: false,
       open: false,
       currentComponentInModal: '',
       item: null
@@ -36,39 +37,11 @@ export default {
 
   async created () {
     await this.$store.dispatch('system/getCurrencies')
-
     await Promise.all([
       this.$store.dispatch('account/getList'),
       this.$store.dispatch('category/getList')
     ])
-
-    const from = this.getDate(
-      'from',
-      this.$moment().add(-1, 'Y').format('YYYY-MM-DD')
-    )
-
-    const to = this.getDate(
-      'to',
-      this.$moment().add(6, 'M').format('YYYY-MM-DD')
-    )
-
-    const filter = this.$store.state.transaction.queryParams.filter || `currency/${this.$store.getters['account/currenciesInAccounts'][0]}`
-
-    this.$store.subscribe((mutation) => {
-      if (mutation.type === 'transaction/updateQueryParams') {
-        this.$store.dispatch('transaction/getList')
-
-        const keys = Object.keys(mutation.payload)
-        const key = keys[0]
-        const changeOffset = keys.length === 1 && key === 'offset'
-
-        if (!changeOffset) {
-          this.$store.dispatch('transaction/getChartData')
-        }
-      }
-    })
-
-    this.$store.commit('transaction/updateQueryParams', { from, to, filter })
+    this.showView = true
   },
 
   methods: {
@@ -80,15 +53,6 @@ export default {
 
     close () {
       window.android.goBack()
-    },
-
-    getDate (type, defaultDate) {
-      let result = defaultDate
-      const lsValue = localStorage.getItem(`interval_${type}`)
-      if (lsValue) {
-        result = this.$store.state.intervals[type].find((e) => e.title === lsValue)?.value || defaultDate
-      }
-      return result
     }
   }
 }
