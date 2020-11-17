@@ -81,7 +81,10 @@ class cashReportDds
         /** @var cashReportDdsStatDto $datum */
         foreach ($data as $datum) {
             $id = $datum->entity->getId();
-            if (in_array($id, [self::ALL_INCOME_KEY, self::ALL_EXPENSE_KEY])) {
+            if (in_array(
+                $id,
+                [self::ALL_INCOME_KEY, self::ALL_EXPENSE_KEY, cashCategoryFactory::TRANSFER_CATEGORY_ID]
+            )) {
                 continue;
             }
 
