@@ -1,6 +1,13 @@
 <template>
-    <div class="chart-container">
-      <div id="chartdiv" class="smaller" :class="{'tw-opacity-0': loadingChart}"></div>
+    <div v-show="isShowChart" class="chart-container">
+      <div v-if="!loadingChart && isMultipleCurrencies" class="toggle">
+        <span @click="activeCurrencyChart = i" v-for="(currencyData, i) in chartData" :key="i" :class="{'selected': i === activeCurrencyChart}">
+          {{ currencyData.currency }}
+        </span>
+      </div>
+      <div>
+        <div ref="chartdiv" class="chart-main smaller" :class="{'tw-opacity-0': loadingChart}"></div>
+      </div>
       <!-- <transition name="fade-appear"> -->
         <div v-if="loadingChart" class="skeleton-container">
           <div class="skeleton">
@@ -23,11 +30,29 @@ am4core.useTheme(am4themesAnimated)
 
 export default {
 
+  data () {
+    return {
+      activeCurrencyChart: 0
+    }
+  },
+
   computed: {
     ...mapState('transaction', ['chartData', 'loadingChart']),
 
+    currentCategory () {
+      return this.$store.getters.getCurrentType
+    },
+
+    isShowChart () {
+      return this.chartData && this.currentCategory.id !== -1312
+    },
+
+    isMultipleCurrencies () {
+      return Array.isArray(this.chartData) && this.chartData.length > 1
+    },
+
     activeChartData () {
-      return Array.isArray(this.chartData) ? this.chartData[0] : { data: [] }
+      return Array.isArray(this.chartData) ? this.chartData[this.activeCurrencyChart] : { data: [] }
     },
 
     currency () {
@@ -36,13 +61,17 @@ export default {
   },
 
   watch: {
+    chartData () {
+      this.activeCurrencyChart = 0
+    },
+
     activeChartData () {
       this.renderChart()
     }
   },
 
   mounted () {
-    const chart = am4core.create('chartdiv', am4charts.XYChart)
+    const chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
     if (locale === 'ru_RU') chart.language.locale = am4langRU
 
     chart.leftAxesContainer.layout = 'vertical'
@@ -342,7 +371,7 @@ export default {
         this.balanceSeries.dataFields.dateX = 'period'
         this.balanceSeries.groupFields.valueY = 'sum'
         this.balanceSeries.stroke = am4core.color('#19ffa3')
-        this.balanceSeries.strokeWidth = 3
+        this.balanceSeries.strokeWidth = 2
         this.balanceSeries.strokeOpacity = 0.8
         this.balanceSeries.defaultState.transitionDuration = 0
 
@@ -351,9 +380,10 @@ export default {
         // Create a range to change stroke for values below 0
         const range = this.balanceAxis.createSeriesRange(this.balanceSeries)
         range.value = 0
-        range.endValue = -10000000
+        range.endValue = -100000000
         range.contents.stroke = am4core.color('#ff604a')
-        range.contents.strokeOpacity = 0.7
+        range.contents.fill = am4core.color('#ff604a')
+        range.contents.fillOpacity = 0.2
       })
     },
 
@@ -415,9 +445,7 @@ export default {
 <style lang="scss">
   .chart-container {
     position: relative;
-    height: 500px;
     margin-bottom: 1rem;
-    overflow: hidden;
 
     .skeleton-container {
       position: absolute;
@@ -437,16 +465,15 @@ export default {
       }
     }
 
-    @media (max-width: 768px) {
-      height: 400px !important;
+    .chart-main {
+      width: 100%;
+      height: 500px;
+
+      @media (max-width: 768px) {
+        height: 400px !important;
+      }
     }
+
   }
 
-  #chartdiv {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
 </style>
