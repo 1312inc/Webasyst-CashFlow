@@ -2,7 +2,10 @@
   <div>
     <div class="flexbox middle custom-mb-32">
       <div class="wide flexbox middle">
-        <h2 class="custom-mb-0">
+        <h2 v-if="defaultCategoryType === 'transfer'" class="custom-mb-0">
+          {{ $t("newTransfer") }}
+        </h2>
+        <h2 v-else class="custom-mb-0">
           {{ isModeUpdate ? $t("updateTransaction") : $t("addTransaction") }}
         </h2>
         <span v-if="isModeUpdate && transaction.repeating_id" class="tooltip custom-ml-8 large" :data-title="$t('repeatingTran')">
@@ -167,7 +170,7 @@
 
       <div class="field">
         <div class="name for-input">
-          {{ $t("account") }}
+          {{ defaultCategoryType === 'transfer' ? $t("fromAccount") : $t("account") }}
         </div>
         <div class="value">
           <div class="wa-select">
@@ -196,7 +199,52 @@
         </div>
       </div>
 
-      <div class="field">
+      <div v-if="defaultCategoryType === 'transfer'" class="field">
+        <div class="name for-input">
+          {{ $t("toAccount") }}
+        </div>
+        <div class="value">
+          <div class="wa-select">
+            <select
+              v-model="model.transfer_account_id"
+            >
+              <option
+                :value="account.id"
+                v-for="account in accounts"
+                :key="account.id"
+              >
+                {{ account.currency }} – {{ account.name }} ({{
+                  getCurrencySignByCode(account.currency)
+                }})
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="defaultCategoryType === 'transfer'" class="field">
+        <div class="name for-input">
+          {{ $t("incomingAmount") }}
+        </div>
+        <div class="value">
+          <div>
+            <input
+                v-model.number="model.transfer_incoming_amount"
+                type="text"
+            />
+            <span v-if="selectedAccountTransfer" class="custom-ml-8">{{
+              getCurrencySignByCode(selectedAccountTransfer.currency)
+            }}</span>
+          </div>
+          <span v-if="selectedAccount && selectedAccountTransfer && selectedAccount.currency !== selectedAccountTransfer.currency" class="smaller alert warning tw-mt-4 custom-mb-0">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ selectedAccount.currency }} → {{ selectedAccountTransfer.currency }}.
+            {{ $t("transferMessage") }}
+          </span>
+        </div>
+      </div>
+
+      <div v-if="defaultCategoryType !== 'transfer'" class="field">
         <div class="name for-input">
           {{ $t("category") }}
         </div>
@@ -224,7 +272,7 @@
         </div>
       </div>
 
-      <div class="field">
+      <div v-if="defaultCategoryType !== 'transfer'" class="field">
         <div class="name for-input">
           {{ $t("contractor") }}
         </div>
@@ -305,6 +353,7 @@ export default {
         repeating_end_after: null,
         repeating_end_ondate: '',
         transfer_account_id: null,
+        transfer_incoming_amount: null,
         apply_to_all_in_future: false
       },
       custom_interval: 'month'
@@ -357,6 +406,10 @@ export default {
       return this.getAccountById(this.model.account_id)
     },
 
+    selectedAccountTransfer () {
+      return this.getAccountById(this.model.transfer_account_id)
+    },
+
     selectedCategory () {
       return this.getCategoryById(this.model.category_id)
     },
@@ -378,6 +431,9 @@ export default {
         this.model[prop] = this.transaction[prop] || this.model[prop]
       }
       this.model.amount = Math.abs(this.model.amount)
+    }
+    if (this.defaultCategoryType === 'transfer') {
+      this.model.category_id = -1312
     }
   },
 

@@ -15,7 +15,7 @@
               {{ $numeral(currentCategory.stat.summary).format() }}
               {{ getCurrencySignByCode(currentCategory.currency) }}
             </div>
-            <div>
+            <div v-if="currentCategory.id >= 0">
               <button
                 @click="update(currentCategory)"
                 class="button nobutton smaller"
