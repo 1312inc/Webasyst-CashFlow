@@ -22,7 +22,7 @@
             <i class="fas fa-minus"></i> {{ $t("addExpense") }}
           </button>
         </div>
-        <div v-if="currentType.type !== 'expense' && currentType.type !== 'income'">
+        <div v-if="currentType.type !== 'expense' && currentType.type !== 'income' && $permissions.canAccessTransfers">
           <button @click="addTransaction('transfer')" class="nobutton">
             <i class="fas fa-arrow-right"></i> {{ $t("transfer") }}
           </button>

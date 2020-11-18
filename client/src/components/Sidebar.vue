@@ -2,7 +2,7 @@
   <div class="sidebar flexbox width-16rem tw-z-50">
     <div class="sidebar-header">
       <transition name="fade-appear">
-        <div v-if="accounts.length > 1" class="tw-mt-6">
+        <div v-if="accounts.length > 1" class="custom-mt-24">
           <div v-if="currenciesInAccounts.length > 1" class="tw-mx-4">
             <h5>{{ $t("cashOnHand") }}</h5>
           </div>
@@ -27,7 +27,7 @@
 
     <div class="sidebar-body">
       <transition name="fade-appear">
-        <div v-if="accounts.length" class="tw-mt-6">
+        <div v-if="accounts.length" class="custom-mt-24">
           <div class="tw-mx-4">
             <h5>{{ $t("accounts") }}</h5>
           </div>
@@ -81,7 +81,7 @@
       </transition>
 
       <transition name="fade-appear">
-        <div v-if="categories.length" class="tw-mt-6">
+        <div v-if="categories.length" class="custom-mt-24">
           <div class="tw-mx-4">
             <h5>{{ $t("categories") }}</h5>
           </div>
@@ -155,28 +155,30 @@
             </button>
           </div>
 
-          <h6 class="heading black">{{ $t("other") }}</h6>
+          <div v-if="$permissions.canAccessTransfers" class="custom-mt-24">
+            <h6 class="heading black">{{ $t("other") }}</h6>
 
-          <ul class="menu-v">
-            <li
-              v-for="category in categoriesTransfer"
-              :key="category.id"
-              :class="{ selected: isActive('Category', category.id) }"
-            >
-              <router-link
-                  :to="`/category/${category.id}`"
-                  class="flexbox middle"
-                >
-                <span class="icon"
-                    ><i
-                      class="rounded"
-                      :style="`background-color:${category.color};`"
-                    ></i
-                  ></span>
-                <span>{{ category.name }}</span>
-              </router-link>
-            </li>
-          </ul>
+            <ul class="menu-v">
+              <li
+                v-for="category in categoriesTransfer"
+                :key="category.id"
+                :class="{ selected: isActive('Category', category.id) }"
+              >
+                <router-link
+                    :to="`/category/${category.id}`"
+                    class="flexbox middle"
+                  >
+                  <span class="icon"
+                      ><i
+                        class="rounded"
+                        :style="`background-color:${category.color};`"
+                      ></i
+                    ></span>
+                  <span>{{ category.name }}</span>
+                </router-link>
+              </li>
+            </ul>
+          </div>
 
         </div>
       </transition>
