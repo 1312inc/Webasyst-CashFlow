@@ -114,6 +114,12 @@
             </li>
           </draggable>
 
+          <div class="tw-mx-4">
+            <button @click="update('Category')" class="button rounded smaller">
+              <i class="fas fa-plus"></i> {{ $t("addCategory") }}
+            </button>
+          </div>
+
           <h6 class="heading black">{{ $t("expense") }}</h6>
 
           <draggable
@@ -148,6 +154,30 @@
               <i class="fas fa-plus"></i> {{ $t("addCategory") }}
             </button>
           </div>
+
+          <h6 class="heading black">{{ $t("other") }}</h6>
+
+          <ul class="menu-v">
+            <li
+              v-for="category in categoriesTransfer"
+              :key="category.id"
+              :class="{ selected: isActive('Category', category.id) }"
+            >
+              <router-link
+                  :to="`/category/${category.id}`"
+                  class="flexbox middle"
+                >
+                <span class="icon"
+                    ><i
+                      class="rounded"
+                      :style="`background-color:${category.color};`"
+                    ></i
+                  ></span>
+                <span>{{ category.name }}</span>
+              </router-link>
+            </li>
+          </ul>
+
         </div>
       </transition>
     </div>
@@ -200,14 +230,20 @@ export default {
 
     ...mapGetters('system', ['getCurrencySignByCode']),
     ...mapGetters('account', ['currenciesInAccounts']),
-    ...mapGetters('category', ['getByType']),
+    ...mapGetters({
+      getCategoriesByType: ['category/getByType']
+    }),
 
     categoriesIncome () {
-      return this.getByType('income')
+      return this.getCategoriesByType('income')
     },
 
     categoriesExpense () {
-      return this.getByType('expense')
+      return this.getCategoriesByType('expense')
+    },
+
+    categoriesTransfer () {
+      return this.getCategoriesByType('transfer')
     }
   },
 
