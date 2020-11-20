@@ -426,10 +426,13 @@ export default {
 
       const startDate = dates[0].date
       const endDate = dates[dates.length - 1].date
-      const istart = this.$moment()
-      const iend = this.$moment(startDate)
-      const daysInInterval = iend.diff(istart, 'days')
-      const inDays = (daysInInterval > 0) ? ` (in ${daysInInterval} days)` : ''
+      const itoday = this.$moment()
+      const istart = this.$moment(startDate)
+      const iend = this.$moment(endDate)
+      const daysInIntervalStart = istart.diff(itoday, 'days')
+      const daysInIntervalEnd = iend.diff(itoday, 'days')
+      const inDaysStart = (daysInIntervalStart > 0) ? ` (in ${daysInIntervalStart} days)` : ''
+      const inDaysEnd = (daysInIntervalEnd > 0 && !dates[dates.length - 1].isEnd) ? ` (in ${daysInIntervalEnd} days)` : ''
 
       const nbr = this.dateAxis2.createSeriesRange(target)
       nbr.date = new Date(dates[0].date)
@@ -445,7 +448,7 @@ export default {
       nbr.axisFill.tooltip.background.fill = am4core.color('#ff604a')
       nbr.axisFill.tooltip.label.fill = am4core.color('#4a0900')
       nbr.axisFill.tooltipY = this.balanceAxis.renderer.baseGrid.y
-      nbr.axisFill.tooltipText = `CASH GAP!\nStart date:${dates[0].isStart ? ' <=' : ''} ${startDate}${inDays}\nEnd date:${dates[dates.length - 1].isEnd ? ' >=' : ''} ${endDate}\nMax balance decline: ${this.$numeral(minimumAmount).format()} ${this.currency} on ${minimumDate}`
+      nbr.axisFill.tooltipText = `CASH GAP!\nStart date:${dates[0].isStart ? ' <=' : ''} ${startDate}${inDaysStart}\nEnd date:${dates[dates.length - 1].isEnd ? ' >=' : ''} ${endDate}${inDaysEnd}\nMax balance decline: ${this.$numeral(minimumAmount).format()} ${this.currency} on ${minimumDate}`
     },
 
     addBalanceAxis () {
