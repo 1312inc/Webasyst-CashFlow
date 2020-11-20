@@ -390,17 +390,28 @@ export default {
 
         this.balanceSeries.events.on('datavalidated', (ev) => {
           let dates = []
-          ev.target.data.forEach(e => {
+          let previous = null
+          ev.target.data.forEach((e, i, arr) => {
             if (e.balance < 0) {
               dates.push({
                 balance: e.balance,
-                date: e.period
+                date: e.period,
+                isStart: previous === null,
+                isEnd: false
               })
+              if (i === arr.length - 1) {
+                if (dates.length) {
+                  dates[dates.length - 1].isEnd = true
+                  this.addNegativeBalanceRange(ev.target, dates)
+                }
+              }
+              previous = e.balance
             } else {
               if (dates.length) {
                 this.addNegativeBalanceRange(ev.target, dates)
               }
               dates = []
+              previous = e.balance
             }
           })
         })
@@ -408,9 +419,17 @@ export default {
     },
 
     addNegativeBalanceRange (target, dates) {
-      const minimum = dates.reduce((min, e) => {
+      const minimumAmount = dates.reduce((min, e) => {
         return e.balance < min ? e.balance : min
       }, dates[0].balance)
+      const minimumDate = dates.find(d => d.balance === minimumAmount).date
+
+      const startDate = dates[0].date
+      const endDate = dates[dates.length - 1].date
+      const istart = this.$moment()
+      const iend = this.$moment(startDate)
+      const daysInInterval = iend.diff(istart, 'days')
+      const inDays = (daysInInterval > 0) ? ` (in ${daysInInterval} days)` : ''
 
       const nbr = this.dateAxis2.createSeriesRange(target)
       nbr.date = new Date(dates[0].date)
@@ -426,7 +445,7 @@ export default {
       nbr.axisFill.tooltip.background.fill = am4core.color('#ff604a')
       nbr.axisFill.tooltip.label.fill = am4core.color('#4a0900')
       nbr.axisFill.tooltipY = this.balanceAxis.renderer.baseGrid.y
-      nbr.axisFill.tooltipText = `CASH GAP!\nStart date: ${dates[0].date}\nEnd date: ${dates[dates.length - 1].date}\nMax balance decline: ${this.$numeral(minimum).format()} ${this.currency}`
+      nbr.axisFill.tooltipText = `CASH GAP!\nStart date:${dates[0].isStart ? ' <=' : ''} ${startDate}${inDays}\nEnd date:${dates[dates.length - 1].isEnd ? ' >=' : ''} ${endDate}\nMax balance decline: ${this.$numeral(minimumAmount).format()} ${this.currency} on ${minimumDate}`
     },
 
     addBalanceAxis () {
