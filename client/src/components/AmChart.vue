@@ -108,17 +108,12 @@ export default {
 
     // Cursor
     chart.cursor = new am4charts.XYCursor()
-    chart.cursor.xAxis = this.dateAxis2
-    // chart.cursor.fullWidthLineX = true
-    // chart.cursor.lineX.strokeOpacity = 0
-    // chart.cursor.lineX.fill = am4core.color('#000')
-    // chart.cursor.lineX.fillOpacity = 0.1
-    // chart.cursor.lineY.strokeOpacity = 0
-    chart.cursor.events.on('zoomended', (event) => {
-      if (event.target.behavior === 'none') return
-      const range = event.target.xRange
-      const from = this.$moment(this.dateAxis2.positionToDate(range.start)).format('YYYY-MM-DD')
-      const to = this.$moment(this.dateAxis2.positionToDate(range.end)).format('YYYY-MM-DD')
+    chart.cursor.xAxis = this.dateAxis
+    chart.cursor.events.on('zoomended', (ev) => {
+      if (ev.target.behavior === 'none') return
+      const range = ev.target.xRange
+      const from = this.$moment(this.dateAxis.positionToDate(this.dateAxis.toAxisPosition(range.start))).format('YYYY-MM-DD')
+      const to = this.$moment(this.dateAxis.positionToDate(this.dateAxis.toAxisPosition(range.end))).format('YYYY-MM-DD')
       this.setDetailsInterval({ from, to })
     })
 
