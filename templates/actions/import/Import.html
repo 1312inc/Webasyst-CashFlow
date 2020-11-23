@@ -1,4 +1,4 @@
-<div class="content left200px" id="cash-import-page">
+<div id="cash-import-page">
 <div class="block">
 
     <h1>[`Import`]</h1>
@@ -13,37 +13,40 @@
     <div id="c-import-step-1">
         <div class="fields form">
             <div class="field">
-                <div class="name">
+                <div class="name for-input">
                     [`Encoding`]
                 </div>
-                <div class="value no-shift">
-                    <select name="upload[encoding]">
-                        {foreach cashImportCsv::getEncodings() as $encoding}
-                        <option>{$encoding}</option>
-                        {/foreach}
-                    </select>
+                <div class="value middle">
+                    <div class="wa-select">
+                        <select name="upload[encoding]">
+                            {foreach cashImportCsv::getEncodings() as $encoding}
+                            <option>{$encoding}</option>
+                            {/foreach}
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="field">
-                <div class="name">
+                <div class="name for-input">
                     [`Delimeter`]
                 </div>
-                <div class="value no-shift">
-                    <select name="upload[delimiter]">
-                        {foreach cashImportCsv::getDelimiters() as $name => $value}
-                        <option value="{$value}">{$name}</option>
-                        {/foreach}
-                    </select>
+                <div class="value middle">
+                    <div class="wa-select">
+                        <select name="upload[delimiter]">
+                            {foreach cashImportCsv::getDelimiters() as $name => $value}
+                            <option value="{$value}">{$name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="field">
-                <div class="name">
+                <div class="name for-input">
                     [`Select file`]
                 </div>
-                <div class="value no-shift">
+                <div class="value middle">
                     <input type="file" name="upload[file]"/>
                     <p class="hint">
-                        <br>
                         {sprintf(
                             '[`Supported file formats: <b>%s</b>`]',
                             'CSV (Excel)'

@@ -2,7 +2,7 @@
 {** @var cashCategoryDto[] $incomes **}
 {** @var cashCategoryDto[] $expenses **}
 <section id="cash-settings">
-<div class="content left200px">
+<div class="">
     <div id="content">
 
         <div class="shadowed blank">
@@ -45,15 +45,17 @@
                         <div class="field">
                             <div class="name">[`Account`]</div>
                             <div class="value no-shift">
-                                <select name="shopscript_settings[accountId]">
-                                    {foreach $accounts as $account}
-                                    <option value="{$account->id}"
-                                            {if $shopScriptSettings->getAccountId() == $account->id}selected{/if}
-                                    >
-                                        {$account->currency->getCode()|escape} - {$account->name|escape|truncate:42} ({$account->currency->getSign()|escape})
-                                    </option>
-                                    {/foreach}
-                                </select>
+                                <div class="wa-select">
+                                    <select name="shopscript_settings[accountId]">
+                                        {foreach $accounts as $account}
+                                        <option value="{$account->id}"
+                                                {if $shopScriptSettings->getAccountId() == $account->id}selected{/if}
+                                        >
+                                            {$account->currency->getCode()|escape} - {$account->name|escape|truncate:42} ({$account->currency->getSign()|escape})
+                                        </option>
+                                        {/foreach}
+                                    </select>
+                                </div>
                                 <p class="hint">{sprintf('[`In case of different currencies for orders and the account, an order amount will be converted to the selected account currency according to the conversion rate defined <a href="%s">in Shop-Script settings</a>.`]', $wa_backend_url|cat:'shop/?action=settings#/currencies/')}</p>
                                 {if !$shopCurrencyExists}<p class="errormsg">[`The currency of the selected account is not defined in Shop-Script settings. Conversion won’t work well.`]</p>{/if}
                             </div>
@@ -64,111 +66,146 @@
                                 [`Categories`]
                             </div>
 
-                            <div class="value no-shift" data-cash-category-color-icon>
-                                [`Sales (paid orders)`] &rarr;
-                                <i class="icon16 color" style="background:  {$shopScriptSettings->getCategoryIncome()->getColor()}" data-cash-category-color></i>
-                                <select name="shopscript_settings[categoryIncomeId]" class="{if isset($errors['categoryIncomeId'])}error{/if}">
-                                    <option value="0"></option>
-                                    {foreach $incomes as $category}
-                                    <option value="{$category->id}"
-                                            {if $shopScriptSettings->getCategoryIncomeId() == $category->id}selected{/if}
-                                            data-cash-category-color="{$category->color}"
-                                    >
-                                        {$category->name|escape}
-                                    </option>
-                                    {/foreach}
-                                </select>
-                                <a href="#" class="small inline-link" data-cash-shop-configure-actions="income"><b><i>[`Configure pay actions`]</i></b></a>
-                            </div>
-                            <div class="value" style="display: none" data-cash-shop-configure-actions-income>
-                                <div>[`Select Shop-Script order actions which are directly associated with marking orders as paid. The Cash app will listen only to the selected list of order actions for importing sales:`]</div>
-                                <select name="shopscript_settings[actions][income]" multiple style="min-height: 250px;">
-                                    {foreach $actions as $action}
-                                        <option value="{$action->getId()}"
-                                                {if in_array($action->getId(), $shopScriptSettings->getIncomeActions())}selected{/if}
-                                        >{$action->getName()}</option>
-                                    {/foreach}
-                                </select>
-                                <br>
-                                <span class="hint">[`For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options.`]</span>
+                            <div class="value no-shift" style="overflow-x: auto;">
+                                <div class="flexbox fixed space-1rem">
+                                    <div data-cash-category-color-icon>
+                                        <div class="custom-mb-8">
+                                            [`Sales (paid orders)`]&nbsp;&rarr;
+                                            <i class="icon16 color" style="background:  {$shopScriptSettings->getCategoryIncome()->getColor()}" data-cash-category-color></i>
+                                        </div>
+                                        <div class="custom-mb-8">
+                                            <div class="wa-select">
+                                                <select name="shopscript_settings[categoryIncomeId]" class="{if isset($errors['categoryIncomeId'])}error{/if}">
+                                                    <option value="0"></option>
+                                                    {foreach $incomes as $category}
+                                                    <option value="{$category->id}"
+                                                            {if $shopScriptSettings->getCategoryIncomeId() == $category->id}selected{/if}
+                                                            data-cash-category-color="{$category->color}"
+                                                    >
+                                                        {$category->name|escape}
+                                                    </option>
+                                                    {/foreach}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <a href="#" class="small inline-link" data-cash-shop-configure-actions="income"><b><i>[`Configure pay actions`]</i></b></a>
+                                    </div>
+                                    <div style="display: none" data-cash-shop-configure-actions-income>
+                                        <div class="custom-mb-8">[`Select Shop-Script order actions which are directly associated with marking orders as paid. The Cash app will listen only to the selected list of order actions for importing sales:`]</div>
+                                        <div class="custom-mb-8">
+                                            <div class="wa-select">
+                                                <select name="shopscript_settings[actions][income]" multiple style="min-height: 250px;">
+                                                    {foreach $actions as $action}
+                                                        <option value="{$action->getId()}"
+                                                                {if in_array($action->getId(), $shopScriptSettings->getIncomeActions())}selected{/if}
+                                                        >{$action->getName()}</option>
+                                                    {/foreach}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <p class="hint">[`For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options.`]</p>
+                                    </div>
+                                    <div data-cash-category-color-icon>
+                                        <div class="custom-mb-8">
+                                            [`Refunds`]&nbsp;&rarr;
+                                            <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryExpense()->getColor()}"></i>
+                                        </div>
+                                        <div class="custom-mb-8">
+                                            <div class="wa-select">
+                                                <select name="shopscript_settings[categoryExpenseId]" class="{if isset($errors['categoryExpenseId'])}error{/if}">
+                                                    <option value="0"></option>
+                                                    {foreach $expenses as $category}
+                                                    <option value="{$category->id}"
+                                                            {if $shopScriptSettings->getCategoryExpenseId() == $category->id}selected{/if}
+                                                            data-cash-category-color="{$category->color}"
+                                                    >
+                                                        {$category->name|escape}
+                                                    </option>
+                                                    {/foreach}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <a href="#" class="small inline-link" data-cash-shop-configure-actions="expense"><b><i>[`Configure refund actions`]</i></b></a>
+                                    </div>
+                                    <div style="display: none" data-cash-shop-configure-actions-expense>
+                                        <div class="custom-mb-8">[`Select Shop-Script order actions which are related with issueing refunds (cancelling orders that had been paid in the past):`]</div>
+                                        <div class="custom-mb-8">
+                                            <div class="wa-select">
+                                                <select name="shopscript_settings[actions][expense]" multiple style="min-height: 130px;">
+                                                    {foreach $actions as $action}
+                                                        <option value="{$action->getId()}"
+                                                                {if in_array($action->getId(), $shopScriptSettings->getExpenseActions())}selected{/if}
+                                                        >{$action->getName()}</option>
+                                                    {/foreach}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <p class="hint">[`For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options.`]</p>
+                                    </div>
+                                    <div data-cash-category-color-icon>
+                                        <div class="custom-mb-8">
+                                            [`Product purchases`]&nbsp;&rarr;
+                                            <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryPurchase()->getColor()}"></i>
+                                        </div>
+                                        <div class="custom-mb-8">
+                                            <div class="wa-select">
+                                                <select name="shopscript_settings[categoryPurchaseId]">
+                                                    <option value="0">[`Don’t import`]</option>
+                                                    {foreach $expenses as $category}
+                                                        <option value="{$category->id}"
+                                                                {if $category->id == $shopScriptSettings->getCategoryPurchaseId()}selected{/if}
+                                                                data-cash-category-color="{$category->color}"
+                                                        >{$category->name|escape}</option>
+                                                    {/foreach}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <p class="hint">[`Enabling the setting will automatically add expense transactions based on purchase price of all ordered products. Useful if you have 'purchase price' field defined for most products in Shop-Script and you don't wish to manually add product purchase transations in the Cash app.`]</p>
+                                    </div>
+                                    <div data-cash-category-color-icon>
+                                        <div class="custom-mb-8">
+                                            [`Shipping costs`]&nbsp;&rarr;
+                                            <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryShipping()->getColor()}"></i>
+                                        </div>
+                                        <div class="custom-mb-8">
+                                            <div class="wa-select">
+                                                <select name="shopscript_settings[categoryShippingId]">
+                                                    <option value="0">[`Don’t import`]</option>
+                                                    {foreach $expenses as $category}
+                                                        <option value="{$category->id}"
+                                                                {if $category->id == $shopScriptSettings->getCategoryShippingId()}selected{/if}
+                                                                data-cash-category-color="{$category->color}"
+                                                        >{$category->name|escape}</option>
+                                                    {/foreach}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <p class="hint">[`Enabling the setting will automatically add expense transactions based on shipping costs for each order.`]</p>
+                                    </div>
+                                    <div data-cash-category-color-icon>
+                                        <div class="custom-mb-8">
+                                            [`Taxes`]&nbsp;&rarr;
+                                            <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryTax()->getColor()}"></i>
+                                        </div>
+                                        <div class="custom-mb-8">
+                                            <div class="wa-select">
+                                                <select name="shopscript_settings[categoryTaxId]">
+                                                    <option value="0">[`Don’t import`]</option>
+                                                    {foreach $expenses as $category}
+                                                        <option value="{$category->id}"
+                                                                {if $category->id == $shopScriptSettings->getCategoryTaxId()}selected{/if}
+                                                                data-cash-category-color="{$category->color}"
+                                                        >{$category->name|escape}</option>
+                                                    {/foreach}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <p class="hint">[`Enabling the setting will automatically add expense transactions based on tax amount for each order.`]</p>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="value no-shift" data-cash-category-color-icon>
-                                [`Refunds`] &rarr;
-                                <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryExpense()->getColor()}"></i>
-                                <select name="shopscript_settings[categoryExpenseId]" class="{if isset($errors['categoryExpenseId'])}error{/if}">
-                                    <option value="0"></option>
-                                    {foreach $expenses as $category}
-                                    <option value="{$category->id}"
-                                            {if $shopScriptSettings->getCategoryExpenseId() == $category->id}selected{/if}
-                                            data-cash-category-color="{$category->color}"
-                                    >
-                                        {$category->name|escape}
-                                    </option>
-                                    {/foreach}
-                                </select>
-                                <a href="#" class="small inline-link" data-cash-shop-configure-actions="expense"><b><i>[`Configure refund actions`]</i></b></a>
-                            </div>
-                            <div class="value" style="display: none" data-cash-shop-configure-actions-expense>
-                                <div>[`Select Shop-Script order actions which are related with issueing refunds (cancelling orders that had been paid in the past):`]</div>
-                                <select name="shopscript_settings[actions][expense]" multiple style="min-height: 130px;">
-                                    {foreach $actions as $action}
-                                        <option value="{$action->getId()}"
-                                                {if in_array($action->getId(), $shopScriptSettings->getExpenseActions())}selected{/if}
-                                        >{$action->getName()}</option>
-                                    {/foreach}
-                                </select>
-                                <br>
-                                <span class="hint">[`For Windows: Hold down the control (ctrl) button to select multiple options.<br> For Mac: Hold down the command button to select multiple options.`]</span>
-                            </div>
-
-                            <div class="value no-shift" data-cash-category-color-icon>
-                                <br>
-                                [`Product purchases`] &rarr;
-                                <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryPurchase()->getColor()}"></i>
-                                <select name="shopscript_settings[categoryPurchaseId]">
-                                    <option value="0">[`Don’t import`]</option>
-                                    {foreach $expenses as $category}
-                                        <option value="{$category->id}"
-                                                {if $category->id == $shopScriptSettings->getCategoryPurchaseId()}selected{/if}
-                                                data-cash-category-color="{$category->color}"
-                                        >{$category->name|escape}</option>
-                                    {/foreach}
-                                </select>
-                                <br>
-                                <span class="hint">[`Enabling the setting will automatically add expense transactions based on purchase price of all ordered products. Useful if you have 'purchase price' field defined for most products in Shop-Script and you don't wish to manually add product purchase transations in the Cash app.`]</span>
-                            </div>
-                            <div class="value no-shift" data-cash-category-color-icon>
-                                [`Shipping costs`] &rarr;
-                                <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryShipping()->getColor()}"></i>
-                                <select name="shopscript_settings[categoryShippingId]">
-                                    <option value="0">[`Don’t import`]</option>
-                                    {foreach $expenses as $category}
-                                        <option value="{$category->id}"
-                                                {if $category->id == $shopScriptSettings->getCategoryShippingId()}selected{/if}
-                                                data-cash-category-color="{$category->color}"
-                                        >{$category->name|escape}</option>
-                                    {/foreach}
-                                </select>
-                                <br>
-                                <span class="hint">[`Enabling the setting will automatically add expense transactions based on shipping costs for each order.`]</span>
-                            </div>
-                            <div class="value no-shift" data-cash-category-color-icon>
-                                [`Taxes`] &rarr;
-                                <i class="icon16 color" style="background: {$shopScriptSettings->getCategoryTax()->getColor()}"></i>
-                                <select name="shopscript_settings[categoryTaxId]">
-                                    <option value="0">[`Don’t import`]</option>
-                                    {foreach $expenses as $category}
-                                        <option value="{$category->id}"
-                                                {if $category->id == $shopScriptSettings->getCategoryTaxId()}selected{/if}
-                                                data-cash-category-color="{$category->color}"
-                                        >{$category->name|escape}</option>
-                                    {/foreach}
-                                </select>
-                                <br>
-                                <span class="hint">[`Enabling the setting will automatically add expense transactions based on tax amount for each order.`]</span>
-                                <br><br>
-                            </div>
+                            
                         </div>
 
 
@@ -176,48 +213,52 @@
                             <div class="name">
                                 [`Forecasted sales`]
                             </div>
-
                             <div class="value no-shift">
-                                <label>
-                                    <input type="hidden" name="shopscript_settings[enableForecast]" value="0" />
-                                    <input type="checkbox"
-                                           name="shopscript_settings[enableForecast]"
-                                           {if $shopScriptSettings->isEnableForecast()}checked{/if}
-                                           value="1" />
-                                    [`Enable average forecasted sales (recommended)`]
-                                </label>
-                                <p class="hint">{sprintf('[`<b>Works like magic!</b> Average daily sales will be automatically added as planned transactions for better budget forecasting. When a new day comes, forecasted sales for this day will be cleared automatically and replaced with real sales (paid orders) data.`]')}</p>
+                                <div class="flexbox fixed space-1rem">
+                                    <div>
+                                        <label>
+                                            <input type="hidden" name="shopscript_settings[enableForecast]" value="0" />
+                                            <input type="checkbox"
+                                                   name="shopscript_settings[enableForecast]"
+                                                   {if $shopScriptSettings->isEnableForecast()}checked{/if}
+                                                   value="1" />
+                                            [`Enable average forecasted sales (recommended)`]
+                                        </label>
+                                        <p class="hint">{sprintf('[`<b>Works like magic!</b> Average daily sales will be automatically added as planned transactions for better budget forecasting. When a new day comes, forecasted sales for this day will be cleared automatically and replaced with real sales (paid orders) data.`]')}</p>
+                                    </div>
+                                    <div>
+                                        <section data-cash-settings="forecast-variants" style="{if !$shopScriptSettings->isEnableForecast()}display: none{/if}">
+                                            <div>
+                                                <label>
+                                                    <input type="radio"
+                                                           name="shopscript_settings[autoForecast]"
+                                                           value="1"
+                                                           {if $shopScriptSettings->isAutoForecast()}checked{/if}
+                                                    />
+                                                    [`Calculate average daily sales automatically (≈{$avg}/day based on the data for the last 30 days)`]
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label>
+                                                    <input type="radio"
+                                                           name="shopscript_settings[autoForecast]"
+                                                           value="0"
+                                                           {if !$shopScriptSettings->isAutoForecast()}checked{/if}
+                                                    />
+                                                    [`Enter manually:`]
+                                                </label>
+                                                <input type="text"
+                                                       class="numerical short"
+                                                       placeholder="0"
+                                                       name="shopscript_settings[manualForecast]"
+                                                       value="{$shopScriptSettings->getManualForecast()}"
+                                                /> {sprintf('[`%s/day`]', $accountCurrencySign)}
+                                                <br><br>
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div>
                             </div>
-
-                            <section data-cash-settings="forecast-variants" style="{if !$shopScriptSettings->isEnableForecast()}display: none{/if}">
-                            <div class="value no-shift">
-                                <label>
-                                    <input type="radio"
-                                           name="shopscript_settings[autoForecast]"
-                                           value="1"
-                                           {if $shopScriptSettings->isAutoForecast()}checked{/if}
-                                    />
-                                    [`Calculate average daily sales automatically (≈{$avg}/day based on the data for the last 30 days)`]
-                                </label>
-                            </div>
-                            <div class="value no-shift">
-                                <label>
-                                    <input type="radio"
-                                           name="shopscript_settings[autoForecast]"
-                                           value="0"
-                                           {if !$shopScriptSettings->isAutoForecast()}checked{/if}
-                                    />
-                                    [`Enter manually:`]
-                                </label>
-                                <input type="text"
-                                       class="numerical short"
-                                       placeholder="0"
-                                       name="shopscript_settings[manualForecast]"
-                                       value="{$shopScriptSettings->getManualForecast()}"
-                                /> {sprintf('[`%s/day`]', $accountCurrencySign)}
-                                <br><br>
-                            </div>
-                            </section>
                         </div>
 
                         <div class="field">
@@ -243,19 +284,23 @@
                                 [`Import orders`]
                             </div>
                             <div class="value no-shift">
-                                <label>
-                                    <input type="radio" checked name="import_period" value="all"/>
-                                    [`All time`]
-                                </label>
-                                <span class="hint">{sprintf('%s — %s', $shopOrderDateBounds['min']|wa_date:humandate, $shopOrderDateBounds['max']|wa_date:humandate)}</span>
-                            </div>
-                            <div class="value no-shift">
-                                <label>
-                                    <input type="radio" name="import_period" value="after"/>
-                                    [`Only orders paid after`]
-                                </label>
-                                <input type="text" name="import_period_after"/>
-                                <i class="icon16 calendar"></i>
+                                <div class="flexbox fixed space-1rem">
+                                    <div>
+                                        <label>
+                                            <input type="radio" checked name="import_period" value="all"/>
+                                            [`All time`]
+                                        </label>
+                                        <span class="hint">{sprintf('%s — %s', $shopOrderDateBounds['min']|wa_date:humandate, $shopOrderDateBounds['max']|wa_date:humandate)}</span>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input type="radio" name="import_period" value="after"/>
+                                            [`Only orders paid after`]
+                                        </label>
+                                        <input type="text" name="import_period_after"/>
+                                        <i class="icon16 calendar"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         {/if}
