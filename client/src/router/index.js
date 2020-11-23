@@ -41,7 +41,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: process.env.VUE_APP_MODE === 'desktop' ? 'history' : 'hash',
   base: window?.appState?.baseUrl || '/',
   routes
 })
@@ -49,7 +49,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.name === 'Account' || to.name === 'Category' || to.name === 'Currency') {
     // if no Category
-    if (to.params.id < 0) {
+    if (to.params.id < 0 && to.params.id !== '-1312') {
       next({ name: 'Home' })
     } else {
       store.dispatch('updateCurrentType', {
