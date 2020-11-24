@@ -3,14 +3,14 @@
     <td class="min-width">
       <input type="checkbox" @click="checkboxSelect" :checked="isChecked" />
     </td>
-    <td @click="openModal">
+    <td @click="openModal" class="nowrap" style="width: 15%;">
       {{ $moment(transaction.date).format("LL") }}
     </td>
-    <td @click="openModal" class="tw-text-right" :style="`color: ${category.color}`">
+    <td @click="openModal" class="nowrap tw-text-right" style="width: 15%;" :style="`color: ${category.color}`">
       {{ $numeral(transaction.amount).format() }}
       {{ getCurrencySignByCode(accountById(transaction.account_id).currency) }}
     </td>
-    <td @click="openModal">
+    <td @click="openModal" style="width: 20%;">
       <div class="flexbox middle">
         <span class="icon smaller custom-mr-8">
           <i class="rounded" :style="`background-color:${category.color};`"></i>
@@ -21,8 +21,8 @@
         </span>
       </div>
     </td>
-    <td @click="openModal">{{ transaction.description }}</td>
-    <td @click="openModal">
+    <td @click="openModal" style="width: 29%;">{{ transaction.description }}</td>
+    <td @click="openModal" style="width: 20%;">
       {{ accountById(transaction.account_id).name }}
     </td>
 
