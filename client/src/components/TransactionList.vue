@@ -64,7 +64,7 @@
     <transition name="fade-appear">
       <div v-if="!loading">
         <div v-if="isTransactionsExists">
-          <div v-if="transactions.offset === 0" class="custom-mb-24"> <!-- If firts page -->
+          <div v-if="transactions.offset === 0 && !isDetailsMode" class="custom-mb-24"> <!-- If firts page -->
             <div class="flexbox middle">
               <div @click="toggleupcomingBlockOpened" class="tw-cursor-pointer custom-mr-8 black" :class="{'tw-opacity-50': !upcomingBlockOpened}">
                 <i class="fas fa-caret-down"></i>&nbsp;
@@ -203,10 +203,14 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['transactions', 'loading']),
+    ...mapState('transaction', ['transactions', 'loading', 'detailsInterval']),
     ...mapGetters({
       currentType: 'getCurrentType'
     }),
+
+    isDetailsMode () {
+      return this.detailsInterval.from !== '' || this.detailsInterval.to !== ''
+    },
 
     sortedTransactions () {
       const today = this.$moment().format('YYYY-MM-DD')
@@ -231,7 +235,7 @@ export default {
 
     incomingTransactions () {
       const today = this.$moment().format('YYYY-MM-DD')
-      const acc = this.transactions.offset === 0 ? { today: [] } : {}
+      const acc = this.transactions.offset === 0 && !this.isDetailsMode ? { today: [] } : {}
       const result = this.sortedTransactions.incoming.reduce((acc, e) => {
         const month = this.$moment(e.date).format('YYYY-MM')
         if (e.date === today && acc.today) {
