@@ -29,7 +29,8 @@ export default {
       set (value) {
         localStorage.setItem(`interval_${this.type}`, this.getNameByValue(value))
         this.$store.commit('transaction/updateQueryParams', {
-          [this.type]: value
+          [this.type]: value,
+          offset: 0
         })
       }
     }

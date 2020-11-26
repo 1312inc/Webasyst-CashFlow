@@ -78,8 +78,8 @@ export default {
   created () {
     this.unsubscribe = this.$store.subscribe(async (mutation) => {
       if (mutation.type === 'transaction/setDetailsInterval') {
+        this.$store.commit('transaction/updateQueryParams', { offset: 0 })
         if (this.detailsInterval.from) {
-          this.$store.commit('transaction/updateQueryParams', { offset: 0 })
           const { data } = await api.get('cash.aggregate.getBreakDown', {
             params: {
               from: this.detailsInterval.from,

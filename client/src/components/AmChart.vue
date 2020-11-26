@@ -112,8 +112,8 @@ export default {
     chart.cursor.events.on('zoomended', (ev) => {
       if (ev.target.behavior === 'none') return
       const range = ev.target.xRange
-      const from = this.$moment(this.dateAxis.positionToDate(this.dateAxis.toAxisPosition(range.start))).format('YYYY-MM-DD')
-      const to = this.$moment(this.dateAxis.positionToDate(this.dateAxis.toAxisPosition(range.end))).format('YYYY-MM-DD')
+      const from = this.$moment(this.dateAxis2.positionToDate(this.dateAxis2.toAxisPosition(range.start))).format('YYYY-MM-DD')
+      const to = this.$moment(this.dateAxis2.positionToDate(this.dateAxis2.toAxisPosition(range.end))).format('YYYY-MM-DD')
       this.setDetailsInterval({ from, to })
     })
 
@@ -152,12 +152,11 @@ export default {
       this.setDetailsInterval({ from, to })
     }
 
+    chart.scrollbarX.thumb.events.on('dragstop', dateAxisChanged)
     chart.scrollbarX.startGrip.events.on('dragstop', dateAxisChanged)
     chart.scrollbarX.endGrip.events.on('dragstop', dateAxisChanged)
-
     chart.zoomOutButton.events.on('hit', () => {
       this.setDetailsInterval({ from: '', to: '' })
-      this.$store.commit('transaction/updateQueryParams', { offset: 0 })
     })
 
     this.unsubscribe = this.$store.subscribe((mutation) => {
@@ -213,15 +212,6 @@ export default {
     })
 
     this.chart = chart
-
-    window.toggleDateForDetails = (date, interval) => {
-      const from = date
-      let to = date
-      if (interval === 'month') {
-        to = this.$moment(from).add(1, 'M').format('YYYY-MM-DD')
-      }
-      this.setDetailsInterval({ from, to })
-    }
   },
 
   beforeDestroy () {
@@ -320,8 +310,6 @@ export default {
         const dateFormat = isGrouped ? 'MMM yyyy' : 'd MMMM yyyy'
         return `{dateX.formatDate('${dateFormat}')}\n{name}: {valueY.value} ${this.currency}`
       })
-
-      // if (!this.showBalance) this.attacheTooltip(this.incomeSeries)
     },
 
     addExpenseSeries () {
@@ -348,8 +336,6 @@ export default {
         const dateFormat = isGrouped ? 'MMM yyyy' : 'd MMMM yyyy'
         return `{dateX.formatDate('${dateFormat}')}\n{name}: {valueY.value} ${this.currency}`
       })
-
-      // if (!this.showBalance) this.attacheTooltip(this.expenseSeries)
     },
 
     addBalanceSeries () {
@@ -372,8 +358,6 @@ export default {
         this.balanceSeries.strokeWidth = 1
         // this.balanceSeries.strokeOpacity = 0.8
         this.balanceSeries.defaultState.transitionDuration = 0
-
-        // this.attacheTooltip(this.balanceSeries)
 
         // Create a range to change stroke for values below 0
         const range = this.balanceAxis.createSeriesRange(this.balanceSeries)
@@ -461,34 +445,6 @@ export default {
     removeSeries (seriesToRemove) {
       const i = this.chart.series.indexOf(seriesToRemove)
       if (i > -1) this.chart.series.removeIndex(i).dispose()
-    },
-
-    attacheTooltip (series) {
-      series.adapter.add('tooltipHTML', (t, target) => {
-        const isGrouped = !!target.tooltipDataItem.groupDataItems
-        const dateFormat = isGrouped ? 'MMM yyyy' : 'd MMMM yyyy'
-        let text = '<div>'
-        text += '<div class="custom-my-4"><strong>{dateX.formatDate(\'' + dateFormat + '\')}</strong></div>'
-
-        this.chart.series.each((item) => {
-          text += `<div class="custom-mb-2"><span style="color: ${item.stroke.hex}">●</span> ${item.name}: ${this.$numeral(item.tooltipDataItem.valueY).format()} ${this.currency}</div>`
-        })
-
-        const timeUnit = isGrouped ? 'month' : 'day'
-
-        text += '<button onclick="toggleDateForDetails(\'{dateX}\', \'' + timeUnit + '\')" class="button small custom-my-8">' + this.$t('details') + '</button>'
-        text += '</div>'
-        return text
-      })
-
-      series.tooltip.getFillFromObject = false
-      series.tooltip.background.filters.clear()
-      series.tooltip.background.fill = am4core.color('#333')
-      series.tooltip.background.fillOpacity = 1
-      series.tooltip.background.strokeWidth = 0
-      series.tooltip.background.cornerRadius = 3
-      series.tooltip.label.interactionsEnabled = true
-      series.tooltip.pointerOrientation = 'vertical'
     },
 
     showSeries (series) {
