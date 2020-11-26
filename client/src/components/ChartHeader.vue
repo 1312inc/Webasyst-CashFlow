@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flexbox custom-mb-12">
-      <div class="wide">
+      <div v-if="$helper.isDesktopEnv" class="wide">
         <div v-if="currentCategory && !currentCategory.name">
           <div class="h2 custom-mb-0">{{ $t("cashToday") }}</div>
         </div>
