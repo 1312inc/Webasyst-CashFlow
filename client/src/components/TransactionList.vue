@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <div v-if="!loading" class="flexbox custom-mb-24">
+    <div v-if="!loading" class="flexbox middle space-1rem custom-mb-24">
       <div v-if="checkedRows.length" class="flexbox space-1rem middle wide">
         <button @click="openMove = true" class="yellow red"><i class="fas fa-arrow-right"></i> {{ $t('move') }} {{ checkedRows.length }}</button>
         <button @click="bulkDelete" class="button red"><i class="fas fa-trash-alt"></i> {{ $t('delete') }} {{ checkedRows.length }}</button>
@@ -28,9 +28,11 @@
           </button>
         </div>
       </div>
-
       <div>
         <NumPages />
+      </div>
+      <div>
+        <ExportButton />
       </div>
     </div>
 
@@ -181,6 +183,7 @@ import Modal from '@/components/Modal'
 import NumPages from '@/components/NumPages'
 import AddTransaction from '@/components/AddTransaction'
 import TransactionMove from '@/components/TransactionMove'
+import ExportButton from '@/components/ExportButton'
 
 export default {
   data () {
@@ -199,7 +202,8 @@ export default {
     Modal,
     NumPages,
     AddTransaction,
-    TransactionMove
+    TransactionMove,
+    ExportButton
   },
 
   computed: {
