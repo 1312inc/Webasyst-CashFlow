@@ -19,62 +19,61 @@ export default new Vuex.Store({
     intervals: {
       from: [
         {
-          title: 'Last 30 days',
+          key: '-1_M',
           value: setIntervalDate(-1, 'M')
         },
         {
-          title: 'Last 90 days',
+          key: '-3_M',
           value: setIntervalDate(-3, 'M')
         },
         {
-          title: 'Last 180 days',
+          key: '-6_M',
           value: setIntervalDate(-6, 'M')
         },
         {
-          title: 'Last 365 days',
+          key: '-1_Y',
           value: setIntervalDate(-1, 'Y')
         },
         {
-          title: 'Last 3 years',
+          key: '-3_Y',
           value: setIntervalDate(-3, 'Y')
         },
         {
-          title: 'Last 5 years',
+          key: '-5_Y',
           value: setIntervalDate(-5, 'Y')
         },
         {
-          title: 'Last 10 years',
+          key: '-10_Y',
           value: setIntervalDate(-10, 'Y')
         }
-
       ],
       to: [
         {
-          title: 'None',
+          key: '0_M',
           value: setIntervalDate(0, 'd')
         },
         {
-          title: 'Future 30 days',
+          key: '1_M',
           value: setIntervalDate(1, 'M')
         },
         {
-          title: 'Future 90 days',
+          key: '3_M',
           value: setIntervalDate(3, 'M')
         },
         {
-          title: 'Future 180 days',
+          key: '6_M',
           value: setIntervalDate(6, 'M')
         },
         {
-          title: 'Future 365 days',
+          key: '1_Y',
           value: setIntervalDate(1, 'Y')
         },
         {
-          title: 'Future 2 years',
+          key: '2_Y',
           value: setIntervalDate(2, 'Y')
         },
         {
-          title: 'Future 3 years',
+          key: '3_Y',
           value: setIntervalDate(3, 'Y')
         }
       ]

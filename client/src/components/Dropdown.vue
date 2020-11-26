@@ -1,8 +1,8 @@
 <template>
   <div class="wa-select">
     <select v-model="value">
-      <option v-for="(item, i) in items" :key="i" :value="item.value">
-        {{ item.title }}
+      <option v-for="item in items" :key="item.key" :value="item.value">
+        {{ $t(item.key) }}
       </option>
     </select>
   </div>
@@ -38,7 +38,7 @@ export default {
 
   methods: {
     getNameByValue (value) {
-      return this.items.find(e => e.value === value).title
+      return this.items.find(e => e.value === value).key
     }
   }
 }

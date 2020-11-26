@@ -93,5 +93,19 @@
   "fromAccount": "From account",
   "toAccount": "To account",
   "incomingAmount": "Incoming amount",
-  "transferMessage": "You are about to make a transfer from one currency to another. Please enter the right incoming amount to make sure the conversion rate is right."
+  "transferMessage": "You are about to make a transfer from one currency to another. Please enter the right incoming amount to make sure the conversion rate is right.",
+  "-1_M": "Last 30 days",
+  "-3_M": "Last 90 days",
+  "-6_M": "Last 180 days",
+  "-1_Y": "Last 365 days",
+  "-3_Y": "Last 3 years",
+  "-5_Y": "Last 5 years",
+  "-10_Y": "Last 10 years",
+  "0_M": "None",
+  "1_M": "Future 30 days",
+  "3_M": "Future 90 days",
+  "6_M": "Future 180 days",
+  "1_Y": "Future 1 year",
+  "2_Y": "Future 2 years",
+  "3_Y": "Future 3 years"
 }

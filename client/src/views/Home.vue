@@ -60,7 +60,7 @@ export default {
       let result = defaultDate
       const lsValue = localStorage.getItem(`interval_${type}`)
       if (lsValue) {
-        result = this.$store.state.intervals[type].find((e) => e.title === lsValue)?.value || defaultDate
+        result = this.$store.state.intervals[type].find((e) => e.key === lsValue)?.value || defaultDate
       }
       return result
     }

@@ -187,7 +187,7 @@ export default {
       state: (target, stateId) => {
         if (target instanceof am4charts.Chart) {
           const state = target.states.create(stateId)
-          state.properties.paddingTop = 0
+          state.properties.paddingTop = 10
           state.properties.paddingRight = 0
           state.properties.paddingBottom = 0
           state.properties.paddingLeft = 0
@@ -200,13 +200,11 @@ export default {
         //   return state
         // }
 
-        // if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
-        //   // eslint-disable-next-line no-redeclare
-        //   var state = target.states.create(stateId)
-        //   state.properties.inside = true
-        //   state.properties.maxLabelPosition = 0.99
-        //   return state
-        // }
+        if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
+          const state = target.states.create(stateId)
+          state.properties.inside = true
+          return state
+        }
         return null
       }
     })
