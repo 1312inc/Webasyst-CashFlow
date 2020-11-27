@@ -1,5 +1,4 @@
 <div id="cash-import-page">
-<div class="block">
 
     <h1>[`Import`]</h1>
 
@@ -10,58 +9,57 @@
     </ol>
 
     <form action="?module=import&action=upload" method="post" enctype="multipart/form-data" target="cash-upload-file" id="cash-import-upload-form">
-    <div id="c-import-step-1">
-        <div class="fields form">
-            <div class="field">
-                <div class="name for-input">
-                    [`Encoding`]
-                </div>
-                <div class="value middle">
-                    <div class="wa-select">
-                        <select name="upload[encoding]">
-                            {foreach cashImportCsv::getEncodings() as $encoding}
-                            <option>{$encoding}</option>
-                            {/foreach}
-                        </select>
+        <div id="c-import-step-1">
+            <div class="fields form">
+                <div class="field">
+                    <div class="name for-input">
+                        [`Encoding`]
+                    </div>
+                    <div class="value">
+                        <div class="wa-select">
+                            <select name="upload[encoding]">
+                                {foreach cashImportCsv::getEncodings() as $encoding}
+                                <option>{$encoding}</option>
+                                {/foreach}
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="field">
-                <div class="name for-input">
-                    [`Delimeter`]
-                </div>
-                <div class="value middle">
-                    <div class="wa-select">
-                        <select name="upload[delimiter]">
-                            {foreach cashImportCsv::getDelimiters() as $name => $value}
-                            <option value="{$value}">{$name}</option>
-                            {/foreach}
-                        </select>
+                <div class="field">
+                    <div class="name for-input">
+                        [`Delimeter`]
+                    </div>
+                    <div class="value">
+                        <div class="wa-select">
+                            <select name="upload[delimiter]">
+                                {foreach cashImportCsv::getDelimiters() as $name => $value}
+                                <option value="{$value}">{$name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="field">
-                <div class="name for-input">
-                    [`Select file`]
-                </div>
-                <div class="value middle">
-                    <input type="file" name="upload[file]"/>
-                    <p class="hint">
-                        {sprintf(
-                            '[`Supported file formats: <b>%s</b>`]',
-                            'CSV (Excel)'
-                        )}
-                    </p>
+                <div class="field">
+                    <div class="name for-input">
+                        [`Select file`]
+                    </div>
+                    <div class="value">
+                        <input type="file" name="upload[file]"/>
+                        <p class="hint">
+                            {sprintf(
+                                '[`Supported file formats: <b>%s</b>`]',
+                                'CSV (Excel)'
+                            )}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </form>
     <iframe style="display: none;" frameborder="0" name="cash-upload-file" id="cash-upload-file"></iframe>
 
     <div id="c-import-step-2"></div>
 
-</div>
 </div>
 <script>
     'use strict';
@@ -71,7 +69,7 @@
             $uploadForm = $('#cash-import-upload-form'),
             $uploadIframe = $('#cash-upload-file'),
             $step2 = $('#c-import-step-2'),
-            $loading = $('<i class="icon16 loading"></i>');
+            $loading = $('<div><i class="fas fa-spinner"></i></div>');
 
         $uploadForm.on('change', '[name="upload[file]"]', function () {
             $uploadForm.append($loading);

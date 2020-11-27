@@ -1,6 +1,6 @@
 {if $errors}
     {foreach $errors as $error}
-    <div class="errormsg">{$error}</div>
+    <div class="alert warning errormsg">{$error}</div>
     {/foreach}
 {else}
     {foreach $responses as $fileType => $eventResponses}

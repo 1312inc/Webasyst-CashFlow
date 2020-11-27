@@ -9,7 +9,7 @@
             </p>
 
             {if 0}
-                <p><i class="icon16 exclamation"></i> [`Looks like something was not properly recognized in the uploaded file. To try another encoding or a delimeter, please reload the page.`]</p>
+                <p><i class="fas fa-exclamation-triangle exclamation"></i> [`Looks like something was not properly recognized in the uploaded file. To try another encoding or a delimeter, please reload the page.`]</p>
             {/if}
 
             <div class="c-parsed-rows">
@@ -94,7 +94,7 @@
             </div>
 
             <div class="field">
-                <div class="name">
+                <div class="name for-input">
                     [`Description`]
                 </div>
                 <div class="value">
@@ -106,7 +106,7 @@
                             {/foreach}
                         </select>
                     </div>
-                    <i class="icon10 yes" style="display: none"></i>
+                    <i class="fas fa-check yes" style="display: none"></i>
                 </div>
             </div>
 
@@ -115,7 +115,7 @@
             </div>
 
             <div class="field">
-                <div class="name">
+                <div class="name for-input">
                     [`Date`]
                 </div>
                 <div class="value">
@@ -139,9 +139,9 @@
                                 <option value="">[`Custom`]</option>
                             </select>
                         </div>
+                        <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check yes"></i> <span></span></span>
+                        <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
                     </span>
-                    <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
-                    <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
                 </div>
             </div>
 
@@ -150,7 +150,7 @@
             </div>
 
             <div class="field">
-                <div class="name">
+                <div class="name for-input">
                     [`Amount`]
                 </div>
                 <div class="value">
@@ -169,8 +169,8 @@
                                     {/foreach}
                                 </select>
                             </div>
-                            <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
-                            <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
+                            <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check yes"></i> <span></span></span>
+                            <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
                         </label>
                     </div>
                     <div>
@@ -193,8 +193,8 @@
                                         {/foreach}
                                     </select>
                                 </div>
-                                <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
-                                <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
+                                <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check yes"></i> <span></span></span>
+                                <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
                             </div>
                             <div>
                                 [`Expenses`]:
@@ -208,8 +208,8 @@
                                         {/foreach}
                                     </select>
                                 </div>
-                                <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
-                                <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
+                                <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check yes"></i> <span></span></span>
+                                <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
                             </div>
                         </div>
                     </div>
@@ -301,7 +301,7 @@
             </div>
 
             <div class="field">
-                <div class="value submit no-shift">
+                <div class="value submit">
                     <input type="submit" data-cash-csv-import-action="import" value="{sprintf('[`Import %s transactions`]', $info->totalRows)}"
                            class="button green"/>
                 </div>
@@ -310,7 +310,7 @@
     </form>
 
 
-    <div class="c-csv-configurator" id="c-import-step-3" style="display: none">
+    <div class="c-csv-configurator custom-mt-24" id="c-import-step-3" style="display: none">
         <div class="progressbar green">
             <div class="progressbar-outer">
                 <div class="progressbar-inner" style="width: 0%;">
@@ -320,9 +320,15 @@
         {*                    <div data-cash-csv-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
         <div data-cash-csv-import-progress-errors style="display: none"></div>
         <div>
-            <span data-cash-csv-import-progress-icon="loading" style="display:none;"><i class="icon16 loading"></i> <span>[`Importing...`]</span></span>
-            <span data-cash-csv-import-progress-icon="success" style="display:none;"><i class="icon16 yes"></i> <span>[`Finalizing...`]</span></span>
-            <span data-cash-csv-import-progress-icon="error" style="display:none;"><i class="icon16 no"></i> <span>[`Done`]</span></span>
+            <span data-cash-csv-import-progress-icon="loading" class="alert" style="display:none;">
+                <i class="fas fa-spinner loading"></i> <span>[`Importing...`]</span>
+            </span>
+            <span data-cash-csv-import-progress-icon="success" class="alert success" style="display:none;">
+                <i class="fas fa-check-circle yes"></i> <span>[`Finalizing...`]</span>
+            </span>
+            <span data-cash-csv-import-progress-icon="error" class="alert danger" style="display:none;">
+                <i class="fas fa-exclamation-triangle"></i> <span>[`Done`]</span>
+            </span>
         </div>
     </div>
 </div>
@@ -352,9 +358,9 @@
             $.get('?module=import&action=csvValidateColumn', { column_name: name, dateformat: format, to_validate: '{cashImportCsvAbstractValidator::DATETIME}' }, function (r) {
                 $status.show();
                 if (r.status === 'ok') {
-                    $status.append('<i class="icon10 yes"></i>' + r.data.datetime.source + ' => ' + r.data.datetime.converted);
+                    $status.append('<i class="fas fa-check yes"></i>' + r.data.datetime.source + ' => ' + r.data.datetime.converted);
                 } else {
-                    $status.append('<i class="icon10 no"></i>' + r.errors.join("\n"));
+                    $status.append('<i class="fas fa-exclamation-triangle"></i>' + r.errors.join("\n"));
                 }
             });
         };
@@ -517,7 +523,7 @@
             .on('change.cash', '[data-cash-csv-import-validate]', function (e) {
                 var $this = $(this),
                     name = $this.find(':selected').text(),
-                    $wrapper = $this.parent(),
+                    $wrapper = $this.parent().parent(),
                     $error = $wrapper.find('[data-cash-import-csv-validate-error]'),
                     $ok = $wrapper.find('[data-cash-import-csv-validate-ok]'),
                     to_validate = $this.data('cash-csv-import-validate'),
