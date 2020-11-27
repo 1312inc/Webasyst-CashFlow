@@ -5,7 +5,7 @@
     <title>{$wa->appName()} &mdash; {$wa->accountName()}</title>
 
     {$wa->css()}
-    <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/jquery-ui.min.css">
+    <link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/css/jquery-ui/jquery-ui-1.7.2.custom.css?v={$wa->version()}">
     <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/c3.min.css?v{$wa->version()}">
     <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/cash.css{if !waSystemConfig::isDebug()}?v{$wa->version()}{/if}">
     <link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.css?v={$wa->version()}">
