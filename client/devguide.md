@@ -12,8 +12,11 @@
 ## Режим разработки
 Для запуска режима используется команда vue-cli-service serve.
 
+`cd /to/webasyst-working-copy/wa-apps/cash/client/
+`npm install` #to install dependencies
+
 #### Запуск сервера разработки для web версии
-`npm run serve-desktop `
+`npm run serve-desktop`
 
 #### Для мобильной версии
 `npm run serve-mobile`
