@@ -1,15 +1,15 @@
 <template>
-    <div v-show="isShowChart" class="chart-container">
-      <div v-if="!loadingChart && isMultipleCurrencies" class="toggle">
+    <div class="chart-container">
+      <div v-if="!isShowChart && isMultipleCurrencies" class="toggle">
         <span @click="activeCurrencyChart = i" v-for="(currencyData, i) in chartData" :key="i" :class="{'selected': i === activeCurrencyChart}">
           {{ currencyData.currency }}
         </span>
       </div>
       <div>
-        <div ref="chartdiv" class="chart-main smaller" :class="{'tw-opacity-0': loadingChart}"></div>
+        <div ref="chartdiv" class="chart-main smaller" :class="{'tw-opacity-0': !isShowChart}"></div>
       </div>
       <!-- <transition name="fade-appear"> -->
-        <div v-if="loadingChart" class="skeleton-container">
+        <div v-if="!isShowChart" class="skeleton-container">
           <div class="skeleton">
             <span class="skeleton-custom-box"></span>
           </div>
@@ -24,15 +24,23 @@ import { mapState, mapMutations } from 'vuex'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
+import am4themesDark from '@amcharts/amcharts4/themes/amchartsdark'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
+let prefersColorSchemeDark = false
+
 am4core.useTheme(am4themesAnimated)
+if (window?.appState?.theme === 'dark' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  prefersColorSchemeDark = true
+  am4core.useTheme(am4themesDark)
+}
 
 export default {
 
   data () {
     return {
-      activeCurrencyChart: 0
+      activeCurrencyChart: 0,
+      dataValidated: true
     }
   },
 
@@ -44,7 +52,7 @@ export default {
     },
 
     isShowChart () {
-      return this.chartData && this.currentCategory.id !== -1312
+      return !this.loadingChart && this.dataValidated
     },
 
     isMultipleCurrencies () {
@@ -99,9 +107,7 @@ export default {
 
     // Cols axis
     this.colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
-    this.colsAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
-    this.colsAxis.renderer.gridContainer.background.fillOpacity = 0.3
-    this.colsAxis.renderer.grid.template.strokeOpacity = 0.06
+    this.colsAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
 
     // Legend
     chart.legend = new am4charts.Legend()
@@ -120,7 +126,7 @@ export default {
     // Currend day line
     const dateBorder = this.dateAxis2.axisRanges.create()
     dateBorder.date = new Date()
-    dateBorder.grid.stroke = am4core.color('#333333')
+    dateBorder.grid.stroke = prefersColorSchemeDark ? am4core.color('#FFF') : am4core.color('#333333')
     dateBorder.grid.strokeWidth = 1
     dateBorder.grid.strokeOpacity = 0.6
     dateBorder.label.inside = true
@@ -132,19 +138,19 @@ export default {
     dateBorder.label.dx = -10
 
     // Future dates hover
-    const rangeFututre = this.dateAxis2.axisRanges.create()
-    rangeFututre.date = new Date()
-    rangeFututre.endDate = new Date(2100, 0, 3)
-    rangeFututre.grid.disabled = true
-    rangeFututre.axisFill.fillOpacity = 0.6
-    rangeFututre.axisFill.fill = '#FFFFFF'
+    // const rangeFututre = this.dateAxis2.axisRanges.create()
+    // rangeFututre.date = new Date()
+    // rangeFututre.endDate = new Date(2100, 0, 3)
+    // rangeFututre.grid.disabled = true
+    // rangeFututre.axisFill.fillOpacity = 0.6
+    // rangeFututre.axisFill.fill = '#FFFFFF'
 
     // Scrollbar on the bottom
     chart.scrollbarX = new am4core.Scrollbar()
     chart.scrollbarX.parent = chart.bottomAxesContainer
-    chart.scrollbarX.background.fill = am4core.color('#f3f3f3')
-    chart.scrollbarX.thumb.background.fill = am4core.color('#f3f3f3')
-    chart.scrollbarX.stroke = am4core.color('#f3f3f3')
+    // chart.scrollbarX.background.fill = am4core.color('#f3f3f3')
+    // chart.scrollbarX.thumb.background.fill = am4core.color('#f3f3f3')
+    // chart.scrollbarX.stroke = am4core.color('#f3f3f3')
 
     const dateAxisChanged = () => {
       const from = this.$moment(this.dateAxis2.minZoomed).format('YYYY-MM-DD')
@@ -194,11 +200,11 @@ export default {
           return state
         }
 
-        // if (target instanceof am4charts.XYCursor) {
-        //   var state = target.states.create(stateId)
-        //   state.properties.behavior = 'none'
-        //   return state
-        // }
+        if (target instanceof am4charts.ValueAxis) {
+          const state = target.states.create(stateId)
+          state.properties.cursorTooltipEnabled = false
+          return state
+        }
 
         if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
           const state = target.states.create(stateId)
@@ -268,6 +274,12 @@ export default {
           return e
         })
       }
+
+      // this.chart.events.on('datavalidated', () => {
+      //   setTimeout(() => {
+      //     this.dataValidated = true
+      //   }, 0)
+      // })
 
       this.chart.data = filledChartData
       this.chart.xAxes.values[0].min = (new Date(this.$store.state.transaction.queryParams.from)).getTime()
@@ -353,7 +365,7 @@ export default {
         this.balanceSeries.dataFields.dateX = 'period'
         this.balanceSeries.groupFields.valueY = 'sum'
         this.balanceSeries.stroke = am4core.color('#19ffa3')
-        this.balanceSeries.strokeWidth = 1
+        this.balanceSeries.strokeWidth = 2
         // this.balanceSeries.strokeOpacity = 0.8
         this.balanceSeries.defaultState.transitionDuration = 0
 
@@ -432,9 +444,11 @@ export default {
       this.balanceAxis = this.chart.yAxes.push(new am4charts.ValueAxis())
       this.balanceAxis.height = am4core.percent(35)
       this.balanceAxis.marginBottom = 30
-      this.balanceAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
-      this.balanceAxis.renderer.gridContainer.background.fillOpacity = 0.3
-      this.balanceAxis.renderer.grid.template.strokeOpacity = 0.06
+      if (!prefersColorSchemeDark) {
+        this.balanceAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
+        this.balanceAxis.renderer.gridContainer.background.fillOpacity = 0.3
+      }
+      this.balanceAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
       this.balanceAxis.insertBefore(this.colsAxis)
 
       return this.balanceAxis
