@@ -31,7 +31,7 @@
       <div>
         <NumPages />
       </div>
-      <div>
+      <div v-if="$helper.isDesktopEnv">
         <ExportButton />
       </div>
     </div>
@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <transition name="fade-appear">
+    <!-- <transition name="fade-appear"> -->
       <div v-if="!loading">
         <div v-if="isTransactionsExists">
           <div v-if="transactions.offset === 0 && !isDetailsMode && isShowFuture" class="custom-mb-24"> <!-- If firts page -->
@@ -164,7 +164,7 @@
           {{ $t('emptyList') }}
         </div>
       </div>
-    </transition>
+    <!-- </transition> -->
 
     <Modal v-if="open" @close="open = false">
       <AddTransaction :defaultCategoryType="categoryType" />
