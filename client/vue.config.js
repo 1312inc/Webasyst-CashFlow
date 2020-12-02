@@ -4,7 +4,7 @@ module.exports = {
   productionSourceMap: false,
   filenameHashing: false,
   devServer: {
-    proxy: 'http://localhost:8888'
+    proxy: process.env.VUE_APP_DEV_PROXY
   },
   css: {
     loaderOptions: {
