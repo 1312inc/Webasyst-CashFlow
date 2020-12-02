@@ -16,6 +16,19 @@
 
 `npm install` // to install dependencies
 
+#### Перменные окружения
+Для работы в dev режиме необходимы файлы с переменными окружения `.env.desktop.development.local` и `.env.mobile.development.local`
+со следующим содержанием:
+
+```sh
+NODE_ENV=development
+VUE_APP_MODE=desktop                      # или mobile
+VUE_APP_API_TOKEN=aabcdf...843b7a5        # API токен
+VUE_APP_DEV_PROXY=http://localhost:8888   # url, на котором запущена установка Webasyst
+```
+> :warning: **NOTE** 
+.local файлы игнорируются git, их нужно создавать самостоятельно для локального использования
+
 #### Запуск сервера разработки для web версии
 `npm run serve-desktop`
 
