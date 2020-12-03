@@ -1,43 +1,37 @@
 <template>
   <div class="sidebar flexbox width-16rem tw-z-50">
-    <div class="sidebar-header">
-      <transition name="fade-appear">
-        <div v-if="accounts.length > 1" class="custom-mt-24">
-          <div v-if="currenciesInAccounts.length > 1" class="tw-mx-4">
-            <h5>{{ $t("cashOnHand") }}</h5>
-          </div>
-          <ul class="menu-v custom-mb-0">
-            <li
-              v-for="(currency, i) in currenciesInAccounts"
-              :key="i"
-              :class="{ selected: isActive('Currency', currency) }"
-            >
-              <router-link
-                :to="`/currency/${currency}`"
-                :class="{ bold: currenciesInAccounts.length === 1 }"
-                >{{
-                  currenciesInAccounts.length > 1 ? currency : $t("cashOnHand")
-                }}</router-link
-              >
-            </li>
-          </ul>
-        </div>
-      </transition>
-    </div>
-
     <div class="sidebar-body">
+
+      <transition name="fade-appear">
+          <div v-if="accounts.length > 1" class="custom-mt-24">
+            <div v-if="currenciesInAccounts.length > 1" class="tw-mx-4">
+              <h5>{{ $t("cashOnHand") }}</h5>
+            </div>
+            <ul class="menu">
+              <li
+                v-for="(currency, i) in currenciesInAccounts"
+                :key="i"
+                :class="{ selected: isActive('Currency', currency) }"
+              >
+                <router-link
+                  :to="`/currency/${currency}`"
+                  :class="{ bold: currenciesInAccounts.length === 1 }"
+                  >{{
+                    currenciesInAccounts.length > 1 ? currency : $t("cashOnHand")
+                  }}</router-link
+                >
+              </li>
+            </ul>
+          </div>
+      </transition>
       <transition name="fade-appear">
         <div v-if="accounts.length" class="custom-mt-24">
-          <div class="tw-mx-4">
-            <h5>{{ $t("accounts") }}</h5>
-          </div>
-
           <draggable
             group="accounts"
             tag="ul"
             :list="accounts"
             @update="sortAccounts()"
-            class="menu-v"
+            class="menu"
           >
             <li
               v-for="account in accounts"
@@ -48,16 +42,17 @@
                 :to="`/account/${account.id}`"
                 class="flexbox middle"
               >
-                <div class="icon">
+                <span class="icon">
                   <img
                     v-if="$helper.isValidHttpUrl(account.icon)"
                     :src="account.icon"
                     alt=""
+                    class="size-20"
                   />
                   <span v-else>
                     <i class="fas fa-star"></i>
                   </span>
-                </div>
+                </span>
                 <span>{{ account.name }}</span>
                 <span
                   v-if="account.stat"
@@ -82,9 +77,6 @@
 
       <transition name="fade-appear">
         <div v-if="categories.length" class="custom-mt-24">
-          <div class="tw-mx-4">
-            <h5>{{ $t("categories") }}</h5>
-          </div>
           <h6 class="heading black">{{ $t("income") }}</h6>
 
           <draggable
@@ -92,7 +84,7 @@
             tag="ul"
             :list="categoriesIncome"
             @update="sortCategories(categoriesIncome)"
-            class="menu-v"
+            class="menu"
           >
             <li
               v-for="category in categoriesIncome"
@@ -127,7 +119,7 @@
             tag="ul"
             :list="categoriesExpense"
             @update="sortCategories(categoriesExpense)"
-            class="menu-v"
+            class="menu"
           >
             <li
               v-for="category in categoriesExpense"
@@ -158,7 +150,7 @@
           <div v-if="$permissions.canAccessTransfers" class="custom-mt-24">
             <h6 class="heading black">{{ $t("other") }}</h6>
 
-            <ul class="menu-v">
+            <ul class="menu">
               <li
                 v-for="category in categoriesTransfer"
                 :key="category.id"
@@ -184,7 +176,13 @@
       </transition>
     </div>
     <div class="sidebar-footer">
-      <ul class="menu-v">
+      <ul class="menu">
+        <li>
+          <a :href="`${$helper.baseUrl}reports/`">
+            <i class="fas fa-chart-pie"></i>
+            <span>{{ $t("Reports") }}</span>
+          </a>
+        </li>
         <li>
           <a :href="`${$helper.baseUrl}import/`">
             <i class="fas fa-file-import"></i>
