@@ -1,21 +1,30 @@
 <template>
-    <div class="chart-container">
-      <div v-if="!isShowChart && isMultipleCurrencies" class="toggle">
-        <span @click="activeCurrencyChart = i" v-for="(currencyData, i) in chartData" :key="i" :class="{'selected': i === activeCurrencyChart}">
-          {{ currencyData.currency }}
-        </span>
-      </div>
-      <div>
-        <div ref="chartdiv" class="chart-main smaller" :class="{'tw-opacity-0': !isShowChart}"></div>
-      </div>
-      <!-- <transition name="fade-appear"> -->
-        <div v-if="!isShowChart" class="skeleton-container">
-          <div class="skeleton">
-            <span class="skeleton-custom-box"></span>
-          </div>
-        </div>
-      <!-- </transition> -->
+  <div class="chart-container">
+    <div v-if="isShowChart && isMultipleCurrencies" class="toggle">
+      <span
+        @click="activeCurrencyChart = i"
+        v-for="currencyData in chartData"
+        :key="currencyData.currency"
+        :class="{ selected: i === activeCurrencyChart }"
+      >
+        {{ currencyData.currency }}
+      </span>
     </div>
+    <div>
+      <div
+        ref="chartdiv"
+        class="chart-main smaller"
+        :class="{ 'tw-opacity-0': !isShowChart }"
+      ></div>
+    </div>
+    <!-- <transition name="fade-appear"> -->
+    <div v-if="!isShowChart" class="skeleton-container">
+      <div class="skeleton">
+        <span class="skeleton-custom-box"></span>
+      </div>
+    </div>
+    <!-- </transition> -->
+  </div>
 </template>
 
 <script>
@@ -39,13 +48,12 @@ export default {
 
   data () {
     return {
-      activeCurrencyChart: 0,
       dataValidated: true
     }
   },
 
   computed: {
-    ...mapState('transaction', ['chartData', 'loadingChart']),
+    ...mapState('transaction', ['chartData', 'chartDataCurrencyIndex', 'loadingChart']),
 
     currentCategory () {
       return this.$store.getters.getCurrentType
@@ -60,19 +68,24 @@ export default {
     },
 
     activeChartData () {
-      return Array.isArray(this.chartData) ? this.chartData[this.activeCurrencyChart] : { data: [] }
+      return Array.isArray(this.chartData) ? this.chartData[this.chartDataCurrencyIndex] : { data: [] }
     },
 
     currency () {
-      return this.$store.getters['system/getCurrencySignByCode'](this.activeChartData.currency)
+      return this.$helper.currencySignByCode(this.activeChartData.currency)
+    },
+
+    activeCurrencyChart: {
+      set (val) {
+        this.$store.commit('transaction/setChartDataCurrencyIndex', val)
+      },
+      get () {
+        return this.chartDataCurrencyIndex
+      }
     }
   },
 
   watch: {
-    chartData () {
-      this.activeCurrencyChart = 0
-    },
-
     activeChartData () {
       this.renderChart()
     }
