@@ -88,7 +88,8 @@ export default {
     this.dateAxis2 = chart.xAxes.push(new am4charts.DateAxis())
     this.dateAxis2.baseInterval = { timeUnit: 'day', count: 1 }
     this.dateAxis2.renderer.grid.template.location = 0
-    this.dateAxis2.renderer.grid.template.disabled = true
+    this.dateAxis2.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
+    // this.dateAxis2.renderer.grid.template.disabled = true
 
     // Date axis for groups
     this.dateAxis = chart.xAxes.push(new am4charts.DateAxis())
@@ -102,8 +103,8 @@ export default {
     this.dateAxis.renderer.grid.template.location = 0
     this.dateAxis.renderer.grid.template.disabled = true
     this.dateAxis.renderer.labels.template.disabled = true
-    this.dateAxis.renderer.ticks.template.disabled = true
-    this.dateAxis.height = 0
+    // this.dateAxis.renderer.ticks.template.disabled = true
+    // this.dateAxis.height = 0
 
     // Cols axis
     this.colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
@@ -301,7 +302,7 @@ export default {
       this.incomeSeries.tooltip.background.filters.clear()
       this.incomeSeries.tooltip.background.strokeWidth = 0
       this.incomeSeries.tooltip.getFillFromObject = false
-      this.incomeSeries.tooltip.background.fill = am4core.color('#19ffa3')
+      this.incomeSeries.tooltip.background.fill = am4core.color('#3ec55e')
       this.incomeSeries.tooltip.label.fill = am4core.color('#333')
       this.incomeSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
       this.incomeSeries.yAxis = this.colsAxis
@@ -309,9 +310,9 @@ export default {
       this.incomeSeries.dataFields.valueY = 'amountIncome'
       this.incomeSeries.dataFields.dateX = 'period'
       this.incomeSeries.groupFields.valueY = 'sum'
-      this.incomeSeries.stroke = am4core.color('#19ffa3')
-      this.incomeSeries.columns.template.stroke = am4core.color('#19ffa3')
-      this.incomeSeries.columns.template.fill = am4core.color('#19ffa3')
+      this.incomeSeries.stroke = am4core.color('#3ec55e')
+      this.incomeSeries.columns.template.stroke = am4core.color('#3ec55e')
+      this.incomeSeries.columns.template.fill = am4core.color('#3ec55e')
       this.incomeSeries.columns.template.fillOpacity = 0.5
       this.incomeSeries.defaultState.transitionDuration = 0
 
@@ -328,16 +329,16 @@ export default {
       this.expenseSeries.tooltip.background.filters.clear()
       this.expenseSeries.tooltip.background.strokeWidth = 0
       this.expenseSeries.tooltip.getFillFromObject = false
-      this.expenseSeries.tooltip.background.fill = am4core.color('#ff604a')
+      this.expenseSeries.tooltip.background.fill = am4core.color('#fc3d38')
       this.expenseSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
       this.expenseSeries.yAxis = this.colsAxis
       this.expenseSeries.xAxis = this.dateAxis
       this.expenseSeries.dataFields.valueY = 'amountExpense'
       this.expenseSeries.dataFields.dateX = 'period'
       this.expenseSeries.groupFields.valueY = 'sum'
-      this.expenseSeries.stroke = am4core.color('#ff604a')
-      this.expenseSeries.columns.template.stroke = am4core.color('#ff604a')
-      this.expenseSeries.columns.template.fill = am4core.color('#ff604a')
+      this.expenseSeries.stroke = am4core.color('#fc3d38')
+      this.expenseSeries.columns.template.stroke = am4core.color('#fc3d38')
+      this.expenseSeries.columns.template.fill = am4core.color('#fc3d38')
       this.expenseSeries.columns.template.fillOpacity = 0.5
       this.expenseSeries.defaultState.transitionDuration = 0
 
@@ -364,7 +365,7 @@ export default {
         this.balanceSeries.dataFields.valueY = 'balance'
         this.balanceSeries.dataFields.dateX = 'period'
         this.balanceSeries.groupFields.valueY = 'sum'
-        this.balanceSeries.stroke = am4core.color('#19ffa3')
+        this.balanceSeries.stroke = am4core.color('#3ec55e')
         this.balanceSeries.strokeWidth = 2
         // this.balanceSeries.strokeOpacity = 0.8
         this.balanceSeries.defaultState.transitionDuration = 0
@@ -373,8 +374,8 @@ export default {
         const range = this.balanceAxis.createSeriesRange(this.balanceSeries)
         range.value = 0
         range.endValue = -100000000
-        range.contents.stroke = am4core.color('#ff604a')
-        range.contents.fill = am4core.color('#ff604a')
+        range.contents.stroke = am4core.color('#fc3d38')
+        range.contents.fill = am4core.color('#fc3d38')
         range.contents.fillOpacity = 0.2
 
         this.balanceSeries.events.on('datavalidated', (ev) => {
@@ -434,7 +435,7 @@ export default {
       nbr.axisFill.tooltip.background.filters.clear()
       nbr.axisFill.tooltip.background.strokeWidth = 0
       nbr.axisFill.tooltip.getFillFromObject = false
-      nbr.axisFill.tooltip.background.fill = am4core.color('#ff604a')
+      nbr.axisFill.tooltip.background.fill = am4core.color('#fc3d38')
       nbr.axisFill.tooltip.label.fill = am4core.color('#4a0900')
       nbr.axisFill.tooltipY = this.balanceAxis.renderer.baseGrid.y
       nbr.axisFill.tooltipText = `CASH GAP!\nStart date:${dates[0].isStart ? ' <=' : ''} ${startDate}${inDaysStart}\nEnd date:${dates[dates.length - 1].isEnd ? ' >=' : ''} ${endDate}${inDaysEnd}\nMax balance decline: ${this.$numeral(minimumAmount).format()} ${this.currency} on ${minimumDate}`
