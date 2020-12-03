@@ -28,10 +28,14 @@
       </div>
       <div class="flexbox space-1rem">
         <div>
-          <Dropdown type="from" />
+          <Dropdown type="from" class="custom-mb-4" />
+          <AmountForPeriod type="income" period="from" class="custom-mb-4" />
+          <AmountForPeriod type="expense" period="from" />
         </div>
         <div>
-          <Dropdown type="to" />
+          <Dropdown type="to" class="custom-mb-4" />
+          <AmountForPeriod type="income" period="to" class="custom-mb-4" />
+          <AmountForPeriod type="expense" period="to" />
         </div>
       </div>
     </div>
@@ -48,13 +52,15 @@ import Modal from '@/components/Modal'
 import Account from '@/components/AddAccount'
 import Category from '@/components/AddCategory'
 import Dropdown from '@/components/Dropdown'
+import AmountForPeriod from '@/components/AmountForPeriod'
 
 export default {
   components: {
     Modal,
     Account,
     Category,
-    Dropdown
+    Dropdown,
+    AmountForPeriod
   },
 
   data () {
