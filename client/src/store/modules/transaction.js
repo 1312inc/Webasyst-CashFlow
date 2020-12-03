@@ -11,6 +11,7 @@ export default {
       data: []
     },
     chartData: [],
+    chartDataCurrencyIndex: 0,
     loading: true,
     loadingChart: true,
     queryParams: {
@@ -59,6 +60,10 @@ export default {
         if (key in newData) newData[key] = data[key]
       }
       state.queryParams = newData
+    },
+
+    setChartDataCurrencyIndex (state, value) {
+      state.chartDataCurrencyIndex = value
     }
 
   },
@@ -91,6 +96,7 @@ export default {
           }
         })
         commit('setChartData', data)
+        commit('setChartDataCurrencyIndex', 0)
         commit('setLoadingChart', false)
       } catch (e) {}
     },
