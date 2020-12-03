@@ -1,9 +1,24 @@
+import store from '../store'
+import { numeral } from '../plugins/numeralMoment'
+
 export default {
   install (Vue) {
     Vue.prototype.$helper = {
+      toCurrency: function (value, currencyCode) {
+        return `${numeral(value).format()} ${this.currencySignByCode(
+          currencyCode
+        )}`
+      },
+
+      currencySignByCode: code => {
+        return store.getters['system/getCurrencySignByCode'](code)
+      },
+
       isDesktopEnv: process.env.VUE_APP_MODE === 'desktop',
+
       baseUrl: window?.appState?.baseUrl || '/',
-      isValidHttpUrl: (string) => {
+
+      isValidHttpUrl: string => {
         let url
 
         try {
