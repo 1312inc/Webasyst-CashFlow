@@ -3,8 +3,8 @@
     <div v-if="isShowChart && isMultipleCurrencies" class="toggle">
       <span
         @click="activeCurrencyChart = i"
-        v-for="currencyData in chartData"
-        :key="currencyData.currency"
+        v-for="(currencyData, i) in chartData"
+        :key="i"
         :class="{ selected: i === activeCurrencyChart }"
       >
         {{ currencyData.currency }}
