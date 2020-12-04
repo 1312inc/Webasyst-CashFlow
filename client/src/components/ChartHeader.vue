@@ -9,11 +9,20 @@
           <div class="flexbox middle space-1rem">
             <div class="h2 custom-mb-0">{{ currentCategory.name }}</div>
             <div
-              v-if="currentCategory.stat && currentCategory.stat.summary"
-              class="larger"
+              v-if="currentCategory.stat"
+              class="h2 custom-mb-0"
+              :class="
+                currentCategory.stat.balance >= 0
+                  ? 'tw-text-green-500'
+                  : 'tw-text-red-500'
+              "
             >
-              {{ $numeral(currentCategory.stat.summary).format() }}
-              {{ getCurrencySignByCode(currentCategory.currency) }}
+              {{
+                $helper.toCurrency(
+                  currentCategory.stat.balance,
+                  currentCategory.currency
+                )
+              }}
             </div>
             <div v-if="currentCategory.id >= 0">
               <button
@@ -47,7 +56,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import Account from '@/components/AddAccount'
 import Category from '@/components/AddCategory'
@@ -72,8 +80,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters('system', ['getCurrencySignByCode']),
-
     currentCategory () {
       return this.$store.getters.getCurrentType
     }
