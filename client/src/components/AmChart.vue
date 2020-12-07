@@ -452,6 +452,12 @@ export default {
       nbr.axisFill.tooltip.label.fill = am4core.color('#4a0900')
       nbr.axisFill.tooltipY = this.balanceAxis.renderer.baseGrid.y
       nbr.axisFill.tooltipText = `CASH GAP!\nStart date:${dates[0].isStart ? ' <=' : ''} ${startDate}${inDaysStart}\nEnd date:${dates[dates.length - 1].isEnd ? ' >=' : ''} ${endDate}${inDaysEnd}\nMax balance decline: ${this.$numeral(minimumAmount).format()} ${this.currency} on ${minimumDate}`
+
+      // Remove range when balance series removed
+      this.balanceSeries.events.on('beforedisposed', (ev) => {
+        const i = ev.target.xAxis.axisRanges.indexOf(nbr)
+        if (i > -1) ev.target.xAxis.axisRanges.removeIndex(i).dispose()
+      })
     },
 
     addBalanceAxis () {
