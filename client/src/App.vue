@@ -54,6 +54,8 @@ export default {
     })
 
     this.$store.commit('transaction/updateQueryParams', { from, to, filter })
+
+    this.$store.dispatch('transaction/getBalanceFlow')
   },
 
   beforeDestroy () {
