@@ -24,7 +24,8 @@ export default {
     detailsInterval: {
       from: '',
       to: ''
-    }
+    },
+    balanceFlow: []
   }),
 
   getters: {
@@ -40,6 +41,10 @@ export default {
 
     setChartData (state, data) {
       state.chartData = data
+    },
+
+    setBalanceFlow (state, data) {
+      state.balanceFlow = data
     },
 
     setDetailsInterval (state, data) {
@@ -99,6 +104,18 @@ export default {
         commit('setChartDataCurrencyIndex', 0)
         commit('setLoadingChart', false)
       } catch (e) {}
+    },
+
+    async getBalanceFlow ({ commit, state }) {
+      const { from, to } = state.queryParams
+      const { data } = await api.get('cash.aggregate.getBalanceFlow', {
+        params: {
+          from,
+          to,
+          group_by: 'day'
+        }
+      })
+      commit('setBalanceFlow', data)
     },
 
     async update ({ dispatch }, params) {

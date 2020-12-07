@@ -1,28 +1,36 @@
 <template>
   <div class="sidebar flexbox width-16rem tw-z-50">
     <div class="sidebar-body">
-
       <transition name="fade-appear">
-          <div v-if="accounts.length > 1" class="custom-mt-24">
-            <div v-if="currenciesInAccounts.length > 1" class="tw-mx-4">
-              <h5>{{ $t("cashOnHand") }}</h5>
-            </div>
-            <ul class="menu">
-              <li
-                v-for="(currency, i) in currenciesInAccounts"
-                :key="i"
-                :class="{ selected: isActive('Currency', currency) }"
-              >
-                <router-link
-                  :to="`/currency/${currency}`"
-                  :class="{ bold: currenciesInAccounts.length === 1 }"
-                  >{{
-                    currenciesInAccounts.length > 1 ? currency : $t("cashOnHand")
-                  }}</router-link
-                >
-              </li>
-            </ul>
+        <div v-if="accounts.length > 1" class="custom-mt-24">
+          <div v-if="currenciesInAccounts.length > 1" class="tw-mx-4">
+            <h5>{{ $t("cashOnHand") }}</h5>
           </div>
+          <ul class="menu">
+            <li
+              v-for="(currency, i) in currenciesInAccounts"
+              :key="i"
+              :class="{ selected: isActive('Currency', currency) }"
+            >
+              <router-link
+                :to="`/currency/${currency}`"
+                :class="{ bold: currenciesInAccounts.length === 1 }"
+                class="flexbox middle full-width"
+              >
+                <div class="wide">
+                  {{
+                    currenciesInAccounts.length > 1
+                      ? currency
+                      : $t("cashOnHand")
+                  }}
+                </div>
+                <div>
+                  <CurrencyChart :currency="currency" />
+                </div>
+              </router-link>
+            </li>
+          </ul>
+        </div>
       </transition>
       <transition name="fade-appear">
         <div v-if="accounts.length" class="custom-mt-24">
@@ -157,21 +165,20 @@
                 :class="{ selected: isActive('Category', category.id) }"
               >
                 <router-link
-                    :to="`/category/${category.id}`"
-                    class="flexbox middle"
-                  >
+                  :to="`/category/${category.id}`"
+                  class="flexbox middle"
+                >
                   <span class="icon"
-                      ><i
-                        class="rounded"
-                        :style="`background-color:${category.color};`"
-                      ></i
-                    ></span>
+                    ><i
+                      class="rounded"
+                      :style="`background-color:${category.color};`"
+                    ></i
+                  ></span>
                   <span>{{ category.name }}</span>
                 </router-link>
               </li>
             </ul>
           </div>
-
         </div>
       </transition>
     </div>
@@ -210,13 +217,15 @@ import draggable from 'vuedraggable'
 import Modal from '@/components/Modal'
 import Account from '@/components/AddAccount'
 import Category from '@/components/AddCategory'
+import CurrencyChart from '@/components/CurrencyChart'
 
 export default {
   components: {
     draggable,
     Modal,
     Account,
-    Category
+    Category,
+    CurrencyChart
   },
   data () {
     return {
@@ -274,14 +283,14 @@ export default {
     },
 
     sortAccounts () {
-      const ids = this.accounts.map((e) => e.id)
+      const ids = this.accounts.map(e => e.id)
       this.$store.dispatch('account/sort', {
         order: ids
       })
     },
 
     sortCategories (list) {
-      const ids = list.map((e) => e.id)
+      const ids = list.map(e => e.id)
       this.$store.commit('category/updateSort', list)
       this.$store.dispatch('category/sort', {
         order: ids

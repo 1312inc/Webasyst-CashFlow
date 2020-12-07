@@ -22,6 +22,7 @@
     "@uppy/xhr-upload": "^1.6.4",
     "axios": "^0.20.0",
     "core-js": "^3.6.5",
+    "d3": "^6.3.0",
     "flatpickr": "^4.6.6",
     "moment": "^2.28.0",
     "noty": "^3.2.0-beta",
