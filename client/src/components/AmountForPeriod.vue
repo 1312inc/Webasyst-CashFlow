@@ -48,15 +48,15 @@ export default {
     },
 
     showComponent () {
-      return !this.currentType || this.type === this.currentType
+      return !this.currentType || (this.chartData && this.type === this.currentType)
     },
 
     currency () {
-      return this.chartData[this.chartDataCurrencyIndex].currency
+      return this.chartData?.[this.chartDataCurrencyIndex].currency
     },
 
     total () {
-      const currencyData = this.chartData.find(
+      const currencyData = this.chartData?.find(
         d => d.currency === this.currency
       )
       if (!currencyData) return false
