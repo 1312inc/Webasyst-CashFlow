@@ -1,5 +1,5 @@
 <template>
-  <div v-if="total">
+  <div v-if="showComponent">
     <div
       v-if="!showSkeleton"
       :class="{
@@ -42,6 +42,14 @@ export default {
 
   computed: {
     ...mapState('transaction', ['chartData', 'chartDataCurrencyIndex']),
+
+    currentType () {
+      return this.$store.getters.getCurrentType?.type
+    },
+
+    showComponent () {
+      return !this.currentType || this.type === this.currentType
+    },
 
     currency () {
       return this.chartData[this.chartDataCurrencyIndex].currency
