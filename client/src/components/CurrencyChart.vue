@@ -7,11 +7,16 @@
       <svg ref="chart"></svg>
     </div>
     <div class="align-right">
-      <div class="custom-mb-4 count">
-        {{ shorten }} {{ $helper.currencySignByCode(this.currency) }}
-      </div>
+      <div
+        class="custom-mb-4 count"
+        v-html="`${shorten}&nbsp;${$helper.currencySignByCode(this.currency)}`"
+      ></div>
       <div>
-        <span class="c-bwc-badge small">{{ $numeral(diff).format() }}</span>
+        <span
+          class="c-bwc-badge small"
+          :class="diff >= 0 ? 'c-bwc-badge--green' : 'c-bwc-badge--red'"
+          >{{ $numeral(diff).format() }}</span
+        >
       </div>
     </div>
   </div>
@@ -195,12 +200,19 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 .c-bwc-badge {
-  background: #3ec55e;
   color: #fff;
   padding: 2px 6px;
   border-radius: 4px;
+
+  &--green {
+    background: #3ec55e;
+  }
+
+  &--red {
+    background: #fc3d38;
+  }
 }
 
 .c-bwc-container svg {
