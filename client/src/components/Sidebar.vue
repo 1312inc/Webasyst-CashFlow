@@ -8,8 +8,8 @@
           </div>
           <ul class="menu">
             <li
-              v-for="(currency, i) in currenciesInAccounts"
-              :key="i"
+              v-for="currency in currenciesInAccounts"
+              :key="currency"
               :class="{ selected: isActive('Currency', currency) }"
             >
               <router-link
