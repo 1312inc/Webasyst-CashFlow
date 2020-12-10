@@ -13,35 +13,41 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import Paginate from 'vuejs-paginate'
 export default {
+  props: {
+    total: {
+      type: Number
+    },
+
+    limit: {
+      type: Number
+    },
+
+    offset: {
+      type: Number
+    }
+  },
+
   components: {
     Paginate
   },
 
+  data () {
+    return {
+      currentPage: 0
+    }
+  },
+
   computed: {
-    ...mapState('transaction', ['transactions']),
-
     pagesCount () {
-      return Math.ceil(this.transactions.total / this.transactions.limit)
-    },
-
-    currentPage: {
-      get () {
-        return this.transactions.offset / this.transactions.limit + 1
-      },
-      set () {
-        return false
-      }
+      return Math.ceil(this.total / this.limit)
     }
   },
 
   methods: {
     clickCallback (pageNum) {
-      this.$store.commit('transaction/updateQueryParams', {
-        offset: (pageNum - 1) * this.transactions.limit
-      })
+      this.$emit('changePage', (pageNum - 1) * this.limit)
     }
   }
 }

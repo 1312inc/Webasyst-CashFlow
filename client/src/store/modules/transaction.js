@@ -74,19 +74,19 @@ export default {
   },
 
   actions: {
-    async getList ({ commit, state }) {
-      const params = { ...state.queryParams }
-      if (state.detailsInterval.from) params.from = state.detailsInterval.from
-      if (state.detailsInterval.to) params.to = state.detailsInterval.to
-      commit('setLoading', true)
-      try {
-        const { data } = await api.get('cash.transaction.getList', {
-          params
-        })
-        commit('setItems', data)
-        commit('setLoading', false)
-      } catch (e) {}
-    },
+    // async getList ({ commit, state }) {
+    //   const params = { ...state.queryParams }
+    //   if (state.detailsInterval.from) params.from = state.detailsInterval.from
+    //   if (state.detailsInterval.to) params.to = state.detailsInterval.to
+    //   commit('setLoading', true)
+    //   try {
+    //     const { data } = await api.get('cash.transaction.getList', {
+    //       params
+    //     })
+    //     commit('setItems', data)
+    //     commit('setLoading', false)
+    //   } catch (e) {}
+    // },
 
     async getChartData ({ commit, state }) {
       const { from, to, filter } = state.queryParams
@@ -121,7 +121,7 @@ export default {
     async update ({ dispatch }, params) {
       const method = params.id ? 'update' : 'create'
       await api.post(`cash.transaction.${method}`, params)
-      dispatch('getList')
+      // dispatch('getList')
       dispatch('getChartData')
     },
 
@@ -129,19 +129,19 @@ export default {
       await api.delete('cash.transaction.delete', {
         params: { id }
       })
-      dispatch('getList')
+      // dispatch('getList')
       dispatch('getChartData')
     },
 
     async bulkDelete ({ dispatch }, ids) {
       await api.post('cash.transaction.bulkDelete', { ids })
-      dispatch('getList')
+      // dispatch('getList')
       dispatch('getChartData')
     },
 
     async bulkMove ({ dispatch }, params) {
       await api.post('cash.transaction.bulkMove', params)
-      dispatch('getList')
+      // dispatch('getList')
       dispatch('getChartData')
     }
 

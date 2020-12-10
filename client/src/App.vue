@@ -39,27 +39,8 @@ export default {
 
     const filter = this.$store.state.transaction.queryParams.filter || `currency/${this.$store.getters['account/currenciesInAccounts'][0]}`
 
-    this.unsubscribe = this.$store.subscribe((mutation) => {
-      if (mutation.type === 'transaction/updateQueryParams') {
-        this.$store.dispatch('transaction/getList')
-
-        const keys = Object.keys(mutation.payload)
-        const key = keys[0]
-        const changeOffset = keys.length === 1 && key === 'offset'
-
-        if (!changeOffset) {
-          this.$store.dispatch('transaction/getChartData')
-        }
-      }
-    })
-
     this.$store.commit('transaction/updateQueryParams', { from, to, filter })
-
     this.$store.dispatch('transaction/getBalanceFlow')
-  },
-
-  beforeDestroy () {
-    this.unsubscribe()
   },
 
   methods: {

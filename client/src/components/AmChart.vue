@@ -53,7 +53,7 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['chartData', 'chartDataCurrencyIndex', 'loadingChart']),
+    ...mapState('transaction', ['queryParams', 'chartData', 'chartDataCurrencyIndex', 'loadingChart']),
 
     currentCategory () {
       return this.$store.getters.getCurrentType
@@ -89,6 +89,19 @@ export default {
     activeChartData () {
       this.renderChart()
     }
+  },
+
+  created () {
+    this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
+      if (mutation.type === 'transaction/updateQueryParams') {
+        const keys = Object.keys(mutation.payload)
+        const key = keys[0]
+        const changeOffset = keys.length === 1 && key === 'offset'
+        if (!changeOffset) {
+          this.$store.dispatch('transaction/getChartData')
+        }
+      }
+    })
   },
 
   mounted () {
@@ -179,7 +192,7 @@ export default {
       this.setDetailsInterval({ from: '', to: '' })
     })
 
-    this.unsubscribe = this.$store.subscribe((mutation) => {
+    this.unsubscribeFromDetailsInterval = this.$store.subscribe((mutation) => {
       if (mutation.type === 'transaction/setDetailsInterval') {
         if (mutation.payload.from === '') {
           this.dateAxis2.zoom({ start: 0, end: 1 })
@@ -233,7 +246,8 @@ export default {
   },
 
   beforeDestroy () {
-    this.unsubscribe()
+    this.unsubscribeFromDetailsInterval()
+    this.unsubscribeFromQueryParams()
     if (this.chart) {
       this.chart.dispose()
     }
