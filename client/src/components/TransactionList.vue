@@ -4,12 +4,21 @@
       <div
         class="c-sticky-element custom-py-12 flexbox middle space-1rem"
         data-sticky-class="c-sticky-element--fixed"
+        data-margin-top=64
       >
-        <!-- <div v-if="checkedRows.length" class="flexbox space-1rem middle wide">
-        <button @click="openMove = true" class="yellow red"><i class="fas fa-arrow-right"></i> {{ $t('move') }} {{ checkedRows.length }}</button>
-        <button @click="bulkDelete" class="button red"><i class="fas fa-trash-alt"></i> {{ $t('delete') }} {{ checkedRows.length }}</button>
-        <button @click="checkedRows = []" class="button nobutton smaller">{{ $t('unselectAll') }}</button>
-      </div> -->
+        <div v-if="checkedRows.length" class="flexbox space-1rem middle wide">
+          <button @click="openMove = true" class="yellow red">
+            <i class="fas fa-arrow-right"></i> {{ $t("move") }}
+            {{ checkedRows.length }}
+          </button>
+          <button @click="bulkDelete" class="button red">
+            <i class="fas fa-trash-alt"></i> {{ $t("delete") }}
+            {{ checkedRows.length }}
+          </button>
+          <button @click="checkedRows = []" class="button nobutton smaller">
+            {{ $t("unselectAll") }}
+          </button>
+        </div>
 
         <div
           v-if="!checkedRows.length && currentType"
@@ -46,8 +55,15 @@
       </div>
     </div> -->
 
-    <TransactionListUpcoming class="custom-mb-24" />
-    <TransactionListIncoming />
+    <TransactionListUpcoming
+      class="custom-mb-24"
+      ref="upcoming"
+      @checkRows="(ids) => this.checkRows(ids, 'upcoming')"
+    />
+    <TransactionListIncoming
+      ref="incoming"
+      @checkRows="(ids) => this.checkRows(ids, 'incoming')"
+    />
 
     <Modal v-if="open" @close="open = false">
       <AddTransaction :defaultCategoryType="categoryType" />
@@ -60,7 +76,7 @@
 </template>
 
 <script>
-// import Sticky from 'sticky-js'
+import Sticky from 'sticky-js'
 import { mapState, mapGetters } from 'vuex'
 import TransactionListIncoming from '@/components/TransactionListIncoming'
 import TransactionListUpcoming from '@/components/TransactionListUpcoming'
@@ -74,9 +90,10 @@ export default {
       open: false,
       categoryType: '',
       openMove: false,
-      checkedRows: [],
-      featurePeriod: 7,
-      upcomingBlockOpened: false
+      checkedBy: {
+        incoming: [],
+        upcoming: []
+      }
     }
   },
 
@@ -89,28 +106,27 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', [
-      'transactions',
-      'queryParams',
-      'loading',
-      'detailsInterval'
-    ]),
+    ...mapState('transaction', ['loading']),
+
     ...mapGetters({
       currentType: 'getCurrentType'
     }),
 
-    isTransactionsExists () {
-      return (
-        this.sortedTransactions.incoming.length ||
-        this.sortedTransactions.upcoming.length
-      )
+    checkedRows: {
+      get () {
+        return [...this.checkedBy.incoming, ...this.checkedBy.upcoming]
+      },
+      set () {
+        this.$refs.incoming.unCheckAll()
+        this.$refs.upcoming.unCheckAll()
+      }
     }
   },
 
   mounted () {
-    // if (document.querySelector('.c-sticky-element')) {
-    //   this.sticky = new Sticky('.c-sticky-element')
-    // }
+    if (document.querySelector('.c-sticky-element')) {
+      this.sticky = new Sticky('.c-sticky-element')
+    }
   },
 
   methods: {
@@ -119,19 +135,8 @@ export default {
       this.categoryType = type
     },
 
-    checkAll ({ target }) {
-      this.checkedRows = target.checked
-        ? this.transactions.data.map(r => r.id)
-        : []
-    },
-
-    onTransactionListRowUpdate (id) {
-      const index = this.checkedRows.indexOf(id)
-      if (index > -1) {
-        this.checkedRows.splice(index, 1)
-      } else {
-        this.checkedRows.push(id)
-      }
+    checkRows (ids, type) {
+      this.checkedBy[type] = ids
     },
 
     bulkDelete () {
@@ -152,7 +157,7 @@ export default {
 .c-sticky-element {
   background-color: #fff;
   border-bottom: 1px solid #fff;
-  z-index: 50;
+  z-index: 10;
 }
 .c-sticky-element--fixed {
   border-bottom: 1px solid #eee;

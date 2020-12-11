@@ -74,7 +74,11 @@
             <th
               class="min-width tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
             >
-              <!-- <input type="checkbox" @click="checkAll" /> -->
+              <input
+                type="checkbox"
+                @click="checkAll"
+                v-model="checkboxChecked"
+              />
             </th>
             <th
               colspan="5"
@@ -91,6 +95,7 @@
             v-for="transaction in filteredTransactions"
             :key="transaction.id"
             :transaction="transaction"
+            :is-checked="checkedRows.includes(transaction.id)"
             @checkboxUpdate="onTransactionListRowUpdate(transaction.id)"
           />
         </table>
@@ -105,15 +110,19 @@
 <script>
 import { mapState } from 'vuex'
 import api from '@/plugins/api'
+import transactionListMixin from '@/mixins/transactionListMixin'
 import TransactionListRow from '@/components/TransactionListRow'
 import ExportButton from '@/components/ExportButton'
 export default {
+  mixins: [transactionListMixin],
+
   data () {
     return {
       loading: true,
       transactions: [],
       featurePeriod: 7,
-      upcomingBlockOpened: false
+      upcomingBlockOpened: false,
+      checkedRows: []
     }
   },
 
@@ -137,7 +146,12 @@ export default {
     ...mapState('transaction', ['queryParams', 'detailsInterval']),
 
     showComponent () {
-      return this.queryParams.to >= this.$moment().add(1, 'M').format('YYYY-MM-DD')
+      return (
+        this.queryParams.to >=
+        this.$moment()
+          .add(1, 'M')
+          .format('YYYY-MM-DD')
+      )
     },
 
     filteredTransactions () {
@@ -170,7 +184,12 @@ export default {
       params.to = this.$moment()
         .add(1, 'M')
         .format('YYYY-MM-DD')
-      if (this.detailsInterval.from && this.detailsInterval.from > params.from) { params.from = this.detailsInterval.from }
+      if (
+        this.detailsInterval.from &&
+        this.detailsInterval.from > params.from
+      ) {
+        params.from = this.detailsInterval.from
+      }
       if (this.detailsInterval.to) params.to = this.detailsInterval.to
       const { data } = await api.get('cash.transaction.getList', {
         params
