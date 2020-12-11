@@ -51,7 +51,11 @@
             <th
               class="min-width tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
             >
-              <!-- <input type="checkbox" @click="checkAll" /> -->
+              <input
+                type="checkbox"
+                @click="checkAll"
+                v-model="checkboxChecked"
+              />
             </th>
             <th
               colspan="5"
@@ -66,6 +70,7 @@
             v-for="transaction in transactionGroup"
             :key="transaction.id"
             :transaction="transaction"
+            :is-checked="checkedRows.includes(transaction.id)"
             @checkboxUpdate="onTransactionListRowUpdate(transaction.id)"
           />
         </table>
@@ -80,14 +85,18 @@
 <script>
 import { mapState } from 'vuex'
 import api from '@/plugins/api'
+import transactionListMixin from '@/mixins/transactionListMixin'
 import NumPages from '@/components/NumPages'
 import TransactionListRow from '@/components/TransactionListRow'
 import ExportButton from '@/components/ExportButton'
 export default {
+  mixins: [transactionListMixin],
+
   data () {
     return {
       loading: true,
-      transactions: {}
+      transactions: {},
+      checkedRows: []
     }
   },
 
@@ -109,6 +118,10 @@ export default {
   computed: {
     ...mapState('transaction', ['queryParams', 'detailsInterval']),
 
+    filteredTransactions () {
+      return this.transactions.data
+    },
+
     isDetailsMode () {
       return this.detailsInterval.from !== '' || this.detailsInterval.to !== ''
     },
@@ -119,7 +132,7 @@ export default {
         this.transactions.offset === 0 && !this.isDetailsMode
           ? { today: [] }
           : {}
-      const result = this.transactions.data.reduce((acc, e) => {
+      const result = this.filteredTransactions.reduce((acc, e) => {
         const month = this.$moment(e.date).format('YYYY-MM')
         if (e.date === today && acc.today) {
           acc.today.push(e)
@@ -140,7 +153,10 @@ export default {
   created () {
     this.unsubscribeFromTransitionUpdate = this.$store.subscribeAction({
       after: (action, state) => {
-        if (action.type === 'transaction/update' || action.type === 'transaction/delete') {
+        if (
+          action.type === 'transaction/update' ||
+          action.type === 'transaction/delete'
+        ) {
           this.getTransactions()
         }
       }
