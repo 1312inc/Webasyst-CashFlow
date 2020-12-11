@@ -1,12 +1,12 @@
 <template>
-  <div v-if="dataByCurrency" class="flexbox middle">
+  <div class="flexbox middle">
     <div
       class="c-bwc-container custom-mr-12"
       :style="`width: ${width}px; height: ${height}px`"
     >
       <svg ref="chart"></svg>
     </div>
-    <div class="align-right">
+    <div v-if="dataByCurrency" class="align-right">
       <div
         class="custom-mb-4 count"
         v-html="`${shorten}&nbsp;${$helper.currencySignByCode(this.currency)}`"

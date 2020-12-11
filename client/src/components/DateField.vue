@@ -1,7 +1,7 @@
 <template>
   <input
-    v-bind:value="value"
-    v-on:input="$emit('input', $event.target.value)"
+    :value="value"
+    @input="$emit('input', $event.target.value)"
     type="text"
     ref="date"
   />
@@ -26,6 +26,6 @@ export default {
 }
 </script>
 
-<style lang="scss">
-@import "~flatpickr/dist/flatpickr.css";
+<style>
+  @import "~flatpickr/dist/flatpickr.css";
 </style>

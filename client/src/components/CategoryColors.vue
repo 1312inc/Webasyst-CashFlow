@@ -1,8 +1,8 @@
 <template>
-  <div class="colors flexbox">
+  <div class="c-colors flexbox">
     <div v-for="(color, i) in colors[type]" :key="i">
       <div
-        class="colors__item"
+        class="c-colors__item"
         :class="{ active: color === active }"
         :style="`background-color: ${color};`"
         @click="click(color)"
@@ -13,21 +13,7 @@
 
 <script>
 export default {
-  props: {
-    type: {
-      type: String,
-      default () {
-        return ''
-      }
-    },
-
-    active: {
-      type: String,
-      default () {
-        return ''
-      }
-    }
-  },
+  props: ['type', 'active'],
 
   data () {
     return {
@@ -121,7 +107,7 @@ export default {
 </script>
 
 <style lang="scss">
-.colors {
+.c-colors {
   flex-wrap: wrap;
 
   & > div {

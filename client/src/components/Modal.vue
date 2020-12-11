@@ -16,7 +16,15 @@
 </template>
 
 <script>
-export default {}
+export default {
+  created () {
+    document.body.classList.add('modal')
+  },
+
+  beforeDestroy () {
+    document.body.classList.remove('modal')
+  }
+}
 </script>
 
 <style scoped>

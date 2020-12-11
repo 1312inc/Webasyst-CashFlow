@@ -65,7 +65,7 @@
             </span>
           </div>
           <span v-if="selectedAccount" class="custom-ml-8">{{
-            getCurrencySignByCode(selectedAccount.currency)
+            $helper.currencySignByCode(selectedAccount.currency)
           }}</span>
         </div>
       </div>
@@ -119,6 +119,7 @@
             {{ $t("howOften.every") }}
             <input
               v-model.number="model.repeating_frequency"
+              :class="{ 'state-error': $v.model.repeating_frequency.$error }"
               type="text"
               class="shorter custom-ml-8"
             />
@@ -174,9 +175,8 @@
         </div>
         <div class="value">
           <div class="wa-select">
-            <div v-if="selectedAccount" class="icon custom-ml-8">
+            <div v-if="selectedAccount && $helper.isValidHttpUrl(selectedAccount.icon)" class="icon custom-ml-8">
               <img
-                v-if="$helper.isValidHttpUrl(selectedAccount.icon)"
                 :src="selectedAccount.icon"
                 alt=""
               />
@@ -191,7 +191,7 @@
                 :key="account.id"
               >
                 {{ account.currency }} – {{ account.name }} ({{
-                  getCurrencySignByCode(account.currency)
+                  $helper.currencySignByCode(account.currency)
                 }})
               </option>
             </select>
@@ -214,7 +214,7 @@
                 :key="account.id"
               >
                 {{ account.currency }} – {{ account.name }} ({{
-                  getCurrencySignByCode(account.currency)
+                  $helper.currencySignByCode(account.currency)
                 }})
               </option>
             </select>
@@ -233,7 +233,7 @@
                 type="text"
             />
             <span v-if="selectedAccountTransfer" class="custom-ml-8">{{
-              getCurrencySignByCode(selectedAccountTransfer.currency)
+              $helper.currencySignByCode(selectedAccountTransfer.currency)
             }}</span>
           </div>
           <span v-if="selectedAccount && selectedAccountTransfer && selectedAccount.currency !== selectedAccountTransfer.currency" class="smaller alert warning tw-mt-4 custom-mb-0">
@@ -318,7 +318,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { required, integer, numeric } from 'vuelidate/lib/validators'
+import { required, requiredIf, integer, numeric } from 'vuelidate/lib/validators'
 import DateField from '@/components/DateField'
 export default {
   props: {
@@ -376,9 +376,15 @@ export default {
         required
       },
       repeating_frequency: {
+        required: requiredIf(function () {
+          return this.model.repeating_interval === 'custom'
+        }),
         integer
       },
       repeating_end_after: {
+        required: requiredIf(function () {
+          return this.model.repeating_end_type === 'after'
+        }),
         integer
       }
     }
@@ -387,7 +393,6 @@ export default {
   computed: {
     ...mapState('account', ['accounts']),
     ...mapState('category', ['categories']),
-    ...mapGetters('system', ['getCurrencySignByCode']),
     ...mapGetters({
       getAccountById: 'account/getById',
       getCategoryById: 'category/getById',
@@ -396,10 +401,6 @@ export default {
 
     isModeUpdate () {
       return !!this.transaction
-    },
-
-    transactionType () {
-      return this.selectedCategory?.type || this.defaultCategoryType
     },
 
     selectedAccount () {
@@ -414,9 +415,14 @@ export default {
       return this.getCategoryById(this.model.category_id)
     },
 
+    transactionType () {
+      return this.selectedCategory?.type || this.defaultCategoryType
+    },
+
     categoriesInSelect () {
       return this.getCategoryByType(this.transactionType)
     }
+
   },
 
   watch: {
@@ -427,9 +433,10 @@ export default {
 
   created () {
     if (this.isModeUpdate) {
-      for (const prop in this.model) {
-        this.model[prop] = this.transaction[prop] || this.model[prop]
-      }
+      // for (const prop in this.model) {
+      //   this.model[prop] = this.transaction[prop] || this.model[prop]
+      // }
+      this.model = { ...this.model, ...this.transaction }
       this.model.amount = Math.abs(this.model.amount)
     }
     if (this.defaultCategoryType === 'transfer') {
@@ -459,15 +466,17 @@ export default {
     },
 
     remove () {
-      this.$store
-        .dispatch('transaction/delete', this.model.id)
-        .then(() => {
-          this.$noty.success('Транзакция успешно удалена')
-          this.close()
-        })
-        .catch(() => {
-          this.$noty.error('Oops, something went wrong!')
-        })
+      if (confirm(this.$t('transactionDeleteWarning'))) {
+        this.$store
+          .dispatch('transaction/delete', this.model.id)
+          .then(() => {
+            this.$noty.success('Транзакция успешно удалена')
+            this.close()
+          })
+          .catch(() => {
+            this.$noty.error('Oops, something went wrong!')
+          })
+      }
     },
 
     close () {

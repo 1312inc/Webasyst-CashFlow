@@ -11,7 +11,6 @@
           <div class="wa-select">
             <select
               v-model="model.account_id"
-              :class="{ 'state-error': $v.model.account_id.$error }"
             >
               <option value="0">{{ $t("dontChange") }}</option>
               <option
@@ -20,7 +19,7 @@
                 :key="account.id"
               >
                 {{ account.currency }} – {{ account.name }} ({{
-                  getCurrencySignByCode(account.currency)
+                  $helper.currencySignByCode(account.currency)
                 }})
               </option>
             </select>
@@ -36,10 +35,8 @@
           <div class="wa-select">
             <select
               v-model="model.category_id"
-              :class="{ 'state-error': $v.model.category_id.$error }"
             >
-              <option value="-1">{{ $t("dontChange") }}</option>
-              <option value="0">{{ $t("noCategory") }}</option>
+              <option :value=0>{{ $t("dontChange") }}</option>
               <optgroup :label="$t('income')">
                 <option
                   :value="category.id"
@@ -83,8 +80,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
-import { required } from 'vuelidate/lib/validators'
+import { mapState } from 'vuex'
 export default {
   props: {
     ids: {
@@ -98,18 +94,7 @@ export default {
       model: {
         ids: this.ids,
         account_id: 0,
-        category_id: -1
-      }
-    }
-  },
-
-  validations: {
-    model: {
-      account_id: {
-        required
-      },
-      category_id: {
-        required
+        category_id: 0
       }
     }
   },
@@ -117,7 +102,6 @@ export default {
   computed: {
     ...mapState('account', ['accounts']),
     ...mapState('category', ['categories']),
-    ...mapGetters('system', ['getCurrencySignByCode']),
 
     categoriesIncome () {
       return this.categories.filter((c) => c.type === 'income')
@@ -134,16 +118,13 @@ export default {
 
   methods: {
     submit () {
-      this.$v.$touch()
-      if (!this.$v.$invalid) {
-        this.$store
-          .dispatch('transaction/bulkMove', this.model)
-          .then(() => {
-            this.$emit('success')
-            this.close()
-          })
-          .catch(() => {})
-      }
+      this.$store
+        .dispatch('transaction/bulkMove', this.model)
+        .then(() => {
+          this.$emit('success')
+          this.close()
+        })
+        .catch(() => {})
     },
 
     close () {
