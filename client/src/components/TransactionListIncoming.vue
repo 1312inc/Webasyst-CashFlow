@@ -150,23 +150,6 @@ export default {
     }
   },
 
-  created () {
-    this.unsubscribeFromTransitionUpdate = this.$store.subscribeAction({
-      after: (action, state) => {
-        if (
-          action.type === 'transaction/update' ||
-          action.type === 'transaction/delete'
-        ) {
-          this.getTransactions()
-        }
-      }
-    })
-  },
-
-  beforeDestroy () {
-    this.unsubscribeFromTransitionUpdate()
-  },
-
   methods: {
     async getTransactions (customQueryParams = {}) {
       this.loading = true

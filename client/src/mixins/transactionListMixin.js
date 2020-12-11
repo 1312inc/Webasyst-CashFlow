@@ -10,6 +10,25 @@ export default {
     }
   },
 
+  created () {
+    this.unsubscribeFromTransitionUpdate = this.$store.subscribeAction({
+      after: (action, state) => {
+        if (
+          action.type === 'transaction/update' ||
+          action.type === 'transaction/delete' ||
+          action.type === 'transaction/bulkDelete' ||
+          action.type === 'transaction/bulkMove'
+        ) {
+          this.getTransactions()
+        }
+      }
+    })
+  },
+
+  beforeDestroy () {
+    this.unsubscribeFromTransitionUpdate()
+  },
+
   methods: {
     checkAll ({ target }) {
       this.checkedRows = target.checked

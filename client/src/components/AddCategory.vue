@@ -51,14 +51,14 @@
 
     <div class="flexbox">
       <div class="flexbox space-1rem wide">
-        <button @click="submit" class="button purple">
+        <button @click="submit('category')" class="button purple">
           {{ isModeUpdate ? $t("update") : $t("add") }}
         </button>
         <button @click="close" class="button light-gray">
           {{ $t("cancel") }}
         </button>
       </div>
-      <button v-if="isModeUpdate" @click="remove" class="button red">
+      <button v-if="isModeUpdate" @click="remove('category')" class="button red">
         {{ $t("delete") }}
       </button>
     </div>
@@ -67,13 +67,12 @@
 
 <script>
 import { required } from 'vuelidate/lib/validators'
+import updateEntityMixin from '@/mixins/updateEntityMixin'
 import CategoryColors from '@/components/CategoryColors'
 export default {
-  props: {
-    editedItem: {
-      type: Object
-    }
-  },
+  mixins: [updateEntityMixin],
+
+  props: ['editedItem'],
 
   components: {
     CategoryColors
@@ -101,54 +100,7 @@ export default {
     }
   },
 
-  computed: {
-    isModeUpdate () {
-      return !!this.editedItem
-    }
-  },
-
-  created () {
-    if (this.editedItem) {
-      for (const prop in this.model) {
-        this.model[prop] = this.editedItem[prop] || this.model[prop]
-      }
-    }
-  },
-
   methods: {
-    submit () {
-      this.$v.$touch()
-      if (!this.$v.$invalid) {
-        this.$store
-          .dispatch('category/update', this.model)
-          .then(() => {
-            this.$noty.success('Категория успешно обновлена')
-            this.close()
-          })
-          .catch(() => {
-            this.$noty.error('Oops, something went wrong!')
-          })
-      }
-    },
-
-    remove () {
-      if (confirm(this.$t('deleteWarning', { type: this.$t('categories') }))) {
-        this.$store
-          .dispatch('category/delete', this.model.id)
-          .then(() => {
-            this.$noty.success('Категория успешно удалена')
-            this.close()
-          })
-          .catch((e) => {
-            this.$noty.error('Oops, something went wrong!')
-          })
-      }
-    },
-
-    close () {
-      this.$parent.$emit('close')
-    },
-
     selectColor (color) {
       this.model.color = color
     }

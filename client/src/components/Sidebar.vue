@@ -1,8 +1,9 @@
 <template>
   <div class="sidebar flexbox width-16rem tw-z-50">
     <div class="sidebar-body">
-      <transition name="fade-appear">
-        <div v-if="accounts.length > 1" class="custom-mt-24">
+
+        <!-- Widgets charts block -->
+        <div v-if="currenciesInAccounts.length" class="custom-mt-24">
           <div v-if="currenciesInAccounts.length > 1" class="tw-mx-4">
             <h5>{{ $t("cashOnHand") }}</h5>
           </div>
@@ -10,7 +11,6 @@
             <li
               v-for="currency in currenciesInAccounts"
               :key="currency"
-              :class="{ selected: isActive('Currency', currency) }"
             >
               <router-link
                 :to="`/currency/${currency}`"
@@ -24,15 +24,13 @@
                       : $t("cashOnHand")
                   }}
                 </div>
-                <div>
-                  <CurrencyChart :currency="currency" />
-                </div>
+                <CurrencyChart :currency="currency" />
               </router-link>
             </li>
           </ul>
         </div>
-      </transition>
-      <transition name="fade-appear">
+
+        <!-- Accounts list block -->
         <div v-if="accounts.length" class="custom-mt-24">
           <draggable
             group="accounts"
@@ -44,7 +42,6 @@
             <li
               v-for="account in accounts"
               :key="account.id"
-              :class="{ selected: isActive('Account', account.id) }"
             >
               <router-link
                 :to="`/account/${account.id}`"
@@ -68,7 +65,7 @@
                   v-html="
                     `${
                       account.stat.balanceShorten
-                    }&nbsp;${getCurrencySignByCode(account.currency)}`
+                    }&nbsp;${$helper.currencySignByCode(account.currency)}`
                   "
                 ></span>
               </router-link>
@@ -81,9 +78,8 @@
             </button>
           </div>
         </div>
-      </transition>
 
-      <transition name="fade-appear">
+        <!-- Categories list block -->
         <div v-if="categories.length" class="custom-mt-24">
           <h6 class="heading black">{{ $t("income") }}</h6>
 
@@ -97,7 +93,6 @@
             <li
               v-for="category in categoriesIncome"
               :key="category.id"
-              :class="{ selected: isActive('Category', category.id) }"
             >
               <router-link
                 :to="`/category/${category.id}`"
@@ -132,7 +127,6 @@
             <li
               v-for="category in categoriesExpense"
               :key="category.id"
-              :class="{ selected: isActive('Category', category.id) }"
             >
               <router-link
                 :to="`/category/${category.id}`"
@@ -162,7 +156,6 @@
               <li
                 v-for="category in categoriesTransfer"
                 :key="category.id"
-                :class="{ selected: isActive('Category', category.id) }"
               >
                 <router-link
                   :to="`/category/${category.id}`"
@@ -180,14 +173,14 @@
             </ul>
           </div>
         </div>
-      </transition>
+
     </div>
     <div class="sidebar-footer">
       <ul class="menu">
         <li>
           <a :href="`${$helper.baseUrl}reports/`">
             <i class="fas fa-chart-pie"></i>
-            <span>{{ $t("Reports") }}</span>
+            <span>{{ $t("reports") }}</span>
           </a>
         </li>
         <li>
@@ -205,7 +198,7 @@
       </ul>
     </div>
 
-    <Modal v-if="open" @close="close">
+    <Modal v-if="openModal" @close="close">
       <component :is="currentComponentInModal"></component>
     </Modal>
   </div>
@@ -227,59 +220,44 @@ export default {
     Category,
     CurrencyChart
   },
+
   data () {
     return {
-      open: false,
+      openModal: false,
       currentComponentInModal: ''
     }
   },
+
   computed: {
     ...mapState('account', ['accounts']),
     ...mapState('category', ['categories']),
-
-    ...mapGetters('system', ['getCurrencySignByCode']),
-    ...mapGetters('account', ['currenciesInAccounts']),
     ...mapGetters({
-      getCategoriesByType: ['category/getByType']
+      currenciesInAccounts: ['account/currenciesInAccounts'],
+      categoriesByType: ['category/getByType']
     }),
 
     categoriesIncome () {
-      return this.getCategoriesByType('income')
+      return this.categoriesByType('income')
     },
 
     categoriesExpense () {
-      return this.getCategoriesByType('expense')
+      return this.categoriesByType('expense')
     },
 
     categoriesTransfer () {
-      return this.getCategoriesByType('transfer')
+      return this.categoriesByType('transfer')
     }
   },
 
   methods: {
     update (component) {
-      this.open = true
+      this.openModal = true
       this.currentComponentInModal = component
     },
 
     close () {
-      this.open = false
+      this.openModal = false
       this.currentComponentInModal = ''
-    },
-
-    isActive (name, id) {
-      if (this.$route) {
-        if (
-          this.$route.name === 'Home' &&
-          id === this.currenciesInAccounts[0]
-        ) {
-          return true
-        }
-        return (
-          this.$route.name === name &&
-          (+this.$route.params.id || this.$route.params.id) === id
-        )
-      }
     },
 
     sortAccounts () {

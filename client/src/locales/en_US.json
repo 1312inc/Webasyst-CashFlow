@@ -69,6 +69,7 @@
   "details": "View Details",
   "optional": "Optional",
   "transactionsListCount": "{count} TRANSACTIONS",
+  "transactionDeleteWarning": "The transaction will be permanently deleted. Are you sure?",
   "cashOnHand": "Cash on hand",
   "cashToday": "Cash on hand today",
   "today": "Today",
@@ -107,5 +108,6 @@
   "6_M": "Future 180 days",
   "1_Y": "Future 1 year",
   "2_Y": "Future 2 years",
-  "3_Y": "Future 3 years"
+  "3_Y": "Future 3 years",
+  "reports": "Reports"
 }

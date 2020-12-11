@@ -29,7 +29,13 @@
               class="wide"
               :class="{ 'state-error': $v.model.currency.$error }"
             >
-              <option :value="c.code" v-for="c in $store.state.system.currencies" :key="c.code">{{c.code}} – {{c.title}} ({{c.sign}})</option>
+              <option
+                :value="c.code"
+                v-for="c in $store.state.system.currencies"
+                :key="c.code"
+              >
+                {{ c.code }} – {{ c.title }} ({{ c.sign }})
+              </option>
             </select>
           </div>
         </div>
@@ -40,11 +46,22 @@
           {{ $t("icon") }}
         </div>
         <div class="value">
-          <div class="icon-uploader">
-            <div v-if="$helper.isValidHttpUrl(model.icon)" class="flexbox middle">
-              <div class="icon-uploader-image tw-rounded" :style="`background-image:url(${model.icon})`"></div>
+          <div class="с-icon-uploader">
+            <div
+              v-if="$helper.isValidHttpUrl(model.icon)"
+              class="flexbox middle"
+            >
+              <div
+                class="с-icon-uploader-image tw-rounded"
+                :style="`background-image:url(${model.icon})`"
+              ></div>
               <div>
-                <a href="#" @click.prevent="model.icon = ''" class="button nobutton smaller">Remove</a>
+                <a
+                  href="#"
+                  @click.prevent="model.icon = ''"
+                  class="button nobutton smaller"
+                  >{{ $t("delete") }}</a
+                >
               </div>
             </div>
             <div v-else>
@@ -61,7 +78,9 @@
         <div class="value">
           <textarea
             v-model="model.description"
-            class="wide" rows="4" style="resize:none;height:auto;"
+            class="wide"
+            rows="4"
+            style="resize: none; height: auto"
             :placeholder="$t('optional')"
           ></textarea>
         </div>
@@ -70,14 +89,14 @@
 
     <div class="flexbox">
       <div class="flexbox space-1rem wide">
-        <button @click="submit" class="button purple">
+        <button @click="submit('account')" class="button purple">
           {{ isModeUpdate ? $t("update") : $t("add") }}
         </button>
         <button @click="close" class="button light-gray">
           {{ $t("cancel") }}
         </button>
       </div>
-      <button v-if="isModeUpdate" @click="remove" class="button red">
+      <button v-if="isModeUpdate" @click="remove('account')" class="button red">
         {{ $t("delete") }}
       </button>
     </div>
@@ -86,13 +105,12 @@
 
 <script>
 import { required } from 'vuelidate/lib/validators'
+import updateEntityMixin from '@/mixins/updateEntityMixin'
 import IconUploader from '@/components/IconUploader'
 export default {
-  props: {
-    editedItem: {
-      type: Object
-    }
-  },
+  mixins: [updateEntityMixin],
+
+  props: ['editedItem'],
 
   components: {
     IconUploader
@@ -121,54 +139,7 @@ export default {
     }
   },
 
-  computed: {
-    isModeUpdate () {
-      return !!this.editedItem
-    }
-  },
-
-  created () {
-    if (this.editedItem) {
-      for (const prop in this.model) {
-        this.model[prop] = this.editedItem[prop] || this.model[prop]
-      }
-    }
-  },
-
   methods: {
-    submit () {
-      this.$v.$touch()
-      if (!this.$v.$invalid) {
-        this.$store
-          .dispatch('account/update', this.model)
-          .then(() => {
-            this.$noty.success('Аккаунт успешно обновлен')
-            this.close()
-          })
-          .catch(() => {
-            this.$noty.error('Oops, something went wrong!')
-          })
-      }
-    },
-
-    remove () {
-      if (confirm(this.$t('deleteWarning', { type: this.$t('accounts') }))) {
-        this.$store
-          .dispatch('account/delete', this.model.id)
-          .then(() => {
-            this.$noty.success('Аккаунт успешно удален')
-            this.close()
-          })
-          .catch(() => {
-            this.$noty.error('Oops, something went wrong!')
-          })
-      }
-    },
-
-    close () {
-      this.$parent.$emit('close')
-    },
-
     setIcon (url) {
       this.model.icon = url
     }
@@ -177,7 +148,7 @@ export default {
 </script>
 
 <style lang="scss">
-.icon-uploader {
+.с-icon-uploader {
   height: 40px;
   position: relative;
 
