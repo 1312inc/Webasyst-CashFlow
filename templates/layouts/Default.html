@@ -26,10 +26,16 @@
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.js"></script>
     
     <link href="{$wa_app_static_url}js/app.js" rel="preload" as="script">
-    
+
     <script>
-        window.appState = {ldelim}"lang":"{$wa->locale()}","baseUrl":"{$wa_app_url}","baseApiUrl":"{$wa_url}api.php","token":"{$token}"{rdelim};
-      </script>
+        window.appState = {
+            "lang":"{$wa->locale()}",
+            "baseUrl":"{$wa_app_url}",
+            "baseApiUrl":"{$wa_url}api.php",
+            "token":"{$token}",
+            "currencies":{$currencies}
+        };
+    </script>
 </head>
 <body>
 <div id="wa">
