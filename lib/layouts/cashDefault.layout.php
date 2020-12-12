@@ -19,6 +19,7 @@ class cashDefaultLayout extends waLayout
         $showReviewWidget = cash()->getModel(cashTransaction::class)->select('count(id)')->limit(30)->fetchField() == 30;
 
         $apiSettings = (new cashApiSystemGetSettingsHandler())->handle(null);
+        $currencies = (new cashApiSystemGetCurrenciesHandler())->handle(null);
 
         $this->view->assign(
             [
@@ -29,6 +30,7 @@ class cashDefaultLayout extends waLayout
                 'userId' => (int) wa()->getUser()->getId(),
                 'show_review_widget' => $showReviewWidget,
                 'api_settings' => $apiSettings,
+                'currencies' => json_encode($currencies, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
             ]
         );
     }
