@@ -1,22 +1,26 @@
 <template>
   <div class="flexbox middle">
     <div
-      class="c-bwc-container custom-mr-12"
+      class="c-bwc-container"
       :style="`width: ${width}px; height: ${height}px`"
     >
       <svg ref="chart"></svg>
     </div>
-    <div v-if="dataByCurrency" class="align-right">
+    <div v-if="dataByCurrency" class="c-bwc-details align-right">
       <div
-        class="custom-mb-4 count"
+        class="custom-mb-4 small hint nowrap"
         v-html="`${shorten}&nbsp;${$helper.currencySignByCode(this.currency)}`"
       ></div>
       <div>
         <span
-          class="c-bwc-badge small"
-          :class="diff >= 0 ? 'c-bwc-badge--green' : 'c-bwc-badge--red'"
-          >{{ $numeral(diff).format() }}</span
-        >
+          class="c-bwc-badge small nowrap"
+          :class="
+            dataByCurrency.balances.diff.amount >= 0
+              ? 'c-bwc-badge--green'
+              : 'c-bwc-badge--red'
+          "
+          v-html="dataByCurrency.balances.diff.amountShorten"
+        ></span>
       </div>
     </div>
   </div>
@@ -34,8 +38,8 @@ export default {
 
   data () {
     return {
-      width: 70,
-      height: 30
+      width: 72,
+      height: 38
     }
   },
 
@@ -52,13 +56,6 @@ export default {
 
     shorten () {
       return this.dataByCurrency?.balances.now.amountShorten
-    },
-
-    diff () {
-      return (
-        this.dataByCurrency?.balances.to.amount -
-        this.dataByCurrency?.balances.from.amount
-      )
     }
   },
 
@@ -79,8 +76,8 @@ export default {
       this.svg.attr('viewBox', [0, 0, width, height])
 
       const x = d3
-        .scaleUtc()
-        .domain(d3.extent(this.data, d => this.$moment(d.period).toDate()))
+        .scaleTime()
+        .domain(d3.extent(this.data, d => new Date(d.period)))
         .range([margin.left, width - margin.right])
 
       const y = d3
@@ -93,10 +90,14 @@ export default {
         .range([height - margin.bottom, margin.top])
         .clamp(true)
 
-      // Draw Balance Line
-      const linePositive = d3
+      // Draw Balance Line Past
+      const pastDates = this.data.filter(e => {
+        return this.$moment(e.period) <= this.$moment()
+      })
+
+      const linePast = d3
         .line()
-        .x(d => x(this.$moment(d.period).toDate()))
+        .x(d => x(new Date(d.period)))
         .y(d => y(d.amount))
 
       this.svg
@@ -106,12 +107,31 @@ export default {
           'style',
           `stroke: url(#line-gradient-${this._uid});fill: none;stroke-width: 2px;`
         )
-        .attr('d', linePositive(this.data))
+        .attr('d', linePast(pastDates))
+
+      // Draw Balance Line Future
+      const futureDates = this.data.filter(e => {
+        return this.$moment(e.period) > this.$moment()
+      })
+
+      const lineFuture = d3
+        .line()
+        .x(d => x(new Date(d.period)))
+        .y(d => y(d.amount))
+
+      this.svg
+        .append('g')
+        .append('path')
+        .attr(
+          'style',
+          `stroke: url(#line-gradient-${this._uid});fill: none;stroke-width: 2px;stroke-dasharray: 4,2;`
+        )
+        .attr('d', lineFuture(futureDates))
 
       // Draw Negative Area
       const areaNeg = d3
         .area()
-        .x(d => x(this.$moment(d.period).toDate()))
+        .x(d => x(new Date(d.period)))
         .y0(y(0))
         .y1(d => y(Math.min(1.0, d.amount)))
 
@@ -127,7 +147,7 @@ export default {
       // Draw Positive Area
       const areaPos = d3
         .area()
-        .x(d => x(this.$moment(d.period).toDate()))
+        .x(d => x(new Date(d.period)))
         .y0(y(0))
         .y1(d => y(Math.max(1.0, d.amount)))
 
@@ -201,6 +221,10 @@ export default {
 </script>
 
 <style lang="scss">
+.c-bwc-details {
+  width: 70px;
+}
+
 .c-bwc-badge {
   color: #fff;
   padding: 2px 6px;
@@ -216,6 +240,6 @@ export default {
 }
 
 .c-bwc-container svg {
-  max-width: 200px !important;
+  max-width: initial !important;
 }
 </style>
