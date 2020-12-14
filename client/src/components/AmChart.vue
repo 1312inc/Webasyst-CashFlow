@@ -397,6 +397,12 @@ export default {
         // this.balanceSeries.strokeOpacity = 0.8
         this.balanceSeries.defaultState.transitionDuration = 0
 
+        // Create a range to make stroke dashed in the future
+        const rangeDashed = this.dateAxis.createSeriesRange(this.balanceSeries)
+        rangeDashed.date = new Date()
+        rangeDashed.endDate = new Date(this.$store.state.transaction.queryParams.to)
+        rangeDashed.contents.strokeDasharray = '8,4'
+
         // Create a range to change stroke for values below 0
         const range = this.balanceAxis.createSeriesRange(this.balanceSeries)
         range.value = 0
