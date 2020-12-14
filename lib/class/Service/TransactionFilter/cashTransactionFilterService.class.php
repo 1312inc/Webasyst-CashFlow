@@ -199,6 +199,45 @@ final class cashTransactionFilterService
 
     /**
      * @param cashTransactionFilterParamsDto $dto
+     * @param cashSelectQueryParts           $selectQueryParts
+     *
+     * @throws kmwaForbiddenException
+     */
+    private function makeBaseSqlForImportFilter(
+        cashTransactionFilterParamsDto $dto,
+        cashSelectQueryParts $selectQueryParts
+    ): void {
+        if (!$this->right->isAdmin($dto->contact)) {
+            throw new kmwaForbiddenException(_w('You have no access to this import'));
+        }
+
+        $selectQueryParts->addAndWhere('ct.import_id = i:import_id')
+            ->addParam('import_id', $dto->filter->getImportId());
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     * @param cashSelectQueryParts           $selectQueryParts
+     *
+     * @throws waException
+     */
+    private function makeBaseSqlForSearchFilter(
+        cashTransactionFilterParamsDto $dto,
+        cashSelectQueryParts $selectQueryParts
+    ): void {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $dto->contact,
+            'ct',
+            'account_id'
+        );
+
+        $selectQueryParts->addAndWhere('ct.description like s:description')
+            ->addAndWhere($accountAccessSql, 'accountAccessSql')
+            ->addParam('description', $dto->filter->getSearch(), 'like');
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
      *
      * @return cashSelectQueryParts
      * @throws kmwaForbiddenException
@@ -271,6 +310,16 @@ final class cashTransactionFilterService
 
             case null !== $dto->filter->getContractorId():
                 $this->makeBaseSqlForContractorFilter($dto, $sqlParts);
+
+                break;
+
+            case null !== $dto->filter->getImportId():
+                $this->makeBaseSqlForImportFilter($dto, $sqlParts);
+
+                break;
+
+            case null !== $dto->filter->getSearch():
+                $this->makeBaseSqlForSearchFilter($dto, $sqlParts);
 
                 break;
         }
