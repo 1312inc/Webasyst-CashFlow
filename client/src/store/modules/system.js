@@ -4,7 +4,7 @@ export default {
   namespaced: true,
 
   state: () => ({
-    currencies: []
+    currencies: window.appState.currencies
   }),
 
   getters: {

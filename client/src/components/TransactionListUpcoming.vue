@@ -167,6 +167,10 @@ export default {
   },
 
   created () {
+    if (this.showComponent) {
+      this.getTransactions()
+    }
+
     this.featurePeriod =
       +localStorage.getItem('upcoming_transactions_days') || this.featurePeriod
     this.upcomingBlockOpened =

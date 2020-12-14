@@ -5,7 +5,7 @@ export default {
   namespaced: true,
 
   state: () => ({
-    accounts: []
+    accounts: window.appState.accounts
   }),
 
   getters: {
