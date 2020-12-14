@@ -92,6 +92,8 @@ export default {
   },
 
   created () {
+    this.$store.dispatch('transaction/getChartData')
+
     this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
       if (mutation.type === 'transaction/updateQueryParams') {
         const keys = Object.keys(mutation.payload)

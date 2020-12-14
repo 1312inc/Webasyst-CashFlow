@@ -20,13 +20,7 @@ export default {
     Sidebar
   },
 
-  async created () {
-    await this.$store.dispatch('system/getCurrencies')
-    await Promise.all([
-      this.$store.dispatch('account/getList'),
-      this.$store.dispatch('category/getList')
-    ])
-
+  created () {
     const from = this.getDate(
       'from',
       this.$moment().add(-1, 'Y').format('YYYY-MM-DD')

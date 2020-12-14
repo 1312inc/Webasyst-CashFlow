@@ -150,6 +150,10 @@ export default {
     }
   },
 
+  created () {
+    this.getTransactions()
+  },
+
   methods: {
     async getTransactions (customQueryParams = {}) {
       this.loading = true
