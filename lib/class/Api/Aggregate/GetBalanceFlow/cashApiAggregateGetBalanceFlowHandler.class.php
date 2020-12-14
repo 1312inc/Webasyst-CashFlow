@@ -46,7 +46,7 @@ final class cashApiAggregateGetBalanceFlowHandler implements cashApiHandlerInter
                 ),
                 'diff' => new cashApiAggregateGetBalanceFlowBalanceDto(
                     '',
-                    ($balanceNow[$currency] ?? 0) - ($balanceTo[$currency] ?? 0)
+                    ($balanceTo[$currency] ?? 0) - ($balanceNow[$currency] ?? 0)
                 )
             ];
 

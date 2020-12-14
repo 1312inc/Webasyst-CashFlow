@@ -337,7 +337,7 @@
 
 <script>
     'use strict';
-    (function ($) {
+    (function () {
         var data = {
                 account: {$accounts|json_encode},
                 category: {
@@ -416,8 +416,8 @@
                         onReady: function (r) {
                             $progressSuccess.show().siblings().hide();
                             $progress.find('.progressbar-inner').css('width', r.progress + '%');
-                            window.location.hash = '#/import/view/csv/' + r.import_id;
-                            $.cash_routing.redispatch();
+                            window.location.hash = '/import/' + r.import_id;
+                            // $.cash_routing.redispatch();
                             // $button.prop('disabled', false);
                             // $transactionStat.show();
                             // $transactionStat.find('span').text(r.transactions.ok);
@@ -590,8 +590,7 @@
 
         $form.find('[name="import[datetime]"], [name="import[amount][single][column]"]').trigger('change.cash');
         $('#c-import-step-1').hide();
-
-    }(jQuery))
+    }())
 </script>
 
 <script type="text/x-jquery-tmpl" data-cash-csv-import-conditions-category>

@@ -217,13 +217,31 @@ SQL;
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param             $key
+     * @param             $value
+     * @param null|string $escape
      *
      * @return cashSelectQueryParts
      */
-    public function addParam($key, $value): cashSelectQueryParts
+    public function addParam($key, $value, $escape = null): cashSelectQueryParts
     {
+        if ($escape) {
+            $value = $this->model->escape($value, 'like');
+            switch ($escape) {
+                case 'like_begin':
+                    $value = "%$value";
+                    break;
+
+                case 'like_end':
+                    $value = "$value%";
+                    break;
+
+                case 'like':
+                    $value = "%$value%";
+                    break;
+            }
+        }
+
         $this->params[$key] = $value;
 
         return $this;

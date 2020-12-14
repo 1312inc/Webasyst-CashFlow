@@ -41,6 +41,9 @@ class cashBackendLocAction extends cashViewAction
             _w('Skip rows with this value'),
             _w('transactions'),
         ];
+        foreach ($translates as $s) {
+            $strings[$s] = _w($s);
+        }
 
         $this->view->assign(
             'strings',

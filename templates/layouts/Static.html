@@ -23,7 +23,7 @@
     <script type="text/javascript" src="{$wa_app_static_url}js/c3.min.js?v{$wa->version()}"></script>
     <script type="text/javascript" src="{$wa_app_static_url}js/cash-routing.js{if !waSystemConfig::isDebug()}?v={$wa->version()}{/if}"></script>
     <script type="text/javascript" src="{$wa_app_static_url}js/cash.js{if !waSystemConfig::isDebug()}?v={$wa->version()}{/if}"></script>
-    <script type="text/javascript" src="?action=loc{if !waSystemConfig::isDebug()}&v={$wa->version()}{/if}"></script>
+    <script type="text/javascript" src="{$wa_app_url}loc/{if !waSystemConfig::isDebug()}?v={$wa->version()}{/if}"></script>
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.js"></script>
     
     <link href="{$wa_app_static_url}js/sidebar/app.js" rel="preload" as="script">
@@ -48,7 +48,7 @@
         <div class="flexbox">
      ***REMOVED***
             <div class="content blank">
-                <div class="box contentbox">
+                <div class="box contentbox" id="cash-content">
                     {$content}
                 </div>
             </div>

@@ -26,7 +26,7 @@ class cashApiTransactionGetListRequest
     public $limit;
 
     /**
-     * @var null|string Hash to filter transactions, can be "category/X", "account/X", "contractor/X", "currency/XXX"
+     * @var null|string Hash to filter transactions, can be "category/X", "account/X", "contractor/X", "currency/XXX", "import/X", "search/XXXX"
      */
     public $filter;
 }
