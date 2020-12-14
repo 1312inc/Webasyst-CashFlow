@@ -20,6 +20,8 @@ class cashDefaultLayout extends waLayout
 
         $apiSettings = (new cashApiSystemGetSettingsHandler())->handle(null);
         $currencies = (new cashApiSystemGetCurrenciesHandler())->handle(null);
+        $categories = (new cashApiCategoryGetListHandler())->handle(null);
+        $accounts = (new cashApiAccountGetListHandler())->handle(null);
 
         $this->view->assign(
             [
@@ -31,6 +33,8 @@ class cashDefaultLayout extends waLayout
                 'show_review_widget' => $showReviewWidget,
                 'api_settings' => $apiSettings,
                 'currencies' => json_encode($currencies, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
+                'categories' => json_encode($categories, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
+                'accounts' => json_encode($accounts, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
             ]
         );
     }
