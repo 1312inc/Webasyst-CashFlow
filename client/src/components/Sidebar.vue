@@ -1,7 +1,11 @@
 <template>
   <div class="sidebar flexbox width-16rem tw-z-50">
-    <div class="sidebar-body">
 
+    <div class="sidebar-header">
+      <SearchField />
+    </div>
+
+    <div class="sidebar-body">
         <!-- Widgets charts block -->
         <div v-if="currenciesInAccounts.length" class="custom-mt-24">
           <div v-if="currenciesInAccounts.length > 1" class="tw-mx-4">
@@ -211,6 +215,7 @@ import Modal from '@/components/Modal'
 import Account from '@/components/AddAccount'
 import Category from '@/components/AddCategory'
 import CurrencyChart from '@/components/CurrencyChart'
+import SearchField from '@/components/SearchField'
 
 export default {
   components: {
@@ -218,7 +223,8 @@ export default {
     Modal,
     Account,
     Category,
-    CurrencyChart
+    CurrencyChart,
+    SearchField
   },
 
   data () {
