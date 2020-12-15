@@ -35,6 +35,10 @@ export default {
   },
 
   async created () {
+    window.eventBus.$on('openDialog', (type = 'Category') => {
+      this.update(type)
+    })
+
     await this.$store.dispatch('system/getCurrencies')
     await Promise.all([
       this.$store.dispatch('account/getList'),
@@ -53,25 +57,7 @@ export default {
 
     const filter = this.$store.state.transaction.queryParams.filter || `currency/${this.$store.getters['account/currenciesInAccounts'][0]}`
 
-    this.unsubscribe = this.$store.subscribe((mutation) => {
-      if (mutation.type === 'transaction/updateQueryParams') {
-        this.$store.dispatch('transaction/getList')
-
-        const keys = Object.keys(mutation.payload)
-        const key = keys[0]
-        const changeOffset = keys.length === 1 && key === 'offset'
-
-        if (!changeOffset) {
-          this.$store.dispatch('transaction/getChartData')
-        }
-      }
-    })
-
     this.$store.commit('transaction/updateQueryParams', { from, to, filter })
-  },
-
-  beforeDestroy () {
-    this.unsubscribe()
   },
 
   methods: {

@@ -92,7 +92,9 @@ export default {
   },
 
   created () {
-    this.$store.dispatch('transaction/getChartData')
+    if (this.$helper.isDesktopEnv) {
+      this.$store.dispatch('transaction/getChartData')
+    }
 
     this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
       if (mutation.type === 'transaction/updateQueryParams') {

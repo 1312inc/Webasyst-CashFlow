@@ -5,7 +5,7 @@ export default {
   namespaced: true,
 
   state: () => ({
-    categories: window.appState.categories
+    categories: window.appState?.categories || []
   }),
 
   getters: {

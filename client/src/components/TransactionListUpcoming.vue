@@ -167,7 +167,7 @@ export default {
   },
 
   created () {
-    if (this.showComponent) {
+    if (this.$helper.isDesktopEnv && this.showComponent) {
       this.getTransactions()
     }
 

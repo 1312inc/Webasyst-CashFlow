@@ -26,7 +26,7 @@
           <div class="wa-select">
             <select
               v-model="model.currency"
-              class="wide"
+              class="width-100"
               :class="{ 'state-error': $v.model.currency.$error }"
             >
               <option
@@ -78,7 +78,7 @@
         <div class="value">
           <textarea
             v-model="model.description"
-            class="wide"
+            class="width-100"
             rows="4"
             style="resize: none; height: auto"
             :placeholder="$t('optional')"
