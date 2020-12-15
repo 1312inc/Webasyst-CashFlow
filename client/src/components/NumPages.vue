@@ -33,13 +33,16 @@ export default {
     Paginate
   },
 
-  data () {
-    return {
-      currentPage: 0
-    }
-  },
-
   computed: {
+    currentPage: {
+      get () {
+        return Math.ceil(this.offset / this.total) + 1
+      },
+      set () {
+        return false
+      }
+    },
+
     pagesCount () {
       return Math.ceil(this.total / this.limit)
     }
