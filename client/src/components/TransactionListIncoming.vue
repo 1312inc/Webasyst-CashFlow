@@ -151,7 +151,9 @@ export default {
   },
 
   created () {
-    this.getTransactions()
+    if (this.$helper.isDesktopEnv) {
+      this.getTransactions()
+    }
   },
 
   methods: {
