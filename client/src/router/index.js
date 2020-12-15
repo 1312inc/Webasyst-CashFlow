@@ -4,6 +4,7 @@ import store from '../store'
 import Home from '../views/Home.vue'
 import Transactions from '../views/Transactions.vue'
 import Reports from '../views/Reports.vue'
+import Search from '../views/Search.vue'
 
 Vue.use(VueRouter)
 
@@ -37,6 +38,11 @@ const routes = [
     path: '/reports',
     name: 'Reports',
     component: Reports
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: Search
   }
 ]
 
