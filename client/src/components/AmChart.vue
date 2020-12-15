@@ -394,24 +394,31 @@ export default {
         this.balanceSeries.dataFields.valueY = 'balance'
         this.balanceSeries.dataFields.dateX = 'period'
         this.balanceSeries.groupFields.valueY = 'sum'
-        this.balanceSeries.stroke = am4core.color('#3ec55e')
+        this.balanceSeries.stroke = am4core.color('rgba(255, 0, 0, 0)')
         this.balanceSeries.strokeWidth = 2
-        // this.balanceSeries.strokeOpacity = 0.8
         this.balanceSeries.defaultState.transitionDuration = 0
+
+        // Create a range to change stroke for positive values
+        const rangePositive = this.balanceAxis.createSeriesRange(this.balanceSeries)
+        rangePositive.value = 0
+        rangePositive.endValue = Number.MAX_SAFE_INTEGER
+        rangePositive.contents.stroke = am4core.color('#3ec55e')
+
+        // Create a range to change stroke for negative values
+        const rangeNegative = this.balanceAxis.createSeriesRange(this.balanceSeries)
+        rangeNegative.value = -1
+        rangeNegative.endValue = Number.MIN_SAFE_INTEGER
+        rangeNegative.contents.stroke = am4core.color('#fc3d38')
+        rangeNegative.contents.fill = am4core.color('#fc3d38')
+        rangeNegative.contents.fillOpacity = 0.2
 
         // Create a range to make stroke dashed in the future
         const rangeDashed = this.dateAxis.createSeriesRange(this.balanceSeries)
         rangeDashed.date = new Date()
-        rangeDashed.endDate = new Date(this.$store.state.transaction.queryParams.to)
-        rangeDashed.contents.strokeDasharray = '8,4'
-
-        // Create a range to change stroke for values below 0
-        const range = this.balanceAxis.createSeriesRange(this.balanceSeries)
-        range.value = 0
-        range.endValue = -100000000
-        range.contents.stroke = am4core.color('#fc3d38')
-        range.contents.fill = am4core.color('#fc3d38')
-        range.contents.fillOpacity = 0.2
+        rangeDashed.endDate = new Date(8640000000000000)
+        rangeDashed.contents.stroke = am4core.color('#f3f3f3')
+        rangeDashed.contents.strokeDasharray = '4,8'
+        rangeDashed.contents.strokeWidth = 3
 
         this.balanceSeries.events.on('datavalidated', (ev) => {
           let dates = []
