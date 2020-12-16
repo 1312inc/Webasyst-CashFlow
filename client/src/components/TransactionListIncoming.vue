@@ -106,15 +106,6 @@ export default {
     ExportButton
   },
 
-  watch: {
-    queryParams: {
-      handler () {
-        this.getTransactions()
-      },
-      deep: true
-    }
-  },
-
   computed: {
     ...mapState('transaction', ['queryParams', 'detailsInterval']),
 
@@ -147,12 +138,6 @@ export default {
       }, acc)
 
       return result
-    }
-  },
-
-  created () {
-    if (this.$helper.isDesktopEnv) {
-      this.getTransactions()
     }
   },
 

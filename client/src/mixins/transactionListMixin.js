@@ -11,8 +11,14 @@ export default {
   },
 
   created () {
+    this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
+      if (mutation.type === 'transaction/updateQueryParams' && !mutation.payload.silent) {
+        this.getTransactions()
+      }
+    })
+
     this.unsubscribeFromTransitionUpdate = this.$store.subscribeAction({
-      after: (action, state) => {
+      after: (action) => {
         if (
           action.type === 'transaction/update' ||
           action.type === 'transaction/delete' ||
@@ -26,6 +32,7 @@ export default {
   },
 
   beforeDestroy () {
+    this.unsubscribeFromQueryParams()
     this.unsubscribeFromTransitionUpdate()
   },
 

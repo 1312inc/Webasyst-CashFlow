@@ -31,9 +31,7 @@ export default {
       this.$moment().add(6, 'M').format('YYYY-MM-DD')
     )
 
-    const filter = this.$store.state.transaction.queryParams.filter || `currency/${this.$store.getters['account/currenciesInAccounts'][0]}`
-
-    this.$store.commit('transaction/updateQueryParams', { from, to, filter })
+    this.$store.commit('transaction/updateQueryParams', { from, to, silent: true })
     this.$store.dispatch('transaction/getBalanceFlow')
   },
 
