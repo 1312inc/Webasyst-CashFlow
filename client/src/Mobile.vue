@@ -35,8 +35,8 @@ export default {
   },
 
   async created () {
-    window.eventBus.$on('openDialog', (type = 'Category') => {
-      this.update(type)
+    window.eventBus.$on('openDialog', (type = 'Category', editedItem = null) => {
+      this.update(type, editedItem)
     })
 
     await this.$store.dispatch('system/getCurrencies')
@@ -61,9 +61,9 @@ export default {
   },
 
   methods: {
-    update (component, editedItem) {
+    update (componentName, editedItem) {
       this.open = true
-      this.currentComponentInModal = component
+      this.currentComponentInModal = componentName
       this.item = editedItem
     },
 

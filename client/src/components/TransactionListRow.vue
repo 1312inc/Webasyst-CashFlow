@@ -1,6 +1,6 @@
 <template>
   <tr>
-    <td class="min-width">
+    <td v-if="showCheckbox" class="min-width">
       <input type="checkbox" @click="checkboxSelect" :checked="isChecked" />
     </td>
     <td @click="openModal" class="nowrap" style="width: 15%">
@@ -73,6 +73,10 @@ export default {
 
     category () {
       return this.$store.getters['category/getById'](this.transaction.category_id)
+    },
+
+    showCheckbox () {
+      return window.eventBus ? window.eventBus.multiSelect : true
     }
   },
 
