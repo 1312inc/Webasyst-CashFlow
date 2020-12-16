@@ -5,7 +5,7 @@
         type="search"
         name="query"
         v-model.trim="queryText"
-        :placeholder="$t('search')"
+        :placeholder="$t('search.label')"
         class="width-100"
       />
       <button class="icon"><i class="fas fa-search"></i></button>
@@ -15,16 +15,23 @@
 
 <script>
 export default {
-
   data () {
     return {
       queryText: ''
     }
   },
 
+  watch: {
+    '$route' (val) {
+      if (val.name !== 'Search') {
+        this.queryText = ''
+      }
+    }
+  },
+
   methods: {
     submit () {
-      if (this.queryText) {
+      if (this.queryText && this.queryText !== this.$route.query.text) {
         this.$router.push({ name: 'Search', query: { text: this.queryText } })
       }
     }

@@ -106,15 +106,6 @@ export default {
     ExportButton
   },
 
-  watch: {
-    queryParams: {
-      handler () {
-        this.getTransactions()
-      },
-      deep: true
-    }
-  },
-
   computed: {
     ...mapState('transaction', ['queryParams', 'detailsInterval']),
 
@@ -148,10 +139,6 @@ export default {
 
       return result
     }
-  },
-
-  created () {
-    this.getTransactions()
   },
 
   methods: {

@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <TransactionList />
-  </div>
+  <TransactionList />
 </template>
 
 <script>
@@ -13,9 +11,27 @@ export default {
     TransactionList
   },
 
-  created () {
-    this.$store.commit('transaction/updateQueryParams', { from: moment().add(-3, 'Y').format('YYYY-MM-DD'), to: moment().format('YYYY-MM-DD'), filter: '' })
-  }
+  data () {
+    return {
+      paramsBus: {}
+    }
+  },
 
+  mounted () {
+    this.paramsBus = this.$store.state.transaction.queryParams
+
+    this.$store.commit('transaction/updateQueryParams', {
+      from: moment().add(-3, 'Y').format('YYYY-MM-DD'),
+      to: moment().format('YYYY-MM-DD'),
+      filter: ''
+    })
+  },
+
+  beforeDestroy () {
+    this.$store.commit('transaction/updateQueryParams', {
+      ...this.paramsBus,
+      silent: true
+    })
+  }
 }
 </script>
