@@ -49,6 +49,7 @@
         <table v-if="transactionGroup.length" class="small zebra custom-mb-24">
           <tr>
             <th
+              v-if="showCheckbox"
               class="min-width tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
             >
               <input

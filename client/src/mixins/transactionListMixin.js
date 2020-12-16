@@ -7,6 +7,10 @@ export default {
       set () {
         return false
       }
+    },
+
+    showCheckbox () {
+      return window.eventBus ? window.eventBus.multiSelect : true
     }
   },
 

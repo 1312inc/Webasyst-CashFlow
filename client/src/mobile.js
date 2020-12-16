@@ -21,7 +21,19 @@ Vue.use(Vuelidate)
 Vue.use(Helpers)
 Vue.use(IsOnline)
 
-window.eventBus = new Vue()
+window.eventBus = new Vue({
+  data () {
+    return {
+      multiSelect: true
+    }
+  },
+
+  methods: {
+    multiSelectEnabled (val) {
+      this.multiSelect = val
+    }
+  }
+})
 
 new Vue({
   router,
