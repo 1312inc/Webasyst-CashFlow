@@ -8,12 +8,12 @@ class cashApiTransactionGetListRequest
     /**
      * @var string
      */
-    public $from = '';
+    public $from;
 
     /**
      * @var string
      */
-    public $to = '';
+    public $to;
 
     /**
      * @var int
