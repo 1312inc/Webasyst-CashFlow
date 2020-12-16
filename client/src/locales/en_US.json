@@ -109,5 +109,9 @@
   "1_Y": "Future 1 year",
   "2_Y": "Future 2 years",
   "3_Y": "Future 3 years",
-  "reports": "Reports"
+  "reports": "Reports",
+  "search": {
+    "label": "Search",
+    "noResults": "No results"
+  }
 }
