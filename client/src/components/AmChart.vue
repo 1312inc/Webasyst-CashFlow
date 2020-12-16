@@ -135,6 +135,7 @@ export default {
     // Cols axis
     this.colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
     this.colsAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
+    this.colsAxis.cursorTooltipEnabled = false
 
     // Legend
     chart.legend = new am4charts.Legend()
@@ -142,6 +143,7 @@ export default {
     // Cursor
     chart.cursor = new am4charts.XYCursor()
     chart.cursor.xAxis = this.dateAxis
+    chart.cursor.lineY.disabled = true
     chart.cursor.events.on('zoomended', (ev) => {
       if (ev.target.behavior === 'none') return
       const range = ev.target.xRange
@@ -395,6 +397,7 @@ export default {
         this.balanceSeries.stroke = am4core.color('rgba(255, 0, 0, 0)')
         this.balanceSeries.strokeWidth = 2
         this.balanceSeries.defaultState.transitionDuration = 0
+        this.balanceSeries.cursorTooltipEnabled = false
 
         // Create a range to change stroke for positive values
         const rangePositive = this.balanceAxis.createSeriesRange(this.balanceSeries)
