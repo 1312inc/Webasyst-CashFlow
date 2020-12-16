@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import TransactionList from '@/components/TransactionList'
 
 export default {
@@ -41,8 +40,8 @@ export default {
   methods: {
     makeSearch () {
       this.$store.commit('transaction/updateQueryParams', {
-        from: moment().add(-10, 'Y').format('YYYY-MM-DD'),
-        to: moment().format('YYYY-MM-DD'),
+        from: '',
+        to: '',
         filter: `search/${this.$route.query.text}`
       })
     }
