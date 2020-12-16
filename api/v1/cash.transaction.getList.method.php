@@ -68,6 +68,22 @@ class cashTransactionGetListMethod extends cashApiAbstractMethod
             $request->limit = 500;
         }
 
+        if ($request->filter
+            && (empty($request->to) && empty($request->from))
+            && strpos($request->filter, cashAggregateFilter::FILTER_SEARCH . '/') === false
+            && strpos($request->filter, cashAggregateFilter::FILTER_IMPORT . '/') === false
+        ) {
+            throw new cashApiMissingParamException('to, from');
+        }
+
+        if (empty($request->to)) {
+            $request->to = date('Y-m-d', strtotime('+25 years'));
+        }
+
+        if (empty($request->from)) {
+            $request->from = date('Y-m-d', strtotime('-25 years'));
+        }
+
         $transactions = (new cashApiTransactionGetListHandler())->handle($request);
 
         return new cashApiTransactionGetListResponse(

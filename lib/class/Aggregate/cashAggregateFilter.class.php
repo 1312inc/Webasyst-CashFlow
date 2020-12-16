@@ -5,6 +5,13 @@
  */
 class cashAggregateFilter
 {
+    public const FILTER_ACCOUNT    = 'account';
+    public const FILTER_CATEGORY   = 'category';
+    public const FILTER_CONTRACTOR = 'contractor';
+    public const FILTER_IMPORT     = 'import';
+    public const FILTER_CURRENCY   = 'currency';
+    public const FILTER_SEARCH     = 'search';
+
     /**
      * @var int|null
      */
@@ -48,9 +55,11 @@ class cashAggregateFilter
             [$filter, $identifier] = explode('/', $hash);
 
             if (property_exists($self, $filter)) {
-                $self->$filter = in_array($filter, ['account', 'category', 'contractor', 'import'])
-                    ? (int) $identifier
-                    : (string) $identifier;
+                $self->$filter = in_array(
+                    $filter,
+                    [self::FILTER_ACCOUNT, self::FILTER_CATEGORY, self::FILTER_CONTRACTOR, self::FILTER_IMPORT],
+                    true
+                ) ? (int) $identifier : (string) $identifier;
             }
         }
 
