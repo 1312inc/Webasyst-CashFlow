@@ -1,45 +1,50 @@
 <template>
     <div>
-        <div v-if="searchResult.data.length">
-            <div v-for="(item, i) in searchResult.data" :key="i">
-                {{ item }}
-            </div>
-        </div>
-        <div v-else>
-            {{ $t('noResults') }}
-        </div>
+        <h1 class="custom-mb-24">{{ $route.query.text }}</h1>
+        <TransactionList />
     </div>
 </template>
 
 <script>
-import api from '../plugins/api'
+import moment from 'moment'
+import TransactionList from '@/components/TransactionList'
+
 export default {
+  components: {
+    TransactionList
+  },
 
   data () {
     return {
-      searchResult: {
-        offset: 0,
-        limit: 100,
-        total: 0,
-        data: []
-      }
+      paramsBus: {}
     }
   },
 
-  created () {
-    this.makeRequest()
+  watch: {
+    '$route' () {
+      this.makeSearch()
+    }
+  },
+
+  mounted () {
+    this.paramsBus = this.$store.state.transaction.queryParams
+    this.makeSearch()
+  },
+
+  beforeDestroy () {
+    this.$store.commit('transaction/updateQueryParams', {
+      ...this.paramsBus,
+      silent: true
+    })
   },
 
   methods: {
-    async makeRequest (params = {}) {
-      const { data } = await api.get('cash.transaction.getList', {
-        params: {
-          filter: `search/${this.$route.query.text}`,
-          offset: params.offset || 0,
-          limit: params.limit || 100
-        }
+    makeSearch () {
+      this.$store.commit('transaction/updateQueryParams', {
+        from: moment().add(-10, 'Y').format('YYYY-MM-DD'),
+        to: moment().format('YYYY-MM-DD'),
+        filter: `search/${this.$route.query.text}`
       })
-      this.searchResult = data
     }
   }
 

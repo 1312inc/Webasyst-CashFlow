@@ -131,17 +131,6 @@ export default {
     ExportButton
   },
 
-  watch: {
-    queryParams: {
-      handler () {
-        if (this.showComponent) {
-          this.getTransactions()
-        }
-      },
-      deep: true
-    }
-  },
-
   computed: {
     ...mapState('transaction', ['queryParams', 'detailsInterval']),
 
@@ -167,10 +156,6 @@ export default {
   },
 
   created () {
-    if (this.showComponent) {
-      this.getTransactions()
-    }
-
     this.featurePeriod =
       +localStorage.getItem('upcoming_transactions_days') || this.featurePeriod
     this.upcomingBlockOpened =
@@ -180,6 +165,8 @@ export default {
 
   methods: {
     async getTransactions () {
+      if (!this.showComponent) return
+
       this.loading = true
       const params = { ...this.queryParams }
       params.from = this.$moment()

@@ -92,10 +92,8 @@ export default {
   },
 
   created () {
-    this.$store.dispatch('transaction/getChartData')
-
     this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
-      if (mutation.type === 'transaction/updateQueryParams') {
+      if (mutation.type === 'transaction/updateQueryParams' && !mutation.payload.silent) {
         const keys = Object.keys(mutation.payload)
         const key = keys[0]
         const changeOffset = keys.length === 1 && key === 'offset'

@@ -19,6 +19,25 @@ export default {
     AmChart,
     DetailsDashboard,
     TransactionList
+  },
+
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.updateEntity(to)
+    })
+  },
+
+  beforeRouteUpdate (to) {
+    this.updateEntity(to)
+  },
+
+  methods: {
+    updateEntity (to) {
+      this.$store.dispatch('updateCurrentType', {
+        name: to.name.toLowerCase(),
+        id: +to.params.id || to.params.id
+      })
+    }
   }
 }
 </script>
