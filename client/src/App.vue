@@ -32,7 +32,6 @@ export default {
     )
 
     this.$store.commit('transaction/updateQueryParams', { from, to, silent: true })
-    this.$store.dispatch('transaction/getBalanceFlow')
   },
 
   methods: {

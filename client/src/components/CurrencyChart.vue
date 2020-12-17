@@ -6,20 +6,20 @@
     >
       <svg ref="chart"></svg>
     </div>
-    <div v-if="dataByCurrency" class="c-bwc-details align-right">
+    <div class="c-bwc-details align-right">
       <div
         class="custom-mb-4 small hint nowrap"
-        v-html="`${shorten}&nbsp;${$helper.currencySignByCode(this.currency)}`"
+        v-html="`${shorten}&nbsp;${$helper.currencySignByCode(currency.currency)}`"
       ></div>
       <div>
         <span
           class="c-bwc-badge small nowrap"
           :class="
-            dataByCurrency.balances.diff.amount >= 0
+            currency.balances.diff.amount >= 0
               ? 'c-bwc-badge--green'
               : 'c-bwc-badge--red'
           "
-          v-html="dataByCurrency.balances.diff.amountShorten"
+          v-html="currency.balances.diff.amountShorten"
         ></span>
       </div>
     </div>
@@ -31,7 +31,7 @@ import * as d3 from 'd3'
 export default {
   props: {
     currency: {
-      type: String,
+      type: Object,
       requred: true
     }
   },
@@ -44,26 +44,23 @@ export default {
   },
 
   computed: {
-    dataByCurrency () {
-      return this.$store.state.transaction.balanceFlow.find(
-        e => e.currency === this.currency
-      )
-    },
-
     data () {
-      return this.dataByCurrency?.data
+      return this.currency.data
     },
 
     shorten () {
-      return this.dataByCurrency?.balances.now.amountShorten
+      return this.currency.balances.now.amountShorten
     }
   },
 
   watch: {
-    async data () {
-      await this.$nextTick()
+    data () {
       this.renderChart()
     }
+  },
+
+  mounted () {
+    this.renderChart()
   },
 
   methods: {
@@ -73,6 +70,7 @@ export default {
       const margin = { top: 0, right: 0, bottom: 0, left: 0 }
 
       this.svg = d3.select(this.$refs.chart)
+      this.svg.selectAll('*').remove()
       this.svg.attr('viewBox', [0, 0, width, height])
 
       const x = d3
