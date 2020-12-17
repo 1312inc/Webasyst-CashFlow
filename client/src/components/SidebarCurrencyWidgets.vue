@@ -39,9 +39,8 @@ export default {
         if (
           action.type === 'transaction/update' ||
           action.type === 'transaction/delete' ||
-          action.type === 'transaction/bulkDelete' ||
-          action.type === 'transaction/bulkMove' ||
-          action.type === 'account/update' ||
+          action.type === 'transactionBulk/bulkDelete' ||
+          action.type === 'transactionBulk/bulkMove' ||
           action.type === 'account/delete' ||
           action.type === 'category/delete'
         ) {

@@ -48,10 +48,6 @@ export default {
   props: {
     transaction: {
       type: Object
-    },
-
-    isChecked: {
-      type: Boolean
     }
   },
 
@@ -75,6 +71,10 @@ export default {
       return this.$store.getters['category/getById'](this.transaction.category_id)
     },
 
+    isChecked () {
+      return this.$store.getters['transactionBulk/isSelected'](this.transaction.id)
+    },
+
     showCheckbox () {
       return window.eventBus ? window.eventBus.multiSelect : true
     }
@@ -91,7 +91,8 @@ export default {
     },
 
     checkboxSelect () {
-      this.$emit('checkboxUpdate')
+      const method = this.isChecked ? 'unselect' : 'select'
+      this.$store.commit(`transactionBulk/${method}`, [this.transaction.id])
     }
   }
 }

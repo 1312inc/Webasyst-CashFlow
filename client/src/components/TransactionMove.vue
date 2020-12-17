@@ -82,17 +82,9 @@
 <script>
 import { mapState } from 'vuex'
 export default {
-  props: {
-    ids: {
-      type: Array,
-      required: true
-    }
-  },
-
   data () {
     return {
       model: {
-        ids: this.ids,
         account_id: 0,
         category_id: 0
       }
@@ -102,6 +94,10 @@ export default {
   computed: {
     ...mapState('account', ['accounts']),
     ...mapState('category', ['categories']),
+
+    ids () {
+      return this.$store.state.transactionBulk.selectedTransactionsIds
+    },
 
     categoriesIncome () {
       return this.categories.filter((c) => c.type === 'income')
@@ -118,10 +114,8 @@ export default {
 
   methods: {
     submit () {
-      this.$store
-        .dispatch('transaction/bulkMove', this.model)
+      this.$store.dispatch('transactionBulk/bulkMove', { ids: this.ids, ...this.model })
         .then(() => {
-          this.$emit('success')
           this.close()
         })
         .catch(() => {})

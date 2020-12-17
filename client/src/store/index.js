@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import transaction from './modules/transaction'
+import transactionBulk from './modules/transactionBulk'
 import category from './modules/category'
 import account from './modules/account'
 import system from './modules/system'
@@ -109,6 +110,7 @@ export default new Vuex.Store({
 
   modules: {
     transaction,
+    transactionBulk,
     category,
     account,
     system

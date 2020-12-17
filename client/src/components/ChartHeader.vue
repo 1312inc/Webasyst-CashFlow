@@ -34,6 +34,7 @@
             </div>
           </div>
         </div>
+        <TransactionControls />
       </div>
       <div class="flexbox space-1rem">
         <div>
@@ -56,6 +57,7 @@
 </template>
 
 <script>
+import TransactionControls from '@/components/TransactionControls'
 import Modal from '@/components/Modal'
 import Account from '@/components/AddAccount'
 import Category from '@/components/AddCategory'
@@ -64,6 +66,7 @@ import AmountForPeriod from '@/components/AmountForPeriod'
 
 export default {
   components: {
+    TransactionControls,
     Modal,
     Account,
     Category,

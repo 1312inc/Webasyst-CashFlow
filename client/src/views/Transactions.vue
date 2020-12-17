@@ -1,13 +1,18 @@
 <template>
-  <TransactionList />
+  <div>
+    <TransactionControls class="custom-mb-24" />
+    <TransactionList />
+  </div>
 </template>
 
 <script>
 import moment from 'moment'
+import TransactionControls from '@/components/TransactionControls'
 import TransactionList from '@/components/TransactionList'
 
 export default {
   components: {
+    TransactionControls,
     TransactionList
   },
 
