@@ -19,7 +19,7 @@
         @mouseleave="$refs.dropdown.style.display = 'none'"
         class="dropdown"
       >
-        <i class="fas fa-ellipsis-h"></i>
+        <span class="icon"><i class="fas fa-ellipsis-v"></i></span>
         <div class="dropdown-body" ref="dropdown">
           <ul class="menu">
             <li>
@@ -77,8 +77,8 @@
             >
               <input
                 type="checkbox"
-                @click="checkAll"
-                v-model="checkboxChecked"
+                @click="checkAll(filteredTransactions)"
+                :checked="isCheckedAllInGroup(filteredTransactions)"
               />
             </th>
             <th
@@ -96,8 +96,6 @@
             v-for="transaction in filteredTransactions"
             :key="transaction.id"
             :transaction="transaction"
-            :is-checked="checkedRows.includes(transaction.id)"
-            @checkboxUpdate="onTransactionListRowUpdate(transaction.id)"
           />
         </table>
         <div v-else class="tw-text-center custom-py-20">
@@ -122,8 +120,7 @@ export default {
       loading: true,
       transactions: [],
       featurePeriod: 7,
-      upcomingBlockOpened: false,
-      checkedRows: []
+      upcomingBlockOpened: false
     }
   },
 

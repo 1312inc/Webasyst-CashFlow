@@ -54,8 +54,8 @@
             >
               <input
                 type="checkbox"
-                @click="checkAll"
-                v-model="checkboxChecked"
+                @click="checkAll(transactionGroup)"
+                :checked="isCheckedAllInGroup(transactionGroup)"
               />
             </th>
             <th
@@ -71,8 +71,6 @@
             v-for="transaction in transactionGroup"
             :key="transaction.id"
             :transaction="transaction"
-            :is-checked="checkedRows.includes(transaction.id)"
-            @checkboxUpdate="onTransactionListRowUpdate(transaction.id)"
           />
         </table>
         <div v-else class="tw-text-center custom-py-20">
@@ -96,8 +94,7 @@ export default {
   data () {
     return {
       loading: true,
-      transactions: {},
-      checkedRows: []
+      transactions: []
     }
   },
 

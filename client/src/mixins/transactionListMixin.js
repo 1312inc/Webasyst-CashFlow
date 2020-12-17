@@ -1,14 +1,5 @@
 export default {
   computed: {
-    checkboxChecked: {
-      get () {
-        return this.checkedRows.length === this.filteredTransactions.length
-      },
-      set () {
-        return false
-      }
-    },
-
     showCheckbox () {
       return window.eventBus ? window.eventBus.multiSelect : true
     }
@@ -26,8 +17,10 @@ export default {
         if (
           action.type === 'transaction/update' ||
           action.type === 'transaction/delete' ||
-          action.type === 'transaction/bulkDelete' ||
-          action.type === 'transaction/bulkMove'
+          action.type === 'transactionBulk/bulkDelete' ||
+          action.type === 'transactionBulk/bulkMove' ||
+          action.type === 'account/delete' ||
+          action.type === 'category/delete'
         ) {
           this.getTransactions()
         }
@@ -41,26 +34,14 @@ export default {
   },
 
   methods: {
-    checkAll ({ target }) {
-      this.checkedRows = target.checked
-        ? this.filteredTransactions.map(r => r.id)
-        : []
-      this.$emit('checkRows', this.checkedRows)
+    checkAll (items) {
+      const ids = items.map(e => e.id)
+      const method = this.isCheckedAllInGroup(items) ? 'unselect' : 'select'
+      this.$store.commit(`transactionBulk/${method}`, ids)
     },
 
-    unCheckAll () {
-      this.checkedRows = []
-      this.$emit('checkRows', this.checkedRows)
-    },
-
-    onTransactionListRowUpdate (id) {
-      const index = this.checkedRows.indexOf(id)
-      if (index > -1) {
-        this.checkedRows.splice(index, 1)
-      } else {
-        this.checkedRows.push(id)
-      }
-      this.$emit('checkRows', this.checkedRows)
+    isCheckedAllInGroup (items) {
+      return items.every(e => this.$store.state.transactionBulk.selectedTransactionsIds.includes(e.id))
     }
   }
 }

@@ -94,10 +94,20 @@ export default {
   created () {
     this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
       if (mutation.type === 'transaction/updateQueryParams' && !mutation.payload.silent) {
-        const keys = Object.keys(mutation.payload)
-        const key = keys[0]
-        const changeOffset = keys.length === 1 && key === 'offset'
-        if (!changeOffset) {
+        this.$store.dispatch('transaction/getChartData')
+      }
+    })
+
+    this.unsubscribeFromTransitionUpdate = this.$store.subscribeAction({
+      after: (action) => {
+        if (
+          action.type === 'transaction/update' ||
+          action.type === 'transaction/delete' ||
+          action.type === 'transactionBulk/bulkDelete' ||
+          action.type === 'transactionBulk/bulkMove' ||
+          action.type === 'account/delete' ||
+          action.type === 'category/delete'
+        ) {
           this.$store.dispatch('transaction/getChartData')
         }
       }
@@ -248,8 +258,9 @@ export default {
   },
 
   beforeDestroy () {
-    this.unsubscribeFromDetailsInterval()
     this.unsubscribeFromQueryParams()
+    this.unsubscribeFromTransitionUpdate()
+    this.unsubscribeFromDetailsInterval()
     if (this.chart) {
       this.chart.dispose()
     }
@@ -397,7 +408,6 @@ export default {
         this.balanceSeries.stroke = am4core.color('rgba(255, 0, 0, 0)')
         this.balanceSeries.strokeWidth = 2
         this.balanceSeries.defaultState.transitionDuration = 0
-        this.balanceSeries.cursorTooltipEnabled = false
 
         // Create a range to change stroke for positive values
         const rangePositive = this.balanceAxis.createSeriesRange(this.balanceSeries)
@@ -494,6 +504,7 @@ export default {
       this.balanceAxis = this.chart.yAxes.push(new am4charts.ValueAxis())
       this.balanceAxis.height = am4core.percent(35)
       this.balanceAxis.marginBottom = 30
+      this.balanceAxis.cursorTooltipEnabled = false
       if (!prefersColorSchemeDark) {
         this.balanceAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
         this.balanceAxis.renderer.gridContainer.background.fillOpacity = 0.3

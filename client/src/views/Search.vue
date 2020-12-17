@@ -1,15 +1,18 @@
 <template>
-    <div>
-        <h1 class="custom-mb-24">{{ $route.query.text }}</h1>
-        <TransactionList />
-    </div>
+  <div>
+    <h1 class="custom-mb-12">{{ $route.query.text }}</h1>
+    <TransactionControls class="custom-mb-24" />
+    <TransactionList />
+  </div>
 </template>
 
 <script>
+import TransactionControls from '@/components/TransactionControls'
 import TransactionList from '@/components/TransactionList'
 
 export default {
   components: {
+    TransactionControls,
     TransactionList
   },
 
