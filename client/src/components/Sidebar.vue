@@ -7,32 +7,7 @@
 
     <div class="sidebar-body">
         <!-- Widgets charts block -->
-        <div v-if="currenciesInAccounts.length" class="custom-mt-24">
-          <div v-if="currenciesInAccounts.length > 1" class="tw-mx-4">
-            <h5>{{ $t("cashOnHand") }}</h5>
-          </div>
-          <ul class="menu">
-            <li
-              v-for="currency in currenciesInAccounts"
-              :key="currency"
-            >
-              <router-link
-                :to="`/currency/${currency}`"
-                :class="{ bold: currenciesInAccounts.length === 1 }"
-                class="flexbox middle full-width"
-              >
-                <div class="wide">
-                  {{
-                    currenciesInAccounts.length > 1
-                      ? currency
-                      : $t("cashOnHand")
-                  }}
-                </div>
-                <CurrencyChart :currency="currency" />
-              </router-link>
-            </li>
-          </ul>
-        </div>
+        <SidebarCurrencyWidgets />
 
         <!-- Accounts list block -->
         <div v-if="accounts.length" class="custom-mt-24">
@@ -214,17 +189,16 @@ import draggable from 'vuedraggable'
 import Modal from '@/components/Modal'
 import Account from '@/components/AddAccount'
 import Category from '@/components/AddCategory'
-import CurrencyChart from '@/components/CurrencyChart'
 import SearchField from '@/components/SearchField'
-
+import SidebarCurrencyWidgets from '@/components/SidebarCurrencyWidgets'
 export default {
   components: {
     draggable,
     Modal,
     Account,
     Category,
-    CurrencyChart,
-    SearchField
+    SearchField,
+    SidebarCurrencyWidgets
   },
 
   data () {
