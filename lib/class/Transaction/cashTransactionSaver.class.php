@@ -29,8 +29,8 @@ class cashTransactionSaver extends cashEntitySaver
             $toPersist[] = $transaction;
         }
 
-        if ($params->repeating) {
-            $transferTransaction = $transaction-$this->createTransfer($transaction, $params);
+        if ($params->transfer) {
+            $transferTransaction = $this->createTransfer($transaction, $params);
             if ($transferTransaction) {
                 $toPersist[] = $transferTransaction;
             }

@@ -126,6 +126,16 @@ class cashContactRightsManager
      *
      * @return bool
      */
+    public function canAccessTransfers(waContact $contact): bool
+    {
+        return $this->getContactAccess($contact)->canAccessTransfers();
+    }
+
+    /**
+     * @param waContact $contact
+     *
+     * @return bool
+     */
     public function canImport(waContact $contact): bool
     {
         return $this->getContactAccess($contact)->canImport();
