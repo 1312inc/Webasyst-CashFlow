@@ -3,6 +3,12 @@
 
     <div class="sidebar-header">
       <SearchField />
+
+      <ul class="menu custom-my-0">
+        <li>
+          <router-link to="/upnext" class="flexbox middle bold">{{ $t('upnext') }}</router-link>
+        </li>
+      </ul>
     </div>
 
     <div class="sidebar-body">

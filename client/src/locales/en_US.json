@@ -113,5 +113,6 @@
   "search": {
     "label": "Search",
     "noResults": "No results"
-  }
+  },
+  "upnext": "Up Next"
 }
