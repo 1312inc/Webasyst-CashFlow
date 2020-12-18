@@ -73,6 +73,9 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
 
         if ($paramsDto->transfer) {
             $transferTransaction = $saver->createTransfer($transaction, $paramsDto);
+            if ($transferTransaction) {
+                $saver->addToPersist($transferTransaction);
+            }
         }
 
         $newTransactionIds = [];
@@ -108,7 +111,6 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
                     }
                 }
             }
-
         } else {
             $saver->addToPersist($transaction);
             $saved = $saver->persistTransactions();
