@@ -146,6 +146,8 @@ export default {
     this.colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
     this.colsAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
     this.colsAxis.cursorTooltipEnabled = false
+    this.colsAxis.numberFormatter = new am4core.NumberFormatter()
+    this.colsAxis.numberFormatter.numberFormat = '#a'
 
     // Legend
     chart.legend = new am4charts.Legend()
@@ -505,6 +507,8 @@ export default {
       this.balanceAxis.height = am4core.percent(35)
       this.balanceAxis.marginBottom = 30
       this.balanceAxis.cursorTooltipEnabled = false
+      this.balanceAxis.numberFormatter = new am4core.NumberFormatter()
+      this.balanceAxis.numberFormatter.numberFormat = '#a'
       if (!prefersColorSchemeDark) {
         this.balanceAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
         this.balanceAxis.renderer.gridContainer.background.fillOpacity = 0.3
