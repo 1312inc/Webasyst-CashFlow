@@ -43,6 +43,9 @@
         <div v-if="group === 'today'" class="black">
           {{ $t("today") }}
         </div>
+        <div v-else-if="group === 'items'" class="black">
+          {{ $t("nextDays", {count: 7}) }}
+        </div>
         <div v-else class="black">
           {{ $moment(group).format("MMMM, YYYY") }}
         </div>
@@ -91,6 +94,29 @@ import ExportButton from '@/components/ExportButton'
 export default {
   mixins: [transactionListMixin],
 
+  props: {
+    grouping: {
+      type: Boolean,
+      default () {
+        return true
+      }
+    },
+
+    upcoming: {
+      type: Boolean,
+      default () {
+        return false
+      }
+    },
+
+    reverse: {
+      type: Boolean,
+      default () {
+        return false
+      }
+    }
+  },
+
   data () {
     return {
       loading: true,
@@ -124,14 +150,20 @@ export default {
       const result = this.filteredTransactions.reduce((acc, e) => {
         const month = this.$moment(e.date).format('YYYY-MM')
         if (e.date === today && acc.today) {
-          acc.today.push(e)
+          this.reverse ? acc.today.unshift(e) : acc.today.push(e)
           return acc
         }
-        if (month in acc) {
-          acc[month].push(e)
+        if (this.grouping) {
+          if (month in acc) {
+            this.reverse ? acc[month].unshift(e) : acc[month].push(e)
+          } else {
+            acc[month] = [e]
+          }
         } else {
-          acc[month] = [e]
+          if (!('items' in acc)) acc.items = []
+          this.reverse ? acc.items.unshift(e) : acc.items.push(e)
         }
+
         return acc
       }, acc)
 
@@ -143,7 +175,7 @@ export default {
     async getTransactions (customQueryParams = {}) {
       this.loading = true
       const defaultParams = { ...this.queryParams }
-      defaultParams.to = this.$moment().format('YYYY-MM-DD')
+      if (!this.upcoming) defaultParams.to = this.$moment().format('YYYY-MM-DD')
       if (this.detailsInterval.from) {
         defaultParams.from = this.detailsInterval.from
       }
