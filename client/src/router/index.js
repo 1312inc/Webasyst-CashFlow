@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import Transactions from '../views/Transactions.vue'
+import History from '../views/History.vue'
+import Upnext from '../views/Upnext.vue'
 import Reports from '../views/Reports.vue'
 import Search from '../views/Search.vue'
+import Import from '../views/Import.vue'
 
 Vue.use(VueRouter)
 
@@ -29,9 +31,14 @@ const routes = [
     component: Home
   },
   {
-    path: '/transactions',
-    name: 'Transactions',
-    component: Transactions
+    path: '/history',
+    name: 'History',
+    component: History
+  },
+  {
+    path: '/upnext',
+    name: 'Upnext',
+    component: Upnext
   },
   {
     path: '/reports',
@@ -42,6 +49,11 @@ const routes = [
     path: '/search',
     name: 'Search',
     component: Search
+  },
+  {
+    path: '/import/:id',
+    name: 'Import',
+    component: Import
   }
 ]
 

@@ -1,19 +1,20 @@
 <template>
   <div>
-    <h1>{{ $route.query.text }}</h1>
+    <h1>History</h1>
     <TransactionControls class="custom-mb-24" />
-    <TransactionList />
+    <TransactionListIncoming />
   </div>
 </template>
 
 <script>
+import moment from 'moment'
 import TransactionControls from '@/components/TransactionControls'
-import TransactionList from '@/components/TransactionList'
+import TransactionListIncoming from '@/components/TransactionListIncoming'
 
 export default {
   components: {
     TransactionControls,
-    TransactionList
+    TransactionListIncoming
   },
 
   data () {
@@ -22,15 +23,14 @@ export default {
     }
   },
 
-  watch: {
-    '$route' () {
-      this.makeSearch()
-    }
-  },
-
   mounted () {
     this.paramsBus = this.$store.state.transaction.queryParams
-    this.makeSearch()
+
+    this.$store.commit('transaction/updateQueryParams', {
+      from: moment().add(-3, 'Y').format('YYYY-MM-DD'),
+      to: moment().format('YYYY-MM-DD'),
+      filter: ''
+    })
   },
 
   beforeDestroy () {
@@ -38,17 +38,6 @@ export default {
       ...this.paramsBus,
       silent: true
     })
-  },
-
-  methods: {
-    makeSearch () {
-      this.$store.commit('transaction/updateQueryParams', {
-        from: '',
-        to: '',
-        filter: `search/${this.$route.query.text}`
-      })
-    }
   }
-
 }
 </script>

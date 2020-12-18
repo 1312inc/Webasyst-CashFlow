@@ -1,9 +1,8 @@
 <template>
-  <div>
-    <h1>{{ $route.query.text }}</h1>
-    <TransactionControls class="custom-mb-24" />
-    <TransactionList />
-  </div>
+    <div>
+        <TransactionControls class="custom-mb-24" />
+        <TransactionList />
+    </div>
 </template>
 
 <script>
@@ -22,15 +21,9 @@ export default {
     }
   },
 
-  watch: {
-    '$route' () {
-      this.makeSearch()
-    }
-  },
-
   mounted () {
     this.paramsBus = this.$store.state.transaction.queryParams
-    this.makeSearch()
+    this.fetchData()
   },
 
   beforeDestroy () {
@@ -41,11 +34,11 @@ export default {
   },
 
   methods: {
-    makeSearch () {
+    fetchData () {
       this.$store.commit('transaction/updateQueryParams', {
         from: '',
         to: '',
-        filter: `search/${this.$route.query.text}`
+        filter: `import/${this.$route.params.id}`
       })
     }
   }
