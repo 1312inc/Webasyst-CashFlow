@@ -483,10 +483,10 @@
                     newCatName = '',
                     type = '';
 
-                if (val == {cashCategoryFactory::NO_CATEGORY_INCOME_ID}) {
+                if (val == 'new-income') {
                     newCatName = prompt($_('New income category: '));
                     type = '{cashCategory::TYPE_INCOME}';
-                } else if (val == {cashCategoryFactory::NO_CATEGORY_EXPENSE_ID}) {
+                } else if (val == 'new-expense') {
                     newCatName = prompt($_('New expense category: '));
                     type = '{cashCategory::TYPE_EXPENSE}';
                 }

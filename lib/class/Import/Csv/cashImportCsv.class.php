@@ -612,9 +612,9 @@ final class cashImportCsv
         switch ($this->settings->getCategoryType()) {
             case cashCsvImportSettings::TYPE_SINGLE:
                 if ($type === cashCategory::TYPE_INCOME) {
-                    $_catId = $this->settings->getCategoryIncome();
+                    $_catId = $this->settings->getCategoryIncome() ?: cashCategoryFactory::NO_CATEGORY_INCOME_ID;
                 } else {
-                    $_catId = $this->settings->getCategoryExpense();
+                    $_catId = $this->settings->getCategoryExpense() ?: cashCategoryFactory::NO_CATEGORY_EXPENSE_ID;
                 }
                 $categoryId = isset($infoDto->categories[$_catId]) ? $infoDto->categories[$_catId]->id : null;
                 break;
@@ -623,7 +623,9 @@ final class cashImportCsv
                 $categoryMap = $this->settings->getCategoryMap();
                 $category = $this->settings->getCategory();
                 if (isset($data[$category], $categoryMap[$data[$category]])) {
-                    if ($categoryMap[$data[$category]] > 0) {
+                    if ($categoryMap[$data[$category]] > 0
+                        || in_array($categoryMap[$data[$category]], cashCategoryFactory::getSystemIds())
+                    ) {
                         $categoryId = $categoryMap[$data[$category]];
                     } elseif ($categoryMap[$data[$category]] == 0) {
                         $categoryId = 0;
