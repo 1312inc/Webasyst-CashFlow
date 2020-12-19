@@ -77,7 +77,7 @@ return array(
         'date' => array('date', 'null' => 0),
         'datetime' => array('datetime', 'null' => 0),
         'account_id' => array('int', 11, 'null' => 0),
-        'category_id' => array('int', 11),
+        'category_id' => array('int', 11, 'null' => 0),
         'amount' => array('decimal', "18,4", 'default' => '0.0000'),
         'description' => array('text'),
         'repeating_id' => array('int', 11),
@@ -92,7 +92,6 @@ return array(
         'contractor_contact_id' => array('int', 11),
         ':keys' => array(
             'PRIMARY' => 'id',
-            'cash_transaction_category_id_index' => 'category_id',
             'cash_transaction_datetime_create_contact_id_index' => array('datetime', 'create_contact_id'),
             'cash_transaction_repeating_id_index' => 'repeating_id',
             'cash_transaction_cash_account_id_fk' => 'account_id',
@@ -102,6 +101,7 @@ return array(
             'cash_transaction_date_account_id_index' => array('date', 'account_id'),
             'cash_transaction_date_category_id_index' => array('date', 'category_id'),
             'cash_transaction_date_contractor_contact_id_index' => array('date', 'contractor_contact_id'),
+            'cash_transaction_cash_category_id_fk' => 'category_id',
         ),
     ),
 );

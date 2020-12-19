@@ -46,6 +46,7 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
                 cash()->getEntityFactory(cashCategory::class)
                     ->createNewNoCategoryIncome()
                     ->setName(_w('New income category'))
+                    ->setId('new-income')
             )
         );
 
@@ -59,6 +60,7 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
                 cash()->getEntityFactory(cashCategory::class)
                     ->createNewNoCategoryExpense()
                     ->setName(_w('New expense category'))
+                    ->setId('new-expense')
             )
         );
 
