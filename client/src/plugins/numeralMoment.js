@@ -7,7 +7,7 @@ const localeCode = locale.split('_')[0]
 numeral.locale(localeCode)
 moment.locale(localeCode)
 
-export { numeral }
+export { numeral, moment }
 
 export default {
   install (Vue, options) {
