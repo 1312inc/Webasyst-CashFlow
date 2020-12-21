@@ -1,4 +1,6 @@
 import api from '@/plugins/api'
+import { moment } from '@/plugins/numeralMoment'
+import { i18n } from '@/plugins/locale'
 import router from '@/router'
 
 export default {
@@ -35,7 +37,18 @@ export default {
 
     async update ({ dispatch }, params) {
       const method = params.id ? 'update' : 'create'
-      await api.post(`cash.account.${method}`, params)
+      const { data } = await api.post(`cash.account.${method}`, params)
+      if (parseInt(params.starting_balance) !== 0 && !isNaN(parseInt(params.starting_balance))) {
+        dispatch('transaction/update', {
+          id: null,
+          amount: params.starting_balance,
+          date: moment().format('YYYY-MM-DD'),
+          account_id: data.id,
+          category_id: parseInt(params.starting_balance) > 0 ? -1 : -2,
+          description: i18n.t('startingBalance'),
+          silent: true
+        }, { root: true })
+      }
       dispatch('getList')
     },
 

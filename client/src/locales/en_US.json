@@ -114,5 +114,6 @@
     "label": "Search",
     "noResults": "No results"
   },
-  "upnext": "Up Next"
+  "upnext": "Up Next",
+  "startingBalance": "Starting balance"
 }
