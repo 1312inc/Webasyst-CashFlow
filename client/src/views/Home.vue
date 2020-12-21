@@ -27,8 +27,9 @@ export default {
     })
   },
 
-  beforeRouteUpdate (to) {
+  beforeRouteUpdate (to, from, next) {
     this.updateEntity(to)
+    next()
   },
 
   methods: {
