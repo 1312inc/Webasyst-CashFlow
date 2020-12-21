@@ -114,5 +114,6 @@
     "label": "Поиск",
     "noResults": "Не найдено"
   },
-  "upnext": "План"
+  "upnext": "План",
+  "startingBalance": "Начальный баланс"
 }

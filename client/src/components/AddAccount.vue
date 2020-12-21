@@ -41,6 +41,23 @@
         </div>
       </div>
 
+      <div v-if="!isModeUpdate" class="field">
+        <div class="name for-input">
+          {{ $t("startingBalance") }}
+        </div>
+        <div class="value">
+          <input
+            v-model="model.starting_balance"
+            :class="{ 'state-error': $v.model.starting_balance.$error }"
+            :placeholder="$t('optional')"
+            type="text"
+          />
+          <span v-if="model.currency" class="custom-ml-8">{{
+            $helper.currencySignByCode(model.currency)
+          }}</span>
+        </div>
+      </div>
+
       <div class="field">
         <div class="name for-input">
           {{ $t("icon") }}
@@ -104,7 +121,7 @@
 </template>
 
 <script>
-import { required } from 'vuelidate/lib/validators'
+import { required, integer } from 'vuelidate/lib/validators'
 import updateEntityMixin from '@/mixins/updateEntityMixin'
 import IconUploader from '@/components/IconUploader'
 export default {
@@ -122,6 +139,7 @@ export default {
         id: null,
         name: '',
         currency: '',
+        starting_balance: '',
         icon: '',
         description: ''
       }
@@ -135,6 +153,9 @@ export default {
       },
       currency: {
         required
+      },
+      starting_balance: {
+        integer
       }
     }
   },
