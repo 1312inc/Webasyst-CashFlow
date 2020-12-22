@@ -24,7 +24,7 @@ Vue.use(IsOnline)
 window.eventBus = new Vue({
   data () {
     return {
-      multiSelect: true
+      multiSelect: false
     }
   },
 
