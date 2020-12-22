@@ -1,18 +1,46 @@
 <template>
   <div class="custom-mt-24">
     <div v-if="balanceFlow.length > 1" class="tw-mx-4">
-      <h5>{{ $t("cashOnHand") }}</h5>
+      <div class="heading custom-mx-0">
+        {{ this.$moment().format('LL') }} <span class="count">+30d</span>
+      </div>
     </div>
     <ul class="menu">
       <li v-for="currency in balanceFlow" :key="currency.currency">
         <router-link
           :to="`/currency/${currency.currency}`"
-          class="flexbox middle full-width"
+          style="display: block"
         >
-          <div class="wide">
-            {{ balanceFlow.length > 1 ? currency.currency : $t("cashOnHand") }}
+          <div class="flexbox middle">
+            <div class="wide bold nowrap">
+              {{
+                $helper.toCurrency(
+                  currency.balances.now.amount,
+                  currency.currency
+                )
+              }}
+            </div>
+            <div
+              class="nowrap small"
+              v-html="
+                `${
+                  currency.balances.to.amountShorten
+                }&nbsp;${$helper.currencySignByCode(currency.currency)}`
+              "
+            ></div>
+            <div class="custom-ml-4">
+              <span
+                class="c-bwc-badge small nowrap"
+                :class="
+                  currency.balances.diff.amount >= 0
+                    ? 'c-bwc-badge--green'
+                    : 'c-bwc-badge--red'
+                "
+                v-html="currency.balances.diff.amountShorten"
+              ></span>
+            </div>
           </div>
-          <CurrencyChart :currency="currency" />
+          <CurrencyChart v-if="currency.data.length > 2" :currency="currency" />
         </router-link>
       </li>
     </ul>
@@ -63,3 +91,19 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.c-bwc-badge {
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+
+  &--green {
+    background: #3ec55e;
+  }
+
+  &--red {
+    background: #fc3d38;
+  }
+}
+</style>
