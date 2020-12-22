@@ -1,28 +1,9 @@
 <template>
-  <div class="flexbox middle">
-    <div
-      class="c-bwc-container"
-      :style="`width: ${width}px; height: ${height}px`"
-    >
-      <svg ref="chart"></svg>
-    </div>
-    <div class="c-bwc-details align-right">
-      <div
-        class="custom-mb-4 small hint nowrap"
-        v-html="`${shorten}&nbsp;${$helper.currencySignByCode(currency.currency)}`"
-      ></div>
-      <div>
-        <span
-          class="c-bwc-badge small nowrap"
-          :class="
-            currency.balances.diff.amount >= 0
-              ? 'c-bwc-badge--green'
-              : 'c-bwc-badge--red'
-          "
-          v-html="currency.balances.diff.amountShorten"
-        ></span>
-      </div>
-    </div>
+  <div
+    class="c-bwc-container custom-mt-8"
+    :style="`width: ${width}px; height: ${height}px`"
+  >
+    <svg ref="chart"></svg>
   </div>
 </template>
 
@@ -38,18 +19,14 @@ export default {
 
   data () {
     return {
-      width: 72,
-      height: 38
+      width: 220,
+      height: 42
     }
   },
 
   computed: {
     data () {
       return this.currency.data
-    },
-
-    shorten () {
-      return this.currency.balances.now.amountShorten
     }
   },
 
@@ -218,25 +195,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.c-bwc-details {
-  width: 70px;
-}
-
-.c-bwc-badge {
-  color: #fff;
-  padding: 2px 6px;
-  border-radius: 4px;
-
-  &--green {
-    background: #3ec55e;
-  }
-
-  &--red {
-    background: #fc3d38;
-  }
-}
-
+<style>
 .c-bwc-container svg {
   max-width: initial !important;
 }
