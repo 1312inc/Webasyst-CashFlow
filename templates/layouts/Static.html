@@ -57,6 +57,20 @@
 
     <script>
         var apiSettings = {$api_settings|json_encode};
+        $(function() {
+            $.cash.init({
+                isAdmin: {$isAdmin},
+                userId: {$userId},
+                accountName: '{$wa->accountName()|escape}',
+                appName: '{$wa->appName()}',
+                routingOptions: {
+                    wa_url: '{$wa_url}',
+                    wa_backend_url: '{$wa_backend_url}',
+                    wa_app_url: '{$wa_app_url}',
+                    wa_app_static_url: '{$wa_app_static_url}'
+                }
+            });
+        });
     </script>
     <script type="text/javascript" src="{$wa_app_static_url}js/sidebar/app.js"></script>
 </body>

@@ -457,8 +457,7 @@
                                 if (r.status === 'ok') {
                                     d.trigger('close');
 
-                                    $.cash_routing.redispatch();
-                                    setTimeout($.cash.reloadSidebar, 1312)
+                                    window.location.reload();
                                 } else {
                                     $errorMsg.text(r.errors.join('<br>')).show();
                                 }
@@ -577,7 +576,7 @@
                                         $progressSuccess.show().siblings().hide();
                                         $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
                                         // alert('done, redirect to app');
-                                        window.location.hash = '/account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
+                                        window.location = $.cash.options.routingOptions.wa_app_url + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
                                         // $button.prop('disabled', false);
                                         // $transactionStat.show();
                                         // $transactionStat.find('span').text(r.transactions.ok);
