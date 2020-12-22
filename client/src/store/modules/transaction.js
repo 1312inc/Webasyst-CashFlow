@@ -1,4 +1,5 @@
 import api from '@/plugins/api'
+import { moment } from '@/plugins/numeralMoment'
 
 export default {
   namespaced: true,
@@ -92,12 +93,11 @@ export default {
       } catch (e) {}
     },
 
-    async getBalanceFlow ({ commit, state }) {
-      const { from, to } = state.queryParams
+    async getBalanceFlow ({ commit }) {
       const { data } = await api.get('cash.aggregate.getBalanceFlow', {
         params: {
-          from,
-          to,
+          from: moment().add(-7, 'd').format('YYYY-MM-DD'),
+          to: moment().add(1, 'M').format('YYYY-MM-DD'),
           group_by: 'day'
         }
       })
