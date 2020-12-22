@@ -26,7 +26,39 @@ export default {
 
   computed: {
     data () {
-      return this.currency.data
+      const istart = this.$moment().add(-7, 'd')
+      const iend = this.$moment().add(1, 'M')
+      const daysInInterval = iend.diff(istart, 'days') + 1
+
+      // Filling empty data
+      const filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
+        return {
+          period: this.$moment().add(-7, 'd').add(i, 'd').format('YYYY-MM-DD'),
+          amount: null
+        }
+      })
+
+      // Merge empty period with days with data
+      this.currency.data.forEach(element => {
+        const i = filledChartData.findIndex(e => e.period === element.period)
+        if (i > -1) {
+          filledChartData.splice(i, 1, { ...element })
+        }
+      })
+
+      // Filling daily amount
+      let previosValue = 0
+      filledChartData.map(e => {
+        if (e.amount !== null) {
+          previosValue = e.amount
+        }
+        if (e.amount === null) {
+          e.amount = previosValue
+        }
+        return e
+      })
+
+      return filledChartData
     }
   },
 
@@ -44,7 +76,7 @@ export default {
     renderChart () {
       const width = this.width
       const height = this.height
-      const margin = { top: 0, right: 0, bottom: 0, left: 0 }
+      const margin = { top: 3, right: 0, bottom: 3, left: 0 }
 
       this.svg = d3.select(this.$refs.chart)
       this.svg.selectAll('*').remove()
@@ -184,8 +216,8 @@ export default {
         .attr('y2', height)
         .selectAll('stop')
         .data([
-          { offset: y(0) / height, color: '#3ec55e' },
-          { offset: y(0) / height, color: '#fc3d38' }
+          { offset: y(0) / (height - 1), color: '#3ec55e' },
+          { offset: y(0) / (height - 1), color: '#fc3d38' }
         ])
         .join('stop')
         .attr('offset', d => d.offset)

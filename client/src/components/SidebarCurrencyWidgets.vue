@@ -40,7 +40,7 @@
               ></span>
             </div>
           </div>
-          <CurrencyChart v-if="currency.data.length > 2" :currency="currency" />
+          <CurrencyChart :currency="currency" />
         </router-link>
       </li>
     </ul>
