@@ -203,10 +203,10 @@ class cashTransactionRepository extends cashBaseRepository
     /**
      * @param $repeatingId
      *
-     * @return cashTransaction
+     * @return cashTransaction|null
      * @throws waException
      */
-    public function findLastByRepeatingId($repeatingId): cashTransaction
+    public function findLastByRepeatingId($repeatingId): ?cashTransaction
     {
         return $this->findByQuery(
             $this->getModel()

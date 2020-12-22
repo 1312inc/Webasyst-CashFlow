@@ -57,7 +57,13 @@
                 isAdmin: {$isAdmin},
                 userId: {$userId},
                 accountName: '{$wa->accountName()|escape}',
-                appName: '{$wa->appName()}'
+                appName: '{$wa->appName()}',
+                routingOptions: {
+                    wa_url: '{$wa_url}',
+                    wa_backend_url: '{$wa_backend_url}',
+                    wa_app_url: '{$wa_app_url}',
+                    wa_app_static_url: '{$wa_app_static_url}'
+                }
             });
             $.cash_routing.init();
         });
