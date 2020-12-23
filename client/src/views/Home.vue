@@ -34,7 +34,7 @@ export default {
 
   methods: {
     updateEntity (to) {
-      this.$store.dispatch('updateCurrentType', {
+      this.$store.dispatch('updateCurrentEntity', {
         name: to.name.toLowerCase(),
         id: +to.params.id || to.params.id
       })

@@ -1,104 +1,37 @@
 <template>
-  <div>
-    <div class="flexbox custom-mb-12">
-      <div v-if="$helper.isDesktopEnv" class="wide">
-        <div v-if="currentCategory && !currentCategory.name">
-          <div class="h2 custom-mb-0">{{ $t("cashToday") }}</div>
-        </div>
-        <div v-if="currentCategory && currentCategory.name">
-          <div class="flexbox middle space-1rem">
-            <div class="h2 custom-mb-0">{{ currentCategory.name }}</div>
-            <div
-              v-if="currentCategory.stat"
-              class="h2 custom-mb-0"
-              :class="
-                currentCategory.stat.balance >= 0
-                  ? 'tw-text-green-500'
-                  : 'tw-text-red-500'
-              "
-            >
-              {{
-                $helper.toCurrency(
-                  currentCategory.stat.balance,
-                  currentCategory.currency
-                )
-              }}
-            </div>
-            <div v-if="currentCategory.id >= 0">
-              <button
-                @click="update(currentCategory)"
-                class="button nobutton smaller"
-              >
-                <i class="fas fa-sliders-h"></i> {{ $t("changeSettings") }}
-              </button>
-            </div>
-          </div>
-        </div>
-        <TransactionControls />
+  <div class="flexbox custom-mb-12">
+    <div v-if="$helper.isDesktopEnv" class="wide">
+      <ChartHeaderTitle />
+      <TransactionControls />
+    </div>
+    <div class="flexbox space-1rem">
+      <div>
+        <Dropdown type="from" class="custom-mb-4" />
+        <AmountForPeriod type="income" period="from" class="custom-mb-4" />
+        <AmountForPeriod type="expense" period="from" />
       </div>
-      <div class="flexbox space-1rem">
-        <div>
-          <Dropdown type="from" class="custom-mb-4" />
-          <AmountForPeriod type="income" period="from" class="custom-mb-4" />
-          <AmountForPeriod type="expense" period="from" />
-        </div>
-        <div>
-          <Dropdown type="to" class="custom-mb-4" />
-          <AmountForPeriod type="income" period="to" class="custom-mb-4" />
-          <AmountForPeriod type="expense" period="to" />
-        </div>
+      <div>
+        <Dropdown type="to" class="custom-mb-4" />
+        <AmountForPeriod type="income" period="to" class="custom-mb-4" />
+        <AmountForPeriod type="expense" period="to" />
       </div>
     </div>
-
-    <Modal v-if="open" @close="close">
-      <component :is="currentComponentInModal" :editedItem="item"></component>
-    </Modal>
   </div>
 </template>
 
 <script>
+import ChartHeaderTitle from '@/components/ChartHeaderTitle'
 import TransactionControls from '@/components/TransactionControls'
-import Modal from '@/components/Modal'
-import Account from '@/components/AddAccount'
-import Category from '@/components/AddCategory'
+
 import Dropdown from '@/components/Dropdown'
 import AmountForPeriod from '@/components/AmountForPeriod'
 
 export default {
   components: {
+    ChartHeaderTitle,
     TransactionControls,
-    Modal,
-    Account,
-    Category,
     Dropdown,
     AmountForPeriod
-  },
-
-  data () {
-    return {
-      open: false,
-      currentComponentInModal: '',
-      item: null
-    }
-  },
-
-  computed: {
-    currentCategory () {
-      return this.$store.getters.getCurrentType
-    }
-  },
-
-  methods: {
-    update (item) {
-      this.open = true
-      this.currentComponentInModal = item.currency ? 'Account' : 'Category'
-      this.item = item
-    },
-
-    close () {
-      this.open = false
-      this.currentComponentInModal = ''
-    }
   }
 }
 </script>
