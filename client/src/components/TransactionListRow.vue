@@ -64,7 +64,7 @@ export default {
 
   computed: {
     account () {
-      return this.$store.getters['account/getById'](this.transaction.account_id)
+      return this.$store.getters['account/getById'](this.transaction.account_id) || {}
     },
 
     category () {

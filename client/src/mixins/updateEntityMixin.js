@@ -11,6 +11,10 @@ export default {
     }
   },
 
+  beforeDestroy () {
+    this.close()
+  },
+
   methods: {
     submit (entity) {
       this.$v.$touch()
@@ -33,7 +37,11 @@ export default {
           .dispatch(`${entity}/delete`, this.model.id)
           .then(() => {
             this.$noty.success('Успешно удалено')
-            this.close()
+            if (entity === 'account') {
+              this.$router.push({ name: 'Home' })
+            } else {
+              this.close()
+            }
           })
           .catch((e) => {
             this.$noty.error('Oops, something went wrong!')

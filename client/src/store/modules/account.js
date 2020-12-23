@@ -1,7 +1,6 @@
 import api from '@/plugins/api'
 import { moment } from '@/plugins/numeralMoment'
 import { i18n } from '@/plugins/locale'
-import router from '@/router'
 
 export default {
   namespaced: true,
@@ -26,6 +25,13 @@ export default {
   mutations: {
     setAccounts (state, data) {
       state.accounts = data
+    },
+
+    deleteAccount (state, id) {
+      const i = state.accounts.findIndex(a => a.id === id)
+      if (i > -1) {
+        state.accounts.splice(i, 1)
+      }
     }
   },
 
@@ -52,12 +58,12 @@ export default {
       dispatch('getList')
     },
 
-    async delete ({ dispatch }, id) {
+    async delete ({ commit }, id) {
       await api.delete('cash.account.delete', {
         params: { id }
       })
-      router.push({ name: 'Home' })
-      dispatch('getList')
+      // await dispatch('getList')
+      commit('deleteAccount', id)
     },
 
     async sort ({ commit }, params) {

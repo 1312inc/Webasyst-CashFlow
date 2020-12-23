@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import balanceFlow from './modules/balanceFlow'
 import transaction from './modules/transaction'
 import transactionBulk from './modules/transactionBulk'
 import category from './modules/category'
@@ -89,18 +90,19 @@ export default new Vuex.Store({
   },
 
   mutations: {
-    setCurrentType (state, { name, id }) {
+    setCurrentEntity (state, { name, id }) {
       state.currentType = name
       state.currentTypeId = id
     }
   },
 
   actions: {
-    updateCurrentType ({ commit, getters }, { name, id }) {
-      commit('setCurrentType', { name, id })
+    updateCurrentEntity ({ commit, getters }, { name, id }) {
+      commit('setCurrentEntity', { name, id })
       if (name && id) {
         commit('transaction/updateQueryParams', { filter: `${name}/${id}`, offset: 0 })
       } else {
+        // if Home page
         if (getters['account/currenciesInAccounts'][0]) {
           commit('transaction/updateQueryParams', { filter: `currency/${getters['account/currenciesInAccounts'][0]}`, offset: 0 })
         }
@@ -109,6 +111,7 @@ export default new Vuex.Store({
   },
 
   modules: {
+    balanceFlow,
     transaction,
     transactionBulk,
     category,

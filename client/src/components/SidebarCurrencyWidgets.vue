@@ -56,7 +56,7 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['balanceFlow'])
+    ...mapState('balanceFlow', ['balanceFlow'])
   },
 
   created () {
@@ -86,7 +86,7 @@ export default {
 
   methods: {
     getBalanceFlow () {
-      this.$store.dispatch('transaction/getBalanceFlow')
+      this.$store.dispatch('balanceFlow/getBalanceFlow')
     }
   }
 }

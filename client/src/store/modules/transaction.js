@@ -1,5 +1,4 @@
 import api from '@/plugins/api'
-import { moment } from '@/plugins/numeralMoment'
 
 export default {
   namespaced: true,
@@ -25,8 +24,7 @@ export default {
     detailsInterval: {
       from: '',
       to: ''
-    },
-    balanceFlow: []
+    }
   }),
 
   getters: {
@@ -42,10 +40,6 @@ export default {
 
     setChartData (state, data) {
       state.chartData = data
-    },
-
-    setBalanceFlow (state, data) {
-      state.balanceFlow = data
     },
 
     setDetailsInterval (state, data) {
@@ -91,17 +85,6 @@ export default {
         commit('setChartDataCurrencyIndex', 0)
         commit('setLoadingChart', false)
       } catch (e) {}
-    },
-
-    async getBalanceFlow ({ commit }) {
-      const { data } = await api.get('cash.aggregate.getBalanceFlow', {
-        params: {
-          from: moment().add(-7, 'd').format('YYYY-MM-DD'),
-          to: moment().add(1, 'M').format('YYYY-MM-DD'),
-          group_by: 'day'
-        }
-      })
-      commit('setBalanceFlow', data)
     },
 
     async update ({ dispatch }, params) {
