@@ -2,11 +2,11 @@
 <div>
     <div v-if="$helper.isDesktopEnv" style="height: 61px">
       <div
-        class="c-sticky-element custom-py-12 flexbox middle space-1rem"
+        class="c-sticky-element custom-py-12 flexbox middle space-12"
         data-sticky-class="c-sticky-element--fixed"
         data-margin-top=64
       >
-        <div v-if="checkedRows.length" class="flexbox space-1rem middle wide">
+        <div v-if="checkedRows.length" class="flexbox space-12 middle wide">
           <button @click="openMove = true" class="yellow red">
             <i class="fas fa-arrow-right"></i> {{ $t("move") }}
             {{ checkedRows.length }}
@@ -22,7 +22,7 @@
 
         <div
           v-if="!checkedRows.length && currentType"
-          class="flexbox space-1rem middle wide"
+          class="flexbox space-12 middle wide"
         >
           <div v-if="currentType.type !== 'expense'">
             <button @click="addTransaction('income')" class="button green">

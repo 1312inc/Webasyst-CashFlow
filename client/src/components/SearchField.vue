@@ -1,6 +1,6 @@
 <template>
   <div class="custom-p-12">
-    <form @submit.prevent="submit" class="input-with-inner-icon left width-100">
+    <form @submit.prevent="submit" class="state-with-inner-icon left width-100">
       <input
         type="search"
         name="query"

@@ -1,7 +1,7 @@
 <template>
   <div v-if="currentEntity">
     <div>{{ $t("cashToday") }}</div>
-    <div class="flexbox middle space-1rem">
+    <div class="flexbox middle space-12">
       <div class="h2 custom-mb-0">
         {{ currentEntity.name || currentEntity.currency }}
       </div>

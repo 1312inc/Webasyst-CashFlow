@@ -50,7 +50,7 @@
     </div>
 
     <div class="flexbox">
-      <div class="flexbox space-1rem wide">
+      <div class="flexbox space-12 wide">
         <button @click="submit('category')" class="button purple">
           {{ isModeUpdate ? $t("update") : $t("add") }}
         </button>

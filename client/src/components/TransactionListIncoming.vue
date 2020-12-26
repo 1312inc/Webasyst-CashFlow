@@ -21,7 +21,7 @@
       </div>
     </div>
     <div v-else>
-      <div class="flexbox middle space-1rem align-right">
+      <div class="flexbox middle space-12 align-right">
         <div class="wide"></div>
         <div>
           <NumPages
