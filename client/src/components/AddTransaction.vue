@@ -53,7 +53,7 @@
           {{ $t("ammount") }}
         </div>
         <div class="value">
-          <div class="input-with-inner-icon left">
+          <div class="state-with-inner-icon left">
             <input
               v-model.number="model.amount"
               :class="{ 'state-error': $v.model.amount.$error }"
@@ -90,7 +90,7 @@
           {{ model.is_repeating ? $t("repeatFrom") : $t("date") }}
         </div>
         <div class="value">
-          <div class="input-with-inner-icon left">
+          <div class="state-with-inner-icon left">
             <DateField
               v-model="model.date"
               :class="{ 'state-error': $v.model.date.$error }"
@@ -151,7 +151,7 @@
           </div>
 
           <div v-if="model.repeating_end_type === 'ondate'" class="tw-mt-4">
-            <div class="input-with-inner-icon left">
+            <div class="state-with-inner-icon left">
               <DateField v-model="model.repeating_end_ondate" />
               <span class="icon"><i class="fas fa-calendar"></i></span>
             </div>
@@ -277,7 +277,7 @@
           {{ $t("contractor") }}
         </div>
         <div class="value">
-          <div class="input-with-inner-icon left">
+          <div class="state-with-inner-icon left">
             <input v-model="model.contractor_contact_id" type="text" />
             <span class="icon"><i class="fas fa-user"></i></span>
           </div>
@@ -301,7 +301,7 @@
     </div>
 
     <div class="flexbox">
-      <div class="flexbox space-1rem wide">
+      <div class="flexbox space-12 wide">
         <button @click="submit" class="button purple">
           {{ isModeUpdate ? $t("update") : $t("add") }}
         </button>

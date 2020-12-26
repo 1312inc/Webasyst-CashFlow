@@ -4,7 +4,7 @@
       <ChartHeaderTitle />
       <TransactionControls />
     </div>
-    <div class="flexbox space-1rem">
+    <div class="flexbox space-4">
       <div>
         <Dropdown type="from" class="custom-mb-4" />
         <AmountForPeriod type="income" period="from" class="custom-mb-4" />

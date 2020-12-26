@@ -67,7 +67,7 @@
     </span>
 
     <div class="flexbox">
-      <div class="flexbox space-1rem wide">
+      <div class="flexbox space-12 wide">
         <button @click="submit" class="button purple">
           {{ $t("updateTransactions", { count: count }) }}
         </button>
