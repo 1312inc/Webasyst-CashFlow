@@ -45,12 +45,12 @@ export default {
       const method = params.id ? 'update' : 'create'
       const { data } = await api.post(`cash.account.${method}`, params)
       if (parseInt(params.starting_balance) !== 0 && !isNaN(parseInt(params.starting_balance))) {
-        dispatch('transaction/update', {
+        await dispatch('transaction/update', {
           id: null,
           amount: params.starting_balance,
           date: moment().format('YYYY-MM-DD'),
           account_id: data.id,
-          category_id: parseInt(params.starting_balance) > 0 ? -1 : -2,
+          category_id: parseInt(params.starting_balance) >= 0 ? -2 : -1,
           description: i18n.t('startingBalance'),
           silent: true
         }, { root: true })
