@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h1>{{ $t('importResults') }}</h1>
         <TransactionControls class="custom-mb-24" />
         <TransactionList />
     </div>
