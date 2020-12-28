@@ -151,6 +151,8 @@ export default {
     const balanceAxis = chart.yAxes.push(new am4charts.ValueAxis())
     balanceAxis.height = 100
     balanceAxis.marginBottom = 60
+    balanceAxis.extraMin = 0.1
+    balanceAxis.extraMax = 0.1
     balanceAxis.cursorTooltipEnabled = false
     balanceAxis.numberFormatter = new am4core.NumberFormatter()
     balanceAxis.numberFormatter.numberFormat = '# a'
