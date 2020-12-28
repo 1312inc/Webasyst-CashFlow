@@ -416,7 +416,7 @@
                         onReady: function (r) {
                             $progressSuccess.show().siblings().hide();
                             $progress.find('.progressbar-inner').css('width', r.progress + '%');
-                            window.location = $.cash.options.routingOptions.wa_app_url + 'import/' + r.import_id;
+                            window.location = window.appState.baseUrl + 'import/' + r.import_id;
                             // $.cash_routing.redispatch();
                             // $button.prop('disabled', false);
                             // $transactionStat.show();

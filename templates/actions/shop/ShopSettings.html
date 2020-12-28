@@ -352,13 +352,11 @@
 
             </div>
 
-            {if !empty($errors)}
-            <div class="field" data-cash-shop-errors>
+            <div class="field" data-cash-shop-errors {if empty($errors)}style="display:none;"{/if}>
                 <div class="value errormsg">
                     {$errors|implode:'<br>'}
                 </div>
             </div>
-            {/if}
         </div>
         </form>
         {/if}
@@ -390,7 +388,7 @@
                         $button.after($saved);
                         setTimeout(function () {
                             $saved.remove();
-                            $.cash_routing.redispatch();
+                            window.location.reload();
                         }, 131.2);
                     })
                 })
@@ -529,15 +527,21 @@
                         $progressSuccess = $progress.find('[data-cash-shop-import-progress-icon="success"]'),
                         $progressError = $progress.find('[data-cash-shop-import-progress-icon="error"]');
 
-                    $.post('?module=shop&action=settings', $ssform.serialize(), function (html) {
-                        var $html = $(html);
+                    $.post('?module=shop&action=settingsValidate', $ssform.serialize(), function (r) {
+                        var $errors = $ssform.find('[data-cash-shop-errors]');
 
-                        $ssform.find('[data-cash-shop-errors]').remove();
-                        $button.prop('disabled', true).hide();
-
-                        if ($html.find('[data-cash-shop-errors]').length) {
-                            $('#cash-settings').html(html);
+                        $errors.find('.errormsg').empty();
+                        if (r.status === 'fail') {
+                            $errors.show();
+                            var errors = [];
+                            for(var error in r['errors']) {
+                                errors.push(r['errors'][error]);
+                            }
+                            $errors.find('.errormsg').html(errors.join('<br>'));
                         } else {
+                            $errors.hide();
+                            $button.prop('disabled', true).hide();
+
                             var long = $.wa.kmLongAction();
                             long.start({
                                 process_url: '?module=shop&action=importProcess',
@@ -576,7 +580,7 @@
                                         $progressSuccess.show().siblings().hide();
                                         $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
                                         // alert('done, redirect to app');
-                                        window.location = $.cash.options.routingOptions.wa_app_url + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
+                                        window.location = window.appState.baseUrl + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
                                         // $button.prop('disabled', false);
                                         // $transactionStat.show();
                                         // $transactionStat.find('span').text(r.transactions.ok);
