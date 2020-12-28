@@ -90,12 +90,14 @@ export default {
     async update ({ dispatch }, params) {
       const method = params.id ? 'update' : 'create'
       await api.post(`cash.transaction.${method}`, params)
+      dispatch('account/getList', null, { root: true })
     },
 
     async delete ({ dispatch }, id) {
       await api.delete('cash.transaction.delete', {
         params: { id }
       })
+      dispatch('account/getList', null, { root: true })
     }
 
   }
