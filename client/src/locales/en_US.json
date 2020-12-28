@@ -115,5 +115,6 @@
     "noResults": "No results"
   },
   "upnext": "Up Next",
-  "startingBalance": "Starting balance"
+  "startingBalance": "Starting balance",
+  "importResults": "Import Results"
 }

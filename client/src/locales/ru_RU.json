@@ -115,5 +115,6 @@
     "noResults": "Не найдено"
   },
   "upnext": "План",
-  "startingBalance": "Начальный баланс"
+  "startingBalance": "Начальный баланс",
+  "importResults": "Результаты импорта"
 }
