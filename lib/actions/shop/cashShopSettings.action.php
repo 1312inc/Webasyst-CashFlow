@@ -35,53 +35,24 @@ class cashShopSettingsAction extends cashViewAction
         $incomes = cash()->getEntityRepository(cashCategory::class)->findAllByTypeForContact(cashCategory::TYPE_INCOME);
         $incomeDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $incomes);
 
-        $expenses = cash()->getEntityRepository(cashCategory::class)->findAllByTypeForContact(cashCategory::TYPE_EXPENSE);
+        $expenses = cash()->getEntityRepository(cashCategory::class)->findAllByTypeForContact(
+            cashCategory::TYPE_EXPENSE
+        );
         $expenseDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $expenses);
 
         $shopIntegration = new cashShopIntegration();
+        $settingsData = waRequest::post('shopscript_settings', [], waRequest::TYPE_ARRAY_TRIM);
 
-        $settingsData = waRequest::post('shopscript_settings', waRequest::TYPE_ARRAY_TRIM, []);
-        $settings = $shopIntegration->getSettings();
         if (waRequest::getMethod() === 'post') {
-            $settings
-                ->load($settingsData)
-                ->save();
-
-            if ($settings->validate($settingsData)) {
-                switch (true) {
-                    case $settings->isTurnedOff():
-                        $shopIntegration->turnedOff();
-                        break;
-
-                    case $settings->isTurnedOn():
-                        $shopIntegration->turnedOn();
-                        break;
-
-                    case $settings->forecastTurnedOff():
-                        $shopIntegration->disableForecast();
-                        break;
-
-                    case $settings->forecastTurnedOn():
-                        $shopIntegration->enableForecast();
-                        break;
-
-                    case $settings->forecastTypeChanged()
-                        || $settings->forecastAccountChanged()
-                        || $settings->forecastCategoryIncomeChanged():
-                        $shopIntegration->changeForecastType();
-                        break;
-                }
-            }
+            (new cashShopIntegrationManager())->setup($shopIntegration, $settingsData);
         }
 
-        if ($settings->getAccountId()) {
-            /** @var cashAccount $account */
-            $account = cash()->getEntityRepository(cashAccount::class)->findById(
-                $settings->getAccountId()
-            );
-        } else {
+        $settings = $shopIntegration->getSettings();
+
+        if (!$settings->getAccountId()) {
             $account = cash()->getEntityRepository(cashAccount::class)->findFirstForContact();
-            $settings->setAccountId($account->getId());
+        } else {
+            $account = $settings->getAccount();
         }
 
         $storefronts = [];
@@ -94,11 +65,13 @@ class cashShopSettingsAction extends cashViewAction
 
             /** @var waWorkflowAction[] $actions */
             $actions = (new shopWorkflow())->getAllActions();
-            $avg = round($shopIntegration->getShopAvgAmount(), 2);
-            $shopCurrencyExists = (bool)(new shopCurrencyModel())->getById($account->getCurrency());
+            $avg = round($shopIntegration->getShopAvgAmount($account->getCurrency()), 2);
+            $shopCurrencyExists = (bool) (new shopCurrencyModel())->getById($account->getCurrency());
             $dateBounds = $shopIntegration->getOrderBounds();
         } else {
-            $settings->setEnabled(false)->save();
+            if ($settings->isEnabled()) {
+                $settings->setEnabled(false)->save();
+            }
             $dateBounds = ['min' => '', 'max' => ''];
         }
 
@@ -119,6 +92,7 @@ class cashShopSettingsAction extends cashViewAction
                 'accountCurrencySign' => $accountCurrency->getSignHtml(),
                 'shopCurrencyExists' => $shopCurrencyExists,
                 'ordersToImportCount' => $shopIntegration->countOrdersToProcess(),
+                'hasErrors' => !empty($settings->getErrors()),
                 'errors' => $settings->getErrors(),
                 'shopOrderDateBounds' => $dateBounds,
             ]

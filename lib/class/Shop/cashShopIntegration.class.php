@@ -118,23 +118,25 @@ class cashShopIntegration
         $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
         kmwaAssert::instance($account, cashAccount::class);
 
-        $amount = $this->settings->isAutoForecast() ? $this->getShopAvgAmount() : $this->settings->getManualForecast();
+        $amount = $this->settings->isAutoForecast()
+            ? $this->getShopAvgAmount($account->getCurrency())
+            : $this->settings->getManualForecast();
 
         $category = cash()->getEntityRepository(cashCategory::class)->findById($this->settings->getCategoryIncomeId());
         kmwaAssert::instance($category, cashCategory::class);
 
-        $transaction = $this->getTransactionFactory()->createForecastTransaction($amount, $account, $category);
+        if ($amount) {
+            $transaction = $this->getTransactionFactory()->createForecastTransaction($amount, $account, $category);
 
-        $saver = new cashRepeatingTransactionSaver();
-        $repeatingSettings = new cashRepeatingTransactionSettingsDto();
-        $repeatingSettings->end_type = cashRepeatingTransaction::REPEATING_END_NEVER;
-        $repeatingSettings->interval = cashRepeatingTransaction::INTERVAL_DAY;
-        $repeatingSettings->frequency = cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY;
-        $repeatingTransaction = $saver->saveFromTransaction($transaction, $repeatingSettings, true);
+            $saver = new cashRepeatingTransactionSaver();
+            $repeatingSettings = new cashRepeatingTransactionSettingsDto();
+            $repeatingSettings->end_type = cashRepeatingTransaction::REPEATING_END_NEVER;
+            $repeatingSettings->interval = cashRepeatingTransaction::INTERVAL_DAY;
+            $repeatingSettings->frequency = cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY;
+            $repeatingTransaction = $saver->saveFromTransaction($transaction, $repeatingSettings, true);
 
-        (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction , new DateTime('tomorrow'));
-
-        return $transaction;
+            (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction, new DateTime('tomorrow'));
+        }
     }
 
     /**
@@ -150,17 +152,22 @@ class cashShopIntegration
         if (!$transaction instanceof cashRepeatingTransaction) {
             $this->enableForecast();
         } else {
-            $amount = $this->settings->isAutoForecast() ? $this->getShopAvgAmount() : $this->settings->getManualForecast();
-            $transaction
-                ->setAmount($amount)
-                ->setAccount(
-                    cash()->getEntityRepository(cashAccount::class)->findById($this->getSettings()->getAccountId())
-                )
-                ->setCategory($this->getSettings()->getCategoryIncome());
+            $amount = $this->settings->isAutoForecast()
+                ? $this->getShopAvgAmount($this->settings->getAccount()->getCurrency())
+                : $this->settings->getManualForecast();
+            if ($amount) {
+                $transaction
+                    ->setAmount($amount)
+                    ->setAccount(
+                        cash()->getEntityRepository(cashAccount::class)->findById($this->getSettings()->getAccountId())
+                    )
+                    ->setCategory($this->getSettings()->getCategoryIncome());
 
-            cash()->getEntityPersister()->update($transaction);
+                cash()->getEntityPersister()->update($transaction);
 
-            $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);        }
+                $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);
+            }
+        }
     }
 
     /**
@@ -205,21 +212,17 @@ SQL;
 
 
     /**
+     * @param string $currency
      * @param int $days
      *
      * @return float
-     * @throws kmwaAssertException
      * @throws waException
      */
-    public function getShopAvgAmount($days = self::DAYS_FOR_AVG_BILL_CALCULATION): float
+    public function getShopAvgAmount($currency, $days = self::DAYS_FOR_AVG_BILL_CALCULATION): float
     {
-        /** @var cashAccount $account */
-        $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
-        kmwaAssert::instance($account, cashAccount::class);
-
         $amount = $this->calculateAvgBill($days);
         $defaultCurrency = wa('shop')->getConfig()->getCurrency();
-        $amount = $this->convert($amount, $defaultCurrency, $account->getCurrency());
+        $amount = $this->convert($amount, $defaultCurrency, $currency);
 
         return $amount;
     }
@@ -231,6 +234,10 @@ SQL;
      */
     public function actualizeForecastTransaction()
     {
+        if (!$this->settings->isEnabled()) {
+            return;
+        }
+
         if (!$this->settings->isEnableForecast()) {
             return;
         }
