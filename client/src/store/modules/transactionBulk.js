@@ -39,14 +39,16 @@ export default {
   },
 
   actions: {
-    async bulkDelete ({ state, commit }) {
+    async bulkDelete ({ dispatch, state, commit }) {
       await api.post('cash.transaction.bulkDelete', { ids: state.selectedTransactionsIds })
       commit('empty')
+      dispatch('account/getList', null, { root: true })
     },
 
-    async bulkMove ({ commit }, params) {
+    async bulkMove ({ dispatch, commit }, params) {
       await api.post('cash.transaction.bulkMove', params)
       commit('empty')
+      dispatch('account/getList', null, { root: true })
     }
   }
 

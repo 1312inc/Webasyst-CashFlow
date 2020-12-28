@@ -57,7 +57,8 @@ export default {
         params: { id }
       })
       router.push({ name: 'Home' })
-      dispatch('getList')
+      await dispatch('getList')
+      dispatch('account/getList', null, { root: true })
     },
 
     async sort ({ commit }, params) {
