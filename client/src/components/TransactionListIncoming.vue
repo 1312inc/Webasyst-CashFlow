@@ -40,14 +40,27 @@
         v-for="(transactionGroup, group) in grouppedTransactions"
         :key="group"
       >
-        <div v-if="group === 'today'" class="black">
-          {{ $t("today") }}
-        </div>
-        <div v-else-if="group === 'items'" class="black">
-          {{ $t("nextDays", {count: 7}) }}
-        </div>
-        <div v-else class="black">
-          {{ $moment(group).format("MMMM, YYYY") }}
+
+        <div class="flexbox middle">
+          <div class="wide">
+            <div v-if="group === 'today'" class="black">
+              {{ $t("today") }}
+            </div>
+            <div v-else-if="group === 'items'" class="black">
+              {{ $t("nextDays", {count: 7}) }}
+            </div>
+            <div v-else class="black">
+              {{ $moment(group).format("MMMM, YYYY") }}
+            </div>
+          </div>
+          <div class="flexbox middle space-12">
+            <div>
+              <AmountForGroup :group="transactionGroup" type="income" />
+            </div>
+            <div>
+              <AmountForGroup :group="transactionGroup" type="expense" />
+            </div>
+          </div>
         </div>
         <table v-if="transactionGroup.length" class="small zebra custom-mb-24">
           <tr>
@@ -91,6 +104,7 @@ import transactionListMixin from '@/mixins/transactionListMixin'
 import NumPages from '@/components/NumPages'
 import TransactionListRow from '@/components/TransactionListRow'
 import ExportButton from '@/components/ExportButton'
+import AmountForGroup from '@/components/AmountForGroup'
 export default {
   mixins: [transactionListMixin],
 
@@ -127,7 +141,8 @@ export default {
   components: {
     NumPages,
     TransactionListRow,
-    ExportButton
+    ExportButton,
+    AmountForGroup
   },
 
   computed: {
