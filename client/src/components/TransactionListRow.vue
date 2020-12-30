@@ -112,8 +112,15 @@ export default {
   },
 
   methods: {
-    openModal (event) {
-      if (event.path && event.path.some(e => e.className === 'wa-checkbox')) return
+    openModal ({ target }) {
+      const path = []
+      let currentElem = target
+      while (currentElem) {
+        path.push(currentElem)
+        currentElem = currentElem.parentElement
+      }
+
+      if (path.some(e => e.className === 'wa-checkbox')) return
       if (process.env.VUE_APP_MODE === 'mobile') {
         window.callAndroidAsync('editTransaction', this.transaction)
       } else {
