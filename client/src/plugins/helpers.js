@@ -28,6 +28,10 @@ export default {
         }
 
         return url.protocol === 'http:' || url.protocol === 'https:'
+      },
+
+      showMultiSelect () {
+        return process.env.VUE_APP_MODE === 'mobile' ? window.eventBus.multiSelect : true
       }
     }
   }

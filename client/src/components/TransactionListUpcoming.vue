@@ -1,10 +1,11 @@
 <template>
   <div v-if="showComponent">
     <div v-if="!loading" class="flexbox middle">
+      <div v-if="$helper.showMultiSelect()" style="width: 1rem;"></div>
       <div
         @click="toggleupcomingBlockOpened"
         class="tw-cursor-pointer custom-mr-8 black"
-        :class="{ 'tw-opacity-50': !upcomingBlockOpened }"
+        :class="{ 'opacity-50': !upcomingBlockOpened }"
       >
         <i class="fas fa-caret-down"></i>&nbsp;
         <span v-if="featurePeriod === 1">{{ $t("tomorrow") }}</span>
@@ -17,7 +18,7 @@
       <div
         @mouseover="$refs.dropdown.style.display = 'block'"
         @mouseleave="$refs.dropdown.style.display = 'none'"
-        class="dropdown"
+        class="dropdown tw-z-40"
       >
         <span class="icon"><i class="fas fa-ellipsis-v"></i></span>
         <div class="dropdown-body" ref="dropdown">
@@ -41,66 +42,12 @@
         </div>
       </div>
     </div>
-    <div v-if="upcomingBlockOpened">
-      <div v-if="loading">
-        <div class="skeleton">
-          <table>
-            <tr v-for="i in 10" :key="i">
-              <td>
-                <span class="skeleton-line custom-mb-0"></span>
-              </td>
-              <td>
-                <span class="skeleton-line custom-mb-0"></span>
-              </td>
-              <td>
-                <span class="skeleton-line custom-mb-0"></span>
-              </td>
-              <td>
-                <span class="skeleton-line custom-mb-0"></span>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-      <div v-else>
+    <div v-if="upcomingBlockOpened" class="custom-mt-24">
+      <div v-if="!loading">
         <div class="align-right">
           <ExportButton type="upcoming" />
         </div>
-        <table
-          class="small zebra custom-mt-12"
-          v-if="filteredTransactions.length"
-        >
-          <tr>
-            <th
-              v-if="showCheckbox"
-              class="min-width tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
-            >
-              <input
-                type="checkbox"
-                @click="checkAll(filteredTransactions)"
-                :checked="isCheckedAllInGroup(filteredTransactions)"
-              />
-            </th>
-            <th
-              colspan="5"
-              class="tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
-            >
-              {{
-                $t("transactionsListCount", {
-                  count: filteredTransactions.length,
-                })
-              }}
-            </th>
-          </tr>
-          <TransactionListRow
-            v-for="transaction in filteredTransactions"
-            :key="transaction.id"
-            :transaction="transaction"
-          />
-        </table>
-        <div v-else class="tw-text-center custom-py-20">
-          {{ $t("emptyListUpcoming") }}
-        </div>
+        <TransactionListGroup :group="filteredTransactions" />
       </div>
     </div>
   </div>
@@ -110,7 +57,7 @@
 import { mapState } from 'vuex'
 import api from '@/plugins/api'
 import transactionListMixin from '@/mixins/transactionListMixin'
-import TransactionListRow from '@/components/TransactionListRow'
+import TransactionListGroup from '@/components/TransactionListGroup'
 import ExportButton from '@/components/ExportButton'
 export default {
   mixins: [transactionListMixin],
@@ -125,7 +72,7 @@ export default {
   },
 
   components: {
-    TransactionListRow,
+    TransactionListGroup,
     ExportButton
   },
 
