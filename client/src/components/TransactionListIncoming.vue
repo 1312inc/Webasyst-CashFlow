@@ -1,27 +1,10 @@
 <template>
   <div>
     <div v-if="loading">
-      <div class="skeleton">
-        <table>
-          <tr v-for="i in queryParams.limit" :key="i">
-            <td>
-              <span class="skeleton-line custom-mb-0"></span>
-            </td>
-            <td>
-              <span class="skeleton-line custom-mb-0"></span>
-            </td>
-            <td>
-              <span class="skeleton-line custom-mb-0"></span>
-            </td>
-            <td>
-              <span class="skeleton-line custom-mb-0"></span>
-            </td>
-          </tr>
-        </table>
-      </div>
+      <SkeletonTransaction />
     </div>
     <div v-else>
-      <div class="flexbox middle space-12 align-right">
+      <div class="flexbox middle space-12">
         <div class="wide"></div>
         <div>
           <NumPages
@@ -35,63 +18,11 @@
           <ExportButton type="completed" />
         </div>
       </div>
-
       <div
         v-for="(transactionGroup, group) in grouppedTransactions"
         :key="group"
       >
-
-        <div class="flexbox middle">
-          <div class="wide">
-            <div v-if="group === 'today'" class="black">
-              {{ $t("today") }}
-            </div>
-            <div v-else-if="group === 'items'" class="black">
-              {{ $t("nextDays", {count: 7}) }}
-            </div>
-            <div v-else class="black">
-              {{ $moment(group).format("MMMM, YYYY") }}
-            </div>
-          </div>
-          <div class="flexbox middle space-12">
-            <div>
-              <AmountForGroup :group="transactionGroup" type="income" />
-            </div>
-            <div>
-              <AmountForGroup :group="transactionGroup" type="expense" />
-            </div>
-          </div>
-        </div>
-        <table v-if="transactionGroup.length" class="small zebra custom-mb-24">
-          <tr>
-            <th
-              v-if="showCheckbox"
-              class="min-width tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
-            >
-              <input
-                type="checkbox"
-                @click="checkAll(transactionGroup)"
-                :checked="isCheckedAllInGroup(transactionGroup)"
-              />
-            </th>
-            <th
-              colspan="5"
-              class="tw-border-0 tw-border-b tw-border-solid tw-border-gray-400"
-            >
-              {{
-                $t("transactionsListCount", { count: transactionGroup.length })
-              }}
-            </th>
-          </tr>
-          <TransactionListRow
-            v-for="transaction in transactionGroup"
-            :key="transaction.id"
-            :transaction="transaction"
-          />
-        </table>
-        <div v-else class="tw-text-center custom-py-20">
-          {{ $t("emptyListToday") }}
-        </div>
+        <TransactionListGroup :group="transactionGroup" :title="group" />
       </div>
     </div>
   </div>
@@ -102,9 +33,10 @@ import { mapState } from 'vuex'
 import api from '@/plugins/api'
 import transactionListMixin from '@/mixins/transactionListMixin'
 import NumPages from '@/components/NumPages'
-import TransactionListRow from '@/components/TransactionListRow'
+import TransactionListGroup from '@/components/TransactionListGroup'
 import ExportButton from '@/components/ExportButton'
-import AmountForGroup from '@/components/AmountForGroup'
+import SkeletonTransaction from '@/components/SkeletonTransaction'
+
 export default {
   mixins: [transactionListMixin],
 
@@ -140,9 +72,9 @@ export default {
 
   components: {
     NumPages,
-    TransactionListRow,
+    TransactionListGroup,
     ExportButton,
-    AmountForGroup
+    SkeletonTransaction
   },
 
   computed: {
