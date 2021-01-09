@@ -1,7 +1,7 @@
 <template>
-  <div v-if="showComponent">
-    <div v-if="!loading" class="flexbox middle">
-      <div v-if="$helper.showMultiSelect()" style="width: 1rem;"></div>
+  <div v-if="showComponent && !loading">
+    <div class="flexbox middle">
+      <div v-if="$helper.showMultiSelect()" style="width: 1rem"></div>
       <div
         @click="toggleupcomingBlockOpened"
         class="tw-cursor-pointer custom-mr-8 black"
@@ -43,12 +43,10 @@
       </div>
     </div>
     <div v-if="upcomingBlockOpened" class="custom-mt-24">
-      <div v-if="!loading">
-        <div class="align-right">
-          <ExportButton type="upcoming" />
-        </div>
-        <TransactionListGroup :group="filteredTransactions" />
+      <div class="align-right custom-mb-4">
+        <ExportButton type="upcoming" />
       </div>
+      <TransactionListGroup :group="filteredTransactions" />
     </div>
   </div>
 </template>
