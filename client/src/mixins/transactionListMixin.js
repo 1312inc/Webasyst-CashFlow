@@ -2,7 +2,7 @@ export default {
   created () {
     this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
       if (mutation.type === 'transaction/updateQueryParams' && !mutation.payload.silent) {
-        this.getTransactions()
+        this.getTransactions({ offset: 0 })
       }
     })
 
@@ -15,7 +15,7 @@ export default {
             action.type === 'transactionBulk/bulkMove' ||
             action.type === 'category/delete') && !action.payload.silent
         ) {
-          this.getTransactions()
+          this.getTransactions({ offset: 0 })
         }
       }
     })

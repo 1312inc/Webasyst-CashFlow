@@ -13,10 +13,7 @@
           'fa-caret-down': type === 'expense',
         }"
       ></i
-      >&nbsp;<span class="small">{{ $numeral(total).format() }}</span
-      >&nbsp;<span v-if="type === 'expense'" class="small hint"
-        >({{ date }})</span
-      >
+      >&nbsp;<span class="small">{{ $numeral(total).format() }}</span>
     </div>
   </div>
 </template>
@@ -42,15 +39,6 @@ export default {
         .reduce((acc, e) => {
           return acc + e.amount
         }, 0)
-    },
-
-    date () {
-      if (this.group.length > 1) {
-        return `${this.$moment(this.group[this.group.length - 1].date).format('ll')} 
-        – ${this.$moment(this.group[0].date).format('ll')}`
-      } else {
-        return this.$moment(this.group[0].date).format('ll')
-      }
     }
   }
 }

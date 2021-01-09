@@ -1,32 +1,27 @@
 <template>
   <div class="custom-mb-24">
-    <div
-      @mouseover="isHover = true"
-      @mouseleave="isHover = false"
-      v-if="group.length"
-    >
+    <div @mouseover="isHover = true" @mouseleave="isHover = false">
       <div class="flexbox flexbox-mobile middle">
         <div class="flexbox middle space-12 wide">
           <div v-if="$helper.showMultiSelect()" style="width: 1rem">
-            <span
-              v-show="isHoverComputed"
-              @click="checkAll(group)"
-              class="wa-checkbox"
-            >
-              <input type="checkbox" :checked="isCheckedAllInGroup(group)" />
-              <span>
-                <span class="icon">
-                  <i class="fas fa-check"></i>
+            <div v-if="group.length">
+              <span
+                v-show="isHoverComputed"
+                @click="checkAll(group)"
+                class="wa-checkbox"
+              >
+                <input type="checkbox" :checked="isCheckedAllInGroup(group)" />
+                <span>
+                  <span class="icon">
+                    <i class="fas fa-check"></i>
+                  </span>
                 </span>
               </span>
-            </span>
+            </div>
           </div>
           <div v-if="title">
             <div v-if="title === 'today'" class="black">
               {{ $t("today") }}
-            </div>
-            <div v-else-if="title === 'items'" class="black">
-              {{ $t("nextDays", { count: 7 }) }}
             </div>
             <div v-else class="black">
               {{ $moment(title).format("MMMM, YYYY") }}
@@ -46,7 +41,7 @@
         </div>
       </div>
 
-      <ul class="c-list list">
+      <ul v-if="group.length" class="c-list list">
         <TransactionListRow
           v-for="transaction in group"
           :key="transaction.id"
@@ -54,22 +49,9 @@
           :showChecker="isShowChecker"
         />
       </ul>
-    </div>
-    <div v-else>
-      <div class="flexbox space-12">
-        <div v-if="$helper.showMultiSelect()" style="width: 1rem"></div>
-        <div v-if="title === 'today'" class="black">
-          {{ $t("today") }}
-        </div>
-        <div v-else-if="title === 'items'" class="black">
-          {{ $t("nextDays", { count: 7 }) }}
-        </div>
-        <div v-else class="black">
-          {{ $moment(title).format("MMMM, YYYY") }}
-        </div>
-      </div>
-      <div class="tw-text-center custom-py-20">
-        {{ $t("emptyListToday") }}
+
+      <div v-else class="tw-text-center custom-py-20">
+        {{ $t("emptyList") }}
       </div>
     </div>
   </div>
