@@ -94,7 +94,7 @@ export default {
   created () {
     this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
       if (mutation.type === 'transaction/updateQueryParams' && !mutation.payload.silent) {
-        this.$store.dispatch('transaction/getChartData')
+        this.getChartData()
       }
     })
 
@@ -107,7 +107,7 @@ export default {
             action.type === 'transactionBulk/bulkMove' ||
             action.type === 'category/delete') && !action.payload.silent
         ) {
-          this.$store.dispatch('transaction/getChartData')
+          this.getChartData()
         }
       }
     })
@@ -297,6 +297,14 @@ export default {
 
   methods: {
     ...mapMutations('transaction', ['setDetailsInterval']),
+
+    async getChartData () {
+      try {
+        await this.$store.dispatch('transaction/getChartData')
+      } catch (e) {
+        this.$notify.error(`Method: getChartData<br>${e}`)
+      }
+    },
 
     renderChart () {
       // Delete negative ranges

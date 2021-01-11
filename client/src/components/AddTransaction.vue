@@ -320,7 +320,10 @@
 import { mapState, mapGetters } from 'vuex'
 import { required, requiredIf, integer, numeric } from 'vuelidate/lib/validators'
 import DateField from '@/components/DateField'
+import utils from '@/mixins/utilsMixin.js'
 export default {
+  mixins: [utils],
+
   props: {
     transaction: {
       type: Object
@@ -456,11 +459,10 @@ export default {
         this.$store
           .dispatch('transaction/update', model)
           .then(() => {
-            this.$noty.success('Транзакция успешно обновлена')
             this.close()
           })
-          .catch(() => {
-            this.$noty.error('Oops, something went wrong!')
+          .catch((e) => {
+            this.handleApiError(e)
           })
       }
     },
@@ -470,11 +472,10 @@ export default {
         this.$store
           .dispatch('transaction/delete', this.model.id)
           .then(() => {
-            this.$noty.success('Транзакция успешно удалена')
             this.close()
           })
-          .catch(() => {
-            this.$noty.error('Oops, something went wrong!')
+          .catch((e) => {
+            this.handleApiError(e)
           })
       }
     },
