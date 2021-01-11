@@ -68,17 +68,20 @@ class cashContactRightsManager
     /**
      * @param waDbQuery $query
      * @param waContact $contact
+     * @param int       $access
      *
      * @return waDbQuery
-     * @throws waException
      */
-    public function filterQueryAccountsForContact(waDbQuery $query, waContact $contact): waDbQuery
-    {
+    public function filterQueryAccountsForContact(
+        waDbQuery $query,
+        waContact $contact,
+        $access = cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
+    ): waDbQuery {
         if ($this->isAdmin($contact)) {
             return $query;
         }
 
-        $query->where('id in (i:ids)', ['ids' => $this->getAccountIdsForContact($contact)]);
+        $query->where('id in (i:ids)', ['ids' => $this->getAccountIdsForContact($contact, $access)]);
 
         return $query;
     }

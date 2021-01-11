@@ -530,14 +530,14 @@ class cashGraphService
      */
     public function getAggregateBalanceFlow(cashAggregateChartDataFilterParamsDto $paramsDto): array
     {
-//        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact($paramsDto->contact);
-//        $currencies = [];
-//        /** @var cashAccount $account */
-//        foreach ($accounts as $account) {
-//            if (!in_array($account->getId(), $accountIds)) {
-//                continue;
-//            }
-//        }
+        $accounts = cash()->getEntityRepository(cashAccount::class)
+            ->findAllActiveFullAccessForContact($paramsDto->contact);
+
+        $currencies = [];
+        /** @var cashAccount $account */
+        foreach ($accounts as $account) {
+            $currencies[$account->getCurrency()] = [];
+        }
 
         $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
             ->from('cash_transaction', 'ct')
@@ -587,26 +587,29 @@ class cashGraphService
             ->orderBy(['currency', 'period']);
 
         $data = $sqlParts->query()->fetchAll('currency', 2);
-        foreach ($data as $currency => &$currencyData) {
-            $currencyData = array_map(
-                static function ($datum) use ($currency, &$initialBalance) {
-                    if (!isset($initialBalance[$currency])) {
-                        $initialBalance[$currency] = 0;
+        foreach ($currencies as $currencyCode => $currency) {
+            if (!isset($data[$currencyCode])) {
+                continue;
+            }
+
+            $currencies[$currencyCode] = array_map(
+                static function ($datum) use ($currencyCode, &$initialBalance) {
+                    if (!isset($initialBalance[$currencyCode])) {
+                        $initialBalance[$currencyCode] = 0;
                     }
-                    $datum['amount'] = (float) $datum['amount'] + $initialBalance[$currency];
-                    $initialBalance[$currency] = (float) $datum['amount'];
+                    $datum['amount'] = (float) $datum['amount'] + $initialBalance[$currencyCode];
+                    $initialBalance[$currencyCode] = (float) $datum['amount'];
 
                     return $datum;
                 },
-                $currencyData
+                $data[$currencyCode]
             );
         }
-        unset($currencyData, $initialBalance);
 
-        return $data;
+        return $currencies;
     }
 
-    public function getGroupingDateFormat(cashAggregateChartDataFilterParamsDto $paramsDto, string $prefix = 'ct'): string
+    public function getGroupingDateFormat(cashAggregateChartDataFilterParamsDto $paramsDto): string
     {
         switch ($paramsDto->groupBy) {
             case cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY:
@@ -621,11 +624,13 @@ class cashGraphService
         }
     }
 
-    public function getGroupingSqlDateFormat(cashAggregateChartDataFilterParamsDto $paramsDto, string $prefix = 'ct'): string
-    {
+    public function getGroupingSqlDateFormat(
+        cashAggregateChartDataFilterParamsDto $paramsDto,
+        string $prefix = 'ct'
+    ): string {
         switch ($paramsDto->groupBy) {
             case cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY:
-                return $prefix.'.date';
+                return $prefix . '.date';
 
             case cashAggregateChartDataFilterParamsDto::GROUP_BY_YEAR:
                 return "date_format({$prefix}.date, '%Y')";
