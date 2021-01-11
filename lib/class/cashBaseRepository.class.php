@@ -195,7 +195,7 @@ class cashBaseRepository
      * @param array $data
      * @param bool  $all
      *
-     * @return array|null
+     * @return array<cashAbstractEntity>|cashAbstractEntity|null
      */
     public function generateWithData($data, $all = false)
     {

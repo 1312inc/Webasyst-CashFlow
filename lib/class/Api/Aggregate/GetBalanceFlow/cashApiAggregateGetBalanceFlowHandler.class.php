@@ -19,14 +19,16 @@ final class cashApiAggregateGetBalanceFlowHandler implements cashApiHandlerInter
         );
 
         $graphService = new cashGraphService();
+        $initialBalanceCalculator = new cashInitialBalanceCalculator();
+
         $graphData = $graphService->getAggregateBalanceFlow($paramsDto);
 
         $response = [];
         $now = new DateTimeImmutable();
 
-        $balanceFrom = $graphService->getInitialBalanceOnDate($paramsDto, $request->from);
-        $balanceTo = $graphService->getInitialBalanceOnDate($paramsDto, $request->to);
-        $balanceNow = $graphService->getInitialBalanceOnDate($paramsDto, $now);
+        $balanceFrom = $initialBalanceCalculator->getOnDate($paramsDto, $request->from);
+        $balanceTo = $initialBalanceCalculator->getOnDate($paramsDto, $request->to);
+        $balanceNow = $initialBalanceCalculator->getOnDate($paramsDto, $now);
 
         foreach ($graphData as $currency => $data) {
             $dto = new cashApiAggregateGetBalanceFlowDto($currency, $data);

@@ -217,4 +217,56 @@ class cashTransactionRepository extends cashBaseRepository
             false
         );
     }
+
+    public function findFirstForAccount(cashAccount $account): ?cashTransaction
+    {
+        $initialBalanceSql = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
+            ->select(['ct.*'])
+            ->from('cash_transaction', 'ct')
+            ->andWhere(
+                [
+                    'ct.is_archived = 0',
+                    'ca.is_archived = 0',
+                    'ct.account_id = i:account_id',
+                ]
+            )
+            ->addParam('account_id', $account->getId())
+            ->join(['join cash_account ca on ct.account_id = ca.id'])
+            ->orderBy(['ct.date ASC'])
+            ->limit(1);
+
+        $data = $initialBalanceSql->query()->fetchAssoc();
+
+        if (!$data) {
+            return null;
+        }
+
+        return $this->generateWithData($data);
+    }
+
+    public function findFirstForCurrency(cashCurrencyVO $currencyVO): ?cashTransaction
+    {
+        $initialBalanceSql = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
+            ->select(['ct.*'])
+            ->from('cash_transaction', 'ct')
+            ->andWhere(
+                [
+                    'ct.is_archived = 0',
+                    'ca.is_archived = 0',
+                    'ca.currency = s:currency',
+                ]
+            )
+            ->addParam('currency', $currencyVO->getCode())
+            ->join(['join cash_account ca on ct.account_id = ca.id'])
+            ->orderBy(['ct.date ASC'])
+            ->limit(1);
+
+        $data = $initialBalanceSql->query()->fetchAssoc();
+
+        if (!$data) {
+            return null;
+        }
+
+        return $this->generateWithData($data);
+    }
 }

@@ -113,4 +113,14 @@ class cashAggregateFilter
     {
         return $this->search;
     }
+
+    public function isFilterByCurrency(): bool
+    {
+        return !empty($this->currency);
+    }
+
+    public function isFilterByAccount(): bool
+    {
+        return !empty($this->account);
+    }
 }

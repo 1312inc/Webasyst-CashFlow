@@ -18,8 +18,8 @@ final class cashApiAggregateGetBalanceOnDateHandler implements cashApiHandlerInt
             cashAggregateFilter::createFromHash($request->filter)
         );
 
-        $graphService = new cashGraphService();
+        $initialBalanceCalculator = new cashInitialBalanceCalculator();
 
-        return $graphService->getInitialBalanceOnDate($paramsDto, $request->date);
+        return $initialBalanceCalculator->getOnDate($paramsDto, $request->date);
     }
 }
