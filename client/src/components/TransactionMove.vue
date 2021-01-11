@@ -81,7 +81,10 @@
 
 <script>
 import { mapState } from 'vuex'
+import utils from '@/mixins/utilsMixin.js'
 export default {
+  mixins: [utils],
+
   data () {
     return {
       model: {
@@ -118,7 +121,9 @@ export default {
         .then(() => {
           this.close()
         })
-        .catch(() => {})
+        .catch((e) => {
+          this.handleApiError(e)
+        })
     },
 
     close () {

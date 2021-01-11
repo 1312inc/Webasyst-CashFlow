@@ -72,19 +72,17 @@ export default {
     async getChartData ({ commit, state }) {
       const { from, to, filter } = state.queryParams
       commit('setLoadingChart', true)
-      try {
-        const { data } = await api.get('cash.aggregate.getChartData', {
-          params: {
-            from,
-            to,
-            filter,
-            group_by: 'day'
-          }
-        })
-        commit('setChartData', data)
-        commit('setChartDataCurrencyIndex', 0)
-        commit('setLoadingChart', false)
-      } catch (e) {}
+      const { data } = await api.get('cash.aggregate.getChartData', {
+        params: {
+          from,
+          to,
+          filter,
+          group_by: 'day'
+        }
+      })
+      commit('setChartData', data)
+      commit('setChartDataCurrencyIndex', 0)
+      commit('setLoadingChart', false)
     },
 
     async update ({ dispatch }, params) {
