@@ -270,6 +270,10 @@ SQL;
     {
         $this->limit = $limit;
 
+        if ($this->offset === null) {
+            $this->offset = 0;
+        }
+
         return $this;
     }
 
