@@ -1,14 +1,8 @@
 export default {
-  computed: {
-    showCheckbox () {
-      return window.eventBus ? window.eventBus.multiSelect : true
-    }
-  },
-
   created () {
     this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
       if (mutation.type === 'transaction/updateQueryParams' && !mutation.payload.silent) {
-        this.getTransactions()
+        this.getTransactions({ offset: 0 })
       }
     })
 
@@ -21,7 +15,7 @@ export default {
             action.type === 'transactionBulk/bulkMove' ||
             action.type === 'category/delete') && !action.payload.silent
         ) {
-          this.getTransactions()
+          this.getTransactions({ offset: 0 })
         }
       }
     })
@@ -30,17 +24,6 @@ export default {
   beforeDestroy () {
     this.unsubscribeFromQueryParams()
     this.unsubscribeFromTransitionUpdate()
-  },
-
-  methods: {
-    checkAll (items) {
-      const ids = items.map(e => e.id)
-      const method = this.isCheckedAllInGroup(items) ? 'unselect' : 'select'
-      this.$store.commit(`transactionBulk/${method}`, ids)
-    },
-
-    isCheckedAllInGroup (items) {
-      return items.every(e => this.$store.state.transactionBulk.selectedTransactionsIds.includes(e.id))
-    }
   }
+
 }

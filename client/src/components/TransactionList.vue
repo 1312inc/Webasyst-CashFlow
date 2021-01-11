@@ -1,12 +1,7 @@
 <template>
   <div>
-    <TransactionListUpcoming
-      class="custom-mb-24"
-      ref="upcoming"
-    />
-    <TransactionListIncoming
-      ref="incoming"
-    />
+    <TransactionListUpcoming class="custom-mb-24" />
+    <TransactionListIncoming />
   </div>
 </template>
 
