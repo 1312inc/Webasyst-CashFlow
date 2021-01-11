@@ -9,18 +9,21 @@ class cashAccountModel extends cashModel
 
     /**
      * @param waContact $contact
+     * @param int       $access
      *
      * @return array
-     * @throws waException
      */
-    public function getAllActiveForContact(waContact $contact): array
-    {
+    public function getAllActiveForContact(
+        waContact $contact,
+        $access = cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
+    ): array {
         return cash()->getContactRights()->filterQueryAccountsForContact(
             $this
                 ->select('*')
                 ->where('is_archived = 0')
                 ->order('sort ASC, id DESC'),
-            $contact
+            $contact,
+            $access
         )->fetchAll();
     }
 
