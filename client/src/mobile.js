@@ -9,6 +9,8 @@ import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
 import Noty from './plugins/noty'
 import IsOnline from './plugins/isOnline'
+import MobileEventBus from './plugins/mobileEventBus'
+
 import './assets/styles/tailwindcss.css'
 import './assets/styles/transitions.css'
 
@@ -21,19 +23,7 @@ Vue.use(Vuelidate)
 Vue.use(Helpers)
 Vue.use(IsOnline)
 
-window.eventBus = new Vue({
-  data () {
-    return {
-      multiSelect: false
-    }
-  },
-
-  methods: {
-    multiSelectEnabled (val) {
-      this.multiSelect = val
-    }
-  }
-})
+window.eventBus = MobileEventBus
 
 new Vue({
   router,

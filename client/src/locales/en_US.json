@@ -75,7 +75,7 @@
   "today": "Today",
   "repeatingTran": "Repeating transaction",
   "import": "Import",
-  "emptyList": "Transaction list is empty",
+  "emptyList": "No transactions",
   "emptyListUpcoming": "No transactions are planned for this period",
   "emptyListToday": "No transactions today",
   "nextDays": "Next {count} days",
