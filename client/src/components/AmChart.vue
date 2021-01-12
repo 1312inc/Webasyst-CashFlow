@@ -182,8 +182,8 @@ export default {
     cursor.events.on('zoomended', (ev) => {
       if (ev.target.behavior === 'none') return
       const range = ev.target.xRange
-      const from = this.$moment(this.dateAxis.positionToDate(this.dateAxis.toAxisPosition(range.start))).format('YYYY-MM-DD')
-      const to = this.$moment(this.dateAxis.positionToDate(this.dateAxis.toAxisPosition(range.end))).format('YYYY-MM-DD')
+      const from = this.$moment(this.dateAxis2.positionToDate(this.dateAxis2.toAxisPosition(range.start))).format('YYYY-MM-DD')
+      const to = this.$moment(this.dateAxis2.positionToDate(this.dateAxis2.toAxisPosition(range.end))).format('YYYY-MM-DD')
       this.setDetailsInterval({ from, to })
     })
     chart.cursor = cursor
@@ -208,8 +208,10 @@ export default {
     chart.scrollbarX.parent = chart.bottomAxesContainer
 
     const dateAxisChanged = () => {
-      const from = this.$moment(this.dateAxis.minZoomed).format('YYYY-MM-DD')
-      const to = this.$moment(this.dateAxis.maxZoomed).format('YYYY-MM-DD')
+      const f = this.dateAxis2.minZoomed || this.dateAxis.minZoomed
+      const t = this.dateAxis2.maxZoomed || this.dateAxis.maxZoomed
+      const from = this.$moment(f).format('YYYY-MM-DD')
+      const to = this.$moment(t).format('YYYY-MM-DD')
       this.setDetailsInterval({ from, to })
     }
 
@@ -221,10 +223,12 @@ export default {
     })
 
     this.unsubscribeFromDetailsInterval = this.$store.subscribe((mutation) => {
-      if (mutation.type === 'transaction/setDetailsInterval') {
-        // Disable zoom
-        if (mutation.payload.from === '') {
-          this.dateAxis.zoom({ start: 0, end: 1 })
+      if (mutation.type === 'transaction/setDetailsInterval' && mutation.payload.initiator === 'DetailsDashboard') {
+        if (!mutation.payload.from) {
+          this.dateAxis2.zoom({ start: 0, end: 1 })
+        } else {
+          this.dateAxis.zoomToDates(new Date(mutation.payload.from), new Date(mutation.payload.to))
+          this.dateAxis2.zoomToDates(new Date(mutation.payload.from), new Date(mutation.payload.to))
         }
       }
     })
