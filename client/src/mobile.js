@@ -9,9 +9,7 @@ import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
 import IsOnline from './plugins/isOnline'
 import MobileEventBus from './plugins/mobileEventBus'
-
-import './assets/styles/tailwindcss.css'
-import './assets/styles/transitions.css'
+import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
 

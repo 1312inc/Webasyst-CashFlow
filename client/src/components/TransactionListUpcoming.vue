@@ -4,8 +4,9 @@
       <div v-if="$helper.showMultiSelect()" style="width: 1rem"></div>
       <div
         @click="toggleupcomingBlockOpened"
-        class="tw-cursor-pointer custom-mr-8 black"
+        class="custom-mr-8 black"
         :class="{ 'opacity-50': !upcomingBlockOpened }"
+        style="cursor: pointer;"
       >
         <i class="fas fa-caret-down"></i>&nbsp;
         <span v-if="featurePeriod === 1">{{ $t("tomorrow") }}</span>
@@ -18,7 +19,8 @@
       <div
         @mouseover="$refs.dropdown.style.display = 'block'"
         @mouseleave="$refs.dropdown.style.display = 'none'"
-        class="dropdown tw-z-40"
+        class="dropdown"
+        style="z-index:40;"
       >
         <span class="icon"><i class="fas fa-ellipsis-v"></i></span>
         <div class="dropdown-body" ref="dropdown">

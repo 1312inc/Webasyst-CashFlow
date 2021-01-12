@@ -1,6 +1,6 @@
 <template>
   <div class="custom-mt-24">
-    <div v-if="balanceFlow.length > 1" class="tw-mx-4">
+    <div v-if="balanceFlow.length > 1" class="custom-mx-16">
       <div class="heading custom-mx-0">
         {{ this.$moment().format('LL') }} <span class="count">+30d</span>
       </div>

@@ -50,7 +50,7 @@
         />
       </ul>
 
-      <div v-else class="tw-text-center custom-py-20">
+      <div v-else class="align-center custom-py-20">
         {{ $t("emptyList") }}
       </div>
     </div>

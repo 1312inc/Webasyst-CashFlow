@@ -1,8 +1,8 @@
 <template>
   <div
     :class="{
-      'tw-text-green-500': type === 'income',
-      'tw-text-red-500': type === 'expense',
+      'text-green': type === 'income',
+      'text-red': type === 'expense',
     }"
   >
     <div>

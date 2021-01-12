@@ -7,8 +7,7 @@ import Helpers from './plugins/helpers'
 import { i18n } from './plugins/locale'
 import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
-import './assets/styles/tailwindcss.css'
-import './assets/styles/transitions.css'
+import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
 

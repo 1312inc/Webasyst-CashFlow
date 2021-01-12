@@ -9,7 +9,7 @@
           {{ isModeUpdate ? $t("updateTransaction") : $t("addTransaction") }}
         </h2>
         <span v-if="isModeUpdate && transaction.repeating_id" class="tooltip custom-ml-8 large" :data-title="$t('repeatingTran')">
-          <i class="fas fa-redo-alt tw-opacity-50"></i>
+          <i class="fas fa-redo-alt opacity-50"></i>
         </span>
       </div>
       <div v-if="isModeUpdate" class="large">#{{ transaction.id }}</div>
@@ -115,7 +115,7 @@
             </select>
           </div>
 
-          <div v-if="model.repeating_interval === 'custom'" class="tw-mt-4">
+          <div v-if="model.repeating_interval === 'custom'" class="custom-mt-16">
             {{ $t("howOften.every") }}
             <input
               v-model.number="model.repeating_frequency"
@@ -150,21 +150,21 @@
             </select>
           </div>
 
-          <div v-if="model.repeating_end_type === 'ondate'" class="tw-mt-4">
+          <div v-if="model.repeating_end_type === 'ondate'" class="custom-mt-16">
             <div class="state-with-inner-icon left">
               <DateField v-model="model.repeating_end_ondate" />
               <span class="icon"><i class="fas fa-calendar"></i></span>
             </div>
           </div>
 
-          <div v-if="model.repeating_end_type === 'after'" class="tw-mt-4">
+          <div v-if="model.repeating_end_type === 'after'" class="custom-mt-16">
             <input
               v-model.number="model.repeating_end_after"
               type="text"
               class="shorter"
               :class="{ 'state-error': $v.model.repeating_end_after.$error }"
             />
-            <span class="tw-ml-2">{{ $t("endRepeat.occurrences") }}</span>
+            <span class="custom-ml-8">{{ $t("endRepeat.occurrences") }}</span>
           </div>
         </div>
       </div>
@@ -236,7 +236,7 @@
               $helper.currencySignByCode(selectedAccountTransfer.currency)
             }}</span>
           </div>
-          <span v-if="selectedAccount && selectedAccountTransfer && selectedAccount.currency !== selectedAccountTransfer.currency" class="smaller alert warning tw-mt-4 custom-mb-0">
+          <span v-if="selectedAccount && selectedAccountTransfer && selectedAccount.currency !== selectedAccountTransfer.currency" class="smaller alert warning custom-mt-16 custom-mb-0">
             <i class="fas fa-exclamation-triangle"></i>
             {{ selectedAccount.currency }} → {{ selectedAccountTransfer.currency }}.
             {{ $t("transferMessage") }}

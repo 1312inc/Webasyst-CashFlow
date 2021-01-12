@@ -17,10 +17,10 @@
     </div>
 
     <div v-for="currency in data" :key="currency.currency" class="flexbox">
-      <div v-if="currency.income.data.length" class="tw-w-2/5">
+      <div v-if="currency.income.data.length" class="width-40">
         <div class="">
-          <div class="smaller tw-uppercase">{{ $t("income") }}</div>
-          <div class="larger tw-text-green-500">
+          <div class="smaller uppercase">{{ $t("income") }}</div>
+          <div class="larger text-green">
             {{
               $helper.toCurrency(currency.income.totalAmount, currency.currency)
             }}
@@ -29,10 +29,10 @@
         <ChartPie :data="currency.income.data" />
       </div>
 
-      <div v-if="currency.expense.data.length" class="tw-w-2/5">
+      <div v-if="currency.expense.data.length" class="width-40">
         <div class="">
-          <div class="smaller tw-uppercase">{{ $t("expense") }}</div>
-          <div class="larger tw-text-red-500">
+          <div class="smaller uppercase">{{ $t("expense") }}</div>
+          <div class="larger text-red">
             {{
               $helper.toCurrency(
                 currency.expense.totalAmount,
@@ -45,7 +45,7 @@
       </div>
 
       <div v-if="currency.income.data.length && currency.expense.data.length">
-        <div class="smaller tw-uppercase">{{ $t("balance") }}</div>
+        <div class="smaller uppercase">{{ $t("balance") }}</div>
         <div class="larger">
           {{
             $helper.toCurrency(
