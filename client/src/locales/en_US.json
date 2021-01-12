@@ -33,6 +33,8 @@
   "ammount": "Ammount",
   "repeat": "Repeat",
   "date": "Date",
+  "from": "Start Date",
+  "to": "End Date",
   "repeatFrom": "Start repeat",
   "howOften": {
     "name": "How often",
@@ -116,5 +118,7 @@
   },
   "upnext": "Up Next",
   "startingBalance": "Starting balance",
-  "importResults": "Import Results"
+  "importResults": "Import Results",
+  "setDates": "Set Dates",
+  "close": "Close"
 }
