@@ -14,15 +14,15 @@
       <div
         ref="chartdiv"
         class="chart-main smaller"
-        :class="{ 'tw-opacity-0': !isShowChart }"
+        :style="!isShowChart ? 'opacity:0;' : ''"
       ></div>
     </div>
     <!-- <transition name="fade-appear"> -->
-    <div v-if="!isShowChart" class="skeleton-container">
+    <!-- <div v-if="!isShowChart" class="skeleton-container">
       <div class="skeleton">
         <span class="skeleton-custom-box"></span>
       </div>
-    </div>
+    </div> -->
     <!-- </transition> -->
   </div>
 </template>
@@ -573,23 +573,23 @@ export default {
     position: relative;
     margin-bottom: 1rem;
 
-    .skeleton-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+    // .skeleton-container {
+    //   position: absolute;
+    //   top: 0;
+    //   left: 0;
+    //   width: 100%;
+    //   height: 100%;
 
-      .skeleton {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-      }
+    //   .skeleton {
+    //     position: absolute;
+    //     width: 100%;
+    //     height: 100%;
+    //   }
 
-      .skeleton-custom-box {
-        height: 100%;
-      }
-    }
+    //   .skeleton-custom-box {
+    //     height: 100%;
+    //   }
+    // }
 
     .chart-main {
       width: 100%;

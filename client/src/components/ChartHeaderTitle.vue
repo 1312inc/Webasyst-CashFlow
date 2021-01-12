@@ -7,7 +7,7 @@
       </div>
       <div
         v-if="balance"
-        :class="balance >= 0 ? 'tw-text-green-500' : 'tw-text-red-500'"
+        :class="balance >= 0 ? 'text-green' : 'text-red'"
         class="h2 custom-mb-0"
       >
         {{ $helper.toCurrency(balance, currentEntity.currency) }}
