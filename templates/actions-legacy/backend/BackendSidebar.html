@@ -104,7 +104,7 @@
                 <li>
                     <a href="#/import/view/{$import->provider}/{$import->id}">
                         <span class="count">{$import->success}</span>
-                        <i class="icon16 userpic20" style="background-image: url('{$import->contact->getPhoto(20)}');"></i>{$import->filename|escape}
+                        <i class="icon16 userpic20" style="background-image: url('{$import->contact->getPhoto(20)}');"></i><span style="word-break: break-all;">{$import->filename|escape}</span>
                         <br><span class="hint">{$import->create_datetime|wa_datetime:humandatetime}</span>
                     </a>
                 </li>
@@ -130,7 +130,7 @@
             {if $contextUser->isAdmin() && $wa->shop}
             <li>
                 <!-- <a href="#/settings/"><i class="icon16 settings"></i>[`Settings`]</a> -->
-                <a href="#/shopscript/"><i class="icon16" style="background-image: url('/wa-apps/shop/img/shop.png'); background-size: 16px 16px;"></i>Shop-Script</a>
+                <a href="#/shopscript/"><i class="icon16" style="background-image: url('{$shopStatic}img/shop.png'); background-size: 16px 16px;"></i>Shop-Script</a>
             </li>
             {/if}
         </ul>

@@ -183,7 +183,38 @@ class cashContactRightsManager
      *
      * @return bool
      */
-    public function hasAccessToAccount(waContact $contact, $accountId, $access): bool
+    public function hasMinimumAccessToAccount(waContact $contact, $accountId): bool
+    {
+        return $this->hasAccessToAccount(
+            $contact,
+            $accountId,
+            cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
+        );
+    }
+
+    /**
+     * @param waContact $contact
+     * @param int       $accountId
+     *
+     * @return bool
+     */
+    public function canViewBalanceLine(waContact $contact, $accountId): bool
+    {
+        return $this->hasAccessToAccount(
+            $contact,
+            $accountId,
+            cashRightConfig::ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS
+        );
+    }
+
+    /**
+     * @param waContact $contact
+     * @param int       $accountId
+     * @param int       $access
+     *
+     * @return bool
+     */
+    private function hasAccessToAccount(waContact $contact, $accountId, $access): bool
     {
         if ($this->getContactAccess($contact)->isAdmin()) {
             return true;
@@ -193,21 +224,6 @@ class cashContactRightsManager
             (int) $accountId,
             $this->getContactAccess($contact)->getAccountIdsWithAccess($access),
             true
-        );
-    }
-
-    /**
-     * @param waContact $contact
-     * @param           $accountId
-     *
-     * @return bool
-     */
-    public function hasMinimumAccessToAccount(waContact $contact, $accountId): bool
-    {
-        return $this->hasAccessToAccount(
-            $contact,
-            $accountId,
-            cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
         );
     }
 
@@ -238,10 +254,16 @@ class cashContactRightsManager
      */
     public function canAddTransactionToAccount(waContact $contact, $accountId): bool
     {
-        return $this->hasAccessToAccount(
-            $contact,
-            $accountId,
-            cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
+        if ($this->getContactAccess($contact)->isAdmin()) {
+            return true;
+        }
+
+        return in_array(
+            (int) $accountId,
+            $this->getContactAccess($contact)->getAccountIdsWithAccess(
+                cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
+            ),
+            true
         );
     }
 
@@ -364,7 +386,7 @@ class cashContactRightsManager
         }
 
         if ($this->isAdmin($contact)) {
-            return $this->cacheValue($key, ' 1 /* categories access */');
+            return $this->cacheValue($key, '( 1 /* categories access */)');
         }
 
         $ids = $this->getCategoryIdsForContact($contact);
@@ -415,10 +437,6 @@ class cashContactRightsManager
             return $value;
         }
 
-        if ($this->isAdmin($contact)) {
-            return $this->cacheValue($key, '( 1 /* account transactions access */ )');
-        }
-
         $accountAccesses = $this->getContactAccess($contact)
             ->getAccountIdsGroupedByAccess();
         foreach ($accountAccesses as $access => $accounts) {
@@ -452,7 +470,7 @@ class cashContactRightsManager
 
         return $this->cacheValue(
             $key,
-            sprintf('( %s /* account transactions access */ )', $segments ? implode(' or ', $segments) : '0')
+            sprintf('( %s /* account transactions access */ )', $segments ? implode(' or ', $segments) : '1')
         );
     }
 
@@ -505,12 +523,12 @@ class cashContactRightsManager
         }
 
         if ($this->isAdmin($contact)) {
-            return $this->cacheValue($key, ' 1 /* account access */');
+            return $this->cacheValue($key, ' (1 /* account access */)');
         }
 
         $ids = $this->getAccountIdsForContact($contact, $access);
         if (!$ids) {
-            return $this->cacheValue($key, ' 0 /* account access */');
+            return $this->cacheValue($key, ' (0 /* account access */)');
         }
 
         $query = $this->model->prepare(sprintf(' %s.%s in (i:ids)  /* account access */', $alias, $field));

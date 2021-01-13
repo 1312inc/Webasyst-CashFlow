@@ -70,6 +70,7 @@ class cashTransactionListAction extends cashTransactionPageAction
 
                 'paginationHtml' => $this->pagination->prepare()->render($this->view),
                 'pagination' => $this->pagination,
+                'canSeeBalance' => cash()->getContactRights()->isAdmin(wa()->getUser()),
             ]
         );
     }

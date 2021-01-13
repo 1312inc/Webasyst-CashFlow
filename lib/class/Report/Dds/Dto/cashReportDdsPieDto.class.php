@@ -16,6 +16,16 @@ class cashReportDdsPieDto implements JsonSerializable
     public $columns = [];
 
     /**
+     * @var array
+     */
+    public $colors = [];
+
+    /**
+     * @var array
+     */
+    public $total = [];
+
+    /**
      * cashReportDdsPieDto constructor.
      *
      * @param cashCurrencyVO $currency
@@ -31,9 +41,19 @@ class cashReportDdsPieDto implements JsonSerializable
     public function jsonSerialize()
     {
         $data = [
-            'type' => 'pie',
-            'columns' => array_values($this->columns),
+            'data' => [
+                'type' => 'pie',
+                'columns' => array_values($this->columns),
+            ],
+            'total' => $this->total,
+            'helpers' => [
+                'currencySign' => $this->currency->getSign(),
+            ]
         ];
+
+        if ($this->colors) {
+            $data['data']['colors'] = $this->colors;
+        }
 
         return $data;
     }

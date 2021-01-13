@@ -63,9 +63,12 @@ class cashAccountModel extends cashModel
             $accountFilterSql = ' and ca.id in (i:accounts)';
         }
 
-        $accountTransactionRights = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact, $accounts);
+        $accountTransactionRights = cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+            $contact,
+            $accounts
+        );
         $accountRights = cash()->getContactRights()->getSqlForAccountJoinWithFullAccess($contact);
-        $categoryRights = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+//        $categoryRights = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
         $sql = <<<SQL
 select ca.id,
@@ -86,10 +89,10 @@ from cash_account ca
           and ca.is_archived = 0
           {$accountFilterSql}
           and {$accountTransactionRights}
-          and {$categoryRights}
     group by ca.id
 ) t on ca.id = t.id 
-where {$accountRights}
+where ca.is_archived = 0
+    and {$accountRights}
 SQL;
 
         return $this
@@ -119,6 +122,10 @@ SQL;
             'account_id'
         );
         $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+        $transactionAccessSql = ' and ' . cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+            $contact,
+            $filterType === cashTransactionPageFilterDto::FILTER_ACCOUNT ? $filterIds : null
+        );
 
         $filterSql = '';
         if ($filterIds) {
@@ -153,13 +160,14 @@ where ct.date between s:startDate and s:endDate
       and ca.is_archived = 0
       and ct.is_archived = 0
       {$filterSql}
+      {$transactionAccessSql}
       and {$accountAccessSql}
       and {$categoryAccessSql}
 group by ct.category_id, ca.currency
 SQL;
 
         return $this
-            ->query($sql, ['startDate' => $startDate, 'endDate' => $endDate, 'filter_ids' => (array)$filterIds])
+            ->query($sql, ['startDate' => $startDate, 'endDate' => $endDate, 'filter_ids' => (array) $filterIds])
             ->fetchAll();
     }
 
