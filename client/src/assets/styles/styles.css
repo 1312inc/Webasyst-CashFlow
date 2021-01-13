@@ -2,6 +2,14 @@ body.modal {
   overflow: hidden;
 }
 
+.text-green {
+  color: #3ec55e;
+}
+
+.text-red {
+  color: #fc3d38;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s;

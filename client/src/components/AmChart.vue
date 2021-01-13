@@ -14,15 +14,15 @@
       <div
         ref="chartdiv"
         class="chart-main smaller"
-        :class="{ 'tw-opacity-0': !isShowChart }"
+        :style="!isShowChart ? 'opacity:0;' : ''"
       ></div>
     </div>
     <!-- <transition name="fade-appear"> -->
-    <div v-if="!isShowChart" class="skeleton-container">
+    <!-- <div v-if="!isShowChart" class="skeleton-container">
       <div class="skeleton">
         <span class="skeleton-custom-box"></span>
       </div>
-    </div>
+    </div> -->
     <!-- </transition> -->
   </div>
 </template>
@@ -94,7 +94,7 @@ export default {
   created () {
     this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
       if (mutation.type === 'transaction/updateQueryParams' && !mutation.payload.silent) {
-        this.$store.dispatch('transaction/getChartData')
+        this.getChartData()
       }
     })
 
@@ -107,7 +107,7 @@ export default {
             action.type === 'transactionBulk/bulkMove' ||
             action.type === 'category/delete') && !action.payload.silent
         ) {
-          this.$store.dispatch('transaction/getChartData')
+          this.getChartData()
         }
       }
     })
@@ -182,8 +182,8 @@ export default {
     cursor.events.on('zoomended', (ev) => {
       if (ev.target.behavior === 'none') return
       const range = ev.target.xRange
-      const from = this.$moment(this.dateAxis.positionToDate(this.dateAxis.toAxisPosition(range.start))).format('YYYY-MM-DD')
-      const to = this.$moment(this.dateAxis.positionToDate(this.dateAxis.toAxisPosition(range.end))).format('YYYY-MM-DD')
+      const from = this.$moment(this.dateAxis2.positionToDate(this.dateAxis2.toAxisPosition(range.start))).format('YYYY-MM-DD')
+      const to = this.$moment(this.dateAxis2.positionToDate(this.dateAxis2.toAxisPosition(range.end))).format('YYYY-MM-DD')
       this.setDetailsInterval({ from, to })
     })
     chart.cursor = cursor
@@ -208,8 +208,10 @@ export default {
     chart.scrollbarX.parent = chart.bottomAxesContainer
 
     const dateAxisChanged = () => {
-      const from = this.$moment(this.dateAxis.minZoomed).format('YYYY-MM-DD')
-      const to = this.$moment(this.dateAxis.maxZoomed).format('YYYY-MM-DD')
+      const f = this.dateAxis2.minZoomed || this.dateAxis.minZoomed
+      const t = this.dateAxis2.maxZoomed || this.dateAxis.maxZoomed
+      const from = this.$moment(f).format('YYYY-MM-DD')
+      const to = this.$moment(t).format('YYYY-MM-DD')
       this.setDetailsInterval({ from, to })
     }
 
@@ -221,10 +223,12 @@ export default {
     })
 
     this.unsubscribeFromDetailsInterval = this.$store.subscribe((mutation) => {
-      if (mutation.type === 'transaction/setDetailsInterval') {
-        // Disable zoom
-        if (mutation.payload.from === '') {
-          this.dateAxis.zoom({ start: 0, end: 1 })
+      if (mutation.type === 'transaction/setDetailsInterval' && mutation.payload.initiator === 'DetailsDashboard') {
+        if (!mutation.payload.from) {
+          this.dateAxis2.zoom({ start: 0, end: 1 })
+        } else {
+          this.dateAxis.zoomToDates(new Date(mutation.payload.from), new Date(mutation.payload.to))
+          this.dateAxis2.zoomToDates(new Date(mutation.payload.from), new Date(mutation.payload.to))
         }
       }
     })
@@ -297,6 +301,14 @@ export default {
 
   methods: {
     ...mapMutations('transaction', ['setDetailsInterval']),
+
+    async getChartData () {
+      try {
+        await this.$store.dispatch('transaction/getChartData')
+      } catch (e) {
+        this.$notify.error(`Method: getChartData<br>${e}`)
+      }
+    },
 
     renderChart () {
       // Delete negative ranges
@@ -561,23 +573,23 @@ export default {
     position: relative;
     margin-bottom: 1rem;
 
-    .skeleton-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+    // .skeleton-container {
+    //   position: absolute;
+    //   top: 0;
+    //   left: 0;
+    //   width: 100%;
+    //   height: 100%;
 
-      .skeleton {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-      }
+    //   .skeleton {
+    //     position: absolute;
+    //     width: 100%;
+    //     height: 100%;
+    //   }
 
-      .skeleton-custom-box {
-        height: 100%;
-      }
-    }
+    //   .skeleton-custom-box {
+    //     height: 100%;
+    //   }
+    // }
 
     .chart-main {
       width: 100%;
