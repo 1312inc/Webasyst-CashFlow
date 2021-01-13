@@ -34,6 +34,12 @@ export default {
 
   methods: {
     updateEntity (to) {
+      this.$store.commit('transaction/setDetailsInterval', {
+        from: '',
+        to: '',
+        silent: true
+      })
+
       this.$store.dispatch('updateCurrentEntity', {
         name: to.name.toLowerCase(),
         id: +to.params.id || to.params.id

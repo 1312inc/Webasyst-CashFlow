@@ -1,4 +1,7 @@
+import utils from '@/mixins/utilsMixin.js'
 export default {
+  mixins: [utils],
+
   computed: {
     isModeUpdate () {
       return !!this.editedItem
@@ -22,11 +25,10 @@ export default {
         this.$store
           .dispatch(`${entity}/update`, this.model)
           .then(() => {
-            this.$noty.success('Успешно обновлено')
             this.close()
           })
-          .catch(() => {
-            this.$noty.error('Oops, something went wrong!')
+          .catch((e) => {
+            this.handleApiError(e)
           })
       }
     },
@@ -36,7 +38,6 @@ export default {
         this.$store
           .dispatch(`${entity}/delete`, this.model.id)
           .then(() => {
-            this.$noty.success('Успешно удалено')
             if (entity === 'account') {
               this.$router.push({ name: 'Home' })
             } else {
@@ -44,7 +45,7 @@ export default {
             }
           })
           .catch((e) => {
-            this.$noty.error('Oops, something went wrong!')
+            this.handleApiError(e)
           })
       }
     },

@@ -1,7 +1,7 @@
 export default {
   created () {
     this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
-      if (mutation.type === 'transaction/updateQueryParams' && !mutation.payload.silent) {
+      if ((mutation.type === 'transaction/updateQueryParams' || mutation.type === 'transaction/setDetailsInterval') && !mutation.payload.silent) {
         this.getTransactions({ offset: 0 })
       }
     })
