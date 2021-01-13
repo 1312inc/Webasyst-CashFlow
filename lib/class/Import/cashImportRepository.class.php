@@ -15,7 +15,7 @@ class cashImportRepository extends cashBaseRepository
      * @return cashImport[]
      * @throws waException
      */
-    public function findLastN($n)
+    public function findLastN(int $n): array
     {
         return $this->findByQuery(
             $this->getModel()
@@ -31,7 +31,7 @@ class cashImportRepository extends cashBaseRepository
      * @return cashImport[]
      * @throws waException
      */
-    public function findAllActive()
+    public function findAllActive(): array
     {
         return $this->findByQuery(
             $this->getModel()
