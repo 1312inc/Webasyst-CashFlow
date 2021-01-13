@@ -27,7 +27,7 @@ class cashCategoryDeleteController extends cashJsonController
             throw new kmwaRuntimeException(_w('You can`t do anything with system categories'));
         }
 
-        $remover = new cashCategoryRemover(cash()->getEntityFactory(cashCategory::class));
+        $remover = new cashCategoryRemover(cash()->getEntityRepository(cashCategory::class));
         if (!$remover->removeCategory($category)) {
             $this->setError($remover->getError());
         }

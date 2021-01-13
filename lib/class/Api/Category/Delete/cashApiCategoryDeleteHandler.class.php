@@ -33,7 +33,7 @@ class cashApiCategoryDeleteHandler implements cashApiHandlerInterface
             throw new kmwaRuntimeException(_w('You can`t do anything with system categories'));
         }
 
-        $remover = new cashCategoryRemover(cash()->getEntityFactory(cashCategory::class));
+        $remover = new cashCategoryRemover(cash()->getEntityRepository(cashCategory::class));
         if (!$remover->removeCategory($category)) {
             throw new kmwaRuntimeException($remover->getError());
         }

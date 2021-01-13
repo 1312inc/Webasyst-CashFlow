@@ -23,7 +23,9 @@ class cashReportDds
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
         foreach ($model->getYearsWithTransactions() as $yearsWithTransaction) {
-            $periods[] = cashReportDdsPeriod::createForYear($yearsWithTransaction);
+            if ($yearsWithTransaction > 1900) {
+                $periods[] = cashReportDdsPeriod::createForYear($yearsWithTransaction);
+            }
         }
 
         return $periods;
@@ -33,8 +35,9 @@ class cashReportDds
      * @param cashReportDdsTypeDto $type
      * @param cashReportDdsPeriod  $period
      *
-     * @return array
+     * @return cashReportDdsStatDto[]
      * @throws waException
+     * @throws kmwaRuntimeException
      */
     public function getDataForTypeAndPeriod(cashReportDdsTypeDto $type, cashReportDdsPeriod $period): array
     {
@@ -53,6 +56,9 @@ class cashReportDds
                 $data = (new cashReportDdsContractorDataProvider())->getDataForPeriod($period);
 
                 break;
+
+            default:
+                throw new kmwaRuntimeException(sprintf('Wrong dds report type %s', $type->id));
         }
 
         return $data;
@@ -64,7 +70,6 @@ class cashReportDds
      * @param cashReportDdsPeriod  $period
      *
      * @return array
-     * @throws waException
      */
     public function formatDataForPie(array $data, cashReportDdsTypeDto $type, cashReportDdsPeriod $period): array
     {
@@ -76,7 +81,10 @@ class cashReportDds
         /** @var cashReportDdsStatDto $datum */
         foreach ($data as $datum) {
             $id = $datum->entity->getId();
-            if (in_array($id, [self::ALL_INCOME_KEY, self::ALL_EXPENSE_KEY])) {
+            if (in_array(
+                $id,
+                [self::ALL_INCOME_KEY, self::ALL_EXPENSE_KEY, cashCategoryFactory::TRANSFER_CATEGORY_ID]
+            )) {
                 continue;
             }
 
@@ -88,11 +96,24 @@ class cashReportDds
                     $chartData[$incOrExp][$currencyCode] = new cashReportDdsPieDto($currency);
                 }
                 $chartData[$incOrExp][$currencyCode]->columns[$id] = [$datum->entity->getName()];
+                if ($datum->entity->getColor()) {
+                    $chartData[$incOrExp][$currencyCode]->colors[$datum->entity->getName()] = [
+                        $datum->entity->getColor()
+                    ];
+                }
             }
 
             foreach ($datum->valuesPerPeriods as $valuesPerPeriod) {
                 foreach ($valuesPerPeriod as $currency => $value) {
-                    $chartData[$incOrExp][$currency]->columns[$id][] = (float) abs($value['per_month']);
+                    /** @var cashReportDdsPieDto $statIncomeOrExpenseForCurrency */
+                    $statIncomeOrExpenseForCurrency = $chartData[$incOrExp][$currency];
+
+                    $statIncomeOrExpenseForCurrency->columns[$id][] = (float) abs($value['per_month']);
+
+                    if (!isset($statIncomeOrExpenseForCurrency->total[$id])) {
+                        $statIncomeOrExpenseForCurrency->total[$id] = 0;
+                    }
+                    $statIncomeOrExpenseForCurrency->total[$id] += (float) abs($value['per_month']);
                 }
             }
         }
@@ -108,7 +129,7 @@ class cashReportDds
         return [
             self::TYPE_CATEGORY => new cashReportDdsTypeDto(self::TYPE_CATEGORY, _w('Categories'), true),
             self::TYPE_ACCOUNT => new cashReportDdsTypeDto(self::TYPE_ACCOUNT, _w('Accounts'), true),
-            self::TYPE_CONTRACTOR => new cashReportDdsTypeDto(self::TYPE_CONTRACTOR, _w('Contractors'), true),
+//            self::TYPE_CONTRACTOR => new cashReportDdsTypeDto(self::TYPE_CONTRACTOR, _w('Contractors'), true),
         ];
     }
 }

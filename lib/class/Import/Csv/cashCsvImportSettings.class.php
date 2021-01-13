@@ -128,22 +128,22 @@ class cashCsvImportSettings implements JsonSerializable
     public function isValid()
     {
         if (empty($this->amount) && (empty(array_filter($this->amountMap)))) {
-            $this->error = _w('No amount column');
+            $this->error = _w('No amount column selected');
             return false;
         }
 
         if ($this->accountType == self::TYPE_SINGLE && empty($this->account)) {
-            $this->error = _w('No account column');
+            $this->error = _w('No account column selected');
             return false;
         }
 
         if ($this->accountType == self::TYPE_MULTI && (empty($this->accountMap) || empty($this->account))) {
-            $this->error = _w('No account column');
+            $this->error = _w('No account column selected');
             return false;
         }
 
         if (empty($this->datetime)) {
-            $this->error = _w('No date column');
+            $this->error = _w('No date column selected');
             return false;
         }
 

@@ -34,20 +34,22 @@ class cashReportDdsAccountDataProvider implements cashReportDdsDataProviderInter
      */
     public function getDataForPeriod(cashReportDdsPeriod $period): array
     {
-        $sql = <<<SQL
-select ct.account_id account,
-       cc.type category_type,
-       ca.currency currency,
-       MONTH(ct.date) month,
-       sum(ct.amount) per_month
-from cash_transaction ct
-         join cash_account ca on ct.account_id = ca.id
-         join cash_category cc on ct.category_id = cc.id
-where ct.date between s:start and s:end
-  and ca.is_archived = 0
-  and ct.is_archived = 0
-group by cc.type, ct.account_id, ca.currency, MONTH(ct.date)
-SQL;
+        $sql = sprintf(
+            "select ct.account_id account,
+                   if(ct.amount < 0, '%s', '%s') category_type,
+                   ca.currency currency,
+                   MONTH(ct.date) month,
+                   sum(ct.amount) per_month
+            from cash_transaction ct
+                     join cash_account ca on ct.account_id = ca.id
+                     join cash_category cc on ct.category_id = cc.id
+            where ct.date between s:start and s:end
+              and ca.is_archived = 0
+              and ct.is_archived = 0
+            group by cc.type, ct.account_id, ca.currency, MONTH(ct.date)",
+            cashCategory::TYPE_EXPENSE,
+            cashCategory::TYPE_INCOME
+        );
 
         $data = $this->transactionModel->query(
             $sql,
@@ -60,38 +62,51 @@ SQL;
         $rawData = [];
 
         foreach ($data as $datum) {
-            if (!isset($rawData[cashCategory::TYPE_INCOME][cashReportDds::ALL_INCOME_KEY][$datum['month']][$datum['currency']])) {
+            $month = $datum['month'];
+            $currency = $datum['currency'];
+            $catType = $datum['category_type'];
+            $account = $datum['account'];
+            $perMonth = $datum['per_month'];
+
+            if (!isset($rawData[cashCategory::TYPE_INCOME][cashReportDds::ALL_INCOME_KEY][$month][$currency])) {
                 foreach ($period->getGrouping() as $groupingDto) {
                     $initVals = [
-                        'account' => $datum['category_type'],
-                        'type' => $datum['category_type'],
-                        'currency' => $datum['currency'],
+                        'account' => $catType,
+                        'type' => $catType,
+                        'currency' => $currency,
                         'month' => $groupingDto->key,
                         'per_month' => .0,
                     ];
-                    $rawData[cashCategory::TYPE_INCOME][cashReportDds::ALL_INCOME_KEY][$groupingDto->key][$datum['currency']] = $initVals;
-                    $rawData[cashCategory::TYPE_EXPENSE][cashReportDds::ALL_EXPENSE_KEY][$groupingDto->key][$datum['currency']] = $initVals;
+                    $rawData[cashCategory::TYPE_INCOME][cashReportDds::ALL_INCOME_KEY][$groupingDto->key][$currency] = $initVals;
+                    $rawData[cashCategory::TYPE_EXPENSE][cashReportDds::ALL_EXPENSE_KEY][$groupingDto->key][$currency] = $initVals;
                 }
+                $rawData[cashCategory::TYPE_INCOME][cashReportDds::ALL_INCOME_KEY]['total'][$currency]['per_month'] = .0;
+                $rawData[cashCategory::TYPE_EXPENSE][cashReportDds::ALL_EXPENSE_KEY]['total'][$currency]['per_month'] = .0;
             }
 
-            if (!isset($rawData[$datum['category_type']][$datum['account']][$datum['month']][$datum['currency']])) {
+            if (!isset($rawData[$catType][$account][$month][$currency])) {
                 foreach ($period->getGrouping() as $groupingDto) {
-                    $rawData[$datum['category_type']][$datum['account']][$groupingDto->key][$datum['currency']] = [
-                        'account' => $datum['account'],
-                        'type' => $datum['category_type'],
-                        'currency' => $datum['currency'],
+                    $rawData[$catType][$account][$groupingDto->key][$currency] = [
+                        'account' => $account,
+                        'type' => $catType,
+                        'currency' => $currency,
                         'month' => $groupingDto->key,
                         'per_month' => .0,
                     ];
                 }
+                $rawData[$catType][$account]['total'][$currency]['per_month'] = .0;
             }
 
-            $rawData[$datum['category_type']][$datum['account']][$datum['month']][$datum['currency']]['per_month'] = (float)$datum['per_month'];
-            if ($datum['category_type'] === cashCategory::TYPE_INCOME) {
-                $rawData[$datum['category_type']][cashReportDds::ALL_INCOME_KEY][$datum['month']][$datum['currency']]['per_month'] += (float)$datum['per_month'];
+            $rawData[$catType][$account][$month][$currency]['per_month'] = (float) $perMonth;
+            $rawData[$catType][$account]['total'][$currency]['per_month'] += (float) $perMonth;
+
+            if ($catType === cashCategory::TYPE_INCOME) {
+                $categoryTypeKey = cashReportDds::ALL_INCOME_KEY;
             } else {
-                $rawData[$datum['category_type']][cashReportDds::ALL_EXPENSE_KEY][$datum['month']][$datum['currency']]['per_month'] += (float)$datum['per_month'];
+                $categoryTypeKey = cashReportDds::ALL_EXPENSE_KEY;
             }
+            $rawData[$catType][$categoryTypeKey][$month][$currency]['per_month'] += (float) $perMonth;
+            $rawData[$catType][$categoryTypeKey]['total'][$currency]['per_month'] += (float) $perMonth;
         }
 
         $statDataIncome = $statDataExpense = [];

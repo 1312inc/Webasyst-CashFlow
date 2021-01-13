@@ -84,4 +84,34 @@ class cashCategoryRepository extends cashBaseRepository
 
         return $transfers;
     }
+
+    /**
+     * @return cashCategory
+     * @throws waException
+     */
+    public function findNoCategoryIncome(): cashCategory
+    {
+        $income = $this->findById(cashCategoryFactory::NO_CATEGORY_INCOME_ID);
+        if (!$income instanceof cashCategory) {
+            $income = cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryIncome();
+            cash()->getEntityPersister()->insert($income);
+        }
+
+        return $income;
+    }
+
+    /**
+     * @return cashCategory
+     * @throws waException
+     */
+    public function findNoCategoryExpense(): cashCategory
+    {
+        $expense = $this->findById(cashCategoryFactory::NO_CATEGORY_EXPENSE_ID);
+        if (!$expense instanceof cashCategory) {
+            $expense = cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryExpense();
+            cash()->getEntityPersister()->insert($expense);
+        }
+
+        return $expense;
+    }
 }

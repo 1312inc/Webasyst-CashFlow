@@ -32,7 +32,7 @@ class cashContactsProfileTabListener extends waEventHandler
 
             $result[] = [
                 'id' => 'cashapp',
-                'title' => _w('Cash'),
+                'title' => _w('Cash Flow'),
                 'url' => sprintf('%scash/?module=crm&contact=%s&external=1', $backend_url, $contact_id),
             ];
         } catch (waException $ex) {

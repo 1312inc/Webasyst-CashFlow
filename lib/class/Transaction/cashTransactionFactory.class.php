@@ -65,11 +65,11 @@ class cashTransactionFactory extends cashBaseFactory
     public function validate(array $data)
     {
         if (empty($data['amount'])) {
-            throw new cashValidateException(_w('No amount'));
+            throw new cashValidateException(_w('No amount specified'));
         }
 
         if (empty($data['account_id'])) {
-            throw new cashValidateException(_w('No account'));        }
+            throw new cashValidateException(_w('No account selected'));        }
 
         $data['amount'] = cashHelper::parseFloat($data['amount']);
 
@@ -127,7 +127,7 @@ class cashTransactionFactory extends cashBaseFactory
             $secondTransaction->setCategoryId($transferData['category_id']);
         }
         if (empty($transferData['account_id'])) {
-            throw new kmwaLogicException('No account for transfer to');
+            throw new kmwaLogicException('No transfer incoming account selected');
         }
 
         $secondTransaction->setAccountId($transferData['account_id']);
@@ -137,7 +137,7 @@ class cashTransactionFactory extends cashBaseFactory
         kmwaAssert::instance($account, cashAccount::class);
 
         if ($transaction->getAccount()->getCurrency() !== $account->getCurrency()) {
-            throw new kmwaNotImplementedException('No exchange logic');
+            throw new kmwaNotImplementedException('No currency exchange logic');
         }
 
         cash()->getEntityPersister()->save($secondTransaction);

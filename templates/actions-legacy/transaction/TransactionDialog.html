@@ -188,10 +188,12 @@
                         </div>
                         <div class="value no-shift">
                             {$account = reset($accounts)}
+                            {if !empty($account)}
                             <i class="icon16 {$account->icon}"
                                data-cash-transaction-account-icon
                                {if $account->iconLink}style="background-image: url('{$account->iconLink}'); background-size: 16px 16px;"{/if}
                             ></i>
+                            {/if}
                             <select name="transaction[account_id]"
                                     data-cash-element-account-with-sign="data-cash-transaction-account-amount-currency"
                                     data-cash-element-account-with-icon
@@ -293,7 +295,10 @@
                             [`Contractor`]
                         </div>
                         <div class="value">
-                            <i class="icon16 userpic20" style="background-image: url(/wa-content/img/userpic20.jpg);" data-cash-default-url="/wa-content/img/userpic20.jpg"></i>
+                            <i class="icon16 userpic20"
+                               style="background-image: url({$wa_url}wa-content/img/userpic20.jpg);"
+                               data-cash-default-url="{$wa_url}wa-content/img/userpic20.jpg"
+                            ></i>
                             <input type="text" name="contractor" data-cash-contractor value="{$transaction->contractor->getName()|escape}">
                             <input type="hidden" name="transaction[contractor_contact_id]" value="{$transaction->contractor->getId()|default:0}">
                             <br>

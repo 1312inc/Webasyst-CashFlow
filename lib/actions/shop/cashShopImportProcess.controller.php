@@ -36,14 +36,14 @@ class cashShopImportProcessController extends waLongActionController
 
         $shopIntegration = new cashShopIntegration();
         if (!$shopIntegration->shopExists()) {
-            throw new kmwaRuntimeException('No shop app');
+            throw new kmwaRuntimeException('No Shop-Script app installed');
         }
 
         $info = new cashShopImportProcessDto($this->processId);
         $info->period = waRequest::request('period', 'all', waRequest::TYPE_STRING_TRIM);
         $info->periodAfter = waRequest::request('period_after', null, waRequest::TYPE_STRING_TRIM);
         if ($info->period !== 'all' && empty($info->periodAfter)) {
-            throw new kmwaRuntimeException('Wrong import period');
+            throw new kmwaRuntimeException('Invalid import timeframe start date');
         }
         $info->periodAfter = new DateTime($info->periodAfter);
 
@@ -96,10 +96,10 @@ class cashShopImportProcessController extends waLongActionController
 
         $shopOrderModel = new shopOrderModel();
         $ordersSql = <<<SQL
-select id from shop_order 
+select id from shop_order
 where paid_date is not null
 %s
-order by id 
+order by id
 limit i:start, i:chunk
 SQL;
         $orders = $shopOrderModel->query(

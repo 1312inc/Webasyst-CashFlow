@@ -65,7 +65,7 @@ class cashTransactionRepository extends cashBaseRepository
                     );
                 }
 
-                if ($filterDto->id && $data->count()) {
+                if ($data->count() && $filterDto->id) {
                     $initialBalance = cash()->getModel(cashAccount::class)->getStatDataForAccounts(
                         '1970-01-01 00:00:00',
                         $endDate->format('Y-m-d 23:59:59'),
@@ -104,11 +104,21 @@ class cashTransactionRepository extends cashBaseRepository
                     $startDate->format('Y-m-d 00:00:00'),
                     $endDate->format('Y-m-d 23:59:59'),
                     $filterDto->contact,
-                    $filterDto->id
+                    $filterDto->id,
+                    false,
+                    $start,
+                    $limit
                 );
 
                 if ($pagination) {
-                    $pagination->setTotalRows($data->count());
+                    $pagination->setTotalRows(
+                        $model->countByDateBoundsAndImport(
+                            $startDate->format('Y-m-d 00:00:00'),
+                            $endDate->format('Y-m-d 23:59:59'),
+                            $filterDto->contact,
+                            $filterDto->id
+                        )
+                    );
                 }
 
                 break;
@@ -208,7 +218,7 @@ class cashTransactionRepository extends cashBaseRepository
      */
     public function findLastByRepeatingId($repeatingId): ?cashTransaction
     {
-        return $this->findByQuery(
+        $last = $this->findByQuery(
             $this->getModel()
                 ->query(
                     'select * from cash_transaction where repeating_id = i:repeating_id and is_archived = 0 order by id desc limit 1',
@@ -216,6 +226,8 @@ class cashTransactionRepository extends cashBaseRepository
                 ),
             false
         );
+
+        return $last instanceof cashTransaction ? $last : null;
     }
 
     public function findFirstForAccount(cashAccount $account): ?cashTransaction

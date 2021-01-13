@@ -7,7 +7,9 @@ class cashImportAction extends cashViewAction
 {
     public function preExecute()
     {
-        $this->setLayout(new cashStaticLayout());
+        if (wa()->whichUI() === '2.0') {
+            $this->setLayout(new cashStaticLayout());
+        }
 
         parent::preExecute();
     }

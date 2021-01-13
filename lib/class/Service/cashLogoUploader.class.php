@@ -1,8 +1,5 @@
 <?php
 
-/**
- * Class cashLogoUploader
- */
 final class cashLogoUploader
 {
     const ACCOUNT_LOGOS_PATH = 'account_logos';
