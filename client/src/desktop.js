@@ -8,6 +8,7 @@ import { i18n } from './plugins/locale'
 import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
 import Notify from './plugins/notify'
+import Sticky from 'vue-sticky-directive'
 import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
@@ -17,6 +18,7 @@ Vue.use(Numeral)
 Vue.use(Notify)
 Vue.use(Vuelidate)
 Vue.use(Helpers)
+Vue.use(Sticky)
 
 new Vue({
   router,

@@ -1,42 +1,53 @@
 <template>
-  <div class="custom-mb-24">
+  <div sticky-container class="custom-mb-24">
     <div @mouseover="isHover = true" @mouseleave="isHover = false">
-      <div class="flexbox flexbox-mobile middle">
-        <div class="flexbox middle space-12 wide">
-          <div v-if="$helper.showMultiSelect()" style="width: 1rem">
-            <div v-if="group.length">
-              <span
-                v-show="isHoverComputed"
-                @click="checkAll(group)"
-                class="wa-checkbox"
-              >
-                <input type="checkbox" :checked="isCheckedAllInGroup(group)" />
-                <span>
-                  <span class="icon">
-                    <i class="fas fa-check"></i>
+      <div
+        v-sticky
+        sticky-offset="{top: 114, bottom: 10}"
+        sticky-side="both"
+        sticky-z-index="11"
+        class="c-sticky-header-group"
+      >
+        <div class="flexbox flexbox-mobile middle custom-py-8">
+          <div class="flexbox middle space-12 wide">
+            <div v-if="$helper.showMultiSelect()" style="width: 1rem">
+              <div v-if="group.length">
+                <span
+                  v-show="isHoverComputed"
+                  @click="checkAll(group)"
+                  class="wa-checkbox"
+                >
+                  <input
+                    type="checkbox"
+                    :checked="isCheckedAllInGroup(group)"
+                  />
+                  <span>
+                    <span class="icon">
+                      <i class="fas fa-check"></i>
+                    </span>
                   </span>
                 </span>
-              </span>
+              </div>
+            </div>
+            <div v-if="title">
+              <div v-if="title === 'today'" class="black">
+                {{ $t("today") }}
+              </div>
+              <div v-else class="black">
+                {{ $moment(title).format("MMMM, YYYY") }}
+              </div>
+            </div>
+            <div class="hint">
+              {{ $t("transactionsListCount", { count: group.length }) }}
             </div>
           </div>
-          <div v-if="title">
-            <div v-if="title === 'today'" class="black">
-              {{ $t("today") }}
+          <div class="flexbox middle space-12">
+            <div>
+              <AmountForGroup :group="group" type="income" />
             </div>
-            <div v-else class="black">
-              {{ $moment(title).format("MMMM, YYYY") }}
+            <div>
+              <AmountForGroup :group="group" type="expense" />
             </div>
-          </div>
-          <div class="hint">
-            {{ $t("transactionsListCount", { count: group.length }) }}
-          </div>
-        </div>
-        <div class="flexbox middle space-12">
-          <div>
-            <AmountForGroup :group="group" type="income" />
-          </div>
-          <div>
-            <AmountForGroup :group="group" type="expense" />
           </div>
         </div>
       </div>
@@ -121,5 +132,13 @@ export default {
   .flexbox-mobile > *.middle {
     align-self: baseline;
   }
+}
+
+.c-sticky-header-group {
+  background: #fff;
+}
+
+.c-sticky-header-group.vue-sticky-el.top-sticky {
+  box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.1);
 }
 </style>

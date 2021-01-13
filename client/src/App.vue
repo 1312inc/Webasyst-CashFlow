@@ -3,7 +3,7 @@
     <div class="flexbox">
       <Sidebar />
       <div class="content blank">
-        <div class="box contentbox">
+        <div sticky-container class="box contentbox">
           <!-- <keep-alive> -->
             <router-view />
           <!-- </keep-alive> -->
