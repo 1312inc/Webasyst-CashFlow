@@ -35,7 +35,7 @@ export default {
     pieSeries.labels.template.disabled = true
     pieSeries.slices.template.propertyFields.fill = 'category_color'
     pieSeries.slices.template.stroke = am4core.color('#fff')
-    pieSeries.slices.template.strokeOpacity = 0.5
+    pieSeries.slices.template.strokeOpacity = 1
 
     // Add Legend
     chart.legend = new am4charts.Legend()
