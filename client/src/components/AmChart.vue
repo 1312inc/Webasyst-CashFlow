@@ -32,13 +32,11 @@ import { locale } from '@/plugins/locale'
 import { mapState, mapMutations } from 'vuex'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
-import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
 import am4themesDark from '@amcharts/amcharts4/themes/amchartsdark'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
 let prefersColorSchemeDark = false
 
-am4core.useTheme(am4themesAnimated)
 if (window?.appState?.theme === 'dark' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
   prefersColorSchemeDark = true
   am4core.useTheme(am4themesDark)
@@ -380,7 +378,8 @@ export default {
       incomeSeries.tooltip.getFillFromObject = false
       incomeSeries.tooltip.background.fill = am4core.color('#3ec55e')
       incomeSeries.tooltip.label.fill = am4core.color('#333')
-      incomeSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
+      incomeSeries.tooltip.animationDuration = 500
+      // incomeSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
       incomeSeries.yAxis = this.colsAxis
       incomeSeries.xAxis = this.dateAxis
       incomeSeries.dataFields.valueY = 'amountIncome'
@@ -390,7 +389,6 @@ export default {
       incomeSeries.columns.template.stroke = am4core.color('#3ec55e')
       incomeSeries.columns.template.fill = am4core.color('#3ec55e')
       incomeSeries.columns.template.fillOpacity = 0.5
-      incomeSeries.defaultState.transitionDuration = 0
 
       incomeSeries.adapter.add('tooltipText', (t, target) => {
         const isGrouped = !!target.tooltipDataItem.groupDataItems
@@ -419,7 +417,8 @@ export default {
       expenseSeries.tooltip.background.strokeWidth = 0
       expenseSeries.tooltip.getFillFromObject = false
       expenseSeries.tooltip.background.fill = am4core.color('#fc3d38')
-      expenseSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
+      expenseSeries.tooltip.animationDuration = 500
+      // expenseSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
       expenseSeries.yAxis = this.colsAxis
       expenseSeries.xAxis = this.dateAxis
       expenseSeries.dataFields.valueY = 'amountExpense'
@@ -429,7 +428,6 @@ export default {
       expenseSeries.columns.template.stroke = am4core.color('#fc3d38')
       expenseSeries.columns.template.fill = am4core.color('#fc3d38')
       expenseSeries.columns.template.fillOpacity = 0.5
-      expenseSeries.defaultState.transitionDuration = 0
 
       expenseSeries.adapter.add('tooltipText', (t, target) => {
         const isGrouped = !!target.tooltipDataItem.groupDataItems
@@ -464,6 +462,7 @@ export default {
       balanceSeries.tooltip.getFillFromObject = false
       balanceSeries.tooltip.background.fill = am4core.color('#333')
       balanceSeries.tooltip.label.fill = am4core.color('#FFF')
+      balanceSeries.tooltip.animationDuration = 500
       balanceSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
       balanceSeries.yAxis = this.balanceAxis
       balanceSeries.xAxis = this.dateAxis2
@@ -472,7 +471,6 @@ export default {
       balanceSeries.groupFields.valueY = 'sum'
       balanceSeries.stroke = am4core.color('rgba(255, 0, 0, 0)')
       balanceSeries.strokeWidth = 2
-      balanceSeries.defaultState.transitionDuration = 0
       this.balanceSeries = balanceSeries
 
       // Create a range to change stroke for positive values
@@ -560,6 +558,7 @@ export default {
       nbr.axisFill.tooltip.getFillFromObject = false
       nbr.axisFill.tooltip.background.fill = am4core.color('#fc3d38')
       nbr.axisFill.tooltip.label.fill = am4core.color('#4a0900')
+      nbr.axisFill.tooltip.animationDuration = 500
       nbr.axisFill.tooltipY = 50
       nbr.axisFill.tooltipText = `CASH GAP!\nStart date:${dates[0].isStart ? ' <=' : ''} ${startDate}${inDaysStart}\nEnd date:${dates[dates.length - 1].isEnd ? ' >=' : ''} ${endDate}${inDaysEnd}\nMax balance decline: ${this.$numeral(minimumAmount).format()} ${this.currency} on ${minimumDate}`
     }

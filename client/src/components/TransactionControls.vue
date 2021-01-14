@@ -1,17 +1,18 @@
 <template>
-<div>
-    <div v-if="$helper.isDesktopEnv" style="height: 61px">
-      <div
-        class="c-sticky-element custom-py-12 flexbox middle space-12"
-        data-sticky-class="c-sticky-element--fixed"
-        data-margin-top=64
-      >
-        <div v-if="checkedRows.length" class="flexbox space-12 middle wide">
-          <button @click="openMove = true" class="yellow red">
+  <div v-if="$helper.isDesktopEnv">
+    <div
+      v-sticky=!notStick
+      sticky-offset="{top: 64}"
+      sticky-z-index="12"
+      class="c-sticky-header-controls"
+    >
+      <div class="custom-py-12 flexbox middle space-12">
+        <div v-if="checkedRows.length" class="flexbox space-12 middle wide" :style="direction === 'column' && 'flex-direction: column;'">
+          <button @click="openMove = true" class="yellow red" :class="direction === 'column' && 'custom-mb-12'">
             <i class="fas fa-arrow-right"></i> {{ $t("move") }}
             {{ checkedRows.length }}
           </button>
-          <button @click="bulkDelete" class="button red">
+          <button @click="bulkDelete" class="button red" :class="direction === 'column' && 'custom-mb-12'">
             <i class="fas fa-trash-alt"></i> {{ $t("delete") }}
             {{ checkedRows.length }}
           </button>
@@ -56,12 +57,10 @@
     <Modal v-if="openMove" @close="openMove = false">
       <TransactionMove />
     </Modal>
-
-</div>
+  </div>
 </template>
 
 <script>
-// import Sticky from 'sticky-js'
 import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/AddTransaction'
@@ -69,6 +68,8 @@ import TransactionMove from '@/components/TransactionMove'
 import utils from '@/mixins/utilsMixin.js'
 export default {
   mixins: [utils],
+
+  props: ['direction', 'notStick'],
 
   components: {
     Modal,
@@ -93,12 +94,6 @@ export default {
       return this.$store.state.transactionBulk.selectedTransactionsIds
     }
   },
-
-  // mounted () {
-  // if (document.querySelector('.c-sticky-element')) {
-  //   this.sticky = new Sticky('.c-sticky-element')
-  // }
-  // },
 
   beforeDestroy () {
     this.$store.commit('transactionBulk/empty')
@@ -126,12 +121,7 @@ export default {
 </script>
 
 <style>
-.c-sticky-element {
+.c-sticky-header-controls {
   background-color: #fff;
-  border-bottom: 1px solid #fff;
-  z-index: 10;
-}
-.c-sticky-element--fixed {
-  border-bottom: 1px solid #eee;
 }
 </style>

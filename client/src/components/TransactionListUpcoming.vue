@@ -20,7 +20,6 @@
         @mouseover="$refs.dropdown.style.display = 'block'"
         @mouseleave="$refs.dropdown.style.display = 'none'"
         class="dropdown"
-        style="z-index:40;"
       >
         <span class="icon"><i class="fas fa-ellipsis-v"></i></span>
         <div class="dropdown-body" ref="dropdown">
