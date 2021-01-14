@@ -6,10 +6,11 @@
 </template>
 
 <script>
+import { locale } from '@/plugins/locale'
 import TransactionControls from '@/components/TransactionControls'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
-// import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
+import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
 export default {
   components: {
@@ -39,7 +40,7 @@ export default {
 
   mounted () {
     const chart = am4core.create(this.$refs.chart, am4charts.PieChart)
-    // chart.language.locale = am4langRU
+    if (locale === 'ru_RU') chart.language.locale = am4langRU
     chart.innerRadius = am4core.percent(40)
 
     const label = chart.seriesContainer.createChild(am4core.Label)
