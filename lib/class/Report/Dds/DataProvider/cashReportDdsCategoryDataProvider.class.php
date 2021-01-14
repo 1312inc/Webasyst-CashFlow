@@ -154,7 +154,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                     false,
                     $category->getColor()
                 ),
-                $rawData[$category->getId()] ?? []
+                $rawData[sprintf('%s|%s', $category->getId(), $category->getType())] ?? []
             );
         }
         // transfers
