@@ -1,18 +1,18 @@
 <template>
   <div v-if="$helper.isDesktopEnv">
     <div
-      v-sticky
+      v-sticky=!notStick
       sticky-offset="{top: 64}"
       sticky-z-index="12"
       class="c-sticky-header-controls"
     >
       <div class="custom-py-12 flexbox middle space-12">
-        <div v-if="checkedRows.length" class="flexbox space-12 middle wide">
-          <button @click="openMove = true" class="yellow red">
+        <div v-if="checkedRows.length" class="flexbox space-12 middle wide" :style="direction === 'column' && 'flex-direction: column;'">
+          <button @click="openMove = true" class="yellow red" :class="direction === 'column' && 'custom-mb-12'">
             <i class="fas fa-arrow-right"></i> {{ $t("move") }}
             {{ checkedRows.length }}
           </button>
-          <button @click="bulkDelete" class="button red">
+          <button @click="bulkDelete" class="button red" :class="direction === 'column' && 'custom-mb-12'">
             <i class="fas fa-trash-alt"></i> {{ $t("delete") }}
             {{ checkedRows.length }}
           </button>
@@ -68,6 +68,8 @@ import TransactionMove from '@/components/TransactionMove'
 import utils from '@/mixins/utilsMixin.js'
 export default {
   mixins: [utils],
+
+  props: ['direction', 'notStick'],
 
   components: {
     Modal,

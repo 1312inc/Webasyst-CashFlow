@@ -6,6 +6,7 @@
         sticky-offset="{top: 114, bottom: 10}"
         sticky-side="both"
         sticky-z-index="11"
+        on-stick="onStick"
         class="c-sticky-header-group"
       >
         <div class="flexbox flexbox-mobile middle custom-py-8">
@@ -118,6 +119,12 @@ export default {
       return items.every(e =>
         this.$store.state.transactionBulk.selectedTransactionsIds.includes(e.id)
       )
+    },
+
+    onStick (e) {
+      if (e.top && e.sticked) {
+        this.$store.commit('transaction/setActiveGroupTransactions', this.group)
+      }
     }
   }
 }

@@ -139,7 +139,7 @@ export default {
 <style>
   .c-item {
     width: 100%;
-    max-width: 400px;
+    /* max-width: 400px; */
     cursor: pointer;
   }
 </style>

@@ -56,8 +56,7 @@ export default {
   data () {
     return {
       loading: false,
-      result: {},
-      transactions: []
+      result: {}
     }
   },
 
@@ -70,6 +69,16 @@ export default {
 
   computed: {
     ...mapState('transaction', ['queryParams', 'detailsInterval']),
+
+    transactions: {
+      get () {
+        return this.$store.state.transaction.incomingTransactions
+      },
+
+      set (val) {
+        this.$store.commit('transaction/setIncomingTransactions', val)
+      }
+    },
 
     showObserver () {
       return this.transactions.length < this.result.total
@@ -105,8 +114,12 @@ export default {
       if (this.loading) return
       this.loading = true
       const defaultParams = { ...this.queryParams }
-      if (!this.upcoming) { defaultParams.to = this.$moment().format('YYYY-MM-DD') }
-      if (this.detailsInterval.from) { defaultParams.from = this.detailsInterval.from }
+      if (!this.upcoming) {
+        defaultParams.to = this.$moment().format('YYYY-MM-DD')
+      }
+      if (this.detailsInterval.from) {
+        defaultParams.from = this.detailsInterval.from
+      }
       if (
         this.detailsInterval.to &&
         this.detailsInterval.to < defaultParams.to
@@ -114,7 +127,11 @@ export default {
         defaultParams.to = this.detailsInterval.to
       }
 
-      const params = { ...defaultParams, offset: this.transactions.length, ...customQueryParams }
+      const params = {
+        ...defaultParams,
+        offset: this.transactions.length,
+        ...customQueryParams
+      }
 
       if (params.offset === 0) this.transactions = []
 
