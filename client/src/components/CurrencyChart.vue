@@ -99,7 +99,10 @@ export default {
 
       // Draw Balance Line Past
       const pastDates = this.data.filter(e => {
-        return this.$moment(e.period) <= this.$moment()
+        return this.$moment().diff(
+          this.$moment(e.period),
+          'days'
+        ) >= 0
       })
 
       const linePast = d3
