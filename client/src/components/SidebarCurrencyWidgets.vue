@@ -12,7 +12,7 @@
           style="display: block"
         >
           <div class="flexbox middle">
-            <div class="wide bold nowrap">
+            <div class="wide large bold nowrap">
               {{
                 $helper.toCurrency(
                   currency.balances.now.amount,
@@ -20,14 +20,6 @@
                 )
               }}
             </div>
-            <div
-              class="nowrap small"
-              v-html="
-                `${
-                  currency.balances.to.amountShorten
-                }&nbsp;${$helper.currencySignByCode(currency.currency)}`
-              "
-            ></div>
             <div class="custom-ml-4">
               <span
                 class="c-bwc-badge small nowrap"

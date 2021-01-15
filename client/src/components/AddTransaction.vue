@@ -64,10 +64,10 @@
       </div>
 
       <div class="field">
-        <div class="name for-input">
+        <div class="name for-input custom-pt-12">
           {{ $t("Amount") }}
         </div>
-        <div class="value largest">
+        <div class="value larger bold">
           <div class="state-with-inner-icon left">
             <input
               v-model.number="model.amount"

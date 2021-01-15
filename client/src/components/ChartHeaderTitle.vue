@@ -14,7 +14,7 @@
       </div>
       <div v-if="currentEntity.id > 0">
         <button @click="update(currentEntity)" class="button nobutton smaller">
-          <i class="fas fa-sliders-h"></i> {{ $t("changeSettings") }}
+          <i class="fas fa-edit"></i> {{ $t("edit") }}
         </button>
       </div>
     </div>

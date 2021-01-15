@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data.length" class="custom-mb-24">
+  <div v-if="data.length" class="custom-mb-24 c-breakdown-details">
     <div class="flexbox middle custom-mb-24">
       <div class="wide flexbox middle">
         <h3 class="custom-mb-0">
@@ -10,8 +10,8 @@
         </button>
       </div>
       <div>
-        <button @click="close" class="small nobutton">
-          {{ $t("close") }}
+        <button @click="close" class="small nobutton larger gray">
+          <i class="fas fa-times"></i>
         </button>
       </div>
     </div>
@@ -194,3 +194,7 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .c-breakdown-details { border: 1.5px solid var(--alert-border-color); box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05), 0 0.5rem 0.5rem -0.5rem rgba(0, 0, 0, 0.13); border-radius: 0.25rem; padding: 1.5rem; }
+</style>
