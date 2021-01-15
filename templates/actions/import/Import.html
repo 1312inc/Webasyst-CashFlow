@@ -2,6 +2,27 @@
 
     <h1>[`Import`]</h1>
 
+    {if count($imports)}
+    <div>
+        <h5 class="heading top-padded">
+            <a href="#" class="count" data-cash-action="imports-delete"><i class="icon16 broom-bw" title="[`Clear import history`]"></i> [`Clear import history`]</a>
+            [`Import history`]
+        </h5>
+        <ul class="menu-v with-icons">
+            {** @var cashImportDto $import **}
+            {foreach $imports as $import}
+                <li>
+                    <a href="{$wa_app_url}import/{$import->id}">
+                        <span class="count">{$import->success}</span>
+                        <i class="icon16 userpic" style="background-image: url('{$import->contact->getPhoto(20)}');"></i><span style="word-break: break-all;">{$import->filename|escape}</span>
+                        <br><span class="hint">{$import->create_datetime|wa_datetime:humandatetime}</span>
+                    </a>
+                </li>
+            {/foreach}
+        </ul>
+    </div>
+    {/if}
+
     <ol class="c-import-progress">
         <li class="current">[`Select a file.`]</li>
         <li>[`Preview & configure.`]</li>
@@ -84,17 +105,39 @@
             });
         });
 
-        $w.on('stepChange.cash', function (e, stepN) {
-            stepN--;
-            $importProgress.find('li').removeClass().each(function (index) {
-                if (index < stepN) {
-                    $(this).addClass('completed');
+        $w
+            .on('stepChange.cash', function (e, stepN) {
+                stepN--;
+                $importProgress.find('li').removeClass().each(function (index) {
+                    if (index < stepN) {
+                        $(this).addClass('completed');
+                    }
+
+                    if (index == stepN) {
+                        $(this).addClass('current');
+                    }
+                });
+            })
+            .on('click.cash', '[data-cash-action="imports-delete"]', function (e) {
+                e.preventDefault();
+
+                if (!confirm($_('Clear import history (don’t worry, imported transactions will not be affected)?'))) {
+                    return;
                 }
 
-                if (index == stepN) {
-                    $(this).addClass('current');
-                }
-            });
-        });
+                $.post(
+                    '?module=import&action=deleteAll',
+                    function (r) {
+                        if (r.status === 'ok') {
+                            window.location.reload();
+                        } else {
+                            self.log(r.errors.join("\n"));
+                            alert(r.errors.join("\n"));
+                        }
+                    },
+                    'json'
+                );
+            })
+        ;
     }())
 </script>

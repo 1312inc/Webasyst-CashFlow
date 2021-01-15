@@ -7,17 +7,18 @@ import Helpers from './plugins/helpers'
 import { i18n } from './plugins/locale'
 import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
-import Noty from './plugins/noty'
-import './assets/styles/tailwindcss.css'
-import './assets/styles/transitions.css'
+import Notify from './plugins/notify'
+import Sticky from 'vue-sticky-directive'
+import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
 
 Vue.use(permissions)
 Vue.use(Numeral)
-Vue.use(Noty)
+Vue.use(Notify)
 Vue.use(Vuelidate)
 Vue.use(Helpers)
+Vue.use(Sticky)
 
 new Vue({
   router,

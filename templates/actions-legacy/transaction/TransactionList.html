@@ -148,7 +148,7 @@
             <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
             <td class="align-right"><em class="hint nowrap">{if $_days_diff == 1}[`Tomorrow`]{else}{sprintf('[`In %d days`]', $_days_diff)}{/if}</em>&nbsp;<strong class="nowrap"{if $t->category} style="color: {$t->category->color};"{/if} title="[`Amount`]">{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
             <td class="min-width">{if $t->external_entity}{$t->external_entity->getIcon()}{/if}</td>
-            <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
+            <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $canSeeBalance && $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id && $contextUser->canSeeBalance($filter->entity)}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
             <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
         </tr>
     {/foreach}
@@ -224,7 +224,7 @@
         <td class="c-description"><div><span data-cash-transaction-field="description">{$t->description|escape}</span><i class="shortener"></i></div></td>
         <td class="align-right"><strong class="nowrap" title="[`Amount`]"{if $t->category} style="color: {$t->category->color};"{/if}>{if $t->amount>0}+{elseif $t->amount<0}&minus;{/if} {round(abs($t->amount),2)|wa_format_number:false} {$t->currency->getSign()}</strong></td>
         <td class="min-width">{if $t->external_entity}{$t->external_entity->getIcon()}{/if}</td>
-        <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
+        <td class="c-balance"><span class="nowrap" title="[`Account balance`]">{if $canSeeBalance && $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $filter->id && $contextUser->canSeeBalance($filter->entity)}{round($t->balance,2)|wa_format_number:false} {$t->currency->getSign()}{/if}</span></td>
         <td><div><span title="[`Account`]">{$t->account->name|escape}</span><i class="shortener"></i></div></td>
     </tr>
 {/foreach}

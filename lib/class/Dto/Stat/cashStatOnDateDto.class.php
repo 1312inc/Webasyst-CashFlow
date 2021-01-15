@@ -18,7 +18,7 @@ class cashStatOnDateDto
     /**
      * @var float
      */
-    public $balance = 0;
+    public $summary = 0;
 
     /**
      * @var string
@@ -33,22 +33,22 @@ class cashStatOnDateDto
     /**
      * @var string
      */
-    public $balanceShorten = '0';
+    public $summaryShorten = '0';
 
     /**
      * cashAccountStatDto constructor.
      *
      * @param float $income
      * @param float $expense
-     * @param float $balance
+     * @param float $summary
      */
-    public function __construct($income, $expense, $balance)
+    public function __construct($income, $expense, $summary)
     {
         $this->income = (float) $income;
         $this->expense = (float) abs($expense);
-        $this->balance = (float) $balance;
+        $this->summary = (float) $summary;
         $this->incomeShorten = cashShorteningService::money($this->income);
         $this->expenseShorten = cashShorteningService::money($this->expense);
-        $this->balanceShorten = cashShorteningService::money($this->balance);
+        $this->summaryShorten = cashShorteningService::money($this->summary);
     }
 }

@@ -30,7 +30,7 @@ class cashReportDdsContractorDataProvider implements cashReportDdsDataProviderIn
     {
         $sql = <<<SQL
 select ct.contractor_contact_id id,
-       cc.type type,
+       if (ct.amount < 0, '%s', '%s') type,
        ca.currency currency,
        MONTH(ct.date) month,
        sum(ct.amount) per_month
@@ -68,6 +68,8 @@ SQL;
                     $rawData[cashCategory::TYPE_INCOME][cashReportDds::ALL_INCOME_KEY][$groupingDto->key][$datum['currency']] = $initVals;
                     $rawData[cashCategory::TYPE_EXPENSE][cashReportDds::ALL_EXPENSE_KEY][$groupingDto->key][$datum['currency']] = $initVals;
                 }
+                $rawData[cashCategory::TYPE_INCOME][cashReportDds::ALL_INCOME_KEY]['total'][$datum['currency']]['per_month'] = .0;
+                $rawData[cashCategory::TYPE_EXPENSE][cashReportDds::ALL_EXPENSE_KEY]['total'][$datum['currency']]['per_month'] = .0;
             }
 
             if (!isset($rawData[$datum['type']][$datum['id']][$datum['month']][$datum['currency']])) {
@@ -80,15 +82,20 @@ SQL;
                         'per_month' => .0,
                     ];
                 }
+                $rawData[$datum['type']][$datum['id']]['total'][$datum['currency']]['per_month'] = .0;
             }
 
-            $rawData[$datum['type']][$datum['id']][$datum['month']][$datum['currency']]['per_month'] = (float)$datum['per_month'];
+            $rawData[$datum['type']][$datum['id']][$datum['month']][$datum['currency']]['per_month'] = (float) $datum['per_month'];
+            $rawData[$datum['type']][$datum['id']]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+
             if ($datum['type'] === cashCategory::TYPE_INCOME) {
                 $incomeExists = $incomeExists || abs($datum['per_month']) > 0;
-                $rawData[$datum['type']][cashReportDds::ALL_INCOME_KEY][$datum['month']][$datum['currency']]['per_month'] += (float)$datum['per_month'];
+                $rawData[$datum['type']][cashReportDds::ALL_INCOME_KEY][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+                $rawData[$datum['type']][cashReportDds::ALL_INCOME_KEY]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
             } else {
                 $expenseExists = $expenseExists || abs($datum['per_month']) > 0;
-                $rawData[$datum['type']][cashReportDds::ALL_EXPENSE_KEY][$datum['month']][$datum['currency']]['per_month'] += (float)$datum['per_month'];
+                $rawData[$datum['type']][cashReportDds::ALL_EXPENSE_KEY][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+                $rawData[$datum['type']][cashReportDds::ALL_EXPENSE_KEY]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
             }
         }
 

@@ -66,11 +66,11 @@ class cashFixtures
             cashCategory::TYPE_EXPENSE => array_reverse(
                 [
                     'Office rent' => [_wd(cashConfig::APP_ID, 'Office rent'), '#880E4F'],
+                    'Salaries' => [_wd(cashConfig::APP_ID, 'Salaries'), '#E91E63'],
                     'Purchasing & supply' => [_wd(cashConfig::APP_ID, 'Purchasing & supply'), '#E91E63'],
                     'Shipping' => [_wd(cashConfig::APP_ID, 'Shipping'), '#EC407A'],
                     'Marketing' => [_wd(cashConfig::APP_ID, 'Marketing'), '#F48FB1'],
                     'Hosting' => [_wd(cashConfig::APP_ID, 'Hosting'), '#F8BBD0'],
-                    'Salaries' => [_wd(cashConfig::APP_ID, 'Salaries'), '#E91E63'],
                     'Taxes' => [_wd(cashConfig::APP_ID, 'Taxes'), '#FF8A65'],
                     'Commissions & fees' => [_wd(cashConfig::APP_ID, 'Commissions & fees'), '#FB8C20'],
                     'Dividend payouts' => [_wd(cashConfig::APP_ID, 'Dividend payouts'), '#FF7043'],

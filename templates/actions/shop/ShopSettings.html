@@ -432,38 +432,37 @@
                 .on('click.cash', '[data-cash-shop-action="rerun-import"]', function (e) {
                     e.preventDefault();
 
+                    $.get('?module=shop&action=resetImportDialog', function(dialogHtml) {
+                        $.waDialog({
+                            html: dialogHtml,
+                            onOpen: function ($dialogWrapper, d) {
+                                var $errorMsg = $dialogWrapper.find('.errormsg');
 
-                    $('<div id="shop-reset-import-dialog">').waDialog({
-                        'height': '400px',
-                        'width': '600px',
-                        'url': '?module=shop&action=resetImportDialog',
-                        onLoad: function () {
-                            var d = this,
-                                $dialogWrapper = $(d);
+                                setTimeout(function () {
+                                    $dialogWrapper.find('[name="code"]').trigger('focus');
+                                }, 13.12);
 
-                            setTimeout(function () {
-                                $dialogWrapper.find('[name="code"]').trigger('focus');
-                            }, 13.12);
-                        },
-                        onSubmit: function (d) {
-                            var $errorMsg = d.find('.errormsg');
+                                $errorMsg.hide();
+                                $dialogWrapper.find('.js-ok').after($.cash.$loading).on('click.cash', function (e) {
+                                    e.preventDefault();
+                                    $.post('?module=shop&action=resetImport', $dialogWrapper.find('form').serialize(), function (r) {
+                                        $.cash.$loading.remove();
+                                        if (r.status === 'ok') {
+                                            d.close();
 
-                            $errorMsg.hide();
-                            d.find('.dialog-buttons input[type="button"]').after($.cash.$loading);
-                            $.post('?module=shop&action=resetImport', d.find('form').serialize(), function (r) {
-                                $.cash.$loading.remove();
-                                if (r.status === 'ok') {
-                                    d.trigger('close');
+                                            window.location.reload();
+                                        } else {
+                                            $errorMsg.text(r.errors.join('<br>')).show();
+                                        }
+                                    }, 'json');
+                                });
 
-                                    window.location.reload();
-                                } else {
-                                    $errorMsg.text(r.errors.join('<br>')).show();
-                                }
-                            }, 'json');
-
-                            return false;
-                        }
-                    });
+                                $dialogWrapper.find('.js-close').on('click.cash', function (e) {
+                                    d.close();
+                                });
+                            }
+                        });
+                    })
                 })
                 .on('click.cash', '[name="shopscript_settings[enabled]"]:checkbox', function (e) {
                     var $setW = $ssform.find('[data-cash-shop-settings-wrapper]');

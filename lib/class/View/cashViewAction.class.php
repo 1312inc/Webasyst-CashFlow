@@ -18,14 +18,16 @@ abstract class cashViewAction extends kmwaWaViewAction
 
     /**
      * @return array
+     * @throws waException
      */
-    protected function getDefaultViewVars()
+    protected function getDefaultViewVars(): array
     {
         return [
             'cash' => cash(),
-            'isAdmin' => (int)cash()->getUser()->canImport(),
+            'isAdmin' => (int) cash()->getUser()->canImport(),
             'contextUser' => cash()->getUser(),
             'serverTimezone' => date_default_timezone_get(),
+            'waAppStaticUrl' => wa()->getAppStaticUrl(cashConfig::APP_ID),
         ];
     }
 }

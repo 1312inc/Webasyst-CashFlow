@@ -89,9 +89,7 @@ class cashContactRights
                             $this->isRoot = true;
 
                         case cashRightConfig::ADMIN_ACCESS:
-                            $this->isAdmin = true;
-                            $this->canImport = true;
-                            $this->canSeeReport = true;
+                            $this->setupAdminRights();
                     }
 
                     break;
@@ -249,5 +247,13 @@ class cashContactRights
     public function canAccessTransfers(): bool
     {
         return $this->canAccessTransfers;
+    }
+
+    private function setupAdminRights(): void
+    {
+        $this->isAdmin = true;
+        $this->canImport = true;
+        $this->canSeeReport = true;
+        $this->canAccessTransfers = true;
     }
 }

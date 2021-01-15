@@ -337,6 +337,109 @@ class cashGraphService
     }
 
     /**
+     * @param cashGraphColumnsDataDto $graphData
+     *
+     * @throws waException
+     * @throws kmwaLogicException
+     */
+    public function fillBalanceDataForCategories(cashGraphColumnsDataDto $graphData): void
+    {
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
+
+        switch ($graphData->grouping) {
+            case self::GROUP_BY_DAY:
+                $data = $model->getBalanceByDateBoundsAndAccountGroupByDay(
+                    $graphData->startDate->format('Y-m-d 00:00:00'),
+                    $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->contact,
+                    [$graphData->filterDto->id]
+                );
+                break;
+
+            case self::GROUP_BY_MONTH:
+                $data = $model->getBalanceByDateBoundsAndAccountGroupByMonth(
+                    $graphData->startDate->format('Y-m-d 00:00:00'),
+                    $graphData->endDate->format('Y-m-d 23:59:59'),
+                    $graphData->filterDto->contact,
+                    [$graphData->filterDto->id]
+                );
+                break;
+
+            default:
+                throw new kmwaLogicException('No graph grouping');
+        }
+
+        /** @var cashAccountModel $accountModel */
+        $accountModel = cash()->getModel(cashAccount::class);
+        $initialBalance = $accountModel->getStatDataForCategories(
+            '1970-01-01 00:00:00',
+            $graphData->startDate->format('Y-m-d 23:59:59'),
+            [$graphData->filterDto->id]
+        );
+
+        foreach ($graphData->dates as $date) {
+            if (!isset($data[$date])) {
+                continue;
+            }
+
+            foreach ($data[$date] as $datum) {
+                $categoryId = $datum['category_id'];
+                $graphData->lines[$categoryId][$date] += ((float) $datum['summary'] + (float) $initialBalance[$datum['category_id']]['summary']);
+            }
+        }
+    }
+
+    /**
+     * @param cashGraphColumnsDataDto $graphData
+     *
+     * @throws waException
+     * @throws kmwaLogicException
+     */
+    public function fillBalanceDataForImport(cashGraphColumnsDataDto $graphData)
+    {
+        /** @var cashTransactionModel $model */
+        $model = cash()->getModel(cashTransaction::class);
+
+        $data = $model->getBalanceByDateBoundsAndImportGroupByDay(
+            $graphData->startDate->format('Y-m-d 00:00:00'),
+            $graphData->endDate->format('Y-m-d 23:59:59'),
+            $graphData->filterDto->id
+        );
+
+        foreach ($graphData->dates as $date) {
+            if (!isset($data[$date])) {
+                continue;
+            }
+
+            foreach ($data[$date] as $datum) {
+                $categoryId = $datum['category_id'];
+                $graphData->lines[$categoryId][$date] += ((float) $datum['summary'] + 0);
+            }
+        }
+    }
+
+//    private function generateDtos(array $data)
+//    {
+//        foreach ($data as $datum) {
+//            if (!isset($graph[$datum['date']])) {
+//                $graph[$datum['date']] = new cashGraphColumnDto($datum['date']);
+//            }
+//            if (!isset($graph[$datum['date']][$datum['currency']])) {
+//                $graph[$datum['date']][$datum['currency']] = [];
+//                new cashGraphCurrencyColumnDto($datum['currency']);
+//
+//            }
+//            $graph[$datum['date']][$datum['currency']][] = [
+//                'category' => $datum['category_id'],
+//                'summary' => $datum['summary'],
+//            ];
+//
+//            $accountColumn = new cashStatOnDateDto($datum['account_id'], $datum['income'], $datum['expense'], $datum['summary']);
+//        }
+//    }
+
+    /**
      * @param DateTimeInterface      $startDate
      * @param DateTimeInterface|null $endDate
      *
