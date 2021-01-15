@@ -48,30 +48,8 @@
         </div>
       </div>
 
-      <div class="field">
-        <div class="name for-input">
-          {{ $t("ammount") }}
-        </div>
-        <div class="value">
-          <div class="state-with-inner-icon left">
-            <input
-              v-model.number="model.amount"
-              :class="{ 'state-error': $v.model.amount.$error }"
-              type="text"
-            />
-            <span class="icon">
-              <i v-if="transactionType === 'expense'" class="fas fa-minus"></i>
-              <i v-if="transactionType === 'income'" class="fas fa-plus"></i>
-            </span>
-          </div>
-          <span v-if="selectedAccount" class="custom-ml-8">{{
-            $helper.currencySignByCode(selectedAccount.currency)
-          }}</span>
-        </div>
-      </div>
-
       <div v-if="!isModeUpdate" class="field">
-        <div class="name for-input">
+        <div class="name">
           {{ $t("repeat") }}
         </div>
         <div class="value">
@@ -87,6 +65,30 @@
 
       <div class="field">
         <div class="name for-input">
+          {{ $t("Amount") }}
+        </div>
+        <div class="value largest">
+          <div class="state-with-inner-icon left">
+            <input
+              v-model.number="model.amount"
+              :class="{ 'state-error': $v.model.amount.$error }"
+              type="text"
+              class="bold number short"
+              placeholder="0"
+            />
+            <span class="icon">
+              <i v-if="transactionType === 'expense'" class="fas fa-minus"></i>
+              <i v-if="transactionType === 'income'" class="fas fa-plus"></i>
+            </span>
+          </div>
+          <span v-if="selectedAccount" class="custom-ml-8">{{
+            $helper.currencySignByCode(selectedAccount.currency)
+          }}</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="name for-input">
           {{ model.is_repeating ? $t("repeatFrom") : $t("date") }}
         </div>
         <div class="value">
@@ -94,6 +96,7 @@
             <DateField
               v-model="model.date"
               :class="{ 'state-error': $v.model.date.$error }"
+              class="short"
             />
             <span class="icon"><i class="fas fa-calendar"></i></span>
           </div>
@@ -105,7 +108,7 @@
           {{ $t("howOften.name") }}
         </div>
         <div class="value">
-          <div class="wa-select">
+          <div class="wa-select solid">
             <select v-model="model.repeating_interval">
               <option value="month">{{ $t("howOften.list[0]") }}</option>
               <option value="day">{{ $t("howOften.list[1]") }}</option>
@@ -123,7 +126,7 @@
               type="text"
               class="shorter custom-ml-8"
             />
-            <div class="wa-select custom-ml-8">
+            <div class="wa-select solid custom-ml-8">
               <select v-model="custom_interval">
                 <option value="month">
                   {{ $t("howOften.list_short[0]") }}
@@ -142,7 +145,7 @@
           {{ $t("endRepeat.name") }}
         </div>
         <div class="value">
-          <div class="wa-select">
+          <div class="wa-select solid">
             <select v-model="model.repeating_end_type">
               <option value="never">{{ $t("endRepeat.list[0]") }}</option>
               <option value="after">{{ $t("endRepeat.list[1]") }}</option>
@@ -174,7 +177,7 @@
           {{ defaultCategoryType === 'transfer' ? $t("fromAccount") : $t("account") }}
         </div>
         <div class="value">
-          <div class="wa-select">
+          <div class="wa-select solid">
             <div v-if="selectedAccount && $helper.isValidHttpUrl(selectedAccount.icon)" class="icon custom-ml-8">
               <img
                 :src="selectedAccount.icon"
@@ -204,7 +207,7 @@
           {{ $t("toAccount") }}
         </div>
         <div class="value">
-          <div class="wa-select">
+          <div class="wa-select solid">
             <select
               v-model="model.transfer_account_id"
             >
@@ -249,7 +252,7 @@
           {{ $t("category") }}
         </div>
         <div class="value">
-          <div class="wa-select">
+          <div class="wa-select solid">
             <span v-if="selectedCategory" class="icon custom-ml-8"
               ><i
                 class="rounded"
@@ -291,7 +294,7 @@
         <div class="value">
           <textarea
             v-model="model.description"
-            class="wide"
+            class="wide bold"
             rows="4"
             style="resize: none; height: auto"
             :placeholder="$t('optional')"
@@ -309,8 +312,8 @@
           {{ $t("cancel") }}
         </button>
       </div>
-      <button v-if="isModeUpdate" @click="remove" class="button red">
-        {{ $t("delete") }}
+      <button v-if="isModeUpdate" @click="remove" class="button red outlined">
+        <span>{{ $t("delete") }}</span>
       </button>
     </div>
   </div>

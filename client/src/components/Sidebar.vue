@@ -17,6 +17,12 @@
 
         <!-- Accounts list block -->
         <div v-if="accounts.length" class="custom-mt-24">
+          <h6 class="heading">
+            <span>{{ $t("accounts") }}</span>
+            <a @click="update('Account')" class="count">
+              <i class="fas fa-plus-circle"></i>
+            </a>
+          </h6>
           <draggable
             group="accounts"
             tag="ul"
@@ -57,16 +63,16 @@
             </li>
           </draggable>
 
-          <div class="tw-mx-4">
-            <button @click="update('Account')" class="button rounded smaller">
-              <i class="fas fa-plus"></i> {{ $t("addAccount") }}
-            </button>
-          </div>
         </div>
 
         <!-- Categories list block -->
         <div v-if="categories.length" class="custom-mt-24">
-          <h6 class="heading black">{{ $t("income") }}</h6>
+          <h6 class="heading">
+            <span>{{ $t("income") }}</span>
+            <a @click="update('Category')" class="count">
+              <i class="fas fa-plus-circle"></i>
+            </a>
+          </h6>
 
           <draggable
             group="categoriesIncome"
@@ -94,13 +100,12 @@
             </li>
           </draggable>
 
-          <div class="tw-mx-4">
-            <button @click="update('Category')" class="button rounded smaller">
-              <i class="fas fa-plus"></i> {{ $t("addCategory") }}
-            </button>
-          </div>
-
-          <h6 class="heading black">{{ $t("expense") }}</h6>
+          <h6 class="heading">
+            <span>{{ $t("expense") }}</span>
+            <a @click="update('Category')" class="count">
+              <i class="fas fa-plus-circle"></i>
+            </a>
+          </h6>
 
           <draggable
             group="categoriesExpense"
@@ -127,12 +132,6 @@
               </router-link>
             </li>
           </draggable>
-
-          <div class="tw-mx-4">
-            <button @click="update('Category')" class="button rounded smaller">
-              <i class="fas fa-plus"></i> {{ $t("addCategory") }}
-            </button>
-          </div>
 
           <div v-if="$permissions.canAccessTransfers" class="custom-mt-24">
             <h6 class="heading black">{{ $t("other") }}</h6>

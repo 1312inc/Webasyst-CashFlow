@@ -6,7 +6,7 @@
         name="query"
         v-model.trim="queryText"
         :placeholder="$t('search.label')"
-        class="width-100"
+        class="width-100 solid"
       />
       <button class="icon"><i class="fas fa-search"></i></button>
     </form>
