@@ -69,7 +69,7 @@
               class="flexbox middle"
             >
               <div
-                class="с-icon-uploader-image tw-rounded"
+                class="с-icon-uploader-image"
                 :style="`background-image:url(${model.icon})`"
               ></div>
               <div>
@@ -176,6 +176,7 @@ export default {
   &-image {
     width: 40px;
     height: 40px;
+    border-radius: 0.25rem;
     background: {
       position: center center;
       size: cover;

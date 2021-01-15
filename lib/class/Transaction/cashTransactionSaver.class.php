@@ -29,14 +29,14 @@ class cashTransactionSaver extends cashEntitySaver
             $toPersist[] = $transaction;
         }
 
-        if ($params->transfer) {
-            $transferTransaction = $this->createTransfer($transaction, $params);
+        if ($params->repeating) {
+            $transferTransaction = $transaction-$this->createTransfer($transaction, $params);
             if ($transferTransaction) {
                 $toPersist[] = $transferTransaction;
             }
         }
 
-        return $this->persistTransactions($toPersist)[0];
+        return $this->persistTransactions($toPersist);
     }
 
     /**
@@ -121,11 +121,11 @@ class cashTransactionSaver extends cashEntitySaver
     /**
      * @param cashTransaction[] $transactions
      *
-     * @return array
+     * @return array|bool
      * @throws waException
      * @throws Exception
      */
-    public function persistTransactions(array $transactions = []): array
+    public function persistTransactions(array $transactions = [])
     {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);

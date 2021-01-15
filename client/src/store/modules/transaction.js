@@ -4,12 +4,8 @@ export default {
   namespaced: true,
 
   state: () => ({
-    transactions: {
-      limit: 100,
-      offset: 0,
-      total: null,
-      data: []
-    },
+    incomingTransactions: [],
+    activeGroupTransactions: [],
     chartData: [],
     chartDataCurrencyIndex: 0,
     loading: true,
@@ -29,13 +25,17 @@ export default {
 
   getters: {
     getTransactionById: state => id => {
-      return state.transactions.find(t => t.id === id)
+      return state.incomingTransactions.find(t => t.id === id)
     }
   },
 
   mutations: {
-    setItems (state, data) {
-      state.transactions = data
+    setIncomingTransactions (state, data) {
+      state.incomingTransactions = data
+    },
+
+    setActiveGroupTransactions (state, data) {
+      state.activeGroupTransactions = data
     },
 
     setChartData (state, data) {
@@ -72,19 +72,17 @@ export default {
     async getChartData ({ commit, state }) {
       const { from, to, filter } = state.queryParams
       commit('setLoadingChart', true)
-      try {
-        const { data } = await api.get('cash.aggregate.getChartData', {
-          params: {
-            from,
-            to,
-            filter,
-            group_by: 'day'
-          }
-        })
-        commit('setChartData', data)
-        commit('setChartDataCurrencyIndex', 0)
-        commit('setLoadingChart', false)
-      } catch (e) {}
+      const { data } = await api.get('cash.aggregate.getChartData', {
+        params: {
+          from,
+          to,
+          filter,
+          group_by: 'day'
+        }
+      })
+      commit('setChartData', data)
+      commit('setChartDataCurrencyIndex', 0)
+      commit('setLoadingChart', false)
     },
 
     async update ({ dispatch }, params) {

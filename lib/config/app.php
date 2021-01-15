@@ -7,4 +7,5 @@ return array (
   'rights'  => true,
   'sash_color'     => '#3be56c',
     'plugins' => true,
+    'ui' => '1.3, 2.0',
 );

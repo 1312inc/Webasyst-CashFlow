@@ -31,7 +31,11 @@ class cashTransactionGraphDataController extends cashTransactionPageAction
             switch ($this->filterDto->type) {
                 case cashTransactionPageFilterDto::FILTER_ACCOUNT:
                     $graphService->fillColumnCategoriesDataForAccounts($graphData);
-                    $graphService->fillBalanceDataForAccounts($graphData);
+                    if ($this->filterDto->id
+                        || (!$this->filterDto->id && cash()->getContactRights()->isAdmin($this->filterDto->contact))
+                    ) {
+                        $graphService->fillBalanceDataForAccounts($graphData);
+                    }
                     break;
 
                 case cashTransactionPageFilterDto::FILTER_CATEGORY:

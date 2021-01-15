@@ -5,17 +5,17 @@
  */
 class cashTransactionExternalEntityShopOrder implements cashTransactionExternalEntityInterface
 {
-    const APP_ID = 'shop';
+    private const APP_ID = 'shop';
 
     /**
      * @var string
      */
-    private $html;
+    private $html = '';
 
     /**
      * @var string
      */
-    private $icon;
+    private $icon = '';
 
     /**
      * cashTransactionExternalEntityShopOrder constructor.

@@ -1,70 +1,140 @@
 <template>
-  <!-- <transition name="fade" appear> -->
-    <div v-if="data.length" class="custom-mb-24">
-        <div class="flexbox middle custom-mb-24">
-          <div class="wide">
-            <h3>
-              {{ dates }}
-            </h3>
-          </div>
-          <div>
-            <button @click="close" class="small nobutton">
-              Закрыть
-            </button>
-          </div>
-        </div>
-
-        <div v-for="currency in data" :key="currency.currency" class="flexbox">
-          <div v-if="currency.income.data.length" class="tw-w-2/5">
-            <div class="">
-              <div class="smaller tw-uppercase">{{ $t('income') }}</div>
-              <div class="larger tw-text-green-500">
-                {{ $numeral(currency.income.totalAmount).format() }} {{ getCurrencySignByCode(currency.currency) }}
-              </div>
-            </div>
-            <ChartPie :data="currency.income.data" />
-          </div>
-
-          <div v-if="currency.expense.data.length" class="tw-w-2/5">
-            <div class="">
-              <div class="smaller tw-uppercase">{{ $t('expense') }}</div>
-              <div class="larger tw-text-red-500">
-                {{ $numeral(currency.expense.totalAmount).format() }} {{ getCurrencySignByCode(currency.currency) }}
-              </div>
-            </div>
-            <ChartPie :data="currency.expense.data" />
-          </div>
-
-          <div v-if="currency.income.data.length && currency.expense.data.length">
-            <div class="smaller tw-uppercase">{{ $t('balance') }}</div>
-            <div class="larger">
-              {{ $numeral(currency.income.totalAmount - currency.expense.totalAmount).format() }} {{ getCurrencySignByCode(currency.currency) }}
-            </div>
-          </div>
-        </div>
+  <div v-if="data.length" class="custom-mb-24">
+    <div class="flexbox middle custom-mb-24">
+      <div class="wide flexbox middle">
+        <h3 class="custom-mb-0">
+          {{ dates }}
+        </h3>
+        <button @click="openModal = true" class="small nobutton">
+          {{ $t("setDates") }}
+        </button>
+      </div>
+      <div>
+        <button @click="close" class="small nobutton">
+          {{ $t("close") }}
+        </button>
+      </div>
     </div>
-  <!-- </transition> -->
+
+    <div v-for="currency in data" :key="currency.currency" class="flexbox">
+      <div v-if="currency.income.data.length" class="width-40">
+        <div class="">
+          <div class="smaller uppercase">{{ $t("income") }}</div>
+          <div class="larger text-green">
+            {{
+              $helper.toCurrency(currency.income.totalAmount, currency.currency)
+            }}
+          </div>
+        </div>
+        <ChartPie :data="currency.income.data" />
+      </div>
+
+      <div v-if="currency.expense.data.length" class="width-40">
+        <div class="">
+          <div class="smaller uppercase">{{ $t("expense") }}</div>
+          <div class="larger text-red">
+            {{
+              $helper.toCurrency(
+                currency.expense.totalAmount,
+                currency.currency
+              )
+            }}
+          </div>
+        </div>
+        <ChartPie :data="currency.expense.data" />
+      </div>
+
+      <div v-if="currency.income.data.length && currency.expense.data.length">
+        <div class="smaller uppercase">{{ $t("balance") }}</div>
+        <div class="larger">
+          {{
+            $helper.toCurrency(
+              currency.income.totalAmount - currency.expense.totalAmount,
+              currency.currency
+            )
+          }}
+        </div>
+      </div>
+    </div>
+
+    <Modal v-if="openModal">
+      <h2 class="custom-mb-32">
+        {{ $t("setDates") }}
+      </h2>
+      <div class="fields custom-mb-32">
+        <div class="field">
+          <div class="name for-input">
+            {{ $t("from") }}
+          </div>
+          <div class="value">
+            <div class="state-with-inner-icon left">
+              <DateField
+                v-model="from"
+                :minDate="queryParams.from"
+                :maxDate="queryParams.to"
+              />
+              <span class="icon"><i class="fas fa-calendar"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="name for-input">
+            {{ $t("to") }}
+          </div>
+          <div class="value">
+            <div class="state-with-inner-icon left">
+              <DateField
+                v-model="to"
+                :minDate="queryParams.from"
+                :maxDate="queryParams.to"
+              />
+              <span class="icon"><i class="fas fa-calendar"></i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flexbox">
+        <div class="flexbox space-12 wide">
+          <button @click="submitModal" class="button purple">
+            {{ $t("setDates") }}
+          </button>
+          <button @click="openModal = false" class="button light-gray">
+            {{ $t("cancel") }}
+          </button>
+        </div>
+      </div>
+    </Modal>
+  </div>
 </template>
 
 <script>
 import api from '@/plugins/api'
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
+import Modal from '@/components/Modal'
 import ChartPie from '@/components/AmChartPie'
+import DateField from '@/components/DateField'
+import utils from '@/mixins/utilsMixin.js'
 
 export default {
+  mixins: [utils],
+
   components: {
-    ChartPie
+    Modal,
+    ChartPie,
+    DateField
   },
 
   data () {
     return {
-      data: []
+      data: [],
+      openModal: false,
+      from: '',
+      to: ''
     }
   },
 
   computed: {
     ...mapState('transaction', ['queryParams', 'detailsInterval']),
-    ...mapGetters('system', ['getCurrencySignByCode']),
 
     dates () {
       return this.detailsInterval.from !== this.detailsInterval.to
@@ -76,24 +146,25 @@ export default {
   },
 
   created () {
-    this.unsubscribe = this.$store.subscribe(async (mutation) => {
+    this.unsubscribe = this.$store.subscribe(async mutation => {
       if (mutation.type === 'transaction/setDetailsInterval') {
-        this.$store.commit('transaction/updateQueryParams', { offset: 0 })
-        if (this.detailsInterval.from) {
-          const { data } = await api.get('cash.aggregate.getBreakDown', {
-            params: {
-              from: this.detailsInterval.from,
-              to: this.detailsInterval.to,
-              filter: this.queryParams.filter
-            }
-          })
-          this.data = data
-          this.subscribeToQueryParams()
+        this.from = mutation.payload.from
+        this.to = mutation.payload.to
+        if (mutation.payload.from) {
+          try {
+            const { data } = await api.get('cash.aggregate.getBreakDown', {
+              params: {
+                from: mutation.payload.from,
+                to: mutation.payload.to,
+                filter: this.queryParams.filter
+              }
+            })
+            this.data = data
+          } catch (e) {
+            this.handleApiError(e)
+          }
         } else {
           this.data = []
-          if (this.unsubscribeQuery) {
-            this.unsubscribeQuery()
-          }
         }
       }
     })
@@ -101,29 +172,24 @@ export default {
 
   beforeDestroy () {
     this.unsubscribe()
-    if (this.unsubscribeQuery) {
-      this.unsubscribeQuery()
-    }
   },
 
   methods: {
-    subscribeToQueryParams () {
-      this.unsubscribeQuery = this.$store.subscribe((mutation) => {
-        if (mutation.type === 'transaction/updateQueryParams') {
-          const keys = Object.keys(mutation.payload)
-          const key = keys[0]
-          const changeOffset = keys.length === 1 && key === 'offset'
-
-          if (!changeOffset) {
-            this.$store.commit('transaction/setDetailsInterval', { from: '', to: '' })
-          }
-        }
+    close () {
+      this.$store.commit('transaction/setDetailsInterval', {
+        from: '',
+        to: '',
+        initiator: 'DetailsDashboard'
       })
     },
 
-    close () {
-      this.$store.commit('transaction/setDetailsInterval', { from: '', to: '' })
-      this.$store.commit('transaction/updateQueryParams', { offset: 0 })
+    submitModal () {
+      this.$store.commit('transaction/setDetailsInterval', {
+        from: this.from,
+        to: this.to,
+        initiator: 'DetailsDashboard'
+      })
+      this.openModal = false
     }
   }
 }

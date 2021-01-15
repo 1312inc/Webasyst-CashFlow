@@ -313,8 +313,8 @@ class cashTransaction extends cashAbstractEntity
 
             if (!$this->category instanceof cashCategory) {
                 $this->category = $this->amount < 0
-                    ? cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryExpense()
-                    : cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryIncome();
+                    ? cash()->getEntityRepository(cashCategory::class)->findNoCategoryExpense()
+                    : cash()->getEntityRepository(cashCategory::class)->findNoCategoryIncome();
             }
         }
 

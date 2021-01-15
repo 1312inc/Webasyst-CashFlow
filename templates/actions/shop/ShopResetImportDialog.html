@@ -1,12 +1,11 @@
-<section>
-    <div class="dialog-content">
-        <div data-cash-wrapper="transaction-add-dialog">
-            <h1>
-                [`Delete Shop-Script related data?`]
-            </h1>
-
+<div class="dialog" id="c-reset-import">
+    <div class="dialog-background"></div>
+    <div class="dialog-body">
+        <header class="dialog-header">[`Delete Shop-Script related data?`]</header>
+        <div class="dialog-content">
             <p>[`This will flush all Shop-Script import settings so you can restart the import from scratch. All transactions imported from Shop-Script will be deleted. Restart the integration?`]</p>
 
+            <form>
             <div class="fields form">
                 <div class="field-group">
                     <div class="field">
@@ -21,11 +20,13 @@
                     </div>
                 </div>
             </div>
+            </form>
+            <div class="block errormsg" style="display: none; float: right;"></div>
         </div>
-    </div>
 
-    <div class="dialog-buttons">
-        <input type="submit" value="[`Restart the integration`]" class="button red"/> [`or`] <a class="cancel" href="#">[`cancel`]</a>
-        <div class="block errormsg" style="display: none; float: right;"></div>
+        <footer class="dialog-footer">
+            <button class="button blue js-ok" type="button">[`Ok`]</button>
+            <button class="button gray js-close" type="button">[`cancel`]</button>
+        </footer>
     </div>
-</section>
+</div>

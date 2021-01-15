@@ -94,7 +94,7 @@
 
             <div class="c-chart" id="cash-chart"></div>
 
-            {if $listSettings->showOnHandsEndday}
+            {if $listSettings->showOnHandsEndday && $filter->type == cashTransactionPageFilterDto::FILTER_ACCOUNT && $contextUser->canSeeBalance($filter->entity)}
                 <div class="block align-right">
 
                     {sprintf('[`<b>Cash on hand in %s</b> (%s):`]', $selectedForecastPeriod->getName(), $endDate|wa_date:humandate )}
