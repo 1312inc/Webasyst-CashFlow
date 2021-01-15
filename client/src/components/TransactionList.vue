@@ -1,6 +1,6 @@
 <template>
   <div class="flexbox">
-    <div class="width-60">
+    <div class="width-60 c-transaction-list">
       <TransactionListUpcoming class="custom-mb-24" />
       <TransactionListIncoming />
     </div>
@@ -25,3 +25,7 @@ export default {
   }
 }
 </script>
+
+<style>
+  .c-transaction-list .c-transaction-section-header { margin: 0; }
+</style>

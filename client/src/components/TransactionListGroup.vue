@@ -30,19 +30,19 @@
                 </span>
               </div>
             </div>
-            <div v-if="title">
+            <h3 v-if="title" class="c-transaction-section-header">
               <div v-if="title === 'today'" class="black">
                 {{ $t("today") }}
               </div>
               <div v-else class="black">
-                {{ $moment(title).format("MMMM, YYYY") }}
+                {{ $moment(title).format("MMMM YYYY") }}
               </div>
-            </div>
+            </h3>
+          </div>
+          <div class="flexbox middle space-12">
             <div class="hint">
               {{ $t("transactionsListCount", { count: group.length }) }}
             </div>
-          </div>
-          <div class="flexbox middle space-12">
             <div>
               <AmountForGroup :group="group" type="income" />
             </div>

@@ -22,7 +22,7 @@
         ></i>
       </div>
       <div class="wide">
-        <div v-if="transaction.description" class="custom-mb-8 black">
+        <div v-if="transaction.description" class="custom-mb-8 black semibold">
           {{ transaction.description }}
         </div>
         <div v-if="category.name" class="custom-mb-4 hint">
@@ -41,7 +41,7 @@
           >
             <i class="fas fa-redo-alt opacity-50"></i>
           </span>
-          <div :style="`color: ${category.color}`">
+          <div :style="`color: ${category.color}`" class="bold">
             {{ $helper.toCurrency(transaction.amount, account.currency) }}
           </div>
         </div>

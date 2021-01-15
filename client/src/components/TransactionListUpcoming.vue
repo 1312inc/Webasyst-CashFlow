@@ -2,9 +2,9 @@
   <div v-if="showComponent && !loading">
     <div class="flexbox middle">
       <div v-if="$helper.showMultiSelect()" style="width: 1rem"></div>
-      <div
+      <h3
         @click="toggleupcomingBlockOpened"
-        class="custom-mr-8 black"
+        class="c-transaction-section-header"
         :class="{ 'opacity-50': !upcomingBlockOpened }"
         style="cursor: pointer;"
       >
@@ -15,7 +15,7 @@
         <span v-if="filteredTransactions.length"
           >({{ filteredTransactions.length }})</span
         >
-      </div>
+      </h3>
       <div
         @mouseover="$refs.dropdown.style.display = 'block'"
         @mouseleave="$refs.dropdown.style.display = 'none'"
