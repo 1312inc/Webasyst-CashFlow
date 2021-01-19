@@ -1,12 +1,21 @@
 <template>
   <div>
-    <div class="chart smaller custom-mb-24" ref="chart"></div>
-    <TransactionControls v-if="selectedIds.length" direction="column" :notStick="true" />
+    <div class="chart smaller" ref="chart"></div>
+    <transition name="fade">
+      <!-- TODO: Exclude sticky from TransactionControls Component -->
+      <!-- TODO: Remove 'transactionBulk/empty' from destroy() to routerTransitionMixin -->
+      <TransactionControls
+        v-if="selectedTransactionsIds.length"
+        direction="column"
+        :notStick="true"
+      />
+    </transition>
   </div>
 </template>
 
 <script>
 import { locale } from '@/plugins/locale'
+import { mapState } from 'vuex'
 import TransactionControls from '@/components/TransactionControls'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
@@ -17,24 +26,15 @@ export default {
     TransactionControls
   },
 
-  data () {
-    return {
-      selectedIds: [],
-      activeGroupTransactions: []
-    }
-  },
+  computed: {
+    ...mapState('transaction', [
+      'activeGroupTransactions',
+      'defaultGroupTransactions'
+    ]),
+    ...mapState('transactionBulk', ['selectedTransactionsIds']),
 
-  watch: {
-    '$store.state.transactionBulk.selectedTransactionsIds' (val) {
-      this.selectedIds = val
-      this.renderChart()
-    },
-
-    '$store.state.transaction.activeGroupTransactions' (val) {
-      this.activeGroupTransactions = val
-      if (!this.selectedIds.length) {
-        this.renderChart()
-      }
+    featurePeriod () {
+      return this.$store.state.transaction.featurePeriod
     }
   },
 
@@ -58,15 +58,35 @@ export default {
     pieSeries.slices.template.stroke = am4core.color('#fff')
     pieSeries.slices.template.strokeOpacity = 1
     pieSeries.legendSettings.itemValueText = '{value}'
+    pieSeries.interpolationDuration = 500
 
-    // Add Legend
-    chart.legend = new am4charts.Legend()
-    chart.legend.maxHeight = 100
-    chart.legend.scrollable = true
-    chart.legend.valueLabels.template.align = 'right'
-    chart.legend.valueLabels.template.textAlign = 'end'
+    // Add Chart data
+    chart.data = this.$store.state.category.categories.map(c => {
+      return {
+        amount: 0,
+        category: c.name,
+        category_color: c.color
+      }
+    })
 
     this.chart = chart
+
+    this.renderChart()
+
+    this.$watch(
+      vm =>
+        [
+          vm.selectedTransactionsIds,
+          vm.activeGroupTransactions,
+          vm.defaultGroupTransactions
+        ].join(),
+      val => {
+        this.renderChart()
+      },
+      {
+        deep: true
+      }
+    )
   },
 
   beforeDestroy () {
@@ -77,25 +97,30 @@ export default {
 
   methods: {
     renderChart () {
-      const ids = this.selectedIds.length
-        ? this.selectedIds
-        : this.activeGroupTransactions
+      const ids = this.selectedTransactionsIds.length
+        ? this.selectedTransactionsIds
+        : this.activeGroupTransactions.length
+          ? this.activeGroupTransactions
+          : this.defaultGroupTransactions
 
       if (typeof ids[0] === 'number') {
         this.label.text = ids.length
         this.label.fontSize = 36
       } else {
-        this.label.text =
-          this.$moment().diff(
-            this.$moment(this.activeGroupTransactions[0].date),
-            'days'
-          ) === 0
-            ? this.$t('today')
-            : `${this.$moment(this.activeGroupTransactions[0].date).format(
-                'MMMM'
-              )}\n${this.$moment(this.activeGroupTransactions[0].date).format(
-                'YYYY'
-              )}`
+        const diff = this.$moment().diff(this.$moment(ids[0].date), 'days')
+
+        if (diff < 0) {
+          this.label.text =
+            this.featurePeriod === 1
+              ? this.$t('tomorrow')
+              : this.$t('nextDays', { count: this.featurePeriod })
+        } else if (diff === 0) {
+          this.label.text = this.$t('today')
+        } else {
+          this.label.text = `${this.$moment(ids[0].date).format(
+            'MMMM'
+          )}\n${this.$moment(ids[0].date).format('YYYY')}`
+        }
         this.label.fontSize = 16
       }
 
@@ -115,7 +140,11 @@ export default {
         return acc
       }, {})
 
-      this.chart.data = Object.values(res)
+      this.chart.data.forEach(e => {
+        e.amount = res[e.category] ? res[e.category].amount : 0
+      })
+
+      this.chart.invalidateRawData()
     }
   }
 }

@@ -8,7 +8,7 @@ import { i18n } from './plugins/locale'
 import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
 import Notify from './plugins/notify'
-import Sticky from 'vue-sticky-directive'
+import Sticky from './plugins/sticky'
 import './assets/styles/styles.css'
 
 Vue.config.productionTip = false

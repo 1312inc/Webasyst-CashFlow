@@ -9,8 +9,11 @@
 <script>
 import TransactionControls from '@/components/TransactionControls'
 import TransactionList from '@/components/TransactionList'
+import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
+  mixins: [routerTransitionMixin],
+
   components: {
     TransactionControls,
     TransactionList

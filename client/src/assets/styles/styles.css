@@ -10,6 +10,8 @@ body.modal {
   color: #fc3d38;
 }
 
+.c-transaction-section .c-transaction-section__header { margin: 0; }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s;

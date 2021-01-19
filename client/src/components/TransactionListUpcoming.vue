@@ -4,8 +4,8 @@
       <div v-if="$helper.showMultiSelect()" style="width: 1rem"></div>
       <h3
         @click="toggleupcomingBlockOpened"
-        class="c-transaction-section-header"
         :class="{ 'opacity-50': !upcomingBlockOpened }"
+        class="custom-m-0"
         style="cursor: pointer;"
       >
         <i class="fas fa-caret-down"></i>&nbsp;
@@ -47,7 +47,7 @@
       <div class="align-right custom-mb-4">
         <ExportButton type="upcoming" />
       </div>
-      <TransactionListGroup :group="filteredTransactions" />
+      <TransactionListGroup :group="filteredTransactions" :onStickDisabled=true />
     </div>
   </div>
 </template>
@@ -64,8 +64,6 @@ export default {
   data () {
     return {
       loading: true,
-      transactions: [],
-      featurePeriod: 7,
       upcomingBlockOpened: false
     }
   },
@@ -77,6 +75,26 @@ export default {
 
   computed: {
     ...mapState('transaction', ['queryParams', 'detailsInterval']),
+
+    transactions: {
+      get () {
+        return this.$store.state.transaction.upcomingTransactions
+      },
+
+      set (val) {
+        this.$store.commit('transaction/setUpcomingTransactions', val)
+      }
+    },
+
+    featurePeriod: {
+      get () {
+        return this.$store.state.transaction.featurePeriod
+      },
+
+      set (val) {
+        this.$store.commit('transaction/setFeaturePeriod', val)
+      }
+    },
 
     showComponent () {
       return (
@@ -95,6 +113,7 @@ export default {
         const istart = this.$moment(t.date)
         return istart.diff(today, 'days') <= this.featurePeriod
       })
+      this.$store.commit('transaction/setDefaultGroupTransactions', result)
       return result
     }
   },

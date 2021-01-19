@@ -29,7 +29,6 @@
     "vue": "^2.6.11",
     "vue-i18n": "^8.22.0",
     "vue-router": "^3.2.0",
-    "vue-sticky-directive": "0.0.10",
     "vuedraggable": "^2.24.3",
     "vuejs-paginate": "^2.1.0",
     "vuelidate": "^0.7.5",
