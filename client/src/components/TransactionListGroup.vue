@@ -1,10 +1,9 @@
 <template>
-  <div sticky-container class="custom-mb-24">
+  <div sticky-container class="custom-mb-24 c-transaction-section">
     <div @mouseover="isHover = true" @mouseleave="isHover = false">
       <div
         v-sticky
-        sticky-offset="{top: 114, bottom: 10}"
-        sticky-side="both"
+        sticky-offset="{top: 114}"
         sticky-z-index="11"
         on-stick="onStick"
         class="c-sticky-header-group"
@@ -30,9 +29,12 @@
                 </span>
               </div>
             </div>
-            <h3 v-if="title" class="c-transaction-section-header">
+            <h3 v-if="title" class="c-transaction-section__header">
               <div v-if="title === 'today'" class="black">
                 {{ $t("today") }}
+              </div>
+              <div v-else-if="title === 'items'" class="black">
+                {{ $t("nextDays", { count: 7 }) }}
               </div>
               <div v-else class="black">
                 {{ $moment(title).format("MMMM YYYY") }}
@@ -81,6 +83,11 @@ export default {
 
     title: {
       type: String
+    },
+
+    onStickDisabled: {
+      type: Boolean,
+      default: () => false
     }
   },
 
@@ -108,6 +115,12 @@ export default {
     }
   },
 
+  watch: {
+    group () {
+      this.updateStore()
+    }
+  },
+
   methods: {
     checkAll (items) {
       const ids = items.map(e => e.id)
@@ -122,9 +135,29 @@ export default {
     },
 
     onStick (e) {
-      if (e.top && e.sticked) {
-        this.$store.commit('transaction/setActiveGroupTransactions', this.group)
+      if (this.onStickDisabled) return
+
+      if (e.top) {
+        this.$store.commit('transaction/setGroupNames', this.title)
+      } else {
+        if (this.$store.state.transaction.groupNames.includes(this.title)) {
+          this.$store.commit('transaction/setGroupNames', this.title)
+        }
       }
+
+      if (this.$store.state.transaction.groupNames.length) {
+        if (e.top && e.sticked) {
+          this.updateStore()
+        }
+      } else {
+        if (this.$store.state.transaction.activeGroupTransactions.length) {
+          this.$store.commit('transaction/setActiveGroupTransactions', [])
+        }
+      }
+    },
+
+    updateStore () {
+      this.$store.commit('transaction/setActiveGroupTransactions', this.group)
     }
   }
 }

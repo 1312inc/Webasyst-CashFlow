@@ -1,8 +1,13 @@
 <template>
   <div>
-    <h1>History</h1>
+    <h1>{{ $t('history') }}</h1>
     <TransactionControls class="custom-mb-24" />
-    <TransactionListIncoming />
+    <div class="flexbox">
+      <div class="width-60">
+        <TransactionListIncoming />
+      </div>
+      <AmChartPieStickyContainer class="width-40 custom-px-24" />
+    </div>
   </div>
 </template>
 
@@ -10,11 +15,16 @@
 import moment from 'moment'
 import TransactionControls from '@/components/TransactionControls'
 import TransactionListIncoming from '@/components/TransactionListIncoming'
+import AmChartPieStickyContainer from '@/components/AmChartPieStickyContainer'
+import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
+  mixins: [routerTransitionMixin],
+
   components: {
     TransactionControls,
-    TransactionListIncoming
+    TransactionListIncoming,
+    AmChartPieStickyContainer
   },
 
   data () {

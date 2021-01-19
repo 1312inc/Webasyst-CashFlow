@@ -5,7 +5,11 @@ export default {
 
   state: () => ({
     incomingTransactions: [],
+    upcomingTransactions: [],
+    defaultGroupTransactions: [],
     activeGroupTransactions: [],
+    groupNames: [],
+    featurePeriod: 7,
     chartData: [],
     chartDataCurrencyIndex: 0,
     loading: true,
@@ -34,8 +38,29 @@ export default {
       state.incomingTransactions = data
     },
 
+    setUpcomingTransactions (state, data) {
+      state.upcomingTransactions = data
+    },
+
+    setDefaultGroupTransactions (state, data) {
+      state.defaultGroupTransactions = data
+    },
+
     setActiveGroupTransactions (state, data) {
       state.activeGroupTransactions = data
+    },
+
+    setGroupNames (state, data) {
+      const i = state.groupNames.indexOf(data)
+      if (i === -1) {
+        state.groupNames.push(data)
+      } else {
+        state.groupNames.splice(i, 1)
+      }
+    },
+
+    setFeaturePeriod (state, data) {
+      state.featurePeriod = data
     },
 
     setChartData (state, data) {
@@ -44,10 +69,6 @@ export default {
 
     setDetailsInterval (state, data) {
       state.detailsInterval = data
-    },
-
-    setLoading (state, data) {
-      state.loading = data
     },
 
     setLoadingChart (state, data) {

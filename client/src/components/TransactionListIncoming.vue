@@ -55,6 +55,7 @@ export default {
 
   data () {
     return {
+      grouppedTransactions: [],
       loading: false,
       result: {}
     }
@@ -82,30 +83,6 @@ export default {
 
     showObserver () {
       return this.transactions.length < this.result.total
-    },
-
-    grouppedTransactions () {
-      const today = this.$moment().format('YYYY-MM-DD')
-      const acc = { today: [] }
-      const result = this.transactions.reduce((acc, e) => {
-        const month = this.$moment(e.date).format('YYYY-MM')
-        if (e.date === today) {
-          this.reverse ? acc.today.unshift(e) : acc.today.push(e)
-          return acc
-        }
-        if (this.grouping) {
-          if (month in acc) {
-            this.reverse ? acc[month].unshift(e) : acc[month].push(e)
-          } else {
-            acc[month] = [e]
-          }
-        } else {
-          if (!('items' in acc)) acc.items = []
-          this.reverse ? acc.items.unshift(e) : acc.items.push(e)
-        }
-        return acc
-      }, acc)
-      return result
     }
   },
 
@@ -143,7 +120,39 @@ export default {
       this.transactions = [...this.transactions, ...this.result.data]
 
       this.loading = false
+
+      this.setGrouppedTransactions()
+    },
+
+    setGrouppedTransactions () {
+      const today = this.$moment().format('YYYY-MM-DD')
+      const acc = { today: [] }
+      const result = this.transactions.reduce((acc, e) => {
+        const month = this.$moment(e.date).format('YYYY-MM')
+        if (e.date === today) {
+          this.reverse ? acc.today.unshift(e) : acc.today.push(e)
+          return acc
+        }
+        if (this.grouping) {
+          if (month in acc) {
+            this.reverse ? acc[month].unshift(e) : acc[month].push(e)
+          } else {
+            acc[month] = [e]
+          }
+        } else {
+          if (!('items' in acc)) acc.items = []
+          this.reverse ? acc.items.unshift(e) : acc.items.push(e)
+        }
+        return acc
+      }, acc)
+
+      if (!this.$store.state.transaction.defaultGroupTransactions.length) {
+        this.$store.commit('transaction/setDefaultGroupTransactions', Object.values(result)[0])
+      }
+
+      this.grouppedTransactions = result
     }
+
   }
 }
 </script>
