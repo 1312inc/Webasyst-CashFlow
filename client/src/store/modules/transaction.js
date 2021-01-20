@@ -17,7 +17,7 @@ export default {
     queryParams: {
       from: '',
       to: '',
-      limit: 100,
+      limit: 30,
       offset: 0,
       filter: ''
     },

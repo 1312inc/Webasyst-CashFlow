@@ -90,7 +90,7 @@ export default {
     async getTransactions (customQueryParams = {}) {
       if (this.loading) return
       this.loading = true
-      const defaultParams = { ...this.queryParams }
+      const defaultParams = { ...this.queryParams, from: '' }
       if (!this.upcoming) {
         defaultParams.to = this.$moment().format('YYYY-MM-DD')
       }

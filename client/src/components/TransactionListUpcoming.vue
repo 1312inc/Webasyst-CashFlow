@@ -63,7 +63,7 @@ export default {
 
   data () {
     return {
-      loading: true,
+      loading: false,
       upcomingBlockOpened: false
     }
   },
@@ -131,7 +131,7 @@ export default {
       if (!this.showComponent) return
 
       this.loading = true
-      const params = { ...this.queryParams }
+      const params = { ...this.queryParams, limit: 100 }
       params.from = this.$moment()
         .add(1, 'd')
         .format('YYYY-MM-DD')
