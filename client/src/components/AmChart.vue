@@ -186,6 +186,15 @@ export default {
     })
     chart.cursor = cursor
 
+    // Future dates hover
+    const rangeFututre = this.dateAxis.axisRanges.create()
+    rangeFututre.date = this.$moment().set('hour', 12).toDate()
+    rangeFututre.endDate = new Date(8640000000000000)
+    rangeFututre.grid.disabled = true
+    rangeFututre.axisFill.fillOpacity = 0.5
+    rangeFututre.axisFill.fill = '#FFFFFF'
+    chart.seriesContainer.zIndex = -1
+
     // Currend day line
     const dateBorder = this.dateAxis.axisRanges.create()
     dateBorder.date = this.$moment().set('hour', 12).toDate()
@@ -489,7 +498,7 @@ export default {
 
       // Create a range to make stroke dashed in the future
       const rangeDashed = this.dateAxis.createSeriesRange(this.balanceSeries)
-      rangeDashed.date = new Date()
+      rangeDashed.date = this.$moment().set('hour', 12).toDate()
       rangeDashed.endDate = new Date(8640000000000000)
       rangeDashed.contents.stroke = am4core.color('#f3f3f3')
       rangeDashed.contents.strokeDasharray = '4,8'
