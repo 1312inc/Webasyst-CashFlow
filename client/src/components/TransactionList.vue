@@ -4,7 +4,7 @@
       <TransactionListUpcoming class="custom-mb-24" />
       <TransactionListIncoming />
     </div>
-    <AmChartPieStickyContainer class="width-40 custom-px-24" />
+    <AmChartPieStickyContainer class="width-40" />
   </div>
 </template>
 

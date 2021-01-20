@@ -6,7 +6,7 @@
       <div class="width-60">
         <TransactionListIncoming />
       </div>
-      <AmChartPieStickyContainer class="width-40 custom-px-24" />
+      <AmChartPieStickyContainer class="width-40" />
     </div>
   </div>
 </template>

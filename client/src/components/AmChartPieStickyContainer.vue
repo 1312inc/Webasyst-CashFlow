@@ -3,7 +3,7 @@
     <div v-sticky sticky-offset="{top: 80}" sticky-z-index="12">
       <transition name="fade">
         <AmChartPieSticky
-          v-if="$store.state.transaction.defaultGroupTransactions.length"
+          v-if="$store.state.transaction.defaultGroupTransactions"
         />
       </transition>
     </div>

@@ -6,7 +6,7 @@ export default {
   state: () => ({
     incomingTransactions: [],
     upcomingTransactions: [],
-    defaultGroupTransactions: [],
+    defaultGroupTransactions: null,
     activeGroupTransactions: [],
     groupNames: [],
     featurePeriod: 7,
@@ -29,7 +29,8 @@ export default {
 
   getters: {
     getTransactionById: state => id => {
-      return state.incomingTransactions.find(t => t.id === id)
+      const allTransactions = [...state.upcomingTransactions, ...state.incomingTransactions]
+      return allTransactions.find(t => t.id === id)
     }
   },
 

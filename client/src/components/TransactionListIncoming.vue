@@ -146,7 +146,7 @@ export default {
         return acc
       }, acc)
 
-      if (!this.$store.state.transaction.defaultGroupTransactions.length) {
+      if (!this.$store.state.transaction.defaultGroupTransactions) {
         this.$store.commit('transaction/setDefaultGroupTransactions', Object.values(result)[0])
       }
 

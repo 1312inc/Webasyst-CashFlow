@@ -6,7 +6,7 @@
       <div class="width-60">
         <TransactionListIncoming :upcoming="true" :reverse="true" :grouping="false" />
       </div>
-      <AmChartPieStickyContainer class="width-40 custom-px-24" />
+      <AmChartPieStickyContainer class="width-40" />
     </div>
   </div>
 </template>
