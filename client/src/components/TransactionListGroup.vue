@@ -3,7 +3,7 @@
     <div @mouseover="isHover = true" @mouseleave="isHover = false">
       <div
         v-sticky
-        :sticky-offset="{top: $helper.isDesktopEnv ? 114 : 0}"
+        :sticky-offset="stickyOffset"
         sticky-z-index="11"
         on-stick="onStick"
         class="c-sticky-header-group"
@@ -112,6 +112,10 @@ export default {
     isHoverComputed () {
       if (process.env.VUE_APP_MODE === 'mobile') return true
       return this.isShowChecker ? true : this.isHover
+    },
+
+    stickyOffset () {
+      return this.$helper.isDesktopEnv ? '{"top": 114}' : '{"top": 0}'
     }
   },
 
