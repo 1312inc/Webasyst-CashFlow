@@ -1,5 +1,5 @@
 <template>
-  <div sticky-container>
+  <div v-if="$helper.isDesktopEnv" sticky-container class="c-chart-pie-sticky-container">
     <div v-sticky sticky-offset="{top: 80}" sticky-z-index="12">
       <transition name="fade">
         <AmChartPieSticky
@@ -18,3 +18,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  @media screen and (max-width: 980px) {
+    .c-chart-pie-sticky-container {
+      display: none;
+    }
+  }
+</style>

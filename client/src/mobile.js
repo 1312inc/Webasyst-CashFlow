@@ -7,6 +7,8 @@ import Helpers from './plugins/helpers'
 import { i18n } from './plugins/locale'
 import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
+import Notify from './plugins/notify'
+import Sticky from './plugins/sticky'
 import IsOnline from './plugins/isOnline'
 import MobileEventBus from './plugins/mobileEventBus'
 import './assets/styles/styles.css'
@@ -16,6 +18,8 @@ Vue.config.productionTip = false
 Vue.use(permissions)
 Vue.use(Numeral)
 Vue.use(Vuelidate)
+Vue.use(Notify)
+Vue.use(Sticky)
 Vue.use(Helpers)
 Vue.use(IsOnline)
 

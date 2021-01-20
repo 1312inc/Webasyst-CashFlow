@@ -1,6 +1,6 @@
 <template>
   <div class="flexbox">
-    <div class="width-60">
+    <div class="wide">
       <TransactionListUpcoming class="custom-mb-24" />
       <TransactionListIncoming />
     </div>

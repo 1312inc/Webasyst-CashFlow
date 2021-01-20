@@ -7,7 +7,6 @@
       <link href="<%= VUE_APP_DEV_PROXY %>/wa-content/css/wa/wa-2.0.css?v1.14.4" rel="stylesheet">
       <link id="wa-dark-mode" href="<%= VUE_APP_DEV_PROXY %>/wa-content/css/wa/wa-2.0-dark.css?v1.14.4" rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)">
       <script defer="" src="<%= VUE_APP_DEV_PROXY %>/wa-content/js/fontawesome/fontawesome-all.min.js?v=513"></script>
-      <% if (VUE_APP_MODE === "desktop") { %>
 
         <script>
           window.appState = {
@@ -16,7 +15,7 @@
             "accounts":[{"id":2,"name":"Demo account","description":null,"icon":"luggage","currency":"USD","customer_contact_id":null,"is_archived":false,"sort":0,"create_datetime":"2020-12-24 16:09:36","update_datetime":null,"stat":{"income":41207.9,"expense":34808.73,"balance":6399.17,"incomeShorten":"41.2K","expenseShorten":"34.8K","balanceShorten":"6.4K"}},{"id":1,"name":"1312","description":null,"icon":"star","currency":"USD","customer_contact_id":null,"is_archived":false,"sort":0,"create_datetime":"2020-12-24 16:09:36","update_datetime":null,"stat":{"income":0,"expense":0,"balance":0,"incomeShorten":"0","expenseShorten":"0","balanceShorten":"0"}}]
         };
         </script>
-      <% } %>
+
     <% } %>
   </head>
   <body>

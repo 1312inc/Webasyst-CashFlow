@@ -3,7 +3,7 @@
     <div @mouseover="isHover = true" @mouseleave="isHover = false">
       <div
         v-sticky
-        sticky-offset="{top: 114}"
+        :sticky-offset="{top: $helper.isDesktopEnv ? 114 : 0}"
         sticky-z-index="11"
         on-stick="onStick"
         class="c-sticky-header-group"

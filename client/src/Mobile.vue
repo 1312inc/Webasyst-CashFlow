@@ -39,11 +39,11 @@ export default {
       this.update(type, editedItem)
     })
 
-    await this.$store.dispatch('system/getCurrencies')
-    await Promise.all([
-      this.$store.dispatch('account/getList'),
-      this.$store.dispatch('category/getList')
-    ])
+    // await this.$store.dispatch('system/getCurrencies')
+    // await Promise.all([
+    //   this.$store.dispatch('account/getList'),
+    //   this.$store.dispatch('category/getList')
+    // ])
 
     const from = this.getDate(
       'from',
@@ -55,9 +55,7 @@ export default {
       this.$moment().add(6, 'M').format('YYYY-MM-DD')
     )
 
-    const filter = this.$store.state.transaction.queryParams.filter || `currency/${this.$store.getters['account/currenciesInAccounts'][0]}`
-
-    this.$store.commit('transaction/updateQueryParams', { from, to, filter })
+    this.$store.commit('transaction/updateQueryParams', { from, to, silent: true })
   },
 
   methods: {

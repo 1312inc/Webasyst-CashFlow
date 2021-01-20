@@ -3,7 +3,7 @@
     <h1>{{ $t('upnext') }}</h1>
     <TransactionControls class="custom-mb-24" />
     <div class="flexbox">
-      <div class="width-60">
+      <div class="wide">
         <TransactionListIncoming :upcoming="true" :reverse="true" :grouping="false" />
       </div>
       <AmChartPieStickyContainer class="width-40" />
