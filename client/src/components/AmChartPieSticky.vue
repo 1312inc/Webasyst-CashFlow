@@ -26,6 +26,12 @@ export default {
     TransactionControls
   },
 
+  data () {
+    return {
+      chartTransactions: []
+    }
+  },
+
   computed: {
     ...mapState('transaction', [
       'activeGroupTransactions',
@@ -57,7 +63,6 @@ export default {
     pieSeries.slices.template.propertyFields.fill = 'category_color'
     pieSeries.slices.template.stroke = am4core.color('#fff')
     pieSeries.slices.template.strokeOpacity = 1
-    pieSeries.legendSettings.itemValueText = '{value}'
     pieSeries.interpolationDuration = 500
 
     // Add Chart data
@@ -67,6 +72,12 @@ export default {
         category: c.name,
         category_color: c.color
       }
+    })
+    // Push empty data item for the placeholer
+    chart.data.push({
+      amount: 0,
+      category: 'empty',
+      category_color: '#eee'
     })
 
     this.chart = chart
@@ -95,36 +106,54 @@ export default {
     }
   },
 
+  watch: {
+    featurePeriod (val) {
+      if (!this.chartTransactions.length) {
+        this.makeFutureLabelText()
+      }
+    }
+  },
+
   methods: {
     renderChart () {
-      const ids = this.selectedTransactionsIds.length
+      this.chartTransactions = this.selectedTransactionsIds.length
         ? this.selectedTransactionsIds
         : this.activeGroupTransactions.length
           ? this.activeGroupTransactions
           : this.defaultGroupTransactions
 
-      if (typeof ids[0] === 'number') {
-        this.label.text = ids.length
+      if (!this.chartTransactions.length) {
+        this.chart.series.getIndex(0).slices.template.tooltipText = this.$t('emptyList')
+
+        this.chart.data.forEach(e => {
+          e.amount = e.category === 'empty' ? 100 : 0
+        })
+        this.chart.invalidateRawData()
+
+        this.label.fontSize = 16
+        this.makeFutureLabelText()
+        return
+      }
+
+      if (typeof this.chartTransactions[0] === 'number') {
+        this.label.text = this.chartTransactions.length
         this.label.fontSize = 36
       } else {
-        const diff = this.$moment().diff(this.$moment(ids[0].date), 'days')
+        const diff = this.$moment().diff(this.$moment(this.chartTransactions[0].date), 'days')
 
         if (diff < 0) {
-          this.label.text =
-            this.featurePeriod === 1
-              ? this.$t('tomorrow')
-              : this.$t('nextDays', { count: this.featurePeriod })
+          this.makeFutureLabelText()
         } else if (diff === 0) {
           this.label.text = this.$t('today')
         } else {
-          this.label.text = `${this.$moment(ids[0].date).format(
+          this.label.text = `${this.$moment(this.chartTransactions[0].date).format(
             'MMMM'
-          )}\n${this.$moment(ids[0].date).format('YYYY')}`
+          )}\n${this.$moment(this.chartTransactions[0].date).format('YYYY')}`
         }
         this.label.fontSize = 16
       }
 
-      const res = ids.reduce((acc, id) => {
+      const res = this.chartTransactions.reduce((acc, id) => {
         const el =
           this.$store.getters['transaction/getTransactionById'](id) || id
         const category = this.$store.getters['category/getById'](el.category_id)
@@ -145,6 +174,13 @@ export default {
       })
 
       this.chart.invalidateRawData()
+    },
+
+    makeFutureLabelText () {
+      this.label.text =
+            this.featurePeriod === 1
+              ? this.$t('tomorrow')
+              : this.$t('nextDays', { count: this.featurePeriod })
     }
   }
 }
