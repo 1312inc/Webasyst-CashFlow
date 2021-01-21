@@ -55,7 +55,7 @@
                   class="count"
                   v-html="
                     `${
-                      account.stat.balanceShorten
+                      account.stat.summaryShorten
                     }&nbsp;${$helper.currencySignByCode(account.currency)}`
                   "
                 ></span>
