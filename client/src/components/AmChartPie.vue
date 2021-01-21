@@ -37,6 +37,7 @@ export default {
     pieSeries.slices.template.propertyFields.fill = 'category_color'
     pieSeries.slices.template.stroke = am4core.color('#fff')
     pieSeries.slices.template.strokeOpacity = 1
+    pieSeries.slices.template.tooltipText = "{category}: {value.formatNumber('#,###.##')}"
     pieSeries.legendSettings.itemValueText = '{value}'
 
     // Add Legend

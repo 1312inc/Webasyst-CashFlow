@@ -122,6 +122,8 @@ export default {
           ? this.activeGroupTransactions
           : this.defaultGroupTransactions
 
+      this.chart.series.getIndex(0).slices.template.tooltipText = "{category}: {value.formatNumber('#,###.##')}"
+
       if (!this.chartTransactions.length) {
         this.chart.series.getIndex(0).slices.template.tooltipText = this.$t('emptyList')
 

@@ -13,7 +13,7 @@
           'fa-caret-down': type === 'expense',
         }"
       ></i
-      >&nbsp;<span class="small">{{ $numeral(total).format() }}</span>
+      >&nbsp;<span class="small">{{ $numeral(total).format('0,0[.]00') }}</span>
     </div>
   </div>
 </template>
