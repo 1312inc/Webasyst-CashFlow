@@ -569,7 +569,7 @@ export default {
       nbr.axisFill.tooltip.label.fill = am4core.color('#4a0900')
       nbr.axisFill.tooltip.animationDuration = 500
       nbr.axisFill.tooltipY = 50
-      nbr.axisFill.tooltipText = `CASH GAP!\nStart date:${dates[0].isStart ? ' <=' : ''} ${startDate}${inDaysStart}\nEnd date:${dates[dates.length - 1].isEnd ? ' >=' : ''} ${endDate}${inDaysEnd}\nMax balance decline: ${this.$numeral(minimumAmount).format()} ${this.currency} on ${minimumDate}`
+      nbr.axisFill.tooltipText = `CASH GAP!\nStart date:${dates[0].isStart ? ' <=' : ''} ${startDate}${inDaysStart}\nEnd date:${dates[dates.length - 1].isEnd ? ' >=' : ''} ${endDate}${inDaysEnd}\nMax balance decline: ${this.$numeral(minimumAmount).format('0,0[.]00')} ${this.currency} on ${minimumDate}`
     }
 
   }

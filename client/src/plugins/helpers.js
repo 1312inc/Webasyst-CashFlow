@@ -5,7 +5,7 @@ export default {
   install (Vue) {
     Vue.prototype.$helper = {
       toCurrency: function (value, currencyCode) {
-        return `${numeral(value).format()} ${this.currencySignByCode(
+        return `${numeral(value).format('0,0[.]00')} ${this.currencySignByCode(
           currencyCode
         )}`
       },
