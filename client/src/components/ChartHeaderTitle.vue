@@ -55,7 +55,7 @@ export default {
 
     balance () {
       return (
-        this.currentEntity.stat?.balance ||
+        this.currentEntity.stat?.summary ||
         this.currentEntity.balances?.now.amount
       )
     }
