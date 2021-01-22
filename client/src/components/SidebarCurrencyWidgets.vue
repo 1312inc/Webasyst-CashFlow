@@ -28,7 +28,7 @@
                     ? 'c-bwc-badge--green'
                     : 'c-bwc-badge--red'
                 "
-                v-html="currency.balances.diff.amountShorten"
+                v-html="`${currency.balances.diff.amount > 0 ? '+' : currency.balances.diff.amount < 0 ? '-' : ''}${currency.balances.diff.amountShorten}`"
               ></span>
             </div>
           </div>
