@@ -12,6 +12,7 @@
         <div class="value">
           <input
             v-model="model.name"
+            ref="focus"
             :class="{ 'state-error': $v.model.name.$error }"
             type="text"
           />
@@ -40,10 +41,10 @@
           {{ $t("color") }}
         </div>
         <div class="value">
-          <CategoryColors
-            :active="model.color"
+          <ColorPicker
+            :startColor="model.color"
             :type="model.type"
-            @select="selectColor"
+            @colorChange="selectColor"
           />
         </div>
       </div>
@@ -68,14 +69,14 @@
 <script>
 import { required } from 'vuelidate/lib/validators'
 import updateEntityMixin from '@/mixins/updateEntityMixin'
-import CategoryColors from '@/components/CategoryColors'
+import ColorPicker from '@/components/ColorPicker'
 export default {
   mixins: [updateEntityMixin],
 
   props: ['editedItem'],
 
   components: {
-    CategoryColors
+    ColorPicker
   },
 
   data () {
@@ -98,6 +99,10 @@ export default {
         required
       }
     }
+  },
+
+  mounted () {
+    this.$refs.focus.focus()
   },
 
   methods: {
