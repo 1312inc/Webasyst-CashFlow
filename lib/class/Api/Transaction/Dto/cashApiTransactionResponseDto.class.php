@@ -106,6 +106,11 @@ class cashApiTransactionResponseDto extends cashAbstractDto
     public $contractor_contact_id;
 
     /**
+     * @var int|null
+     */
+    public $is_onbadge;
+
+    /**
      * cashApiTransactionResponse constructor.
      *
      * @param array $data
@@ -125,6 +130,7 @@ class cashApiTransactionResponseDto extends cashAbstractDto
         $this->account_id = (int) $this->account_id;
         $this->account_id = (int) $this->account_id;
         $this->is_archived = $this->is_archived ? true : false;
+        $this->is_onbadge = $this->is_onbadge ? true : false;
 
         $this->planned = $this->date > date('Y-m-d');
         $this->amountShorten = cashShorteningService::money($this->amount);

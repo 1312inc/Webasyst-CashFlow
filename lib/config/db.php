@@ -64,6 +64,7 @@ return array(
         'external_hash' => array('varchar', 32),
         'external_source' => array('varchar', 20),
         'contractor_contact_id' => array('int', 11),
+        'is_onbadge' => array('tinyint', 4, 'default' => '0'),
         ':keys' => array(
             'PRIMARY' => 'id',
             'cash_repeating_transaction_cash_account_id_fk' => 'account_id',
@@ -90,6 +91,7 @@ return array(
         'external_source' => array('varchar', 20),
         'external_data' => array('text'),
         'contractor_contact_id' => array('int', 11),
+        'is_onbadge' => array('tinyint', 4, 'default' => '0'),
         ':keys' => array(
             'PRIMARY' => 'id',
             'cash_transaction_datetime_create_contact_id_index' => array('datetime', 'create_contact_id'),
