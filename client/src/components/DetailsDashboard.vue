@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data.length" class="custom-mb-24 c-breakdown-details">
+  <div v-if="data" class="custom-mb-24 c-breakdown-details">
     <div class="flexbox middle custom-mb-24">
       <div class="wide flexbox middle">
         <h3 class="custom-mb-0">
@@ -10,30 +10,30 @@
         </button>
       </div>
       <div>
-        <button @click="close" class="small nobutton larger gray">
+        <button @click="closeDashboard" class="small nobutton larger gray">
           <i class="fas fa-times"></i>
         </button>
       </div>
     </div>
 
     <div v-for="currency in data" :key="currency.currency" class="flexbox">
-      <div v-if="currency.income.data.length" class="width-40">
+      <div class="width-40">
         <div class="">
           <div class="smaller uppercase">{{ $t("income") }}</div>
           <div class="larger text-green">
-            {{
+            {{ currency.income.totalAmount > 0 ? '+' : '' }}{{
               $helper.toCurrency(currency.income.totalAmount, currency.currency)
             }}
           </div>
         </div>
-        <ChartPie :data="currency.income.data" />
+        <ChartPie :data="currency.income.data" :currency="currency.currency" />
       </div>
 
-      <div v-if="currency.expense.data.length" class="width-40">
+      <div class="width-40">
         <div class="">
           <div class="smaller uppercase">{{ $t("expense") }}</div>
           <div class="larger text-red">
-            {{
+            {{ currency.expense.totalAmount > 0 ? '-' : '' }}{{
               $helper.toCurrency(
                 currency.expense.totalAmount,
                 currency.currency
@@ -41,10 +41,10 @@
             }}
           </div>
         </div>
-        <ChartPie :data="currency.expense.data" />
+        <ChartPie :data="currency.expense.data" :currency="currency.currency" />
       </div>
 
-      <div v-if="currency.income.data.length && currency.expense.data.length">
+      <div>
         <div class="smaller uppercase">{{ $t("balance") }}</div>
         <div class="larger">
           {{
@@ -112,7 +112,7 @@ import api from '@/plugins/api'
 import { mapState } from 'vuex'
 import Modal from '@/components/Modal'
 import ChartPie from '@/components/AmChartPie'
-import DateField from '@/components/DateField'
+import DateField from '@/components/InputDate'
 import utils from '@/mixins/utilsMixin.js'
 
 export default {
@@ -126,22 +126,22 @@ export default {
 
   data () {
     return {
-      data: [],
-      openModal: false,
+      data: null,
       from: '',
-      to: ''
+      to: '',
+      openModal: false
     }
   },
 
   computed: {
-    ...mapState('transaction', ['queryParams', 'detailsInterval']),
+    ...mapState('transaction', ['queryParams']),
 
     dates () {
-      return this.detailsInterval.from !== this.detailsInterval.to
-        ? `${this.$moment(this.detailsInterval.from).format(
+      return this.from !== this.to
+        ? `${this.$moment(this.from).format(
             'LL'
-          )} – ${this.$moment(this.detailsInterval.to).format('LL')}`
-        : `${this.$moment(this.detailsInterval.from).format('LL')}`
+          )} – ${this.$moment(this.to).format('LL')}`
+        : `${this.$moment(this.from).format('LL')}`
     }
   },
 
@@ -150,7 +150,7 @@ export default {
       if (mutation.type === 'transaction/setDetailsInterval') {
         this.from = mutation.payload.from
         this.to = mutation.payload.to
-        if (mutation.payload.from) {
+        if (this.from || this.to) {
           try {
             const { data } = await api.get('cash.aggregate.getBreakDown', {
               params: {
@@ -164,7 +164,7 @@ export default {
             this.handleApiError(e)
           }
         } else {
-          this.data = []
+          this.data = null
         }
       }
     })
@@ -175,7 +175,7 @@ export default {
   },
 
   methods: {
-    close () {
+    closeDashboard () {
       this.$store.commit('transaction/setDetailsInterval', {
         from: '',
         to: '',

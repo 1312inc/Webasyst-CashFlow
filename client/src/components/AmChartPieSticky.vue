@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="chart smaller" ref="chart"></div>
+    <div class="c-chart-pie-sticky smaller" ref="chart"></div>
     <transition name="fade">
       <!-- TODO: Exclude sticky from TransactionControls Component -->
       <!-- TODO: Remove 'transactionBulk/empty' from destroy() to routerTransitionMixin -->
@@ -189,7 +189,7 @@ export default {
 </script>
 
 <style>
-.chart {
+.c-chart-pie-sticky {
   height: 400px;
 }
 </style>
