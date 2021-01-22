@@ -93,10 +93,6 @@ class cashRepeatingTransactionSaver extends cashTransactionSaver
 
             cash()->getEntityPersister()->save($repeatingT);
             $result->newTransaction = $repeatingT;
-//
-//            if (!$cloneSourceTransaction && !$transaction->getRepeatingId()) {
-//                $transaction->setRepeatingId($repeatingT->getId());
-//            }
 
             $model->commit();
 

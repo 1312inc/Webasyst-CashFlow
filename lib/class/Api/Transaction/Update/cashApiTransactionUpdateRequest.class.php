@@ -96,4 +96,9 @@ class cashApiTransactionUpdateRequest
      * @var string
      */
     public $transfer_incoming_amount;
+
+    /**
+     * @var bool
+     */
+    public $is_onbadge;
 }

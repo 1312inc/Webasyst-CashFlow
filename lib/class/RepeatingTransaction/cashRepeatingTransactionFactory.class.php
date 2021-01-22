@@ -31,7 +31,8 @@ class cashRepeatingTransactionFactory extends cashBaseFactory
             ->setDescription($transaction->getDescription())
             ->setDate($transaction->getDate())
             ->setExternalHash($transaction->getExternalHash())
-            ->setExternalSource($transaction->getExternalSource());
+            ->setExternalSource($transaction->getExternalSource())
+            ->setIsOnbadge($transaction->getIsOnbadge());
 
         return $tx;
     }
