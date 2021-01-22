@@ -100,7 +100,8 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
                 ->setCategoryId($transaction->getCategoryId())
                 ->setDescription($transaction->getDescription())
                 ->setAmount($transaction->getAmount())
-                ->setContractorContactId($transaction->getContractorContactId());
+                ->setContractorContactId($transaction->getContractorContactId())
+                ->setIsOnbadge($transaction->getIsOnbadge());
             $this->saver->addToPersist($repeatingTransaction);
 
             $transactions = cash()->getEntityRepository(cashTransaction::class)->findAllByRepeatingIdAndAfterDate(
@@ -112,13 +113,18 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
                     ->setCategoryId($transaction->getCategoryId())
                     ->setDescription($transaction->getDescription())
                     ->setAmount($transaction->getAmount())
-                    ->setContractorContactId($transaction->getContractorContactId());
+                    ->setContractorContactId($transaction->getContractorContactId())
+                    ->setIsOnbadge($transaction->getIsOnbadge());
 
                 $this->saver->addToPersist($t);
             }
 
             $saved = $this->saver->persistTransactions();
             foreach ($saved as $item) {
+                if ($item instanceof cashRepeatingTransaction) {
+                    continue;
+                }
+
                 $newTransactionIds[] = $item->getId();
             }
         } else {
