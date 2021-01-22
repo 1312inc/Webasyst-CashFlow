@@ -104,6 +104,11 @@ class cashTransaction extends cashAbstractEntity
     protected $linkedTransaction;
 
     /**
+     * @var bool|int
+     */
+    protected $is_onbadge = 0;
+
+    /**
      * @return int
      */
     public function getId()
@@ -576,4 +581,22 @@ class cashTransaction extends cashAbstractEntity
 
         return $this;
    }
+
+    /**
+     * @return bool|int
+     */
+    public function getIsOnbadge()
+    {
+        return $this->is_onbadge;
+    }
+
+    /**
+     * @return cashTransaction
+     */
+    public function setIsOnbadge($is_onbadge)
+    {
+        $this->is_onbadge = $is_onbadge ? 1 : 0;
+
+        return $this;
+    }
 }

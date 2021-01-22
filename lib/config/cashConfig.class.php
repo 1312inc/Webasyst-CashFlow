@@ -296,7 +296,23 @@ class cashConfig extends waAppConfig
     {
         cash()->getEventDispatcher()->dispatch(new cashEventOnCount(waRequest::request('idle')));
 
-        return null;
+        try {
+            $url = $this->getBackendUrl(true) . $this->application . '/';
+            $request = new cashApiTransactionGetBadgeCountRequest();
+            $request->date = DateTimeImmutable::createFromFormat('Y-m-d', waDateTime::format('Y-m-d'));
+            $response = (new cashApiTransactionGetBadgeCountHandler())->handle($request);
+            if ($response->count) {
+                if (wa()->whichUI(cashConfig::APP_ID) === '2.0') {
+                    $url .= 'upnext';
+                }
+
+                return ['count' => $response->count, 'url' => $url];
+            }
+        } catch (Exception $exception) {
+            cash()->getLogger()->debug(sprintf('onCount error %s', $exception->getMessage()));
+        }
+
+        return ['count' => null, 'url' => $url];
     }
 
     private function registerGlobal()
