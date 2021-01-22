@@ -69,8 +69,10 @@
         </div>
         <div class="value larger bold">
           <div class="state-with-inner-icon left">
-            <input
-              v-model.number="model.amount"
+            <input-currency
+              v-model="model.amount"
+              ref="focus"
+              :signed="false"
               :class="{ 'state-error': $v.model.amount.$error }"
               type="text"
               class="bold number short"
@@ -321,8 +323,9 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { required, requiredIf, integer, numeric } from 'vuelidate/lib/validators'
-import DateField from '@/components/DateField'
+import { required, requiredIf, integer } from 'vuelidate/lib/validators'
+import InputCurrency from '@/components/InputCurrency'
+import DateField from '@/components/InputDate'
 import utils from '@/mixins/utilsMixin.js'
 export default {
   mixins: [utils],
@@ -338,6 +341,7 @@ export default {
   },
 
   components: {
+    InputCurrency,
     DateField
   },
 
@@ -369,8 +373,7 @@ export default {
   validations: {
     model: {
       amount: {
-        required,
-        numeric
+        required
       },
       date: {
         required
@@ -448,6 +451,10 @@ export default {
     if (this.defaultCategoryType === 'transfer') {
       this.model.category_id = -1312
     }
+  },
+
+  mounted () {
+    this.$refs.focus.$el.focus()
   },
 
   methods: {

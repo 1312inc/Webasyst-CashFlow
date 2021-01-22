@@ -12,6 +12,7 @@
         <div class="value">
           <input
             v-model="model.name"
+            ref="focus"
             :class="{ 'state-error': $v.model.name.$error }"
             type="text"
           />
@@ -46,9 +47,8 @@
           {{ $t("startingBalance") }}
         </div>
         <div class="value">
-          <input
+          <input-currency
             v-model="model.starting_balance"
-            :class="{ 'state-error': $v.model.starting_balance.$error }"
             :placeholder="$t('optional')"
             type="text"
           />
@@ -121,8 +121,9 @@
 </template>
 
 <script>
-import { required, integer } from 'vuelidate/lib/validators'
+import { required } from 'vuelidate/lib/validators'
 import updateEntityMixin from '@/mixins/updateEntityMixin'
+import InputCurrency from '@/components/InputCurrency'
 import IconUploader from '@/components/IconUploader'
 export default {
   mixins: [updateEntityMixin],
@@ -130,6 +131,7 @@ export default {
   props: ['editedItem'],
 
   components: {
+    InputCurrency,
     IconUploader
   },
 
@@ -153,11 +155,12 @@ export default {
       },
       currency: {
         required
-      },
-      starting_balance: {
-        integer
       }
     }
+  },
+
+  mounted () {
+    this.$refs.focus.focus()
   },
 
   methods: {
