@@ -281,4 +281,30 @@ class cashTransactionRepository extends cashBaseRepository
 
         return $this->generateWithData($data);
     }
+
+    public function countOnBadgeBeforeDate(DateTimeImmutable $date, waContact $contact): int
+    {
+        $sqlParts = new cashSelectQueryParts($this->getModel());
+
+        $sqlParts->select(['count(ct.id)'])
+            ->from('cash_transaction', 'ct')
+            ->join(
+                [
+                    'join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0',
+                    'left join cash_category cc on ct.category_id = cc.id',
+                ]
+            )
+            ->andWhere(
+                [
+                    'ct.date <= s:date',
+                    'ct.is_archived = 0',
+                    'ct.is_onbadge = 1',
+                    'accountAccessSql' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact),
+                    'categoryAccessSql' => cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id'),
+                ]
+            )
+            ->params(['date' => $date->format('Y-m-d')]);
+
+        return (int) $sqlParts->query()->fetchField();
+    }
 }
