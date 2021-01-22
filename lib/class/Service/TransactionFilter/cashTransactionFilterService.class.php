@@ -6,23 +6,15 @@
 final class cashTransactionFilterService
 {
     /**
-     * @var cashTransactionModel
-     */
-    private $model;
-
-    /**
      * @var cashContactRightsManager
      */
     private $right;
 
     /**
      * cashTransactionFilterService constructor.
-     *
-     * @throws waException
      */
     public function __construct()
     {
-        $this->model = cash()->getModel(cashTransaction::class);
         $this->right = cash()->getContactRights();
     }
 
