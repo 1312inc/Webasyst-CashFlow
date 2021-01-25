@@ -143,14 +143,14 @@ export default {
     dateAxis.renderer.ticks.template.length = 8
     dateAxis.renderer.ticks.template.location = 0.5
     dateAxis.renderer.labels.template.location = 0.5
+    dateAxis.renderer.cellStartLocation = 0.15
+    dateAxis.renderer.cellEndLocation = 0.85
     this.dateAxis = dateAxis
 
     // Balance Axis
     const balanceAxis = chart.yAxes.push(new am4charts.ValueAxis())
     balanceAxis.height = 100
     balanceAxis.marginBottom = 60
-    balanceAxis.extraMin = 0.1
-    balanceAxis.extraMax = 0.1
     balanceAxis.cursorTooltipEnabled = false
     balanceAxis.numberFormatter = new am4core.NumberFormatter()
     balanceAxis.numberFormatter.numberFormat = '# a'
@@ -340,14 +340,20 @@ export default {
             period: this.$moment(this.$store.state.transaction.queryParams.from).add(i, 'd').format('YYYY-MM-DD'),
             amountIncome: null,
             amountExpense: null,
-            balance: null
+            balance: null,
+            bulletDisabled: true
           }
         })
 
         // Merge empty period with days with data
         this.activeChartData.data.forEach(element => {
           const i = filledChartData.findIndex(e => e.period === element.period)
-          if (i > -1) filledChartData.splice(i, 1, element)
+          if (i > -1) {
+            filledChartData.splice(i, 1, {
+       ***REMOVED***element,
+              bulletDisabled: true
+            })
+          }
         })
 
         // Filling daily balance
@@ -358,6 +364,9 @@ export default {
           }
           if (e.balance === null) {
             e.balance = previosValue
+          }
+          if (e.period === this.$moment().format('YYYY-MM-DD')) {
+            e.bulletDisabled = false
           }
           return e
         })
@@ -395,9 +404,11 @@ export default {
       incomeSeries.dataFields.dateX = 'period'
       incomeSeries.groupFields.valueY = 'sum'
       incomeSeries.stroke = am4core.color('#3ec55e')
-      incomeSeries.columns.template.stroke = am4core.color('#3ec55e')
+      incomeSeries.columns.template.strokeWidth = 0
       incomeSeries.columns.template.fill = am4core.color('#3ec55e')
       incomeSeries.columns.template.fillOpacity = 0.5
+      incomeSeries.columns.template.column.cornerRadiusTopLeft = 4
+      incomeSeries.columns.template.column.cornerRadiusTopRight = 4
 
       incomeSeries.adapter.add('tooltipText', (t, target) => {
         const isGrouped = !!target.tooltipDataItem.groupDataItems
@@ -434,9 +445,11 @@ export default {
       expenseSeries.dataFields.dateX = 'period'
       expenseSeries.groupFields.valueY = 'sum'
       expenseSeries.stroke = am4core.color('#fc3d38')
-      expenseSeries.columns.template.stroke = am4core.color('#fc3d38')
+      expenseSeries.columns.template.strokeWidth = 0
       expenseSeries.columns.template.fill = am4core.color('#fc3d38')
       expenseSeries.columns.template.fillOpacity = 0.5
+      expenseSeries.columns.template.column.cornerRadiusTopLeft = 4
+      expenseSeries.columns.template.column.cornerRadiusTopRight = 4
 
       expenseSeries.adapter.add('tooltipText', (t, target) => {
         const isGrouped = !!target.tooltipDataItem.groupDataItems
@@ -479,7 +492,7 @@ export default {
       balanceSeries.dataFields.dateX = 'period'
       balanceSeries.groupFields.valueY = 'sum'
       balanceSeries.stroke = am4core.color('rgba(255, 0, 0, 0)')
-      balanceSeries.strokeWidth = 2
+      balanceSeries.strokeWidth = 3
       this.balanceSeries = balanceSeries
 
       // Create a range to change stroke for positive values
@@ -501,14 +514,37 @@ export default {
       rangeDashed.date = this.$moment().set('hour', 12).toDate()
       rangeDashed.endDate = new Date(8640000000000000)
       rangeDashed.contents.stroke = am4core.color('#f3f3f3')
-      rangeDashed.contents.strokeDasharray = '4,8'
+      rangeDashed.contents.strokeDasharray = '3 5'
       rangeDashed.contents.strokeWidth = 3
 
+      // Add simple bullet
+      const bullet = this.balanceSeries.bullets.push(new am4charts.CircleBullet())
+      bullet.disabled = true
+      bullet.propertyFields.disabled = 'bulletDisabled'
+
+      const secondCircle = bullet.createChild(am4core.Circle)
+      secondCircle.radius = 6
+      secondCircle.fill = this.chart.colors.getIndex(2)
+
+      bullet.events.on('inited', (event) => {
+        animateBullet(event.target.circle)
+      })
+
+      function animateBullet (bullet) {
+        const animation = bullet.animate([{ property: 'scale', from: 1, to: 5 }, { property: 'opacity', from: 1, to: 0 }], 1000, am4core.ease.circleOut)
+        animation.events.on('animationended', (event) => {
+          animateBullet(event.target.object)
+        })
+      }
+
       this.balanceSeries.events.on('datavalidated', (ev) => {
-        const vals = ev.target.data.map(e => e.balance)
-        const max = Math.max.apply(null, vals.map(Math.abs))
-        this.balanceAxis.min = -max
-        this.balanceAxis.max = max
+        // const vals = ev.target.data.map(e => e.balance)
+        // const max = Math.max.apply(null, vals.map(Math.abs))
+        // this.balanceAxis.min = -max
+        // this.balanceAxis.max = max
+
+        // TODO: check this event for the duplicates
+        if (!ev.target.data.length) return
 
         let dates = []
         let previous = null
