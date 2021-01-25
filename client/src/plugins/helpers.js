@@ -4,10 +4,12 @@ import { numeral } from '../plugins/numeralMoment'
 export default {
   install (Vue) {
     Vue.prototype.$helper = {
-      toCurrency: function (value, currencyCode) {
-        return `${numeral(value).format('0,0[.]00')} ${this.currencySignByCode(
-          currencyCode
-        )}`
+      toCurrency: function (value, currencyCode, isDynamics = false, isReverse = false) {
+        value = isReverse ? value * -1 : value
+        const amount = numeral(isDynamics ? Math.abs(value) : value).format('0,0[.]00')
+        const sign = isDynamics ? (value > 0 ? '+ ' : value < 0 ? '− ' : '') : ''
+        const currency = this.currencySignByCode(currencyCode) ? ` ${this.currencySignByCode(currencyCode)}` : ''
+        return `${sign}${amount}${currency}`
       },
 
       currencySignByCode: code => {

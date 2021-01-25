@@ -42,7 +42,7 @@
             <i class="fas fa-redo-alt opacity-50"></i>
           </span>
           <div :style="`color: ${category.color}`" class="bold">
-            {{transaction.amount > 0 ? '+' : ''}}{{ $helper.toCurrency(transaction.amount, account.currency) }}
+            {{ $helper.toCurrency(transaction.amount, account.currency, true) }}
           </div>
         </div>
         <div class="small">
