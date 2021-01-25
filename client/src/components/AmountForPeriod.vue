@@ -16,7 +16,7 @@
           }"
         ></i
         >&nbsp;
-        <span class="small">{{ $helper.toCurrency(total, currency) }}</span>
+        <span class="small">{{ $helper.toCurrency(total, currency, true) }}</span>
       </div>
     </div>
     <div v-else class="skeleton">

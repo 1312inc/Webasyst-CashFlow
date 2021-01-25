@@ -21,9 +21,7 @@
         <div class="">
           <div class="smaller uppercase">{{ $t("income") }}</div>
           <div class="larger text-green">
-            {{ currency.income.totalAmount > 0 ? '+' : '' }}{{
-              $helper.toCurrency(currency.income.totalAmount, currency.currency)
-            }}
+            {{ $helper.toCurrency(currency.income.totalAmount, currency.currency, true) }}
           </div>
         </div>
         <ChartPie :data="currency.income.data" :currency="currency.currency" />
@@ -33,12 +31,7 @@
         <div class="">
           <div class="smaller uppercase">{{ $t("expense") }}</div>
           <div class="larger text-red">
-            {{ currency.expense.totalAmount > 0 ? '-' : '' }}{{
-              $helper.toCurrency(
-                currency.expense.totalAmount,
-                currency.currency
-              )
-            }}
+            {{ $helper.toCurrency(currency.expense.totalAmount, currency.currency, true, true) }}
           </div>
         </div>
         <ChartPie :data="currency.expense.data" :currency="currency.currency" />
