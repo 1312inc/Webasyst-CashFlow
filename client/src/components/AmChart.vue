@@ -521,21 +521,9 @@ export default {
       const bullet = this.balanceSeries.bullets.push(new am4charts.CircleBullet())
       bullet.disabled = true
       bullet.propertyFields.disabled = 'bulletDisabled'
-
-      const secondCircle = bullet.createChild(am4core.Circle)
-      secondCircle.radius = 6
-      secondCircle.fill = this.chart.colors.getIndex(2)
-
-      bullet.events.on('inited', (event) => {
-        animateBullet(event.target.circle)
+      bullet.events.on('inited', ({ target }) => {
+        target.circle.fill = target.dataItem.valueY >= 0 ? am4core.color('#3ec55e') : am4core.color('#fc3d38')
       })
-
-      function animateBullet (bullet) {
-        const animation = bullet.animate([{ property: 'scale', from: 1, to: 5 }, { property: 'opacity', from: 1, to: 0 }], 1000, am4core.ease.circleOut)
-        animation.events.on('animationended', (event) => {
-          animateBullet(event.target.object)
-        })
-      }
 
       this.balanceSeries.events.on('datavalidated', (ev) => {
         // const vals = ev.target.data.map(e => e.balance)
