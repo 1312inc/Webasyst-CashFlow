@@ -4,7 +4,7 @@
       <ChartHeaderTitle />
       <TransactionControls />
     </div>
-    <div class="flexbox space-4" style="position: absolute; right: 0">
+    <div class="c-period-dropdowns flexbox space-4">
       <div>
         <Dropdown type="from" class="custom-mb-4" />
         <AmountForPeriod type="income" period="from" class="custom-mb-4" />
@@ -35,3 +35,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.c-period-dropdowns {
+  position: absolute;
+  right: 0;
+
+  @media (max-width: 768px) {
+    position: relative;
+    right: auto;
+  }
+}
+</style>
