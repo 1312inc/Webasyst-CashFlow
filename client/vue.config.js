@@ -1,19 +1,19 @@
 var webpack = require('webpack')
 var fetch = require('node-fetch')
 
-fetch('http://localhost:8888/api.php/cash.system.getCurrencies?access_token=' + process.env.VUE_APP_API_TOKEN)
+fetch(process.env.VUE_APP_DEV_PROXY + '/api.php/cash.system.getCurrencies?access_token=' + process.env.VUE_APP_API_TOKEN)
   .then(response => response.text())
   .then(res => {
     process.env.VUE_APP_CURRENCIES = res
   })
 
-fetch('http://localhost:8888/api.php/cash.account.getList?access_token=' + process.env.VUE_APP_API_TOKEN)
+fetch(process.env.VUE_APP_DEV_PROXY + '/api.php/cash.account.getList?access_token=' + process.env.VUE_APP_API_TOKEN)
   .then(response => response.text())
   .then(res => {
     process.env.VUE_APP_ACCOUNTS = res
   })
 
-fetch('http://localhost:8888/api.php/cash.category.getList?access_token=' + process.env.VUE_APP_API_TOKEN)
+fetch(process.env.VUE_APP_DEV_PROXY + '/api.php/cash.category.getList?access_token=' + process.env.VUE_APP_API_TOKEN)
   .then(response => response.text())
   .then(res => {
     process.env.VUE_APP_CATEGORIES = res
