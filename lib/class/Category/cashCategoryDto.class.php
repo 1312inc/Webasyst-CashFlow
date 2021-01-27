@@ -41,6 +41,11 @@ class cashCategoryDto extends cashAbstractDto
     public $is_system = false;
 
     /**
+     * @var bool
+     */
+    public $is_profit = false;
+
+    /**
      * cashCategoryDto constructor.
      *
      * @param array $data
@@ -49,6 +54,8 @@ class cashCategoryDto extends cashAbstractDto
     {
         if ($data) {
             $this->initializeWithArray($data);
+            $this->is_profit = (bool) $this->is_profit;
+            $this->is_system = (bool) $this->is_system;
         } else {
             $this->name = _w('New category');
         }

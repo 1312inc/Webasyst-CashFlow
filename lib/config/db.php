@@ -23,6 +23,7 @@ return array(
         'sort' => array('smallint', 6),
         'create_datetime' => array('datetime', 'null' => 0),
         'update_datetime' => array('datetime'),
+        'is_profit' => array('tinyint', 4, 'default' => '0'),
         ':keys' => array(
             'PRIMARY' => 'id',
         ),

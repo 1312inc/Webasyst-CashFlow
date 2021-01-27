@@ -506,7 +506,18 @@ class cashGraphService
         $grouping = $this->getGroupingSqlDateFormat($paramsDto);
         $format = $this->getGroupingDateFormat($paramsDto);
 
+        //@todo category type
         $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
+            ->select(
+                [
+                    "{$grouping} groupkey",
+                    'ca.currency currency',
+                    'null balance',
+                    "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|0', ct.amount, 0)) expenseAmount",
+                    "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'inc|0', ct.amount, 0)) incomeAmount",
+                    "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|1', ct.amount, 0)) profitAmount",
+                ]
+            )
             ->from('cash_transaction', 'ct')
             ->andWhere(
                 [
@@ -527,22 +538,13 @@ class cashGraphService
                     'join cash_account ca on ct.account_id = ca.id',
                     'join cash_category cc on ct.category_id = cc.id',
                 ]
-            )
-            ->select(
-                [
-                    "{$grouping} groupkey",
-                    'ca.currency currency',
-                    'null balance',
-                ]
             );
 
         $calculateBalance = false;
         switch (true) {
             case null !== $paramsDto->filter->getAccountId():
                 $sqlParts->addAndWhere('ct.account_id = i:account_id')
-                    ->addParam('account_id', $paramsDto->filter->getAccountId())
-                    ->addSelect('sum(if(ct.amount < 0, 0, ct.amount)) incomeAmount')
-                    ->addSelect('sum(if(ct.amount < 0, ct.amount, 0)) expenseAmount');
+                    ->addParam('account_id', $paramsDto->filter->getAccountId());
 
                 if (cash()->getContactRights()->canSeeAccountBalance(
                     $paramsDto->contact,
@@ -555,25 +557,19 @@ class cashGraphService
 
             case null !== $paramsDto->filter->getCategoryId():
                 $sqlParts->addAndWhere('ct.category_id = i:category_id')
-                    ->addParam('category_id', $paramsDto->filter->getCategoryId())
-                    ->addSelect('sum(if(ct.amount < 0, null, ct.amount)) incomeAmount')
-                    ->addSelect('sum(if(ct.amount < 0, ct.amount, null)) expenseAmount');
+                    ->addParam('category_id', $paramsDto->filter->getCategoryId());
 
                 break;
 
             case null !== $paramsDto->filter->getContractorId():
                 $sqlParts->addAndWhere('ct.contractor_contact_id = i:contractor_contact_id')
-                    ->addParam('contractor_contact_id', $paramsDto->filter->getContractorId())
-                    ->addSelect('sum(if(ct.amount < 0, 0, ct.amount)) incomeAmount')
-                    ->addSelect('sum(if(ct.amount < 0, ct.amount, 0)) expenseAmount');
+                    ->addParam('contractor_contact_id', $paramsDto->filter->getContractorId());
 
                 break;
 
             case null !== $paramsDto->filter->getCurrency():
                 $sqlParts->addAndWhere('ca.currency = s:currency')
-                    ->addParam('currency', $paramsDto->filter->getCurrency())
-                    ->addSelect('sum(if(ct.amount < 0, 0, ct.amount)) incomeAmount')
-                    ->addSelect('sum(if(ct.amount < 0, ct.amount, 0)) expenseAmount');
+                    ->addParam('currency', $paramsDto->filter->getCurrency());
 
                 $accountSql = clone $sqlParts;
                 $accounts = $accountSql->select(['ct.account_id'])
@@ -617,6 +613,7 @@ class cashGraphService
             foreach ($data as $i => $datum) {
                 $data[$i]['balance'] = (float) $data[$i]['incomeAmount']
                     + (float) $data[$i]['expenseAmount']
+                    + (float) $data[$i]['profitAmount']
                     + $initialBalance;
                 $initialBalance = $data[$i]['balance'];
             }
@@ -788,7 +785,7 @@ class cashGraphService
         $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
             ->select(
                 [
-                    "if(ct.amount < 0, 'expense', 'income') `type`",
+                    "if(ct.amount < 0, concat('expense|',cc.is_profit), 'income') `type`",
                     'ca.currency currency',
                     "{$detailing} detailed",
                     'sum(ct.amount) amount',
