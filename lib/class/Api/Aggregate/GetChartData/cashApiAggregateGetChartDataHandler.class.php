@@ -32,7 +32,9 @@ final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterfa
                 $account = cash()->getEntityRepository(cashAccount::class)
                     ->findByIdForContact($paramsDto->filter->getAccountId());
 
-                if ($account) {
+                if ($account
+                    && cash()->getContactRights()->hasFullAccessToAccount(wa()->getUser(), $account->getId())
+                ) {
                     $accountFirstTransaction = cash()->getEntityRepository(cashTransaction::class)
                         ->findFirstForAccount($account);
                     if ($accountFirstTransaction) {
