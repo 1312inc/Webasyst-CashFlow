@@ -41,6 +41,11 @@ class cashApiCategoryResponseDto
     public $update_datetime;
 
     /**
+     * @var bool
+     */
+    public $is_profit;
+
+    /**
      * @param cashCategory $category
      *
      * @return cashApiCategoryResponseDto
@@ -55,6 +60,7 @@ class cashApiCategoryResponseDto
         $dto->sort = (int) $category->getSort();
         $dto->create_datetime = $category->getCreateDatetime();
         $dto->update_datetime = $category->getUpdateDatetime();
+        $dto->is_profit = (bool) $category->getIsProfit();
 
         return $dto;
     }

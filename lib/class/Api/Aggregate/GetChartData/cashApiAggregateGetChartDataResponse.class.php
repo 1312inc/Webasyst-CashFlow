@@ -25,6 +25,7 @@ final class cashApiAggregateGetChartDataResponse extends cashApiAbstractResponse
                 $graphDatum['groupkey'],
                 $graphDatum['incomeAmount'],
                 $graphDatum['expenseAmount'],
+                $graphDatum['profitAmount'],
                 $graphDatum['balance']
             );
         }

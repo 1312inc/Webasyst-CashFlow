@@ -51,6 +51,7 @@ final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterfa
                                 ),
                                 'incomeAmount' => 0.0,
                                 'expenseAmount' => 0.0,
+                                'profitAmount' => 0.0,
                             ];
                         }
                     }
@@ -79,6 +80,7 @@ final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterfa
                             ),
                             'incomeAmount' => 0.0,
                             'expenseAmount' => 0.0,
+                            'profitAmount' => 0.0,
                         ];
                     }
                 }

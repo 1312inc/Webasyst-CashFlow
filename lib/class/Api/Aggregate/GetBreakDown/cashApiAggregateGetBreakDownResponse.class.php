@@ -17,12 +17,19 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
         parent::__construct(200);
 
         $response = [];
+        $categoryTypeMapping = [
+            'expense|1' => 'profit',
+            'expense|0' => 'expense',
+            'income' => 'income',
+        ];
         foreach ($data as $graphDatum) {
+            $categoryType = $categoryTypeMapping[$graphDatum['type']];
             if (!isset($response[$graphDatum['currency']])) {
                 $response[$graphDatum['currency']] = [
                     'currency' => $graphDatum['currency'],
                     'income' => new cashApiAggregateGetBreakDownDto(),
                     'expense' => new cashApiAggregateGetBreakDownDto(),
+                    'profit' => new cashApiAggregateGetBreakDownDto(),
                 ];
             }
 
@@ -30,8 +37,8 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
                 $graphDatum['amount'],
                 $this->getCategory($graphDatum['detailed'])
             );
-            $response[$graphDatum['currency']][$graphDatum['type']]->data[] = $dataInfo;
-            $response[$graphDatum['currency']][$graphDatum['type']]->totalAmount += abs($dataInfo->amount);
+            $response[$graphDatum['currency']][$categoryType]->data[] = $dataInfo;
+            $response[$graphDatum['currency']][$categoryType]->totalAmount += abs($dataInfo->amount);
         }
 
         $this->response = array_values($response);
