@@ -4,7 +4,7 @@
     <TransactionControls class="custom-mb-24" />
     <div class="flexbox">
       <div class="wide">
-        <TransactionListIncoming />
+        <TransactionList />
       </div>
       <AmChartPieStickyContainer class="width-40" />
     </div>
@@ -14,7 +14,7 @@
 <script>
 import moment from 'moment'
 import TransactionControls from '@/components/TransactionControls'
-import TransactionListIncoming from '@/components/TransactionListIncoming'
+import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
@@ -23,7 +23,7 @@ export default {
 
   components: {
     TransactionControls,
-    TransactionListIncoming,
+    TransactionList,
     AmChartPieStickyContainer
   },
 

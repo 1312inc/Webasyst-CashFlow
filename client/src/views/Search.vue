@@ -8,7 +8,7 @@
 
 <script>
 import TransactionControls from '@/components/TransactionControls'
-import TransactionList from '@/components/TransactionList'
+import TransactionList from '@/components/TransactionList/TransactionList'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
