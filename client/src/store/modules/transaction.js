@@ -6,10 +6,13 @@ export default {
   state: () => ({
     incomingTransactions: [],
     upcomingTransactions: [],
+    updatedTransactionsIds: [],
+    createdTransactions: [],
     defaultGroupTransactions: null,
     activeGroupTransactions: [],
     groupNames: [],
     featurePeriod: 7,
+    upcomingBlockOpened: 1, // TODO: Remove from the store to browser store
     chartData: [],
     chartDataCurrencyIndex: 0,
     loading: true,
@@ -17,7 +20,7 @@ export default {
     queryParams: {
       from: '',
       to: '',
-      limit: 30,
+      limit: 100,
       offset: 0,
       filter: ''
     },
@@ -51,6 +54,37 @@ export default {
       state.activeGroupTransactions = data
     },
 
+    setUpdatedTransactionsIds (state, data) {
+      state.updatedTransactionsIds = data
+      setTimeout(() => {
+        state.updatedTransactionsIds = []
+      }, 6000)
+    },
+
+    setCreatedTransactions (state, data) {
+      data.forEach(t => {
+        const i = state.createdTransactions.findIndex(e => e.id === t.id)
+        if (i === -1) {
+          state.createdTransactions.push(t)
+        } else {
+          state.createdTransactions.splice(i, 1, t)
+        }
+      })
+    },
+
+    deleteCreatedTransaction (state, data) {
+      if (!data.length) {
+        state.createdTransactions = []
+      }
+
+      data.forEach(id => {
+        const i = state.createdTransactions.findIndex(e => e.id === id)
+        if (i > -1) {
+          state.createdTransactions.splice(i, 1)
+        }
+      })
+    },
+
     setGroupNames (state, data) {
       const i = state.groupNames.indexOf(data)
       if (i === -1) {
@@ -62,6 +96,10 @@ export default {
 
     setFeaturePeriod (state, data) {
       state.featurePeriod = data
+    },
+
+    setUpcomingBlockOpened (state, data) {
+      state.upcomingBlockOpened = data
     },
 
     setChartData (state, data) {
@@ -86,6 +124,27 @@ export default {
 
     setChartDataCurrencyIndex (state, value) {
       state.chartDataCurrencyIndex = value
+    },
+
+    updateTransactions (state, data) {
+      data.forEach(t => {
+        const i = state.incomingTransactions.findIndex(e => e.id === t.id)
+        if (i > -1) {
+          state.incomingTransactions.splice(i, 1, t)
+        } else {
+          // state.incomingTransactions.unshift(t)
+        }
+        state.incomingTransactions.sort((a, b) => {
+          return new Date(b.date) - new Date(a.date)
+        })
+      })
+    },
+
+    deleteTransaction (state, id) {
+      const i = state.incomingTransactions.findIndex(e => e.id === id)
+      if (i > -1) {
+        state.incomingTransactions.splice(i, 1)
+      }
     }
 
   },
@@ -93,30 +152,44 @@ export default {
   actions: {
     async getChartData ({ commit, state }) {
       const { from, to, filter } = state.queryParams
-      commit('setLoadingChart', true)
-      const { data } = await api.get('cash.aggregate.getChartData', {
-        params: {
-          from,
-          to,
-          filter,
-          group_by: 'day'
+      try {
+        commit('setLoadingChart', true)
+        const { data } = await api.get('cash.aggregate.getChartData', {
+          params: {
+            from,
+            to,
+            filter,
+            group_by: 'day'
+          }
+        })
+        if (data.error) {
+          throw new Error(data.error_message)
         }
-      })
-      commit('setChartData', data)
-      commit('setChartDataCurrencyIndex', 0)
-      commit('setLoadingChart', false)
+        commit('setChartData', data)
+        commit('setChartDataCurrencyIndex', 0)
+        commit('setLoadingChart', false)
+      } catch (e) {
+        console.log(e)
+      }
     },
 
-    async update ({ dispatch }, params) {
+    async update ({ commit, dispatch }, params) {
       const method = params.id ? 'update' : 'create'
-      await api.post(`cash.transaction.${method}`, params)
+      const { data } = await api.post(`cash.transaction.${method}`, params)
+      commit('updateTransactions', data)
+      commit('setCreatedTransactions', data)
+      const ids = data.map(t => t.id)
+      commit('setUpdatedTransactionsIds', ids)
+
       dispatch('account/getList', null, { root: true })
     },
 
-    async delete ({ dispatch }, id) {
+    async delete ({ commit, dispatch }, id) {
       await api.delete('cash.transaction.delete', {
         params: { id }
       })
+      commit('deleteTransaction', id)
+      commit('deleteCreatedTransaction', [id])
       dispatch('account/getList', null, { root: true })
     }
 

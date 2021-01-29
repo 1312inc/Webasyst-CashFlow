@@ -3,7 +3,7 @@
     <ChartHeader />
     <AmChart />
     <DetailsDashboard />
-    <TransactionList />
+    <Transaction />
   </div>
 </template>
 
@@ -11,7 +11,7 @@
 import ChartHeader from '@/components/ChartHeader'
 import AmChart from '@/components/AmChart'
 import DetailsDashboard from '@/components/DetailsDashboard'
-import TransactionList from '@/components/TransactionList'
+import Transaction from '@/components/TransactionList/Transaction'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
@@ -21,7 +21,7 @@ export default {
     ChartHeader,
     AmChart,
     DetailsDashboard,
-    TransactionList
+    Transaction
   },
 
   beforeRouteEnter (to, from, next) {

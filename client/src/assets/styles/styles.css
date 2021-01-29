@@ -10,7 +10,22 @@ body.modal {
   color: #fc3d38;
 }
 
+.c-list .c-item {
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
 .c-transaction-section .c-transaction-section__header { margin: 0; }
+
+.list-enter, .list-leave-to
+/* .list-complete-leave-active до версии 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.list-leave-active {
+  position: absolute;
+}
 
 .fade-enter-active,
 .fade-leave-active {

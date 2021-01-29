@@ -1,6 +1,11 @@
 <template>
-  <li class="c-item item">
-    <div @mouseover="isHover = true" @mouseleave="isHover = false" @click="openModal" class="flexbox middle space-12 custom-py-12">
+  <li class="c-item item" :class="classes">
+    <div
+      @mouseover="isHover = true"
+      @mouseleave="isHover = false"
+      @click="openModal"
+      class="flexbox middle space-12 custom-py-12 custom-pr-12"
+    >
       <div v-if="$helper.showMultiSelect()" style="width: 1rem">
         <span
           v-show="isHoverComputed"
@@ -41,11 +46,14 @@
           >
             <i class="fas fa-redo-alt opacity-50"></i>
           </span>
-          <div :style="`color: ${category.color}`" class="bold">
+          <span
+            :style="`color: ${category.color};margin-left:auto;`"
+            class="bold"
+          >
             {{ $helper.toCurrency(transaction.amount, account.currency, true) }}
-          </div>
+          </span>
         </div>
-        <div class="small">
+        <div class="small align-right">
           {{ $moment(transaction.date).format("ll") }}
         </div>
       </div>
@@ -108,6 +116,12 @@ export default {
     isHoverComputed () {
       if (process.env.VUE_APP_MODE === 'mobile') return true
       return this.showChecker ? true : this.isHover
+    },
+
+    classes () {
+      return {
+        'c-item--updated': this.$store.state.transaction.updatedTransactionsIds.includes(this.transaction.id)
+      }
     }
   },
 
@@ -137,9 +151,18 @@ export default {
 </script>
 
 <style>
-  .c-item {
-    width: 100%;
-    /* max-width: 400px; */
-    cursor: pointer;
-  }
+
+@keyframes updated {
+  from {background-color: #dbf4e1;}
+  to {background-color: rgba(255, 255, 255, 0);}
+}
+
+.c-item--updated {
+  animation-name: updated;
+  animation-duration: 6s;
+  animation-timing-function: linear;
+  animation-direction: alternate;
+  background-color: #dbf4e1;
+}
+
 </style>
