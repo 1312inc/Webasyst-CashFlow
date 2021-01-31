@@ -18,9 +18,11 @@
         </button>
       </div>
     </div>
-    <Modal v-if="open" @close="close">
-      <component :is="currentComponentInModal" :editedItem="item"></component>
-    </Modal>
+    <portal>
+      <Modal v-if="open" @close="close">
+        <component :is="currentComponentInModal" :editedItem="item"></component>
+      </Modal>
+    </portal>
   </div>
 </template>
 
