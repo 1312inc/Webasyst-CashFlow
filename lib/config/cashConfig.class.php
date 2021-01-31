@@ -299,7 +299,7 @@ class cashConfig extends waAppConfig
         try {
             $url = $this->getBackendUrl(true) . $this->application . '/';
             $request = new cashApiTransactionGetBadgeCountRequest();
-            $request->date = DateTimeImmutable::createFromFormat('Y-m-d', waDateTime::format('Y-m-d'));
+            $request->today = DateTimeImmutable::createFromFormat('Y-m-d', waDateTime::format('Y-m-d'));
             $response = (new cashApiTransactionGetBadgeCountHandler())->handle($request);
             if ($response->count) {
                 if (wa()->whichUI(cashConfig::APP_ID) === '2.0') {

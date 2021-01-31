@@ -16,8 +16,8 @@ class cashApiTransactionGetBadgeCountHandler implements cashApiHandlerInterface
         $transactionRepository = cash()->getEntityRepository(cashTransaction::class);
 
         return new cashApiTransactionGetBadgeCountDto(
-            $request->date,
-            $transactionRepository->countOnBadgeBeforeDate($request->date, wa()->getUser())
+            $request->today,
+            $transactionRepository->countOnBadgeBeforeDate($request->today, wa()->getUser())
         );
     }
 }
