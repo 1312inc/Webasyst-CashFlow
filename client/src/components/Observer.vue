@@ -1,13 +1,13 @@
 <template>
-  <div>
-    <div class="fa-2x flexbox opacity-40 c-spinner">
-      <i class="fas fa-circle-notch fa-spin"></i>
-    </div>
-  </div>
+  <SkeletonTransaction :lines="1" />
 </template>
 
 <script>
+import SkeletonTransaction from '@/components/SkeletonTransaction'
 export default {
+  components: {
+    SkeletonTransaction
+  },
   mounted () {
     this.observer = new IntersectionObserver(([entry]) => {
       if (entry && entry.isIntersecting) {
@@ -22,9 +22,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.c-spinner {
-  justify-content: center;
-}
-</style>
