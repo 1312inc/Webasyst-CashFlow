@@ -59,9 +59,11 @@
       </div>
     </div>
 
-    <Modal v-if="open" @close="open = false">
-      <AddTransaction :transaction="transaction" />
-    </Modal>
+    <portal>
+      <Modal v-if="open" @close="open = false">
+        <AddTransaction :transaction="transaction" />
+      </Modal>
+    </portal>
   </li>
 </template>
 
@@ -120,7 +122,7 @@ export default {
 
     classes () {
       return {
-        'c-item--updated': this.$store.state.transaction.updatedTransactionsIds.includes(this.transaction.id)
+        'c-item--updated': this.$store.state.transaction.updatedTransactions.map(t => t.id).includes(this.transaction.id)
       }
     }
   },

@@ -50,53 +50,55 @@
       </div>
     </div>
 
-    <Modal v-if="openModal">
-      <h2 class="custom-mb-32">
-        {{ $t("setDates") }}
-      </h2>
-      <div class="fields custom-mb-32">
-        <div class="field">
-          <div class="name for-input">
-            {{ $t("from") }}
+    <portal>
+      <Modal v-if="openModal">
+        <h2 class="custom-mb-32">
+          {{ $t("setDates") }}
+        </h2>
+        <div class="fields custom-mb-32">
+          <div class="field">
+            <div class="name for-input">
+              {{ $t("from") }}
+            </div>
+            <div class="value">
+              <div class="state-with-inner-icon left">
+                <DateField
+                  v-model="from"
+                  :minDate="queryParams.from"
+                  :maxDate="queryParams.to"
+                />
+                <span class="icon"><i class="fas fa-calendar"></i></span>
+              </div>
+            </div>
           </div>
-          <div class="value">
-            <div class="state-with-inner-icon left">
-              <DateField
-                v-model="from"
-                :minDate="queryParams.from"
-                :maxDate="queryParams.to"
-              />
-              <span class="icon"><i class="fas fa-calendar"></i></span>
+          <div class="field">
+            <div class="name for-input">
+              {{ $t("to") }}
+            </div>
+            <div class="value">
+              <div class="state-with-inner-icon left">
+                <DateField
+                  v-model="to"
+                  :minDate="queryParams.from"
+                  :maxDate="queryParams.to"
+                />
+                <span class="icon"><i class="fas fa-calendar"></i></span>
+              </div>
             </div>
           </div>
         </div>
-        <div class="field">
-          <div class="name for-input">
-            {{ $t("to") }}
-          </div>
-          <div class="value">
-            <div class="state-with-inner-icon left">
-              <DateField
-                v-model="to"
-                :minDate="queryParams.from"
-                :maxDate="queryParams.to"
-              />
-              <span class="icon"><i class="fas fa-calendar"></i></span>
-            </div>
+        <div class="flexbox">
+          <div class="flexbox space-12 wide">
+            <button @click="submitModal" class="button purple">
+              {{ $t("setDates") }}
+            </button>
+            <button @click="openModal = false" class="button light-gray">
+              {{ $t("cancel") }}
+            </button>
           </div>
         </div>
-      </div>
-      <div class="flexbox">
-        <div class="flexbox space-12 wide">
-          <button @click="submitModal" class="button purple">
-            {{ $t("setDates") }}
-          </button>
-          <button @click="openModal = false" class="button light-gray">
-            {{ $t("cancel") }}
-          </button>
-        </div>
-      </div>
-    </Modal>
+      </Modal>
+    </portal>
   </div>
 </template>
 
