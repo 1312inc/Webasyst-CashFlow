@@ -8,7 +8,7 @@ class cashAutocomplete
     /**
      * Thanks to shop \shopBackendAutocompleteController::contactsAutocomplete
      *
-     * @param string   $q
+     * @param string $q
      * @param null|int $limit
      *
      * @return array
@@ -17,7 +17,7 @@ class cashAutocomplete
     public function findContacts($q, $limit = null)
     {
         $q = trim($q);
-        $key = sprintf('%s|%s', $q, (string)$limit);
+        $key = sprintf('%s|%s', $q, (string) $limit);
         $found = cash()->getCache()->get($key);
         if ($found !== null) {
             return $found;
@@ -139,7 +139,7 @@ class cashAutocomplete
                     $email = htmlspecialchars(ifset($c['email'], ''), ENT_QUOTES, 'utf-8');
                     $phone = htmlspecialchars(ifset($c['phone'], ''), ENT_QUOTES, 'utf-8');
 
-                    $terms = (array)$search_terms[$index];
+                    $terms = (array) $search_terms[$index];
                     foreach ($terms as $term) {
                         $term_safe = htmlspecialchars($term);
                         $match = false;
@@ -170,11 +170,15 @@ class cashAutocomplete
                         }
                     }
 
+                    $photo = waContact::getPhotoUrl($c['id'], $c['photo'], 96);
                     $result[$c['id']] = [
                         'id' => $c['id'],
                         'value' => $c['id'],
                         'name' => $c['name'],
+                        'firstname' => $c['firstname'],
+                        'lastname' => $c['lastname'],
                         'photo_url' => waContact::getPhotoUrl($c['id'], $c['photo'], 96),
+                        'photo_url_absolute' => rtrim(wa()->getUrl(true), '/') . $photo,
                         'label' => implode(' ', array_filter([$name, $email, $phone])),
                     ];
 
@@ -188,7 +192,11 @@ class cashAutocomplete
         foreach ($result as &$c) {
             $contact = new waContact($c['id']);
             $userpic = $contact->getPhoto(20);
-            $c['label'] = sprintf('<i class="icon16 userpic20" style="background-image: url(%s);"></i>%s', $userpic, $c['label']);
+            $c['label'] = sprintf(
+                '<i class="icon16 userpic20" style="background-image: url(%s);"></i>%s',
+                $userpic,
+                $c['label']
+            );
         }
         unset($c);
 
