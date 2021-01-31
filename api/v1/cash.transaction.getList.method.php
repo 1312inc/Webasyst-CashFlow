@@ -54,6 +54,11 @@ class cashTransactionGetListMethod extends cashApiAbstractMethod
     protected $method = self::METHOD_GET;
 
     /**
+     * @var array<cashUser>
+     */
+    private $users = [];
+
+    /**
      * @return cashApiTransactionGetListResponse
      * @throws kmwaForbiddenException
      * @throws waAPIException
@@ -86,11 +91,35 @@ class cashTransactionGetListMethod extends cashApiAbstractMethod
 
         $transactions = (new cashApiTransactionGetListHandler())->handle($request);
 
+        /** @var cashApiTransactionResponseDto $datum */
+        foreach ($transactions['data'] as $datum) {
+            if (!$datum->contractor_contact_id) {
+                continue;
+            }
+
+            $datum->addContactData($this->getContact($datum->contractor_contact_id));
+        }
+
         return new cashApiTransactionGetListResponse(
             $transactions['data'],
             $transactions['total'],
             (int) $request->offset,
             (int) $request->limit
         );
+    }
+
+    /**
+     * @param int $contactId
+     *
+     * @return cashUser
+     * @throws waException
+     */
+    private function getContact($contactId): cashUser
+    {
+        if (!isset($this->users[$contactId])) {
+            $this->users[$contactId] = new cashUser(new waContact($contactId));
+        }
+
+        return $this->users[$contactId];
     }
 }
