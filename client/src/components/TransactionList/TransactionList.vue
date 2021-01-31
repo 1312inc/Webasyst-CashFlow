@@ -7,7 +7,9 @@
       <div class="align-right custom-mb-4">
         <ExportButton type="completed" />
       </div>
-      <TransactionListCreated v-if="$store.state.transaction.createdTransactions.length" />
+      <transition name="fade">
+        <TransactionListCreated v-if="$store.state.transaction.createdTransactions.length" />
+      </transition>
       <div v-for="(items, type, index) in grouppedTransactions" :key="type">
         <TransactionListGroup :group="items" :type="type" :index="index" />
       </div>
@@ -65,11 +67,11 @@ export default {
 
     transactions: {
       get () {
-        return this.$store.state.transaction.incomingTransactions
+        return this.$store.state.transaction.transactions
       },
 
       set (val) {
-        this.$store.commit('transaction/setIncomingTransactions', val)
+        this.$store.commit('transaction/setTransactions', val)
       }
     },
 
