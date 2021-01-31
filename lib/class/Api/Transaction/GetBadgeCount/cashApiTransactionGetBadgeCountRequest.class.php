@@ -6,7 +6,7 @@
 class cashApiTransactionGetBadgeCountRequest
 {
     /**
-     * @var DateTimeImmutable
+     * @var DateTimeImmutable|string
      */
-    public $date;
+    public $today = '';
 }

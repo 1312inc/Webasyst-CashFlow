@@ -13,7 +13,10 @@ class cashTransactionGetBadgeCountMethod extends cashApiAbstractMethod
     {
         /** @var cashApiTransactionGetBadgeCountRequest $request */
         $request = $this->fillRequestWithParams(new cashApiTransactionGetBadgeCountRequest());
-        $request->date = DateTimeImmutable::createFromFormat('Y-m-d', $request->date);
+        $request->today = DateTimeImmutable::createFromFormat('Y-m-d', $request->today);
+        if (!$request->today) {
+            return new cashApiErrorResponse("Wrong date format. Expected 'Y-m-d'");
+        }
 
         return new cashApiTransactionGetBadgeCountResponse(
             (new cashApiTransactionGetBadgeCountHandler())->handle($request)
