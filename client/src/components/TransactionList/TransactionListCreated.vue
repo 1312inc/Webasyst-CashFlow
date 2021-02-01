@@ -11,6 +11,7 @@
         v-for="transaction in $store.state.transaction.createdTransactions"
         :key="transaction.id"
         :transaction="transaction"
+        :showChecker="isShowChecker"
       />
     </transition-group>
   </div>
@@ -21,6 +22,14 @@ import TransactionListGroupRow from '@/components/TransactionList/TransactionLis
 export default {
   components: {
     TransactionListGroupRow
+  },
+
+  computed: {
+    isShowChecker () {
+      return this.$store.state.transaction.createdTransactions.some(e =>
+        this.$store.state.transactionBulk.selectedTransactionsIds.includes(e.id)
+      )
+    }
   },
 
   beforeDestroy () {

@@ -21,7 +21,6 @@
 <script>
 import { mapState } from 'vuex'
 import api from '@/plugins/api'
-import transactionListMixin from '@/mixins/transactionListMixin'
 import TransactionListCreated from '@/components/TransactionList/TransactionListCreated'
 import TransactionListGroup from '@/components/TransactionList/TransactionListGroup'
 import ExportButton from '@/components/ExportButton'
@@ -29,8 +28,6 @@ import SkeletonTransaction from '@/components/SkeletonTransaction'
 import Observer from '@/components/Observer'
 
 export default {
-  mixins: [transactionListMixin],
-
   props: {
     grouping: {
       type: Boolean,
@@ -119,6 +116,30 @@ export default {
 
       this.grouppedTransactions = result
     }
+  },
+
+  created () {
+    this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
+      if ((mutation.type === 'transaction/updateQueryParams' || mutation.type === 'transaction/setDetailsInterval') && !mutation.payload.silent) {
+        this.getTransactions({ offset: 0 })
+      }
+    })
+
+    this.unsubscribeFromTransitionUpdate = this.$store.subscribeAction({
+      after: (action) => {
+        if (
+          (action.type === 'transactionBulk/bulkMove' ||
+            action.type === 'category/delete') && !action.payload?.silent
+        ) {
+          this.getTransactions({ offset: 0 })
+        }
+      }
+    })
+  },
+
+  beforeDestroy () {
+    this.unsubscribeFromQueryParams()
+    this.unsubscribeFromTransitionUpdate()
   },
 
   methods: {
