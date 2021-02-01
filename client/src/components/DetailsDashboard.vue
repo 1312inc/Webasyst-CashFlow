@@ -63,6 +63,7 @@
             <div class="state-with-inner-icon left">
               <DateField
                 v-model="from"
+                :defaultDate="queryParams.from"
                 :minDate="queryParams.from"
                 :maxDate="queryParams.to"
               />
@@ -78,6 +79,7 @@
             <div class="state-with-inner-icon left">
               <DateField
                 v-model="to"
+                :defaultDate="queryParams.to"
                 :minDate="queryParams.from"
                 :maxDate="queryParams.to"
               />
