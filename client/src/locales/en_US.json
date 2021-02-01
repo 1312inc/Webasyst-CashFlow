@@ -32,6 +32,8 @@
   },
   "ammount": "Ammount",
   "repeat": "Repeat",
+  "oneTime": "One time",
+  "repeating": "Repeating",
   "date": "Date",
   "from": "Start Date",
   "to": "End Date",

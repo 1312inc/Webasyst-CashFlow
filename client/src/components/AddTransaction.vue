@@ -49,17 +49,14 @@
       </div>
 
       <div v-if="!isModeUpdate" class="field">
-        <div class="name">
+        <div class="name for-input">
           {{ $t("repeat") }}
         </div>
         <div class="value">
-          <span
-            @click="model.is_repeating = !model.is_repeating"
-            class="switch"
-            :class="{ 'is-active': model.is_repeating }"
-          >
-            <span class="switch-toggle"></span>
-          </span>
+          <div class="toggle">
+              <span @click="model.is_repeating = false" :class="{selected: !model.is_repeating}">One time</span>
+              <span @click="model.is_repeating = true" :class="{selected: model.is_repeating}">Repeating</span>
+          </div>
         </div>
       </div>
 
