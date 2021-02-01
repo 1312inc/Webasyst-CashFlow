@@ -2,7 +2,7 @@
   <div class="custom-mt-24">
     <div v-if="balanceFlow.length > 1" class="custom-mx-16">
       <div class="heading custom-mx-0">
-        {{ this.$moment().format('LL') }} <span class="count">+30d</span>
+        {{ this.$moment().format('LL') }}
       </div>
     </div>
     <ul class="menu">

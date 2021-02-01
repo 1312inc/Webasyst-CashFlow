@@ -1,6 +1,6 @@
 <template>
   <li class="c-item item">
-    <div @mouseover="isHover = true" @mouseleave="isHover = false" @click="openModal" class="flexbox middle space-12 custom-py-12">
+    <div @mouseover="isHover = true" @mouseleave="isHover = false" @click="openModal" class="flexbox middle space-12 custom-py-8">
       <div v-if="$helper.showMultiSelect()" style="width: 1rem">
         <span
           v-show="isHoverComputed"
@@ -16,24 +16,14 @@
         </span>
       </div>
       <div>
-        <i
-          class="userpic userpic48"
+        <span
+          class="userpic userpic48 align-center"
           :style="`background-color:${category.color};`"
-        ></i>
+        ><i class="c-category-glyph fas fa-ruble-sign"></i></span>
       </div>
       <div class="wide">
         <div v-if="transaction.description" class="custom-mb-8 black semibold">
           {{ transaction.description }}
-        </div>
-        <div v-if="category.name" class="custom-mb-4 hint">
-          {{ category.name }}
-        </div>
-        <div v-if="account.name" class="hint">
-          {{ account.name }}
-        </div>
-      </div>
-      <div>
-        <div class="flexbox middle custom-mb-8">
           <span
             v-if="transaction.repeating_id"
             class="tooltip custom-mr-8"
@@ -41,11 +31,21 @@
           >
             <i class="fas fa-redo-alt opacity-50"></i>
           </span>
+        </div>
+        <span v-if="category.name" class="custom-mb-4 small gray">
+          {{ category.name }}
+        </span>
+        <span v-if="account.name" class="small gray">
+          / {{ account.name }}
+        </span>
+      </div>
+      <div>
+        <div class="custom-mb-8 align-right">
           <div :style="`color: ${category.color}`" class="bold">
             {{ $helper.toCurrency(transaction.amount, account.currency, true) }}
           </div>
         </div>
-        <div class="small">
+        <div class="small align-right">
           {{ $moment(transaction.date).format("ll") }}
         </div>
       </div>
@@ -135,11 +135,3 @@ export default {
   }
 }
 </script>
-
-<style>
-  .c-item {
-    width: 100%;
-    /* max-width: 400px; */
-    cursor: pointer;
-  }
-</style>
