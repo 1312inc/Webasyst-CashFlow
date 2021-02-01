@@ -62,7 +62,7 @@
 
       <div class="field">
         <div class="name for-input custom-pt-12">
-          {{ $t("Amount") }}
+          {{ $t("amount") }}
         </div>
         <div class="value larger bold">
           <div class="state-with-inner-icon left">
@@ -438,13 +438,22 @@ export default {
   },
 
   created () {
+    // Set default category/account
+    if (!this.isModeUpdate) {
+      const currentType = this.$store.state.currentType
+      if (currentType === 'account' || currentType === 'category') {
+        this.model[`${currentType}_id`] = this.$store.state.currentTypeId
+      }
+    }
+
+    // Fill data if Update mode
     if (this.isModeUpdate) {
-      // for (const prop in this.model) {
-      //   this.model[prop] = this.transaction[prop] || this.model[prop]
-      // }
-      this.model = { ...this.model, ...this.transaction }
+      for (const prop in this.model) {
+        this.model[prop] = this.transaction[prop] || this.model[prop]
+      }
       this.model.amount = `${Math.abs(this.model.amount)}`
     }
+
     if (this.defaultCategoryType === 'transfer') {
       this.model.category_id = -1312
     }
