@@ -46,6 +46,11 @@ class cashApiShrinkTransactionResponseDto extends cashAbstractDto
     public $create_contact_id;
 
     /**
+     * @var null|array
+     */
+    public $create_contact;
+
+    /**
      * @var string
      */
     public $create_datetime;
@@ -94,6 +99,11 @@ class cashApiShrinkTransactionResponseDto extends cashAbstractDto
      * @var int|null
      */
     public $contractor_contact_id;
+
+    /**
+     * @var null|array
+     */
+    public $contractor_contact;
 
     /**
      * @var int|null

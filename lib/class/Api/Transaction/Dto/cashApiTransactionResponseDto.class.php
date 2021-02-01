@@ -56,6 +56,11 @@ class cashApiTransactionResponseDto extends cashAbstractDto
     public $create_contact_id;
 
     /**
+     * @var null|array
+     */
+    public $create_contact = null;
+
+    /**
      * @var string
      */
     public $create_datetime;
@@ -140,16 +145,5 @@ class cashApiTransactionResponseDto extends cashAbstractDto
         $this->planned = $this->date > date('Y-m-d');
         $this->amountShorten = cashShorteningService::money($this->amount);
         $this->balanceShorten = cashShorteningService::money($this->balance);
-    }
-
-    public function addContactData(cashUser $user): self
-    {
-        $this->contractor_contact = [
-            'firstname' => $user->getContact()->get('firstname'),
-            'lastname' => $user->getContact()->get('lastname'),
-            'userpic' => rtrim(wa()->getUrl(true),'/') . $user->getUserPic(),
-        ];
-
-        return $this;
     }
 }

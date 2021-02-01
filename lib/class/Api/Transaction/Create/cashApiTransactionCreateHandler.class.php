@@ -6,6 +6,16 @@
 class cashApiTransactionCreateHandler implements cashApiHandlerInterface
 {
     /**
+     * @var cashApiTransactionResponseDtoAssembler
+     */
+    private $transactionResponseDtoAssembler;
+
+    public function __construct()
+    {
+        $this->transactionResponseDtoAssembler = new cashApiTransactionResponseDtoAssembler();
+    }
+
+    /**
      * @param cashApiTransactionCreateRequest $request
      *
      * @return array|cashApiTransactionResponseDto[]
@@ -131,7 +141,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
         $transactionModel = cash()->getModel(cashTransaction::class);
         $data = $transactionModel->getAllIteratorByIds($newTransactionIds);
         $response = [];
-        foreach (cashApiTransactionResponseDtoAssembler::fromModelIterator($data) as $item) {
+        foreach ($this->transactionResponseDtoAssembler->fromModelIterator($data) as $item) {
             $response[] = $item;
         }
 

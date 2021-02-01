@@ -6,6 +6,16 @@
 class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
 {
     /**
+     * @var cashApiTransactionResponseDtoAssembler
+     */
+    private $transactionResponseDtoAssembler;
+
+    public function __construct()
+    {
+        $this->transactionResponseDtoAssembler = new cashApiTransactionResponseDtoAssembler();
+    }
+
+    /**
      * @param cashApiTransactionBulkMoveRequest $request
      *
      * @return array|cashApiTransactionResponseDto[]
@@ -65,7 +75,7 @@ class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
             $saveData = array_merge($transactionData, $updateData);
             $transaction = $saver->saveFromArray($transaction, $saveData, $params);
             if ($transaction) {
-                $response[] = cashApiTransactionResponseDtoAssembler::generateResponseFromEntity($transaction);
+                $response[] = $this->transactionResponseDtoAssembler->generateResponseFromEntity($transaction);
             }
         }
 

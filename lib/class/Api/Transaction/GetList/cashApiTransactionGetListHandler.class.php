@@ -6,6 +6,16 @@
 class cashApiTransactionGetListHandler implements cashApiHandlerInterface
 {
     /**
+     * @var cashApiTransactionResponseDtoAssembler
+     */
+    private $transactionResponseDtoAssembler;
+
+    public function __construct()
+    {
+        $this->transactionResponseDtoAssembler = new cashApiTransactionResponseDtoAssembler();
+    }
+
+    /**
      * @param cashApiTransactionGetListRequest $request
      *
      * @return array|cashApiTransactionResponseDto[]
@@ -45,7 +55,7 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
         }
 
         $response = [];
-        $iterator = cashApiTransactionResponseDtoAssembler::fromModelIteratorWithInitialBalance(
+        $iterator = $this->transactionResponseDtoAssembler->fromModelIteratorWithInitialBalance(
             $data,
             $initialBalance,
             $filterDto->reverse
