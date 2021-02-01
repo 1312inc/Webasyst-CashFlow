@@ -1,5 +1,6 @@
 <template>
   <imask-input
+    :value="$attrs.value"
     @accept="update"
     :mask="Number"
     :scale="2"

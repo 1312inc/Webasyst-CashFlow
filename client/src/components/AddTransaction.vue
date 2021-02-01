@@ -446,7 +446,7 @@ export default {
       //   this.model[prop] = this.transaction[prop] || this.model[prop]
       // }
       this.model = { ...this.model, ...this.transaction }
-      this.model.amount = Math.abs(this.model.amount)
+      this.model.amount = `${Math.abs(this.model.amount)}`
     }
     if (this.defaultCategoryType === 'transfer') {
       this.model.category_id = -1312
