@@ -33,21 +33,27 @@ export default {
       }, state.selectedTransactionsIds)
     },
 
-    empty (state) {
+    emptySelectedTransactionsIds (state) {
       state.selectedTransactionsIds = []
     }
   },
 
   actions: {
     async bulkDelete ({ dispatch, state, commit }) {
-      await api.post('cash.transaction.bulkDelete', { ids: state.selectedTransactionsIds })
-      commit('empty')
+      const ids = state.selectedTransactionsIds
+      await api.post('cash.transaction.bulkDelete', { ids: ids })
+      // Remove transactions from the store
+      ids.forEach(id => {
+        commit('transaction/deleteTransaction', id, { root: true })
+        commit('transaction/deleteCreatedTransaction', [id], { root: true })
+      })
+      commit('emptySelectedTransactionsIds')
       dispatch('account/getList', null, { root: true })
     },
 
     async bulkMove ({ dispatch, commit }, params) {
       await api.post('cash.transaction.bulkMove', params)
-      commit('empty')
+      commit('emptySelectedTransactionsIds')
       dispatch('account/getList', null, { root: true })
     }
   }

@@ -64,7 +64,7 @@ export default {
             action.type === 'account/update' ||
             action.type === 'account/delete' ||
             action.type === 'category/delete') &&
-          !action.payload.silent
+          !action.payload?.silent
         ) {
           this.getBalanceFlow()
         }
