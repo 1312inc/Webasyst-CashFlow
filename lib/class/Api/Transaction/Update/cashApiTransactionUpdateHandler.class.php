@@ -11,11 +11,17 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
     private $saver;
 
     /**
+     * @var cashApiTransactionResponseDtoAssembler
+     */
+    private $transactionResponseDtoAssembler;
+
+    /**
      * cashApiTransactionUpdateHandler constructor.
      */
     public function __construct()
     {
         $this->saver = new cashTransactionSaver();
+        $this->transactionResponseDtoAssembler = new cashApiTransactionResponseDtoAssembler();
     }
 
     /**
@@ -140,7 +146,7 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
         $transactionModel = cash()->getModel(cashTransaction::class);
         $data = $transactionModel->getAllIteratorByIds($newTransactionIds);
         $response = [];
-        foreach (cashApiTransactionResponseDtoAssembler::fromModelIterator($data) as $item) {
+        foreach ($this->transactionResponseDtoAssembler->fromModelIterator($data) as $item) {
             $response[] = $item;
         }
 

@@ -6,6 +6,16 @@
 class cashApiTransactionGetShrinkListHandler implements cashApiHandlerInterface
 {
     /**
+     * @var cashApiShrinkTransactionResponseDtoAssembler
+     */
+    private $shrinkTransactionResponseDtoAssembler;
+
+    public function __construct()
+    {
+        $this->shrinkTransactionResponseDtoAssembler = new cashApiShrinkTransactionResponseDtoAssembler();
+    }
+
+    /**
      * @param cashApiTransactionGetShrinkListRequest $request
      *
      * @return array|cashApiTransactionResponseDto[]
@@ -27,7 +37,7 @@ class cashApiTransactionGetShrinkListHandler implements cashApiHandlerInterface
         $data = $transactionFilter->getShrinkResults($filterDto);
 
         $response = [];
-        $iterator = cashApiShrinkTransactionResponseDtoAssembler::fromModelIterator($data);
+        $iterator = $this->shrinkTransactionResponseDtoAssembler->fromModelIterator($data);
         foreach ($iterator as $item) {
             $response[] = $item;
         }

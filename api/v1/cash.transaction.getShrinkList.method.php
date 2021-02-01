@@ -14,8 +14,10 @@ class cashTransactionGetShrinkListMethod extends cashApiAbstractMethod
         /** @var cashApiTransactionGetShrinkListRequest $request */
         $request = $this->fillRequestWithParams(new cashApiTransactionGetShrinkListRequest());
 
+        $transactions = (new cashApiTransactionGetShrinkListHandler())->handle($request);
+
         return new cashApiTransactionGetShrinkListResponse(
-            (new cashApiTransactionGetShrinkListHandler())->handle($request)
+
         );
     }
 }

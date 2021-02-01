@@ -3,7 +3,7 @@
 /**
  * Class cashApiTransactionResponseDtoAssembler
  */
-class cashApiTransactionResponseDtoAssembler
+class cashApiTransactionResponseDtoAssembler extends cashApiTransactionResponseDtoAbstractAssembler
 {
     /**
      * @param Iterator $transactionData
@@ -12,10 +12,13 @@ class cashApiTransactionResponseDtoAssembler
      *
      * @return Generator<cashApiTransactionResponseDto>
      */
-    public static function fromModelIteratorWithInitialBalance(Iterator $transactionData, $initialBalance, $reverseOrder = false)
-    {
+    public function fromModelIteratorWithInitialBalance(
+        Iterator $transactionData,
+        $initialBalance,
+        $reverseOrder = false
+    ): Generator {
         foreach ($transactionData as $transactionDatum) {
-            $dto= new cashApiTransactionResponseDto($transactionDatum);
+            $dto = new cashApiTransactionResponseDto($transactionDatum);
 
             if ($initialBalance !== null && !isset($transactionDatum['balance'])) {
                 $transactionDatum['balance'] = $initialBalance;
@@ -32,6 +35,11 @@ class cashApiTransactionResponseDtoAssembler
             $dto->balance = $initialBalance;
             $dto->balanceShorten = cashShorteningService::money($dto->balance);
 
+            $dto->create_contact = $this->getContactData($dto->create_contact_id);
+            if ($dto->contractor_contact_id) {
+                $dto->contractor_contact = $this->getContactData($dto->contractor_contact_id);
+            }
+
             yield $dto;
         }
     }
@@ -41,10 +49,16 @@ class cashApiTransactionResponseDtoAssembler
      *
      * @return Generator
      */
-    public static function fromModelIterator(Iterator $transactionData)
+    public function fromModelIterator(Iterator $transactionData): Generator
     {
         foreach ($transactionData as $transactionDatum) {
-            yield new cashApiTransactionResponseDto($transactionDatum);
+            $dto = new cashApiTransactionResponseDto($transactionDatum);
+            $dto->create_contact = $this->getContactData($dto->create_contact_id);
+            if ($dto->contractor_contact_id) {
+                $dto->contractor_contact = $this->getContactData($dto->contractor_contact_id);
+            }
+
+            yield $dto;
         }
     }
 
@@ -53,8 +67,15 @@ class cashApiTransactionResponseDtoAssembler
      *
      * @return cashApiTransactionResponseDto
      */
-    public static function generateResponseFromEntity(cashTransaction $transaction): cashApiTransactionResponseDto
+    public function generateResponseFromEntity(cashTransaction $transaction): cashApiTransactionResponseDto
     {
-        return cashDtoFromEntityFactory::fromEntity(cashApiTransactionResponseDto::class, $transaction);
+        /** @var cashApiTransactionResponseDto $dto */
+        $dto = cashDtoFromEntityFactory::fromEntity(cashApiTransactionResponseDto::class, $transaction);
+        $dto->create_contact = $this->getContactData($dto->create_contact_id);
+        if ($dto->contractor_contact_id) {
+            $dto->contractor_contact = $this->getContactData($dto->contractor_contact_id);
+        }
+
+        return $dto;
     }
 }
