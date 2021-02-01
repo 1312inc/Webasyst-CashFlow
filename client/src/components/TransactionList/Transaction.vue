@@ -1,22 +1,19 @@
 <template>
   <div class="flexbox">
     <div class="wide">
-      <TransactionListUpcoming class="custom-mb-24" />
-      <TransactionListIncoming />
+      <TransactionList />
     </div>
     <AmChartPieStickyContainer class="width-40" />
   </div>
 </template>
 
 <script>
-import TransactionListIncoming from '@/components/TransactionListIncoming'
-import TransactionListUpcoming from '@/components/TransactionListUpcoming'
+import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/AmChartPieStickyContainer'
 
 export default {
   components: {
-    TransactionListIncoming,
-    TransactionListUpcoming,
+    TransactionList,
     AmChartPieStickyContainer
   }
 }

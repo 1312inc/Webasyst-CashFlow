@@ -50,13 +50,18 @@
       </div>
     </div>
 
-    <Modal v-if="open" @close="open = false">
-      <AddTransaction :defaultCategoryType="categoryType" />
-    </Modal>
+    <portal>
+      <Modal v-if="open" @close="open = false">
+        <AddTransaction :defaultCategoryType="categoryType" />
+      </Modal>
+    </portal>
 
-    <Modal v-if="openMove" @close="openMove = false">
-      <TransactionMove />
-    </Modal>
+    <portal>
+      <Modal v-if="openMove" @close="openMove = false">
+        <TransactionMove />
+      </Modal>
+    </portal>
+
   </div>
 </template>
 
