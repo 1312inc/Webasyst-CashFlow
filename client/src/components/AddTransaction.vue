@@ -54,8 +54,8 @@
         </div>
         <div class="value">
           <div class="toggle">
-              <span @click="model.is_repeating = false" :class="{selected: !model.is_repeating}">One time</span>
-              <span @click="model.is_repeating = true" :class="{selected: model.is_repeating}">Repeating</span>
+              <span @click="model.is_repeating = false" :class="{selected: !model.is_repeating}">{{ $t('oneTime') }}</span>
+              <span @click="model.is_repeating = true" :class="{selected: model.is_repeating}">{{ $t('repeating') }}</span>
           </div>
         </div>
       </div>
