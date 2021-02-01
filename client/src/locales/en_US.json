@@ -30,7 +30,7 @@
       "This & all related future recurring transactions {count}"
     ]
   },
-  "ammount": "Ammount",
+  "amount": "Amount",
   "repeat": "Repeat",
   "oneTime": "One time",
   "repeating": "Repeating",
