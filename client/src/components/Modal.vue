@@ -1,9 +1,7 @@
 <template>
-  <transition name="fade">
+  <transition name="fade" appear>
     <div class="dialog">
-      <transition name="fade" appear>
-        <div class="dialog-background"></div>
-      </transition>
+      <div class="dialog-background"></div>
       <transition name="slide-fade" appear>
         <div class="dialog-body">
           <div class="dialog-content">

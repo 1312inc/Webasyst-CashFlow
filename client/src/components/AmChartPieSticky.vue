@@ -68,6 +68,7 @@ export default {
     // Add Chart data
     chart.data = this.$store.state.category.categories.map(c => {
       return {
+        id: c.id,
         amount: 0,
         category: c.name,
         category_color: c.color
@@ -159,20 +160,20 @@ export default {
         const el =
           this.$store.getters['transaction/getTransactionById'](id) || id
         const category = this.$store.getters['category/getById'](el.category_id)
-        if (!acc[category.name]) {
-          acc[category.name] = {
+        if (!acc[category.id]) {
+          acc[category.id] = {
             amount: el.amount,
             category: category.name,
             category_color: category.color
           }
         } else {
-          acc[category.name].amount += el.amount
+          acc[category.id].amount += el.amount
         }
         return acc
       }, {})
 
       this.chart.data.forEach(e => {
-        e.amount = res[e.category] ? res[e.category].amount : 0
+        e.amount = res[e.id] ? res[e.id].amount : 0
       })
 
       this.chart.invalidateRawData()

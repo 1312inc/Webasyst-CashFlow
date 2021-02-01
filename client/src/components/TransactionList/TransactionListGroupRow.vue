@@ -1,6 +1,11 @@
 <template>
-  <li class="c-item item">
-    <div @mouseover="isHover = true" @mouseleave="isHover = false" @click="openModal" class="flexbox middle space-12 custom-py-8">
+  <li class="c-item item" :class="classes">
+    <div
+      @mouseover="isHover = true"
+      @mouseleave="isHover = false"
+      @click="openModal"
+      class="flexbox middle space-12 custom-py-12 custom-pr-12"
+    >
       <div v-if="$helper.showMultiSelect()" style="width: 1rem">
         <span
           v-show="isHoverComputed"
@@ -51,9 +56,11 @@
       </div>
     </div>
 
-    <Modal v-if="open" @close="open = false">
-      <AddTransaction :transaction="transaction" />
-    </Modal>
+    <portal>
+      <Modal v-if="open" @close="open = false">
+        <AddTransaction :transaction="transaction" />
+      </Modal>
+    </portal>
   </li>
 </template>
 
@@ -108,6 +115,12 @@ export default {
     isHoverComputed () {
       if (process.env.VUE_APP_MODE === 'mobile') return true
       return this.showChecker ? true : this.isHover
+    },
+
+    classes () {
+      return {
+        'c-item--updated': this.$store.state.transaction.updatedTransactions.map(t => t.id).includes(this.transaction.id)
+      }
     }
   },
 
@@ -135,3 +148,20 @@ export default {
   }
 }
 </script>
+
+<style>
+
+@keyframes updated {
+  from {background-color: #dbf4e1;}
+  to {background-color: rgba(255, 255, 255, 0);}
+}
+
+.c-item--updated {
+  animation-name: updated;
+  animation-duration: 6s;
+  animation-timing-function: linear;
+  animation-direction: alternate;
+  background-color: #dbf4e1;
+}
+
+</style>

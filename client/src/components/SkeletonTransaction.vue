@@ -1,11 +1,6 @@
 <template>
   <ul class="c-list list">
-    <li
-      v-for="i in 10"
-      :key="i"
-      class="item"
-      style="width: 100%; max-width: 400px"
-    >
+    <li v-for="i in this.lines" :key="i" class="c-item item">
       <div class="skeleton">
         <div class="flexbox space-12 custom-py-12">
           <div v-if="$helper.showMultiSelect()" style="width: 1rem"></div>
@@ -26,3 +21,14 @@
     </li>
   </ul>
 </template>
+
+<script>
+export default {
+  props: {
+    lines: {
+      type: Number,
+      default: 10
+    }
+  }
+}
+</script>

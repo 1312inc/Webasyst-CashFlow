@@ -9,6 +9,7 @@ import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
 import Notify from './plugins/notify'
 import Sticky from './plugins/sticky'
+import VuePortal from '@linusborg/vue-simple-portal'
 import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
@@ -19,6 +20,7 @@ Vue.use(Notify)
 Vue.use(Vuelidate)
 Vue.use(Helpers)
 Vue.use(Sticky)
+Vue.use(VuePortal)
 
 new Vue({
   router,

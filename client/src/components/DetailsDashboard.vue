@@ -50,6 +50,7 @@
       </div>
     </div>
 
+  <portal>
     <Modal v-if="openModal">
       <h2 class="custom-mb-32">
         {{ $t("setDates") }}
@@ -87,18 +88,19 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="flexbox">
-        <div class="flexbox space-12 wide">
-          <button @click="submitModal" class="button purple">
-            {{ $t("setDates") }}
-          </button>
-          <button @click="openModal = false" class="button light-gray">
-            {{ $t("cancel") }}
-          </button>
+        <div class="flexbox">
+          <div class="flexbox space-12 wide">
+            <button @click="submitModal" class="button purple">
+              {{ $t("setDates") }}
+            </button>
+            <button @click="openModal = false" class="button light-gray">
+              {{ $t("cancel") }}
+            </button>
+          </div>
         </div>
       </div>
-    </Modal>
+      </Modal>
+    </portal>
   </div>
 </template>
 

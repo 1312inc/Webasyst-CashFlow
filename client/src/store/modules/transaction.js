@@ -4,20 +4,21 @@ export default {
   namespaced: true,
 
   state: () => ({
-    incomingTransactions: [],
-    upcomingTransactions: [],
+    transactions: [],
+    updatedTransactions: [],
+    createdTransactions: [],
     defaultGroupTransactions: null,
     activeGroupTransactions: [],
     groupNames: [],
     featurePeriod: 7,
+    upcomingBlockOpened: 1, // TODO: Remove from the store to browser store
     chartData: [],
     chartDataCurrencyIndex: 0,
-    loading: true,
     loadingChart: true,
     queryParams: {
       from: '',
       to: '',
-      limit: 30,
+      limit: 100,
       offset: 0,
       filter: ''
     },
@@ -29,18 +30,36 @@ export default {
 
   getters: {
     getTransactionById: state => id => {
-      const allTransactions = [...state.upcomingTransactions, ...state.incomingTransactions]
-      return allTransactions.find(t => t.id === id)
+      return state.transactions.find(t => t.id === id)
     }
   },
 
   mutations: {
-    setIncomingTransactions (state, data) {
-      state.incomingTransactions = data
+    setTransactions (state, data) {
+      state.transactions = data
     },
 
-    setUpcomingTransactions (state, data) {
-      state.upcomingTransactions = data
+    updateTransactions (state, data) {
+      data.forEach(t => {
+        const i = state.transactions.findIndex(e => e.id === t.id)
+        if (i > -1) {
+          state.transactions.splice(i, 1, t)
+        }
+        const i2 = state.createdTransactions.findIndex(e => e.id === t.id)
+        if (i2 > -1) {
+          state.createdTransactions.splice(i2, 1, t)
+        }
+      })
+      state.transactions.sort((a, b) => {
+        return new Date(b.date) - new Date(a.date)
+      })
+    },
+
+    deleteTransaction (state, id) {
+      const i = state.transactions.findIndex(e => e.id === id)
+      if (i > -1) {
+        state.transactions.splice(i, 1)
+      }
     },
 
     setDefaultGroupTransactions (state, data) {
@@ -49,6 +68,38 @@ export default {
 
     setActiveGroupTransactions (state, data) {
       state.activeGroupTransactions = data
+    },
+
+    setUpdatedTransactions (state, data) {
+      state.updatedTransactions = data
+      if (window.clearUpdatedTransactions) {
+        clearTimeout(window.clearUpdatedTransactions)
+      }
+      window.clearUpdatedTransactions = setTimeout(() => {
+        state.updatedTransactions = []
+      }, 6000)
+    },
+
+    setCreatedTransactions (state, data) {
+      data.forEach(t => {
+        const i = state.createdTransactions.findIndex(e => e.id === t.id)
+        if (i === -1) {
+          state.createdTransactions.unshift(t)
+        }
+      })
+    },
+
+    deleteCreatedTransaction (state, data) {
+      if (!data.length) {
+        state.createdTransactions = []
+      }
+
+      data.forEach(id => {
+        const i = state.createdTransactions.findIndex(e => e.id === id)
+        if (i > -1) {
+          state.createdTransactions.splice(i, 1)
+        }
+      })
     },
 
     setGroupNames (state, data) {
@@ -62,6 +113,10 @@ export default {
 
     setFeaturePeriod (state, data) {
       state.featurePeriod = data
+    },
+
+    setUpcomingBlockOpened (state, data) {
+      state.upcomingBlockOpened = data
     },
 
     setChartData (state, data) {
@@ -93,31 +148,55 @@ export default {
   actions: {
     async getChartData ({ commit, state }) {
       const { from, to, filter } = state.queryParams
-      commit('setLoadingChart', true)
-      const { data } = await api.get('cash.aggregate.getChartData', {
-        params: {
-          from,
-          to,
-          filter,
-          group_by: 'day'
+      try {
+        commit('setLoadingChart', true)
+        const { data } = await api.get('cash.aggregate.getChartData', {
+          params: {
+            from,
+            to,
+            filter,
+            group_by: 'day'
+          }
+        })
+        if (data.error) {
+          throw new Error(data.error_message)
         }
-      })
-      commit('setChartData', data)
-      commit('setChartDataCurrencyIndex', 0)
-      commit('setLoadingChart', false)
+        commit('setChartData', data)
+        commit('setChartDataCurrencyIndex', 0)
+        commit('setLoadingChart', false)
+      } catch (e) {
+        console.log(e)
+      }
     },
 
-    async update ({ dispatch }, params) {
+    async update ({ commit, dispatch }, params) {
       const method = params.id ? 'update' : 'create'
-      await api.post(`cash.transaction.${method}`, params)
-      dispatch('account/getList', null, { root: true })
+      try {
+        const { data } = await api.post(`cash.transaction.${method}`, params)
+        if (method === 'update') {
+          commit('updateTransactions', data)
+          commit('setUpdatedTransactions', data)
+        }
+        if (method === 'create') {
+          commit('setCreatedTransactions', data)
+        }
+        dispatch('account/getList', null, { root: true })
+      } catch (e) {
+        console.log(e)
+      }
     },
 
-    async delete ({ dispatch }, id) {
-      await api.delete('cash.transaction.delete', {
-        params: { id }
-      })
-      dispatch('account/getList', null, { root: true })
+    async delete ({ commit, dispatch }, id) {
+      try {
+        await api.delete('cash.transaction.delete', {
+          params: { id }
+        })
+        commit('deleteTransaction', id)
+        commit('deleteCreatedTransaction', [id])
+        dispatch('account/getList', null, { root: true })
+      } catch (e) {
+        console.log(e)
+      }
     }
 
   }

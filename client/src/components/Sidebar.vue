@@ -182,9 +182,11 @@
       </ul>
     </div>
 
-    <Modal v-if="openModal" @close="close">
-      <component :is="currentComponentInModal"></component>
-    </Modal>
+    <portal>
+      <Modal v-if="openModal" @close="close">
+        <component :is="currentComponentInModal"></component>
+      </Modal>
+    </portal>
   </div>
 </template>
 

@@ -103,7 +103,7 @@ export default {
             action.type === 'transaction/delete' ||
             action.type === 'transactionBulk/bulkDelete' ||
             action.type === 'transactionBulk/bulkMove' ||
-            action.type === 'category/delete') && !action.payload.silent
+            action.type === 'category/delete') && !action.payload?.silent
         ) {
           this.getChartData()
         }
