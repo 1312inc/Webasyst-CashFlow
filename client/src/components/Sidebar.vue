@@ -46,7 +46,7 @@
                     class="size-20"
                   />
                   <span v-else>
-                    <i class="fas fa-star"></i>
+                    <i class="fas fa-wallet"></i>
                   </span>
                 </span>
                 <span>{{ account.name }}</span>
@@ -159,7 +159,7 @@
         </div>
 
     </div>
-    <div class="sidebar-footer">
+    <div class="sidebar-footer shadowed">
       <ul class="menu">
         <li>
           <a :href="`${$helper.baseUrl}reports/`">

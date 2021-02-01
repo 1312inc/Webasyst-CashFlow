@@ -122,6 +122,6 @@ export default {
 
 <style>
 .c-sticky-header-controls {
-  background-color: #fff;
+  background-color: var(--background-color-blank);
 }
 </style>

@@ -9,14 +9,7 @@
       }"
     >
       <div>
-        <i
-          class="fas"
-          :class="{
-            'fa-caret-up': type === 'income',
-            'fa-caret-down': type === 'expense',
-          }"
-        ></i
-        >&nbsp;<span class="small">{{
+        <span class="small">{{
           $helper.toCurrency(
             getTotalByAccout(account.id),
             account.currency,

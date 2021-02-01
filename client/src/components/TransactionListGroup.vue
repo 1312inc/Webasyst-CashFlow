@@ -179,7 +179,7 @@ export default {
 }
 
 .c-sticky-header-group {
-  background: #fff;
+  background: var(--background-color-blank);
 }
 
 .c-sticky-header-group.vue-sticky-el.top-sticky {
