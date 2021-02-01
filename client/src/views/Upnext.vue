@@ -2,11 +2,8 @@
   <div>
     <h1>{{ $t('upnext') }}</h1>
     <TransactionControls class="custom-mb-24" />
-    <div class="flexbox">
-      <div class="wide">
-        <TransactionList :upcoming="true" :reverse="true" :grouping="false" />
-      </div>
-      <AmChartPieStickyContainer class="width-40" />
+    <div>
+      <TransactionList :upcoming="true" :reverse="true" :grouping="false" />
     </div>
   </div>
 </template>
@@ -15,7 +12,6 @@
 import moment from 'moment'
 import TransactionControls from '@/components/TransactionControls'
 import TransactionList from '@/components/TransactionList/TransactionList'
-import AmChartPieStickyContainer from '@/components/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
@@ -23,8 +19,7 @@ export default {
 
   components: {
     TransactionControls,
-    TransactionList,
-    AmChartPieStickyContainer
+    TransactionList
   },
 
   data () {
