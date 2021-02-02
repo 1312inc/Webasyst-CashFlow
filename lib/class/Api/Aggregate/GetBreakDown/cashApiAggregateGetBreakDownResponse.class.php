@@ -11,8 +11,11 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
      * cashApiAggregateGetBreakDownResponse constructor.
      *
      * @param array $data
+     * @param array $currencies
+     *
+     * @throws waException
      */
-    public function __construct(array $data)
+    public function __construct(array $data, array $currencies)
     {
         parent::__construct(200);
 
@@ -22,16 +25,18 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
             'expense|0' => 'expense',
             'income' => 'income',
         ];
+
+        foreach ($currencies as $currency) {
+            $response[$currency] = [
+                'currency' => $currency,
+                'income' => new cashApiAggregateGetBreakDownDto(),
+                'expense' => new cashApiAggregateGetBreakDownDto(),
+                'profit' => new cashApiAggregateGetBreakDownDto(),
+            ];
+        }
+
         foreach ($data as $graphDatum) {
             $categoryType = $categoryTypeMapping[$graphDatum['type']];
-            if (!isset($response[$graphDatum['currency']])) {
-                $response[$graphDatum['currency']] = [
-                    'currency' => $graphDatum['currency'],
-                    'income' => new cashApiAggregateGetBreakDownDto(),
-                    'expense' => new cashApiAggregateGetBreakDownDto(),
-                    'profit' => new cashApiAggregateGetBreakDownDto(),
-                ];
-            }
 
             $dataInfo = new cashApiAggregateGetBreakDownDataDto(
                 $graphDatum['amount'],
