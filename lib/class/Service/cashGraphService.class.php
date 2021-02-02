@@ -816,33 +816,46 @@ class cashGraphService
             ->groupBy(['`type`', 'ca.currency', 'detailed'])
             ->params(['from' => $paramsDto->from->format('Y-m-d'), 'to' => $paramsDto->to->format('Y-m-d')]);
 
-        switch (true) {
-            case null !== $paramsDto->filter->getAccountId():
-                $sqlParts->addAndWhere('ct.account_id = i:account_id')
-                    ->addParam('account_id', $paramsDto->filter->getAccountId());
+        return $this->filterSqlForAggregateBreakDown($sqlParts, $paramsDto)->query()->fetchAll();
+    }
 
-                break;
+    /**
+     * вернет все валюты, которые когда-либо были в категории/аккаунте
+     *
+     * @param cashAggregateGetBreakDownFilterParamsDto $paramsDto
+     *
+     * @return array
+     * @throws waException
+     */
+    public function getAggregateBreakDownCurrencies(cashAggregateGetBreakDownFilterParamsDto $paramsDto): array
+    {
+        $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
+            ->select(['ca.currency currency'])
+            ->from('cash_transaction', 'ct')
+            ->andWhere(
+                [
+                    'ct.is_archived = 0',
+                    'account_access' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+                        $paramsDto->contact
+                    ),
+                    'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
+                        $paramsDto->contact,
+                        'ct',
+                        'category_id'
+                    ),
+                    'ca.is_archived = 0',
+                ]
+            )
+            ->join(
+                [
+                    'join cash_account ca on ct.account_id = ca.id',
+                    'join cash_category cc on ct.category_id = cc.id',
+                ]
+            )
+            ->groupBy(['ca.currency']);
 
-            case null !== $paramsDto->filter->getCategoryId():
-                $sqlParts->addAndWhere('ct.category_id = i:category_id')
-                    ->addParam('category_id', $paramsDto->filter->getCategoryId());
 
-                break;
-
-            case null !== $paramsDto->filter->getContractorId():
-                $sqlParts->addAndWhere('ct.contractor_contact_id = i:contractor_contact_id')
-                    ->addParam('contractor_contact_id', $paramsDto->filter->getContractorId());
-
-                break;
-
-            case null !== $paramsDto->filter->getCurrency():
-                $sqlParts->addAndWhere('ca.currency = s:currency')
-                    ->addParam('currency', $paramsDto->filter->getCurrency());
-
-                break;
-        }
-
-        return $sqlParts->query()->fetchAll();
+        return $this->filterSqlForAggregateBreakDown($sqlParts, $paramsDto)->query()->fetchAll(null, 2);
     }
 
     /**
@@ -981,5 +994,38 @@ SQL;
         }
 
         return $data;
+    }
+
+    private function filterSqlForAggregateBreakDown(
+        cashSelectQueryParts $sqlParts,
+        cashAggregateGetBreakDownFilterParamsDto $paramsDto
+    ): cashSelectQueryParts {
+        switch (true) {
+            case null !== $paramsDto->filter->getAccountId():
+                $sqlParts->addAndWhere('ct.account_id = i:account_id')
+                    ->addParam('account_id', $paramsDto->filter->getAccountId());
+
+                break;
+
+            case null !== $paramsDto->filter->getCategoryId():
+                $sqlParts->addAndWhere('ct.category_id = i:category_id')
+                    ->addParam('category_id', $paramsDto->filter->getCategoryId());
+
+                break;
+
+            case null !== $paramsDto->filter->getContractorId():
+                $sqlParts->addAndWhere('ct.contractor_contact_id = i:contractor_contact_id')
+                    ->addParam('contractor_contact_id', $paramsDto->filter->getContractorId());
+
+                break;
+
+            case null !== $paramsDto->filter->getCurrency():
+                $sqlParts->addAndWhere('ca.currency = s:currency')
+                    ->addParam('currency', $paramsDto->filter->getCurrency());
+
+                break;
+        }
+
+        return $sqlParts;
     }
 }
