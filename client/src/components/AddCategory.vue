@@ -43,7 +43,6 @@
         <div class="value">
           <ColorPicker
             :startColor="model.color"
-            :type="model.type"
             @colorChange="selectColor"
           />
         </div>
@@ -98,6 +97,12 @@ export default {
       type: {
         required
       }
+    }
+  },
+
+  watch: {
+    'model.type' () {
+      this.model.color = this.model.type === 'income' ? '#00FF00' : '#E57373'
     }
   },
 
