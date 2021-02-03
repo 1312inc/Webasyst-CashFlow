@@ -24,14 +24,33 @@
           {{ $t("type") }}
         </div>
         <div class="value">
-          <div class="wa-select">
-            <select
-              v-model="model.type"
-              :class="{ 'state-error': $v.model.type.$error }"
+          <div class="flexbox middle space-12">
+            <div class="wa-select">
+              <select
+                v-model="model.type"
+                :class="{ 'state-error': $v.model.type.$error }"
+              >
+                <option value="income">{{ $t("income") }}</option>
+                <option value="expense">{{ $t("expense") }}</option>
+              </select>
+            </div>
+            <label
+              v-if="model.type === 'expense'"
+              @click.prevent="model.is_profit = !model.is_profit"
             >
-              <option value="income">{{ $t("income") }}</option>
-              <option value="expense">{{ $t("expense") }}</option>
-            </select>
+              <span class="wa-checkbox">
+                <input type="checkbox" :checked="model.is_profit" />
+                <span>
+                  <span class="icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                </span>
+              </span>
+              {{ $t("profit") }}
+            </label>
+          </div>
+          <div v-if="model.is_profit" class="custom-mt-8">
+            <div class="hint">{{ $t("profitAlert") }}</div>
           </div>
         </div>
       </div>
@@ -41,10 +60,7 @@
           {{ $t("color") }}
         </div>
         <div class="value">
-          <ColorPicker
-            :startColor="model.color"
-            @colorChange="selectColor"
-          />
+          <ColorPicker :startColor="model.color" @colorChange="selectColor" />
         </div>
       </div>
     </div>
@@ -58,7 +74,11 @@
           {{ $t("cancel") }}
         </button>
       </div>
-      <button v-if="isModeUpdate" @click="remove('category')" class="button red">
+      <button
+        v-if="isModeUpdate"
+        @click="remove('category')"
+        class="button red"
+      >
         {{ $t("delete") }}
       </button>
     </div>
@@ -84,7 +104,8 @@ export default {
         id: null,
         name: '',
         type: '',
-        color: ''
+        color: '',
+        is_profit: false
       }
     }
   },
@@ -103,6 +124,9 @@ export default {
   watch: {
     'model.type' () {
       this.model.color = this.model.type === 'income' ? '#00FF00' : '#E57373'
+      if (!this.isModeUpdate) {
+        this.model.is_profit = false
+      }
     }
   },
 
