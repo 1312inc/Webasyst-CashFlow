@@ -24,6 +24,13 @@ class cashTransactionCreateMethod extends cashApiAbstractMethod
     {
         /** @var cashApiTransactionCreateRequest $request */
         $request = $this->fillRequestWithParams(new cashApiTransactionCreateRequest());
+        if ($request->transfer_account_id && $request->category_id !== cashCategoryFactory::TRANSFER_CATEGORY_ID) {
+            return new cashApiErrorResponse('Pass correct transfer category');
+        }
+
+        if ($request->category_id == cashCategoryFactory::TRANSFER_CATEGORY_ID && !$request->transfer_account_id) {
+            return new cashApiErrorResponse('No transfer information');
+        }
 
         $response = (new cashApiTransactionCreateHandler())->handle($request);
 

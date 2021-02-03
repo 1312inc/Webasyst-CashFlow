@@ -77,10 +77,6 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
             throw new kmwaRuntimeException($saver->getError());
         }
 
-        if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-            throw new kmwaForbiddenException(_w('You can not edit or add new transaction'));
-        }
-
         if ($paramsDto->transfer) {
             if (!cash()->getContactRights()->canAccessTransfers(wa()->getUser())) {
                 throw new kmwaForbiddenException(_w('You can not create transfers'));
@@ -95,6 +91,10 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
             if ($transferTransaction) {
                 $saver->addToPersist($transferTransaction);
             }
+        }
+
+        if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
+            throw new kmwaForbiddenException(_w('You can not edit or add new transaction'));
         }
 
         $newTransactionIds = [];
