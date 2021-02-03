@@ -42,27 +42,43 @@ export default {
 
   actions: {
     async getList ({ commit }) {
-      const { data } = await api.get('cash.category.getList')
-      commit('setCategories', data)
+      try {
+        const { data } = await api.get('cash.category.getList')
+        commit('setCategories', data)
+      } catch (_) {
+        return false
+      }
     },
 
     async update ({ dispatch }, params) {
       const method = params.id ? 'update' : 'create'
-      await api.post(`cash.category.${method}`, params)
-      dispatch('getList')
+      try {
+        await api.post(`cash.category.${method}`, params)
+        dispatch('getList')
+      } catch (_) {
+        return false
+      }
     },
 
     async delete ({ dispatch }, id) {
-      await api.delete('cash.category.delete', {
-        params: { id }
-      })
-      router.push({ name: 'Home' })
-      await dispatch('getList')
-      dispatch('account/getList', null, { root: true })
+      try {
+        await api.delete('cash.category.delete', {
+          params: { id }
+        })
+        router.push({ name: 'Home' })
+        await dispatch('getList')
+        dispatch('account/getList', null, { root: true })
+      } catch (_) {
+        return false
+      }
     },
 
     async sort ({ commit }, params) {
-      await api.post('cash.category.sort', params)
+      try {
+        await api.post('cash.category.sort', params)
+      } catch (_) {
+        return false
+      }
     }
   }
 }

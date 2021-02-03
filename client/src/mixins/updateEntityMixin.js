@@ -1,6 +1,4 @@
-import utils from '@/mixins/utilsMixin.js'
 export default {
-  mixins: [utils],
 
   computed: {
     isModeUpdate () {
@@ -27,9 +25,6 @@ export default {
           .then(() => {
             this.close()
           })
-          .catch((e) => {
-            this.handleApiError(e)
-          })
       }
     },
 
@@ -43,9 +38,6 @@ export default {
             } else {
               this.close()
             }
-          })
-          .catch((e) => {
-            this.handleApiError(e)
           })
       }
     },

@@ -11,27 +11,19 @@
 </template>
 
 <script>
+import store from '../../store'
 export default {
-  data () {
-    return {
-      errors: []
+  store,
+  computed: {
+    errors () {
+      return this.$store.state.errors.errors
     }
   },
 
   methods: {
-    error (message) {
-      this.errors.push(message)
-    },
-
     remove (index) {
-      this.errors.splice(index, 1)
+      this.$store.commit('errors/delete', index)
     }
   }
 }
 </script>
-
-<style>
-.alert-fixed-box {
-    z-index: 2001;
-}
-</style>

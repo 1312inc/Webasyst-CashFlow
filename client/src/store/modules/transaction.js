@@ -164,8 +164,8 @@ export default {
         commit('setChartData', data)
         commit('setChartDataCurrencyIndex', 0)
         commit('setLoadingChart', false)
-      } catch (e) {
-        console.log(e)
+      } catch (_) {
+        return false
       }
     },
 
@@ -181,8 +181,8 @@ export default {
           commit('setCreatedTransactions', data)
         }
         dispatch('account/getList', null, { root: true })
-      } catch (e) {
-        console.log(e)
+      } catch (_) {
+        return false
       }
     },
 
@@ -194,8 +194,8 @@ export default {
         commit('deleteTransaction', id)
         commit('deleteCreatedTransaction', [id])
         dispatch('account/getList', null, { root: true })
-      } catch (e) {
-        console.log(e)
+      } catch (_) {
+        return false
       }
     }
 

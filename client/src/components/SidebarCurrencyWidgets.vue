@@ -78,11 +78,7 @@ export default {
 
   methods: {
     async getBalanceFlow () {
-      try {
-        await this.$store.dispatch('balanceFlow/getBalanceFlow')
-      } catch (e) {
-        this.$notify.error(`Method: getBalanceFlow<br>${e}`)
-      }
+      await this.$store.dispatch('balanceFlow/getBalanceFlow')
     }
   }
 }
