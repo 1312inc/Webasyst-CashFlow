@@ -106,6 +106,27 @@ final class cashTransactionFilterService
 
     /**
      * @param cashTransactionFilterParamsDto $dto
+     *
+     * @return array|waDbResultIterator|int
+     * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
+     * @throws waException
+     */
+    public function getUpNextResults(cashTransactionFilterParamsDto $dto)
+    {
+        $sqlParts = $this->getResultsSqlParts($dto);
+
+        $sqlParts
+            ->addAndWhere(
+                '((ct.is_onbadge = 1 and ct.date < s:startDate) or (ct.date between s:startDate and s:endDate))'
+            )
+            ->addAndWhere(null, 'dateBetween');
+
+        return !$dto->returnIterator ? $sqlParts->query()->fetchAll() : $sqlParts->query()->getIterator();
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
      * @param cashSelectQueryParts           $selectQueryParts
      *
      * @throws kmwaForbiddenException
@@ -250,8 +271,8 @@ final class cashTransactionFilterService
             )
             ->andWhere(
                 [
-                    'ct.date between s:startDate and s:endDate',
-                    'ct.is_archived = 0',
+                    'dateBetween' => 'ct.date between s:startDate and s:endDate',
+                    'isArchived' => 'ct.is_archived = 0',
                     'accountAccessSql' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
                         $dto->contact,
                         $dto->filter->getCategoryId()

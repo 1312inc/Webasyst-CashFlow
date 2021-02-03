@@ -104,6 +104,12 @@ SQL;
             $baseSql = $this->baseSql;
         }
 
+        $this->andWhere = array_filter($this->andWhere);
+        $this->join = array_filter($this->join);
+        $this->select = array_filter($this->select);
+        $this->groupBy = array_filter($this->groupBy);
+        $this->orderBy = array_filter($this->orderBy);
+
         $sql = str_replace(
             [
                 '__SELECT_PART__',

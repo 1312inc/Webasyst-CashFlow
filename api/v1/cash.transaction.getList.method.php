@@ -54,18 +54,6 @@ class cashTransactionGetListMethod extends cashApiAbstractMethod
     protected $method = self::METHOD_GET;
 
     /**
-     * @var cashUserRepository
-     */
-    private $userRepository;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->userRepository = new cashUserRepository();
-    }
-
-    /**
      * @return cashApiTransactionGetListResponse
      * @throws kmwaForbiddenException
      * @throws waAPIException
