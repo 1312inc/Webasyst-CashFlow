@@ -24,4 +24,9 @@ class cashApiCategoryCreateRequest
      * @var int
      */
     public $sort;
+
+    /**
+     * @var bool|null
+     */
+    public $is_profit;
 }
