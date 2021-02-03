@@ -22,14 +22,18 @@ export default {
 
   actions: {
     async getBalanceFlow ({ commit }) {
-      const { data } = await api.get('cash.aggregate.getBalanceFlow', {
-        params: {
-          from: moment().add(-7, 'd').format('YYYY-MM-DD'),
-          to: moment().add(1, 'M').format('YYYY-MM-DD'),
-          group_by: 'day'
-        }
-      })
-      commit('setBalanceFlow', data)
+      try {
+        const { data } = await api.get('cash.aggregate.getBalanceFlow', {
+          params: {
+            from: moment().add(-7, 'd').format('YYYY-MM-DD'),
+            to: moment().add(1, 'M').format('YYYY-MM-DD'),
+            group_by: 'day'
+          }
+        })
+        commit('setBalanceFlow', data)
+      } catch (_) {
+        return false
+      }
     }
   }
 

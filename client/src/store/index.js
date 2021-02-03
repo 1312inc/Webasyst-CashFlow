@@ -6,6 +6,7 @@ import transactionBulk from './modules/transactionBulk'
 import category from './modules/category'
 import account from './modules/account'
 import system from './modules/system'
+import errors from './modules/errors'
 import moment from 'moment'
 
 Vue.use(Vuex)
@@ -116,6 +117,7 @@ export default new Vuex.Store({
     transactionBulk,
     category,
     account,
-    system
+    system,
+    errors
   }
 })

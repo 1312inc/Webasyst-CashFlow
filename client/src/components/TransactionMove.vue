@@ -81,10 +81,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import utils from '@/mixins/utilsMixin.js'
 export default {
-  mixins: [utils],
-
   data () {
     return {
       model: {
@@ -120,9 +117,6 @@ export default {
       this.$store.dispatch('transactionBulk/bulkMove', { ids: this.ids, ...this.model })
         .then(() => {
           this.close()
-        })
-        .catch((e) => {
-          this.handleApiError(e)
         })
     },
 

@@ -310,11 +310,7 @@ export default {
     ...mapMutations('transaction', ['setDetailsInterval']),
 
     async getChartData () {
-      try {
-        await this.$store.dispatch('transaction/getChartData')
-      } catch (e) {
-        this.$notify.error(`Method: getChartData<br>${e}`)
-      }
+      await this.$store.dispatch('transaction/getChartData')
     },
 
     renderChart () {

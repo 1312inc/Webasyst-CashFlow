@@ -22,8 +22,12 @@ export default {
   actions: {
     async getCurrencies ({ commit, state }) {
       if (state.currencies.length < 1) {
-        const { data } = await api.get('cash.system.getCurrencies')
-        commit('setCurrencies', data)
+        try {
+          const { data } = await api.get('cash.system.getCurrencies')
+          commit('setCurrencies', data)
+        } catch (_) {
+          return false
+        }
       }
     }
   }

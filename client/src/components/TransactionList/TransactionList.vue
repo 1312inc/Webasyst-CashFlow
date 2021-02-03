@@ -174,15 +174,16 @@ export default {
 
       if (params.offset === 0) this.transactions = []
 
-      // TODO: add error catching
-      const { data } = await api.get('cash.transaction.getList', {
-        params
-      })
-
-      this.result = data
-      this.transactions = [...this.transactions, ...this.result.data]
-
-      this.loading = false
+      try {
+        const { data } = await api.get('cash.transaction.getList', {
+          params
+        })
+        this.result = data
+        this.transactions = [...this.transactions, ...this.result.data]
+        this.loading = false
+      } catch (_) {
+        return false
+      }
     }
   }
 }
