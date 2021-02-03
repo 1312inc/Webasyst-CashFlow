@@ -6,6 +6,16 @@
 class cashApiTransactionGetHandler implements cashApiHandlerInterface
 {
     /**
+     * @var cashApiTransactionGetResponseDtoAssembler
+     */
+    private $transactionResponseDtoAssembler;
+
+    public function __construct()
+    {
+        $this->transactionResponseDtoAssembler = new cashApiTransactionGetResponseDtoAssembler();
+    }
+
+    /**
      * @param cashApiTransactionGetRequest $request
      *
      * @return cashApiTransactionGetResponseDto
@@ -25,9 +35,7 @@ class cashApiTransactionGetHandler implements cashApiHandlerInterface
             throw new kmwaForbiddenException(_w('You can view this transaction'));
         }
 
-        $data = cash()->getHydrator()->extract($transaction);
-
-        $dto = new cashApiTransactionGetResponseDto($data);
+        $dto = $this->transactionResponseDtoAssembler->generateResponseFromEntity($transaction);
 
         $repeatingTransaction = $transaction->getRepeatingTransaction();
         if ($repeatingTransaction) {

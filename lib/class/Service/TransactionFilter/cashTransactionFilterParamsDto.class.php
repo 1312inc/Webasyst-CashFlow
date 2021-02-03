@@ -6,12 +6,12 @@
 class cashTransactionFilterParamsDto
 {
     /**
-     * @var DateTime
+     * @var DateTimeImmutable|null
      */
     public $startDate;
 
     /**
-     * @var DateTime
+     * @var DateTimeImmutable|null
      */
     public $endDate;
 
@@ -48,19 +48,19 @@ class cashTransactionFilterParamsDto
     /**
      * cashTransactionFilterParamsDto constructor.
      *
-     * @param cashAggregateFilter $filter
-     * @param DateTime|null       $startDate
-     * @param DateTime|null       $endDate
-     * @param waContact|null      $contact
-     * @param int|null            $start
-     * @param int|null            $limit
-     * @param bool                $returnIterator
-     * @param bool                $reverse
+     * @param cashAggregateFilter    $filter
+     * @param DateTimeImmutable|null $startDate
+     * @param DateTimeImmutable|null $endDate
+     * @param waContact|null         $contact
+     * @param int|null               $start
+     * @param int|null               $limit
+     * @param bool                   $returnIterator
+     * @param bool                   $reverse
      */
     public function __construct(
         cashAggregateFilter $filter,
-        DateTime $startDate = null,
-        DateTime $endDate = null,
+        DateTimeImmutable $startDate = null,
+        DateTimeImmutable $endDate = null,
         waContact $contact = null,
         int $start = null,
         int $limit = null,
