@@ -55,7 +55,7 @@ class cashApiErrorResponse implements cashApiResponseInterface, JsonSerializable
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $data = [
             'error' => $this->error,
@@ -72,7 +72,7 @@ class cashApiErrorResponse implements cashApiResponseInterface, JsonSerializable
     /**
      * @return $this
      */
-    public function getResponseBody()
+    public function getResponseBody(): cashApiErrorResponse
     {
         return $this;
     }

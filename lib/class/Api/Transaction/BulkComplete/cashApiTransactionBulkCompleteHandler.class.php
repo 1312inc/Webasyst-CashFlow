@@ -1,16 +1,15 @@
 <?php
 
 /**
- * Class cashApiTransactionBulkDeleteHandler
+ * Class cashApiTransactionBulkCompleteHandler
  */
-class cashApiTransactionBulkDeleteHandler implements cashApiHandlerInterface
+class cashApiTransactionBulkCompleteHandler implements cashApiHandlerInterface
 {
     /**
-     * @param cashApiTransactionBulkDeleteRequest $request
+     * @param cashApiTransactionBulkCompleteRequest $request
      *
-     * @return bool
-     * @throws kmwaForbiddenException
-     * @throws waException
+     * @return null|bool
+     * @throws waException|kmwaForbiddenException
      */
     public function handle($request)
     {
@@ -23,10 +22,10 @@ class cashApiTransactionBulkDeleteHandler implements cashApiHandlerInterface
         $saver = new cashTransactionSaver();
         foreach ($transactions as $transaction) {
             if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-                throw new kmwaForbiddenException(_w('You are not allowed to delete this transaction'));
+                throw new kmwaForbiddenException(_w('You are not allowed to edit this transaction'));
             }
 
-            $transaction->setIsArchived(1);
+            $transaction->setIsOnbadge(false);
             $saver->addToPersist($transaction);
         }
 
