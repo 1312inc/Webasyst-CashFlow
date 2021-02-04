@@ -101,7 +101,7 @@ class cashApiTransactionResponseDto extends cashAbstractDto
     public $external_source;
 
     /**
-     * @var string
+     * @var string|array
      */
     public $external_data;
 

@@ -300,11 +300,50 @@ class cashTransactionRepository extends cashBaseRepository
                     'ct.is_archived = 0',
                     'ct.is_onbadge = 1',
                     'accountAccessSql' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact),
-                    'categoryAccessSql' => cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id'),
+                    'categoryAccessSql' => cash()->getContactRights()->getSqlForCategoryJoin(
+                        $contact,
+                        'ct',
+                        'category_id'
+                    ),
                 ]
             )
             ->params(['date' => $date->format('Y-m-d')]);
 
         return (int) $sqlParts->query()->fetchField();
+    }
+
+    /**
+     * @param array  $ids
+     * @param waUser $contact
+     * @param false  $onbadge
+     *
+     * @return bool|null
+     * @throws waException
+     */
+    public function setOnBadgeByIds(array $ids, waUser $contact, $onbadge = false)
+    {
+        $this->getModel()->startTransaction();
+        try {
+            $this->getModel()->exec(
+                sprintf(
+                    'update cash_transaction 
+                    set is_onbadge = :onbadge
+                    join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+                    left join cash_category cc on ct.category_id = cc.id 
+                    where id in (i:ids) and %s and %s',
+                    cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact),
+                    cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id')
+                ),
+                ['onbadge' => (int) $onbadge, 'ids' => $ids]
+            );
+
+            return true;
+        } catch (Exception $exception) {
+            $this->getModel()->rollback();
+
+            cash()->getLogger()->error('Set onbadge error', $exception);
+        }
+
+        return null;
     }
 }

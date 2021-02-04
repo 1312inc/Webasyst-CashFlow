@@ -40,6 +40,10 @@ class cashApiTransactionResponseDtoAssembler extends cashApiTransactionResponseD
                 $dto->contractor_contact = $this->getContactData($dto->contractor_contact_id);
             }
 
+            if (!empty($dto->external_data['id']) && $dto->external_source === 'shop') {
+                $dto->external_data['info'] = $this->getShopData($dto->external_data);
+            }
+
             yield $dto;
         }
     }
