@@ -70,10 +70,7 @@ import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/AddTransaction'
 import TransactionMove from '@/components/TransactionMove'
-import utils from '@/mixins/utilsMixin.js'
 export default {
-  mixins: [utils],
-
   props: ['direction', 'notStick'],
 
   components: {
@@ -112,9 +109,7 @@ export default {
 
     bulkDelete () {
       if (confirm(this.$t('bulkDeleteWarning'))) {
-        this.$store.dispatch('transactionBulk/bulkDelete').catch(e => {
-          this.handleApiError(e)
-        })
+        this.$store.dispatch('transactionBulk/bulkDelete')
       }
     },
 

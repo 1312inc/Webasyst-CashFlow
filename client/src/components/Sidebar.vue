@@ -198,10 +198,7 @@ import Account from '@/components/AddAccount'
 import Category from '@/components/AddCategory'
 import SearchField from '@/components/SearchField'
 import SidebarCurrencyWidgets from '@/components/SidebarCurrencyWidgets'
-import utils from '@/mixins/utilsMixin.js'
 export default {
-  mixins: [utils],
-
   components: {
     draggable,
     Modal,
@@ -254,8 +251,6 @@ export default {
       const ids = this.accounts.map(e => e.id)
       this.$store.dispatch('account/sort', {
         order: ids
-      }).catch(e => {
-        this.handleApiError(e)
       })
     },
 
@@ -264,8 +259,6 @@ export default {
       this.$store.commit('category/updateSort', list)
       this.$store.dispatch('category/sort', {
         order: ids
-      }).catch(e => {
-        this.handleApiError(e)
       })
     }
   }

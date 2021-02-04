@@ -37,37 +37,52 @@ export default {
 
   actions: {
     async getList ({ commit }) {
-      const { data } = await api.get('cash.account.getList')
-      commit('setAccounts', data)
+      try {
+        const { data } = await api.get('cash.account.getList')
+        commit('setAccounts', data)
+      } catch (_) {
+        return false
+      }
     },
 
     async update ({ dispatch }, params) {
       const method = params.id ? 'update' : 'create'
-      const { data } = await api.post(`cash.account.${method}`, params)
-      if (parseInt(params.starting_balance) !== 0 && !isNaN(parseInt(params.starting_balance))) {
-        await dispatch('transaction/update', {
-          id: null,
-          amount: params.starting_balance,
-          date: moment().format('YYYY-MM-DD'),
-          account_id: data.id,
-          category_id: parseInt(params.starting_balance) >= 0 ? -2 : -1,
-          description: i18n.t('startingBalance'),
-          silent: true
-        }, { root: true })
+      try {
+        const { data } = await api.post(`cash.account.${method}`, params)
+        if (parseInt(params.starting_balance) !== 0 && !isNaN(parseInt(params.starting_balance))) {
+          await dispatch('transaction/update', {
+            id: null,
+            amount: params.starting_balance,
+            date: moment().format('YYYY-MM-DD'),
+            account_id: data.id,
+            category_id: parseInt(params.starting_balance) >= 0 ? -2 : -1,
+            description: i18n.t('startingBalance'),
+            silent: true
+          }, { root: true })
+        }
+        dispatch('getList')
+      } catch (_) {
+        return false
       }
-      dispatch('getList')
     },
 
     async delete ({ commit }, id) {
-      await api.delete('cash.account.delete', {
-        params: { id }
-      })
-      // await dispatch('getList')
-      commit('deleteAccount', id)
+      try {
+        await api.delete('cash.account.delete', {
+          params: { id }
+        })
+        commit('deleteAccount', id)
+      } catch (_) {
+        return false
+      }
     },
 
     async sort ({ commit }, params) {
-      await api.post('cash.account.sort', params)
+      try {
+        await api.post('cash.account.sort', params)
+      } catch (_) {
+        return false
+      }
     }
   }
 }
