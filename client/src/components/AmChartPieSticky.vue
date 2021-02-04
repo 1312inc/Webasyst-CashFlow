@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="c-chart-pie-sticky smaller" ref="chart"></div>
+    <AmChartLegend class="custom-mx-20" />
     <transition name="fade">
       <!-- TODO: Exclude sticky from TransactionControls Component -->
       <!-- TODO: Remove 'transactionBulk/empty' from destroy() to routerTransitionMixin -->
@@ -17,13 +18,15 @@
 import { locale } from '@/plugins/locale'
 import { mapState } from 'vuex'
 import TransactionControls from '@/components/TransactionControls'
+import AmChartLegend from '@/components/AmChartLegend'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
 export default {
   components: {
-    TransactionControls
+    TransactionControls,
+    AmChartLegend
   },
 
   data () {
@@ -123,10 +126,13 @@ export default {
           ? this.activeGroupTransactions
           : this.defaultGroupTransactions
 
-      this.chart.series.getIndex(0).slices.template.tooltipText = "{category}: {value.formatNumber('#,###.##')}"
+      this.chart.series.getIndex(0).slices.template.tooltipText =
+        "{category}: {value.formatNumber('#,###.##')}"
 
       if (!this.chartTransactions.length) {
-        this.chart.series.getIndex(0).slices.template.tooltipText = this.$t('emptyList')
+        this.chart.series.getIndex(0).slices.template.tooltipText = this.$t(
+          'emptyList'
+        )
 
         this.chart.data.forEach(e => {
           e.amount = e.category === 'empty' ? 100 : 0
@@ -142,16 +148,21 @@ export default {
         this.label.text = this.chartTransactions.length
         this.label.fontSize = 36
       } else {
-        const diff = this.$moment().diff(this.$moment(this.chartTransactions[0].date), 'days')
+        const diff = this.$moment().diff(
+          this.$moment(this.chartTransactions[0].date),
+          'days'
+        )
 
         if (diff < 0) {
           this.makeFutureLabelText()
         } else if (diff === 0) {
           this.label.text = this.$t('today')
         } else {
-          this.label.text = `${this.$moment(this.chartTransactions[0].date).format(
-            'MMMM'
-          )}\n${this.$moment(this.chartTransactions[0].date).format('YYYY')}`
+          this.label.text = `${this.$moment(
+            this.chartTransactions[0].date
+          ).format('MMMM')}\n${this.$moment(
+            this.chartTransactions[0].date
+          ).format('YYYY')}`
         }
         this.label.fontSize = 16
       }
@@ -181,9 +192,9 @@ export default {
 
     makeFutureLabelText () {
       this.label.text =
-            this.featurePeriod === 1
-              ? this.$t('tomorrow')
-              : this.$t('nextDays', { count: this.featurePeriod })
+        this.featurePeriod === 1
+          ? this.$t('tomorrow')
+          : this.$t('nextDays', { count: this.featurePeriod })
     }
   }
 }
