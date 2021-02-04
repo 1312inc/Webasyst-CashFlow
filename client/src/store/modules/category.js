@@ -34,8 +34,8 @@ export default {
     },
 
     updateSort (state, data) {
-      data.forEach((element, i) => {
-        state.categories.find(c => c.id === element.id).sort = i
+      data.forEach((id, i) => {
+        state.categories.find(c => c.id === id).sort = i
       })
     }
   },
@@ -73,9 +73,10 @@ export default {
       }
     },
 
-    async sort ({ commit }, params) {
+    sort ({ commit }, params) {
       try {
-        await api.post('cash.category.sort', params)
+        commit('updateSort', params.order)
+        api.post('cash.category.sort', params)
       } catch (_) {
         return false
       }
