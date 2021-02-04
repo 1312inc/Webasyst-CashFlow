@@ -83,6 +83,8 @@ class cashTransactionGetListMethod extends cashApiAbstractMethod
         if (empty($request->from)) {
             $request->from = date('Y-m-d', strtotime('-25 years'));
         }
+        $request->from = DateTimeImmutable::createFromFormat('Y-m-d|', $request->from);
+        $request->to = DateTimeImmutable::createFromFormat('Y-m-d|', $request->to);
 
         $transactions = (new cashApiTransactionGetListHandler())->handle($request);
 
