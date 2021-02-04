@@ -197,7 +197,7 @@ import Modal from '@/components/Modal'
 import Account from '@/components/AddAccount'
 import Category from '@/components/AddCategory'
 import SearchField from '@/components/SearchField'
-import SidebarCurrencyWidgets from '@/components/SidebarCurrencyWidgets'
+import SidebarCurrencyWidgets from './SidebarCurrencyWidgets'
 export default {
   components: {
     draggable,
