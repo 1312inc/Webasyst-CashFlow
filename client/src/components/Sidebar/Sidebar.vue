@@ -4,7 +4,7 @@
       <SearchField />
 
       <ul class="menu custom-my-0">
-        <li>
+        <li :class="{'selected': $route.path === '/upnext'}">
           <router-link to="/upnext" class="flexbox middle bold">{{
             $t("upnext")
           }}</router-link>
@@ -17,12 +17,9 @@
       <SidebarCurrencyWidgets />
 
       <!-- Accounts list block -->
-      <h6 class="heading">
-        <span>{{ $t("accounts") }}</span>
-        <a @click="update('Account')" class="count">
-          <i class="fas fa-plus-circle"></i>
-        </a>
-      </h6>
+      <SidebarHeading updatingEntityName="Account">
+        {{ $t("accounts") }}
+      </SidebarHeading>
       <SidebarAccountList>
         <SidebarAccountListItem
           v-for="account in accounts"
@@ -32,12 +29,9 @@
       </SidebarAccountList>
 
       <!-- Categories list block -->
-      <h6 class="heading custom-mt-24">
-        <span>{{ $t("income") }}</span>
-        <a @click="update('Category')" class="count">
-          <i class="fas fa-plus-circle"></i>
-        </a>
-      </h6>
+      <SidebarHeading class="custom-mt-24" updatingEntityName="Category">
+        {{ $t("income") }}
+      </SidebarHeading>
       <SidebarCategoryList :categories="categoriesIncome">
         <SidebarCategoryListItem
           v-for="category in categoriesIncome"
@@ -46,12 +40,9 @@
         />
       </SidebarCategoryList>
 
-      <h6 class="heading">
-        <span>{{ $t("expense") }}</span>
-        <a @click="update('Category')" class="count">
-          <i class="fas fa-plus-circle"></i>
-        </a>
-      </h6>
+      <SidebarHeading updatingEntityName="Category">
+        {{ $t("expense") }}
+      </SidebarHeading>
       <SidebarCategoryList :categories="categoriesExpense">
         <SidebarCategoryListItem
           v-for="category in categoriesExpense"
@@ -82,66 +73,31 @@
       </div>
     </div>
 
-    <div class="sidebar-footer shadowed">
-      <ul class="menu">
-        <li>
-          <a :href="`${$helper.baseUrl}reports/`">
-            <i class="fas fa-chart-pie"></i>
-            <span>{{ $t("reports") }}</span>
-          </a>
-        </li>
-        <li>
-          <a :href="`${$helper.baseUrl}import/`">
-            <i class="fas fa-file-import"></i>
-            <span>{{ $t("import") }}</span>
-          </a>
-        </li>
-        <li>
-          <a :href="`${$helper.baseUrl}shop/settings/`">
-            <i class="fas fa-sliders-h"></i>
-            <span>Shop-Script</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <portal>
-      <Modal v-if="openModal" @close="close">
-        <component :is="currentComponentInModal"></component>
-      </Modal>
-    </portal>
+    <SidebarFooter />
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import Modal from '@/components/Modal'
 import SidebarAccountList from './SidebarAccountList'
 import SidebarAccountListItem from './SidebarAccountListItem'
 import SidebarCategoryList from './SidebarCategoryList'
 import SidebarCategoryListItem from './SidebarCategoryListItem'
-import Account from '@/components/AddAccount'
-import Category from '@/components/AddCategory'
+import SidebarHeading from './SidebarHeading'
+import SidebarFooter from './SidebarFooter'
 import SearchField from '@/components/SearchField'
 import SidebarCurrencyWidgets from './SidebarCurrencyWidgets'
+
 export default {
   components: {
     SidebarAccountList,
     SidebarAccountListItem,
     SidebarCategoryList,
     SidebarCategoryListItem,
-    Modal,
-    Account,
-    Category,
+    SidebarHeading,
+    SidebarFooter,
     SearchField,
     SidebarCurrencyWidgets
-  },
-
-  data () {
-    return {
-      openModal: false,
-      currentComponentInModal: ''
-    }
   },
 
   computed: {
@@ -161,18 +117,6 @@ export default {
 
     categoriesTransfer () {
       return this.categoriesByType('transfer')
-    }
-  },
-
-  methods: {
-    update (component) {
-      this.openModal = true
-      this.currentComponentInModal = component
-    },
-
-    close () {
-      this.openModal = false
-      this.currentComponentInModal = ''
     }
   }
 }
