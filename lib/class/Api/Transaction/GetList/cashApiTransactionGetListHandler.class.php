@@ -26,8 +26,8 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
     {
         $filterDto = new cashTransactionFilterParamsDto(
             cashAggregateFilter::createFromHash($request->filter),
-            DateTime::createFromFormat('Y-m-d', $request->from),
-            DateTime::createFromFormat('Y-m-d', $request->to),
+            $request->from,
+            $request->to,
             wa()->getUser(),
             $request->offset,
             $request->limit

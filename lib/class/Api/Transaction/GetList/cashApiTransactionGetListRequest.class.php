@@ -6,12 +6,12 @@
 class cashApiTransactionGetListRequest
 {
     /**
-     * @var string
+     * @var string|DateTimeImmutable
      */
     public $from;
 
     /**
-     * @var string
+     * @var string|DateTimeImmutable
      */
     public $to;
 
