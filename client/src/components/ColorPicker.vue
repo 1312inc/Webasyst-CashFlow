@@ -3,7 +3,7 @@
     <div
       @click="showPicker = true"
       :class="{ 'c-picker__square--active': showPicker }"
-      :style="`background-color:${color};`"
+      :style="`background-color:${startColor};`"
       class="c-picker__square"
     ></div>
     <transition name="fade">
@@ -19,9 +19,6 @@ export default {
   props: {
     startColor: {
       type: String
-    },
-    type: {
-      type: String
     }
   },
 
@@ -31,16 +28,10 @@ export default {
     }
   },
 
-  computed: {
-    color () {
-      return this.startColor || (this.type === 'income' ? '#00FF00' : '#E57373')
-    }
-  },
-
   mounted () {
     this.colorPicker = new iro.ColorPicker('#c-picker', {
       width: 200,
-      color: this.color,
+      color: this.startColor,
       borderWidth: 10,
       borderColor: '#333',
       wheelLightness: false,

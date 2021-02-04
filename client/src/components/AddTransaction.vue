@@ -323,10 +323,7 @@ import { mapState, mapGetters } from 'vuex'
 import { required, requiredIf, integer } from 'vuelidate/lib/validators'
 import InputCurrency from '@/components/InputCurrency'
 import DateField from '@/components/InputDate'
-import utils from '@/mixins/utilsMixin.js'
 export default {
-  mixins: [utils],
-
   props: {
     transaction: {
       type: Object
@@ -477,9 +474,6 @@ export default {
           .then(() => {
             this.close()
           })
-          .catch((e) => {
-            this.handleApiError(e)
-          })
       }
     },
 
@@ -489,9 +483,6 @@ export default {
           .dispatch('transaction/delete', this.model.id)
           .then(() => {
             this.close()
-          })
-          .catch((e) => {
-            this.handleApiError(e)
           })
       }
     },

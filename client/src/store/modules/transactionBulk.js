@@ -41,20 +41,28 @@ export default {
   actions: {
     async bulkDelete ({ dispatch, state, commit }) {
       const ids = state.selectedTransactionsIds
-      await api.post('cash.transaction.bulkDelete', { ids: ids })
-      // Remove transactions from the store
-      ids.forEach(id => {
-        commit('transaction/deleteTransaction', id, { root: true })
-        commit('transaction/deleteCreatedTransaction', [id], { root: true })
-      })
-      commit('emptySelectedTransactionsIds')
-      dispatch('account/getList', null, { root: true })
+      try {
+        await api.post('cash.transaction.bulkDelete', { ids: ids })
+        // Remove transactions from the store
+        ids.forEach(id => {
+          commit('transaction/deleteTransaction', id, { root: true })
+          commit('transaction/deleteCreatedTransaction', [id], { root: true })
+        })
+        commit('emptySelectedTransactionsIds')
+        dispatch('account/getList', null, { root: true })
+      } catch (_) {
+        return false
+      }
     },
 
     async bulkMove ({ dispatch, commit }, params) {
-      await api.post('cash.transaction.bulkMove', params)
-      commit('emptySelectedTransactionsIds')
-      dispatch('account/getList', null, { root: true })
+      try {
+        await api.post('cash.transaction.bulkMove', params)
+        commit('emptySelectedTransactionsIds')
+        dispatch('account/getList', null, { root: true })
+      } catch (_) {
+        return false
+      }
     }
   }
 

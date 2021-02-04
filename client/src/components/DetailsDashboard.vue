@@ -110,11 +110,8 @@ import { mapState } from 'vuex'
 import Modal from '@/components/Modal'
 import ChartPie from '@/components/AmChartPie'
 import DateField from '@/components/InputDate'
-import utils from '@/mixins/utilsMixin.js'
 
 export default {
-  mixins: [utils],
-
   components: {
     Modal,
     ChartPie,
@@ -157,8 +154,8 @@ export default {
               }
             })
             this.data = data
-          } catch (e) {
-            this.handleApiError(e)
+          } catch (_) {
+            return false
           }
         } else {
           this.data = null
