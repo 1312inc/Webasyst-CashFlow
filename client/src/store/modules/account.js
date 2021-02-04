@@ -32,6 +32,12 @@ export default {
       if (i > -1) {
         state.accounts.splice(i, 1)
       }
+    },
+
+    updateSort (state, ids) {
+      state.accounts.sort((a, b) => {
+        return ids.indexOf(a.id) - ids.indexOf(b.id)
+      })
     }
   },
 
@@ -77,9 +83,10 @@ export default {
       }
     },
 
-    async sort ({ commit }, params) {
+    sort ({ commit }, params) {
       try {
-        await api.post('cash.account.sort', params)
+        commit('updateSort', params.order)
+        api.post('cash.account.sort', params)
       } catch (_) {
         return false
       }
