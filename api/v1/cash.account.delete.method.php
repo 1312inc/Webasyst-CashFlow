@@ -24,6 +24,6 @@ class cashAccountDeleteMethod extends cashApiAbstractMethod
             return new cashApiAccountDeleteResponse();
         }
 
-        return new cashApiErrorResponse('Some error on account delete');
+        return new cashApiErrorResponse('Unrecognized error on account delete');
     }
 }

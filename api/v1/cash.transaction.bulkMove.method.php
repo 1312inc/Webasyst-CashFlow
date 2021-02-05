@@ -21,7 +21,7 @@ class cashTransactionBulkMoveMethod extends cashApiAbstractMethod
         $request = $this->fillRequestWithParams(new cashApiTransactionBulkMoveRequest());
 
         if (count($request->ids) > self::MAX_IDS) {
-            return new cashApiErrorResponse(sprintf_wp('Too many transactions to move. Max %d', self::MAX_IDS));
+            return new cashApiErrorResponse(sprintf_wp('Too many transactions to move. Max limit is %d', self::MAX_IDS));
         }
 
         $transactions = (new cashApiTransactionBulkMoveHandler())->handle($request);

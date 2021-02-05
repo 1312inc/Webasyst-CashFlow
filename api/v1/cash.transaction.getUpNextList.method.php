@@ -20,7 +20,7 @@ class cashTransactionGetUpNextListMethod extends cashApiAbstractMethod
         $request->today = DateTimeImmutable::createFromFormat('Y-m-d|', $request->today);
 
         if (!$request->today) {
-            return new cashApiErrorResponse('Wrong date format');
+            return new cashApiErrorResponse("Wrong date format. Expected 'Y-m-d'");
         }
 
         $transactions = (new cashApiTransactionGetUpNextListHandler())->handle($request);
