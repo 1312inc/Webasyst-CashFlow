@@ -24,6 +24,6 @@ class cashCategoryDeleteMethod extends cashApiAbstractMethod
             return new cashApiCategoryDeleteResponse();
         }
 
-        return new cashApiErrorResponse('Some error on category delete');
+        return new cashApiErrorResponse('Unrecognized error on category delete');
     }
 }

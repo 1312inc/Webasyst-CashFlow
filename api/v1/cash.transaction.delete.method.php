@@ -24,6 +24,6 @@ class cashTransactionDeleteMethod extends cashApiAbstractMethod
             return new cashApiTransactionDeleteResponse();
         }
 
-        return new cashApiErrorResponse('Some error on transaction delete');
+        return new cashApiErrorResponse('Unrecognized error on transaction delete');
     }
 }
