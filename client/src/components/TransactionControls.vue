@@ -97,10 +97,6 @@ export default {
     }
   },
 
-  beforeDestroy () {
-    this.$store.commit('transactionBulk/empty')
-  },
-
   methods: {
     addTransaction (type) {
       this.open = true
@@ -114,7 +110,7 @@ export default {
     },
 
     unselectAll () {
-      this.$store.commit('transactionBulk/empty')
+      this.$store.commit('transactionBulk/emptySelectedTransactionsIds')
     }
   }
 }

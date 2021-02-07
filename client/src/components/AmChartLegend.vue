@@ -17,30 +17,7 @@
 
 <script>
 export default {
-  computed: {
-    rawData () {
-      return this.$store.state.transaction.activeGroupTransactions.length
-        ? this.$store.state.transaction.activeGroupTransactions
-        : this.$store.state.transaction.defaultGroupTransactions
-    },
-    legendItems () {
-      return this.rawData.reduce((acc, el) => {
-        // const el =
-        //   this.$store.getters['transaction/getTransactionById'](id) || id
-        const category = this.$store.getters['category/getById'](el.category_id)
-        if (!acc[category.id]) {
-          acc[category.id] = {
-            amount: el.amount,
-            category: category.name,
-            category_color: category.color
-          }
-        } else {
-          acc[category.id].amount += el.amount
-        }
-        return acc
-      }, {})
-    }
-  }
+  props: ['legendItems']
 }
 </script>
 
