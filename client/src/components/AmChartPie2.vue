@@ -1,0 +1,146 @@
+<template>
+  <div class="c-chart-pie-sticky smaller" ref="chart"></div>
+</template>
+
+<script>
+import { locale } from '@/plugins/locale'
+import * as am4core from '@amcharts/amcharts4/core'
+import * as am4charts from '@amcharts/amcharts4/charts'
+import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
+
+export default {
+  props: ['rawData', 'type'],
+
+  computed: {
+    featurePeriod () {
+      return this.$store.state.transaction.featurePeriod
+    }
+  },
+
+  watch: {
+    featurePeriod () {
+      if (!this.rawData.length) {
+        this.makeFutureLabelText()
+      }
+    }
+  },
+
+  mounted () {
+    const chart = am4core.create(this.$refs.chart, am4charts.PieChart)
+    if (locale === 'ru_RU') chart.language.locale = am4langRU
+    chart.innerRadius = am4core.percent(40)
+
+    const label = chart.seriesContainer.createChild(am4core.Label)
+    label.textAlign = 'middle'
+    label.horizontalCenter = 'middle'
+    label.verticalCenter = 'middle'
+    this.label = label
+
+    // Add and configure Series
+    const pieSeries = chart.series.push(new am4charts.PieSeries())
+    pieSeries.dataFields.value = 'amount'
+    pieSeries.dataFields.category = 'category'
+    pieSeries.labels.template.disabled = true
+    pieSeries.slices.template.propertyFields.fill = 'category_color'
+    pieSeries.slices.template.stroke = am4core.color('#fff')
+    pieSeries.slices.template.strokeOpacity = 1
+    pieSeries.interpolationDuration = 500
+
+    // Add Chart data
+    chart.data = this.$store.state.category.categories.map(c => {
+      return {
+        id: c.id,
+        amount: 0,
+        category: c.name,
+        category_color: c.color
+      }
+    })
+    // Push empty data item for the placeholer
+    chart.data.push({
+      amount: 0,
+      category: 'empty',
+      category_color: '#EEEEEE'
+    })
+
+    this.chart = chart
+
+    this.renderChart(this.rawData)
+    this.$watch('rawData', (val) => {
+      this.renderChart(val)
+    })
+  },
+
+  beforeDestroy () {
+    if (this.chart) {
+      this.chart.dispose()
+    }
+  },
+
+  methods: {
+    renderChart (rawData) {
+      // if empty data
+      if (!rawData.length) {
+        this.chart.series.getIndex(0).slices.template.tooltipText = this.$t(
+          'emptyList'
+        )
+
+        this.label.fontSize = 16
+        this.makeFutureLabelText()
+
+        this.chart.data.forEach(e => {
+          e.amount = e.category === 'empty' ? 100 : 0
+        })
+        this.chart.invalidateRawData()
+        return
+      }
+
+      this.chart.series.getIndex(0).slices.template.tooltipText =
+        "{category}: {value.formatNumber('#,###.##')}"
+
+      // make label inside Chart
+      if (this.type === 'counter') {
+        this.label.text = rawData.length
+        this.label.fontSize = 36
+      } else {
+        const diff = this.$moment().diff(
+          this.$moment(rawData[0].date),
+          'days'
+        )
+
+        if (diff < 0) {
+          this.makeFutureLabelText()
+        } else if (diff === 0) {
+          this.label.text = this.$t('today')
+        } else {
+          this.label.text = `${this.$moment(
+            rawData[0].date
+          ).format('MMMM')}\n${this.$moment(
+            rawData[0].date
+          ).format('YYYY')}`
+        }
+        this.label.fontSize = 16
+      }
+
+      this.chart.data.forEach(e => {
+        const index = rawData.findIndex(el => el.id === e.id)
+        e.amount = index > -1 ? rawData[index].amount : 0
+      })
+
+      this.chart.invalidateRawData()
+    },
+
+    makeFutureLabelText () {
+      this.label.text =
+        this.featurePeriod === 1
+          ? this.$t('tomorrow')
+          : this.$t('nextDays', { count: this.featurePeriod })
+    }
+  }
+}
+</script>
+
+<style>
+.c-chart-pie-sticky {
+  height: 400px;
+}
+</style>
