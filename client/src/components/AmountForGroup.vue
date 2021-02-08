@@ -10,11 +10,12 @@
     >
       <div>
         <span class="small">{{
-          $helper.toCurrency(
-            getTotalByAccout(account.id),
-            account.currency,
-            true
-          )
+          $helper.toCurrency({
+            value: getTotalByAccout(account.id),
+            currencyCode: account.currency,
+            isReverse: type === 'expense',
+            prefix: type === "income" ? "+ " : "− ",
+          })
         }}</span>
       </div>
     </div>

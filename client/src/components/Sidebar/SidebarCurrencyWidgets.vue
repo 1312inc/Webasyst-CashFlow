@@ -2,7 +2,7 @@
   <div class="custom-mt-24">
     <div v-if="balanceFlow.length > 1" class="custom-mx-16">
       <div class="heading custom-mx-0">
-        {{ this.$moment().format('LL') }}
+        {{ this.$moment().format("LL") }}
       </div>
     </div>
     <ul class="menu">
@@ -14,10 +14,10 @@
           <div class="flexbox middle">
             <div class="wide large bold nowrap">
               {{
-                $helper.toCurrency(
-                  currency.balances.now.amount,
-                  currency.currency
-                )
+                $helper.toCurrency({
+                  value: currency.balances.now.amount,
+                  currencyCode: currency.currency,
+                })
               }}
             </div>
             <div class="custom-ml-4">
@@ -28,7 +28,15 @@
                     ? 'c-bwc-badge--green'
                     : 'c-bwc-badge--red'
                 "
-                v-html="`${currency.balances.diff.amount > 0 ? '+ ' : currency.balances.diff.amount < 0 ? '− ' : ''}${currency.balances.diff.amountShorten}`"
+                v-html="
+                  `${
+                    currency.balances.diff.amount > 0
+                      ? '+ '
+                      : currency.balances.diff.amount < 0
+                      ? '− '
+                      : ''
+                  }${currency.balances.diff.amountShorten}`
+                "
               ></span>
             </div>
           </div>

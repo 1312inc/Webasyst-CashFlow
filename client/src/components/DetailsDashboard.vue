@@ -21,7 +21,13 @@
         <div class="">
           <div class="smaller uppercase">{{ $t("income") }}</div>
           <div class="larger text-green">
-            {{ $helper.toCurrency(currency.income.totalAmount, currency.currency, true) }}
+            {{
+              $helper.toCurrency({
+                value: currency.income.totalAmount,
+                currencyCode: currency.currency,
+                isDynamics: true,
+              })
+            }}
           </div>
         </div>
         <ChartPie :data="currency.income.data" :currency="currency.currency" />
@@ -31,7 +37,14 @@
         <div class="">
           <div class="smaller uppercase">{{ $t("expense") }}</div>
           <div class="larger text-red">
-            {{ $helper.toCurrency(currency.expense.totalAmount, currency.currency, true, true) }}
+            {{
+              $helper.toCurrency({
+                value: currency.expense.totalAmount,
+                currencyCode: currency.currency,
+                isDynamics: true,
+                isReverse: true,
+              })
+            }}
           </div>
         </div>
         <ChartPie :data="currency.expense.data" :currency="currency.currency" />
@@ -41,64 +54,64 @@
         <div class="smaller uppercase">{{ $t("balance") }}</div>
         <div class="larger">
           {{
-            $helper.toCurrency(
-              currency.income.totalAmount - currency.expense.totalAmount,
-              currency.currency
-            )
+            $helper.toCurrency({
+              value: currency.income.totalAmount - currency.expense.totalAmount,
+              currencyCode: currency.currency,
+            })
           }}
         </div>
       </div>
     </div>
 
-  <portal>
-    <Modal v-if="openModal">
-      <h2 class="custom-mb-32">
-        {{ $t("setDates") }}
-      </h2>
-      <div class="fields custom-mb-32">
-        <div class="field">
-          <div class="name for-input">
-            {{ $t("from") }}
+    <portal>
+      <Modal v-if="openModal">
+        <h2 class="custom-mb-32">
+          {{ $t("setDates") }}
+        </h2>
+        <div class="fields custom-mb-32">
+          <div class="field">
+            <div class="name for-input">
+              {{ $t("from") }}
+            </div>
+            <div class="value">
+              <div class="state-with-inner-icon left">
+                <DateField
+                  v-model="from"
+                  :defaultDate="queryParams.from"
+                  :minDate="queryParams.from"
+                  :maxDate="queryParams.to"
+                />
+                <span class="icon"><i class="fas fa-calendar"></i></span>
+              </div>
+            </div>
           </div>
-          <div class="value">
-            <div class="state-with-inner-icon left">
-              <DateField
-                v-model="from"
-                :defaultDate="queryParams.from"
-                :minDate="queryParams.from"
-                :maxDate="queryParams.to"
-              />
-              <span class="icon"><i class="fas fa-calendar"></i></span>
+          <div class="field">
+            <div class="name for-input">
+              {{ $t("to") }}
+            </div>
+            <div class="value">
+              <div class="state-with-inner-icon left">
+                <DateField
+                  v-model="to"
+                  :defaultDate="queryParams.to"
+                  :minDate="queryParams.from"
+                  :maxDate="queryParams.to"
+                />
+                <span class="icon"><i class="fas fa-calendar"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="flexbox">
+            <div class="flexbox space-12 wide">
+              <button @click="submitModal" class="button purple">
+                {{ $t("setDates") }}
+              </button>
+              <button @click="openModal = false" class="button light-gray">
+                {{ $t("cancel") }}
+              </button>
             </div>
           </div>
         </div>
-        <div class="field">
-          <div class="name for-input">
-            {{ $t("to") }}
-          </div>
-          <div class="value">
-            <div class="state-with-inner-icon left">
-              <DateField
-                v-model="to"
-                :defaultDate="queryParams.to"
-                :minDate="queryParams.from"
-                :maxDate="queryParams.to"
-              />
-              <span class="icon"><i class="fas fa-calendar"></i></span>
-            </div>
-          </div>
-        </div>
-        <div class="flexbox">
-          <div class="flexbox space-12 wide">
-            <button @click="submitModal" class="button purple">
-              {{ $t("setDates") }}
-            </button>
-            <button @click="openModal = false" class="button light-gray">
-              {{ $t("cancel") }}
-            </button>
-          </div>
-        </div>
-      </div>
       </Modal>
     </portal>
   </div>
@@ -132,9 +145,9 @@ export default {
 
     dates () {
       return this.from !== this.to
-        ? `${this.$moment(this.from).format(
-            'LL'
-          )} – ${this.$moment(this.to).format('LL')}`
+        ? `${this.$moment(this.from).format('LL')} – ${this.$moment(
+            this.to
+          ).format('LL')}`
         : `${this.$moment(this.from).format('LL')}`
     }
   },
@@ -190,5 +203,11 @@ export default {
 </script>
 
 <style lang="scss">
-  .c-breakdown-details { border: 1.5px solid var(--alert-border-color); box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05), 0 0.5rem 0.5rem -0.5rem rgba(0, 0, 0, 0.13); border-radius: 0.25rem; padding: 1.5rem; }
+.c-breakdown-details {
+  border: 1.5px solid var(--alert-border-color);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05),
+    0 0.5rem 0.5rem -0.5rem rgba(0, 0, 0, 0.13);
+  border-radius: 0.25rem;
+  padding: 1.5rem;
+}
 </style>

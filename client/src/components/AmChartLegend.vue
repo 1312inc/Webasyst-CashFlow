@@ -8,7 +8,11 @@
       <div class="c-legend__item__label smaller">
         <div class="c-legend__item__label__title">{{ item.category }}</div>
         <div class="c-legend__item__label__value">
-          {{ $helper.toCurrency(item.amount, null) }}
+          {{
+            $helper.toCurrency({
+              value: item.amount,
+            })
+          }}
         </div>
       </div>
     </div>

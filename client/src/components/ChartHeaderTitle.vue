@@ -10,7 +10,12 @@
         :class="balance >= 0 ? 'text-green' : 'text-red'"
         class="h2 custom-mb-0"
       >
-        {{ $helper.toCurrency(balance, currentEntity.currency) }}
+        {{
+          $helper.toCurrency({
+            value: balance,
+            currencyCode: currentEntity.currency,
+          })
+        }}
       </div>
       <div v-if="currentEntity.id > 0">
         <button @click="update(currentEntity)" class="button nobutton smaller">
@@ -47,7 +52,10 @@ export default {
 
   computed: {
     currentEntity () {
-      if (this.$store.state.currentType === 'account' || this.$store.state.currentType === 'category') {
+      if (
+        this.$store.state.currentType === 'account' ||
+        this.$store.state.currentType === 'category'
+      ) {
         return this.$store.getters.getCurrentType
       }
       return this.$store.getters['balanceFlow/getBalanceFlowByCode'](

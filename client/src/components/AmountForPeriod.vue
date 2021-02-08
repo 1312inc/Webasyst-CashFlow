@@ -8,7 +8,13 @@
       }"
     >
       <div>
-        <span class="small">{{ $helper.toCurrency(total, currency, true) }}</span>
+        <span class="small">{{
+          $helper.toCurrency({
+            value: total,
+            currencyCode: currency,
+            prefix: type === "income" ? "+ " : "− ",
+          })
+        }}</span>
       </div>
     </div>
     <div v-else class="skeleton">
@@ -40,7 +46,9 @@ export default {
     },
 
     showComponent () {
-      return !this.currentType || (this.chartData && this.type === this.currentType)
+      return (
+        !this.currentType || (this.chartData && this.type === this.currentType)
+      )
     },
 
     currency () {
