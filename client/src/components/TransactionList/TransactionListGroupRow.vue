@@ -24,7 +24,8 @@
         <span
           class="userpic userpic48 align-center"
           :style="`background-color:${category.color};`"
-        ><i class="c-category-glyph fas fa-ruble-sign"></i></span>
+          ><i class="c-category-glyph fas fa-ruble-sign"></i
+        ></span>
       </div>
       <div class="wide">
         <div v-if="transaction.description" class="custom-mb-8 black semibold">
@@ -47,7 +48,13 @@
       <div>
         <div class="custom-mb-8 align-right">
           <div :style="`color: ${category.color}`" class="bold">
-            {{ $helper.toCurrency(transaction.amount, account.currency, true) }}
+            {{
+              $helper.toCurrency({
+                value: transaction.amount,
+                currencyCode: account.currency,
+                isDynamics: true,
+              })
+            }}
           </div>
         </div>
         <div class="small align-right">
@@ -119,7 +126,9 @@ export default {
 
     classes () {
       return {
-        'c-item--updated': this.$store.state.transaction.updatedTransactions.map(t => t.id).includes(this.transaction.id)
+        'c-item--updated': this.$store.state.transaction.updatedTransactions
+          .map(t => t.id)
+          .includes(this.transaction.id)
       }
     }
   },
@@ -150,10 +159,13 @@ export default {
 </script>
 
 <style>
-
 @keyframes updated {
-  from {background-color: #dbf4e1;}
-  to {background-color: rgba(255, 255, 255, 0);}
+  from {
+    background-color: #dbf4e1;
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0);
+  }
 }
 
 .c-item--updated {
@@ -163,5 +175,4 @@ export default {
   animation-direction: alternate;
   background-color: #dbf4e1;
 }
-
 </style>
