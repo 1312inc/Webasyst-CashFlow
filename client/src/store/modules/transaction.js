@@ -5,7 +5,9 @@ export default {
   namespaced: true,
 
   state: () => ({
-    transactions: [],
+    transactions: {
+      data: []
+    },
     updatedTransactions: [],
     createdTransactions: [],
     defaultGroupTransactions: [],
@@ -31,7 +33,7 @@ export default {
 
   getters: {
     getTransactionById: state => id => {
-      return state.transactions.find(t => t.id === id)
+      return state.transactions.data.find(t => t.id === id)
     }
   },
 
@@ -42,24 +44,24 @@ export default {
 
     updateTransactions (state, data) {
       data.forEach(t => {
-        const i = state.transactions.findIndex(e => e.id === t.id)
+        const i = state.transactions.data.findIndex(e => e.id === t.id)
         if (i > -1) {
-          state.transactions.splice(i, 1, t)
+          state.transactions.data.splice(i, 1, t)
         }
         const i2 = state.createdTransactions.findIndex(e => e.id === t.id)
         if (i2 > -1) {
           state.createdTransactions.splice(i2, 1, t)
         }
       })
-      state.transactions.sort((a, b) => {
+      state.transactions.data.sort((a, b) => {
         return new Date(b.date) - new Date(a.date)
       })
     },
 
     deleteTransaction (state, id) {
-      const i = state.transactions.findIndex(e => e.id === id)
+      const i = state.transactions.data.findIndex(e => e.id === id)
       if (i > -1) {
-        state.transactions.splice(i, 1)
+        state.transactions.data.splice(i, 1)
       }
     },
 
@@ -219,17 +221,17 @@ export default {
         // setting offset
         const params = {
    ***REMOVED***defaultParams,
-          offset: state.transactions.length
+          offset: state.transactions.data.length
         }
 
         const { data } = await api.get('cash.transaction.getList', {
           params
         })
 
-        const result =
-          params.offset === 0
-            ? [...data.data]
-            : [...state.transactions, ...data.data]
+        const result = {
+   ***REMOVED***data,
+   ***REMOVED***(params.offset > 0 && { data: [...state.transactions.data, ...data.data] })
+        }
 
         commit('setTransactions', result)
       } catch (_) {
@@ -244,7 +246,7 @@ export default {
             today: moment().format('YYYY-MM-DD')
           }
         })
-        commit('setTransactions', data.data)
+        commit('setTransactions', data)
       } catch (_) {
         return false
       }

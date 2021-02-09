@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!this.$store.state.transaction.transactions.length">
+    <div v-if="!transactions.data.length">
       <SkeletonTransaction />
     </div>
     <div v-else>
@@ -9,10 +9,20 @@
           v-if="$store.state.transaction.createdTransactions.length"
         />
       </transition>
-      <div v-for="(group, index) in (upnext ? [...groups].reverse() : groups)" :key="group.name">
-        <TransactionListGroup :group="group.items" :type="group.name" :index="index" />
+      <div
+        v-for="(group, index) in upnext ? [...groups].reverse() : groups"
+        :key="group.name"
+      >
+        <TransactionListGroup
+          :group="group.items"
+          :type="group.name"
+          :index="index"
+        />
       </div>
-      <Observer v-if="observer" @callback="$emit('offsetCallback')" />
+      <Observer
+        v-if="observer && (transactions.data.length < transactions.total)"
+        @callback="$emit('offsetCallback')"
+      />
     </div>
   </div>
 </template>
@@ -51,6 +61,9 @@ export default {
   },
 
   computed: {
+    transactions () {
+      return this.$store.state.transaction.transactions
+    },
     groups () {
       const today = this.$moment().format('YYYY-MM-DD')
       const result = []
@@ -67,7 +80,7 @@ export default {
         }
       }
 
-      this.$store.state.transaction.transactions.forEach(e => {
+      this.$store.state.transaction.transactions.data.forEach(e => {
         // if no grouping
         if (!this.grouping) {
           return add('ungroup', e)
@@ -80,7 +93,9 @@ export default {
 
         if (this.upnext) {
           // if yesterday
-          const yesterday = this.$moment().add(-1, 'day').format('YYYY-MM-DD')
+          const yesterday = this.$moment()
+            .add(-1, 'day')
+            .format('YYYY-MM-DD')
           if (e.date === yesterday) {
             return add('yesterday', e)
           }
@@ -92,7 +107,9 @@ export default {
         }
 
         // if past
-        const month = this.upnext ? 'overdue' : this.$moment(e.date).format('YYYY-MM')
+        const month = this.upnext
+          ? 'overdue'
+          : this.$moment(e.date).format('YYYY-MM')
         add(month, e)
       })
 
