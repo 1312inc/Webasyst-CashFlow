@@ -91,6 +91,7 @@
           {{ model.is_repeating ? $t("repeatFrom") : $t("date") }}
         </div>
         <div class="value">
+          <div class="flexbox space-12 middle">
           <div class="state-with-inner-icon left">
             <DateField
               v-model="model.date"
@@ -98,6 +99,21 @@
               class="short"
             />
             <span class="icon"><i class="fas fa-calendar"></i></span>
+          </div>
+          <label @click.prevent="model.is_onbadge = !model.is_onbadge">
+              <span class="wa-checkbox">
+                <input type="checkbox" :checked="model.is_onbadge" />
+                <span>
+                  <span class="icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                </span>
+              </span>
+              {{ $t("notifyMe") }}
+            </label>
+            </div>
+            <div v-if="model.is_onbadge" class="custom-mt-8">
+            <div class="hint" v-html="$t('notifyMeAlert')"></div>
           </div>
         </div>
       </div>
@@ -350,6 +366,7 @@ export default {
         contractor_contact_id: null,
         contractor: null,
         description: '',
+        is_onbadge: false,
         is_repeating: false,
         repeating_frequency: 1,
         repeating_interval: 'month',

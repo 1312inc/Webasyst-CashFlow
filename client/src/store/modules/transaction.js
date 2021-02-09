@@ -1,4 +1,5 @@
 import api from '@/plugins/api'
+import { moment } from '@/plugins/numeralMoment'
 
 export default {
   namespaced: true,
@@ -7,7 +8,7 @@ export default {
     transactions: [],
     updatedTransactions: [],
     createdTransactions: [],
-    defaultGroupTransactions: null,
+    defaultGroupTransactions: [],
     activeGroupTransactions: [],
     groupNames: [],
     featurePeriod: 7,
@@ -180,7 +181,7 @@ export default {
         if (method === 'create') {
           commit('setCreatedTransactions', data)
         }
-        dispatch('account/getList', null, { root: true })
+        dispatch('emitTransactionStateUpdate')
       } catch (_) {
         return false
       }
@@ -193,10 +194,65 @@ export default {
         })
         commit('deleteTransaction', id)
         commit('deleteCreatedTransaction', [id])
-        dispatch('account/getList', null, { root: true })
+        dispatch('emitTransactionStateUpdate')
       } catch (_) {
         return false
       }
+    },
+
+    async fetchTransactions ({ commit, state }) {
+      try {
+        const defaultParams = { ...state.queryParams }
+        defaultParams.from = ''
+        defaultParams.to = moment()
+          .add(1, 'M')
+          .format('YYYY-MM-DD')
+
+        // if view details mode
+        if (state.detailsInterval.from) {
+          defaultParams.from = state.detailsInterval.from
+        }
+        if (state.detailsInterval.to) {
+          defaultParams.to = state.detailsInterval.to
+        }
+
+        // setting offset
+        const params = {
+          ...defaultParams,
+          offset: state.transactions.length
+        }
+
+        const { data } = await api.get('cash.transaction.getList', {
+          params
+        })
+
+        const result =
+          params.offset === 0
+            ? [...data.data]
+            : [...state.transactions, ...data.data]
+
+        commit('setTransactions', result)
+      } catch (_) {
+        return false
+      }
+    },
+
+    async fetchUpNextTransactions ({ commit }) {
+      try {
+        const { data } = await api.get('cash.transaction.getUpNextList', {
+          params: {
+            today: moment().format('YYYY-MM-DD')
+          }
+        })
+        commit('setTransactions', data.data)
+      } catch (_) {
+        return false
+      }
+    },
+
+    emitTransactionStateUpdate ({ dispatch }) {
+      dispatch('account/getList', null, { root: true })
+      dispatch('balanceFlow/getBalanceFlow', null, { root: true })
     }
 
   }

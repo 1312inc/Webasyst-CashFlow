@@ -77,6 +77,8 @@
   "cashOnHand": "Деньги",
   "cashToday": "Деньги сегодня",
   "today": "Сегодня",
+  "yesterday": "Вчера",
+  "overdue": "Просроченные",
   "repeatingTran": "Повторяющаяся операция",
   "import": "Импорт",
   "emptyList": "Список операций пуст",
@@ -125,5 +127,7 @@
   "setDates": "Выбрать даты",
   "close": "Закрыть",
   "profit": "Профит",
-  "profitAlert": "сообщение Профит"
+  "profitAlert": "Профит сообщение",
+  "notifyMe": "Напомнить",
+  "notifyMeAlert": "When due, the app will count & show this transaction right on the app icon"
 }

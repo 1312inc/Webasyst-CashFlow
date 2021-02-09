@@ -77,6 +77,8 @@
   "cashOnHand": "Cash on hand",
   "cashToday": "Cash on hand today",
   "today": "Today",
+  "yesterday": "Yesterday",
+  "overdue": "Overdue",
   "repeatingTran": "Repeating transaction",
   "import": "Import",
   "emptyList": "No transactions",
@@ -125,5 +127,7 @@
   "setDates": "Set Dates",
   "close": "Close",
   "profit": "Profit",
-  "profitAlert": "Profit message"
+  "profitAlert": "Profit message",
+  "notifyMe": "Notify Me",
+  "notifyMeAlert": "When due, the app will count & show this transaction right on the app icon <span class=\"badge smaller\">1</span>"
 }

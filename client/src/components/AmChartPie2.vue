@@ -102,12 +102,12 @@ export default {
         this.label.text = rawData.length
         this.label.fontSize = 36
       } else {
-        const diff = this.$moment().diff(
-          this.$moment(rawData[0].date),
+        const diff = this.$moment(rawData[0].date).diff(
+          this.$moment().format('YYYY-MM-DD'),
           'days'
         )
 
-        if (diff < 0) {
+        if (diff > 0) {
           this.makeFutureLabelText()
         } else if (diff === 0) {
           this.label.text = this.$t('today')

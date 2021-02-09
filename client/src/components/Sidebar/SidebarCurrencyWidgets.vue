@@ -60,34 +60,7 @@ export default {
   },
 
   created () {
-    this.getBalanceFlow()
-
-    this.unsubscribeFromActions = this.$store.subscribeAction({
-      after: action => {
-        if (
-          (action.type === 'transaction/update' ||
-            action.type === 'transaction/delete' ||
-            action.type === 'transactionBulk/bulkDelete' ||
-            action.type === 'transactionBulk/bulkMove' ||
-            action.type === 'account/update' ||
-            action.type === 'account/delete' ||
-            action.type === 'category/delete') &&
-          !action.payload?.silent
-        ) {
-          this.getBalanceFlow()
-        }
-      }
-    })
-  },
-
-  beforeDestroy () {
-    this.unsubscribeFromActions()
-  },
-
-  methods: {
-    async getBalanceFlow () {
-      await this.$store.dispatch('balanceFlow/getBalanceFlow')
-    }
+    this.$store.dispatch('balanceFlow/getBalanceFlow')
   }
 }
 </script>

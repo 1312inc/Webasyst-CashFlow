@@ -31,6 +31,12 @@
             </div>
 
             <h3 class="c-transaction-section__header">
+              <div v-if="type === 'overdue'" class="black">
+                {{ $t("overdue") }}
+              </div>
+              <div v-if="type === 'yesterday'" class="black">
+                {{ $t("yesterday") }}
+              </div>
               <div v-if="type === 'today'" class="black">
                 {{ $t("today") }}
               </div>
@@ -76,7 +82,7 @@
       <div v-if="upcomingBlockOpened">
         <transition-group name="list" tag="ul" class="c-list list">
           <TransactionListGroupRow
-            v-for="transaction in filteredTransactions"
+            v-for="transaction in (type === 'future' ? [...filteredTransactions].reverse() : filteredTransactions)"
             :key="transaction.id"
             :transaction="transaction"
             :showChecker="isShowChecker"
