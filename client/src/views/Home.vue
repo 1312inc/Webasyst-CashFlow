@@ -3,7 +3,14 @@
     <ChartHeader />
     <AmChart />
     <DetailsDashboard />
-    <Transaction />
+    <div class="flexbox">
+      <div class="wide">
+        <TransactionList
+          @offsetCallback="fetchTransactions"
+        />
+      </div>
+      <AmChartPieStickyContainer class="width-40" />
+    </div>
   </div>
 </template>
 
@@ -11,7 +18,8 @@
 import ChartHeader from '@/components/ChartHeader'
 import AmChart from '@/components/AmChart'
 import DetailsDashboard from '@/components/DetailsDashboard'
-import Transaction from '@/components/TransactionList/Transaction'
+import TransactionList from '@/components/TransactionList/TransactionList'
+import AmChartPieStickyContainer from '@/components/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
@@ -21,32 +29,33 @@ export default {
     ChartHeader,
     AmChart,
     DetailsDashboard,
-    Transaction
+    TransactionList,
+    AmChartPieStickyContainer
   },
 
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.updateEntity(to)
+      vm.fetchTransactions()
     })
   },
 
   beforeRouteUpdate (to, from, next) {
     this.updateEntity(to)
+    this.fetchTransactions()
     next()
   },
 
   methods: {
     updateEntity (to) {
-      this.$store.commit('transaction/setDetailsInterval', {
-        from: '',
-        to: '',
-        silent: true
-      })
-
       this.$store.dispatch('updateCurrentEntity', {
         name: to.name.toLowerCase(),
         id: +to.params.id || to.params.id
       })
+    },
+
+    fetchTransactions () {
+      this.$store.dispatch('transaction/fetchTransactions')
     }
   }
 }

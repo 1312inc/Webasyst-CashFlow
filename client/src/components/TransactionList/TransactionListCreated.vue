@@ -34,7 +34,7 @@ export default {
 
   beforeDestroy () {
     // Clear created transactions temp list
-    this.$store.commit('transaction/setCreatedTransactions', [])
+    this.$store.commit('transaction/deleteCreatedTransaction', [])
   }
 }
 </script>

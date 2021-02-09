@@ -67,7 +67,7 @@ export default {
         })
         router.push({ name: 'Home' })
         await dispatch('getList')
-        dispatch('account/getList', null, { root: true })
+        dispatch('emitCategoryStateUpdate')
       } catch (_) {
         return false
       }
@@ -80,6 +80,11 @@ export default {
       } catch (_) {
         return false
       }
+    },
+
+    emitCategoryStateUpdate ({ dispatch }) {
+      dispatch('account/getList', null, { root: true })
+      dispatch('balanceFlow/getBalanceFlow', null, { root: true })
     }
   }
 }

@@ -6,7 +6,7 @@
   >
     <div v-sticky sticky-offset="{top: 80}" sticky-z-index="12">
       <AmChartPieSticky
-        v-if="$store.state.transaction.defaultGroupTransactions"
+        v-if="$store.state.transaction.defaultGroupTransactions.length"
       />
       <!-- TODO: Exclude sticky from TransactionControls Component -->
       <TransactionControls
