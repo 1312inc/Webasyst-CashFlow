@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AmChartPie2 :rawData="chartData" :type="chartType" />
+    <AmChartPie2 :rawData="chartData" :label="label" />
     <AmChartLegend :legendItems="chartData" class="custom-mx-20" />
   </div>
 </template>
@@ -19,7 +19,7 @@ export default {
   data () {
     return {
       chartData: [],
-      chartType: ''
+      label: ''
     }
   },
 
@@ -52,16 +52,14 @@ export default {
   methods: {
     makeChartData () {
       const data = this.selectedTransactionsIds.length
-        ? this.selectedTransactionsIds
-        : this.activeGroupTransactions.length
+        ? { items: this.selectedTransactionsIds }
+        : this.activeGroupTransactions.items?.length
           ? this.activeGroupTransactions
           : this.defaultGroupTransactions
 
-      // if array of selectedTransactionsIds
-      this.chartType = typeof data[0] === 'number' ? 'counter' : 'normal'
-
+      this.label = data.name
       this.chartData = Object.values(
-        data.reduce((acc, el) => {
+        data.items.reduce((acc, el) => {
           // el can be an Object or an ID
           const transaction =
             this.$store.getters['transaction/getTransactionById'](el) || el
