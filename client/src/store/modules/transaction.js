@@ -10,8 +10,8 @@ export default {
     },
     updatedTransactions: [],
     createdTransactions: [],
-    defaultGroupTransactions: [],
-    activeGroupTransactions: [],
+    defaultGroupTransactions: {},
+    activeGroupTransactions: {},
     groupNames: [],
     featurePeriod: 7,
     upcomingBlockOpened: 1, // TODO: Remove from the store to browser store

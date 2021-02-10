@@ -9,19 +9,19 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
 export default {
-  props: ['rawData', 'type'],
+  props: ['rawData', 'label'],
 
   computed: {
     featurePeriod () {
       return this.$store.state.transaction.featurePeriod
-    }
-  },
-
-  watch: {
-    featurePeriod () {
-      if (!this.rawData.length) {
-        this.makeFutureLabelText()
-      }
+    },
+    selectedTransactionsIds () {
+      return this.$store.state.transactionBulk.selectedTransactionsIds
+    },
+    futureLabelText () {
+      return this.featurePeriod === 1
+        ? this.$t('tomorrow')
+        : this.$t('nextDays', { count: this.featurePeriod })
     }
   },
 
@@ -30,11 +30,11 @@ export default {
     if (locale === 'ru_RU') chart.language.locale = am4langRU
     chart.innerRadius = am4core.percent(40)
 
-    const label = chart.seriesContainer.createChild(am4core.Label)
-    label.textAlign = 'middle'
-    label.horizontalCenter = 'middle'
-    label.verticalCenter = 'middle'
-    this.label = label
+    const pieLabel = chart.seriesContainer.createChild(am4core.Label)
+    pieLabel.textAlign = 'middle'
+    pieLabel.horizontalCenter = 'middle'
+    pieLabel.verticalCenter = 'middle'
+    this.pieLabel = pieLabel
 
     // Add and configure Series
     const pieSeries = chart.series.push(new am4charts.PieSeries())
@@ -57,6 +57,7 @@ export default {
     })
     // Push empty data item for the placeholer
     chart.data.push({
+      id: null,
       amount: 0,
       category: 'empty',
       category_color: '#EEEEEE'
@@ -65,7 +66,7 @@ export default {
     this.chart = chart
 
     this.renderChart(this.rawData)
-    this.$watch('rawData', (val) => {
+    this.$watch('rawData', val => {
       this.renderChart(val)
     })
   },
@@ -83,10 +84,8 @@ export default {
         this.chart.series.getIndex(0).slices.template.tooltipText = this.$t(
           'emptyList'
         )
-
-        this.label.fontSize = 16
-        this.makeFutureLabelText()
-
+        this.pieLabel.fontSize = 16
+        this.pieLabel.text = this.futureLabelText
         this.chart.data.forEach(e => {
           e.amount = e.category === 'empty' ? 100 : 0
         })
@@ -94,46 +93,31 @@ export default {
         return
       }
 
+      // pie label formatting
       this.chart.series.getIndex(0).slices.template.tooltipText =
         "{category}: {value.formatNumber('#,###.##')}"
 
       // make label inside Chart
-      if (this.type === 'counter') {
-        this.label.text = rawData.length
-        this.label.fontSize = 36
+      if (this.selectedTransactionsIds.length) {
+        this.pieLabel.text = this.selectedTransactionsIds.length
+        this.pieLabel.fontSize = 36
       } else {
-        const diff = this.$moment(rawData[0].date).diff(
-          this.$moment().format('YYYY-MM-DD'),
-          'days'
-        )
-
-        if (diff > 0) {
-          this.makeFutureLabelText()
-        } else if (diff === 0) {
-          this.label.text = this.$t('today')
+        if (this.label === 'future') {
+          this.pieLabel.text = this.futureLabelText
         } else {
-          this.label.text = `${this.$moment(
-            rawData[0].date
-          ).format('MMMM')}\n${this.$moment(
-            rawData[0].date
-          ).format('YYYY')}`
+          this.pieLabel.text = this.$moment(this.label).isValid()
+            ? this.$moment(this.label).format('MMMM YYYY')
+            : this.$t(this.label)
         }
-        this.label.fontSize = 16
+        this.pieLabel.fontSize = 16
       }
 
+      // update data
       this.chart.data.forEach(e => {
         const index = rawData.findIndex(el => el.id === e.id)
         e.amount = index > -1 ? rawData[index].amount : 0
       })
-
       this.chart.invalidateRawData()
-    },
-
-    makeFutureLabelText () {
-      this.label.text =
-        this.featurePeriod === 1
-          ? this.$t('tomorrow')
-          : this.$t('nextDays', { count: this.featurePeriod })
     }
   }
 }

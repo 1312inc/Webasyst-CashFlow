@@ -11,6 +11,7 @@
           {{
             $helper.toCurrency({
               value: item.amount,
+              isDynamics: true,
             })
           }}
         </div>

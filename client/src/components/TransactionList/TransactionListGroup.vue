@@ -170,7 +170,10 @@ export default {
       }
 
       if (this.index === 0) {
-        this.$store.commit('transaction/setDefaultGroupTransactions', result)
+        this.$store.commit('transaction/setDefaultGroupTransactions', {
+          name: this.type,
+          items: result
+        })
       }
 
       return result
@@ -203,11 +206,14 @@ export default {
 
       if (this.$store.state.transaction.groupNames.length) {
         if (e.top && e.sticked) {
-          this.updateActiveGroup(this.filteredTransactions)
+          this.updateActiveGroup({
+            name: this.type,
+            items: this.group
+          })
         }
       } else {
-        if (this.$store.state.transaction.activeGroupTransactions.length) {
-          this.updateActiveGroup([])
+        if (this.$store.state.transaction.activeGroupTransactions.items?.length) {
+          this.updateActiveGroup({})
         }
       }
     },
