@@ -62,8 +62,7 @@ export default {
             date: moment().format('YYYY-MM-DD'),
             account_id: data.id,
             category_id: parseInt(params.starting_balance) >= 0 ? -2 : -1,
-            description: i18n.t('startingBalance'),
-            silent: true
+            description: i18n.t('startingBalance')
           }, { root: true })
         }
         dispatch('getList')
