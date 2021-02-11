@@ -12,6 +12,7 @@
             $helper.toCurrency({
               value: item.amount,
               isDynamics: true,
+              currencyCode
             })
           }}
         </div>
@@ -22,7 +23,7 @@
 
 <script>
 export default {
-  props: ['legendItems']
+  props: ['legendItems', 'currencyCode']
 }
 </script>
 
@@ -57,6 +58,10 @@ export default {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+
+      &__value {
+        white-space: nowrap;
       }
     }
   }

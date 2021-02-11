@@ -1,7 +1,7 @@
 <template>
   <div>
-    <AmChartPie2 :rawData="chartData" :label="label" />
-    <AmChartLegend :legendItems="chartData" class="custom-mx-20" />
+    <AmChartPie2 :rawData="rawData" :label="label" />
+    <AmChartLegend :legendItems="rawData" :currencyCode="currencyCode" class="custom-mx-20" />
   </div>
 </template>
 
@@ -18,17 +18,31 @@ export default {
 
   data () {
     return {
-      chartData: [],
+      rawData: [],
       label: ''
     }
   },
 
   computed: {
     ...mapState('transaction', [
+      'transactions',
       'activeGroupTransactions',
-      'defaultGroupTransactions'
+      'defaultGroupTransactions',
+      'chartData',
+      'chartDataCurrencyIndex'
     ]),
-    ...mapState('transactionBulk', ['selectedTransactionsIds'])
+    ...mapState('transactionBulk', ['selectedTransactionsIds']),
+    currencyCode () {
+      if (this.chartData.length) {
+        return this.chartData[this.chartDataCurrencyIndex].currency
+      } else {
+        const account = this.$store.getters['account/getById'](
+          this.transactions.data[0].account_id
+        )
+        console.log(account.currency)
+        return account.currency
+      }
+    }
   },
 
   created () {
@@ -58,7 +72,7 @@ export default {
           : this.defaultGroupTransactions
 
       this.label = data.name
-      this.chartData = Object.values(
+      this.rawData = Object.values(
         data.items.reduce((acc, el) => {
           // el can be an Object or an ID
           const transaction =
@@ -66,16 +80,21 @@ export default {
           const category = this.$store.getters['category/getById'](
             transaction.category_id
           )
-          if (!acc[category.id]) {
-            acc[category.id] = {
-              id: category.id,
-              date: transaction.date,
-              amount: transaction.amount,
-              category: category.name,
-              category_color: category.color
+          const account = this.$store.getters['account/getById'](
+            transaction.account_id
+          )
+          if (account.currency === this.currencyCode) {
+            if (!acc[category.id]) {
+              acc[category.id] = {
+                id: category.id,
+                date: transaction.date,
+                amount: transaction.amount,
+                category: category.name,
+                category_color: category.color
+              }
+            } else {
+              acc[category.id].amount += transaction.amount
             }
-          } else {
-            acc[category.id].amount += transaction.amount
           }
           return acc
         }, {})
