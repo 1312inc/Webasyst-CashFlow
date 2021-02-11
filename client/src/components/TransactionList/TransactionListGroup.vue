@@ -1,6 +1,15 @@
 <template>
   <div sticky-container class="custom-mb-24 c-transaction-section">
-    <div @mouseover="isHover = true" @mouseleave="isHover = false">
+    <div
+      @mouseover="
+        isHover = true;
+        $refs.pieIcon.style.display = 'block';
+      "
+      @mouseleave="
+        isHover = false;
+        $refs.pieIcon.style.display = 'none';
+      "
+    >
       <div
         v-sticky
         :sticky-offset="stickyOffset"
@@ -11,23 +20,21 @@
         <div class="flexbox flexbox-mobile middle custom-py-8">
           <div class="flexbox middle space-12 wide">
             <div v-if="$helper.showMultiSelect()" style="width: 1rem">
-
-                <span
-                  v-show="isHoverComputed"
-                  @click="checkAll(filteredTransactions)"
-                  class="wa-checkbox"
-                >
-                  <input
-                    type="checkbox"
-                    :checked="isCheckedAllInGroup(filteredTransactions)"
-                  />
-                  <span>
-                    <span class="icon">
-                      <i class="fas fa-check"></i>
-                    </span>
+              <span
+                v-show="isHoverComputed"
+                @click="checkAll(filteredTransactions)"
+                class="wa-checkbox"
+              >
+                <input
+                  type="checkbox"
+                  :checked="isCheckedAllInGroup(filteredTransactions)"
+                />
+                <span>
+                  <span class="icon">
+                    <i class="fas fa-check"></i>
                   </span>
                 </span>
-
+              </span>
             </div>
 
             <h3 class="c-transaction-section__header">
@@ -52,14 +59,16 @@
                 <span v-else>{{
                   $t("nextDays", { count: featurePeriod })
                 }}</span>
-                <span>({{ filteredTransactions.length }})</span
-                >
+                <span>({{ filteredTransactions.length }})</span>
               </div>
               <div v-if="$moment(type).isValid()" class="black">
                 {{ $moment(type).format("MMMM YYYY") }}
               </div>
             </h3>
             <TransactionListGroupUpcomingPeriod v-if="type === 'future'" />
+            <div @click="onStick({sticked: true})" style="display: none;cursor: pointer;" ref="pieIcon">
+              <i class="fas fa-chart-pie"></i>
+            </div>
           </div>
           <div class="flexbox middle space-12">
             <div class="hint">
@@ -82,7 +91,9 @@
       <div v-if="upcomingBlockOpened">
         <transition-group name="list" tag="ul" class="c-list list">
           <TransactionListGroupRow
-            v-for="transaction in (type === 'future' ? [...filteredTransactions].reverse() : filteredTransactions)"
+            v-for="transaction in type === 'future'
+              ? [...filteredTransactions].reverse()
+              : filteredTransactions"
             :key="transaction.id"
             :transaction="transaction"
             :showChecker="isShowChecker"
@@ -168,15 +179,21 @@ export default {
           return istart.diff(today, 'days') <= this.featurePeriod
         })
       }
-
-      if (this.index === 0) {
-        this.$store.commit('transaction/setDefaultGroupTransactions', {
-          name: this.type,
-          items: result
-        })
-      }
-
       return result
+    }
+  },
+
+  watch: {
+    filteredTransactions () {
+      if (this.$store.state.transaction.activeGroupTransactions.index === this.index) {
+        this.onStick({ sticked: true })
+      }
+    }
+  },
+
+  created () {
+    if (this.index === 0) {
+      this.onStick({ sticked: true })
     }
   },
 
@@ -194,32 +211,13 @@ export default {
     },
 
     onStick (e) {
-      if (this.index === 0) return
-
-      if (e.top) {
-        this.$store.commit('transaction/setGroupNames', this.type)
-      } else {
-        if (this.$store.state.transaction.groupNames.includes(this.type)) {
-          this.$store.commit('transaction/setGroupNames', this.type)
-        }
+      if (e.sticked) {
+        this.$store.commit('transaction/setActiveGroupTransactions', {
+          index: this.index,
+          name: this.type,
+          items: this.filteredTransactions
+        })
       }
-
-      if (this.$store.state.transaction.groupNames.length) {
-        if (e.top && e.sticked) {
-          this.updateActiveGroup({
-            name: this.type,
-            items: this.group
-          })
-        }
-      } else {
-        if (this.$store.state.transaction.activeGroupTransactions.items?.length) {
-          this.updateActiveGroup({})
-        }
-      }
-    },
-
-    updateActiveGroup (data) {
-      this.$store.commit('transaction/setActiveGroupTransactions', data)
     },
 
     toggleupcomingBlockOpened () {

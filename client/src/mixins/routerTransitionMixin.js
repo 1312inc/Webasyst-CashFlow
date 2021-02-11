@@ -12,8 +12,7 @@ export default {
   methods: {
     clearDefaultGroupTransactions () {
       this.$store.commit('transaction/setTransactions', { data: [] })
-      this.$store.commit('transaction/setActiveGroupTransactions', {})
-      this.$store.commit('transaction/setDefaultGroupTransactions', {})
+      // this.$store.commit('transaction/setActiveGroupTransactions', {})
       this.$store.commit('transactionBulk/emptySelectedTransactionsIds')
     }
   }

@@ -52,7 +52,7 @@ export default {
     },
 
     currency () {
-      return this.chartData?.[this.chartDataCurrencyIndex].currency
+      return this.chartData?.[this.chartDataCurrencyIndex]?.currency
     },
 
     total () {
