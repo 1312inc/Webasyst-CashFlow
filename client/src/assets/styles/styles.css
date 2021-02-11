@@ -16,7 +16,10 @@ body.modal {
   transition: all 0.3s;
 }
 
-.c-transaction-section .c-transaction-section__header { margin: 0; }
+.c-transaction-section .c-transaction-section__header { 
+  margin: 0; 
+  text-transform: capitalize;
+}
 
 .list-enter, .list-leave-to
 /* .list-complete-leave-active до версии 2.1.8 */ {

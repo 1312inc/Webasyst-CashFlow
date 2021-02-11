@@ -55,7 +55,7 @@ export default {
       this.$moment().add(6, 'M').format('YYYY-MM-DD')
     )
 
-    this.$store.commit('transaction/updateQueryParams', { from, to, silent: true })
+    this.$store.commit('transaction/updateQueryParams', { from, to })
   },
 
   methods: {
