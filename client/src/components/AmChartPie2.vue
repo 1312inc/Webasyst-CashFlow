@@ -79,24 +79,6 @@ export default {
 
   methods: {
     renderChart (rawData) {
-      // if empty data
-      if (!rawData.length) {
-        this.chart.series.getIndex(0).slices.template.tooltipText = this.$t(
-          'emptyList'
-        )
-        this.pieLabel.fontSize = 16
-        this.pieLabel.text = this.futureLabelText
-        this.chart.data.forEach(e => {
-          e.amount = e.category === 'empty' ? 100 : 0
-        })
-        this.chart.invalidateRawData()
-        return
-      }
-
-      // pie label formatting
-      this.chart.series.getIndex(0).slices.template.tooltipText =
-        "{category}: {value.formatNumber('#,###.##')}"
-
       // make label inside Chart
       if (this.selectedTransactionsIds.length) {
         this.pieLabel.text = this.selectedTransactionsIds.length
@@ -111,6 +93,22 @@ export default {
         }
         this.pieLabel.fontSize = 16
       }
+
+      // if empty data
+      if (!rawData.length) {
+        this.chart.series.getIndex(0).slices.template.tooltipText = this.$t(
+          'emptyList'
+        )
+        this.chart.data.forEach(e => {
+          e.amount = e.category === 'empty' ? 100 : 0
+        })
+        this.chart.invalidateRawData()
+        return
+      }
+
+      // pie label formatting
+      this.chart.series.getIndex(0).slices.template.tooltipText =
+        "{category}: {value.formatNumber('#,###.##')}"
 
       // update data
       this.chart.data.forEach(e => {
