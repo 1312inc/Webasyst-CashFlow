@@ -1,29 +1,22 @@
 <template>
   <div class="chart-container">
-    <div v-if="isShowChart && isMultipleCurrencies" class="toggle">
+    <div v-if="chartData.length > 1" class="toggle">
       <span
         @click="activeCurrencyChart = i"
-        v-for="(currencyData, i) in chartData"
-        :key="i"
+        v-for="(item, i) in chartData"
+        :key="item.currency"
         :class="{ selected: i === activeCurrencyChart }"
       >
-        {{ currencyData.currency }}
+        {{ item.currency }}
       </span>
     </div>
     <div>
       <div
         ref="chartdiv"
         class="chart-main smaller"
-        :style="!isShowChart ? 'opacity:0;' : ''"
+        :style="loadingChart ? 'opacity:.3;' : ''"
       ></div>
     </div>
-    <!-- <transition name="fade-appear"> -->
-    <!-- <div v-if="!isShowChart" class="skeleton-container">
-      <div class="skeleton">
-        <span class="skeleton-custom-box"></span>
-      </div>
-    </div> -->
-    <!-- </transition> -->
   </div>
 </template>
 
@@ -43,30 +36,11 @@ if (window?.appState?.theme === 'dark' || (window.matchMedia && window.matchMedi
 }
 
 export default {
-
-  data () {
-    return {
-      dataValidated: true
-    }
-  },
-
   computed: {
     ...mapState('transaction', ['queryParams', 'chartData', 'chartDataCurrencyIndex', 'loadingChart']),
 
-    currentCategory () {
-      return this.$store.getters.getCurrentType
-    },
-
-    isShowChart () {
-      return !this.loadingChart && this.dataValidated
-    },
-
-    isMultipleCurrencies () {
-      return Array.isArray(this.chartData) && this.chartData.length > 1
-    },
-
     activeChartData () {
-      return Array.isArray(this.chartData) ? this.chartData[this.chartDataCurrencyIndex] : { data: [] }
+      return this.chartData[this.chartDataCurrencyIndex]
     },
 
     currency () {
@@ -74,25 +48,25 @@ export default {
     },
 
     activeCurrencyChart: {
-      set (val) {
-        this.$store.commit('transaction/setChartDataCurrencyIndex', val)
-      },
       get () {
         return this.chartDataCurrencyIndex
+      },
+      set (val) {
+        this.$store.commit('transaction/setChartDataCurrencyIndex', val)
       }
     }
   },
 
   watch: {
-    activeChartData () {
-      this.renderChart()
+    activeChartData (data) {
+      this.updateChartData(data)
     }
   },
 
   created () {
     this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
-      if (mutation.type === 'transaction/updateQueryParams' && !mutation.payload.silent) {
-        this.getChartData()
+      if (mutation.type === 'transaction/updateQueryParams') {
+        this.$store.dispatch('transaction/getChartData')
       }
     })
 
@@ -103,7 +77,7 @@ export default {
             action.type === 'transactionBulk/emitTransactionBulkStateUpdate' ||
             action.type === 'category/emitCategoryStateUpdate'
         ) {
-          this.getChartData()
+          this.$store.dispatch('transaction/getChartData')
         }
       }
     })
@@ -296,6 +270,7 @@ export default {
   },
 
   beforeDestroy () {
+    this.$store.commit('transaction/setChartData', [])
     this.unsubscribeFromQueryParams()
     this.unsubscribeFromTransitionUpdate()
     this.unsubscribeFromDetailsInterval()
@@ -307,169 +282,127 @@ export default {
   methods: {
     ...mapMutations('transaction', ['setDetailsInterval']),
 
-    async getChartData () {
-      await this.$store.dispatch('transaction/getChartData')
-    },
-
-    renderChart () {
+    updateChartData (data) {
       // Delete negative ranges
       this.dateAxis2.axisRanges.each((e, i) => {
         this.dateAxis2.axisRanges.removeIndex(i).dispose()
+      });
+
+      ['amountIncome', 'amountExpense', 'amountProfit', 'balance'].forEach((dataField, i) => {
+        if (data.data[0][dataField] === null) {
+          const index = this.chart.series.values.findIndex(s => s.dataFields.valueY === dataField)
+          if (index > -1) {
+            this.chart.series.removeIndex(index).dispose()
+          }
+        } else {
+          if (dataField === 'balance') {
+            this.addBalanceSeries()
+          } else {
+            this.addColumnSeries(dataField)
+          }
+        }
       })
 
-      this.addIncomeSeries()
-      this.addExpenseSeries()
-      this.addBalanceSeries()
+      this.balanceAxis.disabled = data.data[0].balance === null
 
-      let filledChartData = []
+      const istart = this.$moment(this.queryParams.from)
+      const iend = this.$moment(this.queryParams.to)
+      const daysInInterval = iend.diff(istart, 'days') + 1
 
-      if (this.activeChartData.data.length) {
-        const istart = this.$moment(this.$store.state.transaction.queryParams.from)
-        const iend = this.$moment(this.$store.state.transaction.queryParams.to)
-        const daysInInterval = iend.diff(istart, 'days') + 1
+      // Filling empty data
+      const filledChartData = new Array(daysInInterval).fill(null).map(() => {
+        return {
+          period: istart.add(1, 'd').format('YYYY-MM-DD'),
+          amountIncome: null,
+          amountExpense: null,
+          balance: null
+        }
+      })
 
-        // Filling empty data
-        filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
-          return {
-            period: this.$moment(this.$store.state.transaction.queryParams.from).add(i, 'd').format('YYYY-MM-DD'),
-            amountIncome: null,
-            amountExpense: null,
-            balance: null,
+      // Merge empty period with days with data
+      data.data.forEach(element => {
+        const i = filledChartData.findIndex(e => e.period === element.period)
+        if (i > -1) {
+          filledChartData.splice(i, 1, {
+            ...element,
             bulletDisabled: true
-          }
-        })
+          })
+        }
+      })
 
-        // Merge empty period with days with data
-        this.activeChartData.data.forEach(element => {
-          const i = filledChartData.findIndex(e => e.period === element.period)
-          if (i > -1) {
-            filledChartData.splice(i, 1, {
-              ...element,
-              bulletDisabled: true
-            })
-          }
-        })
-
-        // Filling daily balance
-        let previosValue = null
-        filledChartData.map(e => {
-          if (e.balance !== null) {
-            previosValue = e.balance
-          }
-          if (e.balance === null) {
-            e.balance = previosValue
-          }
-          if (e.period === this.$moment().format('YYYY-MM-DD')) {
-            e.bulletDisabled = false
-          }
-          return e
-        })
-      }
+      // Filling daily balance
+      let previosValue = null
+      filledChartData.map(e => {
+        if (e.balance !== null) {
+          previosValue = e.balance
+        }
+        if (e.balance === null) {
+          e.balance = previosValue
+        }
+        if (e.period === this.$moment().format('YYYY-MM-DD')) {
+          e.bulletDisabled = false
+        }
+      })
 
       this.chart.data = filledChartData
-      // this.chart.xAxes.values[0].min = (new Date(this.$store.state.transaction.queryParams.from)).getTime()
-      // this.chart.xAxes.values[0].max = (new Date(this.$store.state.transaction.queryParams.to)).getTime()
     },
 
-    addIncomeSeries () {
-      const i = this.chart.series.indexOf(this.incomeSeries)
-      if (i > -1) {
-        this.chart.series.removeIndex(i).dispose()
-        delete this.incomeSeries
+    addColumnSeries (dataField) {
+      let options = {
+        dataField
       }
 
-      if (!this.activeChartData.data.length ||
-        this.activeChartData.data[0].amountIncome === null) {
-        return false
+      if (dataField === 'amountIncome') {
+        options = {
+          name: this.$t('income'),
+          color: am4core.color('#3ec55e'),
+          ...options
+        }
       }
 
-      const incomeSeries = this.chart.series.push(new am4charts.ColumnSeries())
-      incomeSeries.name = this.$t('income')
-      incomeSeries.tooltip.background.filters.clear()
-      incomeSeries.tooltip.background.strokeWidth = 0
-      incomeSeries.tooltip.getFillFromObject = false
-      incomeSeries.tooltip.background.fill = am4core.color('#3ec55e')
-      incomeSeries.tooltip.label.fill = am4core.color('#333')
-      incomeSeries.tooltip.animationDuration = 500
-      // incomeSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
-      incomeSeries.yAxis = this.colsAxis
-      incomeSeries.xAxis = this.dateAxis
-      incomeSeries.dataFields.valueY = 'amountIncome'
-      incomeSeries.dataFields.dateX = 'period'
-      incomeSeries.groupFields.valueY = 'sum'
-      incomeSeries.stroke = am4core.color('#3ec55e')
-      incomeSeries.columns.template.strokeWidth = 0
-      incomeSeries.columns.template.fill = am4core.color('#3ec55e')
-      incomeSeries.columns.template.fillOpacity = 0.5
-      incomeSeries.columns.template.column.cornerRadiusTopLeft = 4
-      incomeSeries.columns.template.column.cornerRadiusTopRight = 4
+      if (dataField === 'amountExpense') {
+        options = {
+          name: this.$t('expense'),
+          color: am4core.color('#fc3d38'),
+          ...options
+        }
+      }
 
-      incomeSeries.adapter.add('tooltipText', (t, target) => {
+      if (dataField === 'amountProfit') {
+        options = {
+          name: this.$t('profit'),
+          color: am4core.color('#000000'),
+          ...options
+        }
+      }
+
+      const newSeries = this.chart.series.push(new am4charts.ColumnSeries())
+      newSeries.name = options.name
+      newSeries.tooltip.background.filters.clear()
+      newSeries.tooltip.background.strokeWidth = 0
+      newSeries.tooltip.getFillFromObject = false
+      newSeries.tooltip.background.fill = options.color
+      newSeries.tooltip.animationDuration = 500
+      newSeries.yAxis = this.colsAxis
+      newSeries.xAxis = this.dateAxis
+      newSeries.dataFields.valueY = options.dataField
+      newSeries.dataFields.dateX = 'period'
+      newSeries.groupFields.valueY = 'sum'
+      newSeries.stroke = options.color
+      newSeries.columns.template.strokeWidth = 0
+      newSeries.columns.template.fill = options.color
+      newSeries.columns.template.fillOpacity = 0.5
+      newSeries.columns.template.column.cornerRadiusTopLeft = 4
+      newSeries.columns.template.column.cornerRadiusTopRight = 4
+
+      newSeries.adapter.add('tooltipText', (t, target) => {
         const isGrouped = !!target.tooltipDataItem.groupDataItems
         const dateFormat = isGrouped ? 'MMM yyyy' : 'd MMMM yyyy'
         return `{dateX.formatDate('${dateFormat}')}\n{name}: {valueY.value} ${this.currency}`
       })
-
-      this.incomeSeries = incomeSeries
-    },
-
-    addExpenseSeries () {
-      const i = this.chart.series.indexOf(this.expenseSeries)
-      if (i > -1) {
-        this.chart.series.removeIndex(i).dispose()
-        delete this.expenseSeries
-      }
-
-      if (!this.activeChartData.data.length ||
-        this.activeChartData.data[0].amountExpense === null) {
-        return false
-      }
-
-      const expenseSeries = this.chart.series.push(new am4charts.ColumnSeries())
-      expenseSeries.name = this.$t('expense')
-      expenseSeries.tooltip.background.filters.clear()
-      expenseSeries.tooltip.background.strokeWidth = 0
-      expenseSeries.tooltip.getFillFromObject = false
-      expenseSeries.tooltip.background.fill = am4core.color('#fc3d38')
-      expenseSeries.tooltip.animationDuration = 500
-      // expenseSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
-      expenseSeries.yAxis = this.colsAxis
-      expenseSeries.xAxis = this.dateAxis
-      expenseSeries.dataFields.valueY = 'amountExpense'
-      expenseSeries.dataFields.dateX = 'period'
-      expenseSeries.groupFields.valueY = 'sum'
-      expenseSeries.stroke = am4core.color('#fc3d38')
-      expenseSeries.columns.template.strokeWidth = 0
-      expenseSeries.columns.template.fill = am4core.color('#fc3d38')
-      expenseSeries.columns.template.fillOpacity = 0.5
-      expenseSeries.columns.template.column.cornerRadiusTopLeft = 4
-      expenseSeries.columns.template.column.cornerRadiusTopRight = 4
-
-      expenseSeries.adapter.add('tooltipText', (t, target) => {
-        const isGrouped = !!target.tooltipDataItem.groupDataItems
-        const dateFormat = isGrouped ? 'MMM yyyy' : 'd MMMM yyyy'
-        return `{dateX.formatDate('${dateFormat}')}\n{name}: {valueY.value} ${this.currency}`
-      })
-
-      this.expenseSeries = expenseSeries
     },
 
     addBalanceSeries () {
-      const i = this.chart.series.indexOf(this.balanceSeries)
-      if (i > -1) {
-        this.chart.series.removeIndex(i).dispose()
-        delete this.balanceSeries
-      }
-
-      this.balanceAxis.disabled = true
-
-      if (!this.activeChartData.data.length ||
-        this.activeChartData.data[0].balance === null) {
-        return false
-      }
-
-      this.balanceAxis.disabled = false
-
       const balanceSeries = this.chart.series.push(new am4charts.LineSeries())
       balanceSeries.name = this.$t('balance')
       balanceSeries.tooltip.pointerOrientation = 'top'
@@ -520,14 +453,6 @@ export default {
       })
 
       this.balanceSeries.events.on('datavalidated', (ev) => {
-        // const vals = ev.target.data.map(e => e.balance)
-        // const max = Math.max.apply(null, vals.map(Math.abs))
-        // this.balanceAxis.min = -max
-        // this.balanceAxis.max = max
-
-        // TODO: check this event for the duplicates
-        if (!ev.target.data.length) return
-
         let dates = []
         let previous = null
         ev.target.data.forEach((e, i, arr) => {
@@ -538,20 +463,17 @@ export default {
               isStart: previous === null,
               isEnd: false
             })
-            if (i === arr.length - 1) {
-              if (dates.length) {
-                dates[dates.length - 1].isEnd = true
-                this.addNegativeBalanceRange(ev.target, dates)
-              }
+            if (i === arr.length - 1 && dates.length) {
+              dates[dates.length - 1].isEnd = true
+              this.addNegativeBalanceRange(ev.target, dates)
             }
-            previous = e.balance
           } else {
             if (dates.length) {
               this.addNegativeBalanceRange(ev.target, dates)
             }
             dates = []
-            previous = e.balance
           }
+          previous = e.balance
         })
       })
     },
@@ -560,6 +482,7 @@ export default {
       const minimumAmount = dates.reduce((min, e) => {
         return e.balance < min ? e.balance : min
       }, dates[0].balance)
+
       const minimumDate = dates.find(d => d.balance === minimumAmount).date
 
       const startDate = dates[0].date
@@ -598,24 +521,6 @@ export default {
   .chart-container {
     position: relative;
     margin-bottom: 1rem;
-
-    // .skeleton-container {
-    //   position: absolute;
-    //   top: 0;
-    //   left: 0;
-    //   width: 100%;
-    //   height: 100%;
-
-    //   .skeleton {
-    //     position: absolute;
-    //     width: 100%;
-    //     height: 100%;
-    //   }
-
-    //   .skeleton-custom-box {
-    //     height: 100%;
-    //   }
-    // }
 
     .chart-main {
       width: 100%;
