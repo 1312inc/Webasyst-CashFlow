@@ -1,7 +1,20 @@
 <template>
   <div>
-    <AmChartPie2 :rawData="rawData" :label="label" />
-    <AmChartLegend :legendItems="rawData" :currencyCode="currencyCode" class="custom-mx-20" />
+    <AmChartPie2
+      :rawData="isCounterMode ? rawData : rawDataByCurrency"
+      :isCounterMode="isCounterMode"
+      :label="
+        isCounterMode
+          ? selectedTransactionsIds.length
+          : activeGroupTransactions.name
+      "
+      :currencyCode="currencyCode"
+    />
+    <AmChartLegend
+      :legendItems="rawDataByCurrency"
+      :currencyCode="currencyCode"
+      class="custom-mx-20"
+    />
   </div>
 </template>
 
@@ -16,22 +29,17 @@ export default {
     AmChartLegend
   },
 
-  data () {
-    return {
-      rawData: [],
-      label: ''
-    }
-  },
-
   computed: {
     ...mapState('transaction', [
       'transactions',
       'activeGroupTransactions',
-      'defaultGroupTransactions',
       'chartData',
       'chartDataCurrencyIndex'
     ]),
     ...mapState('transactionBulk', ['selectedTransactionsIds']),
+    isCounterMode () {
+      return !!this.selectedTransactionsIds.length
+    },
     currencyCode () {
       if (this.chartData.length) {
         return this.chartData[this.chartDataCurrencyIndex].currency
@@ -39,40 +47,18 @@ export default {
         const account = this.$store.getters['account/getById'](
           this.transactions.data[0].account_id
         )
-        console.log(account.currency)
         return account.currency
       }
-    }
-  },
-
-  created () {
-    this.makeChartData()
-    this.$watch(
-      vm =>
-        [
-          vm.selectedTransactionsIds,
-          vm.activeGroupTransactions,
-          vm.defaultGroupTransactions
-        ].join(),
-      () => {
-        this.makeChartData()
-      },
-      {
-        deep: true
-      }
-    )
-  },
-
-  methods: {
-    makeChartData () {
-      const data = this.selectedTransactionsIds.length
+    },
+    rawDataByCurrency () {
+      return this.rawData.filter(e => e.currency === this.currencyCode)
+    },
+    rawData () {
+      const data = this.isCounterMode
         ? { items: this.selectedTransactionsIds }
-        : this.activeGroupTransactions.items?.length
-          ? this.activeGroupTransactions
-          : this.defaultGroupTransactions
+        : this.activeGroupTransactions
 
-      this.label = data.name
-      this.rawData = Object.values(
+      return Object.values(
         data.items.reduce((acc, el) => {
           // el can be an Object or an ID
           const transaction =
@@ -83,18 +69,17 @@ export default {
           const account = this.$store.getters['account/getById'](
             transaction.account_id
           )
-          if (account.currency === this.currencyCode) {
-            if (!acc[category.id]) {
-              acc[category.id] = {
-                id: category.id,
-                date: transaction.date,
-                amount: transaction.amount,
-                category: category.name,
-                category_color: category.color
-              }
-            } else {
-              acc[category.id].amount += transaction.amount
+          if (!acc[category.id]) {
+            acc[category.id] = {
+              id: category.id,
+              date: transaction.date,
+              amount: transaction.amount,
+              currency: account.currency,
+              category: category.name,
+              category_color: category.color
             }
+          } else {
+            acc[category.id].amount += transaction.amount
           }
           return acc
         }, {})

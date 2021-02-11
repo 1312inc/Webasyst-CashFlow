@@ -9,14 +9,11 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
 export default {
-  props: ['rawData', 'label'],
+  props: ['rawData', 'label', 'isCounterMode', 'currencyCode'],
 
   computed: {
     featurePeriod () {
       return this.$store.state.transaction.featurePeriod
-    },
-    selectedTransactionsIds () {
-      return this.$store.state.transactionBulk.selectedTransactionsIds
     },
     futureLabelText () {
       return this.featurePeriod === 1
@@ -65,10 +62,16 @@ export default {
 
     this.chart = chart
 
-    this.renderChart(this.rawData)
-    this.$watch('rawData', val => {
-      this.renderChart(val)
-    })
+    this.renderChart()
+    this.$watch(
+      '$props',
+      () => {
+        this.renderChart()
+      },
+      {
+        deep: true
+      }
+    )
   },
 
   beforeDestroy () {
@@ -78,24 +81,28 @@ export default {
   },
 
   methods: {
-    renderChart (rawData) {
+    renderChart () {
       // make label inside Chart
-      if (this.selectedTransactionsIds.length) {
-        this.pieLabel.text = this.selectedTransactionsIds.length
+      if (this.isCounterMode) {
+        this.pieLabel.html = this.label
         this.pieLabel.fontSize = 36
       } else {
         if (this.label === 'future') {
-          this.pieLabel.text = this.futureLabelText
+          this.pieLabel.html = this.futureLabelText
         } else {
-          this.pieLabel.text = this.$moment(this.label).isValid()
+          this.pieLabel.html = this.$moment(this.label).isValid()
             ? this.$moment(this.label).format('MMMM YYYY')
             : this.$t(this.label)
         }
+        this.pieLabel.html +=
+          '<div class="custom-mt-8 large">' +
+          this.$helper.currencySignByCode(this.currencyCode) +
+          '</div>'
         this.pieLabel.fontSize = 16
       }
 
       // if empty data
-      if (!rawData.length) {
+      if (!this.rawData.length) {
         this.chart.series.getIndex(0).slices.template.tooltipText = this.$t(
           'emptyList'
         )
@@ -112,8 +119,8 @@ export default {
 
       // update data
       this.chart.data.forEach(e => {
-        const index = rawData.findIndex(el => el.id === e.id)
-        e.amount = index > -1 ? rawData[index].amount : 0
+        const index = this.rawData.findIndex(el => el.id === e.id)
+        e.amount = index > -1 ? this.rawData[index].amount : 0
       })
       this.chart.invalidateRawData()
     }

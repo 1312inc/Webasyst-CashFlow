@@ -10,9 +10,11 @@ export default {
     },
     updatedTransactions: [],
     createdTransactions: [],
-    defaultGroupTransactions: {},
-    activeGroupTransactions: {},
-    groupNames: [],
+    activeGroupTransactions: {
+      index: null,
+      name: '',
+      items: []
+    },
     featurePeriod: 7,
     upcomingBlockOpened: 1, // TODO: Remove from the store to browser store
     chartData: [],
@@ -65,10 +67,6 @@ export default {
       }
     },
 
-    setDefaultGroupTransactions (state, data) {
-      state.defaultGroupTransactions = data
-    },
-
     setActiveGroupTransactions (state, data) {
       state.activeGroupTransactions = data
     },
@@ -103,15 +101,6 @@ export default {
           state.createdTransactions.splice(i, 1)
         }
       })
-    },
-
-    setGroupNames (state, data) {
-      const i = state.groupNames.indexOf(data)
-      if (i === -1) {
-        state.groupNames.push(data)
-      } else {
-        state.groupNames.splice(i, 1)
-      }
     },
 
     setFeaturePeriod (state, data) {
