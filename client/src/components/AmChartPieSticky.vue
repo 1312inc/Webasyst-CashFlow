@@ -3,6 +3,7 @@
     <AmChartPie2
       :rawData="isCounterMode ? rawData : rawDataByCurrency"
       :isCounterMode="isCounterMode"
+      :totalTransactions="activeGroupTransactions.items.length"
       :label="
         isCounterMode
           ? selectedTransactionsIds.length
