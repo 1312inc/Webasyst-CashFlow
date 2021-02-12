@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class cashApiTransactionGetBadgeCountRequest
+ * Class cashApiTransactionGetTodayCountRequest
  */
-class cashApiTransactionGetBadgeCountRequest
+class cashApiTransactionGetTodayCountRequest
 {
     /**
      * @var DateTimeImmutable|string
