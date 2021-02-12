@@ -513,9 +513,9 @@ class cashGraphService
                     "{$grouping} groupkey",
                     'ca.currency currency',
                     'null balance',
-                    "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|0', ct.amount, 0)) expenseAmount",
-                    "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'inc|0', ct.amount, 0)) incomeAmount",
-                    "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|1', ct.amount, 0)) profitAmount",
+                    'expenseAmount' => "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|0', ct.amount, 0)) expenseAmount",
+                    'incomeAmount' => "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'inc|0', ct.amount, 0)) incomeAmount",
+                    'profitAmount' => "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|1', ct.amount, 0)) profitAmount",
                 ]
             )
             ->from('cash_transaction', 'ct')
@@ -557,6 +557,18 @@ class cashGraphService
 
             case null !== $paramsDto->filter->getCategoryId():
                 $sqlParts->addAndWhere('ct.category_id = i:category_id')
+                    ->addSelect(
+                        "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|0', ct.amount, null)) expenseAmount",
+                        'expenseAmount'
+                    )
+                    ->addSelect(
+                        "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'inc|0', ct.amount, null)) incomeAmount",
+                        'incomeAmount'
+                    )
+                    ->addSelect(
+                        "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|1', ct.amount, null)) profitAmount",
+                        'profitAmount'
+                    )
                     ->addParam('category_id', $paramsDto->filter->getCategoryId());
 
                 break;
