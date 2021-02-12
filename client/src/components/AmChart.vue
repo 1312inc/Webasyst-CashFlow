@@ -118,6 +118,10 @@ export default {
     dateAxis.renderer.cellStartLocation = 0.15
     dateAxis.renderer.cellEndLocation = 0.85
     this.dateAxis = dateAxis
+    this.dateAxis.events.on('groupperiodchanged', ({ target }) => {
+      target.startLocation = target.currentDataSetId.includes('month') ? this.$moment(this.queryParams.from).date() / this.$moment(this.queryParams.from).daysInMonth() : 0
+      target.endLocation = target.currentDataSetId.includes('month') ? (this.$moment(this.queryParams.to).date() + 1) / this.$moment(this.queryParams.to).daysInMonth() : 1
+    })
 
     // Balance Axis
     const balanceAxis = chart.yAxes.push(new am4charts.ValueAxis())
@@ -160,7 +164,7 @@ export default {
 
     // Future dates hover
     const rangeFututre = this.dateAxis.axisRanges.create()
-    rangeFututre.date = this.$moment().set('hour', 12).toDate()
+    rangeFututre.date = this.$moment().toDate()
     rangeFututre.endDate = new Date(8640000000000000)
     rangeFututre.grid.disabled = true
     rangeFututre.axisFill.fillOpacity = 0.5
@@ -169,7 +173,7 @@ export default {
 
     // Currend day line
     const dateBorder = this.dateAxis.axisRanges.create()
-    dateBorder.date = this.$moment().set('hour', 12).toDate()
+    dateBorder.date = this.$moment().toDate()
     dateBorder.grid.stroke = prefersColorSchemeDark ? am4core.color('#FFF') : am4core.color('#333333')
     dateBorder.grid.strokeWidth = 1
     dateBorder.grid.strokeOpacity = 0.3
@@ -284,8 +288,8 @@ export default {
 
     updateChartData (data) {
       // Delete negative ranges
-      this.dateAxis2.axisRanges.each((e, i) => {
-        this.dateAxis2.axisRanges.removeIndex(i).dispose()
+      this.dateAxis2.axisRanges.each(() => {
+        this.dateAxis2.axisRanges.pop().dispose()
       });
 
       ['amountIncome', 'amountExpense', 'amountProfit', 'balance'].forEach((dataField, i) => {
@@ -437,8 +441,8 @@ export default {
       rangeNegative.contents.fillOpacity = 0.2
 
       // Create a range to make stroke dashed in the future
-      const rangeDashed = this.dateAxis.createSeriesRange(this.balanceSeries)
-      rangeDashed.date = this.$moment().set('hour', 12).toDate()
+      const rangeDashed = this.dateAxis2.createSeriesRange(this.balanceSeries)
+      rangeDashed.date = this.$moment().toDate()
       rangeDashed.endDate = new Date(8640000000000000)
       rangeDashed.contents.stroke = am4core.color('#f3f3f3')
       rangeDashed.contents.strokeDasharray = '3 5'
