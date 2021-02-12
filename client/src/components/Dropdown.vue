@@ -1,5 +1,5 @@
 <template>
-  <div class="wa-select">
+  <div class="wa-select solid">
     <select v-model="value">
       <option v-for="item in items" :key="item.key" :value="item.value">
         {{ $t(item.key) }}

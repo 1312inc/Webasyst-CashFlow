@@ -4,7 +4,7 @@
       <span class="alert danger custom-mb-0" style="border-radius:0;"><span class="icon"><i class="fas fa-skull"></i></span>{{ $t('offlineMessage') }}</span>
     </div>
     <div class="content blank" style="overflow:hidden;">
-      <div class="box contentbox">
+      <div class="c-mobile-build">
         <router-view />
       </div>
     </div>

@@ -32,7 +32,7 @@
   },
   "amount": "Сумма",
   "repeat": "Повтор",
-  "oneTime": "Единоразово",
+  "oneTime": "Один раз",
   "repeating": "Повторять",
   "date": "Дата",
   "from": "Начальная дата",
@@ -129,5 +129,6 @@
   "profit": "Профит",
   "profitAlert": "Профит сообщение",
   "notifyMe": "Напомнить",
-  "notifyMeAlert": "When due, the app will count & show this transaction right on the app icon"
+  "notifyMeAlert": "When due, the app will count & show this transaction right on the app icon",
+  "showNavigationLink": "Show Navigation"
 }

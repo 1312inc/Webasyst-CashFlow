@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-container">
+  <div class="c-chart-container">
     <div v-if="chartData.length > 1" class="toggle">
       <span
         @click="activeCurrencyChart = i"
@@ -13,7 +13,7 @@
     <div>
       <div
         ref="chartdiv"
-        class="chart-main smaller"
+        class="c-chart-main smaller"
         :style="loadingChart ? 'opacity:.3;' : ''"
       ></div>
     </div>
@@ -518,13 +518,13 @@ export default {
 </script>
 
 <style lang="scss">
-  .chart-container {
+  .c-chart-container {
     position: relative;
     margin-bottom: 1rem;
 
-    .chart-main {
+    .c-chart-main {
       width: 100%;
-      height: 500px;
+      height: 450px;
 
       @media (max-width: 768px) {
         height: 400px !important;

@@ -64,7 +64,7 @@
         <div class="name for-input custom-pt-12">
           {{ $t("amount") }}
         </div>
-        <div class="value larger bold">
+        <div class="value large bold">
           <div class="state-with-inner-icon left">
             <input-currency
               v-model="model.amount"
@@ -80,7 +80,7 @@
               <i v-if="transactionType === 'income'" class="fas fa-plus"></i>
             </span>
           </div>
-          <span v-if="selectedAccount" class="custom-ml-8">{{
+          <span v-if="selectedAccount" class="custom-ml-4">{{
             $helper.currencySignByCode(selectedAccount.currency)
           }}</span>
         </div>
@@ -113,7 +113,10 @@
             </label>
             </div>
             <div v-if="model.is_onbadge" class="custom-mt-8">
-            <div class="hint" v-html="$t('notifyMeAlert')"></div>
+            <div class="hint">
+                {{ $t('notifyMeAlert') }}
+                <span class="badge smaller">1</span>
+            </div>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-p-12">
+  <div class="custom-p-16">
     <form @submit.prevent="submit" class="state-with-inner-icon left width-100">
       <input
         type="search"
