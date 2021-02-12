@@ -9,7 +9,13 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
 export default {
-  props: ['rawData', 'label', 'isCounterMode', 'currencyCode'],
+  props: [
+    'rawData',
+    'label',
+    'isCounterMode',
+    'totalTransactions',
+    'currencyCode'
+  ],
 
   computed: {
     featurePeriod () {
@@ -87,18 +93,20 @@ export default {
         this.pieLabel.html = this.label
         this.pieLabel.fontSize = 36
       } else {
+        this.pieLabel.html = `<div class="large custom-mb-4">${this.$helper.currencySignByCode(
+          this.currencyCode
+        )}</div>`
         if (this.label === 'future') {
-          this.pieLabel.html = this.futureLabelText
+          this.pieLabel.html += this.futureLabelText
         } else {
-          this.pieLabel.html = this.$moment(this.label).isValid()
-            ? this.$moment(this.label).format('MMMM YYYY')
+          this.pieLabel.html += this.$moment(this.label).isValid()
+            ? `<div style="text-transform:capitalize;">${this.$moment(this.label).format('MMMM YYYY')}</div>`
             : this.$t(this.label)
         }
-        this.pieLabel.html +=
-          '<div class="custom-mt-8 large">' +
-          this.$helper.currencySignByCode(this.currencyCode) +
-          '</div>'
-        this.pieLabel.fontSize = 16
+        this.pieLabel.html += `<div class="hint custom-mt-8">${this.$t('transactionsListCount', {
+          count: this.totalTransactions
+        })}</div>`
+        this.pieLabel.fontSize = 15
       }
 
       // if empty data

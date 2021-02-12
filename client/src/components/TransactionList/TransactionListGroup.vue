@@ -71,19 +71,8 @@
             </div>
           </div>
           <div class="flexbox middle space-12">
-            <div class="hint">
-              {{
-                $t("transactionsListCount", {
-                  count: filteredTransactions.length,
-                })
-              }}
-            </div>
-            <div>
-              <AmountForGroup :group="filteredTransactions" type="income" />
-            </div>
-            <div>
-              <AmountForGroup :group="filteredTransactions" type="expense" />
-            </div>
+            <AmountForGroup :group="filteredTransactions" type="income" />
+            <AmountForGroup :group="filteredTransactions" type="expense" />
           </div>
         </div>
       </div>
