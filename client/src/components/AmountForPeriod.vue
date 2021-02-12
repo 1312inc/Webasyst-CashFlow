@@ -7,8 +7,8 @@
         'text-red': type === 'expense',
       }"
     >
-      <div>
-        <span class="small">{{
+      <div class="custom-ml-12">
+        <span class="small semibold">{{
           $helper.toCurrency({
             value: total,
             currencyCode: currency,

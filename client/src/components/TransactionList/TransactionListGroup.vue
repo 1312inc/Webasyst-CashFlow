@@ -242,11 +242,4 @@ export default {
   }
 }
 
-.c-sticky-header-group {
-  background: #fff;
-}
-
-.c-sticky-header-group.vue-sticky-el.top-sticky {
-  box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.1);
-}
 </style>

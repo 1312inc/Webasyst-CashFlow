@@ -9,7 +9,7 @@
       }"
     >
       <div>
-        <span class="small">{{
+        <span class="small semibold">{{
           $helper.toCurrency({
             value: getTotalByCurrency(currency),
             currencyCode: currency,

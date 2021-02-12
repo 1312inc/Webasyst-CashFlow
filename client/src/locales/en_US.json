@@ -129,5 +129,6 @@
   "profit": "Profit",
   "profitAlert": "Profit message",
   "notifyMe": "Notify Me",
-  "notifyMeAlert": "When due, the app will count & show this transaction right on the app icon <span class=\"badge smaller\">1</span>"
+  "notifyMeAlert": "When due, the app will count & show this transaction right on the app icon",
+  "showNavigationLink": "Show Navigation"
 }

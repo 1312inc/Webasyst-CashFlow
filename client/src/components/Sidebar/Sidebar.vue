@@ -1,15 +1,31 @@
 <template>
-  <div class="sidebar flexbox width-16rem" style="z-index: 50">
+  <div class="sidebar flexbox width-16rem mobile-friendly z-50" style="z-index: 50">
+    <nav class="sidebar-mobile-toggle">
+      <div class="box align-center">
+        <a href="javascript:void(0);">{{
+          $t("Show Navigation")
+        }}</a>
+      </div>
+    </nav>
     <div class="sidebar-header">
       <SearchField />
 
-      <ul class="menu custom-my-0">
-        <li :class="{'selected': $route.path === '/upnext'}">
-          <router-link to="/upnext" class="flexbox middle bold">{{
-            $t("upnext")
-          }}</router-link>
-        </li>
-      </ul>
+      <div class="c-bricks">
+          <router-link to="/upnext" class="c-brick">
+              <span class="count badge">1</span>
+              <span class="icon" style="color: gold;"><i class="fas fa-star"></i></span>
+              {{
+                $t("upnext")
+              }}
+          </router-link>
+          <router-link to="/history" class="c-brick">
+              <span class="icon"><i class="fas fa-history"></i></span>
+              {{
+                $t("history")
+              }}
+          </router-link>
+      </div>
+
     </div>
 
     <div class="sidebar-body">

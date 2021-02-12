@@ -1,6 +1,6 @@
 <template>
   <div v-if="currentEntity">
-    <div>{{ $t("cashToday") }}</div>
+    <div>{{ this.$moment().format("LL") }}</div>
     <div class="flexbox middle space-12">
       <div class="h2 custom-mb-0">
         {{ currentEntity.name || currentEntity.currency }}
@@ -18,8 +18,8 @@
         }}
       </div>
       <div v-if="currentEntity.id > 0">
-        <button @click="update(currentEntity)" class="button nobutton smaller">
-          <i class="fas fa-edit"></i> {{ $t("edit") }}
+        <button @click="update(currentEntity)" class="button nobutton">
+          <i class="fas fa-edit"></i>
         </button>
       </div>
     </div>
