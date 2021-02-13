@@ -292,13 +292,14 @@ export default {
         this.dateAxis2.axisRanges.pop().dispose()
       });
 
-      ['amountIncome', 'amountExpense', 'amountProfit', 'balance'].forEach((dataField, i) => {
-        if (data.data[0][dataField] === null) {
-          const index = this.chart.series.values.findIndex(s => s.dataFields.valueY === dataField)
-          if (index > -1) {
-            this.chart.series.removeIndex(index).dispose()
-          }
-        } else {
+      ['amountIncome', 'amountExpense', 'amountProfit', 'balance'].forEach((dataField) => {
+        const seriesIndex = this.chart.series.values.findIndex(s => s.dataFields.valueY === dataField)
+        // if no data and series exists
+        if (data.data[0][dataField] === null && seriesIndex > -1) {
+          this.chart.series.removeIndex(seriesIndex).dispose()
+        }
+        // if has data but series not exists
+        if (data.data[0][dataField] !== null && seriesIndex === -1) {
           if (dataField === 'balance') {
             this.addBalanceSeries()
           } else {
@@ -375,7 +376,7 @@ export default {
       if (dataField === 'amountProfit') {
         options = {
           name: this.$t('profit'),
-          color: am4core.color('#000000'),
+          color: am4core.color('#1a9afe'),
           ...options
         }
       }
