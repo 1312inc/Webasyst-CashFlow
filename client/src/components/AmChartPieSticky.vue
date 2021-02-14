@@ -76,7 +76,7 @@ export default {
               date: transaction.date,
               amount: transaction.amount,
               currency: account.currency,
-              category: category.name,
+              category_name: category.name,
               category_color: category.color
             }
           } else {
