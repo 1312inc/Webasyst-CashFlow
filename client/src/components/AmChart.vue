@@ -177,6 +177,8 @@ export default {
     chart.scrollbarX = new am4core.Scrollbar()
     chart.scrollbarX.parent = chart.bottomAxesContainer
 
+    // TODO: make fix for the last date in the scrollbar
+
     const dateAxisChanged = () => {
       const f = this.dateAxis2.minZoomed || this.dateAxis.minZoomed
       const t = this.dateAxis2.maxZoomed || this.dateAxis.maxZoomed
@@ -290,9 +292,9 @@ export default {
       const daysInInterval = iend.diff(istart, 'days') + 1
 
       // Filling empty data
-      const filledChartData = new Array(daysInInterval).fill(null).map(() => {
+      const filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
         return {
-          period: istart.add(1, 'd').format('YYYY-MM-DD'),
+          period: this.$moment(this.queryParams.from).add(i, 'd').format('YYYY-MM-DD'),
           amountIncome: null,
           amountExpense: null,
           balance: null
