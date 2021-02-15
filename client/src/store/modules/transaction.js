@@ -191,7 +191,14 @@ export default {
       }
     },
 
-    async fetchTransactions ({ commit, state }) {
+    async fetchTransactions ({ commit, state }, userOptions = {}) {
+      const defaultOptions = {
+        resetOffset: false // if true set offset to 0
+      }
+      const options = {
+ ***REMOVED***defaultOptions,
+ ***REMOVED***userOptions
+      }
       try {
         const defaultParams = { ...state.queryParams }
         defaultParams.from = ''
@@ -210,7 +217,7 @@ export default {
         // setting offset
         const params = {
    ***REMOVED***defaultParams,
-          offset: state.transactions.data.length
+          offset: options.resetOffset ? 0 : state.transactions.data.length
         }
 
         const { data } = await api.get('cash.transaction.getList', {
@@ -239,6 +246,13 @@ export default {
       } catch (_) {
         return false
       }
+    },
+
+    updateDetailsInterval ({ commit, dispatch }, data) {
+      commit('setDetailsInterval', data)
+      dispatch('fetchTransactions', {
+        resetOffset: true
+      })
     },
 
     emitTransactionStateUpdate ({ dispatch }) {

@@ -109,15 +109,15 @@
               </div>
             </div>
           </div>
-          <div class="flexbox">
-            <div class="flexbox space-12 wide">
-              <button @click="submitModal" class="button purple">
-                {{ $t("setDates") }}
-              </button>
-              <button @click="openModal = false" class="button light-gray">
-                {{ $t("cancel") }}
-              </button>
-            </div>
+        </div>
+        <div class="flexbox">
+          <div class="flexbox space-12 wide">
+            <button @click="submitModal" class="button purple">
+              {{ $t("setDates") }}
+            </button>
+            <button @click="openModal = false" class="button light-gray">
+              {{ $t("cancel") }}
+            </button>
           </div>
         </div>
       </Modal>
@@ -193,18 +193,18 @@ export default {
 
   methods: {
     closeDashboard () {
-      this.$store.commit('transaction/setDetailsInterval', {
+      this.$store.dispatch('transaction/updateDetailsInterval', {
         from: '',
         to: '',
-        initiator: 'DetailsDashboard'
+        outOfChart: true
       })
     },
 
     submitModal () {
-      this.$store.commit('transaction/setDetailsInterval', {
+      this.$store.dispatch('transaction/updateDetailsInterval', {
         from: this.from,
         to: this.to,
-        initiator: 'DetailsDashboard'
+        outOfChart: true
       })
       this.openModal = false
     }
