@@ -7,11 +7,11 @@ import { locale } from '@/plugins/locale'
 import flatpickr from 'flatpickr'
 import { Russian } from 'flatpickr/dist/l10n/ru.js'
 export default {
-  props: ['value', 'minDate', 'maxDate', 'defaultDate'],
+  props: ['value', 'minDate', 'maxDate'],
 
-  async mounted () {
+  mounted () {
     this.flatpickr = flatpickr(this.$refs.date, {
-      defaultDate: this.defaultDate || this.value || 'today',
+      defaultDate: this.value || 'today',
       dateFormat: locale === 'ru_RU' ? 'd.m.Y' : 'm/d/Y',
       ...(locale === 'ru_RU' && { locale: Russian }),
       ...(this.minDate && {
