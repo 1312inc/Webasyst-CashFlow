@@ -210,14 +210,14 @@ export default {
         return false
       },
       state: (target, stateId) => {
-        if (target instanceof am4charts.Chart) {
-          const state = target.states.create(stateId)
-          state.properties.paddingTop = 10
-          state.properties.paddingRight = 0
-          state.properties.paddingBottom = 0
-          state.properties.paddingLeft = 0
-          return state
-        }
+        // if (target instanceof am4charts.Chart) {
+        //   const state = target.states.create(stateId)
+        //   state.properties.paddingTop = 10
+        //   state.properties.paddingRight = 0
+        //   state.properties.paddingBottom = 0
+        //   state.properties.paddingLeft = 0
+        //   return state
+        // }
 
         if (target instanceof am4charts.ValueAxis) {
           const state = target.states.create(stateId)
