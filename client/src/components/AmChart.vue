@@ -8,7 +8,7 @@
 
 <script>
 import { locale } from '@/plugins/locale'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesDark from '@amcharts/amcharts4/themes/amchartsdark'
@@ -23,7 +23,7 @@ if (window?.appState?.theme === 'dark' || (window.matchMedia && window.matchMedi
 
 export default {
   computed: {
-    ...mapState('transaction', ['queryParams', 'chartData', 'chartDataCurrencyIndex', 'loadingChart']),
+    ...mapState('transaction', ['queryParams', 'detailsInterval', 'chartData', 'chartDataCurrencyIndex', 'loadingChart']),
 
     activeChartData () {
       return this.chartData[this.chartDataCurrencyIndex]
@@ -37,6 +37,16 @@ export default {
   watch: {
     activeChartData (data) {
       this.updateChartData(data)
+    },
+    detailsInterval (val) {
+      if (val.outOfChart) {
+        if (!val.from) {
+          this.dateAxis2.zoom({ start: 0, end: 1 })
+        } else {
+          this.dateAxis.zoomToDates(new Date(val.from), new Date(val.to))
+          this.dateAxis2.zoomToDates(new Date(val.from), new Date(val.to))
+        }
+      }
     }
   },
 
@@ -135,7 +145,7 @@ export default {
       const range = ev.target.xRange
       const from = this.$moment(this.dateAxis2.positionToDate(this.dateAxis2.toAxisPosition(range.start))).format('YYYY-MM-DD')
       const to = this.$moment(this.dateAxis2.positionToDate(this.dateAxis2.toAxisPosition(range.end))).format('YYYY-MM-DD')
-      this.setDetailsInterval({ from, to })
+      this.updateDetailsInterval({ from, to })
     })
     chart.cursor = cursor
 
@@ -172,25 +182,14 @@ export default {
       const t = this.dateAxis2.maxZoomed || this.dateAxis.maxZoomed
       const from = this.$moment(f).format('YYYY-MM-DD')
       const to = this.$moment(t).format('YYYY-MM-DD')
-      this.setDetailsInterval({ from, to })
+      this.updateDetailsInterval({ from, to })
     }
 
     chart.scrollbarX.thumb.events.on('dragstop', dateAxisChanged)
     chart.scrollbarX.startGrip.events.on('dragstop', dateAxisChanged)
     chart.scrollbarX.endGrip.events.on('dragstop', dateAxisChanged)
     chart.zoomOutButton.events.on('hit', () => {
-      this.setDetailsInterval({ from: '', to: '' })
-    })
-
-    this.unsubscribeFromDetailsInterval = this.$store.subscribe((mutation) => {
-      if (mutation.type === 'transaction/setDetailsInterval' && mutation.payload.initiator === 'DetailsDashboard') {
-        if (!mutation.payload.from) {
-          this.dateAxis2.zoom({ start: 0, end: 1 })
-        } else {
-          this.dateAxis.zoomToDates(new Date(mutation.payload.from), new Date(mutation.payload.to))
-          this.dateAxis2.zoomToDates(new Date(mutation.payload.from), new Date(mutation.payload.to))
-        }
-      }
+      this.updateDetailsInterval({ from: '', to: '' })
     })
 
     /**
@@ -254,14 +253,13 @@ export default {
     this.$store.commit('transaction/setChartData', [])
     this.unsubscribeFromQueryParams()
     this.unsubscribeFromTransitionUpdate()
-    this.unsubscribeFromDetailsInterval()
     if (this.chart) {
       this.chart.dispose()
     }
   },
 
   methods: {
-    ...mapMutations('transaction', ['setDetailsInterval']),
+    ...mapActions('transaction', ['updateDetailsInterval']),
 
     updateChartData (data) {
       // Delete negative ranges
