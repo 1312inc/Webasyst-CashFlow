@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: make component functional? -->
   <div class="c-legend">
     <div v-for="item in legendItems" :key="item.id" class="c-legend__item">
       <div
@@ -6,7 +7,7 @@
         :style="`background-color:${item.category_color}`"
       ></div>
       <div class="c-legend__item__label smaller">
-        <div class="c-legend__item__label__title">{{ item.category }}</div>
+        <div class="c-legend__item__label__title">{{ item.category_name }}</div>
         <div class="c-legend__item__label__value">
           {{
             $helper.toCurrency({
