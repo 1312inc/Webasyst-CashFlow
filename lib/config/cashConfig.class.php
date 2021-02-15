@@ -147,7 +147,7 @@ class cashConfig extends waAppConfig
      */
     public function getEntityFactory($entity)
     {
-        if (isset($this->factories[$entity])) {
+        if (isset($this->entityFactories[$entity])) {
             return $this->entityFactories[$entity];
         }
 
