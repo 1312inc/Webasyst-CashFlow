@@ -23,12 +23,6 @@ export default {
     }
   },
 
-  watch: {
-    data () {
-      this.renderChart()
-    }
-  },
-
   mounted () {
     const chart = am4core.create(this.$refs.chart, am4charts.PieChart)
     if (locale === 'ru_RU') chart.language.locale = am4langRU
@@ -42,19 +36,17 @@ export default {
     pieSeries.slices.template.propertyFields.fill = 'category_color'
     pieSeries.slices.template.stroke = am4core.color('#fff')
     pieSeries.slices.template.strokeOpacity = 1
-    pieSeries.legendSettings.itemValueText = `{value} ${this.$helper.currencySignByCode(this.currency)}`
-
-    // Add Legend
-    chart.legend = new am4charts.Legend()
-    chart.legend.position = 'right'
-    chart.legend.valign = 'top'
-    chart.legend.maxWidth = 200
-    chart.legend.valueLabels.template.align = 'right'
-    chart.legend.valueLabels.template.textAlign = 'end'
-
     this.chart = chart
-
-    this.renderChart()
+    this.$watch(
+      'data',
+      () => {
+        this.renderChart()
+      },
+      {
+        deep: true,
+        immediate: true
+      }
+    )
   },
 
   beforeDestroy () {
@@ -66,11 +58,9 @@ export default {
   methods: {
     renderChart () {
       if (this.data.length) {
-        this.chart.legend.disabled = false
         this.chart.series.getIndex(0).slices.template.tooltipText = `{category}: {value.formatNumber('#,###.##')} ${this.$helper.currencySignByCode(this.currency)}`
         this.chart.data = this.data
       } else {
-        this.chart.legend.disabled = true
         this.chart.series.getIndex(0).slices.template.tooltipText = this.$t('emptyList')
         this.chart.data = [{
           amount: 100,

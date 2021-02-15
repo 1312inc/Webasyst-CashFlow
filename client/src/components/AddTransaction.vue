@@ -8,7 +8,11 @@
         <h2 v-else class="custom-mb-0">
           {{ isModeUpdate ? $t("updateTransaction") : $t("addTransaction") }}
         </h2>
-        <span v-if="isModeUpdate && transaction.repeating_id" class="tooltip custom-ml-8 large" :data-title="$t('repeatingTran')">
+        <span
+          v-if="isModeUpdate && transaction.repeating_id"
+          class="tooltip custom-ml-8 large"
+          :data-title="$t('repeatingTran')"
+        >
           <i class="fas fa-redo-alt opacity-50"></i>
         </span>
       </div>
@@ -54,8 +58,16 @@
         </div>
         <div class="value">
           <div class="toggle">
-              <span @click="model.is_repeating = false" :class="{selected: !model.is_repeating}">{{ $t('oneTime') }}</span>
-              <span @click="model.is_repeating = true" :class="{selected: model.is_repeating}">{{ $t('repeating') }}</span>
+            <span
+              @click="model.is_repeating = false"
+              :class="{ selected: !model.is_repeating }"
+              >{{ $t("oneTime") }}</span
+            >
+            <span
+              @click="model.is_repeating = true"
+              :class="{ selected: model.is_repeating }"
+              >{{ $t("repeating") }}</span
+            >
           </div>
         </div>
       </div>
@@ -136,7 +148,10 @@
             </select>
           </div>
 
-          <div v-if="model.repeating_interval === 'custom'" class="custom-mt-16">
+          <div
+            v-if="model.repeating_interval === 'custom'"
+            class="custom-mt-16"
+          >
             {{ $t("howOften.every") }}
             <input
               v-model.number="model.repeating_frequency"
@@ -171,7 +186,10 @@
             </select>
           </div>
 
-          <div v-if="model.repeating_end_type === 'ondate'" class="custom-mt-16">
+          <div
+            v-if="model.repeating_end_type === 'ondate'"
+            class="custom-mt-16"
+          >
             <div class="state-with-inner-icon left">
               <DateField v-model="model.repeating_end_ondate" />
               <span class="icon"><i class="fas fa-calendar"></i></span>
@@ -192,15 +210,21 @@
 
       <div class="field">
         <div class="name for-input">
-          {{ defaultCategoryType === 'transfer' ? $t("fromAccount") : $t("account") }}
+          {{
+            defaultCategoryType === "transfer"
+              ? $t("fromAccount")
+              : $t("account")
+          }}
         </div>
         <div class="value">
           <div class="wa-select solid">
-            <div v-if="selectedAccount && $helper.isValidHttpUrl(selectedAccount.icon)" class="icon custom-ml-8">
-              <img
-                :src="selectedAccount.icon"
-                alt=""
-              />
+            <div
+              v-if="
+                selectedAccount && $helper.isValidHttpUrl(selectedAccount.icon)
+              "
+              class="icon custom-ml-8"
+            >
+              <img :src="selectedAccount.icon" alt="" />
             </div>
             <select
               v-model="model.account_id"
@@ -226,9 +250,7 @@
         </div>
         <div class="value">
           <div class="wa-select solid">
-            <select
-              v-model="model.transfer_account_id"
-            >
+            <select v-model="model.transfer_account_id">
               <option
                 :value="account.id"
                 v-for="account in accounts"
@@ -250,16 +272,24 @@
         <div class="value">
           <div>
             <input
-                v-model.number="model.transfer_incoming_amount"
-                type="text"
+              v-model.number="model.transfer_incoming_amount"
+              type="text"
             />
             <span v-if="selectedAccountTransfer" class="custom-ml-8">{{
               $helper.currencySignByCode(selectedAccountTransfer.currency)
             }}</span>
           </div>
-          <span v-if="selectedAccount && selectedAccountTransfer && selectedAccount.currency !== selectedAccountTransfer.currency" class="smaller alert warning custom-mt-16 custom-mb-0">
+          <span
+            v-if="
+              selectedAccount &&
+              selectedAccountTransfer &&
+              selectedAccount.currency !== selectedAccountTransfer.currency
+            "
+            class="smaller alert warning custom-mt-16 custom-mb-0"
+          >
             <i class="fas fa-exclamation-triangle"></i>
-            {{ selectedAccount.currency }} → {{ selectedAccountTransfer.currency }}.
+            {{ selectedAccount.currency }} →
+            {{ selectedAccountTransfer.currency }}.
             {{ $t("transferMessage") }}
           </span>
         </div>
@@ -298,10 +328,21 @@
           {{ $t("contractor") }}
         </div>
         <div class="value">
-          <div class="state-with-inner-icon left">
-            <input v-model="model.contractor_contact_id" type="text" />
-            <span class="icon"><i class="fas fa-user"></i></span>
-          </div>
+          <InputContractor
+            :defaultContractor="model.contractor_contact"
+            @newContractor="
+              (name) => {
+                model.contractor = name;
+                model.contractor_contact_id = null;
+              }
+            "
+            @changeContractor="
+              (id) => {
+                model.contractor = null;
+                model.contractor_contact_id = id;
+              }
+            "
+          />
         </div>
       </div>
 
@@ -341,6 +382,7 @@
 import { mapState, mapGetters } from 'vuex'
 import { required, requiredIf, integer } from 'vuelidate/lib/validators'
 import InputCurrency from '@/components/InputCurrency'
+import InputContractor from '@/components/Inputs/InputContractor'
 import DateField from '@/components/InputDate'
 export default {
   props: {
@@ -355,6 +397,7 @@ export default {
 
   components: {
     InputCurrency,
+    InputContractor,
     DateField
   },
 
@@ -366,8 +409,9 @@ export default {
         date: '',
         account_id: null,
         category_id: null,
-        contractor_contact_id: null,
         contractor: null,
+        contractor_contact: null,
+        contractor_contact_id: null,
         description: '',
         is_onbadge: false,
         is_repeating: false,
@@ -445,7 +489,6 @@ export default {
     categoriesInSelect () {
       return this.getCategoryByType(this.transactionType)
     }
-
   },
 
   watch: {
@@ -489,21 +532,17 @@ export default {
           model.repeating_interval = this.custom_interval
         }
 
-        this.$store
-          .dispatch('transaction/update', model)
-          .then(() => {
-            this.close()
-          })
+        this.$store.dispatch('transaction/update', model).then(() => {
+          this.close()
+        })
       }
     },
 
     remove () {
       if (confirm(this.$t('transactionDeleteWarning'))) {
-        this.$store
-          .dispatch('transaction/delete', this.model.id)
-          .then(() => {
-            this.close()
-          })
+        this.$store.dispatch('transaction/delete', this.model.id).then(() => {
+          this.close()
+        })
       }
     },
 

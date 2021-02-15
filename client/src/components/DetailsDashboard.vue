@@ -31,6 +31,10 @@
           </div>
         </div>
         <ChartPie :data="currency.income.data" :currency="currency.currency" />
+        <AmChartLegend
+          :legendItems="currency.income.data"
+          :currencyCode="currency.currency"
+        />
       </div>
 
       <div class="width-40">
@@ -48,6 +52,10 @@
           </div>
         </div>
         <ChartPie :data="currency.expense.data" :currency="currency.currency" />
+        <AmChartLegend
+          :legendItems="currency.expense.data"
+          :currencyCode="currency.currency"
+        />
       </div>
 
       <div>
@@ -122,12 +130,14 @@ import api from '@/plugins/api'
 import { mapState } from 'vuex'
 import Modal from '@/components/Modal'
 import ChartPie from '@/components/AmChartPie'
+import AmChartLegend from '@/components/AmChartLegend'
 import DateField from '@/components/InputDate'
 
 export default {
   components: {
     Modal,
     ChartPie,
+    AmChartLegend,
     DateField
   },
 

@@ -6,7 +6,8 @@
           <TransactionControls />
         </div>
         <div class="c-period-dropdowns">
-            <div class="flexbox space-12">
+            <div class="flexbox space-12" style="align-items: start;">
+              <CurrencyToggler />
               <div>
                 <Dropdown type="from" class="custom-mb-8" />
                 <AmountForPeriod type="income" period="from" class="custom-mb-4" />
@@ -26,7 +27,7 @@
 <script>
 import ChartHeaderTitle from '@/components/ChartHeaderTitle'
 import TransactionControls from '@/components/TransactionControls'
-
+import CurrencyToggler from '@/components/CurrencyToggler'
 import Dropdown from '@/components/Dropdown'
 import AmountForPeriod from '@/components/AmountForPeriod'
 
@@ -34,6 +35,7 @@ export default {
   components: {
     ChartHeaderTitle,
     TransactionControls,
+    CurrencyToggler,
     Dropdown,
     AmountForPeriod
   }

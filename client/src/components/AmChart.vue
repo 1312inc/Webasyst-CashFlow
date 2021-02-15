@@ -1,23 +1,9 @@
 <template>
-  <div class="c-chart-container">
-    <div v-if="chartData.length > 1" class="toggle">
-      <span
-        @click="activeCurrencyChart = i"
-        v-for="(item, i) in chartData"
-        :key="item.currency"
-        :class="{ selected: i === activeCurrencyChart }"
-      >
-        {{ item.currency }}
-      </span>
-    </div>
-    <div>
-      <div
-        ref="chartdiv"
-        class="c-chart-main smaller"
-        :style="loadingChart ? 'opacity:.3;' : ''"
-      ></div>
-    </div>
-  </div>
+  <div
+    ref="chartdiv"
+    :style="loadingChart ? 'opacity:.3;' : ''"
+    class="c-chart-main smaller"
+  ></div>
 </template>
 
 <script>
@@ -45,15 +31,6 @@ export default {
 
     currency () {
       return this.$helper.currencySignByCode(this.activeChartData.currency)
-    },
-
-    activeCurrencyChart: {
-      get () {
-        return this.chartDataCurrencyIndex
-      },
-      set (val) {
-        this.$store.commit('transaction/setChartDataCurrencyIndex', val)
-      }
     }
   },
 
@@ -292,13 +269,14 @@ export default {
         this.dateAxis2.axisRanges.pop().dispose()
       });
 
-      ['amountIncome', 'amountExpense', 'amountProfit', 'balance'].forEach((dataField, i) => {
-        if (data.data[0][dataField] === null) {
-          const index = this.chart.series.values.findIndex(s => s.dataFields.valueY === dataField)
-          if (index > -1) {
-            this.chart.series.removeIndex(index).dispose()
-          }
-        } else {
+      ['amountIncome', 'amountExpense', 'amountProfit', 'balance'].forEach((dataField) => {
+        const seriesIndex = this.chart.series.values.findIndex(s => s.dataFields.valueY === dataField)
+        // if no data and series exists
+        if (data.data[0][dataField] === null && seriesIndex > -1) {
+          this.chart.series.removeIndex(seriesIndex).dispose()
+        }
+        // if has data but series not exists
+        if (data.data[0][dataField] !== null && seriesIndex === -1) {
           if (dataField === 'balance') {
             this.addBalanceSeries()
           } else {
@@ -375,7 +353,7 @@ export default {
       if (dataField === 'amountProfit') {
         options = {
           name: this.$t('profit'),
-          color: am4core.color('#000000'),
+          color: am4core.color('#1a9afe'),
           ...options
         }
       }
@@ -522,19 +500,11 @@ export default {
 </script>
 
 <style lang="scss">
-  .c-chart-container {
-    position: relative;
-    margin-bottom: 1rem;
+  .c-chart-main {
+    height: 450px;
 
-    .c-chart-main {
-      width: 100%;
-      height: 450px;
-
-      @media (max-width: 768px) {
-        height: 400px !important;
-      }
+    @media (max-width: 768px) {
+      height: 400px !important;
     }
-
   }
-
 </style>

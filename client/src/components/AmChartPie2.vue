@@ -68,14 +68,14 @@ export default {
 
     this.chart = chart
 
-    this.renderChart()
     this.$watch(
       '$props',
       () => {
         this.renderChart()
       },
       {
-        deep: true
+        deep: true,
+        immediate: true
       }
     )
   },
