@@ -10,28 +10,7 @@
     </nav>
     <div class="sidebar-header">
       <SearchField />
-
-      <div class="c-bricks">
-        <router-link
-          to="/upnext"
-          class="c-brick"
-          :class="{ selected: $route.name === 'Upnext' }"
-        >
-          <span class="count badge">1</span>
-          <span class="icon" style="color: gold"
-            ><i class="fas fa-star"></i
-          ></span>
-          {{ $t("upnext") }}
-        </router-link>
-        <router-link
-          to="/history"
-          class="c-brick"
-          :class="{ selected: $route.name === 'History' }"
-        >
-          <span class="icon"><i class="fas fa-history"></i></span>
-          {{ $t("history") }}
-        </router-link>
-      </div>
+      <Bricks />
     </div>
 
     <div class="sidebar-body">
@@ -109,6 +88,7 @@ import SidebarHeading from './SidebarHeading'
 import SidebarFooter from './SidebarFooter'
 import SearchField from '@/components/SearchField'
 import SidebarCurrencyWidgets from './SidebarCurrencyWidgets'
+import Bricks from '@/components/Bricks/Bricks'
 
 export default {
   components: {
@@ -119,7 +99,8 @@ export default {
     SidebarHeading,
     SidebarFooter,
     SearchField,
-    SidebarCurrencyWidgets
+    SidebarCurrencyWidgets,
+    Bricks
   },
 
   computed: {
