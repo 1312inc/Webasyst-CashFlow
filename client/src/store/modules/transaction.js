@@ -30,7 +30,8 @@ export default {
     detailsInterval: {
       from: '',
       to: ''
-    }
+    },
+    todayCount: {}
   }),
 
   getters: {
@@ -133,6 +134,10 @@ export default {
 
     setChartDataCurrencyIndex (state, value) {
       state.chartDataCurrencyIndex = value
+    },
+
+    setTodayCount (state, value) {
+      state.todayCount = value
     }
 
   },
@@ -253,6 +258,19 @@ export default {
       dispatch('fetchTransactions', {
         resetOffset: true
       })
+    },
+
+    async getTodayCount ({ commit }) {
+      try {
+        const { data } = await api.get('cash.transaction.getTodayCount', {
+          params: {
+            today: moment().format('YYYY-MM-DD')
+          }
+        })
+        commit('setTodayCount', data.count)
+      } catch (_) {
+        return false
+      }
     },
 
     emitTransactionStateUpdate ({ dispatch }) {
