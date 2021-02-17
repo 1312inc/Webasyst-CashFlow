@@ -1,7 +1,7 @@
 <template>
   <ul class="c-list list">
     <li v-for="i in this.lines" :key="i" class="c-item item">
-      <div class="skeleton">
+      <div class="skeleton custom-px-16-mobile">
         <div class="flexbox space-12 custom-py-12">
           <div v-if="$helper.showMultiSelect()" style="width: 1rem"></div>
           <div>

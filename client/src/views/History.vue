@@ -1,16 +1,17 @@
 <template>
   <div>
-    <h1>{{ $t('history') }}</h1>
-    <TransactionControls class="custom-mb-24" />
-    <div>
-      <TransactionList />
-    </div>
+    <ChartHeader>
+      <template v-slot:title>
+        <h1 class="custom-m-0">{{ $t("history") }}</h1>
+      </template>
+    </ChartHeader>
+    <TransactionList />
   </div>
 </template>
 
 <script>
 import moment from 'moment'
-import TransactionControls from '@/components/TransactionControls'
+import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
@@ -18,7 +19,7 @@ export default {
   mixins: [routerTransitionMixin],
 
   components: {
-    TransactionControls,
+    ChartHeader,
     TransactionList
   },
 

@@ -1,71 +1,55 @@
 <template>
-  <div class="c-header">
-    <div class="flexbox">
-        <div v-if="$helper.isDesktopEnv" class="wide">
-          <ChartHeaderTitle />
-          <TransactionControls />
+  <div class="c-header custom-p-0-mobile">
+    <div class="flexbox full-width" sticky-ref="controls">
+      <div>
+        <slot v-if="$helper.isDesktopEnv" name="title"></slot>
+        <div
+          v-if="showStickyHeader"
+          v-sticky
+          :sticky-offset="$helper.isDesktopEnv ? `{top:64}` : `{top:39}`"
+          sticky-z-index="12"
+          sticky-width-ref="controls"
+          class="c-sticky-header-controls"
+        >
+          <TransactionControls :multiselectView="!$helper.isDesktopEnv" class="custom-px-16-mobile" />
         </div>
-        <div class="c-period-dropdowns">
-            <div class="flexbox space-12" style="align-items: start;">
-              <CurrencyToggler />
-              <div>
-                <Dropdown type="from" class="custom-mb-8" />
-                <AmountForPeriod type="income" period="from" class="custom-mb-4" />
-                <AmountForPeriod type="expense" period="from" />
-              </div>
-              <div>
-                <Dropdown type="to" class="custom-mb-8" />
-                <AmountForPeriod type="income" period="to" class="custom-mb-4" />
-                <AmountForPeriod type="expense" period="to" />
-              </div>
-            </div>
-        </div>
+      </div>
+      <slot name="controls"></slot>
     </div>
   </div>
 </template>
 
 <script>
-import ChartHeaderTitle from '@/components/ChartHeaderTitle'
 import TransactionControls from '@/components/TransactionControls'
-import CurrencyToggler from '@/components/CurrencyToggler'
-import Dropdown from '@/components/Dropdown'
-import AmountForPeriod from '@/components/AmountForPeriod'
 
 export default {
   components: {
-    ChartHeaderTitle,
-    TransactionControls,
-    CurrencyToggler,
-    Dropdown,
-    AmountForPeriod
+    TransactionControls
+  },
+
+  computed: {
+    showStickyHeader () {
+      return (
+        (!this.$helper.isDesktopEnv &&
+          this.$store.state.transactionBulk.selectedTransactionsIds.length) ||
+        this.$helper.isDesktopEnv
+      )
+    }
   }
 }
 </script>
 
 <style lang="scss">
-.c-period-dropdowns {
-  position: absolute;
-  right: 0;
-
-  @media (max-width: 768px) {
-    position: relative;
-    right: auto;
-    width: 100%;
-  }
-}
-.c-period-dropdowns > .flexbox {
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
-}
-.c-period-dropdowns > .flexbox > div {
-  @media (max-width: 768px) {
-    flex: 1;
-  }
-}
-.c-period-dropdowns > .flexbox > div > .wa-select {
-  @media (max-width: 768px) {
-    width: 100%;
+.c-sticky-header-controls {
+  &.top-sticky:before {
+    position: absolute;
+    top: 0;
+    left: -2rem;
+    right: -2rem;
+    bottom: 0;
+    display: block;
+    content: " ";
+    background-color: var(--background-color-blank);
   }
 }
 </style>
