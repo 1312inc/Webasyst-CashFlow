@@ -1,13 +1,16 @@
 <template>
   <div>
-    <h1>{{ $route.query.text }}</h1>
-    <TransactionControls class="custom-mb-24" />
+    <ChartHeader>
+      <template v-slot:title>
+        <h1 class="custom-m-0">{{ $route.query.text }}</h1>
+      </template>
+    </ChartHeader>
     <TransactionList />
   </div>
 </template>
 
 <script>
-import TransactionControls from '@/components/TransactionControls'
+import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
@@ -15,7 +18,7 @@ export default {
   mixins: [routerTransitionMixin],
 
   components: {
-    TransactionControls,
+    ChartHeader,
     TransactionList
   },
 

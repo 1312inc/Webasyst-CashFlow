@@ -45,6 +45,7 @@ class Sticky {
     const offset = this.getAttribute('sticky-offset') || {}
     const side = this.getAttribute('sticky-side') || 'top'
     const zIndex = this.getAttribute('sticky-z-index') || '10'
+    const widthRef = this.getAttribute('sticky-width-ref') || null
     const onStick = this.getAttribute('on-stick') || null
 
     this.options = {
@@ -53,6 +54,7 @@ class Sticky {
       shouldTopSticky: side === 'top' || side === 'both',
       shouldBottomSticky: side === 'bottom' || side === 'both',
       zIndex: zIndex,
+      widthRef: widthRef,
       onStick: onStick
     }
   }
@@ -239,7 +241,11 @@ class Sticky {
   }
 
   getWidth () {
-    return this.placeholderEl.getBoundingClientRect().width
+    let ref = this.placeholderEl
+    if (this.options.widthRef) {
+      ref = document.querySelector(`[sticky-ref="${this.options.widthRef}"]`) || ref
+    }
+    return ref.getBoundingClientRect().width
   }
 
   getHeight () {
