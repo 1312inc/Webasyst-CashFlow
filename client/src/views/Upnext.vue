@@ -1,7 +1,10 @@
 <template>
   <div>
-    <h1>{{ $t("upnext") }}</h1>
-    <TransactionControls class="custom-mb-24" />
+    <ChartHeader>
+      <template v-slot:title>
+        <h1 class="custom-m-0">{{ $t("upnext") }}</h1>
+      </template>
+    </ChartHeader>
     <div class="flexbox">
       <div class="wide">
         <TransactionList :observer="false" :reverse="true" :upnext="true" />
@@ -12,7 +15,7 @@
 </template>
 
 <script>
-import TransactionControls from '@/components/TransactionControls'
+import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
@@ -21,7 +24,7 @@ export default {
   mixins: [routerTransitionMixin],
 
   components: {
-    TransactionControls,
+    ChartHeader,
     TransactionList,
     AmChartPieStickyContainer
   },

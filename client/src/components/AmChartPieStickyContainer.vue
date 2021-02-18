@@ -12,7 +12,7 @@
       <TransactionControls
         v-if="$store.state.transactionBulk.selectedTransactionsIds.length"
         direction="column"
-        :notStick="true"
+        :addView="false"
         class="custom-mt-20"
       />
     </div>

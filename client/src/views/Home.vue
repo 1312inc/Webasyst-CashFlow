@@ -1,6 +1,13 @@
 <template>
   <div>
-    <ChartHeader />
+    <ChartHeader>
+      <template v-slot:title>
+        <ChartHeaderTitle />
+      </template>
+      <template v-slot:controls>
+        <ChartHeaderControls />
+      </template>
+    </ChartHeader>
     <AmChart />
     <DetailsDashboard />
     <div class="flexbox">
@@ -16,6 +23,8 @@
 
 <script>
 import ChartHeader from '@/components/ChartHeader'
+import ChartHeaderControls from '@/components/ChartHeaderControls'
+import ChartHeaderTitle from '@/components/ChartHeaderTitle'
 import AmChart from '@/components/AmChart'
 import DetailsDashboard from '@/components/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
@@ -27,6 +36,8 @@ export default {
 
   components: {
     ChartHeader,
+    ChartHeaderControls,
+    ChartHeaderTitle,
     AmChart,
     DetailsDashboard,
     TransactionList,
