@@ -29,7 +29,7 @@ abstract class cashApiTransactionResponseDtoAbstractAssembler
             'name' => $user->getName(),
             'firstname' => $user->getContact()->get('firstname'),
             'lastname' => $user->getContact()->get('lastname'),
-            'userpic' => rtrim(wa()->getUrl(true), '/') . $user->getUserPic(),
+            'userpic' => rtrim(wa()->getUrl(true), '/') . $user->getPhotoUrl(),
         ];
     }
 

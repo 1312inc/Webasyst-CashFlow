@@ -22,6 +22,13 @@
       </div>
       <div>
         <span
+          v-if="transaction.contractor_contact"
+          class="icon userpic size-48"
+        >
+          <img :src="transaction.contractor_contact.userpic" alt="" />
+        </span>
+        <span
+          v-else
           class="userpic userpic48 align-center"
           :style="`background-color:${category.color};`"
           ><i class="c-category-glyph fas fa-ruble-sign"></i
