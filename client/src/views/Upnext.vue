@@ -9,7 +9,7 @@
       <div class="wide">
         <TransactionList :observer="false" :reverse="true" :upnext="true" />
       </div>
-      <AmChartPieStickyContainer class="width-40" />
+      <AmChartPieStickyContainer class="width-30" />
     </div>
   </div>
 </template>

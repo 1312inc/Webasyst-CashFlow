@@ -8,11 +8,11 @@
       >
         <button
           @click="openMove = true"
-          class="yellow red"
+          class="blue"
           :class="direction === 'column' && 'custom-mb-12'"
         >
           <i class="fas fa-arrow-right"></i> {{ $t("move") }}
-          {{ checkedRows.length }}
+          ({{ checkedRows.length }})
         </button>
         <button
           @click="bulkDelete"
@@ -20,7 +20,7 @@
           :class="direction === 'column' && 'custom-mb-12'"
         >
           <i class="fas fa-trash-alt"></i> {{ $t("delete") }}
-          {{ checkedRows.length }}
+          ({{ checkedRows.length }})
         </button>
         <button @click="unselectAll" class="button nobutton smaller">
           {{ $t("unselectAll") }}

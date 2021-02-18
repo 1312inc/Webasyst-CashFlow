@@ -66,11 +66,11 @@
               </div>
             </h3>
             <TransactionListGroupUpcomingPeriod v-if="type === 'future'" />
-            <div @click="onStick({sticked: true})" class="desktop-only" style="display: none;cursor: pointer;" ref="pieIcon">
-              <i class="fas fa-chart-pie"></i>
-            </div>
           </div>
           <div class="flexbox middle space-12">
+            <div @click="onStick({sticked: true})" class="desktop-only c-pie-icon-helper" style="display: none;cursor: pointer;" ref="pieIcon">
+              <i class="fas fa-chart-pie"></i>
+            </div>
             <AmountForGroup :group="filteredTransactions" type="income" />
             <AmountForGroup :group="filteredTransactions" type="expense" />
           </div>
@@ -219,3 +219,8 @@ export default {
   }
 }
 </script>
+
+<style>
+.c-pie-icon-helper { opacity: 0.5; transition: 0.2s opacity; }
+.c-pie-icon-helper:hover { opacity: 1; }
+</style>
