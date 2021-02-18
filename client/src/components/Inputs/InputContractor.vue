@@ -17,7 +17,7 @@
       ></span>
       <i
         v-else
-        :style="`background-image: url(${computedPhoto});`"
+        :style="`background-image: url(${computedPhoto});opacity: 1;`"
         class="icon userpic"
       ></i>
     </div>
@@ -40,7 +40,7 @@
         <div class="small flexbox middle space-8 custom-py-8 custom-px-12">
           <i
             class="icon userpic"
-            :style="`background-image: url(${item.photo_url_absolute});`"
+            :style="`background-image: url(${item.photo_url_absolute});opacity: 1;`"
           ></i>
           <span>{{ item.name }}</span>
         </div>

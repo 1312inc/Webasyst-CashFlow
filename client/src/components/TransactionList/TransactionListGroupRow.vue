@@ -71,7 +71,7 @@
           </div>
         </div>
       </div>
-      <div class="c-item-done" v-if="transaction.is_onbadge">
+      <div v-if="transaction.is_onbadge && $route.name === 'Upnext'" class="c-item-done">
         <button class="red">
           <i class="fas fa-check"></i>
         </button>
