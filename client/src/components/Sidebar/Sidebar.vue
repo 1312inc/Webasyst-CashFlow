@@ -8,12 +8,11 @@
         <a href="javascript:void(0);">{{ $t("Show Navigation") }}</a>
       </div>
     </nav>
-    <div class="sidebar-header">
+    <div class="sidebar-body">
+
       <SearchField />
       <Bricks />
-    </div>
 
-    <div class="sidebar-body">
       <!-- Widgets charts block -->
       <SidebarCurrencyWidgets />
 

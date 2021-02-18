@@ -1,26 +1,26 @@
 <template>
-  <div v-if="data" class="custom-mb-24 c-breakdown-details">
-    <div class="flexbox middle custom-mb-24">
+  <div v-if="data" class="c-breakdown-details">
+    <div class="flexbox middle custom-mb-24 wrap-mobile vertical-mobile">
       <div class="wide flexbox middle">
         <h3 class="custom-mb-0">
           {{ dates }}
         </h3>
-        <button @click="openModal = true" class="small nobutton">
+        <button @click="openModal = true" class="button light-gray custom-ml-12">
           {{ $t("setDates") }}
         </button>
       </div>
       <div>
-        <button @click="closeDashboard" class="small nobutton larger gray">
-          <i class="fas fa-times"></i>
+        <button @click="closeDashboard" class="nobutton largest">
+          <i class="fas fa-times gray"></i>
         </button>
       </div>
     </div>
 
     <div v-for="currency in data" :key="currency.currency" class="flexbox">
-      <div class="width-40">
+      <div class="width-40 width-100-mobile">
         <div class="">
-          <div class="smaller uppercase">{{ $t("income") }}</div>
-          <div class="larger text-green">
+          <div class="align-center uppercase small gray bold">{{ $t("income") }}</div>
+          <div class="align-center largest text-green bold custom-mt-4">
             {{
               $helper.toCurrency({
                 value: currency.income.totalAmount,
@@ -37,10 +37,10 @@
         />
       </div>
 
-      <div class="width-40">
+      <div class="width-40 width-100-mobile">
         <div class="">
-          <div class="smaller uppercase">{{ $t("expense") }}</div>
-          <div class="larger text-red">
+          <div class="align-center uppercase small gray bold">{{ $t("expense") }}</div>
+          <div class="align-center largest text-red bold custom-mt-4">
             {{
               $helper.toCurrency({
                 value: currency.expense.totalAmount,
@@ -59,9 +59,9 @@
         />
       </div>
 
-      <div>
-        <div class="smaller uppercase">{{ $t("balance") }}</div>
-        <div class="larger">
+      <div class="width-20 width-100-mobile">
+        <div class="align-center uppercase small gray bold">{{ $t("balance") }}</div>
+        <div class="align-center largest bold black custom-mt-4">
           {{
             $helper.toCurrency({
               value: currency.income.totalAmount - currency.expense.totalAmount,
@@ -150,10 +150,11 @@ export default {
 
 <style lang="scss">
 .c-breakdown-details {
-  border: 1.5px solid var(--alert-border-color);
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05),
-    0 0.5rem 0.5rem -0.5rem rgba(0, 0, 0, 0.13);
-  border-radius: 0.25rem;
-  padding: 1.5rem;
+  border: 3px solid var(--alert-border-color);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1),
+    0 0.5rem 1.5rem -0.5rem rgba(0, 0, 0, 0.2);
+  border-radius: 0.375rem;
+  padding: 1.5rem 2rem;
+  margin: 1.7rem;
 }
 </style>

@@ -1,5 +1,10 @@
 <template>
   <div class="custom-mt-24">
+    <div v-if="balanceFlow.length > 1" class="custom-mx-16">
+      <div class="heading custom-mx-0">
+        {{ $t('Next 90 days') }}
+      </div>
+    </div>
     <ul class="menu">
       <li v-for="currency in balanceFlow" :key="currency.currency">
         <router-link

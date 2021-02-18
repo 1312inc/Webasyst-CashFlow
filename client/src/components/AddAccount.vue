@@ -24,7 +24,7 @@
           {{ $t("currency") }}
         </div>
         <div class="value">
-          <div class="wa-select">
+          <div class="wa-select solid">
             <select
               v-model="model.currency"
               class="width-100"
@@ -49,7 +49,8 @@
         <div class="value">
           <input-currency
             v-model="model.starting_balance"
-            :placeholder="$t('optional')"
+            class="number shorter"
+            :placeholder="0"
             type="text"
           />
           <span v-if="model.currency" class="custom-ml-8">{{
