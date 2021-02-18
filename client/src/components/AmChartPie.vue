@@ -26,7 +26,7 @@ export default {
   mounted () {
     const chart = am4core.create(this.$refs.chart, am4charts.PieChart)
     if (locale === 'ru_RU') chart.language.locale = am4langRU
-    chart.innerRadius = am4core.percent(40)
+    chart.innerRadius = am4core.percent(45)
 
     // Add and configure Series
     const pieSeries = chart.series.push(new am4charts.PieSeries())
@@ -34,8 +34,6 @@ export default {
     pieSeries.dataFields.category = 'category_name'
     pieSeries.labels.template.disabled = true
     pieSeries.slices.template.propertyFields.fill = 'category_color'
-    pieSeries.slices.template.stroke = am4core.color('#fff')
-    pieSeries.slices.template.strokeOpacity = 1
     this.chart = chart
     this.$watch(
       'data',

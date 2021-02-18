@@ -229,6 +229,7 @@
             <select
               v-model="model.account_id"
               :class="{ 'state-error': $v.model.account_id.$error }"
+              style="width: auto;"
             >
               <option
                 :value="account.id"
@@ -310,6 +311,7 @@
             <select
               v-model="model.category_id"
               :class="{ 'state-error': $v.model.category_id.$error }"
+              style="width: auto;"
             >
               <option
                 :value="category.id"
