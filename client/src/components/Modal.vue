@@ -15,12 +15,22 @@
 
 <script>
 export default {
-  created () {
+  mounted () {
     document.body.classList.add('modal')
+    document.addEventListener('keyup', this.handler)
   },
 
   beforeDestroy () {
     document.body.classList.remove('modal')
+    document.removeEventListener('keyup', this.handler)
+  },
+
+  methods: {
+    handler (evt) {
+      if (evt.keyCode === 27) {
+        this.$emit('close')
+      }
+    }
   }
 }
 </script>
