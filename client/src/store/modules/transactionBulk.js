@@ -49,7 +49,6 @@ export default {
           commit('transaction/deleteCreatedTransaction', [id], { root: true })
         })
         commit('emptySelectedTransactionsIds')
-        dispatch('emitTransactionBulkStateUpdate')
       } catch (_) {
         return false
       }
@@ -59,15 +58,9 @@ export default {
       try {
         await api.post('cash.transaction.bulkMove', params)
         commit('emptySelectedTransactionsIds')
-        dispatch('emitTransactionBulkStateUpdate')
       } catch (_) {
         return false
       }
-    },
-
-    emitTransactionBulkStateUpdate ({ dispatch }) {
-      dispatch('account/getList', null, { root: true })
-      dispatch('balanceFlow/getBalanceFlow', null, { root: true })
     }
   }
 

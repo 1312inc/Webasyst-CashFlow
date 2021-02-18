@@ -22,35 +22,20 @@ export default {
     TransactionList
   },
 
-  data () {
-    return {
-      paramsBus: {}
-    }
-  },
-
   watch: {
-    '$route' () {
-      this.makeSearch()
-    }
+    $route: 'makeSearch'
   },
 
   mounted () {
-    this.paramsBus = this.$store.state.transaction.queryParams
     this.makeSearch()
-  },
-
-  beforeDestroy () {
-    this.$store.commit('transaction/updateQueryParams', {
-      ...this.paramsBus,
-      silent: true
-    })
   },
 
   methods: {
     makeSearch () {
-      this.$store.commit('transaction/updateQueryParams', {
+      this.$store.dispatch('transaction/fetchTransactions', {
         from: '',
         to: '',
+        offset: 0,
         filter: `search/${this.$route.query.text}`
       })
     }
