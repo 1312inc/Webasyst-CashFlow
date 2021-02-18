@@ -1,3 +1,7 @@
+@media screen and (max-width: 760px) { /* mobile */
+  .flexbox { flex-wrap: nowrap !important; }
+}
+
 body.modal {
   overflow: hidden;
 }
@@ -30,6 +34,7 @@ body.modal {
 
 .c-header { position: relative; padding: 0.75rem 1.875rem; }
 
+.c-list { margin-top: 0; }
 .c-list .c-item {
   width: 100%;
   cursor: pointer;
@@ -90,6 +95,6 @@ body.modal {
 
 .c-mobile-build .c-item > .flexbox { padding: 0 0 0 1rem; }
 .c-mobile-build .c-item .c-item-amount { padding-right: 1rem; }
-.c-mobile-build .c-sticky-header-group { padding: 0 1rem; }
+.c-mobile-build .c-sticky-header-group > div { padding: 0 1rem; }
 .c-mobile-build .c-chart-container { padding: 1rem; }
-.c-mobile-build .c-transaction-section .c-transaction-section__header { font-size: 1.25rem; margin-bottom: 0.5rem; }
+.c-mobile-build .c-transaction-section .c-transaction-section__header { font-size: 1.25rem; }

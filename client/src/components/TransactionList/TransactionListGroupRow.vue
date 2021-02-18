@@ -6,7 +6,7 @@
       @click="openModal"
       class="flexbox middle space-12"
     >
-      <div v-if="$helper.showMultiSelect()" style="width: 1rem">
+      <div v-if="$helper.showMultiSelect()" style="width: 1rem;">
         <span
           v-show="isHoverComputed"
           @click="checkboxSelect"
@@ -22,13 +22,6 @@
       </div>
       <div>
         <span
-          v-if="transaction.contractor_contact"
-          class="icon userpic size-48"
-        >
-          <img :src="transaction.contractor_contact.userpic" alt="" />
-        </span>
-        <span
-          v-else
           class="userpic userpic48 align-center"
           :style="`background-color:${category.color};`"
           ><i class="c-category-glyph fas fa-ruble-sign"></i
@@ -36,25 +29,23 @@
       </div>
       <div class="wide flexbox c-item-border">
         <div class="wide">
-          <div
-            v-if="transaction.description"
-            class="custom-mb-8 black semibold"
-          >
-            {{ transaction.description }}
-            <span
-              v-if="transaction.repeating_id"
-              class="tooltip custom-mr-8"
-              :data-title="$t('repeatingTran')"
-            >
-              <i class="fas fa-redo-alt opacity-50"></i>
+            <div class="custom-mb-8 black semibold">
+              <span v-if="transaction.description">{{ transaction.description }}</span>
+              <span v-if="!transaction.description" class="gray">{{ $t('no description') }}</span>
+              <span
+                v-if="transaction.repeating_id"
+                class="tooltip custom-ml-4"
+                :data-title="$t('repeatingTran')"
+              >
+                <i class="fas fa-redo-alt opacity-50"></i>
+              </span>
+            </div>
+            <span v-if="category.name" class="custom-mb-4 small gray">
+              {{ category.name }}
             </span>
-          </div>
-          <span v-if="category.name" class="custom-mb-4 small gray">
-            {{ category.name }}
-          </span>
-          <span v-if="account.name" class="small gray">
-            / {{ account.name }}
-          </span>
+            <span v-if="account.name" class="small gray">
+              / {{ account.name }}
+            </span>
         </div>
         <div class="c-item-amount">
           <div class="custom-mb-8 align-right">
@@ -72,6 +63,11 @@
             {{ $moment(transaction.date).format("ll") }}
           </div>
         </div>
+      </div>
+      <div class="c-item-done" v-if="transaction.is_onbadge">
+        <button class="red">
+          <i class="fas fa-check"></i>
+        </button>
       </div>
     </div>
 
