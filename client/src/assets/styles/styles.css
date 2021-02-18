@@ -1,5 +1,5 @@
 @media screen and (max-width: 760px) { /* mobile */
-  .flexbox { flex-wrap: nowrap !important; }
+  .flexbox.wrap-mobile { flex-wrap: wrap; } /* TODO: remove when wa-2.0.css is updated */
 }
 
 body.modal {

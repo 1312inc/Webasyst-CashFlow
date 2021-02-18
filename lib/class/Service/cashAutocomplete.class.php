@@ -49,6 +49,7 @@ class cashAutocomplete
                    FROM wa_contact AS c
                    WHERE $name_condition
                    LIMIT {LIMIT}";
+        $search_terms[] = $q;
 
         // Email starts with requested string
         $sqls[] = "SELECT c.id, c.name, e.email, c.firstname, c.middlename, c.lastname, c.photo

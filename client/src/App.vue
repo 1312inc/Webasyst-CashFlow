@@ -1,6 +1,6 @@
 <template>
   <div id="wa-app">
-    <div class="flexbox">
+    <div class="flexbox wrap-mobile">
       <Sidebar />
       <div class="content blank">
         <div sticky-container class="box">
