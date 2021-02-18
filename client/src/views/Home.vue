@@ -14,7 +14,7 @@
       <div class="wide">
         <TransactionList />
       </div>
-      <AmChartPieStickyContainer class="width-40" />
+      <AmChartPieStickyContainer class="width-30" />
     </div>
   </div>
 </template>
