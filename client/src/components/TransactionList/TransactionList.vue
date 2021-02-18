@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!transactions.data.length && !$store.state.transaction.createdTransactions.length">
+    <div v-if="$store.state.transaction.loading">
       <SkeletonTransaction />
     </div>
     <div v-else>
@@ -19,9 +19,12 @@
           :index="index"
         />
       </div>
+      <div v-if="!groups.length" class="align-center custom-py-24">
+        {{ $t("emptyList") }}
+      </div>
       <Observer
         v-if="observer && (transactions.data.length < transactions.total)"
-        @callback="$store.dispatch('transaction/fetchTransactions')"
+        @callback="observerCallback"
       />
     </div>
   </div>
@@ -114,6 +117,14 @@ export default {
       })
 
       return result
+    }
+  },
+
+  methods: {
+    observerCallback () {
+      this.$store.dispatch('transaction/fetchTransactions', {
+        offset: this.transactions.data.length
+      })
     }
   }
 }

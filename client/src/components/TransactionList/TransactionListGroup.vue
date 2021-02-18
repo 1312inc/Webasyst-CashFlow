@@ -88,9 +88,6 @@
             :showChecker="isShowChecker"
           />
         </transition-group>
-        <!-- <div v-else class="align-center custom-py-20">
-          {{ $t("emptyList") }}
-        </div> -->
       </div>
     </div>
   </div>

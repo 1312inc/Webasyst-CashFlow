@@ -19,6 +19,7 @@ export default {
       offset: 0,
       filter: ''
     },
+    loading: false,
     chartInterval: {
       from: getDateFromLocalStorage('from') || moment().add(-1, 'Y').format('YYYY-MM-DD'),
       to: getDateFromLocalStorage('to') || moment().add(6, 'M').format('YYYY-MM-DD')
@@ -128,6 +129,10 @@ export default {
       state.detailsInterval = data
     },
 
+    setLoading (state, data) {
+      state.loading = data
+    },
+
     setLoadingChart (state, data) {
       state.loadingChart = data
     },
@@ -215,16 +220,16 @@ export default {
       try {
         commit('updateQueryParams', userParams)
         const params = { ...state.queryParams }
+
+        if (params.offset === 0) {
+          commit('setLoading', true)
+        }
         // if view details mode
         if (state.detailsInterval.from) {
           params.from = state.detailsInterval.from
         }
         if (state.detailsInterval.to) {
           params.to = state.detailsInterval.to
-        }
-        // if observer triggering new offset
-        if (state.transactions.data.length < state.transactions.total) {
-          params.offset = state.transactions.data.length
         }
 
         const { data } = await api.get('cash.transaction.getList', {
@@ -239,11 +244,14 @@ export default {
         commit('setTransactions', result)
       } catch (_) {
         return false
+      } finally {
+        commit('setLoading', false)
       }
     },
 
     async fetchUpNextTransactions ({ commit }) {
       try {
+        commit('setLoading', true)
         const { data } = await api.get('cash.transaction.getUpNextList', {
           params: {
             today: moment().format('YYYY-MM-DD')
@@ -252,6 +260,8 @@ export default {
         commit('setTransactions', data)
       } catch (_) {
         return false
+      } finally {
+        commit('setLoading', false)
       }
     },
 
