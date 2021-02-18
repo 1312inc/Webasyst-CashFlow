@@ -22,32 +22,13 @@ export default {
     TransactionList
   },
 
-  data () {
-    return {
-      paramsBus: {}
-    }
-  },
-
   mounted () {
-    this.paramsBus = this.$store.state.transaction.queryParams
-    this.fetchData()
-  },
-
-  beforeDestroy () {
-    this.$store.commit('transaction/updateQueryParams', {
-      ...this.paramsBus,
-      silent: true
+    this.$store.dispatch('transaction/fetchTransactions', {
+      from: '',
+      to: '',
+      offset: 0,
+      filter: `import/${this.$route.params.id}`
     })
-  },
-
-  methods: {
-    fetchData () {
-      this.$store.commit('transaction/updateQueryParams', {
-        from: '',
-        to: '',
-        filter: `import/${this.$route.params.id}`
-      })
-    }
   }
 }
 </script>

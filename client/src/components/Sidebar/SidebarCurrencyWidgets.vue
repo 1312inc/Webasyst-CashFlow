@@ -59,7 +59,7 @@ export default {
     ...mapState('balanceFlow', ['balanceFlow'])
   },
 
-  created () {
+  mounted () {
     this.$store.dispatch('balanceFlow/getBalanceFlow')
   }
 }
