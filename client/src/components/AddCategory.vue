@@ -25,7 +25,7 @@
         </div>
         <div class="value">
           <div class="flexbox middle space-12">
-            <div class="wa-select">
+            <div class="wa-select solid">
               <select
                 v-model="model.type"
                 :class="{ 'state-error': $v.model.type.$error }"

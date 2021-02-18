@@ -37,7 +37,7 @@ export default {
   &__item {
     display: flex;
     align-items: center;
-    width: 200px;
+    width: 70%;
     margin: 0.2rem 0.4rem;
 
     &__square {
@@ -63,6 +63,8 @@ export default {
 
       &__value {
         white-space: nowrap;
+        font-weight: 500;
+        color: var(--dark-gray);
       }
     }
   }

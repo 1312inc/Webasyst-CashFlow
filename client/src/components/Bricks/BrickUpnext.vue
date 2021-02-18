@@ -17,7 +17,7 @@
       }"
       ><i class="fas fa-star"></i
     ></span>
-    {{ $t("upnext") }}
+    {{ $t("today") }}
   </router-link>
 </template>
 

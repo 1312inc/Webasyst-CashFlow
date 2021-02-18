@@ -2,7 +2,7 @@
   <div>
     <h2 class="custom-mb-32">{{ $t("moveTransactions", { count: count }) }}</h2>
 
-    <div class="fields custom-mb-32">
+    <div class="fields">
       <div class="field">
         <div class="name for-input">
           {{ $t("account") }}
@@ -59,12 +59,17 @@
           </div>
         </div>
       </div>
+      <div class="field">
+        <div class="name">
+        </div>
+        <div class="value">
+          <p class="hint custom-mb-24">
+            <i class="fas fa-exclamation-triangle" style="color: orangered"></i>
+            {{ $t("bulkMoveWarning") }}
+          </p>
+        </div>
+      </div>
     </div>
-
-    <span class="smaller alert warning custom-mb-24">
-      <i class="fas fa-exclamation-triangle"></i>
-      {{ $t("bulkMoveWarning") }}
-    </span>
 
     <div class="flexbox">
       <div class="flexbox space-12 wide">
