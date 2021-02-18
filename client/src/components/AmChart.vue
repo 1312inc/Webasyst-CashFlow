@@ -23,7 +23,7 @@ if (window?.appState?.theme === 'dark' || (window.matchMedia && window.matchMedi
 
 export default {
   computed: {
-    ...mapState('transaction', ['queryParams', 'detailsInterval', 'chartData', 'chartDataCurrencyIndex', 'loadingChart']),
+    ...mapState('transaction', ['chartInterval', 'detailsInterval', 'chartData', 'chartDataCurrencyIndex', 'loadingChart']),
 
     activeChartData () {
       return this.chartData[this.chartDataCurrencyIndex]
@@ -51,20 +51,21 @@ export default {
   },
 
   created () {
-    this.unsubscribeFromQueryParams = this.$store.subscribe((mutation) => {
-      if (mutation.type === 'transaction/updateQueryParams') {
-        this.$store.dispatch('transaction/getChartData')
+    this.unsubscribeFromMutations = this.$store.subscribe(({ type }) => {
+      switch (type) {
+        case 'transaction/updateChartInterval':
+        case 'transaction/updateTransactions':
+        case 'transaction/deleteTransaction':
+        case 'transaction/setCreatedTransactions':
+          this.$store.dispatch('transaction/getChartData')
       }
     })
 
-    this.unsubscribeFromTransitionUpdate = this.$store.subscribeAction({
-      after: (action) => {
-        if (
-          action.type === 'transaction/emitTransactionStateUpdate' ||
-            action.type === 'transactionBulk/emitTransactionBulkStateUpdate' ||
-            action.type === 'category/emitCategoryStateUpdate'
-        ) {
-          this.$store.dispatch('transaction/getChartData')
+    this.unsubscribeFromActions = this.$store.subscribeAction({
+      after: ({ type }) => {
+        switch (type) {
+          case 'updateCurrentEntity':
+            this.$store.dispatch('transaction/getChartData')
         }
       }
     })
@@ -106,8 +107,8 @@ export default {
     dateAxis.renderer.cellEndLocation = 0.85
     this.dateAxis = dateAxis
     this.dateAxis.events.on('groupperiodchanged', ({ target }) => {
-      target.startLocation = target.currentDataSetId.includes('month') ? this.$moment(this.queryParams.from).date() / this.$moment(this.queryParams.from).daysInMonth() : 0
-      target.endLocation = target.currentDataSetId.includes('month') ? (this.$moment(this.queryParams.to).date() + 1) / this.$moment(this.queryParams.to).daysInMonth() : 1
+      target.startLocation = target.currentDataSetId.includes('month') ? this.$moment(this.chartInterval.from).date() / this.$moment(this.chartInterval.from).daysInMonth() : 0
+      target.endLocation = target.currentDataSetId.includes('month') ? (this.$moment(this.chartInterval.to).date() + 1) / this.$moment(this.chartInterval.to).daysInMonth() : 1
     })
 
     // Balance Axis
@@ -252,9 +253,8 @@ export default {
   },
 
   beforeDestroy () {
-    this.$store.commit('transaction/setChartData', [])
-    this.unsubscribeFromQueryParams()
-    this.unsubscribeFromTransitionUpdate()
+    this.unsubscribeFromMutations()
+    this.unsubscribeFromActions()
     if (this.chart) {
       this.chart.dispose()
     }
@@ -287,14 +287,14 @@ export default {
 
       this.balanceAxis.disabled = data.data[0].balance === null
 
-      const istart = this.$moment(this.queryParams.from)
-      const iend = this.$moment(this.queryParams.to)
+      const istart = this.$moment(this.chartInterval.from)
+      const iend = this.$moment(this.chartInterval.to)
       const daysInInterval = iend.diff(istart, 'days') + 1
 
       // Filling empty data
       const filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
         return {
-          period: this.$moment(this.queryParams.from).add(i, 'd').format('YYYY-MM-DD'),
+          period: this.$moment(this.chartInterval.from).add(i, 'd').format('YYYY-MM-DD'),
           amountIncome: null,
           amountExpense: null,
           balance: null

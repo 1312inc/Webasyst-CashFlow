@@ -5,14 +5,19 @@
         <h1 class="custom-m-0">{{ $t("history") }}</h1>
       </template>
     </ChartHeader>
-    <TransactionList />
+    <div class="flexbox">
+      <div class="wide">
+        <TransactionList />
+      </div>
+      <AmChartPieStickyContainer class="width-40" />
+    </div>
   </div>
 </template>
 
 <script>
-import moment from 'moment'
 import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
+import AmChartPieStickyContainer from '@/components/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
@@ -20,29 +25,16 @@ export default {
 
   components: {
     ChartHeader,
-    TransactionList
-  },
-
-  data () {
-    return {
-      paramsBus: {}
-    }
+    TransactionList,
+    AmChartPieStickyContainer
   },
 
   mounted () {
-    this.paramsBus = this.$store.state.transaction.queryParams
-
-    this.$store.commit('transaction/updateQueryParams', {
-      from: moment().add(-3, 'Y').format('YYYY-MM-DD'),
-      to: moment().format('YYYY-MM-DD'),
+    this.$store.dispatch('transaction/fetchTransactions', {
+      from: '',
+      to: this.$moment().format('YYYY-MM-DD'),
+      offset: 0,
       filter: ''
-    })
-  },
-
-  beforeDestroy () {
-    this.$store.commit('transaction/updateQueryParams', {
-      ...this.paramsBus,
-      silent: true
     })
   }
 }

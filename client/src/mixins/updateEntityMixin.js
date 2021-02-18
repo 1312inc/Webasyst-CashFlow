@@ -33,11 +33,8 @@ export default {
         this.$store
           .dispatch(`${entity}/delete`, this.model.id)
           .then(() => {
-            if (entity === 'account') {
-              this.$router.push({ name: 'Home' })
-            } else {
-              this.close()
-            }
+            this.close()
+            this.$router.push({ name: 'Home' })
           })
       }
     },

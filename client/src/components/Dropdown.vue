@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { intervals } from '@/utils/getDateFromLocalStorage'
 export default {
   props: {
     type: {
@@ -19,18 +20,20 @@ export default {
 
   computed: {
     items () {
-      return this.$store.state.intervals[this.type]
+      return intervals[this.type]
     },
 
     value: {
       get () {
-        return this.$store.state.transaction.queryParams[this.type]
+        return this.$store.state.transaction.chartInterval[this.type]
       },
       set (value) {
-        localStorage.setItem(`interval_${this.type}`, this.getNameByValue(value))
-        this.$store.commit('transaction/updateQueryParams', {
-          [this.type]: value,
-          offset: 0
+        localStorage.setItem(
+          `interval_${this.type}`,
+          this.getNameByValue(value)
+        )
+        this.$store.commit('transaction/updateChartInterval', {
+          [this.type]: value
         })
       }
     }

@@ -1,5 +1,4 @@
 import api from '@/plugins/api'
-import router from '@/router'
 
 export default {
   namespaced: true,
@@ -65,9 +64,7 @@ export default {
         await api.delete('cash.category.delete', {
           params: { id }
         })
-        router.push({ name: 'Home' })
-        await dispatch('getList')
-        dispatch('emitCategoryStateUpdate')
+        dispatch('getList')
       } catch (_) {
         return false
       }
@@ -80,11 +77,6 @@ export default {
       } catch (_) {
         return false
       }
-    },
-
-    emitCategoryStateUpdate ({ dispatch }) {
-      dispatch('account/getList', null, { root: true })
-      dispatch('balanceFlow/getBalanceFlow', null, { root: true })
     }
   }
 }

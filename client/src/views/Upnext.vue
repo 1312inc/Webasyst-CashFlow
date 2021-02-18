@@ -29,7 +29,7 @@ export default {
     AmChartPieStickyContainer
   },
 
-  created () {
+  mounted () {
     this.$store.dispatch('transaction/fetchUpNextTransactions')
   }
 }

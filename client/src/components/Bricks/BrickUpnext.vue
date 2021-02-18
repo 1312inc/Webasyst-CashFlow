@@ -34,18 +34,8 @@ export default {
     }
   },
 
-  watch: {
-    '$store.state.transaction.transactions': {
-      handler: 'fetch',
-      immediate: true,
-      deep: true
-    }
-  },
-
-  methods: {
-    fetch () {
-      this.$store.dispatch('transaction/getTodayCount')
-    }
+  mounted () {
+    this.$store.dispatch('transaction/getTodayCount')
   }
 }
 </script>

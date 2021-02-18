@@ -1,12 +1,31 @@
 import api from '@/plugins/api'
 import { moment } from '@/plugins/numeralMoment'
+import getDateFromLocalStorage from '../../utils/getDateFromLocalStorage'
 
 export default {
   namespaced: true,
 
   state: () => ({
     transactions: {
-      data: []
+      data: [],
+      limit: null,
+      offset: null,
+      total: null
+    },
+    queryParams: {
+      from: '',
+      to: moment().add(1, 'M').format('YYYY-MM-DD'),
+      limit: 100,
+      offset: 0,
+      filter: ''
+    },
+    chartInterval: {
+      from: getDateFromLocalStorage('from') || moment().add(-1, 'Y').format('YYYY-MM-DD'),
+      to: getDateFromLocalStorage('to') || moment().add(6, 'M').format('YYYY-MM-DD')
+    },
+    detailsInterval: {
+      from: '',
+      to: ''
     },
     updatedTransactions: [],
     createdTransactions: [],
@@ -20,17 +39,6 @@ export default {
     chartData: [],
     chartDataCurrencyIndex: 0,
     loadingChart: true,
-    queryParams: {
-      from: '',
-      to: '',
-      limit: 100,
-      offset: 0,
-      filter: ''
-    },
-    detailsInterval: {
-      from: '',
-      to: ''
-    },
     todayCount: {}
   }),
 
@@ -132,6 +140,13 @@ export default {
       state.queryParams = newData
     },
 
+    updateChartInterval (state, data) {
+      state.chartInterval = {
+ ***REMOVED***state.chartInterval,
+ ***REMOVED***data
+      }
+    },
+
     setChartDataCurrencyIndex (state, value) {
       state.chartDataCurrencyIndex = value
     },
@@ -144,7 +159,9 @@ export default {
 
   actions: {
     async getChartData ({ commit, state }) {
-      const { from, to, filter } = state.queryParams
+      const { filter } = state.queryParams
+      const from = state.chartInterval.from
+      const to = state.chartInterval.to
       try {
         commit('setLoadingChart', true)
         const { data } = await api.get('cash.aggregate.getChartData', {
@@ -177,7 +194,6 @@ export default {
         if (method === 'create') {
           commit('setCreatedTransactions', data)
         }
-        dispatch('emitTransactionStateUpdate')
       } catch (_) {
         return false
       }
@@ -190,39 +206,25 @@ export default {
         })
         commit('deleteTransaction', id)
         commit('deleteCreatedTransaction', [id])
-        dispatch('emitTransactionStateUpdate')
       } catch (_) {
         return false
       }
     },
 
-    async fetchTransactions ({ commit, state }, userOptions = {}) {
-      const defaultOptions = {
-        resetOffset: false // if true set offset to 0
-      }
-      const options = {
- ***REMOVED***defaultOptions,
- ***REMOVED***userOptions
-      }
+    async fetchTransactions ({ commit, state }, userParams = {}) {
       try {
-        const defaultParams = { ...state.queryParams }
-        defaultParams.from = ''
-        defaultParams.to = moment()
-          .add(1, 'M')
-          .format('YYYY-MM-DD')
-
+        commit('updateQueryParams', userParams)
+        const params = { ...state.queryParams }
         // if view details mode
         if (state.detailsInterval.from) {
-          defaultParams.from = state.detailsInterval.from
+          params.from = state.detailsInterval.from
         }
         if (state.detailsInterval.to) {
-          defaultParams.to = state.detailsInterval.to
+          params.to = state.detailsInterval.to
         }
-
-        // setting offset
-        const params = {
-   ***REMOVED***defaultParams,
-          offset: options.resetOffset ? 0 : state.transactions.data.length
+        // if observer triggering new offset
+        if (state.transactions.data.length < state.transactions.total) {
+          params.offset = state.transactions.data.length
         }
 
         const { data } = await api.get('cash.transaction.getList', {
@@ -231,7 +233,7 @@ export default {
 
         const result = {
    ***REMOVED***data,
-   ***REMOVED***(params.offset > 0 && { data: [...state.transactions.data, ...data.data] })
+   ***REMOVED***(data.offset > 0 && { data: [...state.transactions.data, ...data.data] })
         }
 
         commit('setTransactions', result)
@@ -256,7 +258,7 @@ export default {
     updateDetailsInterval ({ commit, dispatch }, data) {
       commit('setDetailsInterval', data)
       dispatch('fetchTransactions', {
-        resetOffset: true
+        offset: 0
       })
     },
 
@@ -271,11 +273,6 @@ export default {
       } catch (_) {
         return false
       }
-    },
-
-    emitTransactionStateUpdate ({ dispatch }) {
-      dispatch('account/getList', null, { root: true })
-      dispatch('balanceFlow/getBalanceFlow', null, { root: true })
     }
 
   }

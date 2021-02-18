@@ -6,31 +6,32 @@
 import Uppy from '@uppy/core'
 import DragDrop from '@uppy/drag-drop'
 import XHRUpload from '@uppy/xhr-upload'
-import { baseApiUrl, accessToken } from '../plugins/api'
 
 export default {
   mounted () {
-    const uppy = new Uppy({
+    this.uppy = new Uppy({
       debug: process.env.NODE_ENV === 'development',
       autoProceed: true,
       restrictions: {
         maxNumberOfFiles: 1
       },
       meta: {
-        access_token: accessToken
+        access_token:
+          process.env.VUE_APP_API_TOKEN || window?.appState?.token || ''
       }
     })
-    uppy.use(DragDrop, {
-      target: '.UppyDragDrop'
-    })
-    uppy.use(XHRUpload, {
-      endpoint: `${baseApiUrl}/cash.account.uploadLogo`,
-      limit: 1,
-      fieldName: 'logo'
-    })
-    uppy.on('upload-success', (file, response) => {
-      this.$emit('uploaded', response.body)
-    })
+      .use(DragDrop, {
+        target: '.UppyDragDrop'
+      })
+      .use(XHRUpload, {
+        endpoint: `${window?.appState?.baseApiUrl ||
+          '/api.php'}/cash.account.uploadLogo`,
+        limit: 1,
+        fieldName: 'logo'
+      })
+      .on('upload-success', (file, response) => {
+        this.$emit('uploaded', response.body)
+      })
   }
 }
 </script>
