@@ -12,9 +12,7 @@
     <DetailsDashboard />
     <div class="flexbox">
       <div class="wide">
-        <TransactionList
-          @offsetCallback="fetchTransactions"
-        />
+        <TransactionList />
       </div>
       <AmChartPieStickyContainer class="width-30" />
     </div>
@@ -47,26 +45,25 @@ export default {
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.updateEntity(to)
-      vm.fetchTransactions()
     })
   },
 
   beforeRouteUpdate (to, from, next) {
     this.updateEntity(to)
-    this.fetchTransactions()
     next()
   },
 
   methods: {
-    updateEntity (to) {
-      this.$store.dispatch('updateCurrentEntity', {
+    async updateEntity (to) {
+      await this.$store.dispatch('updateCurrentEntity', {
         name: to.name.toLowerCase(),
         id: +to.params.id || to.params.id
       })
-    },
-
-    fetchTransactions () {
-      this.$store.dispatch('transaction/fetchTransactions')
+      this.$store.dispatch('transaction/fetchTransactions', {
+        from: '',
+        to: this.$moment().add(1, 'M').format('YYYY-MM-DD'),
+        offset: 0
+      })
     }
   }
 }

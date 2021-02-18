@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!transactions.data.length">
+    <div v-if="!transactions.data.length && !$store.state.transaction.createdTransactions.length">
       <SkeletonTransaction />
     </div>
     <div v-else>
@@ -21,7 +21,7 @@
       </div>
       <Observer
         v-if="observer && (transactions.data.length < transactions.total)"
-        @callback="$emit('offsetCallback')"
+        @callback="$store.dispatch('transaction/fetchTransactions')"
       />
     </div>
   </div>

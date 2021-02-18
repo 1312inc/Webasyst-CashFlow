@@ -60,7 +60,10 @@ const routes = [
 const router = new VueRouter({
   mode: process.env.VUE_APP_MODE === 'desktop' ? 'history' : 'hash',
   base: window?.appState?.baseUrl || '/',
-  routes
+  routes,
+  scrollBehavior (to, from, savedPosition) {
+    return { x: 0, y: 0 }
+  }
 })
 
 export default router
