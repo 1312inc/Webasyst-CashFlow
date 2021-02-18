@@ -55,6 +55,7 @@
         <AmChartLegend
           :legendItems="currency.expense.data"
           :currencyCode="currency.currency"
+          :isReverse="true"
         />
       </div>
 

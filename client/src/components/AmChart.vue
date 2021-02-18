@@ -134,9 +134,6 @@ export default {
     colsAxis.numberFormatter.numberFormat = '# a'
     this.colsAxis = colsAxis
 
-    // Legend
-    chart.legend = new am4charts.Legend()
-
     // Cursor
     const cursor = new am4charts.XYCursor()
     cursor.xAxis = this.dateAxis

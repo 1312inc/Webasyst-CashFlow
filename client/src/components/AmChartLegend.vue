@@ -13,6 +13,7 @@
             $helper.toCurrency({
               value: item.amount,
               isDynamics: true,
+              isReverse: isReverse,
               currencyCode
             })
           }}
@@ -24,7 +25,18 @@
 
 <script>
 export default {
-  props: ['legendItems', 'currencyCode']
+  props: {
+    legendItems: {
+      type: Array
+    },
+    currencyCode: {
+      type: String
+    },
+    isReverse: {
+      type: Boolean,
+      default: false
+    }
+  }
 }
 </script>
 
