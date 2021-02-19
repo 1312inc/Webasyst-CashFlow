@@ -174,8 +174,6 @@ export default {
     chart.scrollbarX = new am4core.Scrollbar()
     chart.scrollbarX.parent = chart.bottomAxesContainer
 
-    // TODO: make fix for the last date in the scrollbar
-
     const dateAxisChanged = () => {
       const from = this.$moment(this.dateAxis.minZoomed).format('YYYY-MM-DD')
       let to = this.$moment(this.dateAxis.maxZoomed)

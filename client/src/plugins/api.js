@@ -15,13 +15,26 @@ const api = axios.create({
 })
 
 api.interceptors.response.use((response) => {
-  if (response.data?.error === 'error') {
-    store.commit('errors/error', response.data.error_message)
-    return Promise.reject(new Error(response.data.error_message))
+  if (response.data?.error) {
+    store.commit('errors/error', {
+      title: 'error.api',
+      message: response.data.error_description
+    })
+    return Promise.reject(new Error(response.data.error_description))
   }
   return response
 }, (error) => {
-  store.commit('errors/error', error)
+  if (error.response.data?.error) {
+    store.commit('errors/error', {
+      title: 'error.api',
+      message: error.response.data.error_description
+    })
+  } else {
+    store.commit('errors/error', {
+      title: 'error.http',
+      message: error.message
+    })
+  }
   return Promise.reject(error)
 })
 

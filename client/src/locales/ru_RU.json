@@ -130,5 +130,9 @@
   "profitAlert": "Профит сообщение",
   "notifyMe": "Напомнить",
   "notifyMeAlert": "When due, the app will count & show this transaction right on the app icon",
-  "showNavigationLink": "Show Navigation"
+  "showNavigationLink": "Show Navigation",
+  "error": {
+    "http": "Request failed",
+    "api": "API error"
+  }
 }
