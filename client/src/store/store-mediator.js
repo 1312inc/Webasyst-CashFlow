@@ -16,6 +16,9 @@ export default (store) => {
           store.dispatch('transaction/getTodayCount')
         }
         break
+      case 'transaction/setDetailsInterval':
+        store.commit('transactionBulk/emptySelectedTransactionsIds')
+        break
       case 'account/update':
         return Promise.all([
           store.dispatch('transaction/getTodayCount'),
