@@ -70,6 +70,17 @@ export default {
       })
     },
 
+    updateTransactionProps (state, { id, props }) {
+      const i = state.transactions.data.findIndex(t => t.id === id)
+      if (i > -1) {
+        const newData = {
+          ...state.transactions.data[i],
+          ...props
+        }
+        state.transactions.data.splice(i, 1, newData)
+      }
+    },
+
     deleteTransaction (state, id) {
       const i = state.transactions.data.findIndex(e => e.id === id)
       if (i > -1) {
