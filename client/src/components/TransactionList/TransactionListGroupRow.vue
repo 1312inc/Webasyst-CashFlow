@@ -71,11 +71,13 @@
           </div>
         </div>
       </div>
-      <div v-if="transaction.is_onbadge && $route.name === 'Upnext'" class="c-item-done">
-        <button class="red">
-          <i class="fas fa-check"></i>
-        </button>
-      </div>
+      <transition name="fade" :duration="300">
+        <TransactionListCompleteButton
+          v-show="transaction.is_onbadge && $route.name === 'Upnext'"
+          :transactionId="transaction.id"
+          class="c-item-done"
+        />
+      </transition>
     </div>
 
     <portal>
@@ -89,6 +91,7 @@
 <script>
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/AddTransaction'
+import TransactionListCompleteButton from './TransactionListCompleteButton'
 
 export default {
   props: {
@@ -111,7 +114,8 @@ export default {
 
   components: {
     Modal,
-    AddTransaction
+    AddTransaction,
+    TransactionListCompleteButton
   },
 
   computed: {
@@ -157,7 +161,7 @@ export default {
         currentElem = currentElem.parentElement
       }
 
-      if (path.some(e => e.className === 'wa-checkbox')) return
+      if (path.some(e => e.className === 'wa-checkbox' || e.className === 'c-item-done')) return
       if (process.env.VUE_APP_MODE === 'mobile') {
         window.callAndroidAsync('editTransaction', this.transaction)
       } else {

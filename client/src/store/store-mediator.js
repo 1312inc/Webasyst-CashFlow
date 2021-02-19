@@ -11,6 +11,11 @@ export default (store) => {
           store.dispatch('account/getList'),
           store.dispatch('balanceFlow/getBalanceFlow')
         ])
+      case 'transaction/updateTransactionProps':
+        if ('is_onbadge' in payload.props) {
+          store.dispatch('transaction/getTodayCount')
+        }
+        break
       case 'account/update':
         return Promise.all([
           store.dispatch('transaction/getTodayCount'),
