@@ -140,8 +140,7 @@ export default {
     closeDashboard () {
       this.$store.dispatch('transaction/updateDetailsInterval', {
         from: '',
-        to: '',
-        outOfChart: true
+        to: ''
       })
     }
   }

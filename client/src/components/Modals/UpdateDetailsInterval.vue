@@ -12,8 +12,8 @@
           <div class="state-with-inner-icon left">
             <DateField
               v-model="interval.from"
-              :minDate="queryParams.from"
-              :maxDate="queryParams.to"
+              :minDate="chartInterval.from"
+              :maxDate="chartInterval.to"
             />
             <span class="icon"><i class="fas fa-calendar"></i></span>
           </div>
@@ -27,8 +27,8 @@
           <div class="state-with-inner-icon left">
             <DateField
               v-model="interval.to"
-              :minDate="queryParams.from"
-              :maxDate="queryParams.to"
+              :minDate="chartInterval.from"
+              :maxDate="chartInterval.to"
             />
             <span class="icon"><i class="fas fa-calendar"></i></span>
           </div>
@@ -63,11 +63,11 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['queryParams', 'detailsInterval'])
+    ...mapState('transaction', ['chartInterval', 'detailsInterval'])
   },
 
   created () {
-    this.interval = this.detailsInterval
+    this.interval = { ...this.detailsInterval }
   },
 
   methods: {

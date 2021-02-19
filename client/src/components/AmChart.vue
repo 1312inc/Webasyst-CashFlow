@@ -39,13 +39,12 @@ export default {
       this.updateChartData(data)
     },
     detailsInterval (val) {
-      if (val.outOfChart) {
-        if (!val.from) {
-          this.dateAxis2.zoom({ start: 0, end: 1 })
-        } else {
-          this.dateAxis.zoomToDates(new Date(val.from), new Date(val.to))
-          this.dateAxis2.zoomToDates(new Date(val.from), new Date(val.to))
-        }
+      if (!val.from) {
+        this.dateAxis.zoom({ start: 0, end: 1 })
+        this.dateAxis2.zoom({ start: 0, end: 1 })
+      } else {
+        this.dateAxis.zoomToDates(new Date(val.from), new Date(val.to))
+        this.dateAxis2.zoomToDates(new Date(val.from), new Date(val.to))
       }
     }
   },
@@ -141,8 +140,8 @@ export default {
     cursor.events.on('zoomended', (ev) => {
       if (ev.target.behavior === 'none') return
       const range = ev.target.xRange
-      const from = this.$moment(this.dateAxis2.positionToDate(this.dateAxis2.toAxisPosition(range.start))).format('YYYY-MM-DD')
-      const to = this.$moment(this.dateAxis2.positionToDate(this.dateAxis2.toAxisPosition(range.end))).format('YYYY-MM-DD')
+      const from = this.$moment(this.dateAxis.positionToDate(range.start)).format('YYYY-MM-DD')
+      const to = this.$moment(this.dateAxis.positionToDate(range.end)).format('YYYY-MM-DD')
       this.updateDetailsInterval({ from, to })
     })
     chart.cursor = cursor
@@ -178,10 +177,9 @@ export default {
     // TODO: make fix for the last date in the scrollbar
 
     const dateAxisChanged = () => {
-      const f = this.dateAxis2.minZoomed || this.dateAxis.minZoomed
-      const t = this.dateAxis2.maxZoomed || this.dateAxis.maxZoomed
-      const from = this.$moment(f).format('YYYY-MM-DD')
-      const to = this.$moment(t).format('YYYY-MM-DD')
+      const from = this.$moment(this.dateAxis.minZoomed).format('YYYY-MM-DD')
+      let to = this.$moment(this.dateAxis.maxZoomed)
+      to = to > this.$moment(this.chartInterval.to) ? this.chartInterval.to : to.format('YYYY-MM-DD')
       this.updateDetailsInterval({ from, to })
     }
 
