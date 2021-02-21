@@ -40,11 +40,22 @@ class cashAutocomplete
         $name_ar = preg_split('/\s+/', $q);
         if (count($name_ar) == 2) {
             $name_condition =
-                "((c.firstname LIKE '%".$m->escape($name_ar[0], 'like')."%' AND c.lastname LIKE '%".$m->escape($name_ar[1], 'like')."%')
-                    OR (c.firstname LIKE '%".$m->escape($name_ar[1], 'like')."%' AND c.lastname LIKE '%".$m->escape($name_ar[0], 'like')."%'))";
-        } else {
-            $name_condition = "c.name LIKE '_%".$m->escape($q, 'like')."%'";
+                "((c.firstname LIKE '%" . $m->escape($name_ar[0], 'like') . "%' AND c.lastname LIKE '%" . $m->escape(
+                    $name_ar[1],
+                    'like'
+                ) . "%')
+                    OR (c.firstname LIKE '%" . $m->escape(
+                    $name_ar[1],
+                    'like'
+                ) . "%' AND c.lastname LIKE '%" . $m->escape($name_ar[0], 'like') . "%'))";
+            $sqls[] = "SELECT c.id, c.name, c.firstname, c.middlename, c.lastname, c.photo
+                   FROM wa_contact AS c
+                   WHERE $name_condition
+                   LIMIT {LIMIT}";
+            $search_terms[] = $q;
         }
+
+        $name_condition = "c.name LIKE '_%" . $m->escape($q, 'like') . "%'";
         $sqls[] = "SELECT c.id, c.name, c.firstname, c.middlename, c.lastname, c.photo
                    FROM wa_contact AS c
                    WHERE $name_condition
