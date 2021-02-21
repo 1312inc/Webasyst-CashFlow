@@ -62,8 +62,7 @@ final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterfa
                 break;
 
             case $paramsDto->filter->isFilterByCurrency():
-                $firstDatum = reset($data);
-                $currency = cashCurrencyVO::fromWaCurrency($firstDatum['currency']);
+                $currency = cashCurrencyVO::fromWaCurrency($paramsDto->filter->getCurrency());
                 $currencyFirstTransaction = cash()->getEntityRepository(cashTransaction::class)
                     ->findFirstForCurrency($currency);
                 if ($currencyFirstTransaction) {
