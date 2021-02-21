@@ -52,7 +52,7 @@ final class cashApiAggregateGetBalanceFlowHandler implements cashApiHandlerInter
 
             if (isset($balanceFrom[$currency])) {
                 $firstDatum = reset($data);
-                if ($request->from->format('Y-m-d') < $firstDatum['period']) {
+                if (!$firstDatum || $request->from->format('Y-m-d') < $firstDatum['period']) {
                     array_unshift(
                         $data,
                         [
@@ -88,7 +88,7 @@ final class cashApiAggregateGetBalanceFlowHandler implements cashApiHandlerInter
                 if (isset($datum) && $request->to->format('Y-m-d') > $datum['period']) {
                     $data[] = [
                         'period' => $request->to->format('Y-m-d'),
-                        'amount' => $balanceFrom[$currency],
+                        'amount' => $balanceTo[$currency],
                     ];
                 }
                 reset($data);
