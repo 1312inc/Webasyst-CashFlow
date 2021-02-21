@@ -16,10 +16,12 @@ final class cashApiAggregateGetBalanceFlowDto
      *
      * @param string $currency
      * @param array  $data
+     * @param array  $balances
      */
-    public function __construct($currency, array $data)
+    public function __construct(string $currency, array $data, array $balances)
     {
         $this->currency = $currency;
         $this->data = $data;
+        $this->balances = $balances;
     }
 }
