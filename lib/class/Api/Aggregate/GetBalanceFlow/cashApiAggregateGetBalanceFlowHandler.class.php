@@ -31,9 +31,7 @@ final class cashApiAggregateGetBalanceFlowHandler implements cashApiHandlerInter
         $balanceNow = $initialBalanceCalculator->getOnDate($paramsDto, $now);
 
         foreach ($graphData as $currency => $data) {
-            $dto = new cashApiAggregateGetBalanceFlowDto($currency, $data);
-
-            $dto->balances = [
+            $balances = [
                 'from' => new cashApiAggregateGetBalanceFlowBalanceDto(
                     $request->from->format('Y-m-d'),
                     $balanceFrom[$currency] ?? null
@@ -49,8 +47,54 @@ final class cashApiAggregateGetBalanceFlowHandler implements cashApiHandlerInter
                 'diff' => new cashApiAggregateGetBalanceFlowBalanceDto(
                     '',
                     ($balanceTo[$currency] ?? 0) - ($balanceNow[$currency] ?? 0)
-                )
+                ),
             ];
+
+            if (isset($balanceFrom[$currency])) {
+                $firstDatum = reset($data);
+                if ($request->from->format('Y-m-d') < $firstDatum['period']) {
+                    array_unshift(
+                        $data,
+                        [
+                            'period' => $request->from->format('Y-m-d'),
+                            'amount' => $balanceFrom[$currency],
+                        ]
+                    );
+                }
+
+                foreach ($data as $i => $datum) {
+                    if ($datum['period'] >= $now->format('Y-m-d')) {
+                        // не будем перезаписывать
+                        if ($datum['period'] === $now->format('Y-m-d')) {
+                            break;
+                        }
+
+                        $data = array_merge(
+                            array_slice($data, 0, $i),
+                            [
+                                [
+                                    'period' => $now->format('Y-m-d'),
+                                    'amount' => $balanceNow[$currency],
+                                ],
+                            ],
+                            array_slice($data, $i, count($data) - $i)
+                        );
+
+                        break;
+                    }
+                }
+
+                $datum = end($data);
+                if (isset($datum) && $request->to->format('Y-m-d') > $datum['period']) {
+                    $data[] = [
+                        'period' => $request->to->format('Y-m-d'),
+                        'amount' => $balanceFrom[$currency],
+                    ];
+                }
+                reset($data);
+            }
+
+            $dto = new cashApiAggregateGetBalanceFlowDto($currency, $data, $balances);
 
             $response[] = $dto;
         }
