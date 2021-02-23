@@ -134,7 +134,7 @@
       </div>
 
       <TransitionCollapseHeight>
-        <div v-show="!isModeUpdate && model.is_repeating">
+        <div v-if="!isModeUpdate && model.is_repeating">
           <div class="field custom-pt-16">
             <div class="name for-input">
               {{ $t("howOften.name") }}
