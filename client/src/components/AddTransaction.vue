@@ -104,15 +104,15 @@
         </div>
         <div class="value">
           <div class="flexbox space-12 middle">
-          <div class="state-with-inner-icon left">
-            <DateField
-              v-model="model.date"
-              :class="{ 'state-error': $v.model.date.$error }"
-              class="short"
-            />
-            <span class="icon"><i class="fas fa-calendar"></i></span>
-          </div>
-          <label @click.prevent="model.is_onbadge = !model.is_onbadge">
+            <div class="state-with-inner-icon left">
+              <DateField
+                v-model="model.date"
+                :class="{ 'state-error': $v.model.date.$error }"
+                class="short"
+              />
+              <span class="icon"><i class="fas fa-calendar"></i></span>
+            </div>
+            <label @click.prevent="model.is_onbadge = !model.is_onbadge">
               <span class="wa-checkbox">
                 <input type="checkbox" :checked="model.is_onbadge" />
                 <span>
@@ -123,90 +123,109 @@
               </span>
               {{ $t("notifyMe") }}
             </label>
-            </div>
-            <div v-if="model.is_onbadge" class="custom-mt-8">
+          </div>
+          <div v-if="model.is_onbadge" class="custom-mt-8">
             <div class="hint">
-                {{ $t('notifyMeAlert') }}
-                <span class="badge smaller">1</span>
+              {{ $t("notifyMeAlert") }}
+              <span class="badge smaller">1</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-if="!isModeUpdate && model.is_repeating" class="field">
-        <div class="name for-input">
-          {{ $t("howOften.name") }}
-        </div>
-        <div class="value">
-          <div class="wa-select solid">
-            <select v-model="model.repeating_interval">
-              <option value="month">{{ $t("howOften.list[0]") }}</option>
-              <option value="day">{{ $t("howOften.list[1]") }}</option>
-              <option value="week">{{ $t("howOften.list[2]") }}</option>
-              <option value="year">{{ $t("howOften.list[3]") }}</option>
-              <option value="custom">{{ $t("howOften.list[4]") }}</option>
-            </select>
-          </div>
-
-          <div
-            v-if="model.repeating_interval === 'custom'"
-            class="custom-mt-16"
-          >
-            {{ $t("howOften.every") }}
-            <input
-              v-model.number="model.repeating_frequency"
-              :class="{ 'state-error': $v.model.repeating_frequency.$error }"
-              type="text"
-              class="shorter custom-ml-8"
-            />
-            <div class="wa-select solid custom-ml-8">
-              <select v-model="custom_interval">
-                <option value="month">
-                  {{ $t("howOften.list_short[0]") }}
-                </option>
-                <option value="day">{{ $t("howOften.list_short[1]") }}</option>
-                <option value="week">{{ $t("howOften.list_short[2]") }}</option>
-                <option value="year">{{ $t("howOften.list_short[3]") }}</option>
-              </select>
+      <TransitionCollapseHeight>
+        <div v-show="!isModeUpdate && model.is_repeating">
+          <div class="field custom-pt-16">
+            <div class="name for-input">
+              {{ $t("howOften.name") }}
             </div>
-          </div>
-        </div>
-      </div>
+            <div class="value">
+              <div class="wa-select solid">
+                <select v-model="model.repeating_interval">
+                  <option value="month">{{ $t("howOften.list[0]") }}</option>
+                  <option value="day">{{ $t("howOften.list[1]") }}</option>
+                  <option value="week">{{ $t("howOften.list[2]") }}</option>
+                  <option value="year">{{ $t("howOften.list[3]") }}</option>
+                  <option value="custom">{{ $t("howOften.list[4]") }}</option>
+                </select>
+              </div>
 
-      <div v-if="!isModeUpdate && model.is_repeating" class="field">
-        <div class="name for-input">
-          {{ $t("endRepeat.name") }}
-        </div>
-        <div class="value">
-          <div class="wa-select solid">
-            <select v-model="model.repeating_end_type">
-              <option value="never">{{ $t("endRepeat.list[0]") }}</option>
-              <option value="after">{{ $t("endRepeat.list[1]") }}</option>
-              <option value="ondate">{{ $t("endRepeat.list[2]") }}</option>
-            </select>
-          </div>
-
-          <div
-            v-if="model.repeating_end_type === 'ondate'"
-            class="custom-mt-16"
-          >
-            <div class="state-with-inner-icon left">
-              <DateField v-model="model.repeating_end_ondate" />
-              <span class="icon"><i class="fas fa-calendar"></i></span>
+              <div
+                v-if="model.repeating_interval === 'custom'"
+                class="custom-mt-16"
+              >
+                {{ $t("howOften.every") }}
+                <input
+                  v-model.number="model.repeating_frequency"
+                  :class="{
+                    'state-error': $v.model.repeating_frequency.$error,
+                  }"
+                  type="text"
+                  class="shorter custom-ml-8"
+                />
+                <div class="wa-select solid custom-ml-8">
+                  <select v-model="custom_interval">
+                    <option value="month">
+                      {{ $t("howOften.list_short[0]") }}
+                    </option>
+                    <option value="day">
+                      {{ $t("howOften.list_short[1]") }}
+                    </option>
+                    <option value="week">
+                      {{ $t("howOften.list_short[2]") }}
+                    </option>
+                    <option value="year">
+                      {{ $t("howOften.list_short[3]") }}
+                    </option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div v-if="model.repeating_end_type === 'after'" class="custom-mt-16">
-            <input
-              v-model.number="model.repeating_end_after"
-              type="text"
-              class="shorter"
-              :class="{ 'state-error': $v.model.repeating_end_after.$error }"
-            />
-            <span class="custom-ml-8">{{ $t("endRepeat.occurrences") }}</span>
+          <div class="field">
+            <div class="name for-input">
+              {{ $t("endRepeat.name") }}
+            </div>
+            <div class="value">
+              <div class="wa-select solid">
+                <select v-model="model.repeating_end_type">
+                  <option value="never">{{ $t("endRepeat.list[0]") }}</option>
+                  <option value="after">{{ $t("endRepeat.list[1]") }}</option>
+                  <option value="ondate">{{ $t("endRepeat.list[2]") }}</option>
+                </select>
+              </div>
+
+              <div
+                v-if="model.repeating_end_type === 'ondate'"
+                class="custom-mt-16"
+              >
+                <div class="state-with-inner-icon left">
+                  <DateField v-model="model.repeating_end_ondate" />
+                  <span class="icon"><i class="fas fa-calendar"></i></span>
+                </div>
+              </div>
+
+              <div
+                v-if="model.repeating_end_type === 'after'"
+                class="custom-mt-16"
+              >
+                <input
+                  v-model.number="model.repeating_end_after"
+                  type="text"
+                  class="shorter"
+                  :class="{
+                    'state-error': $v.model.repeating_end_after.$error,
+                  }"
+                />
+                <span class="custom-ml-8">{{
+                  $t("endRepeat.occurrences")
+                }}</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </TransitionCollapseHeight>
 
       <div class="field">
         <div class="name for-input">
@@ -229,7 +248,7 @@
             <select
               v-model="model.account_id"
               :class="{ 'state-error': $v.model.account_id.$error }"
-              style="width: auto;"
+              style="width: auto"
             >
               <option
                 :value="account.id"
@@ -311,7 +330,7 @@
             <select
               v-model="model.category_id"
               :class="{ 'state-error': $v.model.category_id.$error }"
-              style="width: auto;"
+              style="width: auto"
             >
               <option
                 :value="category.id"
@@ -386,6 +405,7 @@ import { required, requiredIf, integer } from 'vuelidate/lib/validators'
 import InputCurrency from '@/components/InputCurrency'
 import InputContractor from '@/components/Inputs/InputContractor'
 import DateField from '@/components/InputDate'
+import TransitionCollapseHeight from '@/components/Transitions/TransitionCollapseHeight'
 export default {
   props: {
     transaction: {
@@ -400,7 +420,8 @@ export default {
   components: {
     InputCurrency,
     InputContractor,
-    DateField
+    DateField,
+    TransitionCollapseHeight
   },
 
   data () {

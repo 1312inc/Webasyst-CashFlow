@@ -23,7 +23,7 @@
         {{ $t("emptyList") }}
       </div>
       <Observer
-        v-if="observer && (transactions.data.length < transactions.total)"
+        v-if="observer && transactions.data.length < transactions.total"
         @callback="observerCallback"
       />
     </div>
@@ -89,8 +89,12 @@ export default {
           return add('ungroup', e)
         }
 
-        // if future
-        if (e.date > today) {
+        // if future and not details mode
+        if (
+          e.date > today &&
+          !this.$store.state.transaction.detailsInterval.from &&
+            !this.$store.state.transaction.detailsInterval.to
+        ) {
           return add('future', e)
         }
 
