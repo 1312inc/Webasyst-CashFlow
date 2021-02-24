@@ -1,3 +1,5 @@
+import updateHeaderTodayCounter from '../utils/updateHeaderTodayCounter'
+
 export default (store) => {
   // listen to mutations
   store.subscribe(({ type, payload }, state) => {
@@ -18,6 +20,9 @@ export default (store) => {
         break
       case 'transaction/setDetailsInterval':
         store.commit('transactionBulk/emptySelectedTransactionsIds')
+        break
+      case 'transaction/setTodayCount':
+        updateHeaderTodayCounter(payload)
         break
       case 'account/update':
         return Promise.all([
