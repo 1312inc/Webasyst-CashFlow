@@ -134,5 +134,9 @@
   "error": {
     "http": "Request failed",
     "api": "API error"
+  },
+  "arrow": {
+    "up": "Hooray! Going positive on",
+    "down": "Cash gap is coming on"
   }
 }

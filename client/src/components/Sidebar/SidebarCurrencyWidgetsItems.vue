@@ -18,18 +18,19 @@
         </div>
         <div v-if="alertDate" class="custom-ml-4">
           <span
+            :title="title"
             :class="
               alertDate.amount >= 0 ? 'c-bwc-badge--green' : 'c-bwc-badge--red'
             "
             class="c-bwc-badge small nowrap"
             ><i
               :class="
-                alertDate.amount >= 0 ? 'fa-check' : 'fa-exclamation-triangle'
+                alertDate.amount >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'
               "
               class="fas custom-mr-4"
               style="color: white"
             ></i
-            >{{ $moment(alertDate.period).format("MMM Do") }}</span
+            >{{ date }}</span
           >
         </div>
       </div>
@@ -57,6 +58,12 @@ export default {
           Math.sign(nowAmount) !== Math.sign(element.amount)
         )
       })
+    },
+    date () {
+      return this.$moment(this.alertDate.period).format('MMM Do')
+    },
+    title () {
+      return (this.alertDate.amount >= 0 ? this.$t('arrow.up') : this.$t('arrow.down')) + ' ' + this.date
     }
   }
 }
