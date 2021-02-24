@@ -27,7 +27,7 @@
       ref="menu"
       :style="`width:${$refs.input.offsetWidth}px;`"
       tabindex="0"
-      class="c-autocomplete-menu custom-m-0 custom-p-0"
+      class="c-autocomplete-menu custom-m-0 custom-p-0 z-20"
     >
       <li
         @mousedown="select(i)"

@@ -1,62 +1,31 @@
 <template>
-  <div class="custom-mt-24">
-    <div v-if="balanceFlow.length > 1" class="custom-mx-16">
+  <div v-if="balanceFlow.length > 1" class="custom-mt-24">
+    <div class="custom-mx-16">
       <div class="heading custom-mx-0">
-        {{ $t('Next 90 days') }}
+        {{ $t("Next 90 days") }}
       </div>
     </div>
     <ul class="menu">
-      <li v-for="currency in balanceFlow" :key="currency.currency">
-        <router-link
-          :to="`/currency/${currency.currency}`"
-          style="display: block"
-        >
-          <div class="flexbox middle">
-            <div class="wide large bold nowrap">
-              {{
-                $helper.toCurrency({
-                  value: currency.balances.now.amount,
-                  currencyCode: currency.currency,
-                })
-              }}
-            </div>
-            <div class="custom-ml-4">
-              <span
-                class="c-bwc-badge small nowrap"
-                :class="
-                  currency.balances.diff.amount >= 0
-                    ? 'c-bwc-badge--green'
-                    : 'c-bwc-badge--red'
-                "
-                v-html="
-                  `${
-                    currency.balances.diff.amount > 0
-                      ? '+ '
-                      : currency.balances.diff.amount < 0
-                      ? '− '
-                      : ''
-                  }${currency.balances.diff.amountShorten}`
-                "
-              ></span>
-            </div>
-          </div>
-          <CurrencyChart :currency="currency" />
-        </router-link>
-      </li>
+      <SidebarCurrencyWidgetsItems
+        v-for="currency in balanceFlow"
+        :key="currency.currency"
+        :balanceFlow="currency"
+      />
     </ul>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import CurrencyChart from '@/components/CurrencyChart'
+import SidebarCurrencyWidgetsItems from './SidebarCurrencyWidgetsItems'
 export default {
   components: {
-    CurrencyChart
+    SidebarCurrencyWidgetsItems
   },
 
   computed: {
-    ...mapState('balanceFlow', ['balanceFlow'])
+    balanceFlow () {
+      return this.$store.state.balanceFlow.balanceFlow
+    }
   },
 
   mounted () {
@@ -64,19 +33,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.c-bwc-badge {
-  color: #fff;
-  padding: 2px 6px;
-  border-radius: 4px;
-
-  &--green {
-    background: #3ec55e;
-  }
-
-  &--red {
-    background: #fc3d38;
-  }
-}
-</style>
