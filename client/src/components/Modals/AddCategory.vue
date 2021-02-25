@@ -13,6 +13,7 @@
           <input
             v-model="model.name"
             ref="focus"
+            class="bold"
             :class="{ 'state-error': $v.model.name.$error }"
             type="text"
           />
@@ -49,8 +50,14 @@
               {{ $t("profit") }}
             </label>
           </div>
+          <div v-if="model.type === 'income'" class="custom-mt-8">
+            <div class="hint">{{ $t("incomeCategoryExplained") }}</div>
+          </div>
+          <div v-if="model.type === 'expense' && !model.is_profit" class="custom-mt-8">
+            <div class="hint">{{ $t("expenseCategoryExplained") }}</div>
+          </div>
           <div v-if="model.is_profit" class="custom-mt-8">
-            <div class="hint">{{ $t("profitAlert") }}</div>
+            <div class="hint">{{ $t("profitCategoryExplained") }}</div>
           </div>
         </div>
       </div>
