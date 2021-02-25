@@ -387,7 +387,6 @@
             class="wide bold"
             rows="4"
             style="resize: none; height: auto"
-            :placeholder="$t('optional')"
           ></textarea>
         </div>
       </div>
