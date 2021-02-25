@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import TransactionListGroupRow from '@/components/TransactionList/TransactionListGroupRow'
+import TransactionListGroupRow from './TransactionListGroupRow'
 export default {
   components: {
     TransactionListGroupRow

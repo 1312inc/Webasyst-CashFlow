@@ -17,7 +17,7 @@
 <script>
 import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
-import AmChartPieStickyContainer from '@/components/AmChartPieStickyContainer'
+import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {

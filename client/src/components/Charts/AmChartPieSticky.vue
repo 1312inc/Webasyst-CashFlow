@@ -21,8 +21,8 @@
 
 <script>
 import { mapState } from 'vuex'
-import AmChartPie2 from '@/components/AmChartPie2'
-import AmChartLegend from '@/components/AmChartLegend'
+import AmChartPie2 from './AmChartPie2'
+import AmChartLegend from './AmChartLegend'
 
 export default {
   components: {

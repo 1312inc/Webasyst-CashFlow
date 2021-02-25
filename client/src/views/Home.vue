@@ -23,10 +23,10 @@
 import ChartHeader from '@/components/ChartHeader'
 import ChartHeaderControls from '@/components/ChartHeaderControls'
 import ChartHeaderTitle from '@/components/ChartHeaderTitle'
-import AmChart from '@/components/AmChart'
+import AmChart from '@/components/Charts/AmChart'
 import DetailsDashboard from '@/components/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
-import AmChartPieStickyContainer from '@/components/AmChartPieStickyContainer'
+import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {

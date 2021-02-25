@@ -33,8 +33,8 @@
 
 <script>
 import Modal from '@/components/Modal'
-import Account from '@/components/AddAccount'
-import Category from '@/components/AddCategory'
+import Account from '@/components/Modals/AddAccount'
+import Category from '@/components/Modals/AddCategory'
 export default {
   components: {
     Modal,
