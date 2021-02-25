@@ -38,7 +38,7 @@ class cashAutocomplete
         $search_terms[] = $q;
 
         $name_ar = preg_split('/\s+/', $q);
-        if (count($name_ar) == 2) {
+        if (count($name_ar) > 1) {
             $name_condition =
                 "((c.firstname LIKE '%" . $m->escape($name_ar[0], 'like') . "%' AND c.lastname LIKE '%" . $m->escape(
                     $name_ar[1],
@@ -201,6 +201,7 @@ class cashAutocomplete
                         'value' => $c['id'],
                         'name' => $c['name'],
                         'firstname' => $c['firstname'],
+                        'middlename' => $c['middlename'],
                         'lastname' => $c['lastname'],
                         'photo_url' => waContact::getPhotoUrl($c['id'], $c['photo'], 96),
                         'photo_url_absolute' => rtrim(wa()->getUrl(true), '/') . $photo,
