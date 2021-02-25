@@ -50,7 +50,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import DateField from '@/components/InputDate'
+import DateField from '@/components/Inputs/InputDate'
 export default {
   components: {
     DateField

@@ -97,8 +97,8 @@
 </template>
 
 <script>
-import TransactionListGroupUpcomingPeriod from '@/components/TransactionList/TransactionListGroupUpcomingPeriod'
-import TransactionListGroupRow from '@/components/TransactionList/TransactionListGroupRow'
+import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPeriod'
+import TransactionListGroupRow from './TransactionListGroupRow'
 import AmountForGroup from '@/components/AmountForGroup'
 export default {
   props: {

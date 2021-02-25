@@ -90,7 +90,7 @@
 
 <script>
 import Modal from '@/components/Modal'
-import AddTransaction from '@/components/AddTransaction'
+import AddTransaction from '@/components/Modals/AddTransaction'
 import TransactionListCompleteButton from './TransactionListCompleteButton'
 
 export default {

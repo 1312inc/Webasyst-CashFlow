@@ -31,10 +31,10 @@
 </template>
 
 <script>
-import TransactionListCreated from '@/components/TransactionList/TransactionListCreated'
-import TransactionListGroup from '@/components/TransactionList/TransactionListGroup'
-import SkeletonTransaction from '@/components/SkeletonTransaction'
-import Observer from '@/components/Observer'
+import TransactionListCreated from './TransactionListCreated'
+import TransactionListGroup from './TransactionListGroup'
+import SkeletonTransaction from './SkeletonTransaction'
+import Observer from './Observer'
 
 export default {
   props: {

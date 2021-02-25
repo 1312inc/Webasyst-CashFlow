@@ -95,7 +95,7 @@
 <script>
 import { required } from 'vuelidate/lib/validators'
 import updateEntityMixin from '@/mixins/updateEntityMixin'
-import ColorPicker from '@/components/ColorPicker'
+import ColorPicker from '@/components/Inputs/ColorPicker'
 export default {
   mixins: [updateEntityMixin],
 
