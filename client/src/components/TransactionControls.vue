@@ -72,8 +72,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
-import AddTransaction from '@/components/AddTransaction'
-import TransactionMove from '@/components/TransactionMove'
+import AddTransaction from '@/components/Modals/AddTransaction'
+import TransactionMove from '@/components/Modals/TransactionMove'
 export default {
   props: {
     direction: {
