@@ -412,9 +412,9 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { required, requiredIf, integer } from 'vuelidate/lib/validators'
-import InputCurrency from '@/components/InputCurrency'
+import InputCurrency from '@/components/Inputs/InputCurrency'
 import InputContractor from '@/components/Inputs/InputContractor'
-import DateField from '@/components/InputDate'
+import DateField from '@/components/Inputs/InputDate'
 import TransitionCollapseHeight from '@/components/Transitions/TransitionCollapseHeight'
 export default {
   props: {

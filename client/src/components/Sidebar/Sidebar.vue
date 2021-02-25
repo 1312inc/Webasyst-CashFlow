@@ -85,7 +85,7 @@ import SidebarCategoryList from './SidebarCategoryList'
 import SidebarCategoryListItem from './SidebarCategoryListItem'
 import SidebarHeading from './SidebarHeading'
 import SidebarFooter from './SidebarFooter'
-import SearchField from '@/components/SearchField'
+import SearchField from '@/components/Inputs/SearchField'
 import SidebarCurrencyWidgets from './SidebarCurrencyWidgets'
 import Bricks from '@/components/Bricks/Bricks'
 
