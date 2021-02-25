@@ -53,6 +53,14 @@ export default {
     upnext: {
       type: Boolean,
       default: false
+    },
+    showTodayGroup: {
+      type: Boolean,
+      default: true
+    },
+    showYesterdayGroup: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -69,19 +77,19 @@ export default {
     },
     groups () {
       const today = this.$moment().format('YYYY-MM-DD')
-      const result = []
-
-      function add (name, transaction) {
-        const i = result.find(e => e.name === name)
-        if (!i) {
+      const yesterday = this.$moment().add(-1, 'day').format('YYYY-MM-DD')
+      const add = (name, transaction) => {
+        const t = result.find(e => e.name === name)
+        if (!t) {
           result.push({
             name: name,
             items: [transaction]
           })
         } else {
-          i.items.push(transaction)
+          t.items.push(transaction)
         }
       }
+      const result = []
 
       this.$store.state.transaction.transactions.data.forEach(e => {
         // if no grouping
@@ -98,19 +106,30 @@ export default {
           return add('future', e)
         }
 
-        if (this.upnext) {
-          // if yesterday
-          const yesterday = this.$moment()
-            .add(-1, 'day')
-            .format('YYYY-MM-DD')
-          if (e.date === yesterday) {
-            return add('yesterday', e)
-          }
+        // add today object
+        if (this.showTodayGroup && !result.find(e => e.name === 'today')) {
+          result.push({
+            name: 'today',
+            items: []
+          })
         }
 
         // if today
         if (e.date === today) {
           return add('today', e)
+        }
+
+        // add yesterday object
+        if (this.showYesterdayGroup && !result.find(e => e.name === 'yesterday')) {
+          result.push({
+            name: 'yesterday',
+            items: []
+          })
+        }
+
+        // if yesterday
+        if (e.date === yesterday) {
+          return add('yesterday', e)
         }
 
         // if past

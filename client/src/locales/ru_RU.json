@@ -21,6 +21,7 @@
   "color": "Цвет",
   "icon": "Иконка",
   "desc": "Описание",
+  "noDesc": "нет описания",
   "addTransaction": "Добавить операцию",
   "updateTransaction": "Редактировать операцию",
   "applyTo": {

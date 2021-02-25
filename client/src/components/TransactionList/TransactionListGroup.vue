@@ -78,7 +78,7 @@
       </div>
 
       <div v-if="upcomingBlockOpened">
-        <transition-group name="list" tag="ul" class="c-list list">
+        <transition-group v-if="filteredTransactions.length" name="list" tag="ul" class="c-list list">
           <TransactionListGroupRow
             v-for="transaction in type === 'future'
               ? [...filteredTransactions].reverse()
@@ -88,6 +88,9 @@
             :showChecker="isShowChecker"
           />
         </transition-group>
+        <div v-else class="align-center custom-py-24">
+          {{ $t("emptyList") }}
+        </div>
       </div>
     </div>
   </div>
