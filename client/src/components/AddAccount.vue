@@ -13,6 +13,7 @@
           <input
             v-model="model.name"
             ref="focus"
+            class="bold"
             :class="{ 'state-error': $v.model.name.$error }"
             type="text"
           />
