@@ -287,7 +287,7 @@ class cashConfig extends waAppConfig
     /**
      * The method returns a counter to show in backend header near applications' icons.
      * Three types of response are allowed.
-     * @return string|int - A prime number in the form of a int or string
+     * @return string|int|array - A prime number in the form of a int or string
      * @return array - Array with keys 'count' - the value of the counter and 'url' - icon url
      * @return array - An associative array in which the key is the object key from app.php, from the header_items.
      *                 The value must be identical to the value described in one of the previous types of response.
@@ -296,17 +296,18 @@ class cashConfig extends waAppConfig
     {
         cash()->getEventDispatcher()->dispatch(new cashEventOnCount(waRequest::request('idle')));
 
+        $url = null;
         try {
             $url = $this->getBackendUrl(true) . $this->application . '/';
-            $request = new cashApiTransactionGetBadgeCountRequest();
+            $request = new cashApiTransactionGetTodayCountRequest();
             $request->today = DateTimeImmutable::createFromFormat('Y-m-d', waDateTime::format('Y-m-d'));
-            $response = (new cashApiTransactionGetBadgeCountHandler())->handle($request);
-            if ($response->count) {
-                if (wa()->whichUI(cashConfig::APP_ID) === '2.0') {
+            $response = (new cashApiTransactionGetTodayCountHandler())->handle($request);
+            if ($response->onBadge) {
+                if (wa()->whichUI(self::APP_ID) === '2.0') {
                     $url .= 'upnext';
                 }
 
-                return ['count' => $response->count, 'url' => $url];
+                return ['count' => $response->onBadge, 'url' => $url];
             }
         } catch (Exception $exception) {
             cash()->getLogger()->debug(sprintf('onCount error %s', $exception->getMessage()));
