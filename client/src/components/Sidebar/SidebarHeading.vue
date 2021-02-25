@@ -6,7 +6,7 @@
     </a>
     <portal>
       <Modal v-if="openModal" @close="openModal = false">
-        <component :is="updatingEntityName"></component>
+        <component :is="updatingEntityName" :type="type"></component>
       </Modal>
     </portal>
   </h6>
@@ -14,10 +14,10 @@
 
 <script>
 import Modal from '@/components/Modal'
-import Account from '@/components/AddAccount'
-import Category from '@/components/AddCategory'
+import Account from '@/components/Modals/AddAccount'
+import Category from '@/components/Modals/AddCategory'
 export default {
-  props: ['updatingEntityName'],
+  props: ['updatingEntityName', 'type'],
 
   components: {
     Modal,

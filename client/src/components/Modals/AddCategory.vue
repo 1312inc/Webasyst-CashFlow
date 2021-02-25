@@ -13,6 +13,7 @@
           <input
             v-model="model.name"
             ref="focus"
+            class="bold"
             :class="{ 'state-error': $v.model.name.$error }"
             type="text"
           />
@@ -49,8 +50,14 @@
               {{ $t("profit") }}
             </label>
           </div>
+          <div v-if="model.type === 'income'" class="custom-mt-8">
+            <div class="hint">{{ $t("incomeCategoryExplained") }}</div>
+          </div>
+          <div v-if="model.type === 'expense' && !model.is_profit" class="custom-mt-8">
+            <div class="hint">{{ $t("expenseCategoryExplained") }}</div>
+          </div>
           <div v-if="model.is_profit" class="custom-mt-8">
-            <div class="hint">{{ $t("profitAlert") }}</div>
+            <div class="hint">{{ $t("profitCategoryExplained") }}</div>
           </div>
         </div>
       </div>
@@ -60,7 +67,7 @@
           {{ $t("color") }}
         </div>
         <div class="value">
-          <ColorPicker :startColor="model.color" @colorChange="selectColor" />
+          <ColorPicker v-model="model.color" />
         </div>
       </div>
     </div>
@@ -88,11 +95,21 @@
 <script>
 import { required } from 'vuelidate/lib/validators'
 import updateEntityMixin from '@/mixins/updateEntityMixin'
-import ColorPicker from '@/components/ColorPicker'
+import ColorPicker from '@/components/Inputs/ColorPicker'
 export default {
   mixins: [updateEntityMixin],
 
-  props: ['editedItem'],
+  props: {
+    editedItem: {
+      type: Object
+    },
+    type: {
+      type: String,
+      validator: value => {
+        return ['income', 'expense'].indexOf(value) !== -1
+      }
+    }
+  },
 
   components: {
     ColorPicker
@@ -123,21 +140,22 @@ export default {
 
   watch: {
     'model.type' () {
-      this.model.color = this.model.type === 'income' ? '#00FF00' : '#E57373'
       if (!this.isModeUpdate) {
         this.model.is_profit = false
       }
     }
   },
 
-  mounted () {
-    this.$refs.focus.focus()
+  created () {
+    if (this.type) {
+      this.model.type = this.type
+      this.model.color = this.model.type === 'income' ? '#00FF00' : '#E57373'
+    }
   },
 
-  methods: {
-    selectColor (color) {
-      this.model.color = color
-    }
+  mounted () {
+    this.$refs.focus.focus()
   }
+
 }
 </script>

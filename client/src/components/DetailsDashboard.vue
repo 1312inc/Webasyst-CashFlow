@@ -84,8 +84,8 @@
 import api from '@/plugins/api'
 import { mapState } from 'vuex'
 import Modal from '@/components/Modal'
-import ChartPie from '@/components/AmChartPie'
-import AmChartLegend from '@/components/AmChartLegend'
+import ChartPie from '@/components/Charts/AmChartPie'
+import AmChartLegend from '@/components/Charts/AmChartLegend'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 
 export default {

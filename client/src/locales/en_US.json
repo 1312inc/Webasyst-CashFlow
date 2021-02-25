@@ -4,11 +4,11 @@
   "expense": "Expense",
   "income": "Income",
   "balance": "Balance",
-  "addAccount": "Add Account",
+  "addAccount": "New Account",
   "updateAccount": "Update Account",
-  "addCategory": "Add Category",
+  "addCategory": "New Category",
   "updateCategory": "Update Category",
-  "newTransfer": "New transfer",
+  "newTransfer": "New Transfer",
   "add": "Add",
   "update": "Update",
   "or": "or",
@@ -19,8 +19,9 @@
   "currency": "Currency",
   "type": "Type",
   "color": "Color",
-  "icon": "Icon",
+  "icon": "Logo",
   "desc": "Description",
+  "noDesc": "no description",
   "addTransaction": "Add Transaction",
   "updateTransaction": "Update Transaction",
   "applyTo": {
@@ -126,13 +127,19 @@
   "importResults": "Import Results",
   "setDates": "Adjust Dates",
   "close": "Close",
-  "profit": "Profit",
-  "profitAlert": "Profit message",
+  "profit": "Profit (cash out)",
+  "incomeCategoryExplained": "Income transactions increase the account balance.",
+  "expenseCategoryExplained": "Expense transactions decrease the account balance.",
+  "profitCategoryExplained": "For business, profit is similar to expense because its taking money out of business and thus decreasing the account balance. The Profit checkbox allows you to visually group this kind of expenses into a separate blue columns.",
   "notifyMe": "Notify Me",
   "notifyMeAlert": "When due, the app will count & show this transaction right on the app icon",
   "showNavigationLink": "Show Navigation",
   "error": {
     "http": "Request failed",
     "api": "API error"
+  },
+  "arrow": {
+    "up": "Hooray! Going positive on",
+    "down": "Cash gap is coming on"
   }
 }

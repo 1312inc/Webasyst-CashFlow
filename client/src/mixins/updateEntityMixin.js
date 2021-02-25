@@ -34,7 +34,6 @@ export default {
           .dispatch(`${entity}/delete`, this.model.id)
           .then(() => {
             this.close()
-            this.$router.push({ name: 'Home' })
           })
       }
     },

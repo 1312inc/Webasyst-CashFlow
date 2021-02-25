@@ -38,7 +38,7 @@
         <div class="wide">
             <div class="custom-mb-8 black semibold">
               <span v-if="transaction.description">{{ transaction.description }}</span>
-              <span v-if="!transaction.description" class="gray">{{ $t('no description') }}</span>
+              <span v-if="!transaction.description" class="gray">{{ $t('noDesc') }}</span>
               <span
                 v-if="transaction.repeating_id"
                 class="tooltip custom-ml-4"
@@ -90,7 +90,7 @@
 
 <script>
 import Modal from '@/components/Modal'
-import AddTransaction from '@/components/AddTransaction'
+import AddTransaction from '@/components/Modals/AddTransaction'
 import TransactionListCompleteButton from './TransactionListCompleteButton'
 
 export default {

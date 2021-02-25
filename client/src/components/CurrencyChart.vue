@@ -26,14 +26,14 @@ export default {
 
   computed: {
     data () {
-      const istart = this.$moment().add(-7, 'd')
-      const iend = this.$moment().add(1, 'M')
+      const istart = this.$moment().add(-1, 'M')
+      const iend = this.$moment().add(3, 'M')
       const daysInInterval = iend.diff(istart, 'days') + 1
 
       // Filling empty data
       const filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
         return {
-          period: this.$moment().add(-7, 'd').add(i, 'd').format('YYYY-MM-DD'),
+          period: this.$moment().add(-1, 'M').add(i, 'd').format('YYYY-MM-DD'),
           amount: null
         }
       })
@@ -209,6 +209,18 @@ export default {
         .attr('stop-color', d => d.color)
 
       // Gradient for the line
+      const amountRange = Math.abs(d3.max(this.data, d => d.amount)) + Math.abs(d3.min(this.data, d => d.amount))
+      const amountMax = d3.max(this.data, d => d.amount)
+      const amountMin = d3.min(this.data, d => d.amount)
+      let offset
+      if (amountMax < 0) {
+        offset = 0
+      } else if (amountMin >= 0) {
+        offset = height
+      } else {
+        offset = Math.ceil(Math.abs(d3.max(this.data, d => d.amount)) / amountRange * 100) + '%'
+      }
+
       this.svg
         .append('linearGradient')
         .attr('id', `line-gradient-${this._uid}`)
@@ -219,12 +231,18 @@ export default {
         .attr('y2', height)
         .selectAll('stop')
         .data([
-          { offset: y(0) / (height - 1), color: '#3ec55e' },
-          { offset: y(0) / (height - 1), color: '#fc3d38' }
+          { offset: offset, color: '#3ec55e' },
+          { offset: offset, color: '#fc3d38' }
         ])
         .join('stop')
         .attr('offset', d => d.offset)
         .attr('stop-color', d => d.color)
+
+      this.svg.append('circle')
+        .attr('cx', x(new Date()))
+        .attr('cy', y(futureDates[0].amount))
+        .attr('r', 3)
+        .attr('fill', futureDates[0].amount < 0 ? '#fc3d38' : '#3ec55e')
     }
   }
 }

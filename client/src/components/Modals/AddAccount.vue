@@ -13,6 +13,7 @@
           <input
             v-model="model.name"
             ref="focus"
+            class="bold"
             :class="{ 'state-error': $v.model.name.$error }"
             type="text"
           />
@@ -124,8 +125,8 @@
 <script>
 import { required } from 'vuelidate/lib/validators'
 import updateEntityMixin from '@/mixins/updateEntityMixin'
-import InputCurrency from '@/components/InputCurrency'
-import IconUploader from '@/components/IconUploader'
+import InputCurrency from '@/components/Inputs/InputCurrency'
+import IconUploader from '@/components/Inputs/IconUploader'
 export default {
   mixins: [updateEntityMixin],
 

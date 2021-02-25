@@ -10,7 +10,7 @@ export default {
 
   getters: {
     getBalanceFlowByCode: state => code => {
-      return state.balanceFlow.find(c => c.currency === code) || state.balanceFlow[0]
+      return state.balanceFlow.find(c => c.currency === code)
     }
   },
 
@@ -25,8 +25,8 @@ export default {
       try {
         const { data } = await api.get('cash.aggregate.getBalanceFlow', {
           params: {
-            from: moment().add(-7, 'd').format('YYYY-MM-DD'),
-            to: moment().add(1, 'M').format('YYYY-MM-DD'),
+            from: moment().add(-1, 'M').format('YYYY-MM-DD'),
+            to: moment().add(3, 'M').format('YYYY-MM-DD'),
             group_by: 'day'
           }
         })
