@@ -33,13 +33,14 @@ export default new Vuex.Store({
 
   actions: {
     updateCurrentEntity ({ commit, getters }, { name, id }) {
-      commit('setCurrentEntity', { name, id })
       if (name && id) {
+        commit('setCurrentEntity', { name, id })
         commit('transaction/updateQueryParams', { filter: `${name}/${id}` })
       } else {
         // if Home page
         const defaultCurrency = getters['account/currenciesInAccounts'][0]
         if (defaultCurrency) {
+          commit('setCurrentEntity', { name: 'currency', id: defaultCurrency })
           commit('transaction/updateQueryParams', { filter: `currency/${defaultCurrency}` })
         }
       }
