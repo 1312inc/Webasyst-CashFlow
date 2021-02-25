@@ -21,6 +21,7 @@
   "color": "Color",
   "icon": "Icon",
   "desc": "Description",
+  "noDesc": "no description",
   "addTransaction": "Add Transaction",
   "updateTransaction": "Update Transaction",
   "applyTo": {

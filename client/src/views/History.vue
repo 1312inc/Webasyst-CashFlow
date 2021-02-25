@@ -7,7 +7,7 @@
     </ChartHeader>
     <div class="flexbox">
       <div class="wide">
-        <TransactionList />
+        <TransactionList :showTodayGroup="false" :showYesterdayGroup="true" />
       </div>
       <AmChartPieStickyContainer class="width-40" />
     </div>
@@ -32,7 +32,7 @@ export default {
   mounted () {
     this.$store.dispatch('transaction/fetchTransactions', {
       from: '',
-      to: this.$moment().format('YYYY-MM-DD'),
+      to: this.$moment().add(-1, 'd').format('YYYY-MM-DD'),
       offset: 0,
       filter: ''
     })

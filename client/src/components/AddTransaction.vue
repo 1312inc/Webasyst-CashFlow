@@ -195,21 +195,31 @@
                   <option value="ondate">{{ $t("endRepeat.list[2]") }}</option>
                 </select>
               </div>
+            </div>
+          </div>
+        </div>
+      </TransitionCollapseHeight>
 
+      <TransitionCollapseHeight>
+        <div
+          v-if="
+            !isModeUpdate &&
+            model.is_repeating &&
+            model.repeating_end_type !== 'never'
+          "
+        >
+          <div class="field custom-pt-16">
+            <div class="name for-input"></div>
+            <div class="value">
               <div
                 v-if="model.repeating_end_type === 'ondate'"
-                class="custom-mt-16"
+                class="state-with-inner-icon left"
               >
-                <div class="state-with-inner-icon left">
-                  <DateField v-model="model.repeating_end_ondate" />
-                  <span class="icon"><i class="fas fa-calendar"></i></span>
-                </div>
+                <DateField v-model="model.repeating_end_ondate" />
+                <span class="icon"><i class="fas fa-calendar"></i></span>
               </div>
 
-              <div
-                v-if="model.repeating_end_type === 'after'"
-                class="custom-mt-16"
-              >
+              <div v-if="model.repeating_end_type === 'after'">
                 <input
                   v-model.number="model.repeating_end_after"
                   type="text"

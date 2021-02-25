@@ -1,36 +1,37 @@
 <template>
-  <div class="collapse-container" ref="observer">
-    <div ref="observable">
-      <slot></slot>
-    </div>
-  </div>
+  <transition
+    name="collapse"
+    @before-enter="beforeEnter"
+    @enter="enter"
+    @before-leave="beforeLeave"
+    @leave="leave"
+  >
+    <slot></slot>
+  </transition>
 </template>
 
 <script>
 export default {
-  mounted () {
-    this.resizeObserver = new ResizeObserver(entries => {
-      for (const entry of entries) {
-        if (entry.contentBoxSize) {
-          this.$refs.observer.style.height =
-            entry.contentBoxSize[0].blockSize + 'px'
-        } else {
-          this.$refs.observer.style.height = entry.contentRect.height + 'px'
-        }
-      }
-    })
-
-    this.resizeObserver.observe(this.$refs.observable)
-  },
-
-  beforeDestroy () {
-    this.resizeObserver.unobserve(this.$refs.observable)
+  methods: {
+    beforeEnter: el => {
+      el.style.height = '0'
+    },
+    enter: el => {
+      el.style.height = el.scrollHeight + 'px'
+    },
+    beforeLeave: el => {
+      el.style.height = el.scrollHeight + 'px'
+    },
+    leave: el => {
+      el.style.height = '0'
+    }
   }
 }
 </script>
 
 <style>
-.collapse-container {
+.collapse-enter-active,
+.collapse-leave-active {
   transition: 0.3s ease-out;
   overflow: hidden;
 }
