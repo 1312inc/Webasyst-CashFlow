@@ -3,7 +3,7 @@
     <div
       @click="showPicker = true"
       :class="{ 'c-picker__square--active': showPicker }"
-      :style="`background-color:${startColor};`"
+      :style="`background-color:${value};`"
       class="c-picker__square"
     ></div>
     <transition name="fade">
@@ -16,11 +16,7 @@
 import ClickOutside from 'vue-click-outside'
 import iro from '@jaames/iro'
 export default {
-  props: {
-    startColor: {
-      type: String
-    }
-  },
+  props: ['value'],
 
   data () {
     return {
@@ -31,7 +27,7 @@ export default {
   mounted () {
     this.colorPicker = new iro.ColorPicker('#c-picker', {
       width: 200,
-      color: this.startColor,
+      color: this.value,
       borderWidth: 10,
       borderColor: '#333',
       wheelLightness: false,
@@ -41,7 +37,7 @@ export default {
         }
       ]
     }).on('color:change', color => {
-      this.$emit('colorChange', color.hexString)
+      this.$emit('input', color.hexString)
     })
   },
 
