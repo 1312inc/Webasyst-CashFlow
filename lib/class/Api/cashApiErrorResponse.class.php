@@ -59,7 +59,7 @@ class cashApiErrorResponse implements cashApiResponseInterface, JsonSerializable
     {
         $data = [
             'error' => $this->error,
-            'error_message' => $this->errorMessage,
+            'error_description' => $this->errorMessage,
         ];
 
         if ($this->trace && waSystemConfig::isDebug()) {
