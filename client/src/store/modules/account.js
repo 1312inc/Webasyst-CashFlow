@@ -1,6 +1,5 @@
+import router from '../../router'
 import api from '@/plugins/api'
-// import { moment } from '@/plugins/numeralMoment'
-// import { i18n } from '@/plugins/locale'
 
 export default {
   namespaced: true,
@@ -48,16 +47,6 @@ export default {
       const method = params.id ? 'update' : 'create'
       try {
         await api.post(`cash.account.${method}`, params)
-        // if (parseInt(params.starting_balance) !== 0 && !isNaN(parseInt(params.starting_balance))) {
-        //   await dispatch('transaction/update', {
-        //     id: null,
-        //     amount: params.starting_balance,
-        //     date: moment().format('YYYY-MM-DD'),
-        //     account_id: data.id,
-        //     category_id: parseInt(params.starting_balance) >= 0 ? -2 : -1,
-        //     description: i18n.t('startingBalance')
-        //   }, { root: true })
-        // }
         dispatch('getList')
       } catch (_) {
         return false
@@ -70,6 +59,9 @@ export default {
           params: { id }
         })
         dispatch('getList')
+          .then(() => {
+            router.push({ name: 'Home' })
+          })
       } catch (_) {
         return false
       }

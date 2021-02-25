@@ -23,12 +23,24 @@ export default (store) => {
         break
       case 'transaction/setTodayCount':
         updateHeaderTodayCounter(payload)
-        break
-      case 'account/update':
-        return Promise.all([
-          store.dispatch('transaction/getTodayCount'),
-          store.dispatch('balanceFlow/getBalanceFlow')
-        ])
+    }
+  })
+
+  store.subscribeAction({
+    after: ({ type, payload }, state) => {
+      switch (type) {
+        // delete account
+        case 'account/delete':
+          return Promise.all([
+            store.dispatch('transaction/getTodayCount'),
+            store.dispatch('balanceFlow/getBalanceFlow')
+          ])
+        // create account
+        case 'account/update':
+          if (!payload.id) {
+            store.dispatch('balanceFlow/getBalanceFlow')
+          }
+      }
     }
   })
 }

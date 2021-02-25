@@ -15,7 +15,7 @@ const api = axios.create({
 })
 
 api.interceptors.response.use((response) => {
-  if (response.data.error) {
+  if (response.data?.error) {
     store.commit('errors/error', {
       title: 'error.api',
       method: response.config.url,
@@ -25,7 +25,7 @@ api.interceptors.response.use((response) => {
   }
   return response
 }, (error) => {
-  if (error.response.data.error) {
+  if (error.response.data?.error) {
     store.commit('errors/error', {
       title: 'error.api',
       method: error.response.config.url,

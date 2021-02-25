@@ -539,6 +539,11 @@ export default {
       }
     }
 
+    // if only one account make it active in the select
+    if (!this.isModeUpdate && this.accounts.length === 1) {
+      this.model.account_id = this.accounts[0].id
+    }
+
     // Fill data if Update mode
     if (this.isModeUpdate) {
       for (const prop in this.model) {
