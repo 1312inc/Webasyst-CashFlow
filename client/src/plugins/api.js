@@ -18,6 +18,7 @@ api.interceptors.response.use((response) => {
   if (response.data?.error) {
     store.commit('errors/error', {
       title: 'error.api',
+      method: response.config.url,
       message: response.data.error_description
     })
     return Promise.reject(new Error(response.data.error_description))
@@ -27,12 +28,14 @@ api.interceptors.response.use((response) => {
   if (error.response.data?.error) {
     store.commit('errors/error', {
       title: 'error.api',
+      method: error.response.config.url,
       message: error.response.data.error_description
     })
   } else {
     store.commit('errors/error', {
       title: 'error.http',
-      message: error.message
+      method: error.response.config.url,
+      message: error.response.data
     })
   }
   return Promise.reject(error)

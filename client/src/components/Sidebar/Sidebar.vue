@@ -29,7 +29,7 @@
       </SidebarAccountList>
 
       <!-- Categories list block -->
-      <SidebarHeading class="custom-mt-24" updatingEntityName="Category">
+      <SidebarHeading class="custom-mt-24" updatingEntityName="Category" type="income">
         {{ $t("income") }}
       </SidebarHeading>
       <SidebarCategoryList :categories="categoriesIncome">
@@ -40,7 +40,7 @@
         />
       </SidebarCategoryList>
 
-      <SidebarHeading updatingEntityName="Category">
+      <SidebarHeading updatingEntityName="Category" type="expense">
         {{ $t("expense") }}
       </SidebarHeading>
       <SidebarCategoryList :categories="categoriesExpense">
@@ -85,7 +85,7 @@ import SidebarCategoryList from './SidebarCategoryList'
 import SidebarCategoryListItem from './SidebarCategoryListItem'
 import SidebarHeading from './SidebarHeading'
 import SidebarFooter from './SidebarFooter'
-import SearchField from '@/components/SearchField'
+import SearchField from '@/components/Inputs/SearchField'
 import SidebarCurrencyWidgets from './SidebarCurrencyWidgets'
 import Bricks from '@/components/Bricks/Bricks'
 

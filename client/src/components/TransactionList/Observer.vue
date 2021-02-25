@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import SkeletonTransaction from '@/components/SkeletonTransaction'
+import SkeletonTransaction from './SkeletonTransaction'
 export default {
   components: {
     SkeletonTransaction

@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import AmChartPieSticky from '@/components/AmChartPieSticky'
+import AmChartPieSticky from './AmChartPieSticky'
 import TransactionControls from '@/components/TransactionControls'
 export default {
   components: {
