@@ -67,7 +67,7 @@
           {{ $t("color") }}
         </div>
         <div class="value">
-          <ColorPicker :startColor="model.color" @colorChange="selectColor" />
+          <ColorPicker v-model="model.color" />
         </div>
       </div>
     </div>
@@ -99,7 +99,17 @@ import ColorPicker from '@/components/Inputs/ColorPicker'
 export default {
   mixins: [updateEntityMixin],
 
-  props: ['editedItem'],
+  props: {
+    editedItem: {
+      type: Object
+    },
+    type: {
+      type: String,
+      validator: value => {
+        return ['income', 'expense'].indexOf(value) !== -1
+      }
+    }
+  },
 
   components: {
     ColorPicker
@@ -130,21 +140,22 @@ export default {
 
   watch: {
     'model.type' () {
-      this.model.color = this.model.type === 'income' ? '#00FF00' : '#E57373'
       if (!this.isModeUpdate) {
         this.model.is_profit = false
       }
     }
   },
 
-  mounted () {
-    this.$refs.focus.focus()
+  created () {
+    if (this.type) {
+      this.model.type = this.type
+      this.model.color = this.model.type === 'income' ? '#00FF00' : '#E57373'
+    }
   },
 
-  methods: {
-    selectColor (color) {
-      this.model.color = color
-    }
+  mounted () {
+    this.$refs.focus.focus()
   }
+
 }
 </script>
