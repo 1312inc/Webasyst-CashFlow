@@ -72,7 +72,7 @@
             >
               <div
                 class="с-icon-uploader-image"
-                :style="`background-image:url(${model.icon})`"
+                :style="`background-image:url('${model.icon}')`"
               ></div>
               <div>
                 <a
@@ -175,12 +175,10 @@ export default {
 
 <style lang="scss">
 .с-icon-uploader {
-  height: 40px;
-  position: relative;
 
   &-image {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 0.25rem;
     background: {
       position: center center;
