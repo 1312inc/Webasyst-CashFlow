@@ -141,5 +141,7 @@
   "arrow": {
     "up": "Hooray! Going positive on",
     "down": "Cash gap is coming on"
-  }
+  },
+  "cashGapTooltip": "CASH GAP!\nStart date: {start}\nEnd date: {end}\nMax balance decline: {decline} on {declineDate}",
+  "inDays": "(in {days} days)"
 }
