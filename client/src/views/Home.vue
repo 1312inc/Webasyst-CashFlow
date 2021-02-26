@@ -53,6 +53,11 @@ export default {
     next()
   },
 
+  beforeRouteLeave (to, from, next) {
+    this.$store.commit('setCurrentEntity', { name: '', id: null })
+    next()
+  },
+
   methods: {
     async updateEntity (to) {
       await this.$store.dispatch('updateCurrentEntity', {

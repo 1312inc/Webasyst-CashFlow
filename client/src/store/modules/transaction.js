@@ -54,6 +54,15 @@ export default {
       state.transactions = data
     },
 
+    resetTransactions (state) {
+      state.transactions = {
+        data: [],
+        limit: null,
+        offset: null,
+        total: null
+      }
+    },
+
     updateTransactions (state, data) {
       data.forEach(t => {
         const i = state.transactions.data.findIndex(e => e.id === t.id)
@@ -203,12 +212,14 @@ export default {
       const method = params.id ? 'update' : 'create'
       try {
         const { data } = await api.post(`cash.transaction.${method}`, params)
-        if (method === 'update') {
-          commit('updateTransactions', data)
-          commit('setUpdatedTransactions', data)
-        }
-        if (method === 'create') {
-          commit('setCreatedTransactions', data)
+        if (!('silent' in params)) {
+          if (method === 'update') {
+            commit('updateTransactions', data)
+            commit('setUpdatedTransactions', data)
+          }
+          if (method === 'create') {
+            commit('setCreatedTransactions', data)
+          }
         }
       } catch (_) {
         return false
