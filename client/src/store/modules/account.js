@@ -1,5 +1,7 @@
 import router from '../../router'
 import api from '@/plugins/api'
+import { moment } from '@/plugins/numeralMoment'
+import { i18n } from '@/plugins/locale'
 
 export default {
   namespaced: true,
@@ -46,18 +48,31 @@ export default {
     async update ({ dispatch }, params) {
       const method = params.id ? 'update' : 'create'
       try {
-        await api.post(`cash.account.${method}`, params)
+        const { data } = await api.post(`cash.account.${method}`, params)
+        // make transaction if starting balance added
+        if (parseInt(params.starting_balance) !== 0 && !isNaN(parseInt(params.starting_balance))) {
+          await dispatch('transaction/update', {
+            id: null,
+            amount: params.starting_balance,
+            date: moment().format('YYYY-MM-DD'),
+            account_id: data.id,
+            category_id: parseInt(params.starting_balance) >= 0 ? -2 : -1,
+            description: i18n.t('startingBalance'),
+            silent: true // fetch silently
+          }, { root: true })
+        }
         dispatch('getList')
       } catch (_) {
         return false
       }
     },
 
-    async delete ({ dispatch }, id) {
+    async delete ({ dispatch, commit }, id) {
       try {
         await api.delete('cash.account.delete', {
           params: { id }
         })
+        commit('transaction/resetTransactions', null, { root: true })
         dispatch('getList')
           .then(() => {
             router.push({ name: 'Home' })
