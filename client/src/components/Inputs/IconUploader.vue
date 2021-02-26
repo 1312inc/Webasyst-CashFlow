@@ -1,5 +1,7 @@
 <template>
-  <div class="UppyDragDrop"></div>
+    <div class="box uploadbox custom-p-0">
+      <div class="UppyDragDrop"></div>
+    </div>
 </template>
 
 <script>
@@ -21,7 +23,12 @@ export default {
       }
     })
       .use(DragDrop, {
-        target: '.UppyDragDrop'
+        target: '.UppyDragDrop',
+        locale: {
+          strings: {
+            dropHereOr: this.$t('fileUploaderLabel')
+          }
+        }
       })
       .use(XHRUpload, {
         endpoint: `${window?.appState?.baseApiUrl ||
@@ -30,7 +37,15 @@ export default {
         fieldName: 'logo'
       })
       .on('upload-success', (file, response) => {
-        this.$emit('uploaded', response.body)
+        if (response.body.error) {
+          this.$store.commit('errors/error', {
+            title: 'error.api',
+            method: 'cash.account.uploadLogo',
+            message: response.body.error_description
+          })
+        } else {
+          this.$emit('uploaded', response.body)
+        }
       })
   }
 }
@@ -38,20 +53,21 @@ export default {
 
 <style lang="scss">
 @import "~@uppy/core/dist/style.css";
-@import "~@uppy/drag-drop/dist/style.css";
-
-.uppy-DragDrop-container {
-  position: absolute;
+.UppyDragDrop {
+  position: relative;
+  height: 40px;
 }
-.uppy-DragDrop-inner {
-  padding: 8px;
+.uppy-DragDrop-container {
+  top: 0;
+  left: 0;
+  position: absolute;
+  text-align: center;
 }
 .uppy-DragDrop-arrow {
   display: none;
 }
 .uppy-DragDrop-label {
   font-size: 0.7rem;
-  color: initial;
   margin-bottom: 0;
 }
 </style>

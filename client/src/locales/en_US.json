@@ -143,5 +143,6 @@
     "down": "Cash gap is coming on"
   },
   "cashGapTooltip": "CASH GAP!\nStart date: {start}\nEnd date: {end}\nMax balance decline: {decline} on {declineDate}",
-  "inDays": "(in {days} days)"
+  "inDays": "(in {days} days)",
+  "fileUploaderLabel": "Drop here or browse"
 }
