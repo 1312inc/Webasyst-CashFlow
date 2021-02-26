@@ -11,7 +11,6 @@ export default {
 
   methods: {
     clearDefaultGroupTransactions () {
-      this.$store.commit('setCurrentEntity', { name: '', id: null })
       this.$store.commit('transactionBulk/emptySelectedTransactionsIds')
       this.$store.commit('transaction/setDetailsInterval', {
         from: '',
