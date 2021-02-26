@@ -459,16 +459,12 @@ export default {
       }, dates[0].balance)
 
       const minimumDate = dates.find(d => d.balance === minimumAmount).date
-
       const startDate = dates[0].date
       const endDate = dates[dates.length - 1].date
-      const itoday = this.$moment()
-      const istart = this.$moment(startDate)
-      const iend = this.$moment(endDate)
-      const daysInIntervalStart = istart.diff(itoday, 'days')
-      const daysInIntervalEnd = iend.diff(itoday, 'days')
-      const inDaysStart = (daysInIntervalStart > 0) ? ` (in ${daysInIntervalStart} days)` : ''
-      const inDaysEnd = (daysInIntervalEnd > 0 && !dates[dates.length - 1].isEnd) ? ` (in ${daysInIntervalEnd} days)` : ''
+      const daysInIntervalStart = this.$moment(startDate).diff(this.$moment(), 'days') + 1
+      const daysInIntervalEnd = this.$moment(endDate).diff(this.$moment(), 'days') + 1
+      const inDaysStart = daysInIntervalStart > 0 ? ` ${this.$t('inDays', { days: daysInIntervalStart })}` : ''
+      const inDaysEnd = (daysInIntervalEnd > 0 && !dates[dates.length - 1].isEnd) ? ` ${this.$t('inDays', { days: daysInIntervalEnd })}` : ''
 
       const nbr = this.dateAxis2.createSeriesRange(target)
       nbr.date = new Date(dates[0].date)
@@ -485,7 +481,12 @@ export default {
       nbr.axisFill.tooltip.label.fill = am4core.color('#4a0900')
       nbr.axisFill.tooltip.animationDuration = 500
       nbr.axisFill.tooltipY = 50
-      nbr.axisFill.tooltipText = `CASH GAP!\nStart date:${dates[0].isStart ? ' <=' : ''} ${startDate}${inDaysStart}\nEnd date:${dates[dates.length - 1].isEnd ? ' >=' : ''} ${endDate}${inDaysEnd}\nMax balance decline: ${this.$numeral(minimumAmount).format('0,0[.]00')} ${this.currency} on ${minimumDate}`
+      nbr.axisFill.tooltipText = this.$t('cashGapTooltip', {
+        start: `${dates[0].isStart ? ' <=' : ''} ${this.$moment(startDate).format('L')}${inDaysStart}`,
+        end: `${dates[dates.length - 1].isEnd ? ' >=' : ''} ${this.$moment(endDate).format('L')}${inDaysEnd}`,
+        decline: this.$helper.toCurrency({ value: minimumAmount, currencyCode: this.activeChartData.currency }),
+        declineDate: this.$moment(minimumDate).format('L')
+      })
     }
 
   }
