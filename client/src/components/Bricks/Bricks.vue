@@ -1,5 +1,5 @@
 <template>
-  <div class="c-bricks">
+  <div class="bricks">
     <BrickUpnext />
     <BrickHistory />
   </div>
