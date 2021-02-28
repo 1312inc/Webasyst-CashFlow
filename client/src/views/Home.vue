@@ -8,7 +8,7 @@
         <ChartHeaderControls />
       </template>
     </ChartHeader>
-    <AmChart />
+    <AmChartContainer />
     <DetailsDashboard />
     <div class="flexbox">
       <div class="wide">
@@ -23,7 +23,7 @@
 import ChartHeader from '@/components/ChartHeader'
 import ChartHeaderControls from '@/components/ChartHeaderControls'
 import ChartHeaderTitle from '@/components/ChartHeaderTitle'
-import AmChart from '@/components/Charts/AmChart'
+import AmChartContainer from '@/components/Charts/AmChartContainer'
 import DetailsDashboard from '@/components/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
@@ -36,7 +36,7 @@ export default {
     ChartHeader,
     ChartHeaderControls,
     ChartHeaderTitle,
-    AmChart,
+    AmChartContainer,
     DetailsDashboard,
     TransactionList,
     AmChartPieStickyContainer

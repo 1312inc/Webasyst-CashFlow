@@ -1,7 +1,7 @@
 <template>
   <div
     ref="chartdiv"
-    :style="loadingChart ? 'opacity:.3;' : ''"
+    :style="loadingChart && 'opacity:.3'"
     class="c-chart-main smaller"
   ></div>
 </template>
@@ -16,7 +16,9 @@ import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
 let prefersColorSchemeDark = false
 
-if (window?.appState?.theme === 'dark' || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+if (window.appState?.theme === 'dark' ||
+  (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ||
+  document.getElementById('wa-dark-mode')?.getAttribute('media') === '(prefers-color-scheme: light)') {
   prefersColorSchemeDark = true
   am4core.useTheme(am4themesDark)
 }
@@ -24,20 +26,15 @@ if (window?.appState?.theme === 'dark' || (window.matchMedia && window.matchMedi
 export default {
   computed: {
     ...mapState('transaction', ['chartInterval', 'detailsInterval', 'chartData', 'chartDataCurrencyIndex', 'loadingChart']),
-
     activeChartData () {
       return this.chartData[this.chartDataCurrencyIndex]
     },
-
-    currency () {
+    currencySign () {
       return this.$helper.currencySignByCode(this.activeChartData.currency)
     }
   },
 
   watch: {
-    activeChartData (data) {
-      this.updateChartData(data)
-    },
     detailsInterval (val) {
       if (!val.from) {
         this.dateAxis.zoom({ start: 0, end: 1 })
@@ -49,161 +46,161 @@ export default {
     }
   },
 
-  created () {
-    this.unsubscribeFromMutations = this.$store.subscribe(({ type }) => {
-      switch (type) {
-        case 'transaction/updateChartInterval':
-        case 'transaction/updateTransactions':
-        case 'transaction/deleteTransaction':
-        case 'transaction/setCreatedTransactions':
-          this.$store.dispatch('transaction/getChartData')
-      }
-    })
-
-    this.unsubscribeFromActions = this.$store.subscribeAction({
-      after: ({ type }) => {
-        switch (type) {
-          case 'updateCurrentEntity':
-            this.$store.dispatch('transaction/getChartData')
-        }
-      }
-    })
+  mounted () {
+    this.createChart()
+    this.addDarkModeObserver()
   },
 
-  mounted () {
-    const chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
-    if (locale === 'ru_RU') chart.language.locale = am4langRU
-
-    chart.leftAxesContainer.layout = 'vertical'
-
-    // Date axis for days (balance)
-    const dateAxis2 = chart.xAxes.push(new am4charts.DateAxis())
-    dateAxis2.baseInterval = { timeUnit: 'day', count: 1 }
-    dateAxis2.renderer.grid.template.location = 0.5
-    dateAxis2.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
-    dateAxis2.renderer.grid.template.disabled = true
-    dateAxis2.renderer.labels.template.disabled = true
-    dateAxis2.cursorTooltipEnabled = false
-    this.dateAxis2 = dateAxis2
-
-    // Date axis for groups (columns)
-    const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
-    dateAxis.groupData = true
-    dateAxis.groupCount = 360
-    dateAxis.groupIntervals.setAll([
-      { timeUnit: 'day', count: 1 },
-      { timeUnit: 'month', count: 1 }
-    ])
-    dateAxis.renderer.grid.template.location = 0.5
-    dateAxis.renderer.grid.template.disabled = true
-    dateAxis.renderer.ticks.template.disabled = false
-    dateAxis.renderer.ticks.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.2
-    dateAxis.renderer.ticks.template.strokeWidth = 1
-    dateAxis.renderer.ticks.template.length = 8
-    dateAxis.renderer.ticks.template.location = 0.5
-    dateAxis.renderer.labels.template.location = 0.5
-    dateAxis.renderer.cellStartLocation = 0.15
-    dateAxis.renderer.cellEndLocation = 0.85
-    this.dateAxis = dateAxis
-    this.dateAxis.events.on('groupperiodchanged', ({ target }) => {
-      target.startLocation = target.currentDataSetId.includes('month') ? this.$moment(this.chartInterval.from).date() / this.$moment(this.chartInterval.from).daysInMonth() : 0
-      target.endLocation = target.currentDataSetId.includes('month') ? (this.$moment(this.chartInterval.to).date() - 2) / this.$moment(this.chartInterval.to).daysInMonth() : 1
-    })
-
-    // Balance Axis
-    const balanceAxis = chart.yAxes.push(new am4charts.ValueAxis())
-    balanceAxis.height = 100
-    balanceAxis.marginBottom = 60
-    balanceAxis.cursorTooltipEnabled = false
-    balanceAxis.numberFormatter = new am4core.NumberFormatter()
-    balanceAxis.numberFormatter.numberFormat = '# a'
-    if (!prefersColorSchemeDark) {
-      balanceAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
-      balanceAxis.renderer.gridContainer.background.fillOpacity = 0.3
+  beforeDestroy () {
+    if (this.darkModeObserver) {
+      this.darkModeObserver.disconnect()
     }
-    balanceAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
-    this.balanceAxis = balanceAxis
-
-    // Cols axis
-    const colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
-    colsAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
-    // colsAxis.height = am4core.percent(60)
-    colsAxis.cursorTooltipEnabled = false
-    colsAxis.numberFormatter = new am4core.NumberFormatter()
-    colsAxis.numberFormatter.numberFormat = '# a'
-    this.colsAxis = colsAxis
-
-    // Cursor
-    const cursor = new am4charts.XYCursor()
-    cursor.xAxis = this.dateAxis
-    cursor.lineY.disabled = true
-    cursor.events.on('zoomended', (ev) => {
-      if (ev.target.behavior === 'none') return
-      const range = ev.target.xRange
-      const from = this.$moment(this.dateAxis.positionToDate(range.start)).format('YYYY-MM-DD')
-      const to = this.$moment(this.dateAxis.positionToDate(range.end)).format('YYYY-MM-DD')
-      this.updateDetailsInterval({ from, to })
-    })
-    chart.cursor = cursor
-
-    // Future dates hover
-    const rangeFututre = this.dateAxis.axisRanges.create()
-    rangeFututre.date = this.$moment().set('hour', 12).toDate()
-    rangeFututre.endDate = new Date(8640000000000000)
-    rangeFututre.grid.disabled = true
-    rangeFututre.axisFill.fillOpacity = 0.5
-    rangeFututre.axisFill.fill = '#FFFFFF'
-    chart.seriesContainer.zIndex = -1
-
-    // Currend day line
-    const dateBorder = this.dateAxis.axisRanges.create()
-    dateBorder.date = this.$moment().set('hour', 12).toDate()
-    dateBorder.grid.stroke = prefersColorSchemeDark ? am4core.color('#FFF') : am4core.color('#333333')
-    dateBorder.grid.strokeWidth = 1
-    dateBorder.grid.strokeOpacity = 0.3
-    dateBorder.label.inside = true
-    dateBorder.label.valign = 'middle'
-    dateBorder.label.text = this.$t('today')
-    dateBorder.label.fill = dateBorder.grid.stroke
-    dateBorder.label.fillOpacity = 0.6
-    dateBorder.label.rotation = -90
-    dateBorder.label.verticalCenter = 'middle'
-    dateBorder.label.dx = -8
-
-    // Scrollbar on the bottom
-    chart.scrollbarX = new am4core.Scrollbar()
-    chart.scrollbarX.parent = chart.bottomAxesContainer
-
-    const dateAxisChanged = () => {
-      const from = this.$moment(this.dateAxis.minZoomed).format('YYYY-MM-DD')
-      let to = this.$moment(this.dateAxis.maxZoomed)
-      to = to > this.$moment(this.chartInterval.to) ? this.chartInterval.to : to.format('YYYY-MM-DD')
-      this.updateDetailsInterval({ from, to })
+    if (this.chart) {
+      this.chart.dispose()
     }
+  },
 
-    chart.scrollbarX.thumb.events.on('dragstop', dateAxisChanged)
-    chart.scrollbarX.startGrip.events.on('dragstop', dateAxisChanged)
-    chart.scrollbarX.endGrip.events.on('dragstop', dateAxisChanged)
-    chart.zoomOutButton.events.on('hit', () => {
-      this.updateDetailsInterval({ from: '', to: '' })
-    })
+  methods: {
+    ...mapActions('transaction', ['updateDetailsInterval']),
 
-    /**
+    createChart () {
+      if (this.chart) {
+        this.chart.dispose()
+      }
+
+      const chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
+      if (locale === 'ru_RU') chart.language.locale = am4langRU
+
+      chart.leftAxesContainer.layout = 'vertical'
+
+      // Date axis for days (balance)
+      const dateAxis2 = chart.xAxes.push(new am4charts.DateAxis())
+      dateAxis2.baseInterval = { timeUnit: 'day', count: 1 }
+      dateAxis2.renderer.grid.template.location = 0.5
+      dateAxis2.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
+      dateAxis2.renderer.grid.template.disabled = true
+      dateAxis2.renderer.labels.template.disabled = true
+      dateAxis2.cursorTooltipEnabled = false
+      this.dateAxis2 = dateAxis2
+
+      // Date axis for groups (columns)
+      const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
+      dateAxis.groupData = true
+      dateAxis.groupCount = 360
+      dateAxis.groupIntervals.setAll([
+        { timeUnit: 'day', count: 1 },
+        { timeUnit: 'month', count: 1 }
+      ])
+      dateAxis.renderer.grid.template.location = 0.5
+      dateAxis.renderer.grid.template.disabled = true
+      dateAxis.renderer.ticks.template.disabled = false
+      dateAxis.renderer.ticks.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.2
+      dateAxis.renderer.ticks.template.strokeWidth = 1
+      dateAxis.renderer.ticks.template.length = 8
+      dateAxis.renderer.ticks.template.location = 0.5
+      dateAxis.renderer.labels.template.location = 0.5
+      dateAxis.renderer.cellStartLocation = 0.15
+      dateAxis.renderer.cellEndLocation = 0.85
+      this.dateAxis = dateAxis
+      this.dateAxis.events.on('groupperiodchanged', ({ target }) => {
+        target.startLocation = target.currentDataSetId.includes('month') ? this.$moment(this.chartInterval.from).date() / this.$moment(this.chartInterval.from).daysInMonth() : 0
+        target.endLocation = target.currentDataSetId.includes('month') ? (this.$moment(this.chartInterval.to).date() - 2) / this.$moment(this.chartInterval.to).daysInMonth() : 1
+      })
+
+      // Balance Axis
+      const balanceAxis = chart.yAxes.push(new am4charts.ValueAxis())
+      balanceAxis.height = 100
+      balanceAxis.marginBottom = 60
+      balanceAxis.cursorTooltipEnabled = false
+      balanceAxis.numberFormatter = new am4core.NumberFormatter()
+      balanceAxis.numberFormatter.numberFormat = '# a'
+      if (!prefersColorSchemeDark) {
+        balanceAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
+        balanceAxis.renderer.gridContainer.background.fillOpacity = 0.3
+      }
+      balanceAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
+      this.balanceAxis = balanceAxis
+
+      // Cols axis
+      const colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
+      colsAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
+      // colsAxis.height = am4core.percent(60)
+      colsAxis.cursorTooltipEnabled = false
+      colsAxis.numberFormatter = new am4core.NumberFormatter()
+      colsAxis.numberFormatter.numberFormat = '# a'
+      this.colsAxis = colsAxis
+
+      // Cursor
+      const cursor = new am4charts.XYCursor()
+      cursor.xAxis = this.dateAxis
+      cursor.lineY.disabled = true
+      cursor.events.on('zoomended', (ev) => {
+        if (ev.target.behavior === 'none') return
+        const range = ev.target.xRange
+        const from = this.$moment(this.dateAxis.positionToDate(range.start)).format('YYYY-MM-DD')
+        const to = this.$moment(this.dateAxis.positionToDate(range.end)).format('YYYY-MM-DD')
+        this.updateDetailsInterval({ from, to })
+      })
+      chart.cursor = cursor
+
+      // Future dates hover
+      const rangeFututre = this.dateAxis.axisRanges.create()
+      rangeFututre.date = this.$moment().set('hour', 12).toDate()
+      rangeFututre.endDate = new Date(8640000000000000)
+      rangeFututre.grid.disabled = true
+      rangeFututre.axisFill.fillOpacity = 0.5
+      rangeFututre.axisFill.fill = prefersColorSchemeDark ? '#000000' : '#FFFFFF'
+      chart.seriesContainer.zIndex = -1
+
+      // Currend day line
+      const dateBorder = this.dateAxis.axisRanges.create()
+      dateBorder.date = this.$moment().set('hour', 12).toDate()
+      dateBorder.grid.stroke = prefersColorSchemeDark ? am4core.color('#FFF') : am4core.color('#333333')
+      dateBorder.grid.strokeWidth = 1
+      dateBorder.grid.strokeOpacity = 0.3
+      dateBorder.label.inside = true
+      dateBorder.label.valign = 'middle'
+      dateBorder.label.text = this.$t('today')
+      dateBorder.label.fill = dateBorder.grid.stroke
+      dateBorder.label.fillOpacity = 0.6
+      dateBorder.label.rotation = -90
+      dateBorder.label.verticalCenter = 'middle'
+      dateBorder.label.dx = -8
+
+      // Scrollbar on the bottom
+      chart.scrollbarX = new am4core.Scrollbar()
+      chart.scrollbarX.parent = chart.bottomAxesContainer
+
+      const dateAxisChanged = () => {
+        const from = this.$moment(this.dateAxis.minZoomed).format('YYYY-MM-DD')
+        let to = this.$moment(this.dateAxis.maxZoomed)
+        to = to > this.$moment(this.chartInterval.to) ? this.chartInterval.to : to.format('YYYY-MM-DD')
+        this.updateDetailsInterval({ from, to })
+      }
+
+      chart.scrollbarX.thumb.events.on('dragstop', dateAxisChanged)
+      chart.scrollbarX.startGrip.events.on('dragstop', dateAxisChanged)
+      chart.scrollbarX.endGrip.events.on('dragstop', dateAxisChanged)
+      chart.zoomOutButton.events.on('hit', () => {
+        this.updateDetailsInterval({ from: '', to: '' })
+      })
+
+      /**
    * ========================================================
    * Enabling responsive features
    * ========================================================
    */
 
-    chart.responsive.rules.push({
-      relevant: (target) => {
-        if (target.pixelWidth <= 400) {
-          if (target.cursor.behavior !== 'none') target.cursor.behavior = 'none'
-          return true
-        }
-        if (target.cursor.behavior === 'none') target.cursor.behavior = 'zoomX'
-        return false
-      },
-      state: (target, stateId) => {
+      chart.responsive.rules.push({
+        relevant: (target) => {
+          if (target.pixelWidth <= 400) {
+            if (target.cursor.behavior !== 'none') target.cursor.behavior = 'none'
+            return true
+          }
+          if (target.cursor.behavior === 'none') target.cursor.behavior = 'zoomX'
+          return false
+        },
+        state: (target, stateId) => {
         // if (target instanceof am4charts.Chart) {
         //   const state = target.states.create(stateId)
         //   state.properties.paddingTop = 10
@@ -213,48 +210,47 @@ export default {
         //   return state
         // }
 
-        if (target instanceof am4charts.ValueAxis) {
-          const state = target.states.create(stateId)
-          state.properties.cursorTooltipEnabled = false
-          if (target.marginBottom === 60) {
-            state.properties.marginBottom = 40
+          if (target instanceof am4charts.ValueAxis) {
+            const state = target.states.create(stateId)
+            state.properties.cursorTooltipEnabled = false
+            if (target.marginBottom === 60) {
+              state.properties.marginBottom = 40
+            }
+            return state
           }
-          return state
+
+          if (target instanceof am4core.Scrollbar) {
+            const state = target.states.create(stateId)
+            state.properties.paddingLeft = 14
+            state.properties.paddingRight = 14
+            return state
+          }
+
+          if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
+            const state = target.states.create(stateId)
+            state.properties.inside = true
+            state.properties.dx = -8
+            state.properties.dy = -8
+            state.properties.fillOpacity = 0.6
+            state.properties.fontSize = 9
+            return state
+          }
+          return null
         }
+      })
 
-        if (target instanceof am4core.Scrollbar) {
-          const state = target.states.create(stateId)
-          state.properties.paddingLeft = 14
-          state.properties.paddingRight = 14
-          return state
+      this.chart = chart
+
+      this.$watch(
+        'activeChartData',
+        (data) => {
+          this.updateChartData(data)
+        },
+        {
+          immediate: true
         }
-
-        if ((target instanceof am4charts.AxisLabel) && (target.parent instanceof am4charts.AxisRendererY)) {
-          const state = target.states.create(stateId)
-          state.properties.inside = true
-          state.properties.dx = -8
-          state.properties.dy = -8
-          state.properties.fillOpacity = 0.6
-          state.properties.fontSize = 9
-          return state
-        }
-        return null
-      }
-    })
-
-    this.chart = chart
-  },
-
-  beforeDestroy () {
-    this.unsubscribeFromMutations()
-    this.unsubscribeFromActions()
-    if (this.chart) {
-      this.chart.dispose()
-    }
-  },
-
-  methods: {
-    ...mapActions('transaction', ['updateDetailsInterval']),
+      )
+    },
 
     updateChartData (data) {
       // Delete negative ranges
@@ -373,7 +369,7 @@ export default {
       newSeries.adapter.add('tooltipText', (t, target) => {
         const isGrouped = !!target.tooltipDataItem.groupDataItems
         const dateFormat = isGrouped ? 'MMM yyyy' : 'd MMMM yyyy'
-        return `{dateX.formatDate('${dateFormat}')}\n{name}: {valueY.value} ${this.currency}`
+        return `{dateX.formatDate('${dateFormat}')}\n{name}: {valueY.value} ${this.currencySign}`
       })
     },
 
@@ -387,7 +383,7 @@ export default {
       balanceSeries.tooltip.background.fill = am4core.color('#333')
       balanceSeries.tooltip.label.fill = am4core.color('#FFF')
       balanceSeries.tooltip.animationDuration = 500
-      balanceSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currency}`
+      balanceSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currencySign}`
       balanceSeries.yAxis = this.balanceAxis
       balanceSeries.xAxis = this.dateAxis2
       balanceSeries.dataFields.valueY = 'balance'
@@ -415,7 +411,7 @@ export default {
       const rangeDashed = this.dateAxis2.createSeriesRange(this.balanceSeries)
       rangeDashed.date = this.$moment().toDate()
       rangeDashed.endDate = new Date(8640000000000000)
-      rangeDashed.contents.stroke = am4core.color('#f3f3f3')
+      rangeDashed.contents.stroke = prefersColorSchemeDark ? '#000000' : am4core.color('#f3f3f3')
       rangeDashed.contents.strokeDasharray = '3 5'
       rangeDashed.contents.strokeWidth = 3
 
@@ -486,6 +482,39 @@ export default {
         end: `${dates[dates.length - 1].isEnd ? ' >=' : ''} ${this.$moment(endDate).format('L')}${inDaysEnd}`,
         decline: this.$helper.toCurrency({ value: minimumAmount, currencyCode: this.activeChartData.currency }),
         declineDate: this.$moment(minimumDate).format('L')
+      })
+    },
+
+    switchMode (scheme) {
+      if (scheme === '(prefers-color-scheme: light)' || scheme === 'dark') {
+        prefersColorSchemeDark = true
+        am4core.useTheme(am4themesDark)
+        this.createChart()
+      } else {
+        prefersColorSchemeDark = false
+        am4core.unuseAllThemes()
+        this.createChart()
+      }
+    },
+
+    addDarkModeObserver () {
+      const targetNode = document.getElementById('wa-dark-mode')
+      if (targetNode) {
+        const config = { attributes: true }
+        const callback = (mutationsList, observer) => {
+          for (const mutation of mutationsList) {
+            if (mutation.attributeName === 'media') {
+              this.switchMode(targetNode.getAttribute('media'))
+            }
+          }
+        }
+        this.darkModeObserver = new MutationObserver(callback)
+        this.darkModeObserver.observe(targetNode, config)
+      }
+
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        const newColorScheme = e.matches ? 'dark' : 'light'
+        this.switchMode(newColorScheme)
       })
     }
 

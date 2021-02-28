@@ -197,14 +197,12 @@ export default {
             group_by: 'day'
           }
         })
-        if (data.error) {
-          throw new Error(data.error_message)
-        }
-        commit('setChartData', data)
+        commit('setChartData', data === null ? [] : data)
         commit('setChartDataCurrencyIndex', 0)
-        commit('setLoadingChart', false)
       } catch (_) {
         return false
+      } finally {
+        commit('setLoadingChart', false)
       }
     },
 
