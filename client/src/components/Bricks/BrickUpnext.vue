@@ -2,7 +2,7 @@
   <router-link
     to="/upnext"
     :class="{ selected: $route.name === 'Upnext' }"
-    class="brick"
+    class="brick custom-mb-0"
   >
     <span
       v-if="count > 0"

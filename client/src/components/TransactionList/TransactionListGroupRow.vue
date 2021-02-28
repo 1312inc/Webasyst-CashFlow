@@ -36,7 +36,7 @@
       </div>
       <div class="wide flexbox c-item-border">
         <div class="wide">
-            <div class="custom-mb-8 black semibold">
+            <div class="black semibold">
               <span v-if="transaction.description">{{ transaction.description }}</span>
               <span v-if="!transaction.description" class="gray">{{ $t('noDesc') }}</span>
               <span

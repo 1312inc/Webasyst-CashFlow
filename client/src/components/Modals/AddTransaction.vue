@@ -265,7 +265,7 @@
                 v-for="account in accounts"
                 :key="account.id"
               >
-                {{ account.currency }} – {{ account.name }} ({{
+                {{ account.name }} ({{
                   $helper.currencySignByCode(account.currency)
                 }})
               </option>

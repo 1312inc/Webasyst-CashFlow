@@ -1,5 +1,5 @@
 <template>
-  <div v-if="balanceFlow.length > 1" class="custom-mt-24">
+  <div v-if="balanceFlow.length > 0" class="custom-mt-24">
     <div class="custom-mx-16">
       <div class="heading custom-mx-0">
         {{ $t("Next 90 days") }}

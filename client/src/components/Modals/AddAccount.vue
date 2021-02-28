@@ -111,8 +111,8 @@
         <button @click="submit('account')" class="button purple">
           {{ isModeUpdate ? $t("update") : $t("add") }}
         </button>
-        <button @click="close" class="button light-gray">
-          {{ $t("cancel") }}
+        <button @click="close" class="button outlined light-gray">
+          <span>{{ $t("cancel") }}</span>
         </button>
       </div>
       <button v-if="isModeUpdate" @click="remove('account')" class="button red">
