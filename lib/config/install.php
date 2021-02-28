@@ -6,15 +6,15 @@ $m = new waModel();
 $db = require wa('cash')->getConfig()->getAppConfigPath('db');
 
 $innodb = 0;
-foreach ($db as $table => $info) {
-    try {
+try {
+    foreach ($db as $table => $info) {
         $m->exec(sprintf('alter table %s engine=innodb', $table));
         $innodb = 1;
-    } catch (Exception $ex) {
-        cash()->getLogger()->error('mysql do not support InnoDb engine', $ex, 'install');
-    } finally {
-        (new waAppSettingsModel())->set('cash', 'innodb', $innodb);
     }
+} catch (Exception $ex) {
+    cash()->getLogger()->error('mysql do not support InnoDb engine', $ex, 'install');
+} finally {
+    (new waAppSettingsModel())->set('cash', 'innodb', $innodb);
 }
 
 if ($innodb) {
@@ -29,7 +29,7 @@ if ($innodb) {
             'alter table cash_transaction
                     add constraint cash_transaction_cash_category_id_fk
                         foreign key (category_id) references cash_category (id)
-                            on update cascade on delete set null'
+                            on update cascade on delete restrict '
         );
         $m->exec(
             'alter table cash_transaction
@@ -47,7 +47,7 @@ if ($innodb) {
             'alter table cash_repeating_transaction
                     add constraint cash_repeating_transaction_cash_category_id_fk
                         foreign key (category_id) references cash_category (id)
-                            on update cascade on delete set null'
+                            on update cascade on delete restrict'
         );
 
         cash()->getLogger()->log('Foreign key added', 'install');
@@ -63,6 +63,8 @@ if ($innodb) {
         cash()->getLogger()->log('Done: create demo account', 'install');
     } catch (waException $ex) {
         cash()->getLogger()->error('Fail on add foreign keys or account/categories creation', $ex);
+
+        throw $ex;
     }
 } else {
     throw new waException('InnoDb engine is required');

@@ -42,7 +42,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
     from cash_transaction ct
              join cash_account ca on ct.account_id = ca.id
              join cash_category cc on ct.category_id = cc.id
-    where ct.date between s:start and s:end
+    where ct.date >= s:start and ct.date < s:end
       and ca.is_archived = 0
       and ct.is_archived = 0
     group by id, ca.currency, MONTH(ct.date)",
