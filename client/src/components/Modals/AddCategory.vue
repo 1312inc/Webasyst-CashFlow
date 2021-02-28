@@ -77,8 +77,8 @@
         <button @click="submit('category')" class="button purple">
           {{ isModeUpdate ? $t("update") : $t("add") }}
         </button>
-        <button @click="close" class="button light-gray">
-          {{ $t("cancel") }}
+        <button @click="close" class="button outlined light-gray">
+          <span>{{ $t("cancel") }}</span>
         </button>
       </div>
       <button

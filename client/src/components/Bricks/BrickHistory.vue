@@ -1,7 +1,7 @@
 <template>
   <router-link
     to="/history"
-    class="brick"
+    class="brick custom-mb-0"
     :class="{ selected: $route.name === 'History' }"
   >
     <span class="icon"><i class="fas fa-history"></i></span>

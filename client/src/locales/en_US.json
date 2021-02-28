@@ -86,6 +86,7 @@
   "emptyListUpcoming": "No transactions are planned for this period",
   "emptyListToday": "No transactions today",
   "nextDays": "Next {count} days",
+  "Next 90 days": "Next 90 days",
   "tomorrow": "Tomorrow",
   "deleteWarning": "DANGER: This will permanently delete the entire {type} and ALL TRANSACTIONS without the ability to restore. Are you sure?",
   "offlineMessage": "No Internet Connection",

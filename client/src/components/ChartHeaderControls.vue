@@ -5,12 +5,12 @@
       <div class="flexbox fixed space-12 width-100-mobile">
         <div>
           <Dropdown type="from" class="custom-m-0 custom-mb-8 width-100-mobile" />
-          <AmountForPeriod type="income" period="from" class="custom-mb-4" />
+          <AmountForPeriod type="income" period="from" />
           <AmountForPeriod type="expense" period="from" />
         </div>
         <div>
           <Dropdown type="to" class="custom-m-0 custom-mb-8 width-100-mobile" />
-          <AmountForPeriod type="income" period="to" class="custom-mb-4" />
+          <AmountForPeriod type="income" period="to" />
           <AmountForPeriod type="expense" period="to" />
         </div>
       </div>

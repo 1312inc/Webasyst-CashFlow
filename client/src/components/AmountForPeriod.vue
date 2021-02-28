@@ -18,7 +18,7 @@
       </div>
     </div>
     <div v-else class="skeleton">
-      <span class="skeleton-line custom-mb-0"></span>
+      <span class="skeleton-line custom-mb-4"></span>
     </div>
   </div>
 </template>
