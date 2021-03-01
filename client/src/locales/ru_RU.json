@@ -145,5 +145,7 @@
   },
   "cashGapTooltip": "КАССОВЫЙ РАЗРЫВ!\nДата начала: {start}\nКонечная дата: {end}\nМаксимальное отклонение: {decline} дата: {declineDate}",
   "inDays": "(через {days} дней)",
-  "fileUploaderLabel": "Выберите файл"
+  "fileUploaderLabel": "Выберите файл",
+  "linkContact": "Свяжите с существующим контактом или создайте нового",
+  "newContact": "Будет создан новый контакт"
 }
