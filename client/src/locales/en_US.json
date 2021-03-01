@@ -145,5 +145,7 @@
   },
   "cashGapTooltip": "CASH GAP!\nStart date: {start}\nEnd date: {end}\nMax balance decline: {decline} on {declineDate}",
   "inDays": "(in {days} days)",
-  "fileUploaderLabel": "Drop here or browse"
+  "fileUploaderLabel": "Drop here or browse",
+  "linkContact": "Search for existing contact or enter any new contact name",
+  "newContact": "New contact will be created"
 }

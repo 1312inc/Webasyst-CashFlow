@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="position: relative">
     <div class="state-with-inner-icon left">
       <input
         :value="inputLabel"
@@ -22,10 +22,17 @@
       ></i>
     </div>
 
+    <div
+      class="hint custom-mt-8"
+      v-html="isNewContractor ? $t('newContact') : $t('linkContact')"
+    ></div>
+
     <ul
       v-if="response.length"
       ref="menu"
-      :style="`width:${$refs.input.offsetWidth}px;`"
+      :style="`top:${
+        $refs.input.offsetTop + $refs.input.offsetHeight + 1
+      }px;width:${$refs.input.offsetWidth}px;`"
       tabindex="0"
       class="c-autocomplete-menu custom-m-0 custom-p-0 z-20"
     >
@@ -59,7 +66,8 @@ export default {
       inputValue: '',
       photo: '',
       aciveMenuIndex: null,
-      response: []
+      response: [],
+      isNewContractor: false
     }
   },
 
@@ -83,7 +91,6 @@ export default {
     input ({ target }) {
       this.inputValue = target.value
       this.photo = ''
-      this.$emit('newContractor', target.value.trim())
 
       // prevent search request if empty string
       if (!target.value.trim()) {
@@ -95,7 +102,7 @@ export default {
       api
         .get('cash.system.searchContacts', {
           params: {
-            term: target.value
+            term: target.value.trim()
           }
         })
         .then(({ data }) => {
@@ -105,6 +112,9 @@ export default {
           const i = data.findIndex(e => e.name === this.inputValue)
           if (i > -1) {
             this.select(i)
+          } else {
+            this.$emit('newContractor', this.inputValue)
+            this.isNewContractor = true
           }
         })
         .catch(e => {})
@@ -113,6 +123,7 @@ export default {
     select (index) {
       if (index !== null) {
         this.$emit('changeContractor', this.response[index].id)
+        this.isNewContractor = false
         this.inputValue = this.response[index].name
         this.photo = this.response[index].photo_url_absolute
         this.response = []

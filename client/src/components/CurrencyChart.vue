@@ -171,42 +171,46 @@ export default {
         )
 
       // Gradient positive area
-      this.svg
-        .append('linearGradient')
-        .attr('id', `area-gradient-positive-${this._uid}`)
-        .attr('gradientUnits', 'userSpaceOnUse')
-        .attr('x1', 0)
-        .attr('y1', y(0))
-        .attr('x2', 0)
-        .attr('y2', y(d3.max(this.data, d => d.amount)))
-        .selectAll('stop')
-        .data([
-          { offset: '0%', color: 'rgba(62, 197, 94, 0)' },
-          { offset: '100%', color: 'rgba(62, 197, 94, 0.6)' }
-        ])
-        .enter()
-        .append('stop')
-        .attr('offset', d => d.offset)
-        .attr('stop-color', d => d.color)
+      if (d3.max(this.data, d => d.amount) >= 0) {
+        this.svg
+          .append('linearGradient')
+          .attr('id', `area-gradient-positive-${this._uid}`)
+          .attr('gradientUnits', 'userSpaceOnUse')
+          .attr('x1', 0)
+          .attr('y1', y(0))
+          .attr('x2', 0)
+          .attr('y2', y(d3.max(this.data, d => d.amount)))
+          .selectAll('stop')
+          .data([
+            { offset: '0%', color: 'rgba(62, 197, 94, 0)' },
+            { offset: '100%', color: 'rgba(62, 197, 94, 0.6)' }
+          ])
+          .enter()
+          .append('stop')
+          .attr('offset', d => d.offset)
+          .attr('stop-color', d => d.color)
+      }
 
       // Gradient negative area
-      this.svg
-        .append('linearGradient')
-        .attr('id', `area-gradient-negative-${this._uid}`)
-        .attr('gradientUnits', 'userSpaceOnUse')
-        .attr('x1', 0)
-        .attr('y1', y(0))
-        .attr('x2', 0)
-        .attr('y2', y(d3.min(this.data, d => d.amount)))
-        .selectAll('stop')
-        .data([
-          { offset: '0%', color: 'rgba(252, 61, 56, 0)' },
-          { offset: '100%', color: 'rgba(252, 61, 56, 0.6)' }
-        ])
-        .enter()
-        .append('stop')
-        .attr('offset', d => d.offset)
-        .attr('stop-color', d => d.color)
+      if (d3.min(this.data, d => d.amount) < 0) {
+        this.svg
+          .append('linearGradient')
+          .attr('id', `area-gradient-negative-${this._uid}`)
+          .attr('gradientUnits', 'userSpaceOnUse')
+          .attr('x1', 0)
+          .attr('y1', y(0))
+          .attr('x2', 0)
+          .attr('y2', y(d3.min(this.data, d => d.amount)))
+          .selectAll('stop')
+          .data([
+            { offset: '0%', color: 'rgba(252, 61, 56, 0)' },
+            { offset: '100%', color: 'rgba(252, 61, 56, 0.6)' }
+          ])
+          .enter()
+          .append('stop')
+          .attr('offset', d => d.offset)
+          .attr('stop-color', d => d.color)
+      }
 
       // Gradient for the line
       const amountRange = Math.abs(d3.max(this.data, d => d.amount)) + Math.abs(d3.min(this.data, d => d.amount))
