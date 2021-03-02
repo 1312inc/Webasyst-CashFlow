@@ -300,6 +300,10 @@ export default {
           }
         })
         commit('setTodayCount', data.count)
+        // emitting for the mobile platform
+        if (process.env.VUE_APP_MODE === 'mobile') {
+          window.emitter.emit('todayCount', data.count)
+        }
       } catch (_) {
         return false
       }

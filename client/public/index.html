@@ -17,6 +17,13 @@
         </script>
 
     <% } %>
+
+    <% if (VUE_APP_MODE === "mobile") { %>
+      <script src="https://unpkg.com/mitt/dist/mitt.umd.js"></script>
+      <script>
+        window.emitter = mitt()
+      </script>
+    <% } %>
   </head>
   <body>
     <div id="app"></div>

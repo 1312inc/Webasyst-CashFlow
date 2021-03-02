@@ -163,7 +163,8 @@ export default {
 
       if (path.some(e => e.className === 'wa-checkbox' || e.className === 'c-item-done')) return
       if (process.env.VUE_APP_MODE === 'mobile') {
-        window.callAndroidAsync('editTransaction', this.transaction)
+        // emitting for the mobile platform
+        window.emitter.emit('editTransaction', this.transaction)
       } else {
         this.open = true
       }
