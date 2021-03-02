@@ -11,11 +11,9 @@ on:
       - 'client/dist/mobile/**'
 
 jobs:
-  # This workflow contains a single job called "deploy"
-  deploy:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
 
+  deploy_android:
+    runs-on: ubuntu-latest
     steps:        
       - name: Copy to Cash-app-Android
         uses: andstor/copycat-action@v3
@@ -27,7 +25,10 @@ jobs:
           filter: '**/!(*.html)'
           dst_owner: 1312inc
           dst_repo_name: Cash-app-Android
-          
+
+  deploy_ios:
+    runs-on: ubuntu-latest
+    steps:        
       - name: Copy to Cash-app-iOS
         uses: andstor/copycat-action@v3
         with:
