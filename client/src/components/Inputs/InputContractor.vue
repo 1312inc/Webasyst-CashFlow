@@ -13,7 +13,7 @@
         autocomplete="off"
       />
       <span v-if="!computedPhoto" class="icon"
-        ><i class="fas fa-user"></i
+        ><i class="fas fa-user-plus"></i
       ></span>
       <i
         v-else
@@ -22,10 +22,15 @@
       ></i>
     </div>
 
-    <div
-      class="hint custom-mt-8"
-      v-html="isNewContractor ? $t('newContact') : $t('linkContact')"
-    ></div>
+    <div class="hint custom-mt-8">
+      {{
+        inputLabel.trim() === ""
+          ? $t("noContact")
+          : isNewContractor
+          ? $t("newContact")
+          : $t("linkContact")
+      }}
+    </div>
 
     <ul
       v-if="response.length"
@@ -94,6 +99,7 @@ export default {
 
       // prevent search request if empty string
       if (!target.value.trim()) {
+        this.inputValue = ''
         this.reset()
         return false
       }

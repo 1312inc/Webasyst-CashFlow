@@ -30,7 +30,6 @@ body.modal {
 
 .c-transaction-section .c-transaction-section__header {
   margin: 0;
-  text-transform: capitalize;
 }
 
 .list-enter, .list-leave-to

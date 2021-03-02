@@ -1,5 +1,5 @@
 <template>
-  <div class="flexbox space-12">
+  <div v-if="currencies.length" class="flexbox space-12">
     <div
       v-for="(currency, i) in currencies"
       :key="i"
@@ -8,17 +8,24 @@
         'text-red': type === 'expense',
       }"
     >
-      <div>
-        <span class="small semibold">{{
-          $helper.toCurrency({
-            value: getTotalByCurrency(currency),
-            currencyCode: currency,
-            isReverse: type === 'expense',
-            prefix: type === "income" ? "+ " : "− ",
-          })
-        }}</span>
-      </div>
+      <span class="small semibold">{{
+        $helper.toCurrency({
+          value: getTotalByCurrency(currency),
+          currencyCode: currency,
+          isReverse: type === "expense",
+          prefix: type === "income" ? "+ " : "− ",
+        })
+      }}</span>
     </div>
+  </div>
+  <div
+    v-else
+    :class="{
+      'text-green': type === 'income',
+      'text-red': type === 'expense',
+    }"
+  >
+    <span class="small semibold">{{type === "income" ? "+ " : "− "}}0</span>
   </div>
 </template>
 
@@ -39,7 +46,8 @@ export default {
   computed: {
     currencies () {
       return this.group.reduce((acc, e) => {
-        const currency = this.$store.getters['account/getById'](e.account_id).currency
+        const currency = this.$store.getters['account/getById'](e.account_id)
+          .currency
         if (currency && !acc.includes(currency)) {
           acc.push(currency)
         }
@@ -54,7 +62,8 @@ export default {
         .filter(
           e =>
             (this.type === 'income' ? e.amount >= 0 : e.amount < 0) &&
-            this.$store.getters['account/getById'](e.account_id).currency === currency
+            this.$store.getters['account/getById'](e.account_id).currency ===
+              currency
         )
         .reduce((acc, e) => {
           return acc + e.amount
