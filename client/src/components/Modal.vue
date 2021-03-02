@@ -3,11 +3,7 @@
     <div class="dialog">
       <div class="dialog-background"></div>
       <transition name="slide-fade" appear>
-        <div class="dialog-body">
-          <div class="dialog-content">
-            <slot></slot>
-          </div>
-        </div>
+        <slot></slot>
       </transition>
     </div>
   </transition>
@@ -35,14 +31,18 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .dialog {
   display: block;
-}
 
-.dialog .dialog-body {
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  .dialog-body {
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+
+    @media screen and (max-width: 768px) {
+      transform: none;
+    }
+  }
 }
 </style>
