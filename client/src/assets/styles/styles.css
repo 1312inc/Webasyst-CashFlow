@@ -67,6 +67,14 @@ body.modal {
   opacity: 0;
 }
 
+@media screen and (max-width: 768px) {
+  .slide-fade-enter,
+  .slide-fade-leave-to {
+    transform: translateX(-50%) translateY(0%) !important;
+    opacity: 0;
+  }
+}
+
 .c-sticky-header-group {
   background: var(--background-color-blank);
 }

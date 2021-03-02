@@ -1,409 +1,423 @@
 <template>
-  <div>
-    <div class="flexbox middle custom-mb-32">
-      <div class="wide flexbox middle">
-        <h2 v-if="defaultCategoryType === 'transfer'" class="custom-mb-0">
-          {{ $t("newTransfer") }}
-        </h2>
-        <h2 v-else class="custom-mb-0">
-          {{ isModeUpdate ? $t("updateTransaction") : $t("addTransaction") }}
-        </h2>
-        <span
-          v-if="isModeUpdate && transaction.repeating_id"
-          class="tooltip custom-ml-8 large"
-          :data-title="$t('repeatingTran')"
-        >
-          <i class="fas fa-redo-alt opacity-50"></i>
-        </span>
+  <div class="dialog-body">
+    <div class="dialog-header">
+      <div class="flexbox middle">
+        <div class="wide flexbox middle">
+          <h2 v-if="defaultCategoryType === 'transfer'" class="custom-mb-0">
+            {{ $t("newTransfer") }}
+          </h2>
+          <h2 v-else class="custom-mb-0">
+            {{ isModeUpdate ? $t("updateTransaction") : $t("addTransaction") }}
+          </h2>
+          <span
+            v-if="isModeUpdate && transaction.repeating_id"
+            class="tooltip custom-ml-8 large"
+            :data-title="$t('repeatingTran')"
+          >
+            <i class="fas fa-redo-alt opacity-50"></i>
+          </span>
+        </div>
+        <div v-if="isModeUpdate" class="large">#{{ transaction.id }}</div>
       </div>
-      <div v-if="isModeUpdate" class="large">#{{ transaction.id }}</div>
     </div>
 
-    <div class="fields custom-mb-32">
-      <div v-if="isModeUpdate && transaction.repeating_id" class="field">
-        <div class="name for-input">
-          {{ $t("applyTo.name") }}
-        </div>
-        <div class="value">
-          <div class="custom-mb-8">
+    <div class="dialog-content">
+      <div class="fields">
+        <div v-if="isModeUpdate && transaction.repeating_id" class="field">
+          <div class="name for-input">
+            {{ $t("applyTo.name") }}
+          </div>
+          <div class="value">
+            <div class="custom-mb-8">
+              <label>
+                <span class="wa-radio">
+                  <input
+                    type="radio"
+                    :value="false"
+                    v-model="model.apply_to_all_in_future"
+                  />
+                  <span></span>
+                </span>
+                <span class="small custom-ml-4">{{
+                  $t("applyTo.list[0]")
+                }}</span>
+              </label>
+            </div>
             <label>
               <span class="wa-radio">
                 <input
                   type="radio"
-                  :value="false"
+                  :value="true"
                   v-model="model.apply_to_all_in_future"
                 />
                 <span></span>
               </span>
-              <span class="small custom-ml-4">{{ $t("applyTo.list[0]") }}</span>
+              <span class="small custom-ml-4">{{ $t("applyTo.list[1]") }}</span>
             </label>
           </div>
-          <label>
-            <span class="wa-radio">
-              <input
-                type="radio"
-                :value="true"
-                v-model="model.apply_to_all_in_future"
-              />
-              <span></span>
-            </span>
-            <span class="small custom-ml-4">{{ $t("applyTo.list[1]") }}</span>
-          </label>
         </div>
-      </div>
 
-      <div v-if="!isModeUpdate" class="field">
-        <div class="name for-input">
-          {{ $t("repeat") }}
-        </div>
-        <div class="value">
-          <div class="toggle">
-            <span
-              @click="model.is_repeating = false"
-              :class="{ selected: !model.is_repeating }"
-              >{{ $t("oneTime") }}</span
-            >
-            <span
-              @click="model.is_repeating = true"
-              :class="{ selected: model.is_repeating }"
-              >{{ $t("repeating") }}</span
-            >
+        <div v-if="!isModeUpdate" class="field">
+          <div class="name for-input">
+            {{ $t("repeat") }}
           </div>
-        </div>
-      </div>
-
-      <div class="field">
-        <div class="name for-input custom-pt-12">
-          {{ $t("amount") }}
-        </div>
-        <div class="value large bold">
-          <div class="state-with-inner-icon left">
-            <input-currency
-              v-model="model.amount"
-              ref="focus"
-              :signed="false"
-              :class="{ 'state-error': $v.model.amount.$error }"
-              type="text"
-              class="bold number short"
-              placeholder="0"
-            />
-            <span class="icon">
-              <i v-if="transactionType === 'expense'" class="fas fa-minus"></i>
-              <i v-if="transactionType === 'income'" class="fas fa-plus"></i>
-            </span>
-          </div>
-          <span v-if="selectedAccount" class="custom-ml-4">{{
-            $helper.currencySignByCode(selectedAccount.currency)
-          }}</span>
-        </div>
-      </div>
-
-      <div class="field">
-        <div class="name for-input">
-          {{ model.is_repeating ? $t("repeatFrom") : $t("date") }}
-        </div>
-        <div class="value">
-          <div class="flexbox space-12 middle">
-            <div class="state-with-inner-icon left">
-              <DateField
-                v-model="model.date"
-                :class="{ 'state-error': $v.model.date.$error }"
-                class="short"
-              />
-              <span class="icon"><i class="fas fa-calendar"></i></span>
+          <div class="value">
+            <div class="toggle">
+              <span
+                @click="model.is_repeating = false"
+                :class="{ selected: !model.is_repeating }"
+                >{{ $t("oneTime") }}</span
+              >
+              <span
+                @click="model.is_repeating = true"
+                :class="{ selected: model.is_repeating }"
+                >{{ $t("repeating") }}</span
+              >
             </div>
-            <label @click.prevent="model.is_onbadge = !model.is_onbadge">
-              <span class="wa-checkbox">
-                <input type="checkbox" :checked="model.is_onbadge" />
-                <span>
-                  <span class="icon">
-                    <i class="fas fa-check"></i>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="name for-input custom-pt-12">
+            {{ $t("amount") }}
+          </div>
+          <div class="value large bold">
+            <div class="state-with-inner-icon left">
+              <input-currency
+                v-model="model.amount"
+                ref="focus"
+                :signed="false"
+                :class="{ 'state-error': $v.model.amount.$error }"
+                type="text"
+                class="bold number short"
+                placeholder="0"
+              />
+              <span class="icon">
+                <i
+                  v-if="transactionType === 'expense'"
+                  class="fas fa-minus"
+                ></i>
+                <i v-if="transactionType === 'income'" class="fas fa-plus"></i>
+              </span>
+            </div>
+            <span v-if="selectedAccount" class="custom-ml-4">{{
+              $helper.currencySignByCode(selectedAccount.currency)
+            }}</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="name for-input">
+            {{ model.is_repeating ? $t("repeatFrom") : $t("date") }}
+          </div>
+          <div class="value">
+            <div class="flexbox space-12 middle">
+              <div class="state-with-inner-icon left">
+                <DateField
+                  v-model="model.date"
+                  :class="{ 'state-error': $v.model.date.$error }"
+                  class="short"
+                />
+                <span class="icon"><i class="fas fa-calendar"></i></span>
+              </div>
+              <label @click.prevent="model.is_onbadge = !model.is_onbadge">
+                <span class="wa-checkbox">
+                  <input type="checkbox" :checked="model.is_onbadge" />
+                  <span>
+                    <span class="icon">
+                      <i class="fas fa-check"></i>
+                    </span>
                   </span>
                 </span>
-              </span>
-              {{ $t("notifyMe") }}
-            </label>
-          </div>
-          <div v-if="model.is_onbadge" class="custom-mt-8">
-            <div class="hint">
-              {{ $t("notifyMeAlert") }}
-              <span class="badge smaller">1</span>
+                {{ $t("notifyMe") }}
+              </label>
+            </div>
+            <div v-if="model.is_onbadge" class="custom-mt-8">
+              <div class="hint">
+                {{ $t("notifyMeAlert") }}
+                <span class="badge smaller">1</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <TransitionCollapseHeight>
-        <div v-if="!isModeUpdate && model.is_repeating">
-          <div class="field custom-pt-16">
-            <div class="name for-input">
-              {{ $t("howOften.name") }}
-            </div>
-            <div class="value">
-              <div class="wa-select solid">
-                <select v-model="model.repeating_interval">
-                  <option value="month">{{ $t("howOften.list[0]") }}</option>
-                  <option value="day">{{ $t("howOften.list[1]") }}</option>
-                  <option value="week">{{ $t("howOften.list[2]") }}</option>
-                  <option value="year">{{ $t("howOften.list[3]") }}</option>
-                  <option value="custom">{{ $t("howOften.list[4]") }}</option>
-                </select>
+        <TransitionCollapseHeight>
+          <div v-if="!isModeUpdate && model.is_repeating">
+            <div class="field custom-pt-16">
+              <div class="name for-input">
+                {{ $t("howOften.name") }}
               </div>
+              <div class="value">
+                <div class="wa-select solid">
+                  <select v-model="model.repeating_interval">
+                    <option value="month">{{ $t("howOften.list[0]") }}</option>
+                    <option value="day">{{ $t("howOften.list[1]") }}</option>
+                    <option value="week">{{ $t("howOften.list[2]") }}</option>
+                    <option value="year">{{ $t("howOften.list[3]") }}</option>
+                    <option value="custom">{{ $t("howOften.list[4]") }}</option>
+                  </select>
+                </div>
 
-              <div
-                v-if="model.repeating_interval === 'custom'"
-                class="custom-mt-16"
-              >
-                {{ $t("howOften.every") }}
-                <input
-                  v-model.number="model.repeating_frequency"
-                  :class="{
-                    'state-error': $v.model.repeating_frequency.$error,
-                  }"
-                  type="text"
-                  class="shorter custom-ml-8"
-                />
-                <div class="wa-select solid custom-ml-8">
-                  <select v-model="custom_interval">
-                    <option value="month">
-                      {{ $t("howOften.list_short[0]") }}
-                    </option>
-                    <option value="day">
-                      {{ $t("howOften.list_short[1]") }}
-                    </option>
-                    <option value="week">
-                      {{ $t("howOften.list_short[2]") }}
-                    </option>
-                    <option value="year">
-                      {{ $t("howOften.list_short[3]") }}
+                <div
+                  v-if="model.repeating_interval === 'custom'"
+                  class="custom-mt-16"
+                >
+                  {{ $t("howOften.every") }}
+                  <input
+                    v-model.number="model.repeating_frequency"
+                    :class="{
+                      'state-error': $v.model.repeating_frequency.$error,
+                    }"
+                    type="text"
+                    class="shorter custom-ml-8"
+                  />
+                  <div class="wa-select solid custom-ml-8">
+                    <select v-model="custom_interval">
+                      <option value="month">
+                        {{ $t("howOften.list_short[0]") }}
+                      </option>
+                      <option value="day">
+                        {{ $t("howOften.list_short[1]") }}
+                      </option>
+                      <option value="week">
+                        {{ $t("howOften.list_short[2]") }}
+                      </option>
+                      <option value="year">
+                        {{ $t("howOften.list_short[3]") }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="name for-input">
+                {{ $t("endRepeat.name") }}
+              </div>
+              <div class="value">
+                <div class="wa-select solid">
+                  <select v-model="model.repeating_end_type">
+                    <option value="never">{{ $t("endRepeat.list[0]") }}</option>
+                    <option value="after">{{ $t("endRepeat.list[1]") }}</option>
+                    <option value="ondate">
+                      {{ $t("endRepeat.list[2]") }}
                     </option>
                   </select>
                 </div>
               </div>
             </div>
           </div>
+        </TransitionCollapseHeight>
 
-          <div class="field">
-            <div class="name for-input">
-              {{ $t("endRepeat.name") }}
-            </div>
-            <div class="value">
-              <div class="wa-select solid">
-                <select v-model="model.repeating_end_type">
-                  <option value="never">{{ $t("endRepeat.list[0]") }}</option>
-                  <option value="after">{{ $t("endRepeat.list[1]") }}</option>
-                  <option value="ondate">{{ $t("endRepeat.list[2]") }}</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </TransitionCollapseHeight>
-
-      <TransitionCollapseHeight>
-        <div
-          v-if="
-            !isModeUpdate &&
-            model.is_repeating &&
-            model.repeating_end_type !== 'never'
-          "
-        >
-          <div class="field custom-pt-16">
-            <div class="name for-input"></div>
-            <div class="value">
-              <div
-                v-if="model.repeating_end_type === 'ondate'"
-                class="state-with-inner-icon left"
-              >
-                <DateField v-model="model.repeating_end_ondate" />
-                <span class="icon"><i class="fas fa-calendar"></i></span>
-              </div>
-
-              <div v-if="model.repeating_end_type === 'after'">
-                <input
-                  v-model.number="model.repeating_end_after"
-                  type="text"
-                  class="shorter"
-                  :class="{
-                    'state-error': $v.model.repeating_end_after.$error,
-                  }"
-                />
-                <span class="custom-ml-8">{{
-                  $t("endRepeat.occurrences")
-                }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </TransitionCollapseHeight>
-
-      <div class="field">
-        <div class="name for-input">
-          {{
-            defaultCategoryType === "transfer"
-              ? $t("fromAccount")
-              : $t("account")
-          }}
-        </div>
-        <div class="value">
-          <div class="wa-select solid">
-            <div
-              v-if="
-                selectedAccount && $helper.isValidHttpUrl(selectedAccount.icon)
-              "
-              class="icon custom-ml-8"
-            >
-              <img :src="selectedAccount.icon" alt="" />
-            </div>
-            <select
-              v-model="model.account_id"
-              :class="{ 'state-error': $v.model.account_id.$error }"
-              style="width: auto"
-            >
-              <option
-                :value="account.id"
-                v-for="account in accounts"
-                :key="account.id"
-              >
-                {{ account.name }} ({{
-                  $helper.currencySignByCode(account.currency)
-                }})
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="defaultCategoryType === 'transfer'" class="field">
-        <div class="name for-input">
-          {{ $t("toAccount") }}
-        </div>
-        <div class="value">
-          <div class="wa-select solid">
-            <select v-model="model.transfer_account_id">
-              <option
-                :value="account.id"
-                v-for="account in accounts"
-                :key="account.id"
-              >
-                {{ account.currency }} – {{ account.name }} ({{
-                  $helper.currencySignByCode(account.currency)
-                }})
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="defaultCategoryType === 'transfer'" class="field">
-        <div class="name for-input">
-          {{ $t("incomingAmount") }}
-        </div>
-        <div class="value">
-          <div>
-            <input
-              v-model.number="model.transfer_incoming_amount"
-              type="text"
-            />
-            <span v-if="selectedAccountTransfer" class="custom-ml-8">{{
-              $helper.currencySignByCode(selectedAccountTransfer.currency)
-            }}</span>
-          </div>
-          <span
+        <TransitionCollapseHeight>
+          <div
             v-if="
-              selectedAccount &&
-              selectedAccountTransfer &&
-              selectedAccount.currency !== selectedAccountTransfer.currency
+              !isModeUpdate &&
+              model.is_repeating &&
+              model.repeating_end_type !== 'never'
             "
-            class="smaller alert warning custom-mt-16 custom-mb-0"
           >
-            <i class="fas fa-exclamation-triangle"></i>
-            {{ selectedAccount.currency }} →
-            {{ selectedAccountTransfer.currency }}.
-            {{ $t("transferMessage") }}
-          </span>
-        </div>
-      </div>
+            <div class="field custom-pt-16">
+              <div class="name for-input"></div>
+              <div class="value">
+                <div
+                  v-if="model.repeating_end_type === 'ondate'"
+                  class="state-with-inner-icon left"
+                >
+                  <DateField v-model="model.repeating_end_ondate" />
+                  <span class="icon"><i class="fas fa-calendar"></i></span>
+                </div>
 
-      <div v-if="defaultCategoryType !== 'transfer'" class="field">
-        <div class="name for-input">
-          {{ $t("category") }}
-        </div>
-        <div class="value">
-          <div class="wa-select solid">
-            <span v-if="selectedCategory" class="icon custom-ml-8"
-              ><i
-                class="rounded"
-                :style="`background-color:${selectedCategory.color};`"
-              ></i
-            ></span>
-            <select
-              v-model="model.category_id"
-              :class="{ 'state-error': $v.model.category_id.$error }"
-              style="width: auto"
-            >
-              <option
-                :value="category.id"
-                v-for="category in categoriesInSelect"
-                :key="category.id"
+                <div v-if="model.repeating_end_type === 'after'">
+                  <input
+                    v-model.number="model.repeating_end_after"
+                    type="text"
+                    class="shorter"
+                    :class="{
+                      'state-error': $v.model.repeating_end_after.$error,
+                    }"
+                  />
+                  <span class="custom-ml-8">{{
+                    $t("endRepeat.occurrences")
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TransitionCollapseHeight>
+
+        <div class="field">
+          <div class="name for-input">
+            {{
+              defaultCategoryType === "transfer"
+                ? $t("fromAccount")
+                : $t("account")
+            }}
+          </div>
+          <div class="value">
+            <div class="wa-select solid">
+              <div
+                v-if="
+                  selectedAccount &&
+                  $helper.isValidHttpUrl(selectedAccount.icon)
+                "
+                class="icon custom-ml-8"
               >
-                {{ category.name }}
-              </option>
-            </select>
+                <img :src="selectedAccount.icon" alt="" />
+              </div>
+              <select
+                v-model="model.account_id"
+                :class="{ 'state-error': $v.model.account_id.$error }"
+                style="width: auto"
+              >
+                <option
+                  :value="account.id"
+                  v-for="account in accounts"
+                  :key="account.id"
+                >
+                  {{ account.name }} ({{
+                    $helper.currencySignByCode(account.currency)
+                  }})
+                </option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div v-if="defaultCategoryType !== 'transfer'" class="field">
-        <div class="name for-input">
-          {{ $t("contractor") }}
+        <div v-if="defaultCategoryType === 'transfer'" class="field">
+          <div class="name for-input">
+            {{ $t("toAccount") }}
+          </div>
+          <div class="value">
+            <div class="wa-select solid">
+              <select v-model="model.transfer_account_id">
+                <option
+                  :value="account.id"
+                  v-for="account in accounts"
+                  :key="account.id"
+                >
+                  {{ account.currency }} – {{ account.name }} ({{
+                    $helper.currencySignByCode(account.currency)
+                  }})
+                </option>
+              </select>
+            </div>
+          </div>
         </div>
-        <div class="value">
-          <InputContractor
-            :defaultContractor="model.contractor_contact"
-            @newContractor="
-              (name) => {
-                model.contractor = name;
-                model.contractor_contact_id = null;
-              }
-            "
-            @changeContractor="
-              (id) => {
-                model.contractor = null;
-                model.contractor_contact_id = id;
-              }
-            "
-          />
-        </div>
-      </div>
 
-      <div class="field">
-        <div class="name for-input">
-          {{ $t("desc") }}
+        <div v-if="defaultCategoryType === 'transfer'" class="field">
+          <div class="name for-input">
+            {{ $t("incomingAmount") }}
+          </div>
+          <div class="value">
+            <div>
+              <input
+                v-model.number="model.transfer_incoming_amount"
+                type="text"
+              />
+              <span v-if="selectedAccountTransfer" class="custom-ml-8">{{
+                $helper.currencySignByCode(selectedAccountTransfer.currency)
+              }}</span>
+            </div>
+            <span
+              v-if="
+                selectedAccount &&
+                selectedAccountTransfer &&
+                selectedAccount.currency !== selectedAccountTransfer.currency
+              "
+              class="smaller alert warning custom-mt-16 custom-mb-0"
+            >
+              <i class="fas fa-exclamation-triangle"></i>
+              {{ selectedAccount.currency }} →
+              {{ selectedAccountTransfer.currency }}.
+              {{ $t("transferMessage") }}
+            </span>
+          </div>
         </div>
-        <div class="value">
-          <textarea
-            v-model="model.description"
-            class="wide bold"
-            rows="4"
-            style="resize: none; height: auto"
-          ></textarea>
+
+        <div v-if="defaultCategoryType !== 'transfer'" class="field">
+          <div class="name for-input">
+            {{ $t("category") }}
+          </div>
+          <div class="value">
+            <div class="wa-select solid">
+              <span v-if="selectedCategory" class="icon custom-ml-8"
+                ><i
+                  class="rounded"
+                  :style="`background-color:${selectedCategory.color};`"
+                ></i
+              ></span>
+              <select
+                v-model="model.category_id"
+                :class="{ 'state-error': $v.model.category_id.$error }"
+                style="width: auto"
+              >
+                <option
+                  :value="category.id"
+                  v-for="category in categoriesInSelect"
+                  :key="category.id"
+                >
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="defaultCategoryType !== 'transfer'" class="field">
+          <div class="name for-input">
+            {{ $t("contractor") }}
+          </div>
+          <div class="value">
+            <InputContractor
+              :defaultContractor="model.contractor_contact"
+              @newContractor="
+                (name) => {
+                  model.contractor = name;
+                  model.contractor_contact_id = null;
+                }
+              "
+              @changeContractor="
+                (id) => {
+                  model.contractor = null;
+                  model.contractor_contact_id = id;
+                }
+              "
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="name for-input">
+            {{ $t("desc") }}
+          </div>
+          <div class="value">
+            <textarea
+              v-model="model.description"
+              class="wide bold"
+              rows="4"
+              style="resize: none; height: auto"
+            ></textarea>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="flexbox">
-      <div class="flexbox space-12 wide">
-        <button @click="submit" class="button purple">
-          {{ isModeUpdate ? $t("update") : $t("add") }}
-        </button>
-        <button @click="close" class="button light-gray">
-          {{ $t("cancel") }}
+    <div class="dialog-footer">
+      <div class="flexbox">
+        <div class="flexbox space-12 wide">
+          <button @click="submit" class="button purple">
+            {{ isModeUpdate ? $t("update") : $t("add") }}
+          </button>
+          <button @click="close" class="button light-gray">
+            {{ $t("cancel") }}
+          </button>
+        </div>
+        <button v-if="isModeUpdate" @click="remove" class="button red outlined">
+          <span>{{ $t("delete") }}</span>
         </button>
       </div>
-      <button v-if="isModeUpdate" @click="remove" class="button red outlined">
-        <span>{{ $t("delete") }}</span>
-      </button>
     </div>
   </div>
 </template>

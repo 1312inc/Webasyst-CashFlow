@@ -1,84 +1,87 @@
 <template>
-  <div>
-    <h2 class="custom-mb-32">{{ $t("moveTransactions", { count: count }) }}</h2>
-
-    <div class="fields">
-      <div class="field">
-        <div class="name for-input">
-          {{ $t("account") }}
-        </div>
-        <div class="value">
-          <div class="wa-select">
-            <select
-              v-model="model.account_id"
-            >
-              <option value="0">{{ $t("dontChange") }}</option>
-              <option
-                :value="account.id"
-                v-for="account in accounts"
-                :key="account.id"
-              >
-                {{ account.currency }} – {{ account.name }} ({{
-                  $helper.currencySignByCode(account.currency)
-                }})
-              </option>
-            </select>
+  <div class="dialog-body">
+    <div class="dialog-header">
+      <h2>{{ $t("moveTransactions", { count: count }) }}</h2>
+    </div>
+    <div class="dialog-content">
+      <div class="fields">
+        <div class="field">
+          <div class="name for-input">
+            {{ $t("account") }}
+          </div>
+          <div class="value">
+            <div class="wa-select">
+              <select v-model="model.account_id">
+                <option value="0">{{ $t("dontChange") }}</option>
+                <option
+                  :value="account.id"
+                  v-for="account in accounts"
+                  :key="account.id"
+                >
+                  {{ account.currency }} – {{ account.name }} ({{
+                    $helper.currencySignByCode(account.currency)
+                  }})
+                </option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="field">
-        <div class="name for-input">
-          {{ $t("category") }}
-        </div>
-        <div class="value">
-          <div class="wa-select">
-            <select
-              v-model="model.category_id"
-            >
-              <option :value=0>{{ $t("dontChange") }}</option>
-              <optgroup :label="$t('income')">
-                <option
-                  :value="category.id"
-                  v-for="category in categoriesIncome"
-                  :key="category.id"
-                >
-                  {{ category.name }}
-                </option>
-              </optgroup>
-              <optgroup :label="$t('expense')">
-                <option
-                  :value="category.id"
-                  v-for="category in categoriesExpense"
-                  :key="category.id"
-                >
-                  {{ category.name }}
-                </option>
-              </optgroup>
-            </select>
+        <div class="field">
+          <div class="name for-input">
+            {{ $t("category") }}
+          </div>
+          <div class="value">
+            <div class="wa-select">
+              <select v-model="model.category_id">
+                <option :value="0">{{ $t("dontChange") }}</option>
+                <optgroup :label="$t('income')">
+                  <option
+                    :value="category.id"
+                    v-for="category in categoriesIncome"
+                    :key="category.id"
+                  >
+                    {{ category.name }}
+                  </option>
+                </optgroup>
+                <optgroup :label="$t('expense')">
+                  <option
+                    :value="category.id"
+                    v-for="category in categoriesExpense"
+                    :key="category.id"
+                  >
+                    {{ category.name }}
+                  </option>
+                </optgroup>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="field">
-        <div class="name">
-        </div>
-        <div class="value">
-          <p class="hint custom-mb-24">
-            <i class="fas fa-exclamation-triangle" style="color: orangered"></i>
-            {{ $t("bulkMoveWarning") }}
-          </p>
+        <div class="field">
+          <div class="name"></div>
+          <div class="value">
+            <p class="hint">
+              <i
+                class="fas fa-exclamation-triangle"
+                style="color: orangered"
+              ></i>
+              {{ $t("bulkMoveWarning") }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="flexbox">
-      <div class="flexbox space-12 wide">
-        <button @click="submit" class="button purple">
-          {{ $t("updateTransactions", { count: count }) }}
-        </button>
-        <button @click="close" class="button light-gray">
-          {{ $t("cancel") }}
-        </button>
+    <div class="dialog-footer">
+      <div class="flexbox">
+        <div class="flexbox space-12 wide">
+          <button @click="submit" class="button purple">
+            {{ $t("updateTransactions", { count: count }) }}
+          </button>
+          <button @click="close" class="button light-gray">
+            {{ $t("cancel") }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -105,11 +108,11 @@ export default {
     },
 
     categoriesIncome () {
-      return this.categories.filter((c) => c.type === 'income')
+      return this.categories.filter(c => c.type === 'income')
     },
 
     categoriesExpense () {
-      return this.categories.filter((c) => c.type === 'expense')
+      return this.categories.filter(c => c.type === 'expense')
     },
 
     count () {
@@ -119,7 +122,8 @@ export default {
 
   methods: {
     submit () {
-      this.$store.dispatch('transactionBulk/bulkMove', { ids: this.ids, ...this.model })
+      this.$store
+        .dispatch('transactionBulk/bulkMove', { ids: this.ids, ...this.model })
         .then(() => {
           this.close()
         })
