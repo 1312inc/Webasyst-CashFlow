@@ -34,10 +34,8 @@ export default {
     }
   },
 
-  async created () {
-    window.eventBus.$on('openDialog', (type = 'Category', editedItem = null) => {
-      this.update(type, editedItem)
-    })
+  created () {
+    this.addEmitterHandlers()
   },
 
   methods: {
@@ -48,7 +46,17 @@ export default {
     },
 
     close () {
-      window.android.goBack()
+      window.emitter.emit('closeDialog')
+    },
+
+    addEmitterHandlers () {
+      window.emitter.on('openDialog', (type = 'Category', editedItem = null) => {
+        this.update(type, editedItem)
+      })
+
+      window.emitter.on('multiSelectEnabled', (enable) => {
+        this.$store.commit('setMultiSelectMode', enable)
+      })
     }
 
   }

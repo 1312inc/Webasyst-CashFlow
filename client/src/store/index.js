@@ -14,7 +14,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: () => ({
     currentType: '',
-    currentTypeId: null
+    currentTypeId: null,
+    multiSelectMode: process.env.VUE_APP_MODE !== 'mobile'
   }),
 
   getters: {
@@ -28,6 +29,10 @@ export default new Vuex.Store({
     setCurrentEntity (state, { name, id }) {
       state.currentType = name
       state.currentTypeId = id
+    },
+
+    setMultiSelectMode (state, data) {
+      state.multiSelectMode = data
     }
   },
 

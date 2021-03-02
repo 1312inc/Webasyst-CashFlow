@@ -11,7 +11,6 @@ import Errors from './plugins/errors'
 import Sticky from './plugins/sticky'
 import VuePortal from '@linusborg/vue-simple-portal'
 import IsOnline from './plugins/isOnline'
-import MobileEventBus from './plugins/mobileEventBus'
 import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
@@ -24,8 +23,6 @@ Vue.use(Sticky)
 Vue.use(VuePortal)
 Vue.use(Helpers)
 Vue.use(IsOnline)
-
-window.eventBus = MobileEventBus
 
 new Vue({
   router,

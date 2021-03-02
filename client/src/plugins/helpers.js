@@ -42,7 +42,7 @@ export default {
       },
 
       showMultiSelect () {
-        return process.env.VUE_APP_MODE === 'mobile' ? window.eventBus.multiSelect : true
+        return store.state.multiSelectMode
       }
     }
   }
