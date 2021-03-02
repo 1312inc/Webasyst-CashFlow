@@ -10,7 +10,7 @@
         />
       </transition>
       <div
-        v-for="(group, index) in upnext ? [...groups].reverse() : groups"
+        v-for="(group, index) in groups"
         :key="group.name"
       >
         <TransactionListGroup
@@ -95,6 +95,14 @@ export default {
         // if no grouping
         if (!this.grouping) {
           return add('ungroup', e)
+        }
+
+        // add today object if Upnext
+        if (this.upnext && !result.find(e => e.name === 'today')) {
+          result.push({
+            name: 'today',
+            items: []
+          })
         }
 
         // if future and not details mode

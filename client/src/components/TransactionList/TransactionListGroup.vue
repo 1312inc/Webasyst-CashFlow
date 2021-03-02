@@ -54,14 +54,13 @@
                 class="black flexbox middle space-8"
                 style="cursor: pointer"
               >
-                <i class="fas fa-caret-down"></i>
                 <span v-if="featurePeriod === 1">{{ $t("tomorrow") }}</span>
                 <span v-else>{{
                   $t("nextDays", { count: featurePeriod })
                 }}</span>
                 <span>({{ filteredTransactions.length }})</span>
               </div>
-              <div v-if="$moment(type).isValid()" class="black">
+              <div v-if="$moment(type).isValid()" class="black" style="text-transform:capitalize;">
                 {{ $moment(type).format("MMMM YYYY") }}
               </div>
             </h3>
