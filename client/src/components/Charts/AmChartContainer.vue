@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <AmChart v-if="$store.state.transaction.chartData.length" />
-    <div v-else style="width: 100%; height: 450px"></div>
-  </div>
+  <AmChart />
 </template>
 
 <script>

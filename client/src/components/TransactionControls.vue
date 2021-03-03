@@ -31,12 +31,12 @@
         v-if="$helper.isDesktopEnv && currentType && addView"
         class="flexbox space-12 middle wide"
       >
-        <div v-if="currentType.type !== 'expense'">
+        <div v-show="currentType.type !== 'expense'">
           <button @click="addTransaction('income')" class="button green">
             <i class="fas fa-plus"></i> {{ $t("addIncome") }}
           </button>
         </div>
-        <div v-if="currentType.type !== 'income'">
+        <div v-show="currentType.type !== 'income'">
           <button @click="addTransaction('expense')" class="button orange">
             <i class="fas fa-minus"></i> {{ $t("addExpense") }}
           </button>

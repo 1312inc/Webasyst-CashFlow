@@ -30,7 +30,7 @@ export default {
       return this.chartData[this.chartDataCurrencyIndex]
     },
     currencySign () {
-      return this.$helper.currencySignByCode(this.activeChartData.currency)
+      return this.$helper.currencySignByCode(this.activeChartData?.currency)
     }
   },
 
@@ -128,6 +128,7 @@ export default {
       colsAxis.cursorTooltipEnabled = false
       colsAxis.numberFormatter = new am4core.NumberFormatter()
       colsAxis.numberFormatter.numberFormat = '# a'
+      colsAxis.min = 0
       this.colsAxis = colsAxis
 
       // Cursor
@@ -137,8 +138,8 @@ export default {
       cursor.events.on('zoomended', (ev) => {
         if (ev.target.behavior === 'none') return
         const range = ev.target.xRange
-        const from = this.$moment(this.dateAxis.positionToDate(range.start)).format('YYYY-MM-DD')
-        const to = this.$moment(this.dateAxis.positionToDate(range.end)).format('YYYY-MM-DD')
+        const from = this.$moment(this.dateAxis.positionToDate(this.dateAxis.toAxisPosition(range.start))).format('YYYY-MM-DD')
+        const to = this.$moment(this.dateAxis.positionToDate(this.dateAxis.toAxisPosition(range.end))).format('YYYY-MM-DD')
         this.updateDetailsInterval({ from, to })
       })
       chart.cursor = cursor
@@ -252,33 +253,14 @@ export default {
       )
     },
 
-    updateChartData (data) {
-      // Delete negative ranges
+    updateChartData (newChartData) {
+      // Delete cash gap ranges
       this.dateAxis2.axisRanges.each(() => {
         this.dateAxis2.axisRanges.pop().dispose()
-      });
-
-      ['amountIncome', 'amountExpense', 'amountProfit', 'balance'].forEach((dataField) => {
-        const seriesIndex = this.chart.series.values.findIndex(s => s.dataFields.valueY === dataField)
-        // if no data and series exists
-        if (data.data[0][dataField] === null && seriesIndex > -1) {
-          this.chart.series.removeIndex(seriesIndex).dispose()
-        }
-        // if has data but series not exists
-        if (data.data[0][dataField] !== null && seriesIndex === -1) {
-          if (dataField === 'balance') {
-            this.addBalanceSeries()
-          } else {
-            this.addColumnSeries(dataField)
-          }
-        }
       })
 
-      this.balanceAxis.disabled = data.data[0].balance === null
-
-      const istart = this.$moment(this.chartInterval.from)
-      const iend = this.$moment(this.chartInterval.to)
-      const daysInInterval = iend.diff(istart, 'days') + 1
+      // Define interval in days
+      const daysInInterval = this.$moment(this.chartInterval.to).diff(this.$moment(this.chartInterval.from), 'days') + 1
 
       // Filling empty data
       const filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
@@ -290,30 +272,68 @@ export default {
         }
       })
 
-      // Merge empty period with days with data
-      data.data.forEach(element => {
-        const i = filledChartData.findIndex(e => e.period === element.period)
-        if (i > -1) {
-          filledChartData.splice(i, 1, {
-            ...element,
-            bulletDisabled: true
-          })
-        }
-      })
+      if (newChartData) {
+        this.balanceAxis.disabled = newChartData.data[0].balance === null
+        this.chart.scrollbarX.disabled = false
+        this.chart.cursor.disabled = false;
+        ['amountIncome', 'amountExpense', 'amountProfit', 'balance'].forEach((dataField) => {
+          const seriesIndex = this.chart.series.values.findIndex(s => s.dataFields.valueY === dataField)
+          // if no data and series exists
+          if (newChartData.data[0][dataField] === null && seriesIndex > -1) {
+            this.chart.series.removeIndex(seriesIndex).dispose()
+          }
+          // if has data but series not exists
+          if (newChartData.data[0][dataField] !== null && seriesIndex === -1) {
+            if (dataField === 'balance') {
+              this.addBalanceSeries()
+            } else {
+              this.addColumnSeries(dataField)
+            }
+          }
+        })
 
-      // Filling daily balance
-      let previosValue = null
-      filledChartData.map(e => {
-        if (e.balance !== null) {
-          previosValue = e.balance
-        }
-        if (e.balance === null) {
-          e.balance = previosValue
-        }
-        if (e.period === this.$moment().format('YYYY-MM-DD')) {
-          e.bulletDisabled = false
-        }
-      })
+        // Merge empty period with days with data
+        newChartData.data.forEach(element => {
+          const i = filledChartData.findIndex(e => e.period === element.period)
+          if (i > -1) {
+            filledChartData.splice(i, 1, {
+              ...element,
+              bulletDisabled: true
+            })
+          }
+        })
+
+        // Filling daily balance
+        let previosValue = null
+        filledChartData.map(e => {
+          if (e.balance !== null) {
+            previosValue = e.balance
+          }
+          if (e.balance === null) {
+            e.balance = previosValue
+          }
+          if (e.period === this.$moment().format('YYYY-MM-DD')) {
+            e.bulletDisabled = false
+          }
+        })
+      } else {
+        this.balanceAxis.disabled = true
+        this.chart.scrollbarX.disabled = true
+        this.chart.cursor.disabled = true;
+        ['amountIncome', 'amountExpense', 'amountProfit', 'balance'].forEach((dataField) => {
+          const seriesIndex = this.chart.series.values.findIndex(s => s.dataFields.valueY === dataField)
+          // remove series if exists
+          if (seriesIndex > -1) {
+            this.chart.series.removeIndex(seriesIndex).dispose()
+          }
+        })
+        // Add dummy series
+        this.addColumnSeries('amountIncome')
+        // Fill dummy data
+        filledChartData.forEach(element => {
+          element.amountIncome = 0
+        })
+      }
 
       this.chart.data = filledChartData
     },
