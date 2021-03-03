@@ -7,7 +7,7 @@
     </ChartHeader>
     <div class="flexbox">
       <div class="wide">
-        <TransactionList :observer="false" :reverse="true" :upnext="true" />
+        <TransactionList :observer="false" :upnext="true" />
       </div>
       <AmChartPieStickyContainer class="width-30" />
     </div>

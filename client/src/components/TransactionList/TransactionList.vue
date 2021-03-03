@@ -10,7 +10,7 @@
         />
       </transition>
       <div
-        v-for="(group, index) in groups"
+        v-for="(group, index) in upnext ? [...groups].reverse() : groups"
         :key="group.name"
       >
         <TransactionListGroup
@@ -18,9 +18,6 @@
           :type="group.name"
           :index="index"
         />
-      </div>
-      <div v-if="!groups.length" class="align-center custom-py-24">
-        {{ $t("emptyList") }}
       </div>
       <Observer
         v-if="observer && transactions.data.length < transactions.total"
@@ -42,10 +39,6 @@ export default {
       type: Boolean,
       default: true
     },
-    reverse: {
-      type: Boolean,
-      default: false
-    },
     observer: {
       type: Boolean,
       default: true
@@ -53,6 +46,10 @@ export default {
     upnext: {
       type: Boolean,
       default: false
+    },
+    showFutureGroup: {
+      type: Boolean,
+      default: true
     },
     showTodayGroup: {
       type: Boolean,
@@ -91,52 +88,52 @@ export default {
       }
       const result = []
 
+      // add Future object
+      if (this.showFutureGroup && !result.find(e => e.name === 'future')) {
+        result.push({
+          name: 'future',
+          items: []
+        })
+      }
+
+      // add today object
+      if (this.showTodayGroup && !result.find(e => e.name === 'today')) {
+        result.push({
+          name: 'today',
+          items: []
+        })
+      }
+
+      // add yesterday object
+      if (this.showYesterdayGroup && !result.find(e => e.name === 'yesterday')) {
+        result.push({
+          name: 'yesterday',
+          items: []
+        })
+      }
+
       this.$store.state.transaction.transactions.data.forEach(e => {
         // if no grouping
         if (!this.grouping) {
           return add('ungroup', e)
         }
 
-        // add today object if Upnext
-        if (this.upnext && !result.find(e => e.name === 'today')) {
-          result.push({
-            name: 'today',
-            items: []
-          })
-        }
-
         // if future and not details mode
         if (
-          e.date > today &&
+          e.date > today && this.showFutureGroup &&
           !this.$store.state.transaction.detailsInterval.from &&
             !this.$store.state.transaction.detailsInterval.to
         ) {
           return add('future', e)
         }
 
-        // add today object
-        if (this.showTodayGroup && !result.find(e => e.name === 'today')) {
-          result.push({
-            name: 'today',
-            items: []
-          })
-        }
-
         // if today
-        if (e.date === today) {
+        if (e.date === today && this.showTodayGroup) {
           return add('today', e)
         }
 
-        // add yesterday object
-        if (this.showYesterdayGroup && !result.find(e => e.name === 'yesterday')) {
-          result.push({
-            name: 'yesterday',
-            items: []
-          })
-        }
-
         // if yesterday
-        if (e.date === yesterday) {
+        if (e.date === yesterday && this.showYesterdayGroup) {
           return add('yesterday', e)
         }
 

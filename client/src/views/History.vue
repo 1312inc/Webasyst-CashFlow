@@ -7,7 +7,7 @@
     </ChartHeader>
     <div class="flexbox">
       <div class="wide">
-        <TransactionList :showTodayGroup="false" :showYesterdayGroup="true" />
+        <TransactionList :showTodayGroup="false" :showFutureGroup="false" :showYesterdayGroup="true" />
       </div>
       <AmChartPieStickyContainer class="width-40" />
     </div>

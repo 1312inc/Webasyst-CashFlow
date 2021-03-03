@@ -5,7 +5,7 @@
         <h1 class="custom-m-0">{{ $route.query.text }}</h1>
       </template>
     </ChartHeader>
-    <TransactionList />
+    <TransactionList :showTodayGroup="false" :showFutureGroup="false" />
   </div>
 </template>
 
