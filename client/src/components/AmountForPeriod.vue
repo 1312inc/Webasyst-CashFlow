@@ -1,25 +1,25 @@
 <template>
-  <div v-if="showComponent">
-    <div
-      v-if="!showSkeleton"
-      :class="{
-        'text-green': type === 'income',
-        'text-red': type === 'expense',
-      }"
-    >
-      <div class="custom-ml-12">
-        <span class="small semibold">{{
-          $helper.toCurrency({
-            value: total,
-            currencyCode: currency,
-            prefix: type === "income" ? "+ " : "− ",
-          })
-        }}</span>
-      </div>
+  <div
+    v-if="!showSkeleton"
+    :class="{
+      'text-green': type === 'income',
+      'text-red': type === 'expense',
+      'text-blue': type === 'profit',
+    }"
+  >
+    <div class="custom-ml-12">
+      <i v-if="type === 'profit'" class="fas fa-piggy-bank text-blue"></i>
+      <span class="small semibold">{{
+        $helper.toCurrency({
+          value: total,
+          currencyCode: currencyCode,
+          prefix: type === "income" ? "+ " : type === "expense" ? "− " : " ",
+        })
+      }}</span>
     </div>
-    <div v-else class="skeleton">
-      <span class="skeleton-line custom-mb-4"></span>
-    </div>
+  </div>
+  <div v-else class="skeleton">
+    <span class="skeleton-line custom-mb-4"></span>
   </div>
 </template>
 
@@ -41,36 +41,25 @@ export default {
   computed: {
     ...mapState('transaction', ['chartData', 'chartDataCurrencyIndex']),
 
-    currentType () {
-      return this.$store.getters.getCurrentType?.type
+    currentChartData () {
+      return this.chartData[this.chartDataCurrencyIndex]
     },
 
-    showComponent () {
-      return (
-        !this.currentType || (this.chartData && this.type === this.currentType)
-      )
-    },
-
-    currency () {
-      return this.chartData?.[this.chartDataCurrencyIndex]?.currency
+    currencyCode () {
+      return this.currentChartData?.currency
     },
 
     total () {
-      const currencyData = this.chartData?.find(
-        d => d.currency === this.currency
-      )
-      if (!currencyData) return false
+      if (!this.currentChartData) return 0
 
-      const itoday = this.$moment()
-      const eltype = this.type === 'income' ? 'amountIncome' : 'amountExpense'
-
-      const result = currencyData.data
+      const itoday = this.$moment().format('YYYY-MM-DD')
+      const eltype = `amount${this.type[0].toUpperCase()}${this.type.slice(1)}`
+      const result = this.currentChartData.data
         .filter(e => {
-          const diff = this.$moment(e.period).diff(itoday, 'days')
           if (this.period === 'to') {
-            return diff > 0
+            return e.period > itoday
           } else {
-            return diff <= 0
+            return e.period <= itoday
           }
         })
         .reduce((acc, e) => {

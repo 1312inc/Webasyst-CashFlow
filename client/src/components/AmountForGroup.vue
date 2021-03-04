@@ -1,19 +1,21 @@
 <template>
   <div v-if="currencies.length" class="flexbox space-12">
     <div
-      v-for="(currency, i) in currencies"
-      :key="i"
+      v-for="currency in currencies"
+      :key="currency"
       :class="{
         'text-green': type === 'income',
         'text-red': type === 'expense',
+        'text-blue': profit,
       }"
     >
+      <i v-if="profit" class="fas fa-piggy-bank text-blue"></i>
       <span class="small semibold">{{
         $helper.toCurrency({
           value: getTotalByCurrency(currency),
           currencyCode: currency,
-          isReverse: type === "expense",
-          prefix: type === "income" ? "+ " : "− ",
+          isAbs: true,
+          prefix: profit ? " " : type === "income" ? "+ " : "− ",
         })
       }}</span>
     </div>
@@ -23,9 +25,13 @@
     :class="{
       'text-green': type === 'income',
       'text-red': type === 'expense',
+      'text-blue': profit,
     }"
   >
-    <span class="small semibold">{{type === "income" ? "+ " : "− "}}0</span>
+    <i v-if="profit" class="fas fa-piggy-bank text-blue"></i>
+    <span class="small semibold"
+      >{{ profit ? " " : type === "income" ? "+ " : "− " }}0</span
+    >
   </div>
 </template>
 
@@ -36,10 +42,13 @@ export default {
       type: Array,
       required: true
     },
-
     type: {
       type: String,
       required: true
+    },
+    profit: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -48,11 +57,21 @@ export default {
       return this.group.reduce((acc, e) => {
         const currency = this.$store.getters['account/getById'](e.account_id)
           .currency
-        if (currency && !acc.includes(currency)) {
+        if (!acc.includes(currency)) {
           acc.push(currency)
         }
         return acc
       }, [])
+    },
+
+    categoriesIDs () {
+      let categories = this.$store.state.category.categories.filter(
+        c => c.type === this.type
+      )
+      if (this.type === 'expense') {
+        categories = categories.filter(c => c.is_profit === this.profit)
+      }
+      return categories.map(c => c.id)
     }
   },
 
@@ -61,7 +80,7 @@ export default {
       return this.group
         .filter(
           e =>
-            (this.type === 'income' ? e.amount >= 0 : e.amount < 0) &&
+            this.categoriesIDs.includes(e.category_id) &&
             this.$store.getters['account/getById'](e.account_id).currency ===
               currency
         )
