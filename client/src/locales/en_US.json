@@ -28,7 +28,7 @@
     "name": "Apply changes to",
     "list": [
       "This transaction only",
-      "This & all related future recurring transactions {count}"
+      "This & all related future recurring transactions"
     ]
   },
   "amount": "Amount",

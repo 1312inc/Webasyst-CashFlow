@@ -194,7 +194,7 @@ export default {
 
       chart.responsive.rules.push({
         relevant: (target) => {
-          if (target.pixelWidth <= 400) {
+          if (target.pixelWidth <= 768) {
             if (target.cursor.behavior !== 'none') target.cursor.behavior = 'none'
             return true
           }

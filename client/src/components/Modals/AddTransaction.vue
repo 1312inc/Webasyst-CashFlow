@@ -85,9 +85,10 @@
             <div class="state-with-inner-icon left">
               <input-currency
                 v-model="model.amount"
-                ref="focus"
+                @keyup.enter="submit"
                 :signed="false"
                 :class="{ 'state-error': $v.model.amount.$error }"
+                ref="focus"
                 type="text"
                 class="bold number short"
                 placeholder="0"

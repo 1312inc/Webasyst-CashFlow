@@ -2,6 +2,7 @@
   <imask-input
     :value="$attrs.value"
     @accept="update"
+    v-on="$listeners"
     :mask="Number"
     :scale="2"
     :signed="signed"

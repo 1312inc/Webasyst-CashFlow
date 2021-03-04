@@ -14,9 +14,10 @@
           <div class="value">
             <input
               v-model="model.name"
+              @keyup.enter="submit"
+              :class="{ 'state-error': $v.model.name.$error }"
               ref="focus"
               class="bold"
-              :class="{ 'state-error': $v.model.name.$error }"
               type="text"
             />
           </div>
