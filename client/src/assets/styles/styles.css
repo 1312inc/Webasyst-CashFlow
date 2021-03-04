@@ -7,11 +7,15 @@ body.modal {
 }
 
 .text-green {
-  color: #3ec55e;
+  color: var(--green);
 }
 
 .text-red {
-  color: #fc3d38;
+  color: var(--red);
+}
+
+.text-blue {
+  color: var(--blue);
 }
 
 .c-header { position: relative; padding: 0.75rem 1.875rem; }

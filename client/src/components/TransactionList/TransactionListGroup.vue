@@ -72,6 +72,7 @@
             </div>
             <AmountForGroup :group="filteredTransactions" type="income" />
             <AmountForGroup :group="filteredTransactions" type="expense" />
+            <AmountForGroup :group="filteredTransactions" type="expense" :profit="true" />
           </div>
         </div>
       </div>

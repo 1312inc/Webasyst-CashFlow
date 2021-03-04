@@ -10,11 +10,12 @@ export default {
           currencyCode: null,
           isDynamics: false,
           isReverse: false,
+          isAbs: false,
           prefix: ''
         }
         const options = { ...defaults, ...userOptions }
         const value = options.isReverse ? options.value * -1 : options.value
-        const amount = numeral(options.isDynamics ? Math.abs(value) : value).format('0,0[.]00')
+        const amount = numeral(options.isDynamics || options.isAbs ? Math.abs(value) : value).format('0,0[.]00')
         const sign = options.isDynamics ? (value > 0 ? '+ ' : value < 0 ? '− ' : '') : ''
         const currency = this.currencySignByCode(options.currencyCode) ? ` ${this.currencySignByCode(options.currencyCode)}` : ''
         const prefix = options.prefix || ''

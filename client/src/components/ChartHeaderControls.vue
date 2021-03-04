@@ -5,13 +5,11 @@
       <div class="flexbox fixed space-12 width-100-mobile">
         <div>
           <Dropdown type="from" class="custom-m-0 custom-mb-8 width-100-mobile" />
-          <AmountForPeriod type="income" period="from" />
-          <AmountForPeriod type="expense" period="from" />
+          <Amounts period="from" />
         </div>
         <div>
           <Dropdown type="to" class="custom-m-0 custom-mb-8 width-100-mobile" />
-          <AmountForPeriod type="income" period="to" />
-          <AmountForPeriod type="expense" period="to" />
+          <Amounts period="to" />
         </div>
       </div>
     </div>
@@ -21,13 +19,13 @@
 <script>
 import CurrencyToggler from '@/components/CurrencyToggler'
 import Dropdown from '@/components/Dropdown'
-import AmountForPeriod from '@/components/AmountForPeriod'
+import Amounts from '@/components/Amounts'
 
 export default {
   components: {
     CurrencyToggler,
     Dropdown,
-    AmountForPeriod
+    Amounts
   }
 }
 </script>
