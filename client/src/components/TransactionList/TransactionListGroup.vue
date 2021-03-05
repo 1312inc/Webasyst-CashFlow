@@ -70,9 +70,7 @@
             <div @click="onStick({sticked: true})" class="desktop-only c-pie-icon-helper" style="display: none;cursor: pointer;" ref="pieIcon">
               <i class="fas fa-chart-pie"></i>
             </div>
-            <AmountForGroup :group="filteredTransactions" type="income" />
-            <AmountForGroup :group="filteredTransactions" type="expense" />
-            <AmountForGroup :group="filteredTransactions" type="expense" :profit="true" />
+            <Amounts :group="filteredTransactions" target="Group" class="flexbox middle space-12" />
           </div>
         </div>
       </div>
@@ -99,7 +97,7 @@
 <script>
 import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPeriod'
 import TransactionListGroupRow from './TransactionListGroupRow'
-import AmountForGroup from '@/components/AmountForGroup'
+import Amounts from '@/components/Amounts'
 export default {
   props: {
     group: {
@@ -117,7 +115,7 @@ export default {
   components: {
     TransactionListGroupUpcomingPeriod,
     TransactionListGroupRow,
-    AmountForGroup
+    Amounts
   },
 
   data () {

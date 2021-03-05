@@ -6,16 +6,16 @@
       :class="{
         'text-green': type === 'income',
         'text-red': type === 'expense',
-        'text-blue': profit,
+        'text-blue': type === 'profit',
       }"
     >
-      <i v-if="profit" class="fas fa-sign-out-alt text-blue"></i>
+      <i v-if="type === 'profit'" class="fas fa-sign-out-alt text-blue"></i>
       <span class="small semibold">{{
         $helper.toCurrency({
           value: getTotalByCurrency(currency),
           currencyCode: currency,
           isAbs: true,
-          prefix: profit ? " " : type === "income" ? "+ " : "− ",
+          prefix: type === "income" ? "+ " : type === "expense" ? "− " : " ",
         })
       }}</span>
     </div>
@@ -25,12 +25,12 @@
     :class="{
       'text-green': type === 'income',
       'text-red': type === 'expense',
-      'text-blue': profit,
+      'text-blue': type === 'profit',
     }"
   >
-    <i v-if="profit" class="fas fa-sign-out-alt text-blue"></i>
+    <i v-if="type === 'profit'" class="fas fa-sign-out-alt text-blue"></i>
     <span class="small semibold"
-      >{{ profit ? " " : type === "income" ? "+ " : "− " }}0</span
+      >{{ type === "income" ? "+ " : type === "expense" ? "− " : " " }}0</span
     >
   </div>
 </template>
@@ -45,10 +45,6 @@ export default {
     type: {
       type: String,
       required: true
-    },
-    profit: {
-      type: Boolean,
-      default: false
     }
   },
 
@@ -65,12 +61,12 @@ export default {
     },
 
     categoriesIDs () {
-      let categories = this.$store.state.category.categories.filter(
-        c => c.type === this.type
-      )
-      if (this.type === 'expense') {
-        categories = categories.filter(c => c.is_profit === this.profit)
-      }
+      const categories = this.$store.state.category.categories.filter(c => {
+        if (this.type === 'profit') {
+          return c.is_profit === true
+        }
+        return c.type === this.type && c.is_profit === false
+      })
       return categories.map(c => c.id)
     }
   },

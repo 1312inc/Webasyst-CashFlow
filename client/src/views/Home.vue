@@ -80,7 +80,7 @@ export default {
           t = to.params.id
           break
       }
-      document.title = `${t} – ${this.$helper.accountName}`
+      document.title = `${t} — ${this.$helper.accountName}`
 
       this.$store.dispatch('transaction/fetchTransactions', {
         from: '',

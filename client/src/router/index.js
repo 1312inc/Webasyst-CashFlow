@@ -39,7 +39,7 @@ const routes = [
     name: 'History',
     component: History,
     meta: {
-      title: `${i18n.t('history')} – ${accountName}`
+      title: `${i18n.t('history')} — ${accountName}`
     }
   },
   {
@@ -47,7 +47,7 @@ const routes = [
     name: 'Upnext',
     component: Upnext,
     meta: {
-      title: `${i18n.t('upnext')} – ${accountName}`
+      title: `${i18n.t('upnext')} — ${accountName}`
     }
   },
   {
@@ -60,7 +60,7 @@ const routes = [
     name: 'Search',
     component: Search,
     meta: {
-      title: `${i18n.t('search.label')} – ${accountName}`
+      title: `${i18n.t('search.label')} — ${accountName}`
     }
   },
   {
@@ -68,7 +68,7 @@ const routes = [
     name: 'Import',
     component: Import,
     meta: {
-      title: `${i18n.t('importResults')} – ${accountName}`
+      title: `${i18n.t('importResults')} — ${accountName}`
     }
   }
 ]

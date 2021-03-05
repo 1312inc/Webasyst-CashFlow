@@ -70,8 +70,8 @@ export default {
           const account = this.$store.getters['account/getById'](
             transaction.account_id
           )
-          if (!acc[category.id]) {
-            acc[category.id] = {
+          if (!acc[account.currency]) {
+            acc[account.currency] = {
               id: category.id,
               date: transaction.date,
               amount: transaction.amount,
@@ -80,7 +80,7 @@ export default {
               category_color: category.color
             }
           } else {
-            acc[category.id].amount += transaction.amount
+            acc[account.currency].amount += transaction.amount
           }
           return acc
         }, {})

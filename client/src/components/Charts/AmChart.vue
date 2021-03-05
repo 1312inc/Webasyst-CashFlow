@@ -86,7 +86,7 @@ export default {
       // Date axis for groups (columns)
       const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
       dateAxis.groupData = true
-      dateAxis.groupCount = 360
+      dateAxis.groupCount = process.env.VUE_APP_MODE === 'mobile' ? 90 : 180
       dateAxis.groupIntervals.setAll([
         { timeUnit: 'day', count: 1 },
         { timeUnit: 'month', count: 1 }
@@ -104,7 +104,7 @@ export default {
       this.dateAxis = dateAxis
       this.dateAxis.events.on('groupperiodchanged', ({ target }) => {
         target.startLocation = target.currentDataSetId.includes('month') ? this.$moment(this.chartInterval.from).date() / this.$moment(this.chartInterval.from).daysInMonth() : 0
-        target.endLocation = target.currentDataSetId.includes('month') ? (this.$moment(this.chartInterval.to).date() - 2) / this.$moment(this.chartInterval.to).daysInMonth() : 1
+        target.endLocation = target.currentDataSetId.includes('month') ? this.$moment(this.chartInterval.to).date() / this.$moment(this.chartInterval.to).daysInMonth() : 1
       })
 
       // Balance Axis
@@ -146,7 +146,7 @@ export default {
 
       // Future dates hover
       const rangeFututre = this.dateAxis.axisRanges.create()
-      rangeFututre.date = this.$moment().set('hour', 12).toDate()
+      rangeFututre.date = new Date()
       rangeFututre.endDate = new Date(8640000000000000)
       rangeFututre.grid.disabled = true
       rangeFututre.axisFill.fillOpacity = 0.5
@@ -155,7 +155,7 @@ export default {
 
       // Currend day line
       const dateBorder = this.dateAxis.axisRanges.create()
-      dateBorder.date = this.$moment().set('hour', 12).toDate()
+      dateBorder.date = new Date()
       dateBorder.grid.stroke = prefersColorSchemeDark ? am4core.color('#FFF') : am4core.color('#333333')
       dateBorder.grid.strokeWidth = 1
       dateBorder.grid.strokeOpacity = 0.3
