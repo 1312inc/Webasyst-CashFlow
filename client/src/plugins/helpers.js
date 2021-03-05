@@ -28,7 +28,9 @@ export default {
 
       isDesktopEnv: process.env.VUE_APP_MODE === 'desktop',
 
-      baseUrl: window?.appState?.baseUrl || '/',
+      baseUrl: window.appState?.baseUrl || '/',
+
+      accountName: window.appState?.accountName || '',
 
       isValidHttpUrl: string => {
         let url

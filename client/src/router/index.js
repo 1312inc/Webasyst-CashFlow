@@ -6,8 +6,12 @@ import Upnext from '../views/Upnext.vue'
 import Reports from '../views/Reports.vue'
 import Search from '../views/Search.vue'
 import Import from '../views/Import.vue'
+import { i18n } from '../plugins/locale'
 
 Vue.use(VueRouter)
+
+// TODO: make settings file
+const accountName = window.appState?.accountName || ''
 
 const routes = [
   {
@@ -33,12 +37,18 @@ const routes = [
   {
     path: '/history',
     name: 'History',
-    component: History
+    component: History,
+    meta: {
+      title: `${i18n.t('history')} – ${accountName}`
+    }
   },
   {
     path: '/upnext',
     name: 'Upnext',
-    component: Upnext
+    component: Upnext,
+    meta: {
+      title: `${i18n.t('upnext')} – ${accountName}`
+    }
   },
   {
     path: '/reports',
@@ -48,12 +58,18 @@ const routes = [
   {
     path: '/search',
     name: 'Search',
-    component: Search
+    component: Search,
+    meta: {
+      title: `${i18n.t('search.label')} – ${accountName}`
+    }
   },
   {
     path: '/import/:id',
     name: 'Import',
-    component: Import
+    component: Import,
+    meta: {
+      title: `${i18n.t('importResults')} – ${accountName}`
+    }
   }
 ]
 
@@ -64,6 +80,13 @@ const router = new VueRouter({
   scrollBehavior (to, from, savedPosition) {
     return { x: 0, y: 0 }
   }
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
+  next()
 })
 
 export default router
