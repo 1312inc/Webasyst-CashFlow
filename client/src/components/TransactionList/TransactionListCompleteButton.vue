@@ -1,7 +1,10 @@
 <template>
   <div>
     <button @click="handleComplete" class="red">
-      <i class="fas fa-check"></i> {{ $t('Done') }}
+      <i class="fas fa-check"></i>
+      <span class="desktop-only">
+        {{ $t('Done') }}
+      </span>
     </button>
   </div>
 </template>

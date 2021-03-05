@@ -17,7 +17,7 @@
         on-stick="onStick"
         class="c-sticky-header-group"
       >
-        <div class="flexbox middle custom-py-8">
+        <div class="flexbox middle custom-py-8 wrap-mobile">
           <div class="flexbox middle space-12 wide">
             <div v-if="$helper.showMultiSelect()" style="width: 1rem">
               <span
@@ -66,7 +66,7 @@
             </h3>
             <TransactionListGroupUpcomingPeriod v-if="type === 'future'" />
           </div>
-          <div class="flexbox middle space-12">
+          <div class="flexbox middle space-12 wrap-mobile">
             <div @click="onStick({sticked: true})" class="desktop-only c-pie-icon-helper" style="display: none;cursor: pointer;" ref="pieIcon">
               <i class="fas fa-chart-pie"></i>
             </div>
