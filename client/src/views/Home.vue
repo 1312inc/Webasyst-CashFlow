@@ -64,6 +64,24 @@ export default {
         name: to.name.toLowerCase(),
         id: +to.params.id || to.params.id
       })
+
+      // TODO: make current entity more userful
+      const currentEntity = this.$store.getters.getCurrentType
+      let t = ''
+      switch (to.name) {
+        case 'Home':
+          t = this.$store.state.currentTypeId
+          break
+        case 'Account':
+        case 'Category':
+          t = currentEntity.name
+          break
+        case 'Currency':
+          t = to.params.id
+          break
+      }
+      document.title = `${t} – ${this.$helper.accountName}`
+
       this.$store.dispatch('transaction/fetchTransactions', {
         from: '',
         to: this.$moment().add(1, 'M').format('YYYY-MM-DD'),
