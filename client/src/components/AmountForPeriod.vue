@@ -7,8 +7,8 @@
       'text-blue': type === 'profit',
     }"
   >
-    <div class="custom-ml-12">
-      <i v-if="type === 'profit'" class="fas fa-piggy-bank text-blue"></i>
+    <div class="custom-ml-12 custom-mb-4">
+      <i v-if="type === 'profit'" class="fas fa-sign-out-alt text-blue"></i>
       <span class="small semibold">{{
         $helper.toCurrency({
           value: total,

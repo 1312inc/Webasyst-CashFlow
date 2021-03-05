@@ -49,15 +49,15 @@ export default {
   &__item {
     display: flex;
     align-items: center;
-    width: 70%;
-    margin: 0.2rem 0.4rem;
+    width: 80%;
+    margin: 0.375rem 0.5rem;
 
     &__square {
-      width: 1.4rem;
-      height: 1.4rem;
+      width: 1rem;
+      height: 1rem;
       flex-grow: 0;
       flex-shrink: 0;
-      border-radius: 4px;
+      border-radius: 50%;
       margin-right: 0.4rem;
     }
     &__label {

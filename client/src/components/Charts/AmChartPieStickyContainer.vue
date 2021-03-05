@@ -32,6 +32,8 @@ export default {
 
 <style lang="scss">
 .c-chart-pie-sticky-container {
+  width: 35%;
+  min-widtht: 380px;
   padding-left: 1rem;
 }
 @media screen and (max-width: 980px) {

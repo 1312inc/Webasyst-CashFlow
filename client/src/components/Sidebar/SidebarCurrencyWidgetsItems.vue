@@ -25,7 +25,7 @@
             class="c-bwc-badge small nowrap"
             ><i
               :class="
-                alertDate.amount >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'
+                alertDate.amount >= 0 ? 'fa-arrow-circle-up' : 'fa-exclamation-triangle'
               "
               class="fas custom-mr-4"
               style="color: white"
