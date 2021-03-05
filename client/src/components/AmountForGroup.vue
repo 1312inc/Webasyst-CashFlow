@@ -9,7 +9,7 @@
         'text-blue': profit,
       }"
     >
-      <i v-if="profit" class="fas fa-piggy-bank text-blue"></i>
+      <i v-if="profit" class="fas fa-sign-out-alt text-blue"></i>
       <span class="small semibold">{{
         $helper.toCurrency({
           value: getTotalByCurrency(currency),
@@ -28,7 +28,7 @@
       'text-blue': profit,
     }"
   >
-    <i v-if="profit" class="fas fa-piggy-bank text-blue"></i>
+    <i v-if="profit" class="fas fa-sign-out-alt text-blue"></i>
     <span class="small semibold"
       >{{ profit ? " " : type === "income" ? "+ " : "− " }}0</span
     >

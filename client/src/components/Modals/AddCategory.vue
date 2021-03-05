@@ -51,6 +51,7 @@
                   </span>
                 </span>
                 {{ $t("profit") }}
+                <i class="fas fa-sign-out-alt gray"></i>
               </label>
             </div>
             <div v-if="model.type === 'income'" class="custom-mt-8">

@@ -27,8 +27,9 @@ body.modal {
   transition: all 0.3s;
   border: none;
 }
-/* .c-list .c-item:hover { background: var(--background-color-table-row-hover); } */
-.c-list .c-item .c-item-border { border-top: 1px solid var(--border-color-soft); padding: 0.875rem 0; }
+.c-list .c-item:hover { background: linear-gradient(90deg, rgba(255,255,255,0.0) 0%, var(--background-color-table-row-hover) 15%, var(--background-color-table-row-hover) 100%); }
+.c-list .c-item.selected { background: linear-gradient(90deg, rgba(255,255,255,0.0) 0%, var(--background-color-table-row-selected) 15%, var(--background-color-table-row-selected) 100%); }
+.c-list .c-item .c-item-border { border-top: 1px solid var(--border-color-soft); padding: 0.8125rem 0; }
 .c-list .c-item:first-child .c-item-border { border: none; }
 .c-item .userpic .c-category-glyph { color: var(--white); font-size: 1.5rem; padding: 0.75rem; }
 
@@ -80,6 +81,7 @@ body.modal {
 
 .c-sticky-header-group {
   background: var(--background-color-blank);
+  margin-right: 0.75rem;
 }
 
 .c-sticky-header-group.vue-sticky-el.top-sticky {

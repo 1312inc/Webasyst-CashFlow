@@ -36,7 +36,7 @@
       </div>
       <div class="wide flexbox c-item-border">
         <div class="wide">
-            <div class="black semibold">
+            <div class="black semibold custom-mb-8">
               <span v-if="transaction.description">{{ transaction.description }}</span>
               <span v-if="!transaction.description" class="gray">{{ $t('noDesc') }}</span>
               <span
@@ -47,7 +47,7 @@
                 <i class="fas fa-redo-alt opacity-50"></i>
               </span>
             </div>
-            <span v-if="category.name" class="custom-mb-4 small gray">
+            <span v-if="category.name" class="small gray">
               {{ category.name }}
             </span>
             <span v-if="account.name" class="small gray">
@@ -70,14 +70,14 @@
             {{ $moment(transaction.date).format("ll") }}
           </div>
         </div>
+        <transition name="fade" :duration="300">
+          <TransactionListCompleteButton
+            v-show="transaction.is_onbadge && $route.name === 'Upnext'"
+            :transactionId="transaction.id"
+            class="c-item-done"
+          />
+        </transition>
       </div>
-      <transition name="fade" :duration="300">
-        <TransactionListCompleteButton
-          v-show="transaction.is_onbadge && $route.name === 'Upnext'"
-          :transactionId="transaction.id"
-          class="c-item-done"
-        />
-      </transition>
     </div>
 
     <portal>
@@ -194,5 +194,12 @@ export default {
   animation-timing-function: linear;
   animation-direction: alternate;
   background-color: #dbf4e1;
+}
+.c-item-done {
+  margin-right: 0.75rem;
+  margin-top: 0.375rem;
+}
+.c-item-amount {
+  margin-right: 0.75rem;
 }
 </style>
