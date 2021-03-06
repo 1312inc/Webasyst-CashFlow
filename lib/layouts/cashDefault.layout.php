@@ -31,7 +31,7 @@ class cashDefaultLayout extends waLayout
                 'contextUser' => cash()->getUser(),
                 'userId' => (int) wa()->getUser()->getId(),
                 'show_review_widget' => $showReviewWidget,
-                'api_settings' => $apiSettings,
+                'api_settings' => json_encode($apiSettings, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'currencies' => json_encode($currencies, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'categories' => json_encode($categories, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'accounts' => json_encode($accounts, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
