@@ -204,7 +204,7 @@ class cashAutocomplete
                         'middlename' => $c['middlename'],
                         'lastname' => $c['lastname'],
                         'photo_url' => waContact::getPhotoUrl($c['id'], $c['photo'], 96),
-                        'photo_url_absolute' => rtrim(wa()->getUrl(true), '/') . $photo,
+                        'photo_url_absolute' => wa()->getConfig()->getHostUrl() . $photo,
                         'label' => implode(' ', array_filter([$name, $email, $phone])),
                     ];
 
