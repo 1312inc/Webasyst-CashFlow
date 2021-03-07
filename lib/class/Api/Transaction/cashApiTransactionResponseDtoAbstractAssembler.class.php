@@ -29,7 +29,7 @@ abstract class cashApiTransactionResponseDtoAbstractAssembler
             'name' => $user->getName(),
             'firstname' => $user->getContact()->get('firstname'),
             'lastname' => $user->getContact()->get('lastname'),
-            'userpic' => rtrim(wa()->getUrl(true), '/') . $user->getPhotoUrl(),
+            'userpic' => wa()->getConfig()->getHostUrl() . $user->getPhotoUrl(),
         ];
     }
 
@@ -46,10 +46,10 @@ abstract class cashApiTransactionResponseDtoAbstractAssembler
             }
 
             return [
-                'icon' => rtrim(wa()->getUrl(true), '/') . $externalEntity->getAppIcon(),
+                'icon' => wa()->getConfig()->getHostUrl() . $externalEntity->getAppIcon(),
                 'link' => sprintf(
                     '%s%s%s%s',
-                    rtrim(wa()->getUrl(true), '/'),
+                    wa()->getConfig()->getHostUrl(),
                     rtrim(wa('shop')->getConfig()->getBackendUrl(true), '/'),
                     rtrim(wa()->getAppUrl('shop'), '/'),
                     $externalEntity->getLink()
