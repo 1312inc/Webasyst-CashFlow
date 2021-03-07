@@ -39,7 +39,7 @@ class cashCategory extends cashAbstractEntity
     /**
      * @var int|bool
      */
-    private $is_profit;
+    private $is_profit = 0;
 
     /**
      * @return int
