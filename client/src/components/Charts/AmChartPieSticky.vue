@@ -3,7 +3,7 @@
     <AmChartPie2
       :rawData="isCounterMode ? rawData : rawDataByCurrency"
       :isCounterMode="isCounterMode"
-      :totalTransactions="activeGroupTransactions.items.length"
+      :totalTransactions="totalTransactions"
       :label="
         isCounterMode
           ? selectedTransactionsIds.length
@@ -50,6 +50,12 @@ export default {
         )
         return account.currency
       }
+    },
+    totalTransactions () {
+      return this.activeGroupTransactions.items.filter(t => {
+        const account = this.$store.getters['account/getById'](t.account_id)
+        return account.currency === this.currencyCode
+      }).length
     },
     rawDataByCurrency () {
       return this.rawData.filter(e => e.currency === this.currencyCode)

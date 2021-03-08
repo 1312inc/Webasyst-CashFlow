@@ -254,11 +254,6 @@ export default {
     },
 
     updateChartData (newChartData) {
-      // Delete cash gap ranges
-      this.dateAxis2.axisRanges.each(() => {
-        this.dateAxis2.axisRanges.pop().dispose()
-      })
-
       // Define interval in days
       const daysInInterval = this.$moment(this.chartInterval.to).diff(this.$moment(this.chartInterval.from), 'days') + 1
 
@@ -411,6 +406,45 @@ export default {
       balanceSeries.groupFields.valueY = 'sum'
       balanceSeries.stroke = am4core.color('rgba(255, 0, 0, 0)')
       balanceSeries.strokeWidth = 3
+
+      const chartDataChangedEvent = this.chart.events.on('datavalidated', (ev) => {
+        // Delete cash gap ranges
+        this.dateAxis2.axisRanges.each(() => {
+          this.dateAxis2.axisRanges.pop().dispose()
+        })
+
+        let dates = []
+        let previous = null
+        ev.target.data.forEach((e, i, arr) => {
+          if (e.balance < 0) {
+            dates.push({
+              balance: e.balance,
+              date: e.period,
+              isStart: previous === null,
+              isEnd: false
+            })
+            if (i === arr.length - 1 && dates.length) {
+              dates[dates.length - 1].isEnd = true
+              this.addNegativeBalanceRange(balanceSeries, dates)
+            }
+          } else {
+            if (dates.length) {
+              this.addNegativeBalanceRange(balanceSeries, dates)
+            }
+            dates = []
+          }
+          previous = e.balance
+        })
+      })
+
+      balanceSeries.events.on('beforedisposed', (ev) => {
+        // Delete cash gap ranges
+        this.dateAxis2.axisRanges.each(() => {
+          this.dateAxis2.axisRanges.pop().dispose()
+        })
+        chartDataChangedEvent.dispose()
+      })
+
       this.balanceSeries = balanceSeries
 
       // Create a range to change stroke for positive values
@@ -435,37 +469,12 @@ export default {
       rangeDashed.contents.strokeDasharray = '3 5'
       rangeDashed.contents.strokeWidth = 3
 
-      // Add simple bullet
+      // Add Today bullet
       const bullet = this.balanceSeries.bullets.push(new am4charts.CircleBullet())
       bullet.disabled = true
       bullet.propertyFields.disabled = 'bulletDisabled'
       bullet.events.on('inited', ({ target }) => {
         target.circle.fill = target.dataItem.valueY >= 0 ? am4core.color('#3ec55e') : am4core.color('#fc3d38')
-      })
-
-      this.balanceSeries.events.on('datavalidated', (ev) => {
-        let dates = []
-        let previous = null
-        ev.target.data.forEach((e, i, arr) => {
-          if (e.balance < 0) {
-            dates.push({
-              balance: e.balance,
-              date: e.period,
-              isStart: previous === null,
-              isEnd: false
-            })
-            if (i === arr.length - 1 && dates.length) {
-              dates[dates.length - 1].isEnd = true
-              this.addNegativeBalanceRange(ev.target, dates)
-            }
-          } else {
-            if (dates.length) {
-              this.addNegativeBalanceRange(ev.target, dates)
-            }
-            dates = []
-          }
-          previous = e.balance
-        })
       })
     },
 
