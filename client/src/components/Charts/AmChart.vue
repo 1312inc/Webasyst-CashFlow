@@ -409,8 +409,10 @@ export default {
 
       const chartDataChangedEvent = this.chart.events.on('datavalidated', (ev) => {
         // Delete cash gap ranges
-        this.dateAxis2.axisRanges.each(() => {
-          this.dateAxis2.axisRanges.pop().dispose()
+        this.dateAxis2.axisRanges.each((e, i) => {
+          if (e.name === 'CashGap') {
+            this.dateAxis2.axisRanges.removeIndex(i).dispose()
+          }
         })
 
         let dates = []
@@ -439,8 +441,10 @@ export default {
 
       balanceSeries.events.on('beforedisposed', (ev) => {
         // Delete cash gap ranges
-        this.dateAxis2.axisRanges.each(() => {
-          this.dateAxis2.axisRanges.pop().dispose()
+        this.dateAxis2.axisRanges.each((e, i) => {
+          if (e.name === 'CashGap') {
+            this.dateAxis2.axisRanges.removeIndex(i).dispose()
+          }
         })
         chartDataChangedEvent.dispose()
       })
@@ -463,7 +467,7 @@ export default {
 
       // Create a range to make stroke dashed in the future
       const rangeDashed = this.dateAxis2.createSeriesRange(this.balanceSeries)
-      rangeDashed.date = this.$moment().toDate()
+      rangeDashed.date = new Date()
       rangeDashed.endDate = new Date(8640000000000000)
       rangeDashed.contents.stroke = prefersColorSchemeDark ? '#000000' : am4core.color('#f3f3f3')
       rangeDashed.contents.strokeDasharray = '3 5'
@@ -492,6 +496,7 @@ export default {
       const inDaysEnd = (daysInIntervalEnd > 0 && !dates[dates.length - 1].isEnd) ? ` ${this.$t('inDays', { days: daysInIntervalEnd })}` : ''
 
       const nbr = this.dateAxis2.createSeriesRange(target)
+      nbr.name = 'CashGap'
       nbr.date = new Date(dates[0].date)
       nbr.endDate = new Date(dates[dates.length - 1].date)
       nbr.contents.strokeWidth = 0
