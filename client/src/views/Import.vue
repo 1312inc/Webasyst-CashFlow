@@ -2,7 +2,7 @@
   <div>
     <ChartHeader>
       <template v-slot:title>
-        <h1 class="custom-m-0">{{ $t("importResults") }}</h1>
+        <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">{{ $t("importResults") }}</h1>
       </template>
     </ChartHeader>
     <TransactionList />

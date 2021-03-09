@@ -6,7 +6,7 @@
       @click="openModal"
       class="flexbox middle space-12"
     >
-      <div v-if="$helper.showMultiSelect()" style="width: 1rem;">
+      <div v-if="$helper.showMultiSelect()" :class="{'desktop-only': $helper.isDesktopEnv}" style="width: 1rem;">
         <span
           v-show="isHoverComputed"
           @click="checkboxSelect"
@@ -41,8 +41,8 @@
               <span v-if="!transaction.description" class="gray">{{ $t('noDesc') }}</span>
               <span
                 v-if="transaction.repeating_id"
-                class="tooltip custom-ml-4"
-                :data-title="$t('repeatingTran')"
+                class="custom-ml-4"
+                :title="$t('repeatingTran')"
               >
                 <i class="fas fa-redo-alt opacity-50"></i>
               </span>
@@ -196,10 +196,10 @@ export default {
   background-color: #dbf4e1;
 }
 .c-item-done {
-  margin-right: 0.75rem;
+  margin-left: 0.75rem;
   margin-top: 0.375rem;
 }
-.c-item-amount {
+/* .c-item-amount {
   margin-right: 0.75rem;
-}
+} */
 </style>
