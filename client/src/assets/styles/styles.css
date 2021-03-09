@@ -1,5 +1,5 @@
-@media screen and (max-width: 760px) { /* mobile */
-  .flexbox.wrap-mobile { flex-wrap: wrap; } /* TODO: remove when wa-2.0.css is updated */
+.flexbox .wide {
+  flex: 1 1 auto;
 }
 
 body.modal {
@@ -81,15 +81,15 @@ body.modal {
 
 .c-sticky-header-group {
   background: var(--background-color-blank);
-  margin-right: 0.75rem;
+  /* margin-right: 0.75rem; */
 }
 
 .c-sticky-header-group.vue-sticky-el.top-sticky {
   box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.1);
 }
 
-.c-mobile-build .c-item > .flexbox { padding: 0 0 0 1rem; }
-.c-mobile-build .c-item .c-item-amount { padding-right: 1rem; }
+/* .c-mobile-build .c-item > .flexbox { padding: 0 0 0 1rem; } */
+/* .c-mobile-build .c-item .c-item-amount { padding-right: 1rem; } */
 .c-mobile-build .c-sticky-header-group > div { padding: 0 1rem; }
 .c-mobile-build .c-chart-container { padding: 1rem; }
 .c-mobile-build .c-transaction-section .c-transaction-section__header { font-size: 1.25rem; }

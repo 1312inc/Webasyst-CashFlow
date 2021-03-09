@@ -1,5 +1,5 @@
 <template>
-  <div v-if="currentEntity">
+  <div v-if="currentEntity" class="custom-p-16-mobile custom-pb-0-mobile">
     <div>{{ this.$moment().format("LL") }}</div>
     <div class="flexbox middle space-12">
       <div class="h2 custom-mb-0">

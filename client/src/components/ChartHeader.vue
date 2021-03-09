@@ -1,6 +1,6 @@
 <template>
   <div class="c-header custom-p-0-mobile">
-    <div class="flexbox full-width" sticky-ref="controls">
+    <div class="flexbox wrap-mobile full-width" sticky-ref="controls">
       <div>
         <slot v-if="$helper.isDesktopEnv" name="title"></slot>
         <div
