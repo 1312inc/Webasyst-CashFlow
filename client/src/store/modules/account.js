@@ -20,6 +20,10 @@ export default {
         if (!acc.includes(currency)) acc.push(currency)
         return acc
       }, [])
+    },
+
+    accountsByCurrencyCode: state => code => {
+      return state.accounts.filter(a => a.currency === code).map(a => a.id)
     }
   },
 

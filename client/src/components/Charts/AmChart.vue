@@ -58,6 +58,7 @@ export default {
     if (this.chart) {
       this.chart.dispose()
     }
+    this.$store.commit('transaction/setChartData', [])
   },
 
   methods: {
