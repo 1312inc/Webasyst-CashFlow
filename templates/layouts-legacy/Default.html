@@ -20,7 +20,7 @@
     <script type="text/javascript" src="{$wa_app_static_url}js/c3.min.js?v{$wa->version()}"></script>
     <script type="text/javascript" src="{$wa_app_static_url}js/cash-routing.js{if !waSystemConfig::isDebug()}?v={$wa->version()}{/if}"></script>
     <script type="text/javascript" src="{$wa_app_static_url}js/cash.js{if !waSystemConfig::isDebug()}?v={$wa->version()}{/if}"></script>
-    <script type="text/javascript" src="?action=loc{if !waSystemConfig::isDebug()}&v={$wa->version()}{/if}"></script>
+    <script type="text/javascript" src="{$wa_app_url}loc/{if !waSystemConfig::isDebug()}?v={$wa->version()}{/if}"></script>
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.js"></script>
 </head>
 <body>
