@@ -46,6 +46,10 @@ export default {
   getters: {
     getTransactionById: state => id => {
       return state.transactions.data.find(t => t.id === id)
+    },
+
+    activeCurrencyCode: state => {
+      return state.chartData[state.chartDataCurrencyIndex]?.currency
     }
   },
 

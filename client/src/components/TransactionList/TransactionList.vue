@@ -72,9 +72,25 @@ export default {
     transactions () {
       return this.$store.state.transaction.transactions
     },
+    activeCurrencyCode () {
+      return this.$store.getters['transaction/activeCurrencyCode']
+    },
+    transactionsByCurrency () {
+      if (this.activeCurrencyCode) {
+        return this.transactions.data.filter(t => {
+          return this.$store.getters['account/accountsByCurrencyCode'](
+            this.activeCurrencyCode
+          ).includes(t.account_id)
+        })
+      } else {
+        return this.transactions.data
+      }
+    },
     groups () {
       const today = this.$moment().format('YYYY-MM-DD')
-      const yesterday = this.$moment().add(-1, 'day').format('YYYY-MM-DD')
+      const yesterday = this.$moment()
+        .add(-1, 'day')
+        .format('YYYY-MM-DD')
       const add = (name, transaction) => {
         const t = result.find(e => e.name === name)
         if (!t) {
@@ -105,14 +121,17 @@ export default {
       }
 
       // add yesterday object
-      if (this.showYesterdayGroup && !result.find(e => e.name === 'yesterday')) {
+      if (
+        this.showYesterdayGroup &&
+        !result.find(e => e.name === 'yesterday')
+      ) {
         result.push({
           name: 'yesterday',
           items: []
         })
       }
 
-      this.$store.state.transaction.transactions.data.forEach(e => {
+      this.transactionsByCurrency.forEach(e => {
         // if no grouping
         if (!this.grouping) {
           return add('ungroup', e)
@@ -120,9 +139,10 @@ export default {
 
         // if future and not details mode
         if (
-          e.date > today && this.showFutureGroup &&
+          e.date > today &&
+          this.showFutureGroup &&
           !this.$store.state.transaction.detailsInterval.from &&
-            !this.$store.state.transaction.detailsInterval.to
+          !this.$store.state.transaction.detailsInterval.to
         ) {
           return add('future', e)
         }
