@@ -1,7 +1,11 @@
 <template>
-  <!-- TODO: make component functional? -->
-  <div class="c-legend">
-    <div v-for="item in legendItems" :key="item.id" class="c-legend__item">
+  <div class="c-legend" :class="{ 'c-legend--column': isColumnStyle }">
+    <div
+      v-for="item in legendItems"
+      :key="item.id"
+      class="c-legend__item"
+      :class="{ 'c-legend__item--column': isColumnStyle }"
+    >
       <div
         class="c-legend__item__square"
         :style="`background-color:${item.category_color}`"
@@ -14,7 +18,7 @@
               value: item.amount,
               isDynamics: true,
               isReverse: isReverse,
-              currencyCode
+              currencyCode,
             })
           }}
         </div>
@@ -35,6 +39,10 @@ export default {
     isReverse: {
       type: Boolean,
       default: false
+    },
+    isColumnStyle: {
+      type: Boolean,
+      default: true
     }
   }
 }
@@ -44,13 +52,19 @@ export default {
 .c-legend {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+
+  &--column {
+    justify-content: center;
+  }
 
   &__item {
     display: flex;
-    align-items: center;
-    width: 80%;
     margin: 0.375rem 0.5rem;
+
+    &--column {
+      align-items: center;
+      width: 80%;
+    }
 
     &__square {
       width: 1rem;
@@ -71,6 +85,7 @@ export default {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        margin-right: 1rem;
       }
 
       &__value {
