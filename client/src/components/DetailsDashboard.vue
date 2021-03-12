@@ -20,9 +20,7 @@
     </div>
 
     <DetailsDashboardItem
-      v-for="currency in data"
-      :key="currency.currency"
-      :itemData="currency"
+      :itemData="dashboardData"
     />
 
     <portal>
@@ -63,6 +61,10 @@ export default {
             'LL'
           )} – ${this.$moment(this.detailsInterval.to).format('LL')}`
         : `${this.$moment(this.detailsInterval.from).format('LL')}`
+    },
+
+    dashboardData () {
+      return this.data.find(i => i.currency === this.$store.getters['transaction/activeCurrencyCode'])
     }
   },
 

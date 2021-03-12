@@ -3,7 +3,7 @@
     <div v-if="showIncome" class="custom-mb-16">
       <div class="flexbox middle full-width">
         <div class="large bold">
-          {{ $t("income") }} ({{ itemData.currency }})
+          {{ $t("income") }}
         </div>
         <div class="large bold text-green mobile-only">
           {{
@@ -42,7 +42,7 @@
     <div v-if="showExpense" class="custom-mb-16">
       <div class="flexbox middle full-width">
         <div class="large bold">
-          {{ $t("expense") }} ({{ itemData.currency }})
+          {{ $t("expense") }}
         </div>
         <div class="large bold text-red mobile-only">
           {{
@@ -84,7 +84,7 @@
     <div v-if="showProfit">
       <div class="flexbox middle full-width">
         <div class="large bold">
-          {{ $t("profit") }} ({{ itemData.currency }})
+          {{ $t("profit") }}
         </div>
         <div class="large bold text-blue mobile-only">
           {{
