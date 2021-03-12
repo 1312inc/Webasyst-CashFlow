@@ -5,7 +5,10 @@
         <h3 class="custom-mb-0">
           {{ dates }}
         </h3>
-        <button @click="openModal = true" class="button light-gray custom-ml-12">
+        <button
+          @click="openModal = true"
+          class="button light-gray custom-ml-12"
+        >
           {{ $t("setDates") }}
         </button>
       </div>
@@ -16,61 +19,11 @@
       </div>
     </div>
 
-    <div v-for="currency in data" :key="currency.currency" class="flexbox">
-      <div class="width-40 width-100-mobile">
-        <div class="">
-          <div class="align-center uppercase small gray bold">{{ $t("income") }}</div>
-          <div class="align-center largest text-green bold custom-mt-4">
-            {{
-              $helper.toCurrency({
-                value: currency.income.totalAmount,
-                currencyCode: currency.currency,
-                isDynamics: true,
-              })
-            }}
-          </div>
-        </div>
-        <ChartPie :data="currency.income.data" :currency="currency.currency" />
-        <AmChartLegend
-          :legendItems="currency.income.data"
-          :currencyCode="currency.currency"
-        />
-      </div>
-
-      <div class="width-40 width-100-mobile">
-        <div class="">
-          <div class="align-center uppercase small gray bold">{{ $t("expense") }}</div>
-          <div class="align-center largest text-red bold custom-mt-4">
-            {{
-              $helper.toCurrency({
-                value: currency.expense.totalAmount,
-                currencyCode: currency.currency,
-                isDynamics: true,
-                isReverse: true,
-              })
-            }}
-          </div>
-        </div>
-        <ChartPie :data="currency.expense.data" :currency="currency.currency" />
-        <AmChartLegend
-          :legendItems="currency.expense.data"
-          :currencyCode="currency.currency"
-          :isReverse="true"
-        />
-      </div>
-
-      <div class="width-20 width-100-mobile">
-        <div class="align-center uppercase small gray bold">{{ $t("balance") }}</div>
-        <div class="align-center largest bold black custom-mt-4">
-          {{
-            $helper.toCurrency({
-              value: currency.income.totalAmount - currency.expense.totalAmount,
-              currencyCode: currency.currency,
-            })
-          }}
-        </div>
-      </div>
-    </div>
+    <DetailsDashboardItem
+      v-for="currency in data"
+      :key="currency.currency"
+      :itemData="currency"
+    />
 
     <portal>
       <Modal v-if="openModal">
@@ -84,15 +37,13 @@
 import api from '@/plugins/api'
 import { mapState } from 'vuex'
 import Modal from '@/components/Modal'
-import ChartPie from '@/components/Charts/AmChartPie'
-import AmChartLegend from '@/components/Charts/AmChartLegend'
+import DetailsDashboardItem from './DetailsDashboardItem.vue'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 
 export default {
   components: {
     Modal,
-    ChartPie,
-    AmChartLegend,
+    DetailsDashboardItem,
     UpdateDetailsInterval
   },
 
@@ -108,9 +59,9 @@ export default {
 
     dates () {
       return this.detailsInterval.from !== this.detailsInterval.to
-        ? `${this.$moment(this.detailsInterval.from).format('LL')} – ${this.$moment(
-            this.detailsInterval.to
-          ).format('LL')}`
+        ? `${this.$moment(this.detailsInterval.from).format(
+            'LL'
+          )} – ${this.$moment(this.detailsInterval.to).format('LL')}`
         : `${this.$moment(this.detailsInterval.from).format('LL')}`
     }
   },
@@ -122,13 +73,14 @@ export default {
   methods: {
     fetchBreakDown (val) {
       if (val.from && val.to) {
-        api.get('cash.aggregate.getBreakDown', {
-          params: {
-            from: val.from,
-            to: val.to,
-            filter: this.queryParams.filter
-          }
-        })
+        api
+          .get('cash.aggregate.getBreakDown', {
+            params: {
+              from: val.from,
+              to: val.to,
+              filter: this.queryParams.filter
+            }
+          })
           .then(({ data }) => {
             this.data = data
           })
