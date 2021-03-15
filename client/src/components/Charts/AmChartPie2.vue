@@ -97,7 +97,7 @@ export default {
         if (this.label === 'future') {
           this.pieLabel.html += this.futureLabelText
         } else {
-          this.pieLabel.html += this.$moment(this.label).isValid()
+          this.pieLabel.html += this.$moment(new Date(this.label)).isValid()
             ? `<div style="text-transform:capitalize;">${this.$moment(this.label).format('MMMM YYYY')}</div>`
             : this.$t(this.label)
         }

@@ -60,7 +60,7 @@
                 }}</span>
                 <span>({{ filteredTransactions.length }})</span>
               </div>
-              <div v-if="$moment(type).isValid()" class="black" style="text-transform:capitalize;">
+              <div v-if="$moment(new Date(type)).isValid()" class="black" style="text-transform:capitalize;">
                 {{ $moment(type).format("MMMM YYYY") }}
               </div>
             </h3>
