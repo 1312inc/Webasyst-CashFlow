@@ -1,3 +1,4 @@
+import router from '../../router'
 import api from '@/plugins/api'
 
 export default {
@@ -59,12 +60,16 @@ export default {
       }
     },
 
-    async delete ({ dispatch }, id) {
+    async delete ({ dispatch, commit }, id) {
       try {
         await api.delete('cash.category.delete', {
           params: { id }
         })
+        commit('transaction/resetTransactions', null, { root: true })
         dispatch('getList')
+          .then(() => {
+            router.push({ name: 'Home' })
+          })
       } catch (_) {
         return false
       }
