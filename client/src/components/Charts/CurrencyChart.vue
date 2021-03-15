@@ -19,8 +19,8 @@ export default {
 
   data () {
     return {
-      width: 220,
-      height: 42
+      width: 200,
+      height: 40
     }
   },
 

@@ -1,17 +1,15 @@
 <template>
   <div v-if="balanceFlow.length > 0" class="custom-mt-24">
-    <div class="custom-mx-16">
-      <div class="heading custom-mx-0">
-        {{ $t("Next 90 days") }}
-      </div>
+    <div class="heading">
+      {{ $t("Next 90 days") }}
     </div>
-    <ul class="menu">
+    <div class="bricks">
       <SidebarCurrencyWidgetsItems
-        v-for="currency in balanceFlow"
-        :key="currency.currency"
-        :balanceFlow="currency"
+        v-for="item in balanceFlow"
+        :key="item.currency"
+        :balanceFlow="item"
       />
-    </ul>
+    </div>
   </div>
 </template>
 
