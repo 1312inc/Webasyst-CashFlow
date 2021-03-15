@@ -65,6 +65,7 @@ export default {
         offset: null,
         total: null
       }
+      state.createdTransactions = []
     },
 
     updateTransactions (state, data) {
