@@ -172,6 +172,26 @@ export default {
       // Scrollbar on the bottom
       chart.scrollbarX = new am4core.Scrollbar()
       chart.scrollbarX.parent = chart.bottomAxesContainer
+      chart.scrollbarX.thumb.background.fill = am4core.color('#E6E6E6')
+      chart.scrollbarX.thumb.background.states.getKey('hover').properties.fill = am4core.color('#E6E6E6')
+      chart.scrollbarX.thumb.background.states.getKey('down').properties.fill = am4core.color('#E6E6E6')
+
+      // Style scrollbar
+      function customizeGrip (grip, rotation) {
+        grip.icon.disabled = true
+        grip.background.disabled = true
+
+        const img = grip.createChild(am4core.Image)
+        img.href = "data:image/svg+xml,%3Csvg width='29' height='30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7.008 2.672A6 6 0 0112 0h10.789a6 6 0 016 6v18a6 6 0 01-6 6H12a6 6 0 01-4.992-2.672l-6-9a6 6 0 010-6.656l6-9z' fill='%23fff'/%3E%3Cpath d='M7.424 2.95A5.5 5.5 0 0112 .5h10.789a5.5 5.5 0 015.5 5.5v18a5.5 5.5 0 01-5.5 5.5H12a5.5 5.5 0 01-4.576-2.45l-6-9a5.5 5.5 0 010-6.1l6-9z' stroke='%23000' stroke-opacity='.15'/%3E%3C/svg%3E"
+        img.width = 30
+        img.height = 30
+        img.rotation = rotation
+        img.align = 'center'
+        img.valign = 'middle'
+      }
+
+      customizeGrip(chart.scrollbarX.startGrip, 180)
+      customizeGrip(chart.scrollbarX.endGrip, 0)
 
       const dateAxisChanged = () => {
         const from = this.$moment(this.dateAxis.minZoomed).format('YYYY-MM-DD')
