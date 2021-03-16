@@ -4,7 +4,7 @@
     sticky-container
     class="c-chart-pie-sticky-container"
   >
-    <div v-sticky sticky-offset="{top: 80}" sticky-z-index="12">
+    <div v-sticky sticky-offset="{top: 80}" sticky-z-index="12" class="c-chart-pie-sticky-container__inner">
       <AmChartPieSticky
         v-if="this.$store.state.transaction.transactions.data.length"
       />
@@ -23,9 +23,13 @@ export default {
 
 <style lang="scss">
 .c-chart-pie-sticky-container {
-  width: 35%;
   min-width: 340px;
   padding-left: 1rem;
+
+  &__inner {
+    max-width: 340px;
+    margin: 0 auto;
+  }
 }
 @media screen and (max-width: 980px) {
   .c-chart-pie-sticky-container {
