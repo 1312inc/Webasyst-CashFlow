@@ -16,6 +16,7 @@
   "delete": "Delete",
   "move": "Move",
   "name": "Name",
+  "selected": "{count} transactions selected",
   "currency": "Currency",
   "type": "Type",
   "color": "Color",

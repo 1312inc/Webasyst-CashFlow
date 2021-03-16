@@ -1,5 +1,5 @@
 <template>
-    <div class="c-breakdown-details-chart smaller" ref="chart"></div>
+  <div class="c-chart-pie-sticky" ref="chart"></div>
 </template>
 
 <script>
@@ -9,34 +9,65 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
 export default {
-  props: {
-    data: {
-      type: Array,
-      default () {
-        return []
-      }
-    },
+  props: [
+    'rawData',
+    'label',
+    'isCounterMode',
+    'totalTransactions',
+    'currencyCode'
+  ],
 
-    currency: {
-      type: String,
-      required: true
+  computed: {
+    featurePeriod () {
+      return this.$store.state.transaction.featurePeriod
+    },
+    futureLabelText () {
+      return this.featurePeriod === 1
+        ? this.$t('tomorrow')
+        : this.$t('nextDays', { count: this.featurePeriod })
     }
   },
 
   mounted () {
     const chart = am4core.create(this.$refs.chart, am4charts.PieChart)
     if (locale === 'ru_RU') chart.language.locale = am4langRU
-    chart.innerRadius = am4core.percent(45)
+    chart.innerRadius = am4core.percent(90)
+
+    const pieLabel = chart.seriesContainer.createChild(am4core.Label)
+    pieLabel.textAlign = 'middle'
+    pieLabel.horizontalCenter = 'middle'
+    pieLabel.verticalCenter = 'middle'
+    this.pieLabel = pieLabel
 
     // Add and configure Series
     const pieSeries = chart.series.push(new am4charts.PieSeries())
     pieSeries.dataFields.value = 'amount'
-    pieSeries.dataFields.category = 'category_name'
+    pieSeries.dataFields.category = 'category'
     pieSeries.labels.template.disabled = true
     pieSeries.slices.template.propertyFields.fill = 'category_color'
+    pieSeries.interpolationDuration = 500
+
+    // Add Chart data
+    chart.data = this.$store.state.category.categories.map(c => {
+      return {
+        id: c.id,
+        amount: 0,
+        category: c.name,
+        category_color: c.color
+      }
+    })
+    // Push empty data item for the placeholer
+    chart.data.push({
+      id: null,
+      amount: 0,
+      category: 'empty',
+      category_color: '#EEEEEE'
+    })
+
     this.chart = chart
+
     this.$watch(
-      'data',
+      '$props',
       () => {
         this.renderChart()
       },
@@ -55,24 +86,54 @@ export default {
 
   methods: {
     renderChart () {
-      if (this.data.length) {
-        this.chart.series.getIndex(0).slices.template.tooltipText = `{category}: {value.formatNumber('#,###.##')} ${this.$helper.currencySignByCode(this.currency)}`
-        this.chart.data = this.data
+      // make label inside Chart
+      if (this.isCounterMode) {
+        this.pieLabel.html = `<div class="large">${this.$t('selected', { count: this.label })}`
       } else {
-        this.chart.series.getIndex(0).slices.template.tooltipText = this.$t('emptyList')
-        this.chart.data = [{
-          amount: 100,
-          category: 'empty',
-          category_color: '#eee'
-        }]
+        this.pieLabel.html = `<div class="larger custom-mb-4">${this.$helper.currencySignByCode(
+          this.currencyCode
+        )}</div>`
+        if (this.label === 'future') {
+          this.pieLabel.html += this.futureLabelText
+        } else {
+          this.pieLabel.html += this.$moment(new Date(this.label)).isValid()
+            ? `<div style="text-transform:capitalize;">${this.$moment(this.label).format('MMMM YYYY')}</div>`
+            : this.$t(this.label)
+        }
+        this.pieLabel.html += `<div class="hint custom-mt-8">${this.$t('transactionsListCount', {
+          count: this.totalTransactions
+        })}</div>`
       }
+
+      // if empty data
+      if (!this.rawData.length) {
+        this.chart.series.getIndex(0).slices.template.tooltipText = this.$t(
+          'emptyList'
+        )
+        this.chart.data.forEach(e => {
+          e.amount = e.category === 'empty' ? 100 : 0
+        })
+        this.chart.invalidateRawData()
+        return
+      }
+
+      // pie label formatting
+      this.chart.series.getIndex(0).slices.template.tooltipText =
+        "{category}: {value.formatNumber('#,###.##')}"
+
+      // update data
+      this.chart.data.forEach(e => {
+        const index = this.rawData.findIndex(el => el.id === e.id)
+        e.amount = index > -1 ? this.rawData[index].amount : 0
+      })
+      this.chart.invalidateRawData()
     }
   }
 }
 </script>
 
 <style>
-.c-breakdown-details-chart {
-    height: 400px;
+.c-chart-pie-sticky {
+  height: 400px;
 }
 </style>

@@ -8,24 +8,15 @@
       <AmChartPieSticky
         v-if="this.$store.state.transaction.transactions.data.length"
       />
-      <!-- TODO: Exclude sticky from TransactionControls Component -->
-      <TransactionControls
-        v-if="$store.state.transactionBulk.selectedTransactionsIds.length"
-        direction="column"
-        :addView="false"
-        class="custom-mt-20"
-      />
     </div>
   </div>
 </template>
 
 <script>
 import AmChartPieSticky from './AmChartPieSticky'
-import TransactionControls from '@/components/TransactionControls'
 export default {
   components: {
-    AmChartPieSticky,
-    TransactionControls
+    AmChartPieSticky
   }
 }
 </script>
@@ -33,7 +24,7 @@ export default {
 <style lang="scss">
 .c-chart-pie-sticky-container {
   width: 35%;
-  min-widtht: 380px;
+  min-width: 340px;
   padding-left: 1rem;
 }
 @media screen and (max-width: 980px) {
