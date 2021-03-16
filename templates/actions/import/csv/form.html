@@ -14,7 +14,7 @@
 
             <div class="c-parsed-rows">
                 <div class="c-parsed-rows-content">
-                    <table class="zebra single-lined">
+                    <table class="bordered single-lined">
                         <tr>
                             {foreach $info->headers as $header}
                                 <th>{$header|escape}</th>
@@ -30,7 +30,7 @@
                             </tr>
                         {/foreach}
                     </table>
-                    <div class="block double-padded gray align-center">
+                    <div class="box gray align-center">
                         {if count($info->firstRows) == $info->totalRows}
                             [`Showing all rows`]
                         {else}
@@ -52,11 +52,14 @@
                 <div class="value">
                     <div class="custom-mb-12">
                         <label>
-                            <input type="radio" name="import[account][type]" value="{cashCsvImportSettings::TYPE_SINGLE}"
+                            <span class="wa-radio">
+                                <input type="radio" name="import[account][type]" value="{cashCsvImportSettings::TYPE_SINGLE}"
                                 checked/>
+                                <span></span>
+                            </span>
                             [`All imported transactions:`]
-                            <div class="wa-select">
-                                <select name="import[account][single][column]">
+                            <div class="wa-select small">
+                                <select name="import[account][single][column]" class="bold">
                                     <option></option>
                                     {foreach $accounts as $a}
                                         <option value="{$a->id}">{$a->name|escape}</option>
@@ -67,10 +70,13 @@
                     </div>
                     <div>
                         <label>
-                            <input type="radio" name="import[account][type]"
+                            <span class="wa-radio">
+                                <input type="radio" name="import[account][type]"
                                 value="{cashCsvImportSettings::TYPE_MULTI}"/>
+                                <span></span>
+                            </span>
                             [`Set according to the value in the following column:`]
-                            <div class="wa-select">
+                            <div class="wa-select small">
                                 <select name="import[account][multi][column]"
                                         data-cash-csv-import-action="fetch-column-data"
                                         data-cash-csv-import-conditions="account">
@@ -83,14 +89,10 @@
                             </div>
                         </label>
                     </div>
-                    <div class="block"><!-- JS-updated depenging on the column selected -->
-                        <table class="c-import-conditions" data-cash-csv-import-conditions-account></table>
+                    <div><!-- JS-updated depenging on the column selected -->
+                        <table class="c-import-conditions small" data-cash-csv-import-conditions-account></table>
                     </div>
                 </div>
-            </div>
-
-            <div class="custom-my-24">
-                <hr class="custom-m-0">
             </div>
 
             <div class="field">
@@ -98,7 +100,7 @@
                     [`Description`]
                 </div>
                 <div class="value">
-                    <div class="wa-select">
+                    <div class="wa-select small">
                         <select name="import[description]">
                             <option></option>
                             {foreach $info->headers as $header}
@@ -106,12 +108,10 @@
                             {/foreach}
                         </select>
                     </div>
-                    <i class="fas fa-check yes" style="display: none"></i>
+                    <span class="state-success-hint">
+                        <i class="fas fa-check-circle yes" style="display: none"></i>
+                    </span>
                 </div>
-            </div>
-
-            <div class="custom-my-24">
-                <hr class="custom-m-0">
             </div>
 
             <div class="field">
@@ -119,7 +119,7 @@
                     [`Date`]
                 </div>
                 <div class="value">
-                    <div class="wa-select">
+                    <div class="wa-select small">
                         <select name="import[datetime]"
                                 data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::DATETIME}"
                         >
@@ -130,7 +130,7 @@
                         </select>
                     </div>
                     <span data-cash-import-csv-date-format style="display:none;">
-                        <div class="wa-select">
+                        <div class="wa-select small">
                             <select name="import[dateformat]">
                                 <option value="ai">[`Detect automatically`]</option>
                                 {foreach $dateFormats as $dateFormat}
@@ -139,14 +139,10 @@
                                 <option value="">[`Custom`]</option>
                             </select>
                         </div>
-                        <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check yes"></i> <span></span></span>
-                        <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
+                        <span class="state-success-hint" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check-circle yes"></i> <span></span></span>
+                        <span class="state-caution-hint" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
                     </span>
                 </div>
-            </div>
-
-            <div class="custom-my-24">
-                <hr class="custom-m-0">
             </div>
 
             <div class="field">
@@ -156,10 +152,13 @@
                 <div class="value">
                     <div class="custom-mb-12">
                         <label>
-                            <input type="radio" name="import[amount][type]" value="{cashCsvImportSettings::TYPE_SINGLE}"
+                            <span class="wa-radio">
+                                <input type="radio" name="import[amount][type]" value="{cashCsvImportSettings::TYPE_SINGLE}"
                                 checked/>
+                                <span></span>
+                            </span>
                             [`From the single column:`]
-                            <div class="wa-select">
+                            <div class="wa-select small">
                                 <select name="import[amount][single][column]"
                                         data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
                                 >
@@ -169,21 +168,24 @@
                                     {/foreach}
                                 </select>
                             </div>
-                            <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check yes"></i> <span></span></span>
-                            <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
+                            <span class="state-success-hint" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check-circle yes"></i> <span></span></span>
+                            <span class="state-caution-hint" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
                         </label>
                     </div>
                     <div>
                         <div class="custom-mb-8">
                             <label>
-                                <input type="radio" name="import[amount][type]" value="{cashCsvImportSettings::TYPE_MULTI}"/>
+                                <span class="wa-radio">
+                                    <input type="radio" name="import[amount][type]" value="{cashCsvImportSettings::TYPE_MULTI}"/>
+                                    <span></span>
+                                </span>
                                 [`From two different columns:`]
                             </label>
                         </div>
-                        <div class="flexbox space-1rem">
-                            <div>
+                        <div class="flexbox space-1rem small">
+                            <div class="box">
                                 [`Income`]:
-                                <div class="wa-select">
+                                <div class="wa-select small">
                                     <select name="import[amount][multi][map][income]"
                                             data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
                                     >
@@ -193,12 +195,12 @@
                                         {/foreach}
                                     </select>
                                 </div>
-                                <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check yes"></i> <span></span></span>
-                                <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
+                                <span class="state-success-hint" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check-circle yes"></i> <span></span></span>
+                                <span class="state-caution-hint" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
                             </div>
-                            <div>
+                            <div class="box">
                                 [`Expenses`]:
-                                <div class="wa-select">
+                                <div class="wa-select small">
                                     <select name="import[amount][multi][map][expense]"
                                             data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
                                     >
@@ -208,16 +210,12 @@
                                         {/foreach}
                                     </select>
                                 </div>
-                                <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check yes"></i> <span></span></span>
-                                <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
+                                <span class="state-success-hint" data-cash-import-csv-validate-ok style="display: none"><i class="fas fa-check-circle yes"></i> <span></span></span>
+                                <span class="state-caution-hint" data-cash-import-csv-validate-error style="display: none"><i class="fas fa-exclamation-triangle exclamation"></i> <span></span></span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="custom-my-24">
-                <hr class="custom-m-0">
             </div>
 
             <div class="field">
@@ -228,15 +226,18 @@
                     <div class="custom-mb-12">
                         <div class="custom-mb-8">
                             <label>
-                                <input type="radio" name="import[category][type]"
-                                    value="{cashCsvImportSettings::TYPE_SINGLE}" checked/>
+                                <span class="wa-radio">
+                                    <input type="radio" name="import[category][type]"
+                                        value="{cashCsvImportSettings::TYPE_SINGLE}" checked/>
+                                    <span></span>
+                                </span>
                                 [`Set depending on the amount:`]
                             </label>
                         </div>
-                        <div class="flexbox space-1rem">
-                            <div>
+                        <div class="small">
+                            <div class="box custom-pb-0">
                                 [`Income (amount > 0)`]:
-                                <div class="wa-select">
+                                <div class="wa-select small">
                                     <select name="import[category][single][income][column]">
                                         <option></option>
                                         {foreach $categoriesIncome as $category}
@@ -245,9 +246,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <div>
+                            <div class="box">
                                 [`Expenses (amount < 0)`]:
-                                <div class="wa-select">
+                                <div class="wa-select small">
                                     <select name="import[category][single][expense][column]">
                                         <option></option>
                                         {foreach $categoriesExpense as $category}
@@ -260,10 +261,13 @@
                     </div>
                     <div>
                         <label>
-                            <input type="radio" name="import[category][type]"
+                            <span class="wa-radio">
+                                <input type="radio" name="import[category][type]"
                                    value="{cashCsvImportSettings::TYPE_MULTI}"/>
+                                <span></span>
+                            </span>
                             [`Set according to the value in the following column:`]
-                            <div class="wa-select">
+                            <div class="wa-select small">
                                 <select name="import[category][multi][column]"
                                         data-cash-csv-import-action="fetch-column-data"
                                         data-cash-csv-import-conditions="category">
@@ -274,15 +278,11 @@
                                 </select>
                             </div>
                         </label>
-                        <div class="block"><!-- JS-updated depenging on the column selected -->
-                            <table class="c-import-conditions" data-cash-csv-import-conditions-category></table>
+                        <div><!-- JS-updated depenging on the column selected -->
+                            <table class="c-import-conditions small" data-cash-csv-import-conditions-category></table>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="custom-my-24">
-                <hr class="custom-m-0">
             </div>
 
             <div class="field">
@@ -291,12 +291,19 @@
                 </div>
                 <div class="value">
                     <label>
-                        <input type="hidden" name="import[options][skip_duplicates]" value="0"/>
-                        <input type="checkbox" name="import[options][skip_duplicates]" checked value="1"/>
+                        <span class="wa-checkbox">
+                            <input type="hidden" name="import[options][skip_duplicates]" value="0"/>
+                            <input type="checkbox" name="import[options][skip_duplicates]" checked value="1"/>
+                            <span>
+                                <span class="icon">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </span>
+                        </span>
+
                         [`Skip a row if same ACCOUNT && CATEGORY && DATE && AMOUNT pair already exist`]
-                        <br>
-                        <span class="hint">[`Recommended to be on just to make sure all obvious duplicates will be skipped. Though, this depends on the data you are about to import.`]</span>
                     </label>
+                    <p class="hint">[`Recommended to be on just to make sure all obvious duplicates will be skipped. Though, this depends on the data you are about to import.`]</p>
                 </div>
             </div>
 
@@ -599,7 +606,7 @@
     <td><span class="c-condition">${columnValue}</span></td>
     <td>=></td>
     <td>
-        <div class="wa-select">
+        <div class="wa-select small">
             <select name="import[category][multi][map][${columnValue}]">
                 <option value="0">${translate['Skip rows with this value']}</option>
                 <optgroup data-cash-categories-optgroup="income" label="${translate['Income']}">
@@ -625,7 +632,7 @@
     <td><span class="c-condition">${columnValue}</span></td>
     <td>=></td>
     <td>
-        <div class="wa-select">
+        <div class="wa-select small">
             <select name="import[account][multi][map][${columnValue}]">
                 <option value="0">${translate['Skip rows with this value']}</option>
                 {{each(id, name, type) sources}}
