@@ -94,8 +94,9 @@ export default {
       ])
       dateAxis.renderer.grid.template.location = 0.5
       dateAxis.renderer.grid.template.disabled = true
-      dateAxis.renderer.ticks.template.disabled = false
-      dateAxis.renderer.ticks.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.2
+      dateAxis.renderer.labels.template.fill = '#888'
+      dateAxis.renderer.ticks.template.disabled = true
+      dateAxis.renderer.ticks.template.strokeOpacity = 1
       dateAxis.renderer.ticks.template.strokeWidth = 1
       dateAxis.renderer.ticks.template.length = 8
       dateAxis.renderer.ticks.template.location = 0.5
@@ -110,26 +111,27 @@ export default {
 
       // Balance Axis
       const balanceAxis = chart.yAxes.push(new am4charts.ValueAxis())
-      balanceAxis.height = 100
-      balanceAxis.marginBottom = 60
+      balanceAxis.height = 220
       balanceAxis.cursorTooltipEnabled = false
       balanceAxis.numberFormatter = new am4core.NumberFormatter()
       balanceAxis.numberFormatter.numberFormat = '# a'
-      if (!prefersColorSchemeDark) {
-        balanceAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
-        balanceAxis.renderer.gridContainer.background.fillOpacity = 0.3
-      }
       balanceAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
+      balanceAxis.renderer.labels.template.fill = '#888'
       this.balanceAxis = balanceAxis
 
       // Cols axis
       const colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
-      colsAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
-      // colsAxis.height = am4core.percent(60)
       colsAxis.cursorTooltipEnabled = false
       colsAxis.numberFormatter = new am4core.NumberFormatter()
-      colsAxis.numberFormatter.numberFormat = '# a'
       colsAxis.min = 0
+      colsAxis.numberFormatter.numberFormat = '# a'
+      colsAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
+      colsAxis.renderer.labels.template.fill = '#888'
+      colsAxis.renderer.maxLabelPosition = 0.99
+      if (!prefersColorSchemeDark) {
+        colsAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
+        colsAxis.renderer.gridContainer.background.fillOpacity = 0.3
+      }
       this.colsAxis = colsAxis
 
       // Cursor
@@ -157,17 +159,13 @@ export default {
       // Currend day line
       const dateBorder = this.dateAxis.axisRanges.create()
       dateBorder.date = new Date()
-      dateBorder.grid.stroke = prefersColorSchemeDark ? am4core.color('#FFF') : am4core.color('#333333')
+      dateBorder.grid.stroke = prefersColorSchemeDark ? am4core.color('#FFF') : am4core.color('#000000')
       dateBorder.grid.strokeWidth = 1
-      dateBorder.grid.strokeOpacity = 0.3
-      dateBorder.label.inside = true
-      dateBorder.label.valign = 'middle'
+      dateBorder.grid.strokeOpacity = 1
+      dateBorder.label.valign = 'bottom'
       dateBorder.label.text = this.$t('today')
       dateBorder.label.fill = dateBorder.grid.stroke
-      dateBorder.label.fillOpacity = 0.6
-      dateBorder.label.rotation = -90
-      dateBorder.label.verticalCenter = 'middle'
-      dateBorder.label.dx = -8
+      dateBorder.label.dy = 16
 
       // Scrollbar on the bottom
       chart.scrollbarX = new am4core.Scrollbar()
@@ -398,7 +396,6 @@ export default {
       newSeries.stroke = options.color
       newSeries.columns.template.strokeWidth = 0
       newSeries.columns.template.fill = options.color
-      newSeries.columns.template.fillOpacity = 0.5
       newSeries.columns.template.column.cornerRadiusTopLeft = 4
       newSeries.columns.template.column.cornerRadiusTopRight = 4
 
