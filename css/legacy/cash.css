@@ -1,7 +1,7 @@
-/* Cash app
------------ */
+/* Cash app v1 (legacy)
+----------------------- */
 
-.icon16.c-table { background-image: url('../img/icon16-table.png'); background-size: 16px 16px; }
+.icon16.c-table { background-image: url('../../img/icon16-table.png'); background-size: 16px 16px; }
 i.icon16.color { width: 12px; height: 12px; border: none; }
 ul.menu-v i.icon16.color { margin: 1px 6px 1px -18px; }
 
@@ -72,14 +72,14 @@ table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1
 .c-report-pie-header { background: #fff !important; border-bottom-color: #fff !important; min-width: 300px; }
 .c-report-pie-column { background: #fff !important; padding: 20px !important; text-align: center; min-width: 300px; }
 
-.icon16.c-table { background-image: url('../img/icon16-table.png'); background-size: 16px 16px; }
-.icon16.c-repeating { background-image: url('../img/repeating-glyph.png'); background-size: contain; opacity: 0.65; }
+.icon16.c-table { background-image: url('../../img/icon16-table.png'); background-size: 16px 16px; }
+.icon16.c-repeating { background-image: url('../../img/repeating-glyph.png'); background-size: contain; opacity: 0.65; }
 h1 .icon16.c-repeating { width: 24px; height: 24px; }
 
 @media
 (-webkit-min-device-pixel-ratio: 2),
 (min-resolution: 192dpi) {
-    .icon16.c-table { background-image: url('../img/icon16-table@2x.png'); background-size: 16px 16px; }
+    .icon16.c-table { background-image: url('../../img/icon16-table@2x.png'); background-size: 16px 16px; }
 }
 
 [data-cash-import-csv-check-fullness] { display: none }

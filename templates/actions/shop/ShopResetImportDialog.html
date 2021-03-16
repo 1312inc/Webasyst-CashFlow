@@ -1,22 +1,22 @@
 <div class="dialog" id="c-reset-import">
     <div class="dialog-background"></div>
     <div class="dialog-body">
-        <header class="dialog-header">[`Delete Shop-Script related data?`]</header>
+        <header class="dialog-header">
+            <h2>[`Delete Shop-Script related data?`]</h2>
+        </header>
         <div class="dialog-content">
             <p>[`This will flush all Shop-Script import settings so you can restart the import from scratch. All transactions imported from Shop-Script will be deleted. Restart the integration?`]</p>
 
             <form>
-            <div class="fields form">
-                <div class="field-group">
-                    <div class="field">
-                        <div class="name nowrap">
-                            [`Type in the code`]
-                        </div>
-                        <div class="value">
-                            {$code}
-                            &rarr;
-                            <input type="text" name="code" autocomplete="chrome-off"/>
-                        </div>
+            <div class="fields">
+                <div class="field">
+                    <div class="name nowrap for-input">
+                        [`Type in the code`]
+                    </div>
+                    <div class="value">
+                        <b>{$code}</b>
+                        &rarr;
+                        <input type="text" name="code" autocomplete="chrome-off"/>
                     </div>
                 </div>
             </div>
@@ -25,8 +25,8 @@
         </div>
 
         <footer class="dialog-footer">
-            <button class="button blue js-ok" type="button">[`Ok`]</button>
-            <button class="button gray js-close" type="button">[`cancel`]</button>
+            <button class="button orange js-ok" type="button">[`Delete & Restart`]</button>
+            <button class="button gray outlined js-close" type="button"><span>[`Cancel`]</span></button>
         </footer>
     </div>
 </div>
