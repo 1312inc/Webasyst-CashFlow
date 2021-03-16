@@ -28,7 +28,7 @@
       </div>
 
       <div
-        v-if="$helper.isDesktopEnv && currentType && addView"
+        v-if="$helper.isDesktopEnv && currentType"
         class="flexbox space-12 middle wide"
       >
         <div v-show="currentType.type !== 'expense'">
@@ -80,10 +80,6 @@ export default {
       type: String
     },
     multiselectView: {
-      type: Boolean,
-      default: true
-    },
-    addView: {
       type: Boolean,
       default: true
     }

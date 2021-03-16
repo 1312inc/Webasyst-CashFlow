@@ -1,16 +1,24 @@
 <template>
   <div>
-    <AmChartPie2
-      :rawData="isCounterMode ? rawData : rawDataByCurrency"
-      :isCounterMode="isCounterMode"
-      :totalTransactions="totalTransactions"
-      :label="
-        isCounterMode
-          ? selectedTransactionsIds.length
-          : activeGroupTransactions.name
-      "
-      :currencyCode="currencyCode"
-    />
+    <div style="position: relative">
+      <AmChartPie
+        :rawData="isCounterMode ? rawData : rawDataByCurrency"
+        :isCounterMode="isCounterMode"
+        :totalTransactions="totalTransactions"
+        :label="
+          isCounterMode
+            ? selectedTransactionsIds.length
+            : activeGroupTransactions.name
+        "
+        :currencyCode="currencyCode"
+      />
+
+      <AmChartBulkControls
+        v-if="$store.state.transactionBulk.selectedTransactionsIds.length"
+        class="c-chart-bulk-controls"
+      />
+    </div>
+
     <AmChartLegend
       :legendItems="rawDataByCurrency"
       :currencyCode="currencyCode"
@@ -21,13 +29,14 @@
 
 <script>
 import { mapState } from 'vuex'
-import AmChartPie2 from './AmChartPie2'
+import AmChartPie from './AmChartPie'
 import AmChartLegend from './AmChartLegend'
-
+import AmChartBulkControls from './AmChartBulkControls'
 export default {
   components: {
-    AmChartPie2,
-    AmChartLegend
+    AmChartPie,
+    AmChartLegend,
+    AmChartBulkControls
   },
 
   computed: {
@@ -76,8 +85,8 @@ export default {
           const account = this.$store.getters['account/getById'](
             transaction.account_id
           )
-          if (!acc[account.currency]) {
-            acc[account.currency] = {
+          if (!acc[category.id]) {
+            acc[category.id] = {
               id: category.id,
               date: transaction.date,
               amount: transaction.amount,
@@ -86,7 +95,7 @@ export default {
               category_color: category.color
             }
           } else {
-            acc[account.currency].amount += transaction.amount
+            acc[category.id].amount += transaction.amount
           }
           return acc
         }, {})
@@ -95,3 +104,12 @@ export default {
   }
 }
 </script>
+
+<style>
+.c-chart-bulk-controls {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+</style>
