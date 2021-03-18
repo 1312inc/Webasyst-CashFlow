@@ -59,7 +59,7 @@
       </SidebarCategoryList>
 
       <div v-if="$permissions.canAccessTransfers" class="custom-mt-24">
-        <h6 class="heading black">{{ $t("other") }}</h6>
+        <h6 class="heading"><span>{{ $t("other") }}</span></h6>
 
         <ul class="menu">
           <li v-for="category in categoriesTransfer" :key="category.id">

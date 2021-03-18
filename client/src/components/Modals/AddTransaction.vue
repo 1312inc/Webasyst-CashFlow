@@ -298,13 +298,17 @@
           </div>
           <div class="value">
             <div class="wa-select solid">
-              <select v-model="model.transfer_account_id">
+              <select
+                v-model="model.transfer_account_id"
+                :class="{ 'state-error': $v.model.transfer_account_id.$error }"
+                style="width: auto"
+              >
                 <option
                   :value="account.id"
-                  v-for="account in accounts"
+                  v-for="account in accountsTransfer"
                   :key="account.id"
                 >
-                  {{ account.currency }} – {{ account.name }} ({{
+                  {{ account.name }} ({{
                     $helper.currencySignByCode(account.currency)
                   }})
                 </option>
@@ -313,35 +317,38 @@
           </div>
         </div>
 
-        <div v-if="defaultCategoryType === 'transfer'" class="field">
-          <div class="name for-input">
-            {{ $t("incomingAmount") }}
-          </div>
-          <div class="value">
-            <div>
-              <input
-                v-model.number="model.transfer_incoming_amount"
-                type="text"
-              />
-              <span v-if="selectedAccountTransfer" class="custom-ml-8">{{
-                $helper.currencySignByCode(selectedAccountTransfer.currency)
-              }}</span>
+        <TransitionCollapseHeight>
+          <div v-if="showTransferIncomingAmount">
+            <div class="field custom-pt-16">
+              <div class="name for-input custom-pt-12">
+                {{ $t("incomingAmount") }}
+              </div>
+              <div class="value">
+                <div class="large bold">
+                  <input-currency
+                    v-model="model.transfer_incoming_amount"
+                    :signed="false"
+                    :class="{
+                      'state-error': $v.model.transfer_incoming_amount.$error,
+                    }"
+                    type="text"
+                    class="bold number short"
+                    placeholder="0"
+                  />
+                  <span v-if="selectedAccountTransfer" class="custom-ml-4">{{
+                    $helper.currencySignByCode(selectedAccountTransfer.currency)
+                  }}</span>
+                </div>
+                <div class="smaller alert warning custom-mt-16 custom-mb-0">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  {{ selectedAccount.currency }} →
+                  {{ selectedAccountTransfer.currency }}.
+                  {{ $t("transferMessage") }}
+                </div>
+              </div>
             </div>
-            <span
-              v-if="
-                selectedAccount &&
-                selectedAccountTransfer &&
-                selectedAccount.currency !== selectedAccountTransfer.currency
-              "
-              class="smaller alert warning custom-mt-16 custom-mb-0"
-            >
-              <i class="fas fa-exclamation-triangle"></i>
-              {{ selectedAccount.currency }} →
-              {{ selectedAccountTransfer.currency }}.
-              {{ $t("transferMessage") }}
-            </span>
           </div>
-        </div>
+        </TransitionCollapseHeight>
 
         <div v-if="defaultCategoryType !== 'transfer'" class="field">
           <div class="name for-input">
@@ -513,6 +520,16 @@ export default {
           return this.model.repeating_end_type === 'after'
         }),
         integer
+      },
+      transfer_account_id: {
+        required: requiredIf(function () {
+          return this.defaultCategoryType === 'transfer'
+        })
+      },
+      transfer_incoming_amount: {
+        required: requiredIf(function () {
+          return this.showTransferIncomingAmount
+        })
       }
     }
   },
@@ -525,6 +542,10 @@ export default {
       getCategoryById: 'category/getById',
       getCategoryByType: 'category/getByType'
     }),
+
+    accountsTransfer () {
+      return this.accounts.filter(a => a.id !== this.model.account_id)
+    },
 
     isModeUpdate () {
       return !!this.transaction
@@ -548,12 +569,24 @@ export default {
 
     categoriesInSelect () {
       return this.getCategoryByType(this.transactionType)
+    },
+
+    showTransferIncomingAmount () {
+      return (
+        this.defaultCategoryType === 'transfer' &&
+        this.selectedAccount &&
+        this.selectedAccountTransfer &&
+        this.selectedAccount.currency !== this.selectedAccountTransfer.currency
+      )
     }
   },
 
   watch: {
     'model.repeating_interval' (val) {
       if (val !== 'custom') this.model.repeating_frequency = 1
+    },
+    'model.account_id' () {
+      this.model.transfer_account_id = null
     }
   },
 
@@ -595,6 +628,9 @@ export default {
         const model = { ...this.model }
         if (model.repeating_interval === 'custom') {
           model.repeating_interval = this.custom_interval
+        }
+        if (!this.showTransferIncomingAmount) {
+          model.transfer_incoming_amount = this.model.amount
         }
 
         this.$store.dispatch('transaction/update', model).then(() => {
