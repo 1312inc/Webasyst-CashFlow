@@ -19,6 +19,12 @@ fetch(process.env.VUE_APP_DEV_PROXY + '/api.php/cash.category.getList?access_tok
     process.env.VUE_APP_CATEGORIES = res
   })
 
+fetch(process.env.VUE_APP_DEV_PROXY + '/api.php/cash.system.getSettings?access_token=' + process.env.VUE_APP_API_TOKEN)
+  .then(response => response.text())
+  .then(res => {
+    process.env.VUE_APP_SETTINGS = res
+  })
+
 module.exports = {
   productionSourceMap: false,
   filenameHashing: false,
