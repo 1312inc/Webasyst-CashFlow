@@ -105,13 +105,14 @@ export default {
       dateAxis.renderer.cellEndLocation = 0.85
       this.dateAxis = dateAxis
       this.dateAxis.events.on('groupperiodchanged', ({ target }) => {
-        target.startLocation = target.currentDataSetId.includes('month') ? this.$moment(this.chartInterval.from).date() / this.$moment(this.chartInterval.from).daysInMonth() : 0
+        target.startLocation = target.currentDataSetId.includes('month') ? this.$moment(this.chartInterval.from).add(-1, 'd').date() / this.$moment(this.chartInterval.from).add(-1, 'd').daysInMonth() : 0
         target.endLocation = target.currentDataSetId.includes('month') ? this.$moment(this.chartInterval.to).date() / this.$moment(this.chartInterval.to).daysInMonth() : 1
       })
 
       // Balance Axis
       const balanceAxis = chart.yAxes.push(new am4charts.ValueAxis())
       balanceAxis.height = 220
+      balanceAxis.align = 'right'
       balanceAxis.cursorTooltipEnabled = false
       balanceAxis.numberFormatter = new am4core.NumberFormatter()
       balanceAxis.numberFormatter.numberFormat = '# a'
@@ -121,6 +122,7 @@ export default {
 
       // Cols axis
       const colsAxis = chart.yAxes.push(new am4charts.ValueAxis())
+      colsAxis.align = 'right'
       colsAxis.cursorTooltipEnabled = false
       colsAxis.numberFormatter = new am4core.NumberFormatter()
       colsAxis.min = 0
@@ -149,7 +151,7 @@ export default {
 
       // Future dates hover
       const rangeFututre = this.dateAxis.axisRanges.create()
-      rangeFututre.date = new Date()
+      rangeFututre.date = this.$moment().set('hour', 12).toDate()
       rangeFututre.endDate = new Date(8640000000000000)
       rangeFututre.grid.disabled = true
       rangeFututre.axisFill.fillOpacity = 0.5
@@ -158,7 +160,7 @@ export default {
 
       // Currend day line
       const dateBorder = this.dateAxis.axisRanges.create()
-      dateBorder.date = new Date()
+      dateBorder.date = this.$moment().set('hour', 12).toDate()
       dateBorder.grid.stroke = prefersColorSchemeDark ? am4core.color('#FFF') : am4core.color('#000000')
       dateBorder.grid.strokeWidth = 1
       dateBorder.grid.strokeOpacity = 1
@@ -485,7 +487,7 @@ export default {
 
       // Create a range to make stroke dashed in the future
       const rangeDashed = this.dateAxis2.createSeriesRange(this.balanceSeries)
-      rangeDashed.date = new Date()
+      rangeDashed.date = this.$moment().set('hour', 12).toDate()
       rangeDashed.endDate = new Date(8640000000000000)
       rangeDashed.contents.stroke = prefersColorSchemeDark ? '#000000' : am4core.color('#f3f3f3')
       rangeDashed.contents.strokeDasharray = '3 5'
@@ -518,7 +520,6 @@ export default {
       nbr.date = new Date(dates[0].date)
       nbr.endDate = new Date(dates[dates.length - 1].date)
       nbr.contents.strokeWidth = 0
-      nbr.contents.strokeOpacity = 0
       nbr.axisFill.interactionsEnabled = true
       nbr.axisFill.isMeasured = true
       nbr.axisFill.tooltip = new am4core.Tooltip()
@@ -528,7 +529,10 @@ export default {
       nbr.axisFill.tooltip.background.fill = am4core.color('#fc3d38')
       nbr.axisFill.tooltip.label.fill = am4core.color('#4a0900')
       nbr.axisFill.tooltip.animationDuration = 500
-      nbr.axisFill.tooltipY = 50
+      const p1 = (1 - this.balanceAxis.valueToPosition(minimumAmount)) * 100
+      const p2 = 220 / 353 * 100
+      const p3 = p1 / 100 * p2
+      nbr.axisFill.tooltipY = am4core.percent(p3 - 2)
       nbr.axisFill.tooltipText = this.$t('cashGapTooltip', {
         start: `${dates[0].isStart ? ' <=' : ''} ${this.$moment(startDate).format('L')}${inDaysStart}`,
         end: `${dates[dates.length - 1].isEnd ? ' >=' : ''} ${this.$moment(endDate).format('L')}${inDaysEnd}`,

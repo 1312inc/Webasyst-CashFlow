@@ -61,7 +61,7 @@ export default {
       id: null,
       amount: 0,
       category: 'empty',
-      category_color: '#EEEEEE'
+      category_color: 'rgba(128, 128, 128, 0.2)'
     })
 
     this.chart = chart

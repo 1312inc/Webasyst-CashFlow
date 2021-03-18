@@ -159,16 +159,6 @@ export default {
     },
 
     maxAmount () {
-      if (this.showIncome) {
-        return this.itemData.income.totalAmount
-      }
-      if (this.showExpense) {
-        return this.itemData.expense.totalAmount
-      }
-      if (this.showProfit) {
-        return this.itemData.profit.totalAmount
-      }
-
       return Math.max(
         this.itemData.income.totalAmount,
         this.itemData.expense.totalAmount,

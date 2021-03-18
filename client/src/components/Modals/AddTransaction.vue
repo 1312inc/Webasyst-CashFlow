@@ -93,7 +93,13 @@
                 class="bold number short"
                 placeholder="0"
               />
-              <span class="icon">
+              <span
+                class="icon"
+                :class="{
+                  'text-orange': transactionType === 'expense',
+                  'text-green': transactionType === 'income',
+                }"
+              >
                 <i
                   v-if="transactionType === 'expense'"
                   class="fas fa-minus"
@@ -408,7 +414,14 @@
     <div class="dialog-footer">
       <div class="flexbox">
         <div class="flexbox space-12 wide">
-          <button @click="submit" class="button purple">
+          <button
+            @click="submit"
+            :class="{
+              orange: transactionType === 'expense',
+              green: transactionType === 'income',
+            }"
+            class="button"
+          >
             {{ isModeUpdate ? $t("update") : $t("add") }}
           </button>
           <button @click="close" class="button light-gray">

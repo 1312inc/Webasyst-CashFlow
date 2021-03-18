@@ -12,75 +12,75 @@
         >
       </div>
     </nav>
-    <div class="mobile-collapse" ref="sidebarCollapse">
-      <div class="sidebar-body">
-        <SearchField />
-        <Bricks />
+    <div class="sidebar-body" ref="sidebarBody">
+      <SearchField />
+      <Bricks />
 
-        <!-- Widgets charts block -->
-        <SidebarCurrencyWidgets />
+      <!-- Widgets charts block -->
+      <SidebarCurrencyWidgets />
 
-        <!-- Accounts list block -->
-        <SidebarHeading updatingEntityName="Account">
-          {{ $t("accounts") }}
-        </SidebarHeading>
-        <SidebarAccountList>
-          <SidebarAccountListItem
-            v-for="account in accounts"
-            :key="account.id"
-            :account="account"
-          />
-        </SidebarAccountList>
+      <!-- Accounts list block -->
+      <SidebarHeading updatingEntityName="Account">
+        {{ $t("accounts") }}
+      </SidebarHeading>
+      <SidebarAccountList>
+        <SidebarAccountListItem
+          v-for="account in accounts"
+          :key="account.id"
+          :account="account"
+        />
+      </SidebarAccountList>
 
-        <!-- Categories list block -->
-        <SidebarHeading
-          class="custom-mt-24"
-          updatingEntityName="Category"
-          type="income"
-        >
-          {{ $t("income") }}
-        </SidebarHeading>
-        <SidebarCategoryList :categories="categoriesIncome">
-          <SidebarCategoryListItem
-            v-for="category in categoriesIncome"
-            :key="category.id"
-            :category="category"
-          />
-        </SidebarCategoryList>
+      <!-- Categories list block -->
+      <SidebarHeading
+        class="custom-mt-24"
+        updatingEntityName="Category"
+        type="income"
+      >
+        {{ $t("income") }}
+      </SidebarHeading>
+      <SidebarCategoryList :categories="categoriesIncome">
+        <SidebarCategoryListItem
+          v-for="category in categoriesIncome"
+          :key="category.id"
+          :category="category"
+        />
+      </SidebarCategoryList>
 
-        <SidebarHeading updatingEntityName="Category" type="expense">
-          {{ $t("expense") }}
-        </SidebarHeading>
-        <SidebarCategoryList :categories="categoriesExpense">
-          <SidebarCategoryListItem
-            v-for="category in categoriesExpense"
-            :key="category.id"
-            :category="category"
-          />
-        </SidebarCategoryList>
+      <SidebarHeading updatingEntityName="Category" type="expense">
+        {{ $t("expense") }}
+      </SidebarHeading>
+      <SidebarCategoryList :categories="categoriesExpense">
+        <SidebarCategoryListItem
+          v-for="category in categoriesExpense"
+          :key="category.id"
+          :category="category"
+        />
+      </SidebarCategoryList>
 
-        <div v-if="$permissions.canAccessTransfers" class="custom-mt-24">
-          <h6 class="heading black">{{ $t("other") }}</h6>
+      <div v-if="$permissions.canAccessTransfers" class="custom-mt-24">
+        <h6 class="heading black">{{ $t("other") }}</h6>
 
-          <ul class="menu">
-            <li v-for="category in categoriesTransfer" :key="category.id">
-              <router-link
-                :to="`/category/${category.id}`"
-                class="flexbox middle"
-              >
-                <span class="icon"
-                  ><i
-                    class="rounded"
-                    :style="`background-color:${category.color};`"
-                  ></i
-                ></span>
-                <span>{{ category.name }}</span>
-              </router-link>
-            </li>
-          </ul>
-        </div>
+        <ul class="menu">
+          <li v-for="category in categoriesTransfer" :key="category.id">
+            <router-link
+              :to="`/category/${category.id}`"
+              class="flexbox middle"
+            >
+              <span class="icon"
+                ><i
+                  class="rounded"
+                  :style="`background-color:${category.color};`"
+                ></i
+              ></span>
+              <span>{{ category.name }}</span>
+            </router-link>
+          </li>
+        </ul>
       </div>
+    </div>
 
+    <div class="sidebar-footer shadowed" ref="sidebarFooter">
       <SidebarFooter />
     </div>
   </div>
@@ -153,11 +153,15 @@ export default {
       }
     },
     menuOpen () {
-      this.$refs.sidebarCollapse.style['max-height'] =
-        this.$refs.sidebarCollapse.scrollHeight + 'px'
+      ;['Body', 'Footer'].forEach(h => {
+        this.$refs[`sidebar${h}`].style['max-height'] =
+          this.$refs[`sidebar${h}`].scrollHeight + 'px'
+      })
     },
     menuClose () {
-      this.$refs.sidebarCollapse.style['max-height'] = '0px'
+      ;['Body', 'Footer'].forEach(h => {
+        this.$refs[`sidebar${h}`].style['max-height'] = '0px'
+      })
     }
   }
 }
@@ -165,16 +169,13 @@ export default {
 
 <style lang="scss">
 @media (max-width: 768px) {
-  .mobile-collapse {
+  .sidebar-body,
+  .sidebar-footer {
+    display: block !important;
     overflow: hidden;
     transition: max-height 0.4s ease-out;
     height: auto;
     max-height: 0;
-
-    .sidebar-body,
-    .sidebar-footer {
-      display: block !important;
-    }
   }
 }
 </style>
