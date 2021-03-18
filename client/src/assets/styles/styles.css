@@ -10,6 +10,10 @@ body.modal {
   color: var(--green);
 }
 
+.text-orange {
+  color: var(--orange);
+}
+
 .text-red {
   color: var(--red);
 }

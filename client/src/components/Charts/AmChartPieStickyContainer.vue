@@ -4,10 +4,12 @@
     sticky-container
     class="c-chart-pie-sticky-container"
   >
-    <div v-sticky sticky-offset="{top: 80}" sticky-z-index="12" class="c-chart-pie-sticky-container__inner">
-      <AmChartPieSticky
-        v-if="this.$store.state.transaction.transactions.data.length"
-      />
+    <div v-sticky sticky-offset="{top: 80}" sticky-z-index="12">
+      <div class="c-chart-pie-sticky-container__inner">
+        <AmChartPieSticky
+          v-if="this.$store.state.transaction.transactions.data.length"
+        />
+      </div>
     </div>
   </div>
 </template>
