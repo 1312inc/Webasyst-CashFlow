@@ -16,7 +16,7 @@ class cashStaticLayout extends waLayout
         $this->view->assign(
             [
                 'token' => $token,
-                'content' => '<i class="icon16 loading"></i>',
+//                'content' => '<i class="icon16 loading"></i>',
                 'isAdmin' => (int) cash()->getUser()->canImport(),
                 'contextUser' => cash()->getUser(),
                 'userId' => (int) wa()->getUser()->getId(),
