@@ -67,7 +67,7 @@ final class cashTinkoffPluginBankAccountResponseDto
     /**
      * Информация о транзитном счете. Актуально для валютных счетов
      *
-     * @var cashTinkoffPluginBankAccountTransitAccountDto
+     * @var ?cashTinkoffPluginBankAccountTransitAccountDto
      */
     private $transitAccount;
 
@@ -79,7 +79,7 @@ final class cashTinkoffPluginBankAccountResponseDto
         string $accountType,
         ?DateTimeImmutable $activationDate,
         cashTinkoffPluginBankAccountBalanceDto $balance,
-        cashTinkoffPluginBankAccountTransitAccountDto $transitAccount
+        ?cashTinkoffPluginBankAccountTransitAccountDto $transitAccount
     ) {
         $this->accountNumber = $accountNumber;
         $this->name = $name;
@@ -103,7 +103,9 @@ final class cashTinkoffPluginBankAccountResponseDto
                 ? DateTimeImmutable::createFromFormat('Y-m-d', $data['activationDate'])
                 : null,
             cashTinkoffPluginBankAccountBalanceDto::fromArray($data['balance']),
-            cashTinkoffPluginBankAccountTransitAccountDto::fromArray($data['transitAccount'])
+            isset($data['transitAccount'])
+                ? cashTinkoffPluginBankAccountTransitAccountDto::fromArray($data['transitAccount'])
+                : null
         );
     }
 
@@ -142,7 +144,7 @@ final class cashTinkoffPluginBankAccountResponseDto
         return $this->balance;
     }
 
-    public function getTransitAccount(): cashTinkoffPluginBankAccountTransitAccountDto
+    public function getTransitAccount(): ?cashTinkoffPluginBankAccountTransitAccountDto
     {
         return $this->transitAccount;
     }
