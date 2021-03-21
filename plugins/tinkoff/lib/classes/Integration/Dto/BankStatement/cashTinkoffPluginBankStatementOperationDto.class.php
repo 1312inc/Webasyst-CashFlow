@@ -504,4 +504,42 @@ final class cashTinkoffPluginBankStatementOperationDto
     {
         return $this->executionOrder;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'date' => $this->date,
+            'amount' => $this->amount,
+            'drawDate' => $this->drawDate->format('Y-m-d'),
+            'payerName' => $this->payerName,
+            'payerInn' => $this->payerInn,
+            'payerAccount' => $this->payerAccount,
+            'payerCorrAccount' => $this->payerCorrAccount,
+            'payerBic' => $this->payerBic,
+            'payerBank' => $this->payerBank,
+            'chargeDate' => $this->chargeDate->format('Y-m-d'),
+            'recipient' => $this->recipient,
+            'recipientInn' => $this->recipientInn,
+            'recipientAccount' => $this->recipientAccount,
+            'recipientCorrAccount' => $this->recipientCorrAccount,
+            'recipientBic' => $this->recipientBic,
+            'recipientBank' => $this->recipientBank,
+            'paymentType' => $this->paymentType,
+            'operationType' => $this->operationType,
+            'uin' => $this->uin,
+            'paymentPurpose' => $this->paymentPurpose,
+            'creatorStatus' => $this->creatorStatus,
+            'payerKpp' => $this->payerKpp,
+            'recipientKpp' => $this->recipientKpp,
+            'kbk' => $this->kbk,
+            'oktmo' => $this->oktmo,
+            'taxEvidence' => $this->taxEvidence,
+            'taxPeriod' => $this->taxPeriod,
+            'taxDocNumber' => $this->taxDocNumber,
+            'taxDocDate' => $this->taxDocDate,
+            'taxType' => $this->taxType,
+            'executionOrder' => $this->executionOrder,
+        ];
+    }
 }

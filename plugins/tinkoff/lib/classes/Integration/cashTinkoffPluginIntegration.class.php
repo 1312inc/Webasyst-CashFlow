@@ -65,6 +65,8 @@ class cashTinkoffPluginIntegration
                 $requestData['till'] = $requestDto->getTill()->format('Y-m-d');
             }
 
+            cashTinkoffPlugin::debug($requestData);
+
             $statement = $this->waNet->query(self::BASE_URL . '/v1/bank-statement', $requestData);
         } catch (waException $exception) {
             $this->handleError($exception);
