@@ -4,6 +4,10 @@ class cashTinkoffPlugin extends waPlugin
 {
     public static function log($msg): void
     {
+        if ($msg instanceof Exception) {
+            $msg = sprintf("%s\n%s", $msg->getMessage(), $msg->getTraceAsString());
+        }
+
         waLog::log($msg, 'cash/plugins/tinkoff.log');
     }
 
