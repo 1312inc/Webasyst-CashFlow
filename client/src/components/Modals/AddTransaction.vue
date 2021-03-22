@@ -164,11 +164,21 @@
                     <option value="custom">{{ $t("howOften.list[4]") }}</option>
                   </select>
                 </div>
+              </div>
+            </div>
+          </div>
+        </TransitionCollapseHeight>
 
-                <div
-                  v-if="model.repeating_interval === 'custom'"
-                  class="custom-mt-16"
-                >
+        <TransitionCollapseHeight>
+          <div
+            v-if="model.is_repeating && model.repeating_interval === 'custom'"
+          >
+            <div class="field custom-pt-16">
+              <div class="name for-input">
+
+              </div>
+              <div class="value">
+                <div>
                   {{ $t("howOften.every") }}
                   <input
                     v-model.number="model.repeating_frequency"
@@ -197,8 +207,12 @@
                 </div>
               </div>
             </div>
+          </div>
+        </TransitionCollapseHeight>
 
-            <div class="field">
+        <TransitionCollapseHeight>
+          <div v-if="!isModeUpdate && model.is_repeating">
+            <div class="field custom-pt-16">
               <div class="name for-input">
                 {{ $t("endRepeat.name") }}
               </div>

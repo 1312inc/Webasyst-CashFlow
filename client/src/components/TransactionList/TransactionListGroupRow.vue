@@ -145,6 +145,7 @@ export default {
 
     classes () {
       return {
+        'c-upcoming': this.$moment(this.transaction.date) > this.$moment(), // styles for the upcoming transactions
         'c-item--updated': this.$store.state.transaction.updatedTransactions
           .map(t => t.id)
           .includes(this.transaction.id)
