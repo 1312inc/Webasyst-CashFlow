@@ -2,9 +2,11 @@
   <div
     @mouseover="$refs.dropdown.style.display = 'block'"
     @mouseleave="$refs.dropdown.style.display = 'none'"
-    class="dropdown"
+    class="dropdown z-100"
   >
-    <span class="icon"><i class="fas fa-ellipsis-v"></i></span>
+    <a href="#" class="button light-gray"
+      ><span class="icon"><i class="fas fa-ellipsis-v"></i></span
+    ></a>
     <div class="dropdown-body" ref="dropdown">
       <ul class="menu">
         <li>
@@ -71,8 +73,10 @@ export default {
 }
 </script>
 
-<style>
-.dropdown {
-  z-index: 99;
+<style scoped>
+.button {
+  border-radius: 50%;
+  padding: 0.75em;
+  line-height: 0;
 }
 </style>

@@ -21,7 +21,7 @@
           <div class="flexbox middle space-12 wide">
             <div v-if="$helper.showMultiSelect()" :class="{'desktop-only': $helper.isDesktopEnv}" style="width: 1rem">
               <span
-                v-show="isHoverComputed"
+                v-show="isHoverComputed && filteredTransactions.length"
                 @click="checkAll(filteredTransactions)"
                 class="wa-checkbox"
               >
@@ -58,12 +58,13 @@
                 <span v-else>{{
                   $t("nextDays", { count: featurePeriod })
                 }}</span>
-                <span>({{ filteredTransactions.length }})</span>
+
               </div>
               <div v-if="$moment(new Date(type)).isValid()" class="black" style="text-transform:capitalize;">
                 {{ $moment(type).format("MMMM YYYY") }}
               </div>
             </h3>
+            <span v-if="type === 'future'" class="badge light-gray">{{ filteredTransactions.length }}</span>
             <TransactionListGroupUpcomingPeriod v-if="type === 'future'" />
           </div>
           <div class="flexbox middle space-12">
