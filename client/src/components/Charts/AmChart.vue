@@ -8,18 +8,15 @@
 
 <script>
 import { locale } from '@/plugins/locale'
+import { initialDarkMode as isDarkMode } from '@/plugins/darkModeObserver'
 import { mapState, mapActions } from 'vuex'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesDark from '@amcharts/amcharts4/themes/amchartsdark'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
-let prefersColorSchemeDark = false
-
-if (window.appState?.theme === 'dark' ||
-  (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ||
-  document.getElementById('wa-dark-mode')?.getAttribute('media') === '(prefers-color-scheme: light)') {
-  prefersColorSchemeDark = true
+let prefersColorSchemeDark = isDarkMode
+if (prefersColorSchemeDark) {
   am4core.useTheme(am4themesDark)
 }
 
@@ -43,18 +40,26 @@ export default {
         this.dateAxis.zoomToDates(new Date(val.from), new Date(val.to))
         this.dateAxis2.zoomToDates(new Date(val.from), new Date(val.to))
       }
+    },
+
+    '$darkModeObserver.darkMode' (darkMode) {
+      if (darkMode === true) {
+        prefersColorSchemeDark = true
+        am4core.useTheme(am4themesDark)
+        this.createChart()
+      } else {
+        prefersColorSchemeDark = false
+        am4core.unuseAllThemes()
+        this.createChart()
+      }
     }
   },
 
   mounted () {
     this.createChart()
-    this.addDarkModeObserver()
   },
 
   beforeDestroy () {
-    if (this.darkModeObserver) {
-      this.darkModeObserver.disconnect()
-    }
     if (this.chart) {
       this.chart.dispose()
     }
@@ -542,41 +547,7 @@ export default {
         decline: this.$helper.toCurrency({ value: minimumAmount, currencyCode: this.activeChartData.currency }),
         declineDate: this.$moment(minimumDate).format('L')
       })
-    },
-
-    switchMode (scheme) {
-      if (scheme === '(prefers-color-scheme: light)' || scheme === 'dark') {
-        prefersColorSchemeDark = true
-        am4core.useTheme(am4themesDark)
-        this.createChart()
-      } else {
-        prefersColorSchemeDark = false
-        am4core.unuseAllThemes()
-        this.createChart()
-      }
-    },
-
-    addDarkModeObserver () {
-      const targetNode = document.getElementById('wa-dark-mode')
-      if (targetNode) {
-        const config = { attributes: true }
-        const callback = (mutationsList, observer) => {
-          for (const mutation of mutationsList) {
-            if (mutation.attributeName === 'media') {
-              this.switchMode(targetNode.getAttribute('media'))
-            }
-          }
-        }
-        this.darkModeObserver = new MutationObserver(callback)
-        this.darkModeObserver.observe(targetNode, config)
-      }
-
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        const newColorScheme = e.matches ? 'dark' : 'light'
-        this.switchMode(newColorScheme)
-      })
     }
-
   }
 }
 </script>
