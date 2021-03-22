@@ -55,12 +55,13 @@ export default {
       return this.balanceFlow.data.find(element => {
         return (
           element.period > now &&
+          nowAmount !== 0 &&
           Math.sign(nowAmount) !== Math.sign(element.amount)
         )
       })
     },
     date () {
-      return this.$moment(this.alertDate.period).format('MMM Do')
+      return this.$moment(this.alertDate.period).format('MMM, D')
     },
     title () {
       return (
