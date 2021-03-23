@@ -7,6 +7,7 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   components: { ButtonRound },
+  props: Object.keys(argTypes),
   template: `
     <ButtonRound :icon="icon" />
     `

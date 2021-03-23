@@ -45,6 +45,7 @@
     "@storybook/addon-actions": "^6.1.17",
     "@storybook/addon-essentials": "^6.1.17",
     "@storybook/addon-links": "^6.1.17",
+    "@storybook/addon-viewport": "^6.1.21",
     "@storybook/vue": "^6.1.17",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",

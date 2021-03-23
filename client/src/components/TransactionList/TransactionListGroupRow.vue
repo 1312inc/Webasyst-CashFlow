@@ -34,25 +34,29 @@
           ><i class="c-category-glyph fas fa-ruble-sign"></i
         ></span>
       </div>
-      <div class="wide flexbox c-item-border">
-        <div class="wide">
-            <div class="black semibold custom-mb-8">
-              <span v-if="transaction.description">{{ transaction.description }}</span>
+      <div class="wide flexbox middle space-4 c-item-border" style="overflow: hidden;">
+        <div class="wide" style="overflow: hidden;">
+            <div class="flexbox space-4 semibold custom-mb-8" style="overflow: hidden;">
+              <div v-if="transaction.description" class="black text-ellipsis" style="flex-shrink: 1;">{{ transaction.description }}</div>
               <span v-if="!transaction.description" class="gray">{{ $t('noDesc') }}</span>
               <span
                 v-if="transaction.repeating_id"
-                class="custom-ml-4"
                 :title="$t('repeatingTran')"
               >
                 <i class="fas fa-redo-alt opacity-50"></i>
               </span>
             </div>
-            <span v-if="category.name" class="small gray">
-              {{ category.name }}
-            </span>
-            <span v-if="account.name" class="small gray">
-              / {{ account.name }}
-            </span>
+            <div class="flexbox space-4 vertical-mobile small gray">
+              <div v-if="category.name" class="text-ellipsis">
+                {{ category.name }}
+              </div>
+              <span class="desktop-and-tablet-only">
+                 /
+              </span>
+              <div v-if="account.name" class="text-ellipsis">
+                {{ account.name }}
+              </div>
+            </div>
         </div>
         <div class="c-item-amount">
           <div class="custom-mb-8 align-right">
