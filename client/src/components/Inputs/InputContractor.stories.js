@@ -1,3 +1,4 @@
+import { i18n } from '@/plugins/locale'
 import InputContractor from './InputContractor.vue'
 
 export default {
@@ -18,6 +19,7 @@ export default {
 export const Contractor = (args, { argTypes }) => {
   return ({
     props: Object.keys(argTypes),
+    i18n,
     components: { InputContractor },
     template: `
     <InputContractor
