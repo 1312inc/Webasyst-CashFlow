@@ -452,13 +452,13 @@ export default {
       balanceSeries.stroke = am4core.color('rgba(255, 0, 0, 0)') // transparent color
       balanceSeries.strokeWidth = 3
 
-      const chartDataChangedEvent = this.chart.events.on('datavalidated', (ev) => {
+      this.chart.events.on('datavalidated', (ev) => {
         // Delete cash gap ranges
-        this.dateAxis2.axisRanges.each((e, i) => {
-          if (e.name === 'CashGap') {
+        for (let i = 0; i < this.dateAxis2.axisRanges.length; i++) {
+          if (this.dateAxis2.axisRanges.getIndex(i).name === 'CashGap') {
             this.dateAxis2.axisRanges.removeIndex(i).dispose()
           }
-        })
+        }
 
         let dates = []
         let previous = null
@@ -482,16 +482,6 @@ export default {
           }
           previous = e.balance
         })
-      })
-
-      balanceSeries.events.on('beforedisposed', (ev) => {
-        // Delete cash gap ranges
-        this.dateAxis2.axisRanges.each((e, i) => {
-          if (e.name === 'CashGap') {
-            this.dateAxis2.axisRanges.removeIndex(i).dispose()
-          }
-        })
-        chartDataChangedEvent.dispose()
       })
 
       this.balanceSeries = balanceSeries
