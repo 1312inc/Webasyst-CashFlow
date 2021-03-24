@@ -15,6 +15,17 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesDark from '@amcharts/amcharts4/themes/amchartsdark'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
+const chartColors = {
+  green: am4core.color('#3ec55e'),
+  red: am4core.color('#fc3d38'),
+  blue: am4core.color('#1a9afe'),
+  white: am4core.color('#FFFFFF'),
+  black: am4core.color('#000000'),
+  gray: am4core.color('#888888'),
+  graydark: am4core.color('#333333'),
+  graylight: am4core.color('#f3f3f3')
+}
+
 let prefersColorSchemeDark = isDarkMode
 if (prefersColorSchemeDark) {
   am4core.useTheme(am4themesDark)
@@ -51,6 +62,12 @@ export default {
         prefersColorSchemeDark = false
         am4core.unuseAllThemes()
         this.createChart()
+      }
+    },
+
+    loadingChart (loading) {
+      if (this.chart) {
+        this.chart.disabled = loading
       }
     }
   },
@@ -99,7 +116,7 @@ export default {
       ])
       dateAxis.renderer.grid.template.location = 0.5
       dateAxis.renderer.grid.template.disabled = true
-      dateAxis.renderer.labels.template.fill = '#888'
+      dateAxis.renderer.labels.template.fill = chartColors.gray
       dateAxis.renderer.ticks.template.disabled = true
       dateAxis.renderer.ticks.template.strokeOpacity = 1
       dateAxis.renderer.ticks.template.strokeWidth = 1
@@ -122,7 +139,7 @@ export default {
       balanceAxis.numberFormatter = new am4core.NumberFormatter()
       balanceAxis.numberFormatter.numberFormat = '# a'
       balanceAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
-      balanceAxis.renderer.labels.template.fill = '#888'
+      balanceAxis.renderer.labels.template.fill = chartColors.gray
       this.balanceAxis = balanceAxis
 
       // Cols axis
@@ -133,10 +150,10 @@ export default {
       colsAxis.min = 0
       colsAxis.numberFormatter.numberFormat = '# a'
       colsAxis.renderer.grid.template.strokeOpacity = prefersColorSchemeDark ? 0.16 : 0.06
-      colsAxis.renderer.labels.template.fill = '#888'
+      colsAxis.renderer.labels.template.fill = chartColors.gray
       colsAxis.renderer.maxLabelPosition = 0.99
       if (!prefersColorSchemeDark) {
-        colsAxis.renderer.gridContainer.background.fill = am4core.color('#f3f3f3')
+        colsAxis.renderer.gridContainer.background.fill = chartColors.graylight
         colsAxis.renderer.gridContainer.background.fillOpacity = 0.3
       }
       this.colsAxis = colsAxis
@@ -160,13 +177,13 @@ export default {
       rangeFututre.endDate = new Date(8640000000000000)
       rangeFututre.grid.disabled = true
       rangeFututre.axisFill.fillOpacity = 0.5
-      rangeFututre.axisFill.fill = prefersColorSchemeDark ? '#000000' : '#FFFFFF'
+      rangeFututre.axisFill.fill = prefersColorSchemeDark ? chartColors.black : chartColors.white
       chart.seriesContainer.zIndex = -1
 
       // Currend day line
       const dateBorder = this.dateAxis.axisRanges.create()
       dateBorder.date = this.$moment().set('hour', 12).toDate()
-      dateBorder.grid.stroke = prefersColorSchemeDark ? am4core.color('#FFF') : am4core.color('#000000')
+      dateBorder.grid.stroke = prefersColorSchemeDark ? chartColors.white : chartColors.black
       dateBorder.grid.strokeWidth = 1
       dateBorder.grid.strokeOpacity = 1
       dateBorder.label.valign = 'bottom'
@@ -370,7 +387,7 @@ export default {
       if (dataField === 'amountIncome') {
         options = {
           name: this.$t('income'),
-          color: am4core.color('#3ec55e'),
+          color: chartColors.green,
    ***REMOVED***options
         }
       }
@@ -378,7 +395,7 @@ export default {
       if (dataField === 'amountExpense') {
         options = {
           name: this.$t('expense'),
-          color: am4core.color('#fc3d38'),
+          color: chartColors.red,
    ***REMOVED***options
         }
       }
@@ -386,7 +403,7 @@ export default {
       if (dataField === 'amountProfit') {
         options = {
           name: this.$t('profit'),
-          color: am4core.color('#1a9afe'),
+          color: chartColors.blue,
    ***REMOVED***options
         }
       }
@@ -423,8 +440,8 @@ export default {
       balanceSeries.tooltip.background.filters.clear()
       balanceSeries.tooltip.background.strokeWidth = 0
       balanceSeries.tooltip.getFillFromObject = false
-      balanceSeries.tooltip.background.fill = am4core.color('#333')
-      balanceSeries.tooltip.label.fill = am4core.color('#FFF')
+      balanceSeries.tooltip.background.fill = chartColors.graydark
+      balanceSeries.tooltip.label.fill = chartColors.white
       balanceSeries.tooltip.animationDuration = 500
       balanceSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currencySign}`
       balanceSeries.yAxis = this.balanceAxis
@@ -432,7 +449,7 @@ export default {
       balanceSeries.dataFields.valueY = 'balance'
       balanceSeries.dataFields.dateX = 'period'
       balanceSeries.groupFields.valueY = 'sum'
-      balanceSeries.stroke = am4core.color('rgba(255, 0, 0, 0)')
+      balanceSeries.stroke = am4core.color('rgba(255, 0, 0, 0)') // transparent color
       balanceSeries.strokeWidth = 3
 
       const chartDataChangedEvent = this.chart.events.on('datavalidated', (ev) => {
@@ -483,21 +500,21 @@ export default {
       const rangePositive = this.balanceAxis.createSeriesRange(this.balanceSeries)
       rangePositive.value = 0
       rangePositive.endValue = Number.MAX_SAFE_INTEGER
-      rangePositive.contents.stroke = am4core.color('#3ec55e')
+      rangePositive.contents.stroke = chartColors.green
 
       // Create a range to change stroke for negative values
       const rangeNegative = this.balanceAxis.createSeriesRange(this.balanceSeries)
       rangeNegative.value = -1
       rangeNegative.endValue = Number.MIN_SAFE_INTEGER
-      rangeNegative.contents.stroke = am4core.color('#fc3d38')
-      rangeNegative.contents.fill = am4core.color('#fc3d38')
+      rangeNegative.contents.stroke = chartColors.red
+      rangeNegative.contents.fill = chartColors.red
       rangeNegative.contents.fillOpacity = 0.2
 
       // Create a range to make stroke dashed in the future
       const rangeDashed = this.dateAxis2.createSeriesRange(this.balanceSeries)
       rangeDashed.date = this.$moment().set('hour', 12).toDate()
       rangeDashed.endDate = new Date(8640000000000000)
-      rangeDashed.contents.stroke = prefersColorSchemeDark ? '#000000' : am4core.color('#f3f3f3')
+      rangeDashed.contents.stroke = prefersColorSchemeDark ? chartColors.black : chartColors.graylight
       rangeDashed.contents.strokeDasharray = '3 5'
       rangeDashed.contents.strokeWidth = 3
 
@@ -506,7 +523,7 @@ export default {
       bullet.disabled = true
       bullet.propertyFields.disabled = 'bulletDisabled'
       bullet.events.on('inited', ({ target }) => {
-        target.circle.fill = target.dataItem.valueY >= 0 ? am4core.color('#3ec55e') : am4core.color('#fc3d38')
+        target.circle.fill = target.dataItem.valueY >= 0 ? chartColors.green : chartColors.red
       })
     },
 
@@ -534,8 +551,8 @@ export default {
       nbr.axisFill.tooltip.background.filters.clear()
       nbr.axisFill.tooltip.background.strokeWidth = 0
       nbr.axisFill.tooltip.getFillFromObject = false
-      nbr.axisFill.tooltip.background.fill = am4core.color('#fc3d38')
-      nbr.axisFill.tooltip.label.fill = am4core.color('#4a0900')
+      nbr.axisFill.tooltip.background.fill = chartColors.red
+      nbr.axisFill.tooltip.label.fill = chartColors.black
       nbr.axisFill.tooltip.animationDuration = 500
       const p1 = (1 - this.balanceAxis.valueToPosition(minimumAmount)) * 100
       const p2 = 220 / 353 * 100

@@ -25,9 +25,6 @@ export default {
       return this.featurePeriod === 1
         ? this.$t('tomorrow')
         : this.$t('nextDays', { count: this.featurePeriod })
-    },
-    labelColor () {
-      return this.$darkModeObserver.darkMode ? '#FFFFFF' : '#000000'
     }
   },
 
@@ -90,23 +87,25 @@ export default {
   methods: {
     renderChart () {
       // make label inside Chart
+      this.pieLabel.html = '<div class="black">'
       if (this.isCounterMode) {
-        this.pieLabel.html = `<div class="large" style="color:${this.labelColor}">${this.$t('selected', { count: this.label })}`
+        this.pieLabel.html += `<div class="large">${this.$t('selected', { count: this.label })}</div>`
       } else {
-        this.pieLabel.html = `<div class="larger custom-mb-4" style="color:${this.labelColor}">${this.$helper.currencySignByCode(
+        this.pieLabel.html += `<div class="larger custom-mb-4">${this.$helper.currencySignByCode(
           this.currencyCode
         )}</div>`
         if (this.label === 'future') {
-          this.pieLabel.html += `<div style="color:${this.labelColor}">${this.futureLabelText}</div>`
+          this.pieLabel.html += `<div>${this.futureLabelText}</div>`
         } else {
           this.pieLabel.html += this.$moment(new Date(this.label)).isValid()
-            ? `<div style="text-transform:capitalize;color:${this.labelColor}">${this.$moment(this.label).format('MMMM YYYY')}</div>`
-            : `<div style="color:${this.labelColor}">${this.$t(this.label)}</div>`
+            ? `<div style="text-transform:capitalize;">${this.$moment(this.label).format('MMMM YYYY')}</div>`
+            : `<div>${this.$t(this.label)}</div>`
         }
         this.pieLabel.html += `<div class="hint custom-mt-8">${this.$t('transactionsListCount', {
           count: this.totalTransactions
         })}</div>`
       }
+      this.pieLabel.html += '</div>'
 
       // if empty data
       if (!this.rawData.length) {
