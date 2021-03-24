@@ -17,6 +17,7 @@
             class="custom-px-16-mobile"
           />
         </div>
+        <CashGapMessage />
       </div>
       <slot name="controls"></slot>
     </div>
@@ -25,10 +26,11 @@
 
 <script>
 import TransactionControls from '@/components/TransactionControls'
-
+import CashGapMessage from '@/components/CashGapMessage'
 export default {
   components: {
-    TransactionControls
+    TransactionControls,
+    CashGapMessage
   },
 
   computed: {
