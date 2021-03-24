@@ -1,6 +1,6 @@
 .flexbox .wide {
   flex: 1 1 auto;
-  max-width: 100%;
+  min-width: 1px;
 }
 
 .content {

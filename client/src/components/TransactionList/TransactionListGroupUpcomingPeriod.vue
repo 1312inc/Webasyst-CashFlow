@@ -4,9 +4,9 @@
     @mouseleave="$refs.dropdown.style.display = 'none'"
     class="dropdown z-100"
   >
-    <a href="#" class="button light-gray"
+    <button class="button light-gray"
       ><span class="icon"><i class="fas fa-ellipsis-v"></i></span
-    ></a>
+    ></button>
     <div class="dropdown-body" ref="dropdown">
       <ul class="menu">
         <li>
