@@ -1,5 +1,5 @@
 <template>
-  <div v-if="currencies.length" class="flexbox space-12">
+  <div v-if="currencies.length" class="flexbox wrap space-12">
     <div
       v-for="currency in currencies"
       :key="currency"

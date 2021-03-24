@@ -6,7 +6,7 @@
       @click="openModal"
       class="flexbox middle space-12"
     >
-      <div v-if="$helper.showMultiSelect()" :class="{'desktop-only': $helper.isDesktopEnv}" style="width: 1rem;">
+      <div v-if="$helper.showMultiSelect()" :class="{'desktop-only': $helper.isDesktopEnv}" style="min-width: 1rem;">
         <span
           v-show="isHoverComputed"
           @click="checkboxSelect"
@@ -60,7 +60,7 @@
         </div>
         <div class="c-item-amount">
           <div class="custom-mb-8 align-right">
-            <div :style="`color: ${category.color}`" class="bold">
+            <div :style="`color: ${category.color}`" class="bold nowrap">
               {{
                 $helper.toCurrency({
                   value: transaction.amount,
@@ -70,7 +70,7 @@
               }}
             </div>
           </div>
-          <div class="small align-right">
+          <div class="small align-right nowrap">
             {{ $moment(transaction.date).format("ll") }}
           </div>
         </div>

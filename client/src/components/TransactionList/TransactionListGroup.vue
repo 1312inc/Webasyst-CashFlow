@@ -17,9 +17,9 @@
         on-stick="onStick"
         class="c-sticky-header-group"
       >
-        <div class="flexbox middle custom-py-8 vertical-mobile">
-          <div class="flexbox middle space-12 wide">
-            <div v-if="$helper.showMultiSelect()" :class="{'desktop-only': $helper.isDesktopEnv}" style="width: 1rem">
+        <div class="flexbox middle custom-py-8 vertical-mobile justify-between">
+          <div class="flexbox middle space-12">
+            <div v-if="$helper.showMultiSelect()" :class="{'desktop-only': $helper.isDesktopEnv}" style="min-width: 1rem">
               <span
                 v-show="isHoverComputed && filteredTransactions.length"
                 @click="checkAll(filteredTransactions)"
@@ -37,7 +37,7 @@
               </span>
             </div>
 
-            <h3 class="c-transaction-section__header">
+            <h3 class="c-transaction-section__header nowrap">
               <div v-if="type === 'overdue'" class="black">
                 {{ $t("overdue") }}
               </div>
@@ -71,7 +71,7 @@
             <div @click="onStick({sticked: true})" class="desktop-only c-pie-icon-helper" style="display: none;cursor: pointer;" ref="pieIcon">
               <i class="fas fa-chart-pie"></i>
             </div>
-            <Amounts :group="filteredTransactions" target="Group" class="flexbox middle vertical-mobile space-12" />
+            <Amounts :group="filteredTransactions" target="Group" class="flexbox justify-end middle vertical-mobile wrap space-12" />
           </div>
         </div>
       </div>

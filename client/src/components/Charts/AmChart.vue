@@ -1,7 +1,7 @@
 <template>
   <div
     ref="chartdiv"
-    :style="loadingChart && 'opacity:.3'"
+    :style="loadingChart && 'opacity:.2'"
     class="c-chart-main smaller"
   ></div>
 </template>
@@ -67,7 +67,7 @@ export default {
 
     loadingChart (loading) {
       if (this.chart) {
-        this.chart.disabled = loading
+        this.chart.interactionsEnabled = !loading
       }
     }
   },

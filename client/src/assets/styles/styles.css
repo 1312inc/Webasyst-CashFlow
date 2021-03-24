@@ -3,6 +3,22 @@
   min-width: 1px;
 }
 
+.flexbox.justify-between {
+  justify-content: space-between;
+}
+.flexbox.justify-between .flexbox.space-12 > *:first-child {
+  margin-left: 0;
+  margin-right: 0;
+}
+.flexbox.justify-between .flexbox.space-12 > *:not(:first-child) {
+  margin-left: .75rem;
+  margin-right: 0;
+}
+
+.flexbox.justify-end {
+  justify-content: flex-end;
+}
+
 .content {
   min-width: 1px;
 }
