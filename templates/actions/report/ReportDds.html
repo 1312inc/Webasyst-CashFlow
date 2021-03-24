@@ -4,6 +4,7 @@
 {** $type cashReportDdsTypeDto **}
 {** $grouping cashReportDdsPeriodGroupingDto[] **}
 {** $data cashReportDdsStatDto[] **}
+<link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/legacy/c3.min.css?v{$wa->version()}">
 
 <div class="content left200px">
 
@@ -17,7 +18,7 @@
                 <ul class="menu-v" style="min-width: 100px;">
                     {foreach $reportPeriods as $reportPeriod}
                     <li {if $currentPeriod->isEqual($reportPeriod)}class="selected"{/if}>
-                        <a href="#/report/dds/{$type->id}/{$reportPeriod->getValue()}"
+                        <a href="{$wa_app_url}report/dds/{$type->id}/{$reportPeriod->getValue()}"
                            data-cash-period-value="{$reportPeriod->getValue()}"
                            data-cash-period-start="{$reportPeriod->getStartDate()}"
                            data-cash-period-end="{$reportPeriod->getEndDate()}"
@@ -30,7 +31,7 @@
             </li>
             {foreach $ddsTypes as $ddsType}
             <li>
-                <a href="#/report/dds/{$ddsType->id}/{$currentPeriod->getValue()}"
+                <a href="{$wa_app_url}report/dds/{$ddsType->id}/{$currentPeriod->getValue()}"
                    {if $type->id == $ddsType->id}class="selected"{/if}
                 >
                     {$ddsType->name|escape}
@@ -67,8 +68,8 @@
                 </td>
                 {foreach $datum->valuesPerPeriods as $values}
                 <td>
-                {foreach $values as $value}
-                    <div class="nowrap align-right">{$value.per_month} {$datum->currencies[$value.currency]->getSign()}</div>
+                {foreach $values as $currency => $value}
+                    <div class="nowrap align-right">{$value.per_month} {$datum->currencies[$currency]->getSign()}</div>
                 {/foreach}
                 </td>
                 {/foreach}
@@ -90,6 +91,9 @@
 
     </div>
 
+<script type="text/javascript" src="{$wa_app_static_url}js/d3.min.js?v{$wa->version()}"></script>
+<script type="text/javascript" src="{$wa_app_static_url}js/c3.min.js?v{$wa->version()}"></script>
+
 <script>
     "use strict";
     (function ($){
@@ -105,7 +109,14 @@
 
                 chart[incOrExp+'-'+currency] = c3.generate({
                     bindto: '#cash-chart-' + incOrExp + '-' + currency,
-                    data: chartData[incOrExp][currency]
+                    data: chartData[incOrExp][currency].data,
+                    tooltip: {
+                        format: {
+                            value: function (value, ratio, id) {
+                                return d3.format(".1%")(ratio) + ' / ' + ('' + d3.format(',')(value)).replace(',',' ') + ' ' + chartData[incOrExp][currency].helpers.currencySign;
+                            }
+                        }
+                    }
                 });
                 charts.push(chart);
             }
