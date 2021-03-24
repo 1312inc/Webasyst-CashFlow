@@ -3,7 +3,7 @@
     <li v-for="i in this.lines" :key="i" class="c-item item">
       <div class="skeleton custom-px-16-mobile">
         <div class="flexbox space-12 custom-py-12">
-          <div v-if="$helper.showMultiSelect()" style="width: 1rem"></div>
+          <div v-if="$helper.showMultiSelect()" style="min-width: 1rem"></div>
           <div>
             <span class="skeleton-custom-circle size-48"></span>
           </div>
