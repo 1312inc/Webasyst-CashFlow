@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import TransactionListCreated from './TransactionListCreated'
 import TransactionListGroup from './TransactionListGroup'
 import SkeletonTransaction from './SkeletonTransaction'
@@ -69,9 +70,7 @@ export default {
   },
 
   computed: {
-    transactions () {
-      return this.$store.state.transaction.transactions
-    },
+    ...mapState('transaction', ['transactions', 'detailsInterval']),
     activeCurrencyCode () {
       return this.$store.getters['transaction/activeCurrencyCode']
     },
@@ -105,7 +104,7 @@ export default {
       const result = []
 
       // add Future object
-      if (this.showFutureGroup && !result.find(e => e.name === 'future')) {
+      if (this.showFutureGroupComputed && !result.find(e => e.name === 'future')) {
         result.push({
           name: 'future',
           items: []
@@ -113,7 +112,7 @@ export default {
       }
 
       // add today object
-      if (this.showTodayGroup && !result.find(e => e.name === 'today')) {
+      if (this.showTodayGroupComputed && !result.find(e => e.name === 'today')) {
         result.push({
           name: 'today',
           items: []
@@ -140,7 +139,7 @@ export default {
         // if future and not details mode
         if (
           e.date > today &&
-          this.showFutureGroup &&
+          this.showFutureGroupComputed &&
           !this.$store.state.transaction.detailsInterval.from &&
           !this.$store.state.transaction.detailsInterval.to
         ) {
@@ -148,7 +147,7 @@ export default {
         }
 
         // if today
-        if (e.date === today && this.showTodayGroup) {
+        if (e.date === today && this.showTodayGroupComputed) {
           return add('today', e)
         }
 
@@ -165,7 +164,16 @@ export default {
       })
 
       return result
+    },
+
+    showFutureGroupComputed () {
+      return !this.detailsInterval.from && !this.detailsInterval.to ? this.showFutureGroup : false
+    },
+
+    showTodayGroupComputed () {
+      return !this.detailsInterval.from && !this.detailsInterval.to ? this.showTodayGroup : false
     }
+
   },
 
   methods: {

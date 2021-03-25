@@ -145,6 +145,8 @@
     "down": "Кассовый разрыв —"
   },
   "cashGapTooltip": "КАССОВЫЙ РАЗРЫВ!\nДата начала: {start}\nКонечная дата: {end}\nМаксимальное отклонение: {decline} дата: {declineDate}",
+  "cashGapIn": "Cash gap is in {inDays} days ({date})",
+  "cashGapOut": "Going out of the cash gap in {inDays} days ({date})",
   "inDays": "(через {days} дней)",
   "fileUploaderLabel": "Выберите файл",
   "noContact": "Свяжите с существующим контактом или создайте нового",
