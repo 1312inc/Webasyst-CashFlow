@@ -67,7 +67,7 @@ class cashTransactionDialogAction extends cashViewAction
         } elseif ($categoryType === cashCategory::TYPE_EXPENSE) {
             $categoryDtos = cashDtoFromEntityFactory::fromEntities(
                 cashCategoryDto::class,
-                $categoryRep->findAllExpense()
+                $categoryRep->findAllExpenseForContact()
             );
         } else {
             $categoryDtos = cashDtoFromEntityFactory::fromEntities(

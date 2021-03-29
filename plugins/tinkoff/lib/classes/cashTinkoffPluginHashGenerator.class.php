@@ -4,6 +4,6 @@ final class cashTinkoffPluginHashGenerator
 {
     public function makeForTinkoffOperationDto(cashTinkoffPluginBankStatementOperationDto $operationDto): string
     {
-        return sprintf('%s|%s', 'tinkoff_plugin', $operationDto->getPayerName());
+        return md5(sprintf('%s|%s', 'tinkoff_plugin', serialize($operationDto)));
     }
 }

@@ -37,7 +37,7 @@ class cashTransactionBulkMoveDialogAction extends cashViewAction
         $categoryRep = cash()->getEntityRepository(cashCategory::class);
         $categoryDtosExpense = cashDtoFromEntityFactory::fromEntities(
             cashCategoryDto::class,
-            $categoryRep->findAllExpense()
+            $categoryRep->findAllExpenseForContact()
         );
         $categoryDtosIncome = cashDtoFromEntityFactory::fromEntities(
             cashCategoryDto::class,
