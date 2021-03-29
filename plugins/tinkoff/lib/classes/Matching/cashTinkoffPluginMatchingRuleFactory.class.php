@@ -5,7 +5,7 @@ class cashTinkoffPluginMatchingRuleFactory
     /**
      * @return array<cashTinkoffPluginMatchingRuleInterface>
      */
-    public function createFromSetting(cashTinkoffPluginSettings $settings): array
+    public function createFromSetting(cashTinkoffPluginCompanySettings $settings): array
     {
         
     }

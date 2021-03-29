@@ -1,6 +1,6 @@
 <?php
 
-final class cashTinkoffPluginBankStatementOperationDto
+final class cashTinkoffPluginBankStatementOperationDto implements cashTinkoffPluginToArrayInterface
 {
     /**
      * Номер документа

@@ -15,15 +15,21 @@ final class cashTinkoffPluginTransactionSaver
     }
 
     public function makeTransactionCreateRequestFromTinkoffOperation(
+        cashTinkoffPluginTinkoffAccountSettings $accountSettings,
         cashTinkoffPluginBankStatementOperationDto $operationDto
     ): cashApiTransactionCreateRequest {
         $createRequest = new cashApiTransactionCreateRequest();
 
         $createRequest->date = $operationDto->getDate()->format('Y-m-d');
-        $createRequest->category_id = 1;
+        if ($operationDto->getPayerAccount() === $accountSettings->getAccountNumber()) {
+            $createRequest->category_id = $accountSettings->getExpenseCategory()->getId();
+        }
+        if ($operationDto->getRecipientAccount() === $accountSettings->getAccountNumber()) {
+            $createRequest->category_id = $accountSettings->getIncomeCategory()->getId();
+        }
         $createRequest->amount = $operationDto->getAmount();
         $createRequest->description = $operationDto->getPaymentPurpose();
-        $createRequest->account_id = 1;
+        $createRequest->account_id = $accountSettings->getAccount()->getId();
 
         return $createRequest;
     }
@@ -56,10 +62,12 @@ final class cashTinkoffPluginTransactionSaver
         return $t;
     }
 
-    public function saveTransaction(cashTinkoffPluginBankStatementOperationDto $operationDto): ?cashTransaction
-    {
+    public function saveTransaction(
+        cashTinkoffPluginTinkoffAccountSettings $accountSettings,
+        cashTinkoffPluginBankStatementOperationDto $operationDto
+    ): ?cashTransaction {
         try {
-            $createRequest = $this->makeTransactionCreateRequestFromTinkoffOperation($operationDto);
+            $createRequest = $this->makeTransactionCreateRequestFromTinkoffOperation($accountSettings, $operationDto);
             $created = (new cashApiTransactionCreateHandler())->handle($createRequest);
 
             $created = reset($created);
@@ -76,6 +84,10 @@ final class cashTinkoffPluginTransactionSaver
                 ->setExternalSource(self::EXTERNAL_SOURCE)
                 ->setExternalHash($hash)
                 ->setExternalData($operationDto->toArray());
+
+            cash()->getEntityPersister()->save($transaction);
+
+            return $transaction;
         } catch (Exception $exception) {
             cashTinkoffPlugin::log($exception->getMessage());
             cashTinkoffPlugin::log($exception->getTraceAsString());

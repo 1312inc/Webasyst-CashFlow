@@ -2,7 +2,8 @@
 
 class cashTinkoffPluginIntegration
 {
-    private const BASE_URL = 'https://business.tinkoff.ru/openapi/api';
+//    private const BASE_URL = 'https://business.tinkoff.ru/openapi/api';
+    private const BASE_URL = 'https://proxy.kmwa.ru/openapi/api';
 
     private $waNet;
 
@@ -10,6 +11,11 @@ class cashTinkoffPluginIntegration
     {
         $this->waNet = new waNet(
             [
+//                'proxy_host' => '91.240.85.212/tinkoff',
+//                'proxy_port' => '80',
+//                'proxy_auth' => 'basic',
+//                'proxy_user' => 'krll',
+//                'proxy_password' => 'superproxy2',
                 'format' => waNet::FORMAT_JSON,
                 'request_format' => waNet::FORMAT_JSON,
                 'authorization' => true,
@@ -17,6 +23,7 @@ class cashTinkoffPluginIntegration
                 'auth_key' => $token->getValue(),
                 'log' => waSystemConfig::isDebug(),
                 'expected_http_code' => 200,
+                'verify' => false,
             ]
         );
     }
@@ -30,6 +37,14 @@ class cashTinkoffPluginIntegration
 
         try {
             $accounts = $this->waNet->query(self::BASE_URL . '/v3/bank-accounts');
+//            $accounts = json_decode(
+//                <<<JSON
+//[{"accountNumber":"40802810000000044580","name":"Рублевый счет","currency":"643","bankBik":"044525974","accountType":"Current","activationDate":"2016-11-13","balance":{"otb":113431.45,"authorized":0,"pendingPayments":0,"pendingRequisitions":0}}]
+//JSON
+//                ,
+//                true
+//            );
+
         } catch (waException $exception) {
             $this->handleError($exception);
 
