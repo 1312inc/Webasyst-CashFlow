@@ -3,7 +3,7 @@
     <template v-if="collapseHeaderData">
       <div class="black text-ellipsis" style="flex-shrink: 1">
         {{
-          $t("collapseTransactionDesc", { category: category.name, count: 4 })
+          $t("collapseTransactionDesc", { category: category.name, count: collapseHeaderData.ids.length })
         }}
       </div>
       <span>
