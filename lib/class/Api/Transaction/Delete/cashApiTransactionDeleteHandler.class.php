@@ -31,6 +31,9 @@ class cashApiTransactionDeleteHandler implements cashApiHandlerInterface
             throw new kmwaRuntimeException(_w('Error while deleting transaction'));
         }
 
+        $archivedTransactionIds[$transaction->getId()] = [];
+
+        $archivedTransactionIds = [];
         if ($request->all_repeating) {
             /** @var cashRepeatingTransaction $repeatingTransaction */
             $repeatingTransaction = $transaction->getRepeatingTransaction();
@@ -39,7 +42,14 @@ class cashApiTransactionDeleteHandler implements cashApiHandlerInterface
                 throw new kmwaNotFoundException(_w('No repeating transaction'));
             }
 
-            cash()->getModel(cashTransaction::class)->deleteAllRepeatingAfterTransaction(
+            $transactionModel = cash()->getModel(cashTransaction::class);
+
+            $archivedIds = $transactionModel->getAllRepeatingIdsAfterTransaction(
+                $repeatingTransaction->getId(),
+                $transaction->getId()
+            );
+
+            $transactionModel->deleteAllRepeatingAfterTransaction(
                 $repeatingTransaction->getId(),
                 $transaction->getId()
             );

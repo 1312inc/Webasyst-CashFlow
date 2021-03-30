@@ -8,12 +8,12 @@ class cashApiTransactionUpdateResponse extends cashApiAbstractResponse
     /**
      * cashApiTransactionUpdateResponse constructor.
      *
-     * @param array|cashApiTransactionResponseDto[] $transactions
+     * @param array|cashApiTransactionResponseDto $transaction
      */
-    public function __construct(array $transactions)
+    public function __construct($transaction)
     {
         parent::__construct(200);
 
-        $this->response = $transactions;
+        $this->response = $transaction;
     }
 }

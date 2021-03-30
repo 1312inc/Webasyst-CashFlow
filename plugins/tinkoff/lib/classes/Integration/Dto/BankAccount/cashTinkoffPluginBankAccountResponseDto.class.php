@@ -1,7 +1,9 @@
 <?php
 
-final class cashTinkoffPluginBankAccountResponseDto
+final class cashTinkoffPluginBankAccountResponseDto implements cashTinkoffPluginToArrayInterface
 {
+    use cashTinkoffPluginToArrayTrait;
+
     /**
      * Расчетный счет организации
      *

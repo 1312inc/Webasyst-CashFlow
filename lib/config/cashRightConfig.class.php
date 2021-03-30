@@ -74,7 +74,7 @@ class cashRightConfig extends waRightConfig
         $this->addItem(self::RIGHT_CAN_ACCESS_CATEGORY, _w('Income'), 'list', ['items' => $items]);
 
         $items = [];
-        foreach (cash()->getEntityRepository(cashCategory::class)->findAllExpense() as $category) {
+        foreach (cash()->getEntityRepository(cashCategory::class)->findAllExpenseForContact() as $category) {
             $items[$category->getId()] = $category->getName();
         }
 
