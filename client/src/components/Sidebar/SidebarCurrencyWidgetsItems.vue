@@ -1,6 +1,6 @@
 <template>
   <div
-    @click="$router.push(`/currency/${balanceFlow.currency}`)"
+    @click="navigateTo(`/currency/${balanceFlow.currency}`)"
     class="brick full-width"
   >
     <div class="flexbox middle">
@@ -71,6 +71,14 @@ export default {
         ' ' +
         this.date
       )
+    }
+  },
+
+  methods: {
+    navigateTo (path) {
+      if (this.$route.path !== path) {
+        this.$router.push(path)
+      }
     }
   }
 }
