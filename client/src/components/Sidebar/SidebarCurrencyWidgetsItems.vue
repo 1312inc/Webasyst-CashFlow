@@ -6,7 +6,7 @@
     <div class="flexbox middle">
       <div
         :class="{ 'text-red': balanceFlow.balances.now.amount < 0 }"
-        class="wide bold nowrap"
+        class="wide black bold nowrap c-bwc-balance"
       >
         {{
           $helper.toCurrency({
@@ -89,5 +89,8 @@ export default {
   &--red {
     background: var(--red);
   }
+}
+.c-bwc-balance {
+    font-size: 1rem;
 }
 </style>

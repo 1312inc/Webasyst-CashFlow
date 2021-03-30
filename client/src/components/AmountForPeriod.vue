@@ -8,7 +8,7 @@
     }"
   >
     <div class="custom-ml-12 custom-mb-4">
-      <i v-if="type === 'profit'" class="fas fa-sign-out-alt text-blue"></i>
+      <i v-if="type === 'profit'" class="fas fa-arrow-right text-blue"></i>
       <span class="small semibold">{{
         $helper.toCurrency({
           value: total,

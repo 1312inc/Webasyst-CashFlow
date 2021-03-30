@@ -17,7 +17,7 @@
               @keyup.enter="submit"
               :class="{ 'state-error': $v.model.name.$error }"
               ref="focus"
-              class="bold"
+              class="bold large"
               type="text"
             />
           </div>
@@ -51,7 +51,9 @@
                   </span>
                 </span>
                 {{ $t("profit") }}
-                <i class="fas fa-sign-out-alt gray"></i>
+                <span class="text-blue">
+                  <i class="fas fa-arrow-right"></i>
+                </span>
               </label>
             </div>
             <div v-if="model.type === 'income'" class="custom-mt-8">
@@ -86,16 +88,16 @@
           <button @click="submit('category')" class="button purple">
             {{ isModeUpdate ? $t("update") : $t("add") }}
           </button>
-          <button @click="close" class="button outlined light-gray">
-            <span>{{ $t("cancel") }}</span>
+          <button @click="close" class="button light-gray">
+            {{ $t("cancel") }}
           </button>
         </div>
         <button
           v-if="isModeUpdate"
           @click="remove('category')"
-          class="button red"
+          class="button outlined red"
         >
-          {{ $t("delete") }}
+          <span>{{ $t("delete") }}</span>
         </button>
       </div>
     </div>

@@ -67,12 +67,9 @@
               :to="`/category/${category.id}`"
               class="flexbox middle"
             >
-              <span class="icon"
-                ><i
-                  class="rounded"
-                  :style="`background-color:${category.color};`"
-                ></i
-              ></span>
+              <span class="icon">
+                <i class="fas fa-exchange-alt"></i>
+              </span>
               <span>{{ category.name }}</span>
             </router-link>
           </li>

@@ -5,7 +5,7 @@ return array (
   'version' => '1.0.0',
   'vendor'  => '1021997',
   'rights'  => true,
-  'sash_color'     => '#3be56c',
-    'plugins' => true,
-    'ui' => '1.3, 2.0',
+  'sash_color' => '#3be56c',
+  'plugins' => true,
+  'ui' => '1.3,2.0',
 );

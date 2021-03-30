@@ -18,7 +18,7 @@
               @keyup.enter="submit"
               :class="{ 'state-error': $v.model.name.$error }"
               ref="focus"
-              class="bold"
+              class="bold large"
               type="text"
             />
           </div>
@@ -32,7 +32,7 @@
             <div class="wa-select solid">
               <select
                 v-model="model.currency"
-                class="width-100"
+                class="width-50"
                 :class="{ 'state-error': $v.model.currency.$error }"
               >
                 <option
@@ -117,16 +117,16 @@
           <button @click="submit('account')" class="button purple">
             {{ isModeUpdate ? $t("update") : $t("add") }}
           </button>
-          <button @click="close" class="button outlined light-gray">
-            <span>{{ $t("cancel") }}</span>
+          <button @click="close" class="button light-gray">
+            {{ $t("cancel") }}
           </button>
         </div>
         <button
           v-if="isModeUpdate"
           @click="remove('account')"
-          class="button red"
+          class="button outlined red"
         >
-          {{ $t("delete") }}
+          <span>{{ $t("delete") }}</span>
         </button>
       </div>
     </div>
