@@ -143,7 +143,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
             $rawData[cashCategory::TYPE_EXPENSE] ?? []
         );
         // usual categories
-        foreach ($this->categoryRep->findAllExpense() as $category) {
+        foreach ($this->categoryRep->findAllExpenseForContact() as $category) {
             $statData[] = new cashReportDdsStatDto(
                 new cashReportDdsEntity(
                     $category->getName(),

@@ -85,7 +85,9 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
             $transferTransaction = $saver->createTransfer($transaction, $paramsDto);
 
             if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transferTransaction)) {
-                throw new kmwaForbiddenException(_w('You are now allowed to add/edit transfer transactions with the specified set of parameters'));
+                throw new kmwaForbiddenException(
+                    _w('You are now allowed to add/edit transfer transactions with the specified set of parameters')
+                );
             }
 
             if ($transferTransaction) {
@@ -94,7 +96,9 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
         }
 
         if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-            throw new kmwaForbiddenException(_w('You are now allowed to add/edit transactions with the specified set of parameters'));
+            throw new kmwaForbiddenException(
+                _w('You are now allowed to add/edit transactions with the specified set of parameters')
+            );
         }
 
         $newTransactionIds = [];
@@ -111,8 +115,10 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
             if ($repeatingSaveResult->ok) {
                 $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
                 if ($newTransactions) {
+                    $first = reset($newTransactions);
+                    $newTransactionIds[$first->getId()] = [];
                     foreach ($newTransactions as $newTransaction) {
-                        $newTransactionIds[] = $newTransaction->getId();
+                        $newTransactionIds[$first->getId()][] = $newTransaction->getId();
                     }
                 }
             }
@@ -123,10 +129,14 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
                     $repeatingDto
                 );
 
-                $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
-                if ($newTransactions) {
-                    foreach ($newTransactions as $newTransaction) {
-                        $newTransactionIds[] = $newTransaction->getId();
+                if ($repeatingSaveResult->ok) {
+                    $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
+                    if ($newTransactions) {
+                        $first = reset($newTransactions);
+                        $newTransactionIds[$first->getId()] = [];
+                        foreach ($newTransactions as $newTransaction) {
+                            $newTransactionIds[$first->getId()][] = $newTransaction->getId();
+                        }
                     }
                 }
             }
@@ -134,15 +144,18 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
             $saver->addToPersist($transaction);
             $saved = $saver->persistTransactions();
             foreach ($saved as $item) {
-                $newTransactionIds[] = $item->getId();
+                $newTransactionIds[$item->getId()][] = $item->getId();
             }
         }
 
         $transactionModel = cash()->getModel(cashTransaction::class);
-        $data = $transactionModel->getAllIteratorByIds($newTransactionIds);
+        $data = $transactionModel->getById(array_keys($newTransactionIds));
         $response = [];
-        foreach ($this->transactionResponseDtoAssembler->fromModelIterator($data) as $item) {
-            $response[] = $item;
+        foreach ($data as $datum) {
+            $dto = $this->transactionResponseDtoAssembler->fromData($datum);
+            $dto->affected_transactions = count($newTransactionIds[$dto->id]);
+            $dto->affected_transaction_ids = $newTransactionIds[$dto->id];
+            $response[] = $dto;
         }
 
         return $response;

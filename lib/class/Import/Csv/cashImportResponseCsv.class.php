@@ -55,7 +55,7 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
             )
         );
 
-        $categoriesExpense = cash()->getEntityRepository(cashCategory::class)->findAllExpense();
+        $categoriesExpense = cash()->getEntityRepository(cashCategory::class)->findAllExpenseForContact();
         /** @var cashCategoryDto[] $categoryExpenseDtos */
         $categoryExpenseDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $categoriesExpense);
         array_unshift(
