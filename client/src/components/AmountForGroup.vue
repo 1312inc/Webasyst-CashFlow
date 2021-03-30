@@ -9,7 +9,7 @@
         'text-blue': type === 'profit',
       }"
     >
-      <i v-if="type === 'profit'" class="fas fa-sign-out-alt text-blue"></i>
+      <i v-if="type === 'profit'" class="fas fa-arrow-right text-blue"></i>
       <span class="small semibold">{{
         $helper.toCurrency({
           value: getTotalByCurrency(currency),
@@ -28,7 +28,7 @@
       'text-blue': type === 'profit',
     }"
   >
-    <i v-if="type === 'profit'" class="fas fa-sign-out-alt text-blue"></i>
+    <i v-if="type === 'profit'" class="fas fa-arrow-right text-blue"></i>
     <span class="small semibold"
       >{{ type === "income" ? "+ " : type === "expense" ? "− " : " " }}0</span
     >

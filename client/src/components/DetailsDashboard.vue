@@ -103,11 +103,10 @@ export default {
 
 <style lang="scss">
 .c-breakdown-details {
-  border: 3px solid var(--alert-border-color);
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1),
     0 0.5rem 1.5rem -0.5rem rgba(0, 0, 0, 0.2);
   border-radius: 0.375rem;
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.75rem;
   margin: 1.7rem;
 }
 </style>

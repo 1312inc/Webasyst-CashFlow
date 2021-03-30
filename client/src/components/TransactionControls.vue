@@ -49,8 +49,11 @@
           $permissions.canAccessTransfers
         "
       >
-        <button @click="addTransaction('transfer')" class="nobutton">
-          <i class="fas fa-arrow-right"></i> {{ $t("transfer") }}
+        <button @click="addTransaction('transfer')" class="button light-gray">
+          <span>
+            <i class="fas fa-exchange-alt"></i>
+            {{ $t("transfer") }}
+          </span>
         </button>
       </div>
     </div>
