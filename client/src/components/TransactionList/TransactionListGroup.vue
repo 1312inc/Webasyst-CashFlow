@@ -19,7 +19,11 @@
       >
         <div class="flexbox middle custom-py-8 vertical-mobile justify-between">
           <div class="flexbox middle space-12">
-            <div v-if="$helper.showMultiSelect()" :class="{'desktop-only': $helper.isDesktopEnv}" style="min-width: 1rem">
+            <div
+              v-if="$helper.showMultiSelect()"
+              :class="{ 'desktop-only': $helper.isDesktopEnv }"
+              style="min-width: 1rem"
+            >
               <span
                 v-show="isHoverComputed && filteredTransactions.length"
                 @click="checkAll(filteredTransactions)"
@@ -58,35 +62,52 @@
                 <span v-else>{{
                   $t("nextDays", { count: featurePeriod })
                 }}</span>
-
               </div>
-              <div v-if="$moment(new Date(type)).isValid()" class="black" style="text-transform:capitalize;">
+              <div
+                v-if="$moment(new Date(type)).isValid()"
+                class="black"
+                style="text-transform: capitalize"
+              >
                 {{ $moment(type).format("MMMM YYYY") }}
               </div>
             </h3>
-            <span v-if="type === 'future'" class="badge light-gray">{{ filteredTransactions.length }}</span>
+            <span v-if="type === 'future'" class="badge light-gray">{{
+              filteredTransactions.length
+            }}</span>
             <TransactionListGroupUpcomingPeriod v-if="type === 'future'" />
           </div>
           <div class="flexbox middle space-12">
-            <div @click="onStick({sticked: true})" class="desktop-only c-pie-icon-helper" style="display: none;cursor: pointer;" ref="pieIcon">
+            <div
+              @click="onStick({ sticked: true })"
+              class="desktop-only c-pie-icon-helper"
+              style="display: none; cursor: pointer"
+              ref="pieIcon"
+            >
               <i class="fas fa-chart-pie"></i>
             </div>
-            <Amounts :group="filteredTransactions" target="Group" class="flexbox justify-end middle vertical-mobile wrap space-12" />
+            <Amounts
+              :group="filteredTransactions"
+              target="Group"
+              class="flexbox justify-end middle vertical-mobile wrap space-12"
+            />
           </div>
         </div>
       </div>
 
       <div v-if="upcomingBlockOpened">
-        <transition-group v-if="filteredTransactions.length" name="list" tag="ul" class="c-list list">
+        <ul v-if="filteredTransactions.length" class="c-list list">
           <TransactionListGroupRow
+            v-show="isShown(transaction)"
             v-for="transaction in type === 'future'
               ? [...filteredTransactions].reverse()
               : filteredTransactions"
             :key="transaction.id"
             :transaction="transaction"
             :showChecker="isShowChecker"
+            :collapseHeaderData="collapseHeaderData(transaction)"
+            @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
-        </transition-group>
+        </ul>
         <div v-else class="align-center custom-py-24">
           {{ $t("emptyList") }}
         </div>
@@ -97,7 +118,7 @@
 
 <script>
 import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPeriod'
-import TransactionListGroupRow from './TransactionListGroupRow'
+import TransactionListGroupRow from './TransactionListGroupRow/TransactionListGroupRow'
 import Amounts from '@/components/Amounts'
 export default {
   props: {
@@ -121,7 +142,9 @@ export default {
 
   data () {
     return {
-      isHover: false
+      isHover: false,
+      сollapseGroups: {},
+      activeCollapseExternalSourceIDs: []
     }
   },
 
@@ -167,15 +190,40 @@ export default {
           return istart.diff(today, 'days') <= this.featurePeriod
         })
       }
+
       return result
     }
   },
 
   watch: {
-    filteredTransactions () {
-      if (this.$store.state.transaction.activeGroupTransactions.index === this.index) {
-        this.onStick({ sticked: true })
-      }
+    filteredTransactions: {
+      handler (val) {
+        if (
+          this.$store.state.transaction.activeGroupTransactions.index ===
+          this.index
+        ) {
+          this.onStick({ sticked: true })
+        }
+
+        const hash = {}
+        val
+          .filter(e => e.external_source)
+          .forEach(e => {
+            const key = `${e.category_id}|${e.date}|${e.external_source}`
+            if (!hash[key]) {
+              hash[key] = {
+                ids: [e.id],
+                totalAmount: e.amount
+              }
+            } else {
+              hash[key].ids.push(e.id)
+              hash[key].totalAmount += e.amount
+            }
+          })
+
+        this.сollapseGroups = hash
+      },
+      immediate: true
     }
   },
 
@@ -186,6 +234,39 @@ export default {
   },
 
   methods: {
+    isShown (transaction) {
+      const key = `${transaction.category_id}|${transaction.date}|${transaction.external_source}`
+      if (
+        !this.сollapseGroups[key] ||
+        this.сollapseGroups[key].ids[0] === transaction.id
+      ) {
+        return true
+      }
+      return this.activeCollapseExternalSourceIDs.includes(key)
+    },
+
+    collapseHeaderData (transaction) {
+      const key = `${transaction.category_id}|${transaction.date}|${transaction.external_source}`
+      if (
+        this.isShown(transaction) &&
+        !this.activeCollapseExternalSourceIDs.includes(key)
+      ) {
+        return this.сollapseGroups[key]
+      } else {
+        return null
+      }
+    },
+
+    handleCollapseHeaderClick (transaction) {
+      const key = `${transaction.category_id}|${transaction.date}|${transaction.external_source}`
+      const i = this.activeCollapseExternalSourceIDs.indexOf(key)
+      if (i > -1) {
+        this.activeCollapseExternalSourceIDs.splice(i, 1)
+      } else {
+        this.activeCollapseExternalSourceIDs.push(key)
+      }
+    },
+
     checkAll (items) {
       const ids = items.map(e => e.id)
       const method = this.isCheckedAllInGroup(items) ? 'unselect' : 'select'
@@ -220,6 +301,11 @@ export default {
 </script>
 
 <style>
-.c-pie-icon-helper { opacity: 0.5; transition: 0.2s opacity; }
-.c-pie-icon-helper:hover { opacity: 1; }
+.c-pie-icon-helper {
+  opacity: 0.5;
+  transition: 0.2s opacity;
+}
+.c-pie-icon-helper:hover {
+  opacity: 1;
+}
 </style>
