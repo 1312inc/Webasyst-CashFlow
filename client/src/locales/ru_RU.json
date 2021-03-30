@@ -154,5 +154,6 @@
   "newContact": "Будет создан новый контакт",
   "hide": "Скрыть",
   "show": "Показать",
-  "navigation": "{action} меню"
+  "navigation": "{action} меню",
+  "collapseTransactionDesc": "{category} x {count} транзакций"
 }
