@@ -89,6 +89,7 @@
   "nextDays": "Следующие {count} дней",
   "Next 90 days": "Следующие 90 дней",
   "tomorrow": "Завтра",
+  "justCreated": "Только что создано",
   "deleteWarning": "ВАЖНО: ВСЕ ОПЕРАЦИИ {type} будут удалены без возможности восстановления. Удалить?",
   "offlineMessage": "Подключение к интернету отсутствует",
   "bulkDeleteWarning": "Операции будут удалены без возможности восстановления. Вы уверены?",
@@ -155,5 +156,6 @@
   "hide": "Скрыть",
   "show": "Показать",
   "navigation": "{action} меню",
-  "collapseTransactionDesc": "{category} x {count} транзакций"
+  "collapseTransactionDesc": "{category} x {count} транзакций",
+  "repeatingTransactionDesc": "{repeats} повторений"
 }

@@ -1,5 +1,9 @@
 <template>
-  <li class="c-item item" :class="classes">
+  <li
+    class="item c-item"
+    :class="classes"
+    :style="isRepeatingGroup && 'cursor: initial;'"
+  >
     <div
       @mouseover="isHover = true"
       @mouseleave="isHover = false"
@@ -11,8 +15,9 @@
         :class="{ 'desktop-only': $helper.isDesktopEnv }"
         style="min-width: 1rem"
       >
+      <!-- TODO: create computed property for v-show -->
         <span
-          v-show="!isCollapseHeader && isHoverComputed"
+          v-show="isHoverComputed && !isCollapseHeader && !isRepeatingGroup"
           @click="checkboxSelect"
           class="wa-checkbox"
         >
@@ -46,6 +51,7 @@
           <TransactionListGroupRowDesc
             :transaction="transaction"
             :collapseHeaderData="collapseHeaderData"
+            :isRepeatingGroup="isRepeatingGroup"
             :category="category"
           />
           <TransactionListGroupRowCats
@@ -110,6 +116,11 @@ export default {
     collapseHeaderData: {
       type: Object,
       default: null
+    },
+
+    isRepeatingGroup: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -159,6 +170,7 @@ export default {
 
     classes () {
       return {
+        'c-transaction-group': this.isCollapseHeader || this.isRepeatingGroup,
         'c-upcoming': this.$moment(this.transaction.date) > this.$moment(), // styles for the upcoming transactions
         'c-item--updated': this.$store.state.transaction.updatedTransactions
           .map(t => t.id)
@@ -169,10 +181,12 @@ export default {
 
   methods: {
     handleClick (e) {
-      if (!this.isCollapseHeader) {
-        this.openModal(e)
-      } else {
+      if (this.isCollapseHeader) {
         this.$emit('toggleCollapseHeader')
+      } else if (this.isRepeatingGroup) {
+        e.preventDefault()
+      } else {
+        this.openModal(e)
       }
     },
 
