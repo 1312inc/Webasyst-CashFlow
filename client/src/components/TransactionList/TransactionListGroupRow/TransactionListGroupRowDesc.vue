@@ -3,7 +3,22 @@
     <template v-if="collapseHeaderData">
       <div class="black text-ellipsis" style="flex-shrink: 1">
         {{
-          $t("collapseTransactionDesc", { category: category.name, count: collapseHeaderData.ids.length })
+          $t("collapseTransactionDesc", {
+            category: category.name,
+            count: collapseHeaderData.ids.length,
+          })
+        }}
+      </div>
+      <span>
+        <i class="fas fa-chevron-circle-down opacity-50"></i>
+      </span>
+    </template>
+    <template v-else-if="isRepeatingGroup">
+      <div class="black text-ellipsis" style="flex-shrink: 1">
+        {{
+          $t("repeatingTransactionDesc", {
+            repeats: transaction.affected_transactions,
+          })
         }}
       </div>
       <span>
@@ -30,6 +45,6 @@
 
 <script>
 export default {
-  props: ['transaction', 'collapseHeaderData', 'category']
+  props: ['transaction', 'collapseHeaderData', 'isRepeatingGroup', 'category']
 }
 </script>

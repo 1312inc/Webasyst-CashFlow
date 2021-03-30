@@ -221,6 +221,13 @@ export default {
             }
           })
 
+        // remove keys with only one transaction
+        for (const k in hash) {
+          if (hash[k].ids.length < 2) {
+            delete hash[k]
+          }
+        }
+
         this.сollapseGroups = hash
       },
       immediate: true
