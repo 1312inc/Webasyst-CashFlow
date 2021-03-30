@@ -121,6 +121,16 @@ class cashApiTransactionResponseDto extends cashAbstractDto
     public $contractor_contact = null;
 
     /**
+     * @var int
+     */
+    public $affected_transactions = 0;
+
+    /**
+     * @var array<int>|null
+     */
+    public $affected_transaction_ids;
+
+    /**
      * cashApiTransactionResponse constructor.
      *
      * @param array $data

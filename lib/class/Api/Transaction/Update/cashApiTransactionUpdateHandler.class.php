@@ -27,7 +27,7 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
     /**
      * @param cashApiTransactionUpdateRequest $request
      *
-     * @return array|cashApiTransactionResponseDto[]
+     * @return array|cashApiTransactionResponseDto
      * @throws ReflectionException
      * @throws kmwaAssertException
      * @throws kmwaForbiddenException
@@ -144,11 +144,10 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
         }
 
         $transactionModel = cash()->getModel(cashTransaction::class);
-        $data = $transactionModel->getAllIteratorByIds($newTransactionIds);
-        $response = [];
-        foreach ($this->transactionResponseDtoAssembler->fromModelIterator($data) as $item) {
-            $response[] = $item;
-        }
+        $data = $transactionModel->getById($transaction->getId());
+        $response = $this->transactionResponseDtoAssembler->fromData($data);
+        $response->affected_transaction_ids = $newTransactionIds;
+        $response->affected_transactions = count($newTransactionIds);
 
         return $response;
     }
