@@ -56,14 +56,24 @@ class cashApiTransactionResponseDtoAssembler extends cashApiTransactionResponseD
     public function fromModelIterator(Iterator $transactionData): Generator
     {
         foreach ($transactionData as $transactionDatum) {
-            $dto = new cashApiTransactionResponseDto($transactionDatum);
-            $dto->create_contact = $this->getContactData($dto->create_contact_id);
-            if ($dto->contractor_contact_id) {
-                $dto->contractor_contact = $this->getContactData($dto->contractor_contact_id);
-            }
-
-            yield $dto;
+            yield $this->fromData($transactionDatum);
         }
+    }
+
+    /**
+     * @param array $transactionDatum
+     *
+     * @return cashApiTransactionResponseDto
+     */
+    public function fromData(array $transactionDatum): cashApiTransactionResponseDto
+    {
+        $dto = new cashApiTransactionResponseDto($transactionDatum);
+        $dto->create_contact = $this->getContactData($dto->create_contact_id);
+        if ($dto->contractor_contact_id) {
+            $dto->contractor_contact = $this->getContactData($dto->contractor_contact_id);
+        }
+
+        return $dto;
     }
 
     /**
