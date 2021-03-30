@@ -72,15 +72,6 @@ body.modal {
   margin: 0;
 }
 
-.list-enter, .list-leave-to
-/* .list-complete-leave-active до версии 2.1.8 */ {
-  opacity: 0;
-  transform: translateY(30px);
-}
-.list-leave-active {
-  position: absolute;
-}
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s;
