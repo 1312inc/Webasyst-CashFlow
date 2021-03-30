@@ -20,10 +20,6 @@ class cashTransactionDeleteMethod extends cashApiAbstractMethod
         /** @var cashApiTransactionDeleteRequest $request */
         $request = $this->fillRequestWithParams(new cashApiTransactionDeleteRequest());
 
-        if ((new cashApiTransactionDeleteHandler())->handle($request)) {
-            return new cashApiTransactionDeleteResponse();
-        }
-
-        return new cashApiErrorResponse('Unrecognized error on transaction delete');
+        return new cashApiTransactionDeleteResponse((new cashApiTransactionDeleteHandler())->handle($request));
     }
 }
