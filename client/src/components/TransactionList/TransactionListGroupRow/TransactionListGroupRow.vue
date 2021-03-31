@@ -42,6 +42,18 @@
           :style="`background-color:${category.color};`"
           ><i class="c-category-glyph fas fa-ruble-sign"></i
         ></span>
+        <span
+          v-show="isCollapseHeader || isRepeatingGroup"
+        >
+          <span
+            class="userpic-stack-imitation"
+            :style="`background-color:${category.color};`"
+            ></span>
+          <span
+            class="userpic-stack-imitation"
+            :style="`background-color:${category.color};`"
+            ></span>
+        </span>
       </div>
       <div
         class="wide flexbox middle space-4 c-item-border"

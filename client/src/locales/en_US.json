@@ -155,7 +155,7 @@
   "newContact": "New contact will be created",
   "hide": "Hide",
   "show": "Show",
-  "navigation": "{action} Navigation",
-  "collapseTransactionDesc": "{category} x {count} transactions",
-  "repeatingTransactionDesc": "{repeats} occurrences"
+  "navigation": "{action} Menu",
+  "collapseTransactionDesc": "{count} transactions ({category})",
+  "repeatingTransactionDesc": "{repeats} transactions"
 }
