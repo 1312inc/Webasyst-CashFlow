@@ -28,6 +28,7 @@ export default {
       from: '',
       to: ''
     },
+    // TODO: optimize updated/created
     updatedTransactions: [],
     createdTransactions: [],
     activeGroupTransactions: {
@@ -97,11 +98,13 @@ export default {
       }
     },
 
-    deleteTransaction (state, id) {
-      const i = state.transactions.data.findIndex(e => e.id === id)
-      if (i > -1) {
-        state.transactions.data.splice(i, 1)
-      }
+    deleteTransaction (state, data) {
+      data.forEach(id => {
+        const i = state.transactions.data.findIndex(e => e.id === id)
+        if (i > -1) {
+          state.transactions.data.splice(i, 1)
+        }
+      })
     },
 
     setActiveGroupTransactions (state, data) {
@@ -231,13 +234,11 @@ export default {
       }
     },
 
-    async delete ({ commit, dispatch }, id) {
+    async delete ({ commit }, params) {
       try {
-        await api.delete('cash.transaction.delete', {
-          params: { id }
-        })
-        commit('deleteTransaction', id)
-        commit('deleteCreatedTransaction', [id])
+        const { data: arrayOfIDs } = await api.post('cash.transaction.delete', params)
+        commit('deleteTransaction', arrayOfIDs)
+        commit('deleteCreatedTransaction', arrayOfIDs)
       } catch (_) {
         return false
       }

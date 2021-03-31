@@ -660,7 +660,10 @@ export default {
 
     remove () {
       if (confirm(this.$t('transactionDeleteWarning'))) {
-        this.$store.dispatch('transaction/delete', this.model.id).then(() => {
+        this.$store.dispatch('transaction/delete', {
+          id: this.model.id,
+          all_repeating: this.model.apply_to_all_in_future
+        }).then(() => {
           this.close()
         })
       }
