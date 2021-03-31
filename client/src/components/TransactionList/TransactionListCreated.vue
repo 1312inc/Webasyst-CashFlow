@@ -3,17 +3,18 @@
     <div class="flexbox middle custom-py-8">
       <div class="flexbox middle space-12 wide">
         <div v-if="$helper.showMultiSelect()" style="min-width: 1rem"></div>
-        <h3 class="c-transaction-section__header">Just Created</h3>
+        <h3 class="c-transaction-section__header">{{ $t("justCreated") }}</h3>
       </div>
     </div>
-    <transition-group name="list" tag="ul" class="c-list list">
+    <ul class="list c-list">
       <TransactionListGroupRow
         v-for="transaction in $store.state.transaction.createdTransactions"
         :key="transaction.id"
         :transaction="transaction"
         :showChecker="isShowChecker"
+        :isRepeatingGroup="transaction.affected_transactions > 0"
       />
-    </transition-group>
+    </ul>
   </div>
 </template>
 
