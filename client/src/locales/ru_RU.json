@@ -156,6 +156,6 @@
   "hide": "Скрыть",
   "show": "Показать",
   "navigation": "{action} меню",
-  "collapseTransactionDesc": "{category} x {count} транзакций",
-  "repeatingTransactionDesc": "{repeats} повторений"
+  "collapseTransactionDesc": "{count} операций ({category})",
+  "repeatingTransactionDesc": "{repeats} операций"
 }
