@@ -448,14 +448,14 @@
             }"
             class="button"
           >
-            {{ isModeUpdate ? $t("update") : $t("add") }}
+            {{ isModeUpdate ? model.apply_to_all_in_future ? $t("updateAll") : $t("update") : $t("add") }}
           </button>
           <button @click="close" class="button light-gray">
             {{ $t("cancel") }}
           </button>
         </div>
         <button v-if="isModeUpdate" @click="remove" class="button red outlined">
-          <span>{{ $t("delete") }}</span>
+          <span>{{ model.apply_to_all_in_future ? $t("deleteAll") : $t("delete") }}</span>
         </button>
       </div>
     </div>
