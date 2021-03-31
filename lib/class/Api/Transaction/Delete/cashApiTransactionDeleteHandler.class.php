@@ -61,6 +61,6 @@ class cashApiTransactionDeleteHandler implements cashApiHandlerInterface
             $archivedTransactionIds = array_merge($archivedTransactionIds, $archivedIds);
         }
 
-        return $archivedTransactionIds;
+        return array_map('intval', $archivedTransactionIds);
     }
 }
