@@ -12,7 +12,7 @@
         :key="transaction.id"
         :transaction="transaction"
         :showChecker="isShowChecker"
-        :isRepeatingGroup="transaction.affected_transactions > 0"
+        :isRepeatingGroup="transaction.affected_transactions > 1"
       />
     </ul>
   </div>

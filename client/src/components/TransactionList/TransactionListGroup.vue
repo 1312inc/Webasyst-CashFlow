@@ -187,7 +187,7 @@ export default {
           .format('YYYY-MM-DD')
         result = this.group.filter(t => {
           const istart = this.$moment(t.date)
-          return istart.diff(today, 'days') <= this.featurePeriod
+          return istart.diff(today, 'days') < this.featurePeriod
         })
       }
 

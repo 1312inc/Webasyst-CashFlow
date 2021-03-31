@@ -44,10 +44,8 @@ export default {
       try {
         await api.post('cash.transaction.bulkDelete', { ids: ids })
         // Remove transactions from the store
-        ids.forEach(id => {
-          commit('transaction/deleteTransaction', id, { root: true })
-          commit('transaction/deleteCreatedTransaction', [id], { root: true })
-        })
+        commit('transaction/deleteTransaction', ids, { root: true })
+        commit('transaction/deleteCreatedTransaction', ids, { root: true })
         commit('emptySelectedTransactionsIds')
       } catch (_) {
         return false
