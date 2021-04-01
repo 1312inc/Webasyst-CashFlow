@@ -114,7 +114,11 @@
     <div class="dialog-footer">
       <div class="flexbox">
         <div class="flexbox space-12 wide">
-          <button @click="submit('account')" class="button purple">
+          <button
+            @click="submit('account')"
+            :disabled="controlsDisabled"
+            class="button purple"
+          >
             {{ isModeUpdate ? $t("update") : $t("add") }}
           </button>
           <button @click="close" class="button light-gray">
@@ -124,6 +128,7 @@
         <button
           v-if="isModeUpdate"
           @click="remove('account')"
+          :disabled="controlsDisabled"
           class="button outlined red"
         >
           <span>{{ $t("delete") }}</span>

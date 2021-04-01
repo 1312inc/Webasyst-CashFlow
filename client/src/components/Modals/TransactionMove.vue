@@ -75,7 +75,11 @@
     <div class="dialog-footer">
       <div class="flexbox">
         <div class="flexbox space-12 wide">
-          <button @click="submit" class="button purple">
+          <button
+            @click="submit"
+            :disabled="controlsDisabled"
+            class="button purple"
+          >
             {{ $t("updateTransactions", { count: count }) }}
           </button>
           <button @click="close" class="button light-gray">
@@ -95,7 +99,8 @@ export default {
       model: {
         account_id: 0,
         category_id: 0
-      }
+      },
+      controlsDisabled: false
     }
   },
 
@@ -122,10 +127,14 @@ export default {
 
   methods: {
     submit () {
+      this.controlsDisabled = true
       this.$store
         .dispatch('transactionBulk/bulkMove', { ids: this.ids, ...this.model })
         .then(() => {
           this.close()
+        })
+        .finally(() => {
+          this.controlsDisabled = false
         })
     },
 
