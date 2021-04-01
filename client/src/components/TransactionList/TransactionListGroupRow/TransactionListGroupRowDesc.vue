@@ -1,10 +1,17 @@
 <template>
   <div class="flexbox space-4 semibold custom-mb-8" style="overflow: hidden">
+    <!-- if collapsed transactions header -->
     <template v-if="collapseHeaderData">
-      <div class="text-ellipsis c-grouped-transaction-description" style="flex-shrink: 1" :title="$t('collapseTransactionDesc', {
-        category: category.name,
-        count: collapseHeaderData.ids.length,
-      })">
+      <div
+        class="text-ellipsis c-grouped-transaction-description"
+        style="flex-shrink: 1"
+        :title="
+          $t('collapseTransactionDesc', {
+            category: category.name,
+            count: collapseHeaderData.ids.length,
+          })
+        "
+      >
         {{ category.name }}
       </div>
       <span class="badge light-gray small">
@@ -14,17 +21,21 @@
         <i class="fas fa-caret-down opacity-50"></i>
       </span>
     </template>
+    <!-- if repeating transactions in fututre -->
     <template v-else-if="isRepeatingGroup">
-      <div class="black text-ellipsis" style="flex-shrink: 1" :title="$t('repeatingTransactionDesc', {
-        repeats: transaction.affected_transactions,
-      })">
+      <div
+        class="black text-ellipsis"
+        style="flex-shrink: 1"
+        :title="
+          $t('repeatingTransactionDesc', {
+            repeats: transaction.affected_transactions,
+          })
+        "
+      >
         {{ transaction.description }}
       </div>
-      <span class="badge light-gray small">
-        &times;
-        {{ transaction.affected_transactions }}
-      </span>
     </template>
+    <!-- mormal transaction -->
     <template v-else>
       <div
         v-if="transaction.description"
