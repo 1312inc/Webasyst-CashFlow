@@ -4,11 +4,7 @@
       <SkeletonTransaction />
     </div>
     <div v-else>
-      <transition name="fade">
-        <TransactionListCreated
-          v-if="$store.state.transaction.createdTransactions.length"
-        />
-      </transition>
+      <TransactionListCreated />
       <div
         v-for="(group, index) in upnext ? [...groups].reverse() : groups"
         :key="group.name"
@@ -71,18 +67,21 @@ export default {
 
   computed: {
     ...mapState('transaction', ['transactions', 'detailsInterval']),
+    transactionsWithoutJustCreated () {
+      return this.$store.getters['transaction/getTransactionsWithoutJustCreated']
+    },
     activeCurrencyCode () {
       return this.$store.getters['transaction/activeCurrencyCode']
     },
     transactionsByCurrency () {
       if (this.activeCurrencyCode) {
-        return this.transactions.data.filter(t => {
+        return this.transactionsWithoutJustCreated.filter(t => {
           return this.$store.getters['account/accountsByCurrencyCode'](
             this.activeCurrencyCode
           ).includes(t.account_id)
         })
       } else {
-        return this.transactions.data
+        return this.transactionsWithoutJustCreated
       }
     },
     groups () {
@@ -90,7 +89,7 @@ export default {
       const yesterday = this.$moment()
         .add(-1, 'day')
         .format('YYYY-MM-DD')
-      const add = (name, transaction) => {
+      const add = (name, transaction, reverse = false) => {
         const t = result.find(e => e.name === name)
         if (!t) {
           result.push({
@@ -98,7 +97,11 @@ export default {
             items: [transaction]
           })
         } else {
-          t.items.push(transaction)
+          if (reverse) {
+            t.items.unshift(transaction)
+          } else {
+            t.items.push(transaction)
+          }
         }
       }
       const result = []
@@ -143,7 +146,7 @@ export default {
           !this.$store.state.transaction.detailsInterval.from &&
           !this.$store.state.transaction.detailsInterval.to
         ) {
-          return add('future', e)
+          return add('future', e, this.upnext)
         }
 
         // if today

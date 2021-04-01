@@ -28,9 +28,6 @@ export default {
       from: '',
       to: ''
     },
-    // TODO: optimize updated/created
-    updatedTransactions: [],
-    createdTransactions: [],
     activeGroupTransactions: {
       index: null,
       name: '',
@@ -47,6 +44,12 @@ export default {
   getters: {
     getTransactionById: state => id => {
       return state.transactions.data.find(t => t.id === id)
+    },
+    getTransactionsWithoutJustCreated: state => {
+      return state.transactions.data.filter(t => !t.$_flagCreated)
+    },
+    getTransactionsJustCreated: state => {
+      return state.transactions.data.filter(t => t.$_flagCreated)
     },
     getChartDataByCurrentCurrency: state => {
       return state.chartData[state.chartDataCurrencyIndex]
@@ -68,18 +71,23 @@ export default {
         offset: null,
         total: null
       }
-      state.createdTransactions = []
     },
 
     updateTransactions (state, data) {
-      data.forEach(t => {
-        const i = state.transactions.data.findIndex(e => e.id === t.id)
+      const updatedIDs = data.affected_transaction_ids
+      updatedIDs.forEach(id => {
+        const i = state.transactions.data.findIndex(e => e.id === +id)
         if (i > -1) {
-          state.transactions.data.splice(i, 1, t)
-        }
-        const i2 = state.createdTransactions.findIndex(e => e.id === t.id)
-        if (i2 > -1) {
-          state.createdTransactions.splice(i2, 1, t)
+          const newData = {
+     ***REMOVED***data,
+            id: state.transactions.data[i].id,
+            create_datetime: state.transactions.data[i].create_datetime,
+            date: state.transactions.data[i].date,
+            datetime: state.transactions.data[i].datetime,
+            $_flagCreated: state.transactions.data[i].$_flagCreated,
+            $_flagUpdated: true
+          }
+          state.transactions.data.splice(i, 1, newData)
         }
       })
       state.transactions.data.sort((a, b) => {
@@ -111,35 +119,12 @@ export default {
       state.activeGroupTransactions = data
     },
 
-    setUpdatedTransactions (state, data) {
-      state.updatedTransactions = data
-      if (window.clearUpdatedTransactions) {
-        clearTimeout(window.clearUpdatedTransactions)
-      }
-      window.clearUpdatedTransactions = setTimeout(() => {
-        state.updatedTransactions = []
-      }, 6000)
-    },
-
-    setCreatedTransactions (state, data) {
-      data.forEach(t => {
-        const i = state.createdTransactions.findIndex(e => e.id === t.id)
-        if (i === -1) {
-          state.createdTransactions.unshift(t)
-        }
-      })
-    },
-
-    deleteCreatedTransaction (state, data) {
-      if (!data.length) {
-        state.createdTransactions = []
-      }
-
-      data.forEach(id => {
-        const i = state.createdTransactions.findIndex(e => e.id === id)
-        if (i > -1) {
-          state.createdTransactions.splice(i, 1)
-        }
+    createTransactions (state, data) {
+      data.forEach(transition => {
+        state.transactions.data.unshift({
+   ***REMOVED***transition,
+          $_flagCreated: true
+        })
       })
     },
 
@@ -223,10 +208,9 @@ export default {
         if (!('silent' in params)) {
           if (method === 'update') {
             commit('updateTransactions', data)
-            commit('setUpdatedTransactions', data)
           }
           if (method === 'create') {
-            commit('setCreatedTransactions', data)
+            commit('createTransactions', data)
           }
         }
       } catch (_) {
@@ -238,7 +222,6 @@ export default {
       try {
         const { data: arrayOfIDs } = await api.post('cash.transaction.delete', params)
         commit('deleteTransaction', arrayOfIDs)
-        commit('deleteCreatedTransaction', arrayOfIDs)
       } catch (_) {
         return false
       }

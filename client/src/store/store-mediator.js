@@ -7,7 +7,7 @@ export default (store) => {
       // transaction state update
       case 'transaction/updateTransactions':
       case 'transaction/deleteTransaction':
-      case 'transaction/setCreatedTransactions':
+      case 'transaction/createTransactions':
         return Promise.all([
           store.dispatch('transaction/getTodayCount'),
           store.dispatch('account/getList'),
