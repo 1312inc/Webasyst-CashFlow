@@ -8,6 +8,7 @@
         'text-red': type === 'expense',
         'text-blue': type === 'profit',
       }"
+      :title="type === 'profit' ? $t('profit') : ( type === 'income' ? $t('income'): $t('expense') )"
     >
       <i v-if="type === 'profit'" class="fas fa-arrow-right text-blue"></i>
       <span class="small semibold">{{

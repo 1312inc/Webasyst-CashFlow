@@ -6,6 +6,7 @@
       'text-red': type === 'expense',
       'text-blue': type === 'profit',
     }"
+    :title="type === 'profit' ? $t('profit') : ( type === 'income' ? $t('income'): $t('expense') )"
   >
     <div class="custom-ml-12 custom-mb-4">
       <i v-if="type === 'profit'" class="fas fa-arrow-right text-blue"></i>

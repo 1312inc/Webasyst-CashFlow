@@ -2,7 +2,7 @@
   <div id="wa-app">
     <div class="flexbox wrap-mobile">
       <Sidebar />
-      <div class="content blank">
+      <div class="content hide-scrollbar blank">
         <div sticky-container class="box custom-p-0-mobile">
           <router-view />
         </div>

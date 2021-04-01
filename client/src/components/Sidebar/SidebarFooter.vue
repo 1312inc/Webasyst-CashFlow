@@ -14,7 +14,7 @@
     </li>
     <li>
       <a :href="`${$helper.baseUrl}shop/settings/`">
-        <i class="fas fa-sliders-h"></i>
+        <i class="fas fa-shopping-cart"></i>
         <span>Shop-Script</span>
       </a>
     </li>
