@@ -98,9 +98,7 @@
         <ul v-if="filteredTransactions.length" class="c-list list">
           <TransactionListGroupRow
             v-show="isShown(transaction)"
-            v-for="transaction in type === 'future'
-              ? [...filteredTransactions].reverse()
-              : filteredTransactions"
+            v-for="transaction in filteredTransactions"
             :key="transaction.id"
             :transaction="transaction"
             :showChecker="isShowChecker"
