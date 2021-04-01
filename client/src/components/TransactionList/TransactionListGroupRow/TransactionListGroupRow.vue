@@ -16,7 +16,7 @@
         :class="{ 'desktop-only': $helper.isDesktopEnv }"
         style="min-width: 1rem"
       >
-      <!-- TODO: create computed property for v-show -->
+        <!-- TODO: create computed property for v-show -->
         <span
           v-show="isHoverComputed && !isCollapseHeader && !isRepeatingGroup"
           @click="checkboxSelect"
@@ -43,17 +43,15 @@
           :style="`background-color:${category.color};`"
           ><i class="c-category-glyph fas" :class="glyph"></i
         ></span>
-        <span
-          v-show="isCollapseHeader || isRepeatingGroup"
-        >
+        <span v-show="isCollapseHeader || isRepeatingGroup">
           <span
             class="userpic-stack-imitation"
             :style="`background-color:${category.color};`"
-            ></span>
+          ></span>
           <span
             class="userpic-stack-imitation"
             :style="`background-color:${category.color};`"
-            ></span>
+          ></span>
         </span>
       </div>
       <div
@@ -74,7 +72,14 @@
           />
         </div>
         <div class="c-item-amount">
-          <div class="custom-mb-8 align-right">
+          <div class="flexbox justify-end middle custom-mb-8">
+            <span
+              v-if="transaction.affected_transactions > 1"
+              class="badge light-gray small custom-mr-8"
+            >
+              &times;
+              {{ transaction.affected_transactions }}
+            </span>
             <div :style="`color: ${category.color}`" class="bold nowrap">
               {{
                 $helper.toCurrency({

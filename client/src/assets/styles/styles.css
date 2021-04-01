@@ -125,3 +125,11 @@ body.modal {
 .c-mobile-build .c-sticky-header-group > div { padding: 0 1rem; }
 .c-mobile-build .c-chart-container { padding: 1rem; }
 .c-mobile-build .c-transaction-section .c-transaction-section__header { font-size: 1.25rem; }
+
+
+@media screen and (min-width: 768px) {
+  .sidebar-body,
+  .sidebar-footer {
+    max-height: initial !important;
+  }
+}
