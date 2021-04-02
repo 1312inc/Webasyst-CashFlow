@@ -1,7 +1,7 @@
 <template>
   <ul class="menu">
     <li>
-      <a :href="`${$helper.baseUrl}reports/`">
+      <a :href="`${$helper.baseUrl}report/dds/`">
         <i class="fas fa-chart-pie"></i>
         <span>{{ $t("reports") }}</span>
       </a>
@@ -10,12 +10,6 @@
       <a :href="`${$helper.baseUrl}import/`">
         <i class="fas fa-file-import"></i>
         <span>{{ $t("import") }}</span>
-      </a>
-    </li>
-    <li>
-      <a :href="`${$helper.baseUrl}shop/settings/`">
-        <i class="fas fa-shopping-cart"></i>
-        <span>Shop-Script</span>
       </a>
     </li>
   </ul>
