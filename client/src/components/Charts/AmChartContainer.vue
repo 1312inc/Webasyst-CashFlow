@@ -15,7 +15,7 @@ export default {
         case 'transaction/updateChartInterval':
         case 'transaction/updateTransactions':
         case 'transaction/deleteTransaction':
-        case 'transaction/setCreatedTransactions':
+        case 'transaction/createTransactions':
           this.$store.dispatch('transaction/getChartData')
       }
     })

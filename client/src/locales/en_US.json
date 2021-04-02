@@ -11,9 +11,11 @@
   "newTransfer": "New Transfer",
   "add": "Add",
   "update": "Update",
+  "updateAll": "@:update All",
   "or": "or",
   "cancel": "Cancel",
   "delete": "Delete",
+  "deleteAll": "@:delete All",
   "move": "Move",
   "name": "Name",
   "selected": "{count} transactions selected",
@@ -142,12 +144,12 @@
     "api": "API error"
   },
   "arrow": {
-    "up": "Hooray! Going positive on",
-    "down": "Cash gap is coming on"
+    "up": "Going out of cash gap on",
+    "down": "Cash gap is expected on"
   },
   "cashGapTooltip": "CASH GAP!\nStart date: {start}\nEnd date: {end}\nMax balance decline: {decline} on {declineDate}",
   "cashGapIn": "Cash gap is expected in {inDays} days ({date})",
-  "cashGapOut": "Going out of the cash gap in {inDays} days ({date})",
+  "cashGapOut": "Going out of cash gap in {inDays} days ({date})",
   "inDays": "(in {days} days)",
   "fileUploaderLabel": "Drop here or browse",
   "noContact": "Search for existing contact or enter any new contact name",
@@ -155,7 +157,11 @@
   "newContact": "New contact will be created",
   "hide": "Hide",
   "show": "Show",
-  "navigation": "{action} Navigation",
-  "collapseTransactionDesc": "{category} x {count} transactions",
-  "repeatingTransactionDesc": "{repeats} occurrences"
+  "navigation": "{action} Menu",
+  "collapseTransactionDesc": "{count} transactions ({category})",
+  "repeatingTransactionDesc": "{repeats} transactions",
+  "createdBy": {
+    "normal": "Created by {username} on {createDate}",
+    "edited": "@:(createdBy.normal). Last edited on {updateDate}."
+  }
 }

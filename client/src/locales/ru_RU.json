@@ -11,9 +11,11 @@
   "newTransfer": "Перевод",
   "add": "Добавить",
   "update": "Обновить",
+  "updateAll": "@:update все",
   "or": "или",
   "cancel": "Отменить",
   "delete": "Удалить",
+  "deleteAll": "@:delete все",
   "move": "Переместить",
   "name": "Название",
   "selected": "{count} операций выделено",
@@ -87,7 +89,7 @@
   "emptyListUpcoming": "На заданный период запланированных операций нет",
   "emptyListToday": "Сегодня операций нет",
   "nextDays": "Следующие {count} дней",
-  "Next 90 days": "Следующие 90 дней",
+  "Next 90 days": "Будущие 90 дней",
   "tomorrow": "Завтра",
   "justCreated": "Только что создано",
   "deleteWarning": "ВАЖНО: ВСЕ ОПЕРАЦИИ {type} будут удалены без возможности восстановления. Удалить?",
@@ -145,17 +147,21 @@
     "up": "Выходим в плюс —",
     "down": "Кассовый разрыв —"
   },
-  "cashGapTooltip": "КАССОВЫЙ РАЗРЫВ!\nДата начала: {start}\nКонечная дата: {end}\nМаксимальное отклонение: {decline} дата: {declineDate}",
-  "cashGapIn": "Cash gap is in {inDays} days ({date})",
-  "cashGapOut": "Going out of the cash gap in {inDays} days ({date})",
+  "cashGapTooltip": "КАССОВЫЙ РАЗРЫВ!\nДата начала: {start}\nКонечная дата: {end}\nМинимальный баланс: {decline} — {declineDate}",
+  "cashGapIn": "Кассовый разрыв ожидается через {inDays} дней ({date})",
+  "cashGapOut": "Выходим в плюс через {inDays} дней ({date})",
   "inDays": "(через {days} дней)",
   "fileUploaderLabel": "Выберите файл",
   "noContact": "Свяжите с существующим контактом или создайте нового",
-  "linkContact": "Операция будет связана с выбранным контрагентом",
+  "linkContact": "Операция будет связана с выбранным контактом",
   "newContact": "Будет создан новый контакт",
   "hide": "Скрыть",
   "show": "Показать",
   "navigation": "{action} меню",
-  "collapseTransactionDesc": "{category} x {count} транзакций",
-  "repeatingTransactionDesc": "{repeats} повторений"
+  "collapseTransactionDesc": "{count} операций ({category})",
+  "repeatingTransactionDesc": "{repeats} операций",
+  "createdBy": {
+    "normal": "Created by {username} on {createDate}",
+    "edited": "@:(createdBy.normal). Last edited on {updateDate}."
+  }
 }

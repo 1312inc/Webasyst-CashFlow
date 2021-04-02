@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar flexbox width-16rem mobile-friendly z-50">
+  <div class="sidebar flexbox hide-scrollbar width-16rem mobile-friendly z-50">
     <nav class="sidebar-mobile-toggle">
       <div class="box align-center">
         <a @click.prevent="mobileMenuOpen = !mobileMenuOpen" href="#">
@@ -12,7 +12,7 @@
         >
       </div>
     </nav>
-    <div class="sidebar-body" ref="sidebarBody">
+    <div class="sidebar-body hide-scrollbar" ref="sidebarBody">
       <SearchField />
       <Bricks />
 
