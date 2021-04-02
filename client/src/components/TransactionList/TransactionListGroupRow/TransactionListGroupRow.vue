@@ -41,8 +41,13 @@
           v-else
           class="userpic userpic48 align-center"
           :style="`background-color:${category.color};`"
-          ><i class="c-category-glyph fas" :class="glyph"></i
-        ></span>
+          >
+            <i class="c-category-glyph fas" :class="glyph"></i
+        >
+            <span class="userstatus" style="background: #00cc66;" title="Shop-Script">
+              <i class="fas fa-shopping-cart"></i>
+            </span>
+</span>
         <span v-show="isCollapseHeader || isRepeatingGroup">
           <span
             class="userpic-stack-imitation"
@@ -290,5 +295,26 @@ export default {
 .c-item-done {
   margin-left: 0.75rem;
   margin-top: 0.375rem;
+}
+
+.userpic48 > .userstatus {
+  width: 0.5625rem;
+  height: 0.5625rem;
+  bottom: 0;
+  right: 0;
+  transition: 0.1s;
+}
+.userpic48 > .userstatus > svg {
+  display: none;
+}
+.userpic48:hover > .userstatus {
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: 1rem;
+  bottom: -0.375rem;
+  right: -0.375rem;
+}
+.userpic48:hover > .userstatus > svg {
+  display: block;
 }
 </style>

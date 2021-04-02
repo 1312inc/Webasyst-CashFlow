@@ -1,27 +1,46 @@
 <div id="cash-import-page" class="article">
     <div class="article-body">
 
-        <h1>[`Import`]</h1>
+        <div class="flexbox">
+            <div class="wide">
+                <h1>[`Import`]</h1>
+            </div>
+            <div class="custom-mt-8">
+                <a href="{$wa_app_url}shop/settings/">
+                    <i class="icon" style="background-image: url('{$wa_url}wa-apps/shop/img/shop.png');"></i>
+                    [`Import from Shop-Script`]
+                </a>
+            </div>
+        </div>
 
         {if count($imports)}
         <div>
-            <h5 class="heading top-padded">
-                <a href="#" class="count" data-cash-action="imports-delete"><i class="icon16 broom-bw" title="[`Clear import history`]"></i> [`Clear import history`]</a>
-                [`Import history`]
-            </h5>
-            <ul class="menu-v with-icons">
+            <ul class="chips rounded">
                 {** @var cashImportDto $import **}
                 {foreach $imports as $import}
                     <li>
                         <a href="{$wa_app_url}import/{$import->id}">
-                            <span class="count">{$import->success}</span>
-                            <i class="icon16 userpic" style="background-image: url('{$import->contact->getPhoto(20)}');"></i><span style="word-break: break-all;">{$import->filename|escape}</span>
-                            <br><span class="hint">{$import->create_datetime|wa_datetime:humandatetime}</span>
+                            {*
+                                <img class="userpic" src="{$import->contact->getPhoto(20)}" />
+                            *}
+                            <i class="fas fa-file-excel" style="color: #499b5e;"></i>
+                            {$import->create_datetime|wa_datetime:humandatetime}
+                            <span class="hint">
+                                {$import->filename|escape|truncate:24}
+                            </span>
+                            <strong class="count">{$import->success}</strong>
                         </a>
                     </li>
                 {/foreach}
+                <li class="transparent small gray">
+                    <a href="#" class="count" data-cash-action="imports-delete">
+                        <i class="fas fa-trash"></i>
+                        [`Clear import history`]
+                    </a>
+                </li>
             </ul>
         </div>
+        <hr>
         {/if}
 
         <ol class="c-import-progress">
@@ -70,7 +89,7 @@
                             <p class="hint">
                                 {sprintf(
                                     '[`Supported file formats: <b>%s</b>`]',
-                                    'CSV (Excel)'
+                                    '<i class="fas fa-file-excel" style="color: #499b5e;"></i> CSV (Excel)'
                                 )}
                             </p>
                         </div>
