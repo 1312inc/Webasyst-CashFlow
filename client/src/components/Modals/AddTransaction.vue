@@ -17,7 +17,15 @@
             <i class="fas fa-redo-alt opacity-50"></i>
           </span>
         </div>
-        <div v-if="isModeUpdate" class="large">#{{ transaction.id }}</div>
+        <div v-if="isModeUpdate">
+          <span
+            v-if="transaction.create_contact.userpic"
+            class="icon userpic size-32"
+            v-wa-tippy="tippyContent"
+          >
+            <img :src="transaction.create_contact.userpic" alt="" />
+          </span>
+        </div>
       </div>
     </div>
 
@@ -292,6 +300,7 @@
                 <DateField
                   v-model="model.date"
                   :class="{ 'state-error': $v.model.date.$error }"
+                  :disabled="model.apply_to_all_in_future"
                   class="short"
                 />
                 <span class="icon"><i class="fas fa-calendar"></i></span>
@@ -612,6 +621,14 @@ export default {
         this.selectedAccountTransfer &&
         this.selectedAccount.currency !== this.selectedAccountTransfer.currency
       )
+    },
+
+    tippyContent () {
+      return this.$t(`createdBy.${this.transaction.update_datetime ? 'edited' : 'normal'}`, {
+        username: `${this.transaction.create_contact.firstname} ${this.transaction.create_contact.lastname}`,
+        createDate: this.$moment(this.transaction.create_datetime).format('LLL'),
+        ...(this.transaction.update_datetime && { updateDate: this.$moment(this.transaction.update_datetime).format('LLL') })
+      })
     }
   },
 

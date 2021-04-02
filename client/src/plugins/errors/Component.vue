@@ -67,8 +67,7 @@ export default {
   &__content {
     flex-shrink: 1;
     max-height: 320px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
   }
 }
 </style>

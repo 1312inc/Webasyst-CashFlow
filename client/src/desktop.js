@@ -11,6 +11,7 @@ import Errors from './plugins/errors'
 import Sticky from './plugins/sticky'
 import darkModeObserver from './plugins/darkModeObserver'
 import VuePortal from '@linusborg/vue-simple-portal'
+import WAtippy from './plugins/tippy'
 import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
@@ -23,6 +24,7 @@ Vue.use(Helpers)
 Vue.use(Sticky)
 Vue.use(darkModeObserver)
 Vue.use(VuePortal)
+Vue.use(WAtippy)
 
 new Vue({
   router,

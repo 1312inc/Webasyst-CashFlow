@@ -159,5 +159,9 @@
   "show": "Show",
   "navigation": "{action} Menu",
   "collapseTransactionDesc": "{count} transactions ({category})",
-  "repeatingTransactionDesc": "{repeats} transactions"
+  "repeatingTransactionDesc": "{repeats} transactions",
+  "createdBy": {
+    "normal": "Created by {username} on {createDate}",
+    "edited": "@:(createdBy.normal). Last edited on {updateDate}."
+  }
 }
