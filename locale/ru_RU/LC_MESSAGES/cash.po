@@ -458,7 +458,7 @@ msgid "Start forecasting your cash flow by importing sales data from Shop-Script
 msgstr ""
 
 msgid "Import from Shop-Script"
-msgstr ""
+msgstr "Импорт из Shop-Script"
 
 msgid "<strong>You have %d paid orders</strong> in your Shop-Script online store beginning on %s."
 msgstr ""
@@ -701,10 +701,10 @@ msgid "No import found"
 msgstr ""
 
 msgid "Account not found"
-msgstr ""
+msgstr "Счет не найден"
 
 msgid "Category not found"
-msgstr ""
+msgstr "Статья не найдена"
 
 msgid "Import not found"
 msgstr ""
@@ -830,31 +830,31 @@ msgid "Temp path is not writable"
 msgstr ""
 
 msgid "Some rows seem to contain non-numerical data"
-msgstr ""
+msgstr "Некоторые строки содержат нечисловые значения"
 
 msgid "This column has too many unique values, so that import conditions setup seems not applicable here"
 msgstr "В этом столбце слишком много разных уникальных значений"
 
 msgid "This column has no unique values, so that import conditions setup seems not applicable here"
-msgstr ""
+msgstr "Среди всех строк в выбранном столбце не найдено уникальных значений, на которые можно было бы опираться при импорте"
 
 msgid "<b>Only %d out of %d rows in the file have this column defined.</b> Remaining <span class=\"highlighted\">%d rows have an undefined value</span> and thus will be skipped. Please make sure the right column is selected."
-msgstr ""
+msgstr "<b>Только у %d строк из %d значение в этом столбце заполнено.</b> Оставшиеся <span class=\"highlighted\">%d строк имеют неопределенное значение</span> и поэтому будут пропущены при импорте. Убедитесь, что выбран правильный столбец."
 
 msgid "Some dates do not have proper delimiter"
-msgstr ""
+msgstr "В некоторых строках даты записаны с неправильным разделителем"
 
 msgid "Some dates might be in the wrong format"
-msgstr ""
+msgstr "Некоторые даты могут иметь другой формат"
 
 msgid "The column %s contains no dates in the selected format"
-msgstr ""
+msgstr "В столбце %s нет дат, соответствующих выбранному формату"
 
 msgid "Error on csv processing"
-msgstr ""
+msgstr "Ошибка обработки CSV-файла"
 
 msgid "No data columns were located in the uploaded file. Make sure right separator and encoding were chosen for this upload."
-msgstr ""
+msgstr "В загруженном файле не найдено ни одного столбца. Пожалуйста, убедитесь, что правильно выбрали кодировку и символ разделителя."
 
 msgid "Semicolon"
 msgstr "Точка с запятой"
@@ -866,16 +866,16 @@ msgid "Tab"
 msgstr "Табуляция"
 
 msgid "No amount column"
-msgstr ""
+msgstr "Столбец суммы не выбран"
 
 msgid "No account column"
-msgstr ""
+msgstr "Столбец счета не выбран"
 
 msgid "No date column"
-msgstr ""
+msgstr "Столбец даты не выбран"
 
 msgid "Expected %s. Got %s"
-msgstr ""
+msgstr "Ожидали %s. Получили %s"
 
 msgid "Variable %s should be greater then %s"
 msgstr ""
