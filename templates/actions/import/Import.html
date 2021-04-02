@@ -1,7 +1,17 @@
 <div id="cash-import-page" class="article">
     <div class="article-body">
 
-        <h1>[`Import`]</h1>
+        <div class="flexbox">
+            <div class="wide">
+                <h1>[`Import`]</h1>
+            </div>
+            <div class="custom-mt-8">
+                <a href="{$wa_app_url}shop/settings/">
+                    <i class="icon" style="background-image: url('{$wa_url}wa-apps/shop/img/shop.png');"></i>
+                    [`Import from Shop-Script`]
+                </a>
+            </div>
+        </div>
 
         {if count($imports)}
         <div>
@@ -79,7 +89,7 @@
                             <p class="hint">
                                 {sprintf(
                                     '[`Supported file formats: <b>%s</b>`]',
-                                    'CSV (Excel)'
+                                    '<i class="fas fa-file-excel" style="color: #499b5e;"></i> CSV (Excel)'
                                 )}
                             </p>
                         </div>
