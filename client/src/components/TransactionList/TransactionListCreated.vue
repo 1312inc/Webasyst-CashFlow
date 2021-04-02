@@ -1,5 +1,8 @@
 <template>
-  <div class="custom-mb-24 c-transaction-section">
+  <div
+    v-if="transactionsJustCreated.length"
+    class="custom-mb-24 c-transaction-section"
+  >
     <div class="flexbox middle custom-py-8">
       <div class="flexbox middle space-12 wide">
         <div v-if="$helper.showMultiSelect()" style="min-width: 1rem"></div>
@@ -8,11 +11,10 @@
     </div>
     <ul class="list c-list">
       <TransactionListGroupRow
-        v-for="transaction in $store.state.transaction.createdTransactions"
+        v-for="transaction in transactionsJustCreated"
         :key="transaction.id"
         :transaction="transaction"
-        :showChecker="isShowChecker"
-        :isRepeatingGroup="transaction.affected_transactions > 0"
+        :isRepeatingGroup="transaction.affected_transactions > 1"
       />
     </ul>
   </div>
@@ -26,16 +28,9 @@ export default {
   },
 
   computed: {
-    isShowChecker () {
-      return this.$store.state.transaction.createdTransactions.some(e =>
-        this.$store.state.transactionBulk.selectedTransactionsIds.includes(e.id)
-      )
+    transactionsJustCreated () {
+      return this.$store.getters['transaction/getTransactionsJustCreated']
     }
-  },
-
-  beforeDestroy () {
-    // Clear created transactions temp list
-    this.$store.commit('transaction/deleteCreatedTransaction', [])
   }
 }
 </script>

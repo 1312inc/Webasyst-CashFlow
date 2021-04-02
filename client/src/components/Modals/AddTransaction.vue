@@ -17,7 +17,15 @@
             <i class="fas fa-redo-alt opacity-50"></i>
           </span>
         </div>
-        <div v-if="isModeUpdate" class="large">#{{ transaction.id }}</div>
+        <div v-if="isModeUpdate">
+          <span
+            v-if="transaction.create_contact.userpic"
+            class="icon userpic size-32"
+            v-wa-tippy="tippyContent"
+          >
+            <img :src="transaction.create_contact.userpic" alt="" />
+          </span>
+        </div>
       </div>
     </div>
 
@@ -41,7 +49,7 @@
               />
               <span
                 class="icon"
-                style="opacity: 1;"
+                style="opacity: 1"
                 :class="{
                   'text-orange': transactionType === 'expense',
                   'text-green': transactionType === 'income',
@@ -76,7 +84,7 @@
                   $helper.isValidHttpUrl(selectedAccount.icon)
                 "
                 class="icon size-20 custom-ml-8"
-                style="margin-right: -0.25rem;"
+                style="margin-right: -0.25rem"
               >
                 <img :src="selectedAccount.icon" alt="" />
               </div>
@@ -165,8 +173,10 @@
           </div>
           <div class="value">
             <div class="wa-select solid">
-              <span v-if="selectedCategory" class="icon custom-ml-8"
-                style="margin-right: -0.25rem;"
+              <span
+                v-if="selectedCategory"
+                class="icon custom-ml-8"
+                style="margin-right: -0.25rem"
                 ><i
                   class="rounded"
                   :style="`background-color:${selectedCategory.color};`"
@@ -290,6 +300,7 @@
                 <DateField
                   v-model="model.date"
                   :class="{ 'state-error': $v.model.date.$error }"
+                  :disabled="model.apply_to_all_in_future"
                   class="short"
                 />
                 <span class="icon"><i class="fas fa-calendar"></i></span>
@@ -341,9 +352,7 @@
             v-if="model.is_repeating && model.repeating_interval === 'custom'"
           >
             <div class="field custom-pt-16">
-              <div class="name for-input">
-
-              </div>
+              <div class="name for-input"></div>
               <div class="value">
                 <div>
                   <span class="small">{{ $t("howOften.every") }}</span>
@@ -442,20 +451,34 @@
         <div class="flexbox space-12 wide">
           <button
             @click="submit"
+            :disabled="controlsDisabled"
             :class="{
               orange: transactionType === 'expense',
               green: transactionType === 'income',
             }"
             class="button"
           >
-            {{ isModeUpdate ? $t("update") : $t("add") }}
+            {{
+              isModeUpdate
+                ? model.apply_to_all_in_future
+                  ? $t("updateAll")
+                  : $t("update")
+                : $t("add")
+            }}
           </button>
           <button @click="close" class="button light-gray">
             {{ $t("cancel") }}
           </button>
         </div>
-        <button v-if="isModeUpdate" @click="remove" class="button red outlined">
-          <span>{{ $t("delete") }}</span>
+        <button
+          v-if="isModeUpdate"
+          @click="remove"
+          :disabled="controlsDisabled"
+          class="button red outlined"
+        >
+          <span>{{
+            model.apply_to_all_in_future ? $t("deleteAll") : $t("delete")
+          }}</span>
         </button>
       </div>
     </div>
@@ -510,7 +533,8 @@ export default {
         transfer_incoming_amount: null,
         apply_to_all_in_future: false
       },
-      custom_interval: 'month'
+      custom_interval: 'month',
+      controlsDisabled: false
     }
   },
 
@@ -597,6 +621,14 @@ export default {
         this.selectedAccountTransfer &&
         this.selectedAccount.currency !== this.selectedAccountTransfer.currency
       )
+    },
+
+    tippyContent () {
+      return this.$t(`createdBy.${this.transaction.update_datetime ? 'edited' : 'normal'}`, {
+        username: `${this.transaction.create_contact.firstname} ${this.transaction.create_contact.lastname}`,
+        createDate: this.$moment(this.transaction.create_datetime).format('LLL'),
+ ***REMOVED***(this.transaction.update_datetime && { updateDate: this.$moment(this.transaction.update_datetime).format('LLL') })
+      })
     }
   },
 
@@ -644,6 +676,7 @@ export default {
     submit () {
       this.$v.$touch()
       if (!this.$v.$invalid) {
+        this.controlsDisabled = true
         const model = { ...this.model }
         if (model.repeating_interval === 'custom') {
           model.repeating_interval = this.custom_interval
@@ -652,17 +685,30 @@ export default {
           model.transfer_incoming_amount = this.model.amount
         }
 
-        this.$store.dispatch('transaction/update', model).then(() => {
-          this.close()
-        })
+        this.$store.dispatch('transaction/update', model)
+          .then(() => {
+            this.close()
+          })
+          .finally(() => {
+            this.controlsDisabled = false
+          })
       }
     },
 
     remove () {
       if (confirm(this.$t('transactionDeleteWarning'))) {
-        this.$store.dispatch('transaction/delete', this.model.id).then(() => {
-          this.close()
-        })
+        this.controlsDisabled = true
+        this.$store
+          .dispatch('transaction/delete', {
+            id: this.model.id,
+            all_repeating: this.model.apply_to_all_in_future
+          })
+          .then(() => {
+            this.close()
+          })
+          .finally(() => {
+            this.controlsDisabled = false
+          })
       }
     },
 

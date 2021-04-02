@@ -42,7 +42,11 @@
     <div class="dialog-footer">
       <div class="flexbox">
         <div class="flexbox space-12 wide">
-          <button @click="submit" class="button purple">
+          <button
+            @click="submit"
+            :disabled="controlsDisabled"
+            class="button purple"
+          >
             {{ $t("setDates") }}
           </button>
           <button @click="$emit('close')" class="button light-gray">
@@ -64,7 +68,8 @@ export default {
 
   data () {
     return {
-      interval: {}
+      interval: {},
+      controlsDisabled: false
     }
   },
 
@@ -78,12 +83,19 @@ export default {
 
   methods: {
     submit () {
-      this.$store.dispatch('transaction/updateDetailsInterval', {
-        from: this.interval.from,
-        to: this.interval.to,
-        outOfChart: true
-      })
-      this.$emit('close')
+      this.controlsDisabled = true
+      this.$store
+        .dispatch('transaction/updateDetailsInterval', {
+          from: this.interval.from,
+          to: this.interval.to,
+          outOfChart: true
+        })
+        .then(() => {
+          this.$emit('close')
+        })
+        .finally(() => {
+          this.controlsDisabled = true
+        })
     }
   }
 }

@@ -9,6 +9,7 @@ import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
 import Errors from './plugins/errors'
 import Sticky from './plugins/sticky'
+import darkModeObserver from './plugins/darkModeObserver'
 import VuePortal from '@linusborg/vue-simple-portal'
 import IsOnline from './plugins/isOnline'
 import './assets/styles/styles.css'
@@ -17,11 +18,12 @@ Vue.config.productionTip = false
 
 Vue.use(permissions)
 Vue.use(Numeral)
-Vue.use(Vuelidate)
 Vue.use(Errors)
-Vue.use(Sticky)
-Vue.use(VuePortal)
+Vue.use(Vuelidate)
 Vue.use(Helpers)
+Vue.use(Sticky)
+Vue.use(darkModeObserver)
+Vue.use(VuePortal)
 Vue.use(IsOnline)
 
 new Vue({

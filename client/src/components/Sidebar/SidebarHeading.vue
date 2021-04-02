@@ -1,7 +1,7 @@
 <template>
   <h6 class="heading">
     <span><slot></slot></span>
-    <a @click="openModal = true" class="count">
+    <a v-if="$permissions.isAdmin" @click="openModal = true" class="count">
       <i class="fas fa-plus-circle"></i>
     </a>
     <portal>

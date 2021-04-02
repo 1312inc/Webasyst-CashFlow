@@ -98,9 +98,7 @@
         <ul v-if="filteredTransactions.length" class="c-list list">
           <TransactionListGroupRow
             v-show="isShown(transaction)"
-            v-for="transaction in type === 'future'
-              ? [...filteredTransactions].reverse()
-              : filteredTransactions"
+            v-for="transaction in filteredTransactions"
             :key="transaction.id"
             :transaction="transaction"
             :showChecker="isShowChecker"
@@ -187,7 +185,7 @@ export default {
           .format('YYYY-MM-DD')
         result = this.group.filter(t => {
           const istart = this.$moment(t.date)
-          return istart.diff(today, 'days') <= this.featurePeriod
+          return istart.diff(today, 'days') < this.featurePeriod
         })
       }
 

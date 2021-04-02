@@ -64,8 +64,14 @@ body.modal {
 }
 .c-list .c-item:hover { background: linear-gradient(90deg, rgba(255,255,255,0.0) 0%, var(--background-color-table-row-hover) 15%, var(--background-color-table-row-hover) 100%); }
 .c-list .c-item.selected { background: linear-gradient(90deg, rgba(255,255,255,0.0) 0%, var(--background-color-table-row-selected) 15%, var(--background-color-table-row-selected) 100%); }
+.c-list .c-item.c-upcoming .black { color: var(--gray); }
+.c-list .c-item.c-transaction-group .c-grouped-transaction-description { color: var(--gray); }
+.c-list .c-item.c-transaction-group .userpic { position: relative; z-index: 1; }
+.c-list .c-item.c-transaction-group .userpic-stack-imitation { width: 3rem; height: 3rem; background: var(--black); opacity: 0.25;  border-radius: 50%; display: inline-block; position: relative; margin-left: -2.625rem; z-index: 0; vertical-align: top; }
+.c-list .c-item .c-unfold-helper-icon { opacity: 0; }
 .c-list .c-item .c-item-border { border-top: 1px solid var(--border-color-soft); padding: 0.8125rem 0; }
 .c-list .c-item:first-child .c-item-border { border: none; }
+.c-list .c-item:hover .c-unfold-helper-icon { opacity: 1; }
 .c-item .userpic .c-category-glyph { color: var(--white); font-size: 1.5rem; padding: 0.75rem; }
 
 .c-transaction-section .c-transaction-section__header {
@@ -119,3 +125,11 @@ body.modal {
 .c-mobile-build .c-sticky-header-group > div { padding: 0 1rem; }
 .c-mobile-build .c-chart-container { padding: 1rem; }
 .c-mobile-build .c-transaction-section .c-transaction-section__header { font-size: 1.25rem; }
+
+
+@media screen and (min-width: 768px) {
+  .sidebar-body,
+  .sidebar-footer {
+    max-height: initial !important;
+  }
+}

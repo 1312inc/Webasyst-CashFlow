@@ -17,7 +17,7 @@
           })
         }}
       </div>
-      <div v-if="currentEntity.id > 0">
+      <div v-if="currentEntity.id > 0 && $permissions.isAdmin">
         <button @click="update(currentEntity)" class="button nobutton">
           <i class="fas fa-edit"></i>
         </button>

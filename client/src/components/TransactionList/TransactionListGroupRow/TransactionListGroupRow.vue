@@ -1,6 +1,7 @@
 <template>
   <li
     class="item c-item"
+    ref="row"
     :class="classes"
     :style="isRepeatingGroup && 'cursor: initial;'"
   >
@@ -15,7 +16,7 @@
         :class="{ 'desktop-only': $helper.isDesktopEnv }"
         style="min-width: 1rem"
       >
-      <!-- TODO: create computed property for v-show -->
+        <!-- TODO: create computed property for v-show -->
         <span
           v-show="isHoverComputed && !isCollapseHeader && !isRepeatingGroup"
           @click="checkboxSelect"
@@ -40,8 +41,23 @@
           v-else
           class="userpic userpic48 align-center"
           :style="`background-color:${category.color};`"
-          ><i class="c-category-glyph fas fa-ruble-sign"></i
-        ></span>
+          >
+            <i class="c-category-glyph fas" :class="glyph"></i
+        >
+            <span class="userstatus" style="background: #00cc66;" title="Shop-Script">
+              <i class="fas fa-shopping-cart"></i>
+            </span>
+</span>
+        <span v-show="isCollapseHeader || isRepeatingGroup">
+          <span
+            class="userpic-stack-imitation"
+            :style="`background-color:${category.color};`"
+          ></span>
+          <span
+            class="userpic-stack-imitation"
+            :style="`background-color:${category.color};`"
+          ></span>
+        </span>
       </div>
       <div
         class="wide flexbox middle space-4 c-item-border"
@@ -61,7 +77,14 @@
           />
         </div>
         <div class="c-item-amount">
-          <div class="custom-mb-8 align-right">
+          <div class="flexbox justify-end middle custom-mb-8">
+            <span
+              v-if="transaction.affected_transactions > 1"
+              class="badge light-gray small custom-mr-8"
+            >
+              &times;
+              {{ transaction.affected_transactions }}
+            </span>
             <div :style="`color: ${category.color}`" class="bold nowrap">
               {{
                 $helper.toCurrency({
@@ -102,6 +125,7 @@ import AddTransaction from '@/components/Modals/AddTransaction'
 import TransactionListCompleteButton from './TransactionListCompleteButton'
 import TransactionListGroupRowDesc from './TransactionListGroupRowDesc'
 import TransactionListGroupRowCats from './TransactionListGroupRowCats'
+import currencyIcons from '@/utils/currencyIcons'
 export default {
   props: {
     transaction: {
@@ -168,13 +192,41 @@ export default {
       return this.showChecker ? true : this.isHover
     },
 
+    glyph () {
+      // if account currency has icon
+      if (currencyIcons[this.account.currency]) {
+        return currencyIcons[this.account.currency]
+      }
+      // if transfer
+      if (this.transaction.category_id === -1312) {
+        return 'fa-exchange-alt'
+      }
+      // if positive amount
+      if (this.transaction.amount >= 0) {
+        return 'fa-arrow-up'
+      }
+      // if negative amount
+      if (this.transaction.amount < 0) {
+        return 'fa-arrow-down'
+      }
+      return ''
+    },
+
     classes () {
       return {
-        'c-transaction-group': this.isCollapseHeader || this.isRepeatingGroup,
-        'c-upcoming': this.$moment(this.transaction.date) > this.$moment(), // styles for the upcoming transactions
-        'c-item--updated': this.$store.state.transaction.updatedTransactions
-          .map(t => t.id)
-          .includes(this.transaction.id)
+        'c-transaction-group': this.isCollapseHeader || this.isRepeatingGroup, // styles for the collapsed transactions
+        'c-upcoming': this.$moment(this.transaction.date) > this.$moment() // styles for the upcoming transactions
+      }
+    }
+  },
+
+  watch: {
+    transaction (val) {
+      if (val.$_flagUpdated) {
+        this.$refs.row.addEventListener('animationend', () => {
+          this.$refs.row.classList.remove('c-item--updated')
+        })
+        this.$refs.row.classList.add('c-item--updated')
       }
     }
   },
@@ -233,13 +285,36 @@ export default {
 
 .c-item--updated {
   animation-name: updated;
-  animation-duration: 6s;
+  animation-duration: 3s;
+  animation-fill-mode: forwards;
   animation-timing-function: linear;
   animation-direction: alternate;
-  background-color: #dbf4e1;
+  animation-iteration-count: 1;
 }
+
 .c-item-done {
   margin-left: 0.75rem;
   margin-top: 0.375rem;
+}
+
+.userpic48 > .userstatus {
+  width: 0.5625rem;
+  height: 0.5625rem;
+  bottom: 0;
+  right: 0;
+  transition: 0.1s;
+}
+.userpic48 > .userstatus > svg {
+  display: none;
+}
+.userpic48:hover > .userstatus {
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: 1rem;
+  bottom: -0.375rem;
+  right: -0.375rem;
+}
+.userpic48:hover > .userstatus > svg {
+  display: block;
 }
 </style>
