@@ -58,7 +58,7 @@
                                 <span></span>
                             </span>
                             [`All imported transactions:`]
-                            <div class="wa-select small">
+                            <div class="wa-select small" style="max-width: 300px;">
                                 <select name="import[account][single][column]" class="bold">
                                     <option></option>
                                     {foreach $accounts as $a}
@@ -76,7 +76,7 @@
                                 <span></span>
                             </span>
                             [`Set according to the value in the following column:`]
-                            <div class="wa-select small">
+                            <div class="wa-select small" style="max-width: 300px;">
                                 <select name="import[account][multi][column]"
                                         data-cash-csv-import-action="fetch-column-data"
                                         data-cash-csv-import-conditions="account">
@@ -100,7 +100,7 @@
                     [`Description`]
                 </div>
                 <div class="value">
-                    <div class="wa-select small">
+                    <div class="wa-select small" style="max-width: 300px;">
                         <select name="import[description]">
                             <option></option>
                             {foreach $info->headers as $header}
@@ -119,7 +119,7 @@
                     [`Date`]
                 </div>
                 <div class="value">
-                    <div class="wa-select small">
+                    <div class="wa-select small" style="max-width: 300px;">
                         <select name="import[datetime]"
                                 data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::DATETIME}"
                         >
@@ -130,7 +130,7 @@
                         </select>
                     </div>
                     <span data-cash-import-csv-date-format style="display:none;">
-                        <div class="wa-select small">
+                        <div class="wa-select small" style="max-width: 300px;">
                             <select name="import[dateformat]">
                                 <option value="ai">[`Detect automatically`]</option>
                                 {foreach $dateFormats as $dateFormat}
@@ -158,7 +158,7 @@
                                 <span></span>
                             </span>
                             [`From the single column:`]
-                            <div class="wa-select small">
+                            <div class="wa-select small" style="max-width: 300px;">
                                 <select name="import[amount][single][column]"
                                         data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
                                 >
@@ -185,7 +185,7 @@
                         <div class="flexbox space-1rem small">
                             <div class="box">
                                 [`Income`]:
-                                <div class="wa-select small">
+                                <div class="wa-select small" style="max-width: 300px;">
                                     <select name="import[amount][multi][map][income]"
                                             data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
                                     >
@@ -200,7 +200,7 @@
                             </div>
                             <div class="box">
                                 [`Expenses`]:
-                                <div class="wa-select small">
+                                <div class="wa-select small" style="max-width: 300px;">
                                     <select name="import[amount][multi][map][expense]"
                                             data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
                                     >
@@ -219,7 +219,7 @@
             </div>
 
             <div class="field">
-                <div class="name">
+                <div class="name for-checkbox">
                     [`Category`]
                 </div>
                 <div class="value">
@@ -237,7 +237,7 @@
                         <div class="small">
                             <div class="box custom-pb-0">
                                 [`Income (amount > 0)`]:
-                                <div class="wa-select small">
+                                <div class="wa-select small" style="max-width: 300px;">
                                     <select name="import[category][single][income][column]">
                                         <option></option>
                                         {foreach $categoriesIncome as $category}
@@ -248,7 +248,7 @@
                             </div>
                             <div class="box">
                                 [`Expenses (amount < 0)`]:
-                                <div class="wa-select small">
+                                <div class="wa-select small" style="max-width: 300px;">
                                     <select name="import[category][single][expense][column]">
                                         <option></option>
                                         {foreach $categoriesExpense as $category}
@@ -267,7 +267,7 @@
                                 <span></span>
                             </span>
                             [`Set according to the value in the following column:`]
-                            <div class="wa-select small">
+                            <div class="wa-select small" style="max-width: 300px;">
                                 <select name="import[category][multi][column]"
                                         data-cash-csv-import-action="fetch-column-data"
                                         data-cash-csv-import-conditions="category">
@@ -286,7 +286,7 @@
             </div>
 
             <div class="field">
-                <div class="name">
+                <div class="name for-checkbox">
                     [`Duplicates`]
                 </div>
                 <div class="value">
@@ -606,7 +606,7 @@
     <td><span class="c-condition">${columnValue}</span></td>
     <td>=></td>
     <td>
-        <div class="wa-select small">
+        <div class="wa-select small" style="max-width: 300px;">
             <select name="import[category][multi][map][${columnValue}]">
                 <option value="0">${translate['Skip rows with this value']}</option>
                 <optgroup data-cash-categories-optgroup="income" label="${translate['Income']}">
@@ -632,7 +632,7 @@
     <td><span class="c-condition">${columnValue}</span></td>
     <td>=></td>
     <td>
-        <div class="wa-select small">
+        <div class="wa-select small" style="max-width: 300px;">
             <select name="import[account][multi][map][${columnValue}]">
                 <option value="0">${translate['Skip rows with this value']}</option>
                 {{each(id, name, type) sources}}
