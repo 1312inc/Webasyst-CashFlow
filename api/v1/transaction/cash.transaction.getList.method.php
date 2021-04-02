@@ -88,6 +88,15 @@ class cashTransactionGetListMethod extends cashApiAbstractMethod
 
         $transactions = (new cashApiTransactionGetListHandler())->handle($request);
 
+        if ($transactions['data']) {
+            cash()->getEventDispatcher()->dispatch(
+                new cashEvent(
+                    cashEventStorage::API_TRANSACTION_BEFORE_RESPONSE,
+                    new ArrayIterator($transactions['data'])
+                )
+            );
+        }
+
         return new cashApiTransactionGetListResponse(
             $transactions['data'],
             $transactions['total'],

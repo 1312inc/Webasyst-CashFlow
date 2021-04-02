@@ -91,19 +91,14 @@ class cashApiTransactionResponseDto extends cashAbstractDto
     public $is_archived;
 
     /**
-     * @var string
+     * @var array
      */
-    public $external_hash;
+    public $external_source_info;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $external_source;
-
-    /**
-     * @var string|array
-     */
-    public $external_data;
 
     /**
      * @var int|null
@@ -140,7 +135,6 @@ class cashApiTransactionResponseDto extends cashAbstractDto
         $this->initializeWithArray($data);
 
         $this->id = (int) $this->id;
-        $this->external_data = $this->external_data ? json_decode($this->external_data, true) : null;
         $this->amount = (float) $this->amount;
         $this->balance = (float) $this->balance;
         $this->repeating_id = $this->repeating_id ? (int) $this->repeating_id : null;

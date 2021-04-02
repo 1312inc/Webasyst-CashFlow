@@ -26,4 +26,9 @@ class cashTinkoffPlugin extends waPlugin
             echo sprintf("%s\t%s\n", date('Y-m-d H:i:s.u'), $msg);
         }
     }
+
+    public function getExternalInfoHandler(): cashEventHandlerApiTransactionExternalInfo
+    {
+        return new cashEventHandlerApiTransactionExternalInfo();
+    }
 }

@@ -16,8 +16,12 @@ class cashTransactionGetShrinkListMethod extends cashApiAbstractMethod
 
         $transactions = (new cashApiTransactionGetShrinkListHandler())->handle($request);
 
-        return new cashApiTransactionGetShrinkListResponse(
+        if ($transactions) {
+            cash()->getEventDispatcher()->dispatch(
+                new cashEvent(cashEventStorage::API_TRANSACTION_BEFORE_RESPONSE, new ArrayIterator($transactions))
+            );
+        }
 
-        );
+        return new cashApiTransactionGetShrinkListResponse($transactions);
     }
 }
