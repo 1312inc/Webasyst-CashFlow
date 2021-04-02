@@ -18,7 +18,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
     /**
      * @param cashApiTransactionCreateRequest $request
      *
-     * @return array|cashApiTransactionResponseDto[]
+     * @return array<cashApiTransactionResponseDto>
      * @throws ReflectionException
      * @throws kmwaAssertException
      * @throws kmwaForbiddenException

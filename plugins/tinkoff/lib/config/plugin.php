@@ -6,5 +6,6 @@ return array (
   'vendor' => '--',
   'handlers' => 
   array (
+      'api_transaction_response_external_data' => 'getExternalInfoHandler'
   ),
 );

@@ -18,7 +18,7 @@ class cashApiTransactionGetUpNextListHandler implements cashApiHandlerInterface
     /**
      * @param cashApiTransactionGetUpNextListRequest $request
      *
-     * @return array|cashApiTransactionResponseDto[]
+     * @return array<string, array<cashApiTransactionResponseDto>>
      * @throws waException
      * @throws kmwaForbiddenException
      */

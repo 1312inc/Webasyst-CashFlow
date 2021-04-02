@@ -25,6 +25,12 @@ class cashTransactionGetUpNextListMethod extends cashApiAbstractMethod
 
         $transactions = (new cashApiTransactionGetUpNextListHandler())->handle($request);
 
+        if ($transactions['data']) {
+            cash()->getEventDispatcher()->dispatch(
+                new cashEvent(cashEventStorage::API_TRANSACTION_BEFORE_RESPONSE, new ArrayIterator($transactions['data']))
+            );
+        }
+
         return new cashApiTransactionGetUpNextListResponse($transactions['data']);
     }
 }
