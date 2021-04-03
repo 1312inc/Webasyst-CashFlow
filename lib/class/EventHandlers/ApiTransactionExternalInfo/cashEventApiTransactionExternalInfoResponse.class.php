@@ -12,10 +12,16 @@ class cashEventApiTransactionExternalInfoResponse implements cashEventApiTransac
      */
     private $name;
 
-    public function __construct(string $color, string $name)
+    /**
+     * @var string
+     */
+    private $glyph;
+
+    public function __construct(string $color, string $name, string $glyph)
     {
         $this->color = $color;
         $this->name = $name;
+        $this->glyph = $glyph;
     }
 
     public function getColor(): string
@@ -28,11 +34,17 @@ class cashEventApiTransactionExternalInfoResponse implements cashEventApiTransac
         return $this->name;
     }
 
-    public function jsonSerialize()
+    public function getGlyph(): string
+    {
+        return $this->glyph;
+    }
+
+    public function jsonSerialize(): array
     {
         return [
             'name' => $this->name,
             'color' => $this->color,
+            'glyph' => $this->glyph,
         ];
     }
 }
