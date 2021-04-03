@@ -5,7 +5,7 @@ class cashEventHandlerApiTransactionExternalInfo implements cashEventApiTransact
     public function getResponse(
         cashApiTransactionResponseDto $cashApiTransactionResponseDto
     ): cashEventApiTransactionExternalInfoResponseInterface {
-        return new cashEventApiTransactionExternalInfoResponse('yellow', 'Тинькофф');
+        return new cashEventApiTransactionExternalInfoResponse('yellow', 'Тинькофф', 'T');
     }
 
     public function getSource(): string
