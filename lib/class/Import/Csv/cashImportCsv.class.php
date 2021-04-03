@@ -326,7 +326,7 @@ final class cashImportCsv
             return 0;
         }
 
-        return (int)array_sum($this->csvInfoDto->totalRowsByColumn[$columnName]);
+        return (int) array_sum($this->csvInfoDto->totalRowsByColumn[$columnName]);
     }
 
     /**
@@ -336,8 +336,8 @@ final class cashImportCsv
      */
     public function canBeColumnWithUniqueValues($count)
     {
-        return (int)$count <= $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER
-            || ((int)$count > $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER
+        return (int) $count <= $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER
+            || ((int) $count > $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER
                 && $this->getCsvInfoDto()->totalRows < self::MAX_UNIQUENESS_LIMIT);
     }
 
@@ -462,7 +462,7 @@ final class cashImportCsv
     {
         if ($this->encoding && is_array($a)) {
             foreach ($a as &$v) {
-                @$v = iconv($this->encoding, "utf-8//IGNORE", $v);
+                @$v = iconv($this->encoding, "utf-8//IGNORE", trim($v));
             }
         }
         unset($v);
