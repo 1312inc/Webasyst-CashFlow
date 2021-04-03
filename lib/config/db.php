@@ -83,7 +83,7 @@ return array(
         'amount' => array('decimal', "18,4", 'default' => '0.0000'),
         'description' => array('text'),
         'repeating_id' => array('int', 11),
-        'create_contact_id' => array('int', 11, 'null' => 0),
+        'create_contact_id' => array('int', 11),
         'create_datetime' => array('datetime', 'null' => 0),
         'update_datetime' => array('datetime'),
         'import_id' => array('varchar', 100),
