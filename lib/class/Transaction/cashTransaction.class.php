@@ -49,7 +49,7 @@ class cashTransaction extends cashAbstractEntity
     private $repeating_id;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $create_contact_id;
 
@@ -274,7 +274,7 @@ class cashTransaction extends cashAbstractEntity
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreateContactId()
     {
@@ -282,7 +282,7 @@ class cashTransaction extends cashAbstractEntity
     }
 
     /**
-     * @param int $createContactId
+     * @param int|null $createContactId
      *
      * @return cashTransaction
      */

@@ -81,6 +81,7 @@ final class cashTinkoffPluginTransactionSaver
             $hash = $this->hashGenerator->makeForTinkoffOperationDto($operationDto);
 
             $transaction
+                ->setCreateContactId(null)
                 ->setExternalSource(self::EXTERNAL_SOURCE)
                 ->setExternalHash($hash)
                 ->setExternalData($operationDto->toArray());

@@ -381,6 +381,7 @@ final class cashImportCsv
             }
 
             $transaction
+                ->setCreateContactId(null)
                 ->setAmount($amount)
                 ->setDescription($this->getDescription($data))
                 ->setDate($this->getDate($data))
