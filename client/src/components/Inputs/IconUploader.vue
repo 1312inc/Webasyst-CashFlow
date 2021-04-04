@@ -62,6 +62,11 @@ export default {
   left: 0;
   position: absolute;
   text-align: center;
+
+  &:hover {
+    color: inherit;
+  }
+
 }
 .uppy-DragDrop-arrow {
   display: none;
