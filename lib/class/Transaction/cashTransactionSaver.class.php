@@ -5,6 +5,9 @@
  */
 class cashTransactionSaver extends cashEntitySaver
 {
+    const MAX_AMOUNT = 1000000000000.;
+    const MIN_AMOUNT = -1000000000000.;
+
     /**
      * @var cashTransaction[]
      */
@@ -30,7 +33,7 @@ class cashTransactionSaver extends cashEntitySaver
         }
 
         if ($params->repeating) {
-            $transferTransaction = $transaction-$this->createTransfer($transaction, $params);
+            $transferTransaction = $transaction - $this->createTransfer($transaction, $params);
             if ($transferTransaction) {
                 $toPersist[] = $transferTransaction;
             }
@@ -106,14 +109,12 @@ class cashTransactionSaver extends cashEntitySaver
             ->setId(null)
             ->setAmount($amount)
             ->setCategory($category)
-            ->setAccount($account)
-        ;
+            ->setAccount($account);
 
         $transaction
             ->setAmount(-abs($transaction->getAmount()))
             ->setLinkedTransaction($transferTransaction)
-            ->setCategory($category)
-        ;
+            ->setCategory($category);
 
         return $transferTransaction;
     }
@@ -171,6 +172,20 @@ class cashTransactionSaver extends cashEntitySaver
 
         if (empty($data['amount'])) {
             $this->error = _w('No amount specified');
+
+            return false;
+        }
+
+        $data['amount'] = cashHelper::parseFloat($data['amount']);
+
+        if ($data['amount'] > self::MAX_AMOUNT) {
+            $this->error = _w('Come on, all of the world\'s money is less than the amount entered!');
+
+            return false;
+        }
+
+        if ($data['amount'] < self::MIN_AMOUNT) {
+            $this->error = _w('Come on, all of the world\'s money is less than the amount entered!');
 
             return false;
         }

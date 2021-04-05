@@ -23,6 +23,8 @@ abstract class cashApiAbstractMethod extends waAPIMethod
         // check for json request type
         $content_type = $_SERVER['CONTENT_TYPE'] ?? '';
         if (strcmp($content_type, 'application/json') === 0) {
+                @ini_set('precision', 15);
+            @ini_set('serialize_precision', -1);
             $this->jsonParams = json_decode(file_get_contents('php://input'), true);
         }
 
