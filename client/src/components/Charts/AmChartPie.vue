@@ -25,6 +25,11 @@ export default {
       return this.featurePeriod === 1
         ? this.$t('tomorrow')
         : this.$t('nextDays', { count: this.featurePeriod })
+    },
+    currencySignByCode () {
+      return this.$helper.currencySignByCode(
+        this.currencyCode
+      )
     }
   },
 
@@ -44,8 +49,14 @@ export default {
     pieSeries.dataFields.value = 'amount'
     pieSeries.dataFields.category = 'category'
     pieSeries.labels.template.disabled = true
-    pieSeries.slices.template.propertyFields.fill = 'category_color'
     pieSeries.interpolationDuration = 500
+    pieSeries.tooltip.background.filters.clear()
+    pieSeries.tooltip.background.strokeWidth = 0
+    pieSeries.tooltip.label.fontSize = 13
+    pieSeries.tooltip.animationDuration = 500
+    pieSeries.slices.template.propertyFields.fill = 'category_color'
+    pieSeries.slices.template.states.getKey('hover').properties.scale = 1
+    pieSeries.slices.template.states.getKey('active').properties.shiftRadius = 0
 
     // Add Chart data
     chart.data = this.$store.state.category.categories.map(c => {
@@ -91,9 +102,7 @@ export default {
       if (this.isCounterMode) {
         this.pieLabel.html += `<div class="large">${this.$t('selected', { count: this.label })}</div>`
       } else {
-        this.pieLabel.html += `<div class="larger custom-mb-4">${this.$helper.currencySignByCode(
-          this.currencyCode
-        )}</div>`
+        this.pieLabel.html += `<div class="larger custom-mb-4">${this.currencySignByCode}</div>`
         if (this.label === 'future') {
           this.pieLabel.html += `<div>${this.futureLabelText}</div>`
         } else {
@@ -121,7 +130,7 @@ export default {
 
       // pie label formatting
       this.chart.series.getIndex(0).slices.template.tooltipText =
-        "{category}: {value.formatNumber('#,###.##')}"
+        `{category}: {value.formatNumber('#,###.##')} ${this.currencySignByCode}`
 
       // update data
       this.chart.data.forEach(e => {
