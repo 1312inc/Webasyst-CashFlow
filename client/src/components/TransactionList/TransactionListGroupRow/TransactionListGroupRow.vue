@@ -291,4 +291,13 @@ export default {
 .userpic48:hover > .userstatus > svg {
   display: block;
 }
+
+@media screen and (max-width: 760px) {
+  /* mobile */
+  .c-item-done {
+    margin-right: 0.6125rem;
+    margin-left: 0;
+    align-self: normal;
+  }
+}
 </style>

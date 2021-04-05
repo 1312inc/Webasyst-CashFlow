@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="handleComplete" class="red">
+    <button @click="handleComplete" class="red nowrap rounded outlined">
       <i class="fas fa-check"></i>
       <span class="desktop-only">
         {{ $t('Done') }}
