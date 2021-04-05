@@ -109,7 +109,7 @@ class cashBaseRepository
     /**
      * @param $id
      *
-     * @return array|mixed
+     * @return array<cashAbstractEntity>|cashAbstractEntity
      * @throws waException
      */
     public function findById($id)
