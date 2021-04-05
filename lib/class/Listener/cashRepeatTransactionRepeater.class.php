@@ -35,24 +35,22 @@ class cashRepeatTransactionRepeater extends waEventHandler
                     $date = $repeatingTransaction->getDate();
                 }
 
-                cash()->getLogger()->debug(
-                    sprintf(
-                        'Trying to extend repeating transaction #%d starting from %s (%s; %s)',
-                        $repeatingTransaction->getId(),
-                        $date,
-                        json_encode($repeatingTransaction->getRepeatingEndConditions()),
-                        json_encode($repeatingTransaction->getRepeatingConditions())
-                    )
-                );
-
                 $startDate = new DateTime($date);
                 if ($lastT) {
                     // но начать надо со следующей итерации, так как у нас уже есть "последняя" повторяющаяся транзакция
                     $startDate->modify(
                         sprintf('+%d %s', $repeatingTransaction->getRepeatingFrequency(), $repeatingTransaction->getRepeatingInterval())
                     );
-                }
+            }
 
+                cash()->getLogger()->debug(
+                    sprintf(
+                        'Trying to extend repeating transaction #%d starting from %s (%s)',
+                        $repeatingTransaction->getId(),
+                        $startDate->format('Y-m-d'),
+                        json_encode(cash()->getHydrator()->extract($repeatingTransaction))
+                    )
+                );
                 $repeater->repeat($repeatingTransaction, $startDate);
             } catch (Exception $ex) {
                 cash()->getLogger()->error(

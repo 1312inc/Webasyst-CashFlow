@@ -112,10 +112,6 @@ final class cashTransactionRepeater
     ): ?int {
         $newT = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
         if ($newT) {
-            cash()->getLogger()->debug(
-                sprintf('%s. New repeated transaction %d.', $startDate->format('Y-m-d'), $newT->getId())
-            );
-
             $this->transactionSaver->addToPersist($newT);
 
             $this->flushTransaction();
@@ -130,6 +126,7 @@ final class cashTransactionRepeater
     {
         if (count($this->transactionSaver->getToPersist()) % 100 || $force) {
             $this->transactionSaver->persistTransactions();
+            cash()->getLogger()->debug('Saved another 100 repeated transaction');
         }
     }
 
