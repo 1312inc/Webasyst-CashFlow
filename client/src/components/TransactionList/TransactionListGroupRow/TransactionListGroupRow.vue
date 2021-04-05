@@ -16,9 +16,8 @@
         :class="{ 'desktop-only': $helper.isDesktopEnv }"
         style="min-width: 1rem"
       >
-        <!-- TODO: create computed property for v-show -->
         <span
-          v-show="isHoverComputed && !isCollapseHeader && !isRepeatingGroup"
+          v-show="isHoverComputed && !isRepeatingGroup"
           @click="checkboxSelect"
           class="wa-checkbox"
         >
@@ -267,7 +266,11 @@ export default {
 
     checkboxSelect () {
       const method = this.isChecked ? 'unselect' : 'select'
-      this.$store.commit(`transactionBulk/${method}`, [this.transaction.id])
+      let ids = [this.transaction.id]
+      if (this.isCollapseHeader) {
+        ids = this.collapseHeaderData.ids
+      }
+      this.$store.commit(`transactionBulk/${method}`, ids)
     }
   }
 }

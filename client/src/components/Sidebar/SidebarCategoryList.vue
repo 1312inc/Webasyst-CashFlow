@@ -1,8 +1,9 @@
 <template>
   <draggable
-    tag="ul"
     :list="categories"
+    :disabled="!$permissions.isAdmin"
     @update="sortCategories()"
+    tag="ul"
     class="menu"
   >
     <slot></slot>

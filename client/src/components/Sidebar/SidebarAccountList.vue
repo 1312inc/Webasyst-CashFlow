@@ -1,7 +1,8 @@
 <template>
   <draggable
-    tag="ul"
     v-model="accounts"
+    :disabled="!$permissions.isAdmin"
+    tag="ul"
     class="menu"
   >
     <slot></slot>
