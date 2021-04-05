@@ -118,7 +118,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
                     $first = reset($newTransactions);
                     $newTransactionIds[$first->getId()] = [];
                     foreach ($newTransactions as $newTransaction) {
-                        $newTransactionIds[$first->getId()][] = $newTransaction->getId();
+                        $newTransactionIds[$first->getId()][] = (int) $newTransaction->getId();
                     }
                 }
             }
@@ -135,7 +135,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
                         $first = reset($newTransactions);
                         $newTransactionIds[$first->getId()] = [];
                         foreach ($newTransactions as $newTransaction) {
-                            $newTransactionIds[$first->getId()][] = $newTransaction->getId();
+                            $newTransactionIds[$first->getId()][] = (int) $newTransaction->getId();
                         }
                     }
                 }
@@ -144,7 +144,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
             $saver->addToPersist($transaction);
             $saved = $saver->persistTransactions();
             foreach ($saved as $item) {
-                $newTransactionIds[$item->getId()][] = $item->getId();
+                $newTransactionIds[$item->getId()][] = (int) $item->getId();
             }
         }
 
