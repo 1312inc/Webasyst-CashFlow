@@ -62,9 +62,12 @@ export default {
   left: 0;
   position: absolute;
   text-align: center;
+  cursor: pointer;
 
   &:hover {
     color: inherit;
+    box-shadow: none;
+    background: var(--background-color-table-row-hover);
   }
 
 }

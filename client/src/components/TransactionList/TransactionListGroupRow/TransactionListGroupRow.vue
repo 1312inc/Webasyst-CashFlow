@@ -268,9 +268,15 @@ export default {
   font-size: 0;
 
   i {
+    display: none;
     font-style: normal;
+    font-size: 0.75rem;
+    font-weight: bold;
   }
 
+}
+.userpic48:hover > .userstatus > i {
+  display: block;
 }
 .userpic48 > .userstatus > svg {
   display: none;

@@ -33,7 +33,7 @@ export default {
   },
 
   created () {
-    this.mediaQueryList = window.matchMedia('(max-width: 768px)')
+    this.mediaQueryList = window.matchMedia('(max-width: 760px)')
     this.widthСorrection = this.mediaQueryList.matches ? 1 : 2
     this.mediaListener = this.mediaQueryList.addListener(this.screenTest)
   },

@@ -32,24 +32,24 @@ export default {
 
 <style lang="scss">
 .c-period-dropdowns {
-  @media (max-width: 768px) {
+  @media (max-width: 760px) {
     position: relative;
     right: auto;
     width: 100%;
   }
 }
 .c-period-dropdowns > .flexbox {
-  @media (max-width: 768px) {
+  @media (max-width: 760px) {
     padding: 1rem;
   }
 }
 .c-period-dropdowns > .flexbox > div {
-  @media (max-width: 768px) {
+  @media (max-width: 760px) {
     flex: 1;
   }
 }
 .c-period-dropdowns > .flexbox > div > .wa-select {
-  @media (max-width: 768px) {
+  @media (max-width: 760px) {
     width: 100%;
   }
 }
