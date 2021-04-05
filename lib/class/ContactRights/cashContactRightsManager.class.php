@@ -173,18 +173,25 @@ class cashContactRightsManager
      */
     public function hasFullAccessToAccount(waContact $contact, $accountId): bool
     {
+        if ($accountId instanceof cashAccount) {
+            $accountId = $accountId->getId();
+        }
+
         return $this->hasAccessToAccount($contact, $accountId, cashRightConfig::ACCOUNT_FULL_ACCESS);
     }
 
     /**
      * @param waContact $contact
      * @param           $accountId
-     * @param           $access
      *
      * @return bool
      */
     public function hasMinimumAccessToAccount(waContact $contact, $accountId): bool
     {
+        if ($accountId instanceof cashAccount) {
+            $accountId = $accountId->getId();
+        }
+
         return $this->hasAccessToAccount(
             $contact,
             $accountId,
