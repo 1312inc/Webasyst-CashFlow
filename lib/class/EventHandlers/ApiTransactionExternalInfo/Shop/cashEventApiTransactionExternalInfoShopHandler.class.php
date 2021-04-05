@@ -43,7 +43,7 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
             cash()->getLogger()->error('Shop integration error', $exception);
         }
 
-        return new cashEventApiTransactionExternalInfoResponse('green', $name, 'fas fa-shopping-cart', $link, $icon);
+        return new cashEventApiTransactionExternalInfoResponse('#27bf52', $name, 'fas fa-shopping-cart', $link, $icon);
     }
 
     public function getSource(): string
