@@ -44,6 +44,14 @@ final class cashTransactionRepeater
         switch ($repeatingTransaction->getRepeatingEndType()) {
             case cashRepeatingTransaction::REPEATING_END_ONDATE:
                 $endDate = new DateTime($endSettings['ondate']);
+                cash()->getLogger()->debug(
+                    sprintf(
+                        'Repeat %s transaction until %s',
+                        $repeatingTransaction->getRepeatingEndType(),
+                        $endDate->format('Y-m-d')
+                    )
+                );
+
                 while ($startDate <= $endDate) {
                     $id = $this->createRepeating($repeatingTransaction, $data, $startDate);
                     if ($id) {
@@ -54,6 +62,14 @@ final class cashTransactionRepeater
 
             case cashRepeatingTransaction::REPEATING_END_AFTER:
                 $counter = 0;
+                cash()->getLogger()->debug(
+                    sprintf(
+                        'Repeat %s transaction until %s',
+                        $repeatingTransaction->getRepeatingEndType(),
+                        $endSettings['after']
+                    )
+                );
+
                 while ($counter++ < $endSettings['after']) {
                     $id = $this->createRepeating($repeatingTransaction, $data, $startDate);
                     if ($id) {
@@ -64,6 +80,14 @@ final class cashTransactionRepeater
 
             case cashRepeatingTransaction::REPEATING_END_NEVER:
                 $endDate = $this->getEndDateForNeverEndByDefault($repeatingTransaction, $startDate);
+                cash()->getLogger()->debug(
+                    sprintf(
+                        'Repeat %s transaction until %s',
+                        $repeatingTransaction->getRepeatingEndType(),
+                        $endDate->format('Y-m-d')
+                    )
+                );
+
                 while ($startDate <= $endDate) {
                     $id = $this->createRepeating($repeatingTransaction, $data, $startDate);
                     if ($id) {
@@ -88,6 +112,10 @@ final class cashTransactionRepeater
     ): ?int {
         $newT = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
         if ($newT) {
+            cash()->getLogger()->debug(
+                sprintf('%s. New repeated transaction %d.', $startDate->format('Y-m-d'), $newT->getId())
+            );
+
             $this->transactionSaver->addToPersist($newT);
 
             $this->flushTransaction();
@@ -101,16 +129,7 @@ final class cashTransactionRepeater
     private function flushTransaction(bool $force = false)
     {
         if (count($this->transactionSaver->getToPersist()) % 100 || $force) {
-            cash()->getLogger()->debug(
-                sprintf('Before persist another 100 repeating transaction: %d', memory_get_usage(true) / 1024)
-            );
-
             $this->transactionSaver->persistTransactions();
-
-            cash()->getLogger()->debug(
-                sprintf('After persist another 100 repeating transaction: %d', memory_get_usage(true) / 1024)
-            );
-
         }
     }
 
