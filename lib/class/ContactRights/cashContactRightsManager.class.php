@@ -177,7 +177,7 @@ class cashContactRightsManager
             $accountId = $accountId->getId();
         }
 
-        return $this->hasAccessToAccount($contact, $accountId, cashRightConfig::ACCOUNT_FULL_ACCESS);
+        return $this->hasAccessToAccount($contact, (int) $accountId, cashRightConfig::ACCOUNT_FULL_ACCESS);
     }
 
     /**
@@ -244,6 +244,10 @@ class cashContactRightsManager
     {
         if ($this->getContactAccess($contact)->isAdmin()) {
             return true;
+        }
+
+        if ($categoryId instanceof cashCategory) {
+            $categoryId = $categoryId->getId();
         }
 
         return in_array(
@@ -356,6 +360,10 @@ class cashContactRightsManager
     {
         if ($this->getContactAccess($contact)->isAdmin()) {
             return true;
+        }
+
+        if ($categoryId instanceof cashCategory) {
+            $categoryId = $categoryId->getId();
         }
 
         return in_array(
