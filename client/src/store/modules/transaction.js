@@ -76,7 +76,7 @@ export default {
     updateTransactions (state, data) {
       const updatedIDs = data.affected_transaction_ids
       updatedIDs.forEach(id => {
-        const i = state.transactions.data.findIndex(e => e.id === +id)
+        const i = state.transactions.data.findIndex(e => e.id === id)
         if (i > -1) {
           const newData = {
      ***REMOVED***data,

@@ -29,35 +29,13 @@
           </span>
         </span>
       </div>
-      <div>
-        <span
-          v-if="transaction.contractor_contact"
-          class="icon userpic size-48"
-        >
-          <img :src="transaction.contractor_contact.userpic" alt="" />
-        </span>
-        <span
-          v-else
-          class="userpic userpic48 align-center"
-          :style="`background-color:${category.color};`"
-          >
-            <i class="c-category-glyph fas" :class="glyph"></i
-        >
-            <span class="userstatus" style="background: #00cc66;" title="Shop-Script">
-              <i class="fas fa-shopping-cart"></i>
-            </span>
-</span>
-        <span v-show="isCollapseHeader || isRepeatingGroup">
-          <span
-            class="userpic-stack-imitation"
-            :style="`background-color:${category.color};`"
-          ></span>
-          <span
-            class="userpic-stack-imitation"
-            :style="`background-color:${category.color};`"
-          ></span>
-        </span>
-      </div>
+      <TransactionListGroupRowGlyph
+        :transaction="transaction"
+        :category="category"
+        :account="account"
+        :isCollapseHeader="isCollapseHeader"
+        :isRepeatingGroup="isRepeatingGroup"
+      />
       <div
         class="wide flexbox middle space-4 c-item-border"
         style="overflow: hidden"
@@ -124,7 +102,7 @@ import AddTransaction from '@/components/Modals/AddTransaction'
 import TransactionListCompleteButton from './TransactionListCompleteButton'
 import TransactionListGroupRowDesc from './TransactionListGroupRowDesc'
 import TransactionListGroupRowCats from './TransactionListGroupRowCats'
-import currencyIcons from '@/utils/currencyIcons'
+import TransactionListGroupRowGlyph from './TransactionListGroupRowGlyph'
 export default {
   props: {
     transaction: {
@@ -159,7 +137,8 @@ export default {
     AddTransaction,
     TransactionListCompleteButton,
     TransactionListGroupRowDesc,
-    TransactionListGroupRowCats
+    TransactionListGroupRowCats,
+    TransactionListGroupRowGlyph
   },
 
   computed: {
@@ -189,26 +168,6 @@ export default {
     isHoverComputed () {
       if (process.env.VUE_APP_MODE === 'mobile') return true
       return this.showChecker ? true : this.isHover
-    },
-
-    glyph () {
-      // if account currency has icon
-      if (currencyIcons[this.account.currency]) {
-        return currencyIcons[this.account.currency]
-      }
-      // if transfer
-      if (this.transaction.category_id === -1312) {
-        return 'fa-exchange-alt'
-      }
-      // if positive amount
-      if (this.transaction.amount >= 0) {
-        return 'fa-arrow-up'
-      }
-      // if negative amount
-      if (this.transaction.amount < 0) {
-        return 'fa-arrow-down'
-      }
-      return ''
     },
 
     classes () {
@@ -276,7 +235,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 @keyframes updated {
   from {
     background-color: #dbf4e1;
@@ -306,6 +265,12 @@ export default {
   bottom: 0;
   right: 0;
   transition: 0.1s;
+  font-size: 0;
+
+  i {
+    font-style: normal;
+  }
+
 }
 .userpic48 > .userstatus > svg {
   display: none;
