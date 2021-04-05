@@ -5,13 +5,6 @@
  */
 final class cashEventStorage
 {
-    public const ENTITY_INSERT_BEFORE = 'entity_insert.before';
-    public const ENTITY_INSERT_AFTER         = 'entity_insert.after';
-    public const ENTITY_DELETE_BEFORE = 'entity_delete.before';
-    public const ENTITY_DELETE_AFTER  = 'entity_delete.after';
-    public const ENTITY_UPDATE_BEFORE = 'entity_update.before';
-    public const ENTITY_UPDATE_AFTER  = 'entity_update.after';
-
     public const WA_BACKEND_SIDEBAR              = 'backend_sidebar';
     public const WA_BACKEND_TRANSACTION_DIALOG   = 'backend_transaction_dialog';
     public const WA_BACKEND_IMPORT_FILE_UPLOADED = 'backend_import.file_uploaded';

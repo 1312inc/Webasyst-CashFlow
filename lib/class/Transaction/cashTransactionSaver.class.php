@@ -147,6 +147,7 @@ class cashTransactionSaver extends cashEntitySaver
             }
 
             $model->commit();
+            unset($this->toPrsist);
             $this->toPrsist = [];
 
             return $saved;
@@ -210,6 +211,14 @@ class cashTransactionSaver extends cashEntitySaver
     public function addToPersist(cashTransaction $transaction)
     {
         $this->toPrsist[spl_object_hash($transaction)] = $transaction;
+    }
+
+    /**
+     * @return cashTransaction[]
+     */
+    public function getToPersist(): array
+    {
+        return $this->toPrsist;
     }
 
     /**
