@@ -53,20 +53,21 @@ body.modal {
   text-overflow: ellipsis;
 }
 
-.c-header { position: relative; padding: 0.75rem 1.875rem; }
+.c-header { position: relative; padding: 0.75rem 2.375rem; }
 
 .c-list { margin-top: 0; }
 .c-list .c-item {
-  width: 100%;
   cursor: pointer;
   border: none;
+  padding: 0 0.6125rem;
+  border-radius: 0.25rem;
 }
-.c-list .c-item:hover { background: linear-gradient(90deg, rgba(255,255,255,0.0) 0%, var(--background-color-table-row-hover) 15%, var(--background-color-table-row-hover) 100%); }
-.c-list .c-item.selected { background: linear-gradient(90deg, rgba(255,255,255,0.0) 0%, var(--background-color-table-row-selected) 15%, var(--background-color-table-row-selected) 100%); }
+.c-list .c-item:hover { background: var(--background-color-table-row-hover); }
+.c-list .c-item.selected { background: var(--background-color-table-row-selected); }
 .c-list .c-item.c-upcoming .black { color: var(--gray); }
 .c-list .c-item.c-transaction-group .c-grouped-transaction-description { color: var(--gray); }
 .c-list .c-item.c-transaction-group .userpic { position: relative; z-index: 1; }
-.c-list .c-item.c-transaction-group .userpic-stack-imitation { width: 3rem; height: 3rem; background: var(--black); opacity: 0.25;  border-radius: 50%; display: inline-block; position: relative; margin-left: -2.625rem; z-index: 0; vertical-align: top; }
+.c-list .c-item.c-transaction-group .userpic-stack-imitation { width: 3rem; height: 3rem; background: var(--black); opacity: 0.25;  border-radius: 50%; display: inline-block; position: relative; margin-left: -3.25rem; z-index: 0; vertical-align: top; }
 .c-list .c-item .c-unfold-helper-icon { opacity: 0; }
 .c-list .c-item .c-item-border { border-top: 1px solid var(--border-color-soft); padding: 0.8125rem 0; }
 .c-list .c-item:first-child .c-item-border { border: none; }
@@ -102,7 +103,7 @@ body.modal {
   opacity: 0;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 760px) {
   .slide-fade-enter,
   .slide-fade-leave-to {
     transform: translateX(-50%) translateY(0%) !important;
@@ -112,6 +113,7 @@ body.modal {
 
 .c-sticky-header-group {
   background: var(--background-color-blank);
+  padding: 0 0.6125rem;
   /* margin-right: 0.75rem; */
 }
 
@@ -126,9 +128,15 @@ body.modal {
 .c-mobile-build .c-transaction-section .c-transaction-section__header { font-size: 1.25rem; }
 
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 761px) {
   .sidebar-body,
   .sidebar-footer {
     max-height: initial !important;
   }
+}
+
+@media screen and (max-width: 760px) {
+  /* mobile */
+  .c-list .c-item { padding: 0 0 0 0.75rem; border-radius: 0; }
+  .c-item .c-item-amount { padding-right: 0.5rem; align-self: baseline; }
 }

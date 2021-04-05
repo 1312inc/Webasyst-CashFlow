@@ -165,7 +165,7 @@ export default {
 </script>
 
 <style lang="scss">
-@media (max-width: 768px) {
+@media (max-width: 760px) {
   .sidebar-body,
   .sidebar-footer {
     display: block !important;

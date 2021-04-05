@@ -3,7 +3,7 @@
     <div class="flexbox wrap-mobile">
       <Sidebar />
       <div class="content hide-scrollbar blank">
-        <div sticky-container class="box custom-p-0-mobile">
+        <div sticky-container class="box custom-px-8 custom-p-0-mobile">
           <router-view />
         </div>
       </div>
