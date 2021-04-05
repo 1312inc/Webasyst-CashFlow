@@ -48,7 +48,9 @@
         $t("noDesc")
       }}</span>
       <span v-if="transaction.repeating_id" :title="$t('repeatingTran')">
-        <i class="fas fa-redo-alt opacity-50"></i>
+        <span class="small custom-mr-4">
+          <i class="fas fa-redo opacity-50"></i>
+        </span>
       </span>
     </template>
   </div>

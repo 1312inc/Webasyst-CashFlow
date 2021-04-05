@@ -11,10 +11,10 @@
           </h2>
           <span
             v-if="isModeUpdate && transaction.repeating_id"
-            class="tooltip custom-ml-8 large"
-            :data-title="$t('repeatingTran')"
+            class="custom-ml-8 larger"
+            :title="$t('repeatingTran')"
           >
-            <i class="fas fa-redo-alt opacity-50"></i>
+            <i class="fas fa-redo opacity-30"></i>
           </span>
         </div>
         <div v-if="isModeUpdate">
@@ -91,7 +91,7 @@
               <select
                 v-model="model.account_id"
                 :class="{ 'state-error': $v.model.account_id.$error }"
-                style="min-width: 0"
+                style="min-width: 0; max-width: calc(100% - 2rem);"
               >
                 <option
                   :value="account.id"
@@ -116,7 +116,7 @@
               <select
                 v-model="model.transfer_account_id"
                 :class="{ 'state-error': $v.model.transfer_account_id.$error }"
-                style="min-width: 0"
+                style="min-width: 0; max-width: calc(100% - 2rem);"
               >
                 <option
                   :value="account.id"
@@ -185,7 +185,7 @@
               <select
                 v-model="model.category_id"
                 :class="{ 'state-error': $v.model.category_id.$error }"
-                style="min-width: 0"
+                style="min-width: 0; max-width: calc(100% - 2rem);"
               >
                 <option
                   :value="category.id"

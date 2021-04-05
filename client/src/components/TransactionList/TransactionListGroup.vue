@@ -71,9 +71,11 @@
                 {{ $moment(type).format("MMMM YYYY") }}
               </div>
             </h3>
+            <!-- (do we really need this for the upcoming block only?)
             <span v-if="type === 'future'" class="badge light-gray">{{
               filteredTransactions.length
             }}</span>
+            -->
             <TransactionListGroupUpcomingPeriod v-if="type === 'future'" />
           </div>
           <div class="flexbox middle space-12">
