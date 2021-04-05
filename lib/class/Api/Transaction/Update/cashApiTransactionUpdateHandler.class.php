@@ -131,7 +131,7 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
                     continue;
                 }
 
-                $newTransactionIds[] = $item->getId();
+                $newTransactionIds[] = (int) $item->getId();
             }
         } else {
             $transaction = $this->populateTransaction($transaction, $data, $paramsDto);
@@ -139,7 +139,7 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
             $this->saver->addToPersist($transaction);
             $saved = $this->saver->persistTransactions();
             foreach ($saved as $item) {
-                $newTransactionIds[] = $item->getId();
+                $newTransactionIds[] = (int) $item->getId();
             }
         }
 
