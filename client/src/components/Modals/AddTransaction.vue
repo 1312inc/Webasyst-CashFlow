@@ -233,6 +233,23 @@
               rows="3"
               style="resize: none; height: auto"
             ></textarea>
+            <div
+              v-if="transaction.external_source_info"
+              class="custom-mt-8 flexbox middle space-8"
+            >
+              <span
+                v-if="transaction.external_source_info.icon"
+                class="icon userpic size-20"
+              >
+                <img :src="transaction.external_source_info.icon" alt="" />
+              </span>
+              <a
+                :href="transaction.external_source_info.url"
+                target="_blank"
+                class="small"
+                >{{ transaction.external_source_info.name }}</a
+              >
+            </div>
           </div>
         </div>
 
@@ -624,11 +641,20 @@ export default {
     },
 
     tippyContent () {
-      return this.$t(`createdBy.${this.transaction.update_datetime ? 'edited' : 'normal'}`, {
-        username: `${this.transaction.create_contact.firstname} ${this.transaction.create_contact.lastname}`,
-        createDate: this.$moment(this.transaction.create_datetime).format('LLL'),
-        ...(this.transaction.update_datetime && { updateDate: this.$moment(this.transaction.update_datetime).format('LLL') })
-      })
+      return this.$t(
+        `createdBy.${this.transaction.update_datetime ? 'edited' : 'normal'}`,
+        {
+          username: `${this.transaction.create_contact.firstname} ${this.transaction.create_contact.lastname}`,
+          createDate: this.$moment(this.transaction.create_datetime).format(
+            'LLL'
+          ),
+          ...(this.transaction.update_datetime && {
+            updateDate: this.$moment(this.transaction.update_datetime).format(
+              'LLL'
+            )
+          })
+        }
+      )
     }
   },
 
@@ -685,7 +711,8 @@ export default {
           model.transfer_incoming_amount = this.model.amount
         }
 
-        this.$store.dispatch('transaction/update', model)
+        this.$store
+          .dispatch('transaction/update', model)
           .then(() => {
             this.close()
           })
