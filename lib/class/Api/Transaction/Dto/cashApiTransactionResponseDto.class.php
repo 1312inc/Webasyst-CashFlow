@@ -126,6 +126,11 @@ class cashApiTransactionResponseDto extends cashAbstractDto
     public $affected_transaction_ids;
 
     /**
+     * @var array
+     */
+    private $data;
+
+    /**
      * cashApiTransactionResponse constructor.
      *
      * @param array $data
@@ -133,6 +138,8 @@ class cashApiTransactionResponseDto extends cashAbstractDto
     public function __construct(array $data)
     {
         $this->initializeWithArray($data);
+
+        $this->data = $data;
 
         $this->id = (int) $this->id;
         $this->amount = (float) $this->amount;
@@ -149,5 +156,13 @@ class cashApiTransactionResponseDto extends cashAbstractDto
         $this->planned = $this->date > date('Y-m-d');
         $this->amountShorten = cashShorteningService::money($this->amount);
         $this->balanceShorten = cashShorteningService::money($this->balance);
+    }
+
+    /**
+     * @return array
+     */
+    public function getData(): array
+    {
+        return $this->data;
     }
 }
