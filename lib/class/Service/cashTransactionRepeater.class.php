@@ -28,47 +28,46 @@ final class cashTransactionRepeater
      * @param cashRepeatingTransaction $repeatingTransaction
      * @param DateTime|null            $startDate
      *
-     * @return bool|cashTransaction[]|null
+     * @return bool|array<int>|null
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function repeat(cashRepeatingTransaction $repeatingTransaction, DateTime $startDate = null)
+    public function repeat(cashRepeatingTransaction $repeatingTransaction, DateTime $startDate = null): array
     {
         $data = cash()->getHydrator()->extract($repeatingTransaction);
         $endSettings = $repeatingTransaction->getRepeatingEndConditions();
         unset($data['id'], $data['create_datetime'], $data['create_datetime'], $data['update_datetime']);
         $data['repeating_id'] = $repeatingTransaction->getId();
         $startDate = $startDate ?: new DateTime($repeatingTransaction->getDate());
-        $t = [];
+        $tIds = [];
 
         switch ($repeatingTransaction->getRepeatingEndType()) {
             case cashRepeatingTransaction::REPEATING_END_ONDATE:
                 $endDate = new DateTime($endSettings['ondate']);
                 while ($startDate <= $endDate) {
-                    $newT = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
-                    if ($newT) {
-                        $t[] = $newT;
-                    }
+                    $id = $this->createRepeating($repeatingTransaction, $data, $startDate);
+                    if ($id) {
+                        $tIds[] = $id;
+ }
                 }
                 break;
 
             case cashRepeatingTransaction::REPEATING_END_AFTER:
                 $counter = 0;
                 while ($counter++ < $endSettings['after']) {
-                    $newT = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
-                    if ($newT) {
-                        $t[] = $newT;
+                    $id = $this->createRepeating($repeatingTransaction, $data, $startDate);
+                    if ($id) {
+                        $tIds[] = $id;
                     }
                 }
-
                 break;
 
             case cashRepeatingTransaction::REPEATING_END_NEVER:
                 $endDate = $this->getEndDateForNeverEndByDefault($repeatingTransaction, $startDate);
                 while ($startDate <= $endDate) {
-                    $newT = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
-                    if ($newT) {
-                        $t[] = $newT;
+                    $id = $this->createRepeating($repeatingTransaction, $data, $startDate);
+                    if ($id) {
+                        $tIds[] = $id;
                     }
                 }
                 break;
@@ -77,11 +76,31 @@ final class cashTransactionRepeater
                 throw new kmwaRuntimeException('No repeating transaction end setting');
         }
 
-        if ($t) {
-            $this->transactionSaver->persistTransactions($t);
+        $this->flushTransaction(true);
+
+        return $tIds;
+    }
+
+    private function createRepeating(cashRepeatingTransaction $repeatingTransaction, array $data, DateTime $startDate): ?int
+    {
+        $newT = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
+        if ($newT) {
+            $this->transactionSaver->addToPersist($newT);
+
+            $this->flushTransaction();
+
+            return (int) $newT->getId();
         }
 
-        return $t;
+        return null;
+    }
+
+
+    private function flushTransaction(bool $force = false)
+    {
+        if (count($this->transactionSaver->getToPersist()) % 100 || $force) {
+            $this->transactionSaver->persistTransactions();
+        }
     }
 
     /**

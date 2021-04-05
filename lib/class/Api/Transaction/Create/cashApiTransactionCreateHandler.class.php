@@ -113,13 +113,10 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
             );
 
             if ($repeatingSaveResult->ok) {
-                $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
-                if ($newTransactions) {
-                    $first = reset($newTransactions);
-                    $newTransactionIds[$first->getId()] = [];
-                    foreach ($newTransactions as $newTransaction) {
-                        $newTransactionIds[$first->getId()][] = (int) $newTransaction->getId();
-                    }
+                $newRepeatedTransactionIds = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
+                if ($newRepeatedTransactionIds) {
+                    $firstId = reset($newRepeatedTransactionIds);
+                    $newTransactionIds[$firstId][] = $newRepeatedTransactionIds;
                 }
             }
 
@@ -130,13 +127,10 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
                 );
 
                 if ($repeatingSaveResult->ok) {
-                    $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
-                    if ($newTransactions) {
-                        $first = reset($newTransactions);
-                        $newTransactionIds[$first->getId()] = [];
-                        foreach ($newTransactions as $newTransaction) {
-                            $newTransactionIds[$first->getId()][] = (int) $newTransaction->getId();
-                        }
+                    $newRepeatedTransactionIds = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
+                    if ($newRepeatedTransactionIds) {
+                        $firstId = reset($newRepeatedTransactionIds);
+                        $newTransactionIds[$firstId][] = $newRepeatedTransactionIds;
                     }
                 }
             }
