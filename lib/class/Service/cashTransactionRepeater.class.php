@@ -48,7 +48,7 @@ final class cashTransactionRepeater
                     $id = $this->createRepeating($repeatingTransaction, $data, $startDate);
                     if ($id) {
                         $tIds[] = $id;
- }
+                    }
                 }
                 break;
 
@@ -81,8 +81,11 @@ final class cashTransactionRepeater
         return $tIds;
     }
 
-    private function createRepeating(cashRepeatingTransaction $repeatingTransaction, array $data, DateTime $startDate): ?int
-    {
+    private function createRepeating(
+        cashRepeatingTransaction $repeatingTransaction,
+        array $data,
+        DateTime $startDate
+    ): ?int {
         $newT = $this->createNextTransaction($repeatingTransaction, $data, $startDate);
         if ($newT) {
             $this->transactionSaver->addToPersist($newT);
@@ -95,11 +98,19 @@ final class cashTransactionRepeater
         return null;
     }
 
-
     private function flushTransaction(bool $force = false)
     {
         if (count($this->transactionSaver->getToPersist()) % 100 || $force) {
+            cash()->getLogger()->debug(
+                sprintf('Before persist another 100 repeating transaction: %d', memory_get_usage(true) / 1024)
+            );
+
             $this->transactionSaver->persistTransactions();
+
+            cash()->getLogger()->debug(
+                sprintf('After persist another 100 repeating transaction: %d', memory_get_usage(true) / 1024)
+            );
+
         }
     }
 
