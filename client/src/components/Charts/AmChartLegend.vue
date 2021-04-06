@@ -84,6 +84,7 @@ export default {
       &__title {
         white-space: nowrap;
         overflow: hidden;
+        max-width: 160px;
         text-overflow: ellipsis;
         margin-right: 1rem;
       }

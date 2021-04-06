@@ -35,6 +35,9 @@ module.exports = {
     loaderOptions: {
       css: {
         url: false
+      },
+      scss: {
+        prependData: '@import "@/assets/styles/mixins/_breakpoint.scss";'
       }
     }
   },

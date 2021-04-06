@@ -1,11 +1,11 @@
 <template>
   <div class="custom-mb-16">
     <div v-if="showIncome" class="custom-mb-16">
-      <div class="flexbox middle full-width">
+      <div class="flexbox wrap middle full-width">
         <div class="large bold">
           {{ $t("income") }}
         </div>
-        <div class="large bold text-green mobile-only">
+        <div class="large bold text-green mobile-only nowrap">
           {{
             $helper.toCurrency({
               value: itemData.income.totalAmount,
@@ -21,7 +21,7 @@
           :width="(itemData.income.totalAmount / maxAmount) * 100"
         />
         <div
-          class="desktop-and-tablet-only custom-ml-12 align-center larger text-green bold"
+          class="desktop-and-tablet-only custom-ml-12 align-center larger text-green bold nowrap"
         >
           {{
             $helper.toCurrency({
@@ -40,11 +40,11 @@
     </div>
 
     <div v-if="showExpense" class="custom-mb-16">
-      <div class="flexbox middle full-width">
+      <div class="flexbox wrap middle full-width">
         <div class="large bold">
           {{ $t("expense") }}
         </div>
-        <div class="large bold text-red mobile-only">
+        <div class="large bold text-red mobile-only nowrap">
           {{
             $helper.toCurrency({
               value: itemData.expense.totalAmount,
@@ -61,7 +61,7 @@
           :width="(itemData.expense.totalAmount / maxAmount) * 100"
         />
         <div
-          class="desktop-and-tablet-only custom-ml-12 align-center larger text-red bold"
+          class="desktop-and-tablet-only custom-ml-12 align-center larger text-red bold nowrap"
         >
           {{
             $helper.toCurrency({
@@ -82,11 +82,11 @@
     </div>
 
     <div v-if="showProfit">
-      <div class="flexbox middle full-width">
+      <div class="flexbox wrap middle full-width">
         <div class="large bold">
           {{ $t("profit") }}
         </div>
-        <div class="large bold text-blue mobile-only">
+        <div class="large bold text-blue mobile-only nowrap">
           {{
             $helper.toCurrency({
               value: itemData.profit.totalAmount,
@@ -101,7 +101,7 @@
           :width="(itemData.profit.totalAmount / maxAmount) * 100"
         />
         <div
-          class="desktop-and-tablet-only custom-ml-12 align-center larger text-blue bold"
+          class="desktop-and-tablet-only custom-ml-12 align-center larger text-blue bold nowrap"
         >
           {{
             $helper.toCurrency({
