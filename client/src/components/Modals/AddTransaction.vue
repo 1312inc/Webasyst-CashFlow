@@ -11,10 +11,10 @@
           </h2>
           <span
             v-if="isModeUpdate && transaction.repeating_id"
-            class="tooltip custom-ml-8 large"
-            :data-title="$t('repeatingTran')"
+            class="custom-ml-8 larger"
+            :title="$t('repeatingTran')"
           >
-            <i class="fas fa-redo-alt opacity-50"></i>
+            <i class="fas fa-redo opacity-30"></i>
           </span>
         </div>
         <div v-if="isModeUpdate">
@@ -91,7 +91,7 @@
               <select
                 v-model="model.account_id"
                 :class="{ 'state-error': $v.model.account_id.$error }"
-                style="min-width: 0"
+                style="min-width: 0; max-width: calc(100% - 2rem);"
               >
                 <option
                   :value="account.id"
@@ -116,7 +116,7 @@
               <select
                 v-model="model.transfer_account_id"
                 :class="{ 'state-error': $v.model.transfer_account_id.$error }"
-                style="min-width: 0"
+                style="min-width: 0; max-width: calc(100% - 2rem);"
               >
                 <option
                   :value="account.id"
@@ -185,7 +185,7 @@
               <select
                 v-model="model.category_id"
                 :class="{ 'state-error': $v.model.category_id.$error }"
-                style="min-width: 0"
+                style="min-width: 0; max-width: calc(100% - 2rem);"
               >
                 <option
                   :value="category.id"
@@ -233,6 +233,23 @@
               rows="3"
               style="resize: none; height: auto"
             ></textarea>
+            <div
+              v-if="transaction.external_source_info.url"
+              class="custom-mt-8 flexbox middle space-8"
+            >
+              <span
+                v-if="transaction.external_source_info.icon"
+                class="icon userpic size-20"
+              >
+                <img :src="transaction.external_source_info.icon" alt="" />
+              </span>
+              <a
+                :href="transaction.external_source_info.url"
+                target="_blank"
+                class="small"
+                >{{ transaction.external_source_info.name }}</a
+              >
+            </div>
           </div>
         </div>
 
@@ -624,11 +641,20 @@ export default {
     },
 
     tippyContent () {
-      return this.$t(`createdBy.${this.transaction.update_datetime ? 'edited' : 'normal'}`, {
-        username: `${this.transaction.create_contact.firstname} ${this.transaction.create_contact.lastname}`,
-        createDate: this.$moment(this.transaction.create_datetime).format('LLL'),
-        ...(this.transaction.update_datetime && { updateDate: this.$moment(this.transaction.update_datetime).format('LLL') })
-      })
+      return this.$t(
+        `createdBy.${this.transaction.update_datetime ? 'edited' : 'normal'}`,
+        {
+          username: `${this.transaction.create_contact.firstname} ${this.transaction.create_contact.lastname}`,
+          createDate: this.$moment(this.transaction.create_datetime).format(
+            'LLL'
+          ),
+          ...(this.transaction.update_datetime && {
+            updateDate: this.$moment(this.transaction.update_datetime).format(
+              'LLL'
+            )
+          })
+        }
+      )
     }
   },
 
@@ -685,7 +711,8 @@ export default {
           model.transfer_incoming_amount = this.model.amount
         }
 
-        this.$store.dispatch('transaction/update', model)
+        this.$store
+          .dispatch('transaction/update', model)
           .then(() => {
             this.close()
           })

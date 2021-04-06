@@ -146,5 +146,6 @@ export default {
 <style>
 .c-chart-pie-sticky {
   height: 400px;
+  padding: 0 1.5rem;
 }
 </style>
