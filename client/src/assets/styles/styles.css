@@ -6,17 +6,17 @@
 .flexbox.justify-between {
   justify-content: space-between;
 }
-.flexbox.justify-between .flexbox.space-12 > *:first-child {
-  margin-left: 0;
-  margin-right: 0;
-}
-.flexbox.justify-between .flexbox.space-12 > *:not(:first-child) {
-  margin-left: .75rem;
-  margin-right: 0;
-}
 
 .flexbox.justify-end {
   justify-content: flex-end;
+}
+.flexbox.justify-end > *:first-child {
+  margin-left: 0;
+  margin-right: 0;
+}
+.flexbox.justify-end > *:not(:first-child) {
+  margin-left: .75rem;
+  margin-right: 0;
 }
 
 .content {
@@ -113,8 +113,10 @@ body.modal {
 
 .c-sticky-header-group {
   background: var(--background-color-blank);
+}
+
+.c-sticky-header-group > div {
   padding: 0 0.6125rem;
-  /* margin-right: 0.75rem; */
 }
 
 .c-sticky-header-group.vue-sticky-el.top-sticky {
@@ -137,6 +139,6 @@ body.modal {
 
 @media screen and (max-width: 760px) {
   /* mobile */
-  .c-list .c-item { padding: 0 0 0 0.75rem; border-radius: 0; }
+  .c-list .c-item { padding: 0 0 0 0.6125rem; border-radius: 0; }
   .c-item .c-item-amount { padding-right: 0.5rem; align-self: baseline; }
 }

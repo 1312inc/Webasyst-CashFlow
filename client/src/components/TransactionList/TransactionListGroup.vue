@@ -17,7 +17,7 @@
         on-stick="onStick"
         class="c-sticky-header-group"
       >
-        <div class="flexbox middle custom-py-8 vertical-mobile justify-between">
+        <div class="flexbox middle wrap-mobile justify-between custom-py-8">
           <div class="flexbox middle space-12">
             <div
               v-if="$helper.showMultiSelect()"
@@ -90,7 +90,7 @@
             <Amounts
               :group="filteredTransactions"
               target="Group"
-              class="flexbox justify-end middle vertical-mobile wrap space-12"
+              class="flexbox justify-end middle wrap space-12"
             />
           </div>
         </div>
