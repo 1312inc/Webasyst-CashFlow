@@ -204,6 +204,18 @@ class cashImport extends cashAbstractEntity
     }
 
     /**
+     * @param int $inc
+     *
+     * @return cashImport
+     */
+    public function incSuccess(int $inc = 1)
+    {
+        $this->success += $inc;
+
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getFail()
@@ -219,6 +231,18 @@ class cashImport extends cashAbstractEntity
     public function setFail($fail)
     {
         $this->fail = $fail;
+
+        return $this;
+    }
+
+    /**
+     * @param int $inc
+     *
+     * @return cashImport
+     */
+    public function incFail(int $inc = 1)
+    {
+        $this->fail += $inc;
 
         return $this;
     }

@@ -13,6 +13,7 @@ final class cashImportCsv
     const FIRST_ROWS             = 100;
     const MAX_ROWS_TO_READ       = 100500;
     const ROWS_TO_READ           = 10;
+    const EXTERNAL_SOURCE        = 'csv';
 
     /**
      * @var cashImportResponseCsv
@@ -387,6 +388,7 @@ final class cashImportCsv
                 ->setDate($this->getDate($data))
                 ->setAccountId($this->getAccount($data, $infoDto))
                 ->setCategoryId($categoryId)
+                ->setExternalSource(self::EXTERNAL_SOURCE)
                 ->setImportId($infoDto->importId);
 
             $selectedCategory = $transaction->getCategoryId();

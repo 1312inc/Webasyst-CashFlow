@@ -16,9 +16,9 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
         cashApiTransactionResponseDto $cashApiTransactionResponseDto
     ): cashEventApiTransactionExternalInfoResponseInterface {
 
-        $icon = '';
-        $link = '';
-        $name = 'Shop-Script';
+        $entityName = null;
+        $entityUrl = null;
+        $entityIcon = null;
 
         try {
             if ($this->shopIntegration->shopExists()) {
@@ -27,15 +27,14 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
                     $data = json_decode($data['external_data'], true);
                     $externalEntity = cashTransactionExternalEntityFactory::createFromSource('shop', $data);
                     if ($externalEntity) {
-                        $icon = wa()->getConfig()->getHostUrl() . $externalEntity->getAppIcon();
-                        $link = sprintf(
-                            '%s%s%s%s',
+                        $entityIcon = wa()->getConfig()->getHostUrl() . $externalEntity->getAppIcon();
+                        $entityUrl = sprintf(
+                            '%s%sshop%s',
                             wa()->getConfig()->getHostUrl(),
-                            rtrim(wa('shop')->getConfig()->getBackendUrl(true), '/'),
-                            rtrim(wa()->getAppUrl('shop'), '/'),
+                            wa('shop')->getConfig()->getBackendUrl(true),
                             $externalEntity->getLink()
                         );
-                        $name = $externalEntity->getEntityName();
+                        $entityName = $externalEntity->getEntityName();
                     }
                 }
             }
@@ -43,7 +42,14 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
             cash()->getLogger()->error('Shop integration error', $exception);
         }
 
-        return new cashEventApiTransactionExternalInfoResponse('green', $name, 'fas fa-shopping-cart', $link, $icon);
+        return new cashEventApiTransactionExternalInfoResponse(
+            'green',
+            'Shop-Script',
+            'fas fa-shopping-cart',
+            $entityUrl,
+            $entityIcon,
+            $entityName
+        );
     }
 
     public function getSource(): string

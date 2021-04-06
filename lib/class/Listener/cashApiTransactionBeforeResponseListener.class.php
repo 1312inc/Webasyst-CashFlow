@@ -11,12 +11,18 @@ final class cashApiTransactionBeforeResponseListener
         $handlers = cash()->waDispatchEvent(
             new cashEventApiTransactionExternalInfo(cashEventStorage::API_TRANSACTION_RESPONSE_EXTERNAL_DATA)
         );
-        foreach ($handlers as $handler) {
-            if (!is_object($handler) || !$handler instanceof cashEventApiTransactionExternalInfoHandlerInterface) {
-                continue;
+        foreach ($handlers as $infoHandlers) {
+            if (!is_array($infoHandlers)) {
+                $infoHandlers = [$infoHandlers];
             }
 
-            $registry->add($handler->getSource(), $handler);
+            foreach ($infoHandlers as $handler) {
+                if (!$handler instanceof cashEventApiTransactionExternalInfoHandlerInterface) {
+                    continue;
+                }
+
+                $registry->add($handler);
+            }
         }
 
         array_map(
@@ -30,8 +36,14 @@ final class cashApiTransactionBeforeResponseListener
         );
     }
 
-    public function getExternalInfoHandler(): cashEventApiTransactionExternalInfoShopHandler
+    /**
+     * @return array<cashEventApiTransactionExternalInfoHandlerInterface>
+     */
+    public function getExternalInfoHandlers(): array
     {
-        return new cashEventApiTransactionExternalInfoShopHandler();
+        return [
+            new cashEventApiTransactionExternalInfoShopHandler(),
+            new cashEventApiTransactionExternalInfoCsvHandler(),
+        ];
     }
 }

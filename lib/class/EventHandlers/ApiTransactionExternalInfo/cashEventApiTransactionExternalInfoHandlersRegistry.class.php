@@ -7,13 +7,9 @@ class cashEventApiTransactionExternalInfoHandlersRegistry
      */
     private $handlers = [];
 
-    public function add(string $source, cashEventApiTransactionExternalInfoHandlerInterface $handler): void
+    public function add(cashEventApiTransactionExternalInfoHandlerInterface $handler): void
     {
-        if (!$handler instanceof cashEventApiTransactionExternalInfoHandlerInterface) {
-            return;
-        }
-
-        $this->handlers[$source] = $handler;
+        $this->handlers[$handler->getSource()] = $handler;
     }
 
     public function has(string $source): bool
