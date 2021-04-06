@@ -43,7 +43,7 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
         }
 
         return new cashEventApiTransactionExternalInfoResponse(
-            'green',
+            '#27bf52',
             'Shop-Script',
             'fas fa-shopping-cart',
             $entityUrl,

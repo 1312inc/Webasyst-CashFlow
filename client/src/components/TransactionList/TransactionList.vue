@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-mx-16-mobile">
+  <div>
     <div v-if="$store.state.transaction.loading">
       <SkeletonTransaction />
     </div>
