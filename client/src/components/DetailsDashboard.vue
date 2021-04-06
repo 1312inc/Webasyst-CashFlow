@@ -1,27 +1,26 @@
 <template>
   <div v-if="data" class="c-breakdown-details">
-    <div class="flexbox middle custom-mb-24 wrap-mobile vertical-mobile">
-      <div class="wide flexbox middle">
-        <h3 class="custom-mb-0">
-          {{ dates }}
-        </h3>
+    <div class="flexbox custom-mb-24">
+      <div class="wide flexbox middle wrap-mobile">
+        <div
+          class="larger black bold custom-mb-0 custom-mb-8-mobile"
+          v-html="dates"
+        ></div>
         <button
           @click="openModal = true"
-          class="button light-gray custom-ml-12"
+          class="button light-gray custom-ml-12 custom-ml-0-mobile"
         >
           {{ $t("setDates") }}
         </button>
       </div>
       <div>
-        <button @click="closeDashboard" class="nobutton largest">
+        <button @click="closeDashboard" class="nobutton largest custom-p-0">
           <i class="fas fa-times gray"></i>
         </button>
       </div>
     </div>
 
-    <DetailsDashboardItem
-      :itemData="dashboardData"
-    />
+    <DetailsDashboardItem :itemData="dashboardData" />
 
     <portal>
       <Modal v-if="openModal">
@@ -57,14 +56,19 @@ export default {
 
     dates () {
       return this.detailsInterval.from !== this.detailsInterval.to
-        ? `${this.$moment(this.detailsInterval.from).format(
-            'LL'
-          )} – ${this.$moment(this.detailsInterval.to).format('LL')}`
-        : `${this.$moment(this.detailsInterval.from).format('LL')}`
+        ? `<span class="nowrap">${this.$moment(
+            this.detailsInterval.from
+          ).format('LL')}</span> – <span class="nowrap">${this.$moment(
+            this.detailsInterval.to
+          ).format('LL')}`
+        : `${this.$moment(this.detailsInterval.from).format('LL')}</span>`
     },
 
     dashboardData () {
-      return this.data.find(i => i.currency === this.$store.getters['transaction/activeCurrencyCode'])
+      return this.data.find(
+        i =>
+          i.currency === this.$store.getters['transaction/activeCurrencyCode']
+      )
     }
   },
 
@@ -106,7 +110,12 @@ export default {
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1),
     0 0.5rem 1.5rem -0.5rem rgba(0, 0, 0, 0.2);
   border-radius: 0.375rem;
-  padding: 1rem 1.75rem;
+  padding: 1rem 1.2rem;
   margin: 1.7rem;
+
+  @include for-mobile {
+    padding: 1rem;
+    margin: 1rem;
+  }
 }
 </style>
