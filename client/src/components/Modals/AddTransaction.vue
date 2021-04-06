@@ -17,12 +17,8 @@
             <i class="fas fa-redo opacity-30"></i>
           </span>
         </div>
-        <div v-if="isModeUpdate">
-          <span
-            v-if="transaction.create_contact.userpic"
-            class="icon userpic size-32"
-            v-wa-tippy="tippyContent"
-          >
+        <div v-if="isModeUpdate && transaction.create_contact">
+          <span class="icon userpic size-32" v-wa-tippy="tippyContent">
             <img :src="transaction.create_contact.userpic" alt="" />
           </span>
         </div>
@@ -91,7 +87,7 @@
               <select
                 v-model="model.account_id"
                 :class="{ 'state-error': $v.model.account_id.$error }"
-                style="min-width: 0; max-width: calc(100% - 2rem);"
+                style="min-width: 0; max-width: calc(100% - 2rem)"
               >
                 <option
                   :value="account.id"
@@ -116,7 +112,7 @@
               <select
                 v-model="model.transfer_account_id"
                 :class="{ 'state-error': $v.model.transfer_account_id.$error }"
-                style="min-width: 0; max-width: calc(100% - 2rem);"
+                style="min-width: 0; max-width: calc(100% - 2rem)"
               >
                 <option
                   :value="account.id"
@@ -185,7 +181,7 @@
               <select
                 v-model="model.category_id"
                 :class="{ 'state-error': $v.model.category_id.$error }"
-                style="min-width: 0; max-width: calc(100% - 2rem);"
+                style="min-width: 0; max-width: calc(100% - 2rem)"
               >
                 <option
                   :value="category.id"
@@ -235,6 +231,7 @@
             ></textarea>
             <div
               v-if="
+                isModeUpdate &&
                 transaction.external_source_info &&
                 transaction.external_source_info.entity_url
               "
@@ -244,7 +241,10 @@
                 v-if="transaction.external_source_info.entity_icon"
                 class="icon userpic size-20"
               >
-                <img :src="transaction.external_source_info.entity_icon" alt="" />
+                <img
+                  :src="transaction.external_source_info.entity_icon"
+                  alt=""
+                />
               </span>
               <a
                 :href="transaction.external_source_info.entity_url"
