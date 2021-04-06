@@ -234,7 +234,10 @@
               style="resize: none; height: auto"
             ></textarea>
             <div
-              v-if="transaction.external_source_info.url"
+              v-if="
+                transaction.external_source_info &&
+                transaction.external_source_info.url
+              "
               class="custom-mt-8 flexbox middle space-8"
             >
               <span
