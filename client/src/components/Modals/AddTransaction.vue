@@ -236,21 +236,21 @@
             <div
               v-if="
                 transaction.external_source_info &&
-                transaction.external_source_info.url
+                transaction.external_source_info.entity_url
               "
               class="custom-mt-8 flexbox middle space-8"
             >
               <span
-                v-if="transaction.external_source_info.icon"
+                v-if="transaction.external_source_info.entity_icon"
                 class="icon userpic size-20"
               >
-                <img :src="transaction.external_source_info.icon" alt="" />
+                <img :src="transaction.external_source_info.entity_icon" alt="" />
               </span>
               <a
-                :href="transaction.external_source_info.url"
+                :href="transaction.external_source_info.entity_url"
                 target="_blank"
                 class="small"
-                >{{ transaction.external_source_info.name }}</a
+                >{{ transaction.external_source_info.entity_name }}</a
               >
             </div>
           </div>
