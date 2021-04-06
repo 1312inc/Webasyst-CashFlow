@@ -235,7 +235,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 @keyframes updated {
   from {
     background-color: #dbf4e1;
@@ -257,39 +257,6 @@ export default {
 .c-item-done {
   margin-left: 0.75rem;
   margin-top: 0.375rem;
-}
-
-.userpic48 > .userstatus {
-  width: 0.5625rem;
-  height: 0.5625rem;
-  bottom: 0;
-  right: 0;
-  transition: 0.1s;
-  font-size: 0;
-
-  i {
-    display: none;
-    font-style: normal;
-    font-size: 0.75rem;
-    font-weight: bold;
-  }
-
-}
-.userpic48:hover > .userstatus > i {
-  display: block;
-}
-.userpic48 > .userstatus > svg {
-  display: none;
-}
-.userpic48:hover > .userstatus {
-  width: 1.25rem;
-  height: 1.25rem;
-  font-size: 1rem;
-  bottom: -0.375rem;
-  right: -0.375rem;
-}
-.userpic48:hover > .userstatus > svg {
-  display: block;
 }
 
 @media screen and (max-width: 760px) {
