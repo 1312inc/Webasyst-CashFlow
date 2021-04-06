@@ -109,11 +109,12 @@ withUserpic.args = {
       userpic: 'http://localhost:8888/wa-content/img/userpic.svg'
     },
     external_source_info: {
-      name: 'test name',
+      name: 'Тинькофф',
       color: 'green',
       glyph: 'fas fa-shopping-cart',
-      icon: '',
-      url: ''
+      entity_icon: '',
+      entity_url: '',
+      entity_name: 'test name'
     }
   }
 }
@@ -131,11 +132,12 @@ externalSource.args = {
     account_id: 61,
     is_onbadge: false,
     external_source_info: {
-      name: 'test name',
+      name: 'Тинькофф',
       color: 'green',
       glyph: 'fas fa-shopping-cart',
-      icon: '',
-      url: ''
+      entity_icon: '',
+      entity_url: '',
+      entity_name: 'test name'
     }
   }
 }
