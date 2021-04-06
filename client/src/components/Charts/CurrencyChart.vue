@@ -143,7 +143,7 @@ export default {
         .area()
         .x(d => x(new Date(d.period)))
         .y0(y(0))
-        .y1(d => y(Math.min(1.0, d.amount)))
+        .y1(d => y(Math.min(0, d.amount)))
 
       this.svg
         .append('path')
@@ -159,7 +159,7 @@ export default {
         .area()
         .x(d => x(new Date(d.period)))
         .y0(y(0))
-        .y1(d => y(Math.max(1.0, d.amount)))
+        .y1(d => y(Math.max(0, d.amount)))
 
       this.svg
         .append('path')
@@ -183,7 +183,7 @@ export default {
           .selectAll('stop')
           .data([
             { offset: '0%', color: 'rgba(62, 197, 94, 0)' },
-            { offset: '100%', color: 'rgba(62, 197, 94, 0.6)' }
+            { offset: '100%', color: 'rgba(62, 197, 94, 0.3)' }
           ])
           .enter()
           .append('stop')
