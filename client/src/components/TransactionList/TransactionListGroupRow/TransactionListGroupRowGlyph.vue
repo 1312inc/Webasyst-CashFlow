@@ -9,7 +9,9 @@
         :src="transaction.contractor_contact.userpic"
         alt=""
       />
-      <i v-else class="c-category-glyph fas" :class="mainGlyph"></i>
+      <div v-else>
+        <i class="c-category-glyph fas" :class="mainGlyph"></i>
+      </div>
       <span
         v-if="transaction.external_source_info"
         :style="`background:${transaction.external_source_info.color}`"

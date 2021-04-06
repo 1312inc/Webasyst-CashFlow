@@ -101,6 +101,7 @@ export default {
       if (!target.value.trim()) {
         this.inputValue = ''
         this.reset()
+        this.$emit('changeContractor', null)
         return false
       }
 
