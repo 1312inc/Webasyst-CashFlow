@@ -16,47 +16,36 @@ class cashEventApiTransactionExternalInfoResponse implements cashEventApiTransac
      * @var string
      */
     private $glyph;
-    /**
-     * @var string
-     */
-    private $url;
-    /**
-     * @var string
-     */
-    private $icon;
 
-    public function __construct(string $color, string $name, string $glyph = '', string $url = '', string $icon = '')
-    {
+    /**
+     * @var ?string
+     */
+    private $entityUrl;
+
+    /**
+     * @var ?string
+     */
+    private $entityIcon;
+
+    /**
+     * @var ?string
+     */
+    private $entityName;
+
+    public function __construct(
+        string $color,
+        string $name,
+        string $glyph = '',
+        ?string $entityUrl = null,
+        ?string $entityIcon = null,
+        ?string $entityName = null
+    ) {
         $this->color = $color;
         $this->name = $name;
         $this->glyph = $glyph;
-        $this->url = $url;
-        $this->icon = $icon;
-    }
-
-    public function getColor(): string
-    {
-        return $this->color;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getGlyph(): string
-    {
-        return $this->glyph;
-    }
-
-    public function getUrl(): string
-    {
-        return $this->url;
-    }
-
-    public function getIcon(): string
-    {
-        return $this->icon;
+        $this->entityUrl = $entityUrl;
+        $this->entityIcon = $entityIcon;
+        $this->entityName = $entityName;
     }
 
     public function jsonSerialize(): array
@@ -65,8 +54,9 @@ class cashEventApiTransactionExternalInfoResponse implements cashEventApiTransac
             'name' => $this->name,
             'color' => $this->color,
             'glyph' => $this->glyph,
-            'icon' => $this->icon,
-            'url' => $this->url,
+            'entity_icon' => $this->entityIcon,
+            'entity_url' => $this->entityUrl,
+            'entity_name' => $this->entityName,
         ];
     }
 }

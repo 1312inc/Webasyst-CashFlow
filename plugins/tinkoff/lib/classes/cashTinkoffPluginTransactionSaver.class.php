@@ -64,7 +64,8 @@ final class cashTinkoffPluginTransactionSaver
 
     public function saveTransaction(
         cashTinkoffPluginTinkoffAccountSettings $accountSettings,
-        cashTinkoffPluginBankStatementOperationDto $operationDto
+        cashTinkoffPluginBankStatementOperationDto $operationDto,
+        ?cashImport $cashImport = null
     ): ?cashTransaction {
         try {
             $createRequest = $this->makeTransactionCreateRequestFromTinkoffOperation($accountSettings, $operationDto);
@@ -85,6 +86,10 @@ final class cashTinkoffPluginTransactionSaver
                 ->setExternalSource(self::EXTERNAL_SOURCE)
                 ->setExternalHash($hash)
                 ->setExternalData($operationDto->toArray());
+
+            if ($cashImport) {
+                $transaction->setImportId($cashImport->getId());
+            }
 
             cash()->getEntityPersister()->save($transaction);
 

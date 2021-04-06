@@ -2,6 +2,8 @@
 
 class cashTinkoffPluginImporter
 {
+    private const IMPORT_PROVIDER = 'tinkoff';
+
     /**
      * @var cashTinkoffPluginIntegration
      */
@@ -61,11 +63,22 @@ class cashTinkoffPluginImporter
 
 //        $rules = (new cashTinkoffPluginMatchingRuleFactory())->createFromSetting($this->settings);
 
-        foreach ($response->getOperation() as $operation) {
-            $existing = $this->saver->findExistingTransactionByOperation($operation);
+        $tinkoffOperations = $response->getOperation();
+        if (!$tinkoffOperations) {
+            return;
+        }
+
+        $import = cash()->getEntityFactory(cashImport::class)->createNew();
+        $import
+            ->setFilename(sprintf('Tinkoff import %s', date('Y-m-d H:i:s')))
+            ->setProvider(self::IMPORT_PROVIDER);
+        cash()->getEntityPersister()->save($import);
+
+        foreach ($tinkoffOperations as $tinkoffOperation) {
+            $existing = $this->saver->findExistingTransactionByOperation($tinkoffOperation);
             if ($existing) {
                 cashTinkoffPlugin::debug(
-                    sprintf('Operation %s already exists - %s', $operation->getId(), $existing->getId())
+                    sprintf('Operation %s already exists - %s', $tinkoffOperation->getId(), $existing->getId())
                 );
 
                 continue;
@@ -88,7 +101,14 @@ class cashTinkoffPluginImporter
 //                }
 //            }
 
-            $newTransaction = $this->saver->saveTransaction($accountSettings, $operation);
+            $newTransaction = $this->saver->saveTransaction($accountSettings, $tinkoffOperation, $import);
+            if ($newTransaction) {
+                $import->incSuccess();
+            } else {
+                $import->incFail();
+            }
         }
+
+        cash()->getEntityPersister()->save($import);
     }
 }

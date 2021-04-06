@@ -53,6 +53,6 @@ return [
         'event_app_id' => 'cash',
         'event' => 'api_transaction_response_external_data',
         'class' => 'cashApiTransactionBeforeResponseListener',
-        'method' => ['getExternalInfoHandler'],
+        'method' => ['getExternalInfoHandlers'],
     ],
 ];
