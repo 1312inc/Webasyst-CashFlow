@@ -33,7 +33,7 @@ html {
 }
 
 .dialog .dialog-body .dialog-content {
-  min-height: initial;
+  min-height: auto;
 }
 
 body.modal {
