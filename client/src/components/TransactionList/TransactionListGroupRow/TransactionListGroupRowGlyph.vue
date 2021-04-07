@@ -57,11 +57,11 @@ export default {
       }
       // if positive amount
       if (this.transaction.amount >= 0) {
-        return 'fa-arrow-up'
+        return 'fa-arrow-down'
       }
       // if negative amount
       if (this.transaction.amount < 0) {
-        return 'fa-arrow-down'
+        return 'fa-arrow-up'
       }
       return ''
     },

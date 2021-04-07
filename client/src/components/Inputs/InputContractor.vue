@@ -1,6 +1,6 @@
 <template>
   <div style="position: relative">
-    <div class="state-with-inner-icon left">
+    <div class="state-with-inner-icon left width-100">
       <input
         :value="inputLabel"
         @input="input"
@@ -11,6 +11,7 @@
         ref="input"
         type="text"
         autocomplete="off"
+        class="full-width"
       />
       <span v-if="!computedPhoto" class="icon"
         ><i class="fas fa-user-plus"></i

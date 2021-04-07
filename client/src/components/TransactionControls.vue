@@ -33,13 +33,15 @@
       class="flexbox wrap-mobile space-12 middle custom-py-12"
     >
       <div v-show="currentType.type !== 'expense'">
-        <button @click="addTransaction('income')" class="button green">
-          <i class="fas fa-plus"></i> {{ $t("addIncome") }}
+        <button @click="addTransaction('income')" class="button c-button-add-income">
+          <i class="fas fa-plus"></i>
+          <span class="custom-ml-8">{{ $t("addIncome") }}</span>
         </button>
       </div>
       <div v-show="currentType.type !== 'income'">
-        <button @click="addTransaction('expense')" class="button orange">
-          <i class="fas fa-minus"></i> {{ $t("addExpense") }}
+        <button @click="addTransaction('expense')" class="button c-button-add-expense">
+          <i class="fas fa-minus"></i>
+          <span class="custom-ml-8">{{ $t("addExpense") }}</span>
         </button>
       </div>
       <div
@@ -52,7 +54,7 @@
         <button @click="addTransaction('transfer')" class="button light-gray">
           <span>
             <i class="fas fa-exchange-alt"></i>
-            {{ $t("transfer") }}
+            <span class="desktop-only custom-ml-8">{{ $t("transfer") }}</span>
           </span>
         </button>
       </div>
