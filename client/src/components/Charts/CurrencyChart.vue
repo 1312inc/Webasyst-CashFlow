@@ -31,12 +31,17 @@ export default {
       const daysInInterval = iend.diff(istart, 'days') + 1
 
       // Filling empty data
-      const filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
-        return {
-          period: this.$moment().add(-1, 'M').add(i, 'd').format('YYYY-MM-DD'),
-          amount: null
-        }
-      })
+      const filledChartData = new Array(daysInInterval)
+        .fill(null)
+        .map((e, i) => {
+          return {
+            period: this.$moment()
+              .add(-1, 'M')
+              .add(i, 'd')
+              .format('YYYY-MM-DD'),
+            amount: null
+          }
+        })
 
       // Merge empty period with days with data
       this.currency.data.forEach(element => {
@@ -99,10 +104,7 @@ export default {
 
       // Draw Balance Line Past
       const pastDates = this.data.filter(e => {
-        return this.$moment().diff(
-          this.$moment(e.period),
-          'days'
-        ) >= 0
+        return this.$moment().diff(this.$moment(e.period), 'days') >= 0
       })
 
       const linePast = d3
@@ -213,7 +215,9 @@ export default {
       }
 
       // Gradient for the line
-      const amountRange = Math.abs(d3.max(this.data, d => d.amount)) + Math.abs(d3.min(this.data, d => d.amount))
+      const amountRange =
+        Math.abs(d3.max(this.data, d => d.amount)) +
+        Math.abs(d3.min(this.data, d => d.amount))
       const amountMax = d3.max(this.data, d => d.amount)
       const amountMin = d3.min(this.data, d => d.amount)
       let offset
@@ -222,7 +226,10 @@ export default {
       } else if (amountMin >= 0) {
         offset = height
       } else {
-        offset = Math.ceil(Math.abs(d3.max(this.data, d => d.amount)) / amountRange * 100) + '%'
+        offset =
+          Math.ceil(
+            (Math.abs(d3.max(this.data, d => d.amount)) / amountRange) * 100
+          ) + '%'
       }
 
       this.svg
@@ -242,7 +249,9 @@ export default {
         .attr('offset', d => d.offset)
         .attr('stop-color', d => d.color)
 
-      this.svg.append('circle')
+      // current day pointer
+      this.svg
+        .append('circle')
         .attr('cx', x(new Date()))
         .attr('cy', y(futureDates[0].amount))
         .attr('r', 3)
@@ -252,8 +261,12 @@ export default {
 }
 </script>
 
-<style>
-.c-bwc-container svg {
-  max-width: initial !important;
+<style lang="scss">
+.c-bwc-container {
+  margin: 0 auto;
+
+  svg {
+    max-width: initial !important;
+  }
 }
 </style>

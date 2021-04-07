@@ -17,7 +17,7 @@
             <i class="fas fa-redo opacity-30"></i>
           </span>
         </div>
-        <div v-if="isModeUpdate && transaction.create_contact">
+        <div v-if="isModeUpdate && transaction.create_contact_id">
           <span class="icon userpic size-32" v-wa-tippy="tippyContent">
             <img :src="transaction.create_contact.userpic" alt="" />
           </span>
