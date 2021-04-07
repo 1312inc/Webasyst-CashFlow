@@ -104,7 +104,7 @@ export default {
 
       // Draw Balance Line Past
       const pastDates = this.data.filter(e => {
-        return this.$moment(e.period).isSameOrBefore()
+        return this.$moment(e.period).isSameOrBefore(this.$helper.currentDate)
       })
 
       const linePast = d3
@@ -123,7 +123,7 @@ export default {
 
       // Draw Balance Line Future
       const futureDates = this.data.filter(e => {
-        return this.$moment(e.period).isAfter()
+        return this.$moment(e.period).isSameOrAfter(this.$helper.currentDate)
       })
 
       const lineFuture = d3
@@ -252,10 +252,10 @@ export default {
       // current day pointer
       this.svg
         .append('circle')
-        .attr('cx', x(new Date(pastDates[pastDates.length - 1].period)))
-        .attr('cy', y(pastDates[pastDates.length - 1].amount))
+        .attr('cx', x(new Date(futureDates[0].period)))
+        .attr('cy', y(futureDates[0].amount))
         .attr('r', 3)
-        .attr('fill', pastDates[pastDates.length - 1].amount < 0 ? '#fc3d38' : '#3ec55e')
+        .attr('fill', futureDates[0].amount < 0 ? '#fc3d38' : '#3ec55e')
     }
   }
 }
