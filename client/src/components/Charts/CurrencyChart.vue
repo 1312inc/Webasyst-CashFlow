@@ -104,7 +104,7 @@ export default {
 
       // Draw Balance Line Past
       const pastDates = this.data.filter(e => {
-        return this.$moment(e.period) <= this.$moment()
+        return this.$moment(e.period).isSameOrBefore()
       })
 
       const linePast = d3
@@ -123,7 +123,7 @@ export default {
 
       // Draw Balance Line Future
       const futureDates = this.data.filter(e => {
-        return this.$moment(e.period) > this.$moment()
+        return this.$moment(e.period).isAfter()
       })
 
       const lineFuture = d3
