@@ -32,7 +32,7 @@
             {{ $t("amount") }}
           </div>
           <div class="value large bold">
-            <div class="state-with-inner-icon left">
+            <div class="state-with-inner-icon left width-80">
               <input-currency
                 v-model="model.amount"
                 @keyup.enter="submit"
@@ -40,7 +40,7 @@
                 :class="{ 'state-error': $v.model.amount.$error }"
                 ref="focus"
                 type="text"
-                class="bold number short"
+                class="bold number"
                 placeholder="0"
               />
               <span
@@ -58,7 +58,7 @@
                 <i v-if="transactionType === 'income'" class="fas fa-plus"></i>
               </span>
             </div>
-            <span v-if="selectedAccount" class="custom-ml-4">{{
+            <span v-if="selectedAccount" class="custom-ml-8">{{
               $helper.currencySignByCode(selectedAccount.currency)
             }}</span>
           </div>
@@ -73,7 +73,7 @@
             }}
           </div>
           <div class="value">
-            <div class="wa-select solid">
+            <div class="wa-select solid width-100">
               <div
                 v-if="
                   selectedAccount &&
@@ -87,7 +87,7 @@
               <select
                 v-model="model.account_id"
                 :class="{ 'state-error': $v.model.account_id.$error }"
-                style="min-width: 0; max-width: calc(100% - 2rem)"
+                style="min-width: 0; width: calc(100% - 2rem)"
               >
                 <option
                   :value="account.id"
@@ -108,11 +108,11 @@
             {{ $t("toAccount") }}
           </div>
           <div class="value">
-            <div class="wa-select solid">
+            <div class="wa-select solid width-100">
               <select
                 v-model="model.transfer_account_id"
                 :class="{ 'state-error': $v.model.transfer_account_id.$error }"
-                style="min-width: 0; max-width: calc(100% - 2rem)"
+                style="min-width: 0; width: calc(100% - 2rem)"
               >
                 <option
                   :value="account.id"
@@ -168,7 +168,7 @@
             {{ $t("category") }}
           </div>
           <div class="value">
-            <div class="wa-select solid">
+            <div class="wa-select solid width-100">
               <span
                 v-if="selectedCategory"
                 class="icon custom-ml-8"
@@ -181,7 +181,7 @@
               <select
                 v-model="model.category_id"
                 :class="{ 'state-error': $v.model.category_id.$error }"
-                style="min-width: 0; max-width: calc(100% - 2rem)"
+                style="min-width: 0; width: calc(100% - 2rem)"
               >
                 <option
                   :value="category.id"
@@ -473,8 +473,8 @@
             @click="submit"
             :disabled="controlsDisabled"
             :class="{
-              orange: transactionType === 'expense',
-              green: transactionType === 'income',
+              'c-button-add-expense': transactionType === 'expense',
+              'c-button-add-income': transactionType === 'income',
             }"
             class="button"
           >

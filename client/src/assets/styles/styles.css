@@ -1,3 +1,8 @@
+html {
+    --red:    #ff421a;
+    --green:  #0abe5a;
+}
+
 .flexbox .wide {
   flex: 1 1 auto;
   min-width: 1px;
@@ -54,6 +59,9 @@ body.modal {
 }
 
 .c-header { position: relative; padding: 0.75rem 2.375rem; }
+
+.c-button-add-income { background: #16d15f; }
+.c-button-add-expense { background: #f7623a; }
 
 .c-list { margin-top: 0; }
 .c-list .c-item {
