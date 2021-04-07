@@ -1118,3 +1118,6 @@ msgstr "У вас нет доступа к этому счету"
 
 msgid "You are not allowed to create new accounts"
 msgstr "У вас нет доступа к созданию новых счетов"
+
+msgid "Import via CSV"
+msgstr "Импорт из CSV"
