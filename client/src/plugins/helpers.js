@@ -1,5 +1,5 @@
 import store from '../store'
-import { numeral } from '../plugins/numeralMoment'
+import { numeral, moment } from '../plugins/numeralMoment'
 
 export default {
   install (Vue) {
@@ -25,6 +25,9 @@ export default {
       currencySignByCode: code => {
         return store.getters['system/getCurrencySignByCode'](code)
       },
+
+      // TODO: make this hepler everywere
+      currentDate: moment().format('YYYY-MM-DD'),
 
       isDesktopEnv: process.env.VUE_APP_MODE === 'desktop',
 
