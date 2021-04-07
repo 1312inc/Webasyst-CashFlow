@@ -39,6 +39,8 @@ export default {
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
+    max-height: 100%;
+    overflow-y: auto;
 
     @media screen and (max-width: 768px) {
       transform: none;

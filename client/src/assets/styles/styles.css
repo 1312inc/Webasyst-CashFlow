@@ -32,6 +32,10 @@ html {
   display: inherit;
 }
 
+.dialog .dialog-body .dialog-content {
+  min-height: initial;
+}
+
 body.modal {
   overflow: hidden;
 }
