@@ -1112,3 +1112,6 @@ msgstr ""
 
 msgid "You are not allowed to create new accounts"
 msgstr ""
+
+msgid "Import via CSV"
+msgstr ""
