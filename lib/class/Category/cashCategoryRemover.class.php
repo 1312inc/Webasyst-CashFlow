@@ -41,15 +41,12 @@ class cashCategoryRemover
 
         /** @var cashTransactionModel $transactionModel */
         $transactionModel = cash()->getModel(cashTransaction::class);
+        /** @var cashRepeatingTransactionModel $repeatingTransactionModel */
+        $repeatingTransactionModel = cash()->getModel(cashRepeatingTransaction::class);
+
         $transactionModel->startTransaction();
         try {
             $transactionModel->archiveByCategoryId($category->getId());
-            if (!cash()->getEntityPersister()->delete($category)) {
-                $this->error = _w('Error while deleting category');
-                $transactionModel->rollback();
-
-                return false;
-            }
 
             $transactionModel->changeCategoryId(
                 $category->getId(),
@@ -57,6 +54,14 @@ class cashCategoryRemover
                     ? $this->categoryRepository->findNoCategoryExpense()->getId()
                     : $this->categoryRepository->findNoCategoryIncome()->getId()
             );
+            $repeatingTransactionModel->changeCategoryId(
+                $category->getId(),
+                $category->isExpense()
+                    ? $this->categoryRepository->findNoCategoryExpense()->getId()
+                    : $this->categoryRepository->findNoCategoryIncome()->getId()
+            );
+
+            cash()->getEntityPersister()->delete($category);
 
             $transactionModel->commit();
         } catch (Exception $ex) {
