@@ -133,6 +133,9 @@
                 };
 
                 chart[incOrExp+'-'+currency] = c3.generate({
+                    size: {
+                        height: 200
+                    },
                     bindto: '#cash-chart-' + incOrExp + '-' + currency,
                     data: chartData[incOrExp][currency].data,
                     tooltip: {
