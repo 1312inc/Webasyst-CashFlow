@@ -631,6 +631,9 @@ msgstr "Хостинг"
 msgid "Loan payouts"
 msgstr "Выплаты по кредитам"
 
+msgid "Loan payout"
+msgstr "Выплата по кредиту"
+
 msgid "Commissions & fees"
 msgstr "Комиссии банков"
 

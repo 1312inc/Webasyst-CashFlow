@@ -637,6 +637,9 @@ msgstr ""
 msgid "Loan payouts"
 msgstr ""
 
+msgid "Loan payout"
+msgstr ""
+
 msgid "Commissions & fees"
 msgstr ""
 
