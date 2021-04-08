@@ -134,11 +134,14 @@ class cashAccount extends cashAbstractEntity
     {
         if (strpos($this->icon, 'http') !== false) {
             $html = sprintf(
-                '<i class="icon16" style="background-image: url(%s); background-size: 16px 16px;"></i>',
+                wa()->whichUI() == '1.3' ?
+                    '<i class="icon16" style="background-image: url(\'%s\'); background-size: 16px 16px;"></i>'
+                :
+                    '<i class="icon" style="background-image: url(\'%s\'); background-size: 16px 16px;"></i>',
                 $this->icon
             );
         } else {
-            $html = sprintf('<i class="icon16 %s"></i>', $this->icon);
+            $html = sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 %s"></i>' : '', $this->icon);
         }
 
         return $html;

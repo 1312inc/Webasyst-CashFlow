@@ -141,7 +141,7 @@ SQL;
                         $type === cashCategory::TYPE_EXPENSE,
                         $type === cashCategory::TYPE_INCOME,
                         sprintf(
-                            '<i class="icon16 userpic20"  style="background-image: url(%s);"></i>',
+                            wa()->whichUI() == '1.3' ? '<i class="icon16 userpic20" style="background-image: url(%s);"></i>' : '<i class="icon userpic" style="background-image: url(%s);"></i>',
                             $contact->getPhoto(20)
                         ),
                         false
@@ -153,7 +153,7 @@ SQL;
                         $type === cashCategory::TYPE_EXPENSE,
                         $type === cashCategory::TYPE_INCOME,
                         sprintf(
-                            '<i class="icon16 userpic20"  style="background-image: url(%s);"></i>',
+                            wa()->whichUI() == '1.3' ? '<i class="icon16 userpic20" style="background-image: url(%s);"></i>' : '<i class="icon userpic" style="background-image: url(%s);"></i>',
                             wa()->getRootUrl() . 'wa-content/img/userpic20.jpg'
                         ),
                         false
