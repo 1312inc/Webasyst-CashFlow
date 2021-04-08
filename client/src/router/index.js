@@ -3,9 +3,9 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import History from '../views/History.vue'
 import Upnext from '../views/Upnext.vue'
-import Reports from '../views/Reports.vue'
 import Search from '../views/Search.vue'
 import Import from '../views/Import.vue'
+import NotFound from '../views/NotFound.vue'
 import { i18n } from '../plugins/locale'
 
 Vue.use(VueRouter)
@@ -51,11 +51,6 @@ const routes = [
     }
   },
   {
-    path: '/reports',
-    name: 'Reports',
-    component: Reports
-  },
-  {
     path: '/search',
     name: 'Search',
     component: Search,
@@ -63,6 +58,7 @@ const routes = [
       title: `${i18n.t('search.label')} — ${accountName}`
     }
   },
+  // TODO: make 404 guard for imports
   {
     path: '/import/:id',
     name: 'Import',
@@ -70,7 +66,22 @@ const routes = [
     meta: {
       title: `${i18n.t('importResults')} — ${accountName}`
     }
-  }
+  },
+  {
+    path: '/report/dds'
+  },
+  {
+    path: '/import'
+  },
+  {
+    path: '/404',
+    name: 'NotFound',
+    component: NotFound,
+    meta: {
+      title: `${i18n.t('404.title')} — ${accountName}`
+    }
+  },
+  { path: '*', redirect: { name: 'NotFound' } }
 ]
 
 const router = new VueRouter({

@@ -163,5 +163,8 @@
   "createdBy": {
     "normal": "Created by {username} on {createDate}",
     "edited": "@:(createdBy.normal). Last edited on {updateDate}."
+  },
+  "404": {
+    "title": "Не найдено"
   }
 }
