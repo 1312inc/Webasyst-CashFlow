@@ -85,7 +85,7 @@ export default {
       }
     },
     groups () {
-      const today = this.$moment().format('YYYY-MM-DD')
+      const today = this.$helper.currentDate
       const yesterday = this.$moment()
         .add(-1, 'day')
         .format('YYYY-MM-DD')

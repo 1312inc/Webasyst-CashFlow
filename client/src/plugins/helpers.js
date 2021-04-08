@@ -26,7 +26,6 @@ export default {
         return store.getters['system/getCurrencySignByCode'](code)
       },
 
-      // TODO: make this hepler everywere
       currentDate: moment().format('YYYY-MM-DD'),
 
       isDesktopEnv: process.env.VUE_APP_MODE === 'desktop',
