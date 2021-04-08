@@ -54,7 +54,6 @@ final class cashLogoUploader
             $dataPath = $this->getUserAccountPath($contact);
             $dataFullPath = $this->getDataFolder($dataPath);
 
-            waFiles::delete($dataFullPath, true);
             waFiles::create($dataFullPath, true);
 
             $pathToSave = sprintf('%s/%s', $dataFullPath, $file->name);
