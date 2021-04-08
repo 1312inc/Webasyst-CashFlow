@@ -1071,6 +1071,9 @@ msgstr ""
 msgid "Can import transactions"
 msgstr ""
 
+msgid "Can access transfers"
+msgstr ""
+
 msgid "Cash"
 msgstr ""
 

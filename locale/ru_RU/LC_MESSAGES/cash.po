@@ -1077,6 +1077,9 @@ msgstr "Может просматривать отчеты"
 msgid "Can import transactions"
 msgstr "Может импортировать операции"
 
+msgid "Can access transfers"
+msgstr "Может работать с переводами между счетами"
+
 msgid "Cash"
 msgstr "Деньги"
 
