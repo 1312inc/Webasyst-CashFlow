@@ -108,7 +108,7 @@ export default {
 <style>
 .c-chart-bulk-controls {
   position: absolute;
-  top: 57%;
+  top: 50%;
   left: 50%;
   transform: translateX(-50%);
 }
