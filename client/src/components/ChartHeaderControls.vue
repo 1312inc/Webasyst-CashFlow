@@ -18,7 +18,7 @@
 
 <script>
 import CurrencyToggler from '@/components/CurrencyToggler'
-import Dropdown from '@/components/Dropdown'
+import Dropdown from '@/components/Inputs/Dropdown'
 import Amounts from '@/components/Amounts'
 
 export default {

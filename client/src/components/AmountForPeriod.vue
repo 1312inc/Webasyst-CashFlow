@@ -52,7 +52,7 @@ export default {
     total () {
       if (!this.currentChartData) return 0
 
-      const itoday = this.$moment().format('YYYY-MM-DD')
+      const itoday = this.$helper.currentDate
       const eltype = `amount${this.type[0].toUpperCase()}${this.type.slice(1)}`
       const result = this.currentChartData.data
         .filter(e => {

@@ -353,7 +353,7 @@ export default {
           if (e.balance === null) {
             e.balance = previosValue
           }
-          if (e.period === this.$moment().format('YYYY-MM-DD')) {
+          if (e.period === this.$helper.currentDate) {
             e.bulletDisabled = false
           }
         })

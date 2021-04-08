@@ -31,7 +31,7 @@ export default {
       }
 
       const currentBalance = this.chartData.data
-        .filter(e => e.period <= this.$moment().format('YYYY-MM-DD'))
+        .filter(e => e.period <= this.$helper.currentDate)
         .slice(-1)[0]?.balance
       if (!currentBalance) return false
 
