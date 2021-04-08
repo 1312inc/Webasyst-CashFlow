@@ -35,8 +35,7 @@ export default {
         .fill(null)
         .map((e, i) => {
           return {
-            period: this.$moment()
-              .add(-1, 'M')
+            period: istart.clone()
               .add(i, 'd')
               .format('YYYY-MM-DD'),
             amount: null

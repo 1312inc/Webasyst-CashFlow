@@ -41,7 +41,8 @@ export default {
     const pieLabel = chart.seriesContainer.createChild(am4core.Label)
     pieLabel.textAlign = 'middle'
     pieLabel.horizontalCenter = 'middle'
-    pieLabel.verticalCenter = 'middle'
+    pieLabel.dy = -40
+    // pieLabel.verticalCenter = 'middle'
     this.pieLabel = pieLabel
 
     // Add and configure Series
