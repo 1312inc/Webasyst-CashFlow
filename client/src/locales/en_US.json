@@ -18,7 +18,7 @@
   "deleteAll": "@:delete all",
   "move": "Move",
   "name": "Name",
-  "selected": "{count} transactions selected",
+  "selected": "{count} transactions",
   "currency": "Currency",
   "type": "Type",
   "color": "Color",

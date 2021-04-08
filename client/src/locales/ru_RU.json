@@ -18,7 +18,7 @@
   "deleteAll": "@:delete все",
   "move": "Переместить",
   "name": "Название",
-  "selected": "{count} операций выделено",
+  "selected": "{count} операций",
   "currency": "Валюта",
   "type": "Тип",
   "color": "Цвет",
