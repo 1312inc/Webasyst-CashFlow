@@ -115,7 +115,15 @@ final class cashTransactionRepeater
                 throw new kmwaRuntimeException('No repeating transaction end setting');
         }
 
-        $this->flushTransaction(true);
+        $ids = $this->flushTransaction(true);
+        if ($ids) {
+            array_map(
+                static function (cashTransaction $t) use (&$tIds) {
+                    $tIds[] = $t->getId();
+                },
+                $ids
+            );
+        }
 
         return $tIds;
     }
