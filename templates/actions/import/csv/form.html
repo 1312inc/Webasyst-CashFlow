@@ -187,7 +187,7 @@
                                 [`Income`]:
                                 <div class="wa-select small" style="max-width: 300px;">
                                     <select name="import[amount][multi][map][income]"
-                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
+                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::AMOUNT}"
                                     >
                                         <option></option>
                                         {foreach $info->headers as $header}
@@ -202,7 +202,7 @@
                                 [`Expenses`]:
                                 <div class="wa-select small" style="max-width: 300px;">
                                     <select name="import[amount][multi][map][expense]"
-                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
+                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::AMOUNT}"
                                     >
                                         <option></option>
                                         {foreach $info->headers as $header}
