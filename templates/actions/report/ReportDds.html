@@ -144,6 +144,9 @@
                                 return d3.format(".1%")(ratio) + ' / ' + ('' + d3.format(',')(value)).replace(',',' ') + ' ' + chartData[incOrExp][currency].helpers.currencySign;
                             }
                         }
+                    },
+                    legend: {
+                        show: false
                     }
                 });
                 charts.push(chart);
