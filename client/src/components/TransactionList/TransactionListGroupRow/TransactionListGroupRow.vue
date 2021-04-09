@@ -56,11 +56,18 @@
         <div class="c-item-amount">
           <div class="flexbox justify-end middle custom-mb-8">
             <span
-              v-if="transaction.affected_transactions > 1"
-              class="badge light-gray small custom-mr-8"
+              v-if="
+                transaction.$_flagCreated &&
+                transaction.affected_transactions > 1
+              "
+              class="badge light-gray small custom-mr-8 nowrap"
             >
               &times;
-              {{ transaction.affected_transactions }}
+              {{
+                transaction.affected_transactions > 100
+                  ? "99+"
+                  : transaction.affected_transactions
+              }}
             </span>
             <div :style="`color: ${category.color}`" class="bold nowrap">
               {{
