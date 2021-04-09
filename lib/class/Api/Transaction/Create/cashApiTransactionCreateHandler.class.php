@@ -116,7 +116,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
                 $newRepeatedTransactionIds = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
                 if ($newRepeatedTransactionIds) {
                     $firstId = reset($newRepeatedTransactionIds);
-                    $newTransactionIds[$firstId][] = $newRepeatedTransactionIds;
+                    $newTransactionIds[$firstId] = $newRepeatedTransactionIds;
                 }
             }
 
@@ -130,7 +130,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
                     $newRepeatedTransactionIds = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
                     if ($newRepeatedTransactionIds) {
                         $firstId = reset($newRepeatedTransactionIds);
-                        $newTransactionIds[$firstId][] = $newRepeatedTransactionIds;
+                        $newTransactionIds[$firstId] = $newRepeatedTransactionIds;
                     }
                 }
             }
