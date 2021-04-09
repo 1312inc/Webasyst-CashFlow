@@ -89,7 +89,7 @@
                             </div>
                         </label>
                     </div>
-                    <div><!-- JS-updated depenging on the column selected -->
+                    <div><!-- JS-updated depending on the column selected -->
                         <table class="c-import-conditions small" data-cash-csv-import-conditions-account></table>
                     </div>
                 </div>
@@ -187,7 +187,7 @@
                                 [`Income`]:
                                 <div class="wa-select small" style="max-width: 300px;">
                                     <select name="import[amount][multi][map][income]"
-                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
+                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::AMOUNT}"
                                     >
                                         <option></option>
                                         {foreach $info->headers as $header}
@@ -202,7 +202,7 @@
                                 [`Expenses`]:
                                 <div class="wa-select small" style="max-width: 300px;">
                                     <select name="import[amount][multi][map][expense]"
-                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
+                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::AMOUNT}"
                                     >
                                         <option></option>
                                         {foreach $info->headers as $header}
@@ -278,7 +278,7 @@
                                 </select>
                             </div>
                         </label>
-                        <div><!-- JS-updated depenging on the column selected -->
+                        <div><!-- JS-updated depending on the column selected -->
                             <table class="c-import-conditions small" data-cash-csv-import-conditions-category></table>
                         </div>
                     </div>
@@ -455,6 +455,10 @@
                         }
 
                         $.each(r.data.{{cashImportCsvAbstractValidator::UNIQUE_VALUES}}, function (index, columnValue) {
+                            if (!transactionCounts[name][columnValue]) {
+                                return;
+                            }
+
                             $template.tmpl({
                                 columnValue: columnValue,
                                 sources: data[scope],
