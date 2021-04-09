@@ -17,4 +17,15 @@ class cashRepeatingTransactionModel extends cashModel
     {
         return $this->deleteByField(['external_source' => $source, 'external_hash' => $hash]);
     }
+
+    /**
+     * @param int $oldCategoryId
+     * @param int $newCategoryId
+     *
+     * @return bool|waDbResultUpdate|null
+     */
+    public function changeCategoryId($oldCategoryId, $newCategoryId)
+    {
+        return $this->updateByField('category_id', $oldCategoryId, ['category_id' => $newCategoryId]);
+    }
 }
