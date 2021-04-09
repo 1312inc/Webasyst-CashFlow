@@ -17,6 +17,8 @@ class cashReportDdsAction extends cashViewAction
 
         if (wa()->whichUI() === '2.0') {
             $this->setLayout(new cashStaticLayout());
+        } elseif (!waRequest::isXMLHttpRequest() && wa()->whichUI() === '1.3') {
+            $this->redirect(wa()->getAppUrl());
         }
 
         parent::preExecute();
