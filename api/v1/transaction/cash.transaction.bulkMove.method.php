@@ -26,6 +26,10 @@ class cashTransactionBulkMoveMethod extends cashApiAbstractMethod
 
         $transactions = (new cashApiTransactionBulkMoveHandler())->handle($request);
 
+        cash()->getEventDispatcher()->dispatch(
+            new cashEvent(cashEventStorage::API_TRANSACTION_BEFORE_RESPONSE, new ArrayIterator($transactions))
+        );
+
         return new cashApiTransactionBulkMoveResponse($transactions);
     }
 }
