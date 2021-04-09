@@ -21,7 +21,14 @@
         <i :class="externalGlyphClass">{{ externalGlyphSymbol }}</i>
       </span>
     </span>
-    <span v-if="isCollapseHeader || isRepeatingGroup">
+    <!-- Userpic stack imitation block -->
+    <span
+      v-if="
+        (isCollapseHeader || isRepeatingGroup) &&
+        !transaction.contractor_contact
+      "
+      style="position: absolute"
+    >
       <span
         :style="`background-color:${category.color};`"
         class="userpic-stack-imitation"

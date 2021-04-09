@@ -14,6 +14,12 @@
       >
         {{ category.name }}
       </div>
+      <div v-if="transaction.external_source_info">
+        <span class="desktop-and-tablet-only"> / </span>
+        <div class="text-ellipsis">
+          {{ transaction.external_source_info.name }}
+        </div>
+      </div>
       <span class="badge light-gray small">
         {{ collapseHeaderData.ids.length }}
       </span>
