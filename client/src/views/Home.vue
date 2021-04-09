@@ -24,7 +24,7 @@ import ChartHeader from '@/components/ChartHeader'
 import ChartHeaderControls from '@/components/ChartHeaderControls'
 import ChartHeaderTitle from '@/components/ChartHeaderTitle'
 import AmChartContainer from '@/components/Charts/AmChartContainer'
-import DetailsDashboard from '@/components/DetailsDashboard'
+import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
@@ -60,9 +60,27 @@ export default {
 
   methods: {
     async updateEntity (to) {
+      const entityName = to.name.toLowerCase()
+      const entityId = +to.params.id || to.params.id
+
+      if (entityName !== 'home') {
+      // 404 route guard
+        if (entityName === 'currency') {
+          if (!this.$store.getters['account/currenciesInAccounts'].includes(entityId)) {
+            this.$router.replace({ name: 'NotFound' })
+            return
+          }
+        } else {
+          if (!this.$store.getters[`${entityName}/getById`](entityId)) {
+            this.$router.replace({ name: 'NotFound' })
+            return
+          }
+        }
+      }
+
       await this.$store.dispatch('updateCurrentEntity', {
-        name: to.name.toLowerCase(),
-        id: +to.params.id || to.params.id
+        name: entityName,
+        id: entityId
       })
 
       // TODO: make current entity more userful
