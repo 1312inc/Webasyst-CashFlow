@@ -37,7 +37,9 @@
                     {foreach $datum->valuesPerPeriods as $values name=foreach_month_columns}
                     <td{if $smarty.foreach.foreach_month_columns.iteration == 13} class="c-column-sticky-right-totals"{/if}>
                     {foreach $values as $currency => $value}
-                        <div class="nowrap align-right{if $smarty.foreach.foreach_month_columns.iteration == 13} black bold{/if}">{$value.per_month} {$datum->currencies[$currency]->getSign()}</div>
+                        <div class="nowrap align-right{if $smarty.foreach.foreach_month_columns.iteration == 13} black bold{/if}">
+                            {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false} {$datum->currencies[$currency]->getSign()}
+                        </div>
                     {/foreach}
                     </td>
                     {/foreach}
