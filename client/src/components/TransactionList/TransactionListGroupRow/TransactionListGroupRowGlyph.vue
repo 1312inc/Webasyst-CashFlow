@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="position:relative;">
     <span
       :style="`background-color:${category.color};`"
       class="userpic userpic48 align-center"
@@ -21,14 +21,21 @@
         <i :class="externalGlyphClass">{{ externalGlyphSymbol }}</i>
       </span>
     </span>
-    <span v-if="isCollapseHeader || isRepeatingGroup">
+    <!-- Userpic stack imitation block -->
+    <span
+      v-if="
+        (isCollapseHeader || isRepeatingGroup) &&
+        !transaction.contractor_contact
+      "
+      class="c-userpic-stack-imitation"
+    >
       <span
         :style="`background-color:${category.color};`"
-        class="userpic-stack-imitation"
+        class="c-userpic-stack-imitation__item"
       ></span>
       <span
         :style="`background-color:${category.color};`"
-        class="userpic-stack-imitation"
+        class="c-userpic-stack-imitation__item"
       ></span>
     </span>
   </div>
@@ -117,5 +124,27 @@ export default {
 }
 .userpic48:hover > .userstatus > svg {
   display: block;
+}
+
+.c-userpic-stack-imitation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+
+  &__item {
+    position: absolute;
+    top: 0;
+    width: 3rem;
+    height: 3rem;
+    background: var(--black);
+    opacity: 0.25;
+    border-radius: 50%;
+    margin-left: -0.25rem;
+
+    &:nth-child(1) {
+      margin-left: -0.5rem;
+    }
+  }
 }
 </style>

@@ -1,10 +1,13 @@
 <template>
-  <div class="flexbox space-4 semibold custom-mb-8" style="overflow: hidden">
+  <div
+    class="flexbox middle space-4 semibold custom-mb-8"
+    style="overflow: hidden"
+  >
     <!-- if collapsed transactions header -->
     <template v-if="collapseHeaderData">
       <div
         class="text-ellipsis c-grouped-transaction-description"
-        style="flex-shrink: 1"
+        style="flex: 0 1 auto"
         :title="
           $t('collapseTransactionDesc', {
             category: category.name,
@@ -13,6 +16,16 @@
         "
       >
         {{ category.name }}
+      </div>
+      <div
+        v-if="transaction.external_source_info"
+        class="flexbox middle wide space-4"
+        style="flex: 0 1 auto"
+      >
+        <span>/</span>
+        <div class="text-ellipsis">
+          {{ transaction.external_source_info.name }}
+        </div>
       </div>
       <span class="badge light-gray small">
         {{ collapseHeaderData.ids.length }}
