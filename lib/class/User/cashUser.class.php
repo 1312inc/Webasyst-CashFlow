@@ -6,7 +6,7 @@
 class cashUser
 {
     use kmwaWaUserTrait {
-        setContact as setContactParent;
+        kmwaWaUserTrait::setContact as setContactParent;
     }
 
     /**
