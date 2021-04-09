@@ -143,8 +143,11 @@
                     tooltip: {
                         format: {
                             value: function (value, ratio, id) {
-                                return d3.format(".1%")(ratio) + ' / ' + ('' + d3.format(',')(value)).replace(',',' ') + ' ' + chartData[incOrExp][currency].helpers.currencySign;
+                                return d3.format(".1%")(ratio);
                             }
+                        },
+                        contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
+                          return '<span style="background: var(--background-color-blank); padding: 4px; white-space: nowrap; font-size: 13px; border-radius: 2px;">'+d[0].name+'</span>';
                         }
                     },
                     legend: {
