@@ -601,18 +601,6 @@ class cashGraphService
                 break;
         }
 
-        $initialBalance = 0;
-        if ($calculateBalance) {
-            $initialSql = clone $sqlParts;
-            $initialData = $initialSql->select(['sum(ct.amount) balance'])
-                ->addAndWhere('ct.date < s:from')
-                ->addParam('from', $paramsDto->from->format('Y-m-d'))
-                ->query()
-                ->fetchAll();
-
-            $initialBalance = (float) $initialData[0]['balance'];
-        }
-
         $data = $sqlParts->addAndWhere(sprintf('%s between s:from and s:to', $grouping))
             ->addParam('from', $paramsDto->from->format($format))
             ->addParam('to', $paramsDto->to->format($format))
@@ -622,12 +610,15 @@ class cashGraphService
             ->fetchAll();
 
         if ($calculateBalance) {
+            $balanceFlow = $this->getAggregateBalanceFlow($paramsDto);
             foreach ($data as $i => $datum) {
-                $data[$i]['balance'] = (float) $data[$i]['incomeAmount']
-                    + (float) $data[$i]['expenseAmount']
-                    + (float) $data[$i]['profitAmount']
-                    + $initialBalance;
-                $initialBalance = $data[$i]['balance'];
+                if (!isset($balanceFlow[$datum['currency']])) {
+                    continue;
+                }
+
+                if ($datum['groupkey'] === $balanceFlow[$datum['currency']][$i]['period']) {
+                    $data[$i]['balance'] = $balanceFlow[$datum['currency']][$i]['amount'];
+                }
             }
         }
 
