@@ -32,7 +32,6 @@ class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
 
         $saver = new cashTransactionSaver();
         $updateData = [];
-        $response = [];
 
         $account = null;
         if ($request->account_id) {
@@ -73,10 +72,24 @@ class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
 
             $transactionData = cash()->getHydrator()->extract($transaction, [], $fields);
             $saveData = array_merge($transactionData, $updateData);
-            $transaction = $saver->saveFromArray($transaction, $saveData, $params);
-            if ($transaction) {
-                $response[] = $this->transactionResponseDtoAssembler->generateResponseFromEntity($transaction);
+
+            if ($saver->populateFromArray($transaction, $saveData, $params)) {
+                $saver->addToPersist($transaction);
             }
+
+            if ($params->repeating) {
+                $transferTransaction = $saver->createTransfer($transaction, $params);
+                if ($transferTransaction) {
+                    $saver->addToPersist($transferTransaction);
+                }
+            }
+        }
+
+        $saved = $saver->persistTransactions();
+        $response = [];
+        foreach ($saved as $savedT) {
+            $dto = $this->transactionResponseDtoAssembler->generateResponseFromEntity($savedT);
+            $response[] = $dto;
         }
 
         return $response;

@@ -18,7 +18,7 @@ class cashTransactionSaver extends cashEntitySaver
      * @param array                        $data
      * @param cashTransactionSaveParamsDto $params
      *
-     * @return bool|cashTransaction
+     * @return bool|array<cashTransaction>
      * @throws ReflectionException
      * @throws kmwaAssertException
      * @throws kmwaLogicException
@@ -33,7 +33,7 @@ class cashTransactionSaver extends cashEntitySaver
         }
 
         if ($params->repeating) {
-            $transferTransaction = $transaction - $this->createTransfer($transaction, $params);
+            $transferTransaction = $this->createTransfer($transaction, $params);
             if ($transferTransaction) {
                 $toPersist[] = $transferTransaction;
             }
