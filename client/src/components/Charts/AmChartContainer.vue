@@ -24,6 +24,7 @@ export default {
       after: ({ type }) => {
         switch (type) {
           case 'updateCurrentEntity':
+          case 'transactionBulk/bulkMove':
             this.$store.dispatch('transaction/getChartData')
         }
       }
