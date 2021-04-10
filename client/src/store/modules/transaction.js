@@ -95,15 +95,18 @@ export default {
       })
     },
 
-    updateTransactionProps (state, { id, props }) {
-      const i = state.transactions.data.findIndex(t => t.id === id)
-      if (i > -1) {
-        const newData = {
-          ...state.transactions.data[i],
-          ...props
+    updateTransactionProps (state, { ids, props }) {
+      ids.forEach(id => {
+        const i = state.transactions.data.findIndex(t => t.id === id)
+        if (i > -1) {
+          const newData = {
+            ...state.transactions.data[i],
+            ...props,
+            $_flagUpdated: true
+          }
+          state.transactions.data.splice(i, 1, newData)
         }
-        state.transactions.data.splice(i, 1, newData)
-      }
+      })
     },
 
     deleteTransaction (state, data) {

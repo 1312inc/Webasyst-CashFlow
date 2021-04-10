@@ -1,5 +1,13 @@
 import updateHeaderTodayCounter from '../utils/updateHeaderTodayCounter'
 
+const dispatchAll = (store) => {
+  return Promise.all([
+    store.dispatch('transaction/getTodayCount'),
+    store.dispatch('account/getList'),
+    store.dispatch('balanceFlow/getBalanceFlow')
+  ])
+}
+
 export default (store) => {
   // listen to mutations
   store.subscribe(({ type, payload }, state) => {
@@ -8,11 +16,7 @@ export default (store) => {
       case 'transaction/updateTransactions':
       case 'transaction/deleteTransaction':
       case 'transaction/createTransactions':
-        return Promise.all([
-          store.dispatch('transaction/getTodayCount'),
-          store.dispatch('account/getList'),
-          store.dispatch('balanceFlow/getBalanceFlow')
-        ])
+        return dispatchAll(store)
       case 'transaction/updateTransactionProps':
         if ('is_onbadge' in payload.props) {
           store.dispatch('transaction/getTodayCount')
@@ -40,6 +44,12 @@ export default (store) => {
           if (!payload.id) {
             store.dispatch('balanceFlow/getBalanceFlow')
           }
+          break
+        case 'transactionBulk/bulkMove':
+          return Promise.all([
+            store.dispatch('transaction/fetchTransactions'),
+            dispatchAll(store)
+          ])
       }
     }
   })

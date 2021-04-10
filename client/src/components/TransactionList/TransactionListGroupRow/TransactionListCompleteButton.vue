@@ -21,7 +21,7 @@ export default {
         })
         .then(() => {
           this.$store.commit('transaction/updateTransactionProps', {
-            id: this.transactionId,
+            ids: [this.transactionId],
             props: {
               is_onbadge: null
             }
