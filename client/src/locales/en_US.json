@@ -166,5 +166,6 @@
   },
   "404": {
     "title": "Not Found"
-  }
+  },
+  "export": "Export"
 }
