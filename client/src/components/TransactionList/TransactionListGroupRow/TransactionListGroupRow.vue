@@ -60,7 +60,7 @@
                 transaction.$_flagCreated &&
                 transaction.affected_transactions > 1
               "
-              class="badge light-gray small custom-mr-8 nowrap"
+              class="badge light-gray small nowrap"
             >
               &times;
               {{
