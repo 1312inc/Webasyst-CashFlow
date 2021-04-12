@@ -12,7 +12,7 @@
         >
           {{ $t("setDates") }}
         </button>
-        <ExportButton />
+        <ExportButton class="custom-ml-12 custom-ml-8-mobile" />
       </div>
       <div>
         <button @click="closeDashboard" class="nobutton largest custom-p-0">
@@ -37,7 +37,7 @@ import { mapState } from 'vuex'
 import Modal from '@/components/Modal'
 import DetailsDashboardItem from './DetailsDashboardItem.vue'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
-import ExportButton from '@/components/ExportButton'
+import ExportButton from '@/components/Buttons/ExportButton'
 
 export default {
   components: {
