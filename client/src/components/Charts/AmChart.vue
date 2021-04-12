@@ -301,12 +301,14 @@ export default {
 
     updateChartData (newChartData) {
       // Define interval in days
-      const daysInInterval = this.$moment(this.chartInterval.to).diff(this.$moment(this.chartInterval.from), 'days') + 1
+      const ifrom = this.$moment(this.chartInterval.from)
+      const ito = this.$moment(this.chartInterval.to)
+      const daysInInterval = ito.diff(ifrom, 'days') + 1
 
       // Filling empty data
       const filledChartData = new Array(daysInInterval).fill(null).map((e, i) => {
         return {
-          period: this.$moment(this.chartInterval.from).add(i, 'd').format('YYYY-MM-DD'),
+          period: ifrom.clone().add(i, 'd').format('YYYY-MM-DD'),
           amountIncome: null,
           amountExpense: null,
           balance: null
@@ -543,7 +545,6 @@ export default {
       nbr.axisFill.tooltip.getFillFromObject = false
       nbr.axisFill.tooltip.background.fill = chartColors.red
       nbr.axisFill.tooltip.label.fill = chartColors.black
-      nbr.axisFill.tooltip.animationDuration = 500
       const p1 = (1 - this.balanceAxis.valueToPosition(minimumAmount)) * 100
       const p2 = 220 / 353 * 100
       const p3 = p1 / 100 * p2

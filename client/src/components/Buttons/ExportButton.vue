@@ -4,7 +4,10 @@
     :href="link"
     class="button light-gray outlined"
     target="_blank"
-    ><span><i class="fas fa-file-excel"></i> {{ $t("export") }}</span></a
+    ><span
+      ><i class="fas fa-file-excel" style="color: #499b5e"></i>
+      {{ $t("export") }}</span
+    ></a
   >
 </template>
 
@@ -26,7 +29,7 @@ export default {
 
     link () {
       return encodeURI(
-        `${this.$helper.baseUrl}?module=export&action=csv&settings[start_date]=${this.detailsInterval.from}&settings[end_date]=${this.detailsInterval.to}&settings[entity_type]=${this.entity[0]}&settings[entity_id]=${this.entity[1]}&type=completed`
+        `${this.$helper.baseUrl}?module=export&action=csv&settings[start_date]=${this.detailsInterval.from}&settings[end_date]=${this.detailsInterval.to}&settings[entity_type]=${this.entity[0]}&settings[entity_id]=${this.entity[1]}`
       )
     }
   }
