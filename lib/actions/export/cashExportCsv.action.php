@@ -25,14 +25,23 @@ class cashExportCsvAction extends cashViewAction
         switch (waRequest::request('type', waRequest::TYPE_STRING_TRIM, '')) {
             case 'upcoming':
                 $startDate = (new DateTime('tomorrow'))->modify('midnight');
-                $endDate = new DateTime($settings['end_date']);
+                $endDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['end_date']);
                 break;
 
             case 'completed':
+                $startDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['start_date']);
+                $endDate = (new DateTime())->modify('midnight');
+                break;
+
             default:
-                $startDate = new DateTime($settings['start_date']);
-                $endDate = new DateTime('midnight');
+                $startDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['start_date']);
+                $endDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['end_date']);
         }
+
+        if (!$endDate && !$startDate) {
+            throw new waException('Wrong dates');
+        }
+
         $filterDto = new cashTransactionPageFilterDto($settings['entity_type'], $settings['entity_id']);
 
         /** @var cashTransactionRepository $repository */

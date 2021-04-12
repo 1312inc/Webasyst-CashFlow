@@ -337,6 +337,49 @@ SQL;
     }
 
     /**
+     * @param string         $startDate
+     * @param string         $endDate
+     * @param waContact      $contact
+     * @param cashCurrencyVO $currency
+     *
+     * @return int
+     * @throws waException
+     */
+    public function countByDateBoundsAndCurrency(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        cashCurrencyVO $currency
+    ): int {
+        $whereImportSql = ' and ca.currency = s:currency_code';
+
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+        $transactionAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
+
+        $sql = <<<SQL
+select count(ct.id)
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+where ct.date between s:startDate and s:endDate
+      and ct.is_archived = 0
+      {$whereImportSql}
+      and {$transactionAccessSql}
+      and {$categoryAccessSql}
+SQL;
+
+        $query = $this->query(
+            $sql,
+            [
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'currency_code' => $currency->getCode(),
+            ]
+        );
+
+        return (int) $query->fetchField();
+    }
+
+    /**
      * @param string    $startDate
      * @param string    $endDate
      * @param waContact $contact
@@ -508,6 +551,63 @@ SQL;
                 'startDate' => $startDate,
                 'endDate' => $endDate,
                 'import_id' => $import,
+                'start' => $start,
+                'limit' => $limit,
+            ]
+        );
+
+        return $returnResult ? $query->fetchAll() : $query->getIterator();
+    }
+
+    /**
+     * @param string         $startDate
+     * @param string         $endDate
+     * @param waContact      $contact
+     * @param cashCurrencyVO $currency
+     * @param bool           $returnResult
+     * @param int|null       $start
+     * @param int|null       $limit
+     *
+     * @return waDbResultIterator|array
+     * @throws waException
+     */
+    public function getByDateBoundsAndCurrency(
+        $startDate,
+        $endDate,
+        waContact $contact,
+        cashCurrencyVO $currency,
+        $returnResult = false,
+        $start = null,
+        $limit = null
+    ) {
+        $limits = '';
+        if ($start !== null && $limit !== null) {
+            $limits = 'limit i:start, i:limit';
+        }
+
+        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
+        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
+
+        $sql = <<<SQL
+select ct.*
+from cash_transaction ct
+join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+left join cash_category cc on ct.category_id = cc.id
+where ct.date between s:startDate and s:endDate
+    and ct.is_archived = 0
+    and ca.currency = s:currency_code
+    and {$accountAccessSql}
+    and {$categoryAccessSql}
+order by ct.date, ct.id
+{$limits}
+SQL;
+
+        $query = $this->query(
+            $sql,
+            [
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'currency_code' => $currency->getCode(),
                 'start' => $start,
                 'limit' => $limit,
             ]

@@ -28,11 +28,6 @@ class cashTransactionRepository extends cashBaseRepository
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
 
-        $accountDtos = [];
-        foreach (cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact($filterDto->contact) as $a) {
-            $accountDtos[$a->getId()] = cashAccountDto::fromEntity($a);
-        }
-
         $start = null;
         $limit = null;
         if ($pagination) {
@@ -123,6 +118,30 @@ class cashTransactionRepository extends cashBaseRepository
 
                 break;
 
+            case cashTransactionPageFilterDto::FILTER_CURRENCY:
+                $data = $model->getByDateBoundsAndCurrency(
+                    $startDate->format('Y-m-d 00:00:00'),
+                    $endDate->format('Y-m-d 23:59:59'),
+                    $filterDto->contact,
+                    $filterDto->entity,
+                    false,
+                    $start,
+                    $limit
+                );
+
+                if ($pagination) {
+                    $pagination->setTotalRows(
+                        $model->countByDateBoundsAndCurrency(
+                            $startDate->format('Y-m-d 00:00:00'),
+                            $endDate->format('Y-m-d 23:59:59'),
+                            $filterDto->contact,
+                            $filterDto->entity
+                        )
+                    );
+                }
+
+                break;
+
             default:
                 throw new kmwaRuntimeException(_w('Wrong filter type'));
         }
@@ -132,6 +151,11 @@ class cashTransactionRepository extends cashBaseRepository
             cashCategoryDto::class,
             cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact($filterDto->contact)
         );
+
+        $accountDtos = [];
+        foreach (cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact($filterDto->contact) as $a) {
+            $accountDtos[$a->getId()] = cashAccountDto::fromEntity($a);
+        }
 
         $dtoAssembler = new cashTransactionDtoAssembler();
         $dtos = [];
