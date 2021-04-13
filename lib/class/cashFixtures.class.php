@@ -73,10 +73,10 @@ class cashFixtures
                     'Hosting' => [_wd(cashConfig::APP_ID, 'Hosting'), '#F8BBD0', false],
                     'Taxes' => [_wd(cashConfig::APP_ID, 'Taxes'), '#FF8A65', false],
                     'Commissions & fees' => [_wd(cashConfig::APP_ID, 'Commissions & fees'), '#FB8C20', false],
-                    'Dividend payouts' => [_wd(cashConfig::APP_ID, 'Dividend payouts'), '#FF7043', true],
                     'Refunds' => [_wd(cashConfig::APP_ID, 'Refunds'), '#FF1312', false],
                     'Loan payouts' => [_wd(cashConfig::APP_ID, 'Loan payouts'), '#EE2222', false],
                     'Unexpected loss' => [_wd(cashConfig::APP_ID, 'Unexpected loss'), '#FF1312', false],
+                    'Dividend payouts' => [_wd(cashConfig::APP_ID, 'Dividend payouts'), '#2EA2FD', true],
                 ],
                 true
             ),
