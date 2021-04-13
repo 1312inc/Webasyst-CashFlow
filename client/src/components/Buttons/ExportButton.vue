@@ -19,7 +19,7 @@ export default {
     },
 
     showComponent () {
-      const allow = ['account', 'category']
+      const allow = ['account', 'category', 'currency']
       return this.entity.length === 2 && allow.includes(this.entity[0])
     },
 

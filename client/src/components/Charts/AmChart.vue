@@ -15,6 +15,8 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesDark from '@amcharts/amcharts4/themes/amchartsdark'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
+let prefersColorSchemeDark = isDarkMode
+
 const chartColors = {
   green: am4core.color('#3ec55e'),
   red: am4core.color('#fc3d38'),
@@ -26,7 +28,7 @@ const chartColors = {
   graylight: am4core.color('#f3f3f3')
 }
 
-let prefersColorSchemeDark = isDarkMode
+am4core.addLicense('CH269543621')
 if (prefersColorSchemeDark) {
   am4core.useTheme(am4themesDark)
 }
