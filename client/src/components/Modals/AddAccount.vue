@@ -37,7 +37,7 @@
               >
                 <option
                   :value="c.code"
-                  v-for="c in $store.state.system.currencies"
+                  v-for="c in sortedCurrencies"
                   :key="c.code"
                 >
                   {{ c.code }} – {{ c.title }} ({{ c.sign }})
@@ -174,6 +174,16 @@ export default {
       currency: {
         required
       }
+    }
+  },
+
+  computed: {
+    sortedCurrencies () {
+      return [...this.$store.state.system.currencies].sort((a, b) => {
+        if (a.code < b.code) { return -1 }
+        if (a.code > b.code) { return 1 }
+        return 0
+      })
     }
   },
 
