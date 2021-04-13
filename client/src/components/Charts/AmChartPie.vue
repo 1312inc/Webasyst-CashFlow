@@ -8,6 +8,8 @@ import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
 
+am4core.addLicense('CH269543621')
+
 export default {
   props: [
     'rawData',
