@@ -583,14 +583,14 @@ class cashGraphService
                 $sqlParts->addAndWhere('ca.currency = s:currency')
                     ->addParam('currency', $paramsDto->filter->getCurrency());
 
-                $accountSql = clone $sqlParts;
-                $accounts = $accountSql->select(['ct.account_id'])
-                    ->groupBy(['ct.account_id'])
-                    ->query()
-                    ->fetchAll('account_id');
+                /** @var cashAccount[] $accounts */
+                $accounts = cash()->getEntityRepository(cashAccount::class)->findAll();
+                foreach ($accounts as $account) {
+                    if ($account->getCurrency() !== $paramsDto->filter->getCurrency()) {
+                        continue;
+                    }
 
-                foreach ($accounts as $accountId => $accountIds) {
-                    if (cash()->getContactRights()->canSeeAccountBalance($paramsDto->contact, $accountId)) {
+                    if (cash()->getContactRights()->canSeeAccountBalance($paramsDto->contact, $account->getId())) {
                         $calculateBalance = true;
                     } else {
                         $calculateBalance = false;
@@ -652,8 +652,8 @@ class cashGraphService
 
                     $data[$i]['balance'] = $initialBalance
                         + (cashHelper::parseFloat($balanceData[$j]['expenseAmount'])
-                            + cashHelper::parseFloat($balanceData[$j]['incomeAmount'])
-                            + cashHelper::parseFloat($balanceData[$j]['profitAmount']));
+                        + cashHelper::parseFloat($balanceData[$j]['incomeAmount'])
+                        + cashHelper::parseFloat($balanceData[$j]['profitAmount']));
                     $j++;
                     $initialBalance = $data[$i]['balance'];
                 }
