@@ -25,21 +25,46 @@ class cashExportCsvAction extends cashViewAction
         switch (waRequest::request('type', waRequest::TYPE_STRING_TRIM, '')) {
             case 'upcoming':
                 $startDate = (new DateTime('tomorrow'))->modify('midnight');
+
                 $endDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['end_date']);
+                if (!$endDate) {
+                    $endDate = DateTime::createFromFormat('Y-m-d|', $settings['end_date']);
+                }
+                if (!$endDate) {
+                    throw new waException('Wrong end date');
+                }
+
                 break;
 
             case 'completed':
                 $startDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['start_date']);
+                if (!$startDate) {
+                    $startDate = DateTime::createFromFormat('Y-m-d|', $settings['start_date']);
+                }
+                if (!$startDate) {
+                    throw new waException('Wrong start date');
+                }
+
                 $endDate = (new DateTime())->modify('midnight');
+
                 break;
 
             default:
                 $startDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['start_date']);
-                $endDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['end_date']);
-        }
+                if (!$startDate) {
+                    $startDate = DateTime::createFromFormat('Y-m-d|', $settings['start_date']);
+                }
+                if (!$startDate) {
+                    throw new waException('Wrong start date');
+                }
 
-        if (!$endDate && !$startDate) {
-            throw new waException('Wrong dates');
+                $endDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['end_date']);
+                if (!$endDate) {
+                    $endDate = DateTime::createFromFormat('Y-m-d|', $settings['end_date']);
+                }
+                if (!$endDate) {
+                    throw new waException('Wrong end date');
+                }
         }
 
         $filterDto = new cashTransactionPageFilterDto($settings['entity_type'], $settings['entity_id']);
