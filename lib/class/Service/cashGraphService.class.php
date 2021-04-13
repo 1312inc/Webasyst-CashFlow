@@ -611,14 +611,17 @@ class cashGraphService
 
         if ($calculateBalance) {
             $balanceFlow = $this->getAggregateBalanceFlow($paramsDto);
+            cash()->getLogger()->debug($data,'getAggregateChartData.log');
+            cash()->getLogger()->debug($balanceFlow,'getAggregateChartData.log');
+            $balanceLastData = array_fill_keys(array_keys($balanceFlow), 0);
             foreach ($data as $i => $datum) {
                 if (!isset($balanceFlow[$datum['currency']])) {
-                    continue;
+                    $balanceLastData[$datum['currency']] = 0;
+                } elseif ($datum['groupkey'] === $balanceFlow[$datum['currency']][$i]['period']) {
+                    $balanceLastData[$datum['currency']] = $balanceFlow[$datum['currency']][$i]['amount'];
                 }
 
-                if ($datum['groupkey'] === $balanceFlow[$datum['currency']][$i]['period']) {
-                    $data[$i]['balance'] = $balanceFlow[$datum['currency']][$i]['amount'];
-                }
+                $data[$i]['balance'] = $balanceLastData[$datum['currency']];
             }
         }
 
