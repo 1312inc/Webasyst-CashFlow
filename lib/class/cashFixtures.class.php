@@ -101,25 +101,30 @@ class cashFixtures
         );
 
         foreach ($this->fixtures as $type => $categories) {
+            $sort = 0;
             foreach ($categories as $name => $data) {
                 $this->categories[$name] = (new cashCategory())
                     ->setType($type)
                     ->setColor($data[1])
                     ->setName($data[0])
-                    ->setIsProfit((int) $data[2]);
+                    ->setIsProfit((int) $data[2])
+                    ->setSort($sort++);
                 $this->perister->insert($this->categories[$name]);
             }
         }
 
         $transferCategory = cash()->getEntityFactory(cashCategory::class)->createNewTransferCategory();
+        $transferCategory->setSort(1312);
         $data = cash()->getHydrator()->extract($transferCategory);
         cash()->getModel(cashCategory::class)->insert($data);
 
         $incomeNoCategory = cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryIncome();
+        $transferCategory->setSort(1313);
         $data = cash()->getHydrator()->extract($incomeNoCategory);
         cash()->getModel(cashCategory::class)->insert($data);
 
         $expenseNoCategory = cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryExpense();
+        $transferCategory->setSort(1314);
         $data = cash()->getHydrator()->extract($expenseNoCategory);
         cash()->getModel(cashCategory::class)->insert($data);
     }
@@ -136,6 +141,7 @@ class cashFixtures
             $this->demoAccount
                 ->setName(_wd(cashConfig::APP_ID, 'Demo account'))
                 ->setCurrency($this->currency)
+                ->setSort(0)
                 ->setIcon('luggage');
             $this->perister->insert($this->demoAccount);
 

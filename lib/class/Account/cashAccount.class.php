@@ -45,7 +45,7 @@ class cashAccount extends cashAbstractEntity
     /**
      * @var int
      */
-    private $sort;
+    private $sort = 0;
 
     /**
      * @return int

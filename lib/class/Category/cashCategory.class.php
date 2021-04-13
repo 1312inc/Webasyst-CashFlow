@@ -34,7 +34,7 @@ class cashCategory extends cashAbstractEntity
     /**
      * @var int
      */
-    private $sort;
+    private $sort = 0;
 
     /**
      * @var int|bool

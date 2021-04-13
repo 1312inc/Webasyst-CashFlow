@@ -8,7 +8,7 @@ return array(
         'currency' => array('varchar', 3, 'null' => 0),
         'customer_contact_id' => array('int', 11),
         'is_archived' => array('tinyint', 4, 'default' => '0'),
-        'sort' => array('smallint', 6),
+        'sort' => array('int', 11),
         'create_datetime' => array('datetime', 'null' => 0),
         'update_datetime' => array('datetime'),
         ':keys' => array(
@@ -20,7 +20,7 @@ return array(
         'name' => array('varchar', 64, 'null' => 0),
         'type' => array('enum', "'income','expense','transfer'"),
         'color' => array('varchar', 7),
-        'sort' => array('smallint', 6),
+        'sort' => array('int', 11),
         'create_datetime' => array('datetime', 'null' => 0),
         'update_datetime' => array('datetime'),
         'is_profit' => array('tinyint', 4, 'default' => '0'),
