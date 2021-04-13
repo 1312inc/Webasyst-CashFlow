@@ -75,15 +75,15 @@ export default {
 
     updateTransactions (state, data) {
       const updatedIDs = data.affected_transaction_ids
-      updatedIDs.forEach(id => {
+      updatedIDs.forEach((id, updatedIDIndex) => {
         const i = state.transactions.data.findIndex(e => e.id === id)
         if (i > -1) {
           const newData = {
      ***REMOVED***data,
             id: state.transactions.data[i].id,
-            create_datetime: state.transactions.data[i].create_datetime,
-            date: state.transactions.data[i].date,
-            datetime: state.transactions.data[i].datetime,
+     ***REMOVED***(updatedIDIndex > 0 && { create_datetime: state.transactions.data[i].create_datetime }),
+     ***REMOVED***(updatedIDIndex > 0 && { date: state.transactions.data[i].date }),
+     ***REMOVED***(updatedIDIndex > 0 && { datetime: state.transactions.data[i].datetime }),
             $_flagCreated: state.transactions.data[i].$_flagCreated,
             $_flagUpdated: true
           }

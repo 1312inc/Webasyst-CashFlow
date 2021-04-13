@@ -61,7 +61,7 @@ export default {
       })
     },
     date () {
-      return this.$moment(this.alertDate.period).format('MMM, D')
+      return this.$moment(this.alertDate.period).format(this.$moment.locale() === 'ru' ? 'D MMMM' : 'MMMM D')
     },
     title () {
       return (
