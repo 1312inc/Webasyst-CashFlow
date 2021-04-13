@@ -15,7 +15,7 @@
           <div class="value">
             <input
               v-model="model.name"
-              @keyup.enter="submit"
+              @keyup.enter="submit('account')"
               :class="{ 'state-error': $v.model.name.$error }"
               ref="focus"
               class="bold large"
