@@ -1,41 +1,40 @@
 <template>
-  <div
-    @click="navigateTo(`/currency/${balanceFlow.currency}`)"
-    class="brick full-width"
-  >
-    <div class="flexbox middle">
-      <div
-        :class="{ 'text-red': balanceFlow.balances.now.amount < 0 }"
-        class="wide black bold nowrap c-bwc-balance"
-      >
-        {{
-          $helper.toCurrency({
-            value: balanceFlow.balances.now.amount,
-            currencyCode: balanceFlow.currency,
-          })
-        }}
-      </div>
-      <div v-if="alertDate" class="custom-ml-4">
-        <span
-          :title="title"
-          :class="
-            alertDate.amount >= 0 ? 'c-bwc-badge--green' : 'c-bwc-badge--red'
-          "
-          class="c-bwc-badge small nowrap"
-          ><i
-            :class="
-              alertDate.amount >= 0
-                ? 'fa-arrow-circle-up'
-                : 'fa-exclamation-triangle'
-            "
-            class="fas custom-mr-4"
-            style="color: white"
-          ></i
-          >{{ date }}</span
+  <div class="brick full-width">
+    <router-link :to="`/currency/${balanceFlow.currency}`">
+      <div class="flexbox middle">
+        <div
+          :class="{ 'text-red': balanceFlow.balances.now.amount < 0 }"
+          class="wide black bold nowrap c-bwc-balance"
         >
+          {{
+            $helper.toCurrency({
+              value: balanceFlow.balances.now.amount,
+              currencyCode: balanceFlow.currency,
+            })
+          }}
+        </div>
+        <div v-if="alertDate" class="custom-ml-4">
+          <span
+            :title="title"
+            :class="
+              alertDate.amount >= 0 ? 'c-bwc-badge--green' : 'c-bwc-badge--red'
+            "
+            class="c-bwc-badge small nowrap"
+            ><i
+              :class="
+                alertDate.amount >= 0
+                  ? 'fa-arrow-circle-up'
+                  : 'fa-exclamation-triangle'
+              "
+              class="fas custom-mr-4"
+              style="color: white"
+            ></i
+            >{{ date }}</span
+          >
+        </div>
       </div>
-    </div>
-    <CurrencyChart :currency="balanceFlow" />
+      <CurrencyChart :currency="balanceFlow" />
+    </router-link>
   </div>
 </template>
 
@@ -61,7 +60,9 @@ export default {
       })
     },
     date () {
-      return this.$moment(this.alertDate.period).format(this.$moment.locale() === 'ru' ? 'D MMMM' : 'MMMM D')
+      return this.$moment(this.alertDate.period).format(
+        this.$moment.locale() === 'ru' ? 'D MMMM' : 'MMMM D'
+      )
     },
     title () {
       return (
@@ -71,14 +72,6 @@ export default {
         ' ' +
         this.date
       )
-    }
-  },
-
-  methods: {
-    navigateTo (path) {
-      if (this.$route.path !== path) {
-        this.$router.push(path)
-      }
     }
   }
 }
@@ -99,6 +92,6 @@ export default {
   }
 }
 .c-bwc-balance {
-    font-size: 1rem;
+  font-size: 1rem;
 }
 </style>
