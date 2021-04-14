@@ -2,6 +2,7 @@
   <draggable
     :list="categories"
     :disabled="!$permissions.isAdmin"
+    :force-fallback="true"
     @update="sortCategories()"
     tag="ul"
     class="menu"
