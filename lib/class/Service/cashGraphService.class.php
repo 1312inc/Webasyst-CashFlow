@@ -585,6 +585,7 @@ class cashGraphService
 
                 /** @var cashAccount[] $accounts */
                 $accounts = cash()->getEntityRepository(cashAccount::class)->findAll();
+                // проверим есть ли полный доступ хоть к одному счету в данной валюте
                 foreach ($accounts as $account) {
                     if ($account->getCurrency() !== $paramsDto->filter->getCurrency()) {
                         continue;
@@ -592,8 +593,6 @@ class cashGraphService
 
                     if (cash()->getContactRights()->canSeeAccountBalance($paramsDto->contact, $account->getId())) {
                         $calculateBalance = true;
-                    } else {
-                        $calculateBalance = false;
                         break;
                     }
                 }
@@ -610,53 +609,80 @@ class cashGraphService
             ->fetchAll();
 
         if ($calculateBalance) {
-            $initialBalance = 0;
-
             switch (true) {
                 case null !== $paramsDto->filter->getCurrency():
-                    $initialBalance = (new cashInitialBalanceCalculator())->getOnDateForCurrency(
-                        cashCurrencyVO::fromWaCurrency($paramsDto->filter->getCurrency()),
-                        $paramsDto->from->modify('yesterday'),
-                        $paramsDto->contact
-                    );
+                    $balanceFlow = $this->getAggregateBalanceFlow($paramsDto);
+//                    $balanceLastData = 0;
+//                    $j = 0;
+//                    foreach ($data as $i => $datum) {
+//                        while (isset($balanceFlow[$paramsDto->filter->getCurrency()][$j])
+//                            && $datum['groupkey'] > $balanceFlow[$paramsDto->filter->getCurrency()][$j]['period']
+//                        ) {
+//                            $balanceLastData = $balanceFlow[$paramsDto->filter->getCurrency()][$j++]['amount'];
+//                        }
+//
+//                        $data[$i]['balance'] = $balanceLastData;
+//                    }
+
+                    // добавим точки, которые нужны для отображения баланса
+                    $dataWithBalance = [];
+                    $data = array_combine(array_column($data, 'groupkey'), $data);
+
+                    foreach ($balanceFlow[$paramsDto->filter->getCurrency()] as $flowItem) {
+                        if (isset($data[$flowItem['period']])) {
+                            $data[$flowItem['period']]['balance'] = $flowItem['amount'];
+                            $dataWithBalance[] = $data[$flowItem['period']];
+                        } else {
+                            $dataWithBalance[] = [
+                                'groupkey' => $flowItem['period'],
+                                'currency' => $paramsDto->filter->getCurrency(),
+                                'balance' => $flowItem['amount'],
+                                'expenseAmount' => 0,
+                                'incomeAmount' => 0,
+                                'profitAmount' => 0,
+                            ];
+                        }
+                    }
+
+                    $data = $dataWithBalance;
+
 
                     break;
 
                 case null !== $paramsDto->filter->getAccountId():
-                        /** @var cashAccount $account */
-                        $account = cash()->getEntityRepository(cashAccount::class)->findById(
-                            $paramsDto->filter->getAccountId()
-                        );
-                        $initialBalance = (new cashInitialBalanceCalculator())->getOnDateForAccount(
-                            $account,
-                            $paramsDto->from->modify('yesterday'),
-                            $paramsDto->contact
-                        );
+                    /** @var cashAccount $account */
+                    $account = cash()->getEntityRepository(cashAccount::class)->findById(
+                        $paramsDto->filter->getAccountId()
+                    );
+                    $initialBalance = (new cashInitialBalanceCalculator())->getOnDateForAccount(
+                        $account,
+                        $paramsDto->from->modify('yesterday'),
+                        $paramsDto->contact
+                    );
+                    $balanceSqlParts = clone $sqlParts;
+                    $balanceSqlParts->addAndWhere('', 'category_access');
+                    $balanceData = $balanceSqlParts->query()->fetchAll();
 
-                    break;
-            }
+                    if ($balanceData) {
+                        $j = 0;
+                        foreach ($data as $i => $datum) {
+                            while ($datum['groupkey'] > $balanceData[$j]['groupkey']) {
+                                $initialBalance += (cashHelper::parseFloat($balanceData[$j]['expenseAmount'])
+                                    + cashHelper::parseFloat($balanceData[$j]['incomeAmount'])
+                                    + cashHelper::parseFloat($balanceData[$j]['profitAmount']));
+                                $j++;
+                            }
 
-            $balanceSqlParts = clone $sqlParts;
-            $balanceSqlParts->addAndWhere('', 'category_access');
-            $balanceData = $balanceSqlParts->query()->fetchAll();
-
-            if ($balanceData) {
-                $j = 0;
-                foreach ($data as $i => $datum) {
-                    while ($datum['groupkey'] > $balanceData[$j]['groupkey']) {
-                        $initialBalance += (cashHelper::parseFloat($balanceData[$j]['expenseAmount'])
-                            + cashHelper::parseFloat($balanceData[$j]['incomeAmount'])
-                            + cashHelper::parseFloat($balanceData[$j]['profitAmount']));
-                        $j++;
+                            $data[$i]['balance'] = $initialBalance
+                                + (cashHelper::parseFloat($balanceData[$j]['expenseAmount'])
+                                + cashHelper::parseFloat($balanceData[$j]['incomeAmount'])
+                                + cashHelper::parseFloat($balanceData[$j]['profitAmount']));
+                            $j++;
+                            $initialBalance = $data[$i]['balance'];
+                        }
                     }
 
-                    $data[$i]['balance'] = $initialBalance
-                        + (cashHelper::parseFloat($balanceData[$j]['expenseAmount'])
-                        + cashHelper::parseFloat($balanceData[$j]['incomeAmount'])
-                        + cashHelper::parseFloat($balanceData[$j]['profitAmount']));
-                    $j++;
-                    $initialBalance = $data[$i]['balance'];
-                }
+                    break;
             }
         }
 
