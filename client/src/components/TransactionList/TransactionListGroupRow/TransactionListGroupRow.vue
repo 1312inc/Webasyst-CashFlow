@@ -54,7 +54,7 @@
           />
         </div>
         <div class="c-item-amount">
-          <div class="flexbox justify-end middle custom-mb-8">
+          <div class="flexbox justify-end middle custom-mb-4">
             <span
               v-if="
                 transaction.$_flagCreated &&
