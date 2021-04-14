@@ -8,7 +8,7 @@
       <div
         v-if="balance"
         :class="balance >= 0 ? 'text-green' : 'text-red'"
-        class="h2 custom-mb-0"
+        class="h2 nowrap custom-mb-0"
       >
         {{
           $helper.toCurrency({
