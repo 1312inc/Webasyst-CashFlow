@@ -2,6 +2,7 @@
   <draggable
     v-model="accounts"
     :disabled="!$permissions.isAdmin"
+    :force-fallback="true"
     tag="ul"
     class="menu"
   >
