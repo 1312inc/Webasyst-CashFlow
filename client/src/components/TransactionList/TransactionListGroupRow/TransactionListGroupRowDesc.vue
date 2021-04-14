@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flexbox middle space-4 semibold custom-mb-8"
+    class="flexbox middle space-4 semibold custom-mb-4"
     style="overflow: hidden"
   >
     <!-- if collapsed transactions header -->
