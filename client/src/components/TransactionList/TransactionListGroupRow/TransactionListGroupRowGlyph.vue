@@ -1,5 +1,5 @@
 <template>
-  <div style="position:relative;">
+  <div style="position:relative; top: 2px;">
     <span
       :style="`background-color:${category.color};`"
       class="userpic userpic48 align-center"
