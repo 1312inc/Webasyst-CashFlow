@@ -15,7 +15,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `
     <ul class="c-list list">
-      <TransactionListGroupRow :transaction="transaction" :showChecker="showChecker" />
+      <TransactionListGroupRow :transaction="transaction" :showChecker="showChecker" :collapseHeaderData="collapseHeaderData" />
     </ul>
     `,
   store: new Vuex.Store({
@@ -80,8 +80,7 @@ LongData.args = {
 
 export const normalData = Template.bind({})
 normalData.args = {
-  category: { id: 17, name: 'category name', type: 'expense', color: '#880E4F', sort: 0, create_datetime: '2020-12-24 16:09:36', update_datetime: '2021-02-04 13:59:22', is_profit: false },
-  account: { id: 61, name: 'account name', description: 'description', icon: '', currency: 'USD', customer_contact_id: 1, is_archived: false, sort: 0, create_datetime: '2021-03-15 08:42:34', update_datetime: null, stat: { income: 0, expense: 0, summary: 0, incomeShorten: '0', expenseShorten: '0', summaryShorten: '0' } },
+  ...LongData.args,
   transaction: {
     id: 1786,
     date: '2021-03-15',
@@ -95,8 +94,7 @@ normalData.args = {
 
 export const withUserpic = Template.bind({})
 withUserpic.args = {
-  category: { id: 17, name: 'category name', type: 'expense', color: '#880E4F', sort: 0, create_datetime: '2020-12-24 16:09:36', update_datetime: '2021-02-04 13:59:22', is_profit: false },
-  account: { id: 61, name: 'account name', description: 'description', icon: '', currency: 'USD', customer_contact_id: 1, is_archived: false, sort: 0, create_datetime: '2021-03-15 08:42:34', update_datetime: null, stat: { income: 0, expense: 0, summary: 0, incomeShorten: '0', expenseShorten: '0', summaryShorten: '0' } },
+  ...LongData.args,
   transaction: {
     id: 1786,
     date: '2021-03-15',
@@ -121,8 +119,7 @@ withUserpic.args = {
 
 export const externalSource = Template.bind({})
 externalSource.args = {
-  category: { id: 17, name: 'category name', type: 'expense', color: '#880E4F', sort: 0, create_datetime: '2020-12-24 16:09:36', update_datetime: '2021-02-04 13:59:22', is_profit: false },
-  account: { id: 61, name: 'account name', description: 'description', icon: '', currency: 'USD', customer_contact_id: 1, is_archived: false, sort: 0, create_datetime: '2021-03-15 08:42:34', update_datetime: null, stat: { income: 0, expense: 0, summary: 0, incomeShorten: '0', expenseShorten: '0', summaryShorten: '0' } },
+  ...LongData.args,
   transaction: {
     id: 1786,
     date: '2021-03-15',
@@ -139,5 +136,31 @@ externalSource.args = {
       entity_url: '',
       entity_name: 'test name'
     }
+  }
+}
+
+export const collapsedWithSource = Template.bind({})
+collapsedWithSource.args = {
+  ...LongData.args,
+  transaction: {
+    id: 1786,
+    date: '2021-03-15',
+    amount: -123456,
+    description: '',
+    category_id: 17,
+    account_id: 61,
+    is_onbadge: false,
+    external_source_info: {
+      name: 'Тинькофф',
+      color: 'green',
+      glyph: 'fas fa-shopping-cart',
+      entity_icon: '',
+      entity_url: '',
+      entity_name: 'test name'
+    }
+  },
+  collapseHeaderData: {
+    test: 'test',
+    ids: [3, 3]
   }
 }
