@@ -1,16 +1,18 @@
 {
-  "name": "client",
+  "name": "cash-app-webasyst",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "serve-desktop": "vue-cli-service serve src/desktop.js --mode desktop.development",
     "serve-mobile": "vue-cli-service serve src/mobile.js --mode mobile.development",
     "serve-sidebar": "vue-cli-service serve src/sidebar.js --mode desktop.development",
-    "build-desktop": "vue-cli-service build src/desktop.js --dest dist/desktop --mode desktop.production --report && npm run build-sidebar && npm run copycss && npm run copyjs && npm run copyjs-sidebar",
+    "build-desktop": "vue-cli-service build src/desktop.js --dest dist/desktop --mode desktop.production --report && npm run build-sidebar && npm run copycss && npm run copyjs && npm run copymanifest && npm run copyjs-sidebar",
     "build-mobile": "vue-cli-service build src/mobile.js --dest dist/mobile --mode mobile.production --report",
     "build-sidebar": "vue-cli-service build src/sidebar.js --dest dist/sidebar --mode desktop.production",
     "lint": "vue-cli-service lint",
     "copycss": "copyfiles dist/desktop/css/*.css ../css --flat",
     "copyjs": "copyfiles dist/desktop/js/*.js ../js --flat",
+    "copymanifest": "copyfiles dist/desktop/manifest.json ../js --flat",
     "copyjs-sidebar": "copyfiles dist/sidebar/js/*.js ../js/sidebar --flat",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
@@ -64,7 +66,8 @@
     "node-fetch": "^2.6.1",
     "node-sass": "^4.12.0",
     "sass-loader": "^8.0.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "webpack-manifest-plugin": "^3.1.1"
   },
   "eslintConfig": {
     "root": true,
