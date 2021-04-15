@@ -1,4 +1,5 @@
 var webpack = require('webpack')
+var { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 var fetch = require('node-fetch')
 
 fetch(process.env.VUE_APP_DEV_PROXY + '/api.php/cash.system.getCurrencies?access_token=' + process.env.VUE_APP_API_TOKEN)
@@ -43,7 +44,12 @@ module.exports = {
   },
   configureWebpack: {
     plugins: [
-      new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en|ru/)
+      new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en|ru/),
+      new WebpackManifestPlugin({
+        seed: {
+          version: process.env.npm_package_version
+        }
+      })
     ],
     externals: function (context, request, callback) {
       if (/xlsx|canvg|pdfmake/.test(request)) {
