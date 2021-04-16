@@ -6,199 +6,337 @@
 final class cashTransactionFilterService
 {
     /**
-     * @var cashTransactionModel
+     * @var cashContactRightsManager
      */
-    private $model;
+    private $right;
 
     /**
      * cashTransactionFilterService constructor.
-     *
-     * @throws waException
      */
     public function __construct()
     {
-        $this->model = cash()->getModel(cashTransaction::class);
+        $this->right = cash()->getContactRights();
     }
 
     /**
      * @param cashTransactionFilterParamsDto $dto
      *
-     * @return array|waDbResultIterator
+     * @return array|waDbResultIterator|int
      * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
      * @throws waException
      */
     public function getResults(cashTransactionFilterParamsDto $dto)
     {
-        $rights = cash()->getContactRights();
+        $sqlParts = $this->getResultsSqlParts($dto);
 
-        $accountAccessSql = cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+        $query = $sqlParts->query();
+
+        return !$dto->returnIterator ? $query->fetchAll() : $query->getIterator();
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     *
+     * @return array|waDbResultIterator|int
+     * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
+     * @throws waException
+     */
+    public function getResultsCount(cashTransactionFilterParamsDto $dto)
+    {
+        $sqlParts = $this->getResultsSqlParts($dto);
+
+        $sqlParts->select(['count(ct.id) cnt'])
+            ->limit(null)
+            ->offset(null);
+
+        return (int) $sqlParts->query()->fetchField();
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     *
+     * @return array|waDbResultIterator|int
+     * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
+     * @throws waException
+     */
+    public function getShrinkResultsCount(cashTransactionFilterParamsDto $dto)
+    {
+        $sqlParts = $this->getResultsSqlParts($dto);
+
+        $sqlRepeatingParts = clone $sqlParts;
+
+        $sqlParts->addAndWhere('ct.repeating_id is null');
+        $sqlRepeatingParts->groupBy(['ct.repeating_id']);
+
+        $unionSql = cashSelectQueryParts::union($sqlParts, $sqlRepeatingParts);
+
+        $unionSql->select(['count(union_table.id) cnt'])
+            ->limit(null)
+            ->offset(null);
+
+        return (int) $unionSql->query()->fetchField();
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     *
+     * @return array|waDbResultIterator|int
+     * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
+     * @throws waException
+     */
+    public function getShrinkResults(cashTransactionFilterParamsDto $dto)
+    {
+        $sqlParts = $this->getResultsSqlParts($dto);
+
+        $sqlRepeatingParts = clone $sqlParts;
+
+        $sqlParts->addAndWhere('ct.repeating_id is null');
+        $sqlRepeatingParts->groupBy(['ct.repeating_id']);
+
+        $unionSql = cashSelectQueryParts::union($sqlParts, $sqlRepeatingParts);
+
+        $query = $unionSql->query();
+
+        return !$dto->returnIterator ? $query->fetchAll() : $query->getIterator();
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     *
+     * @return array|waDbResultIterator|int
+     * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
+     * @throws waException
+     */
+    public function getUpNextResults(cashTransactionFilterParamsDto $dto)
+    {
+        $sqlParts = $this->getResultsSqlParts($dto);
+
+        $sqlParts
+            ->addAndWhere(
+                '((ct.is_onbadge = 1 and ct.date < s:startDate) or (ct.date between s:startDate and s:endDate))'
+            )
+            ->addAndWhere(null, 'dateBetween');
+
+        return !$dto->returnIterator ? $sqlParts->query()->fetchAll() : $sqlParts->query()->getIterator();
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     * @param cashSelectQueryParts           $selectQueryParts
+     *
+     * @throws kmwaForbiddenException
+     */
+    private function makeBaseSqlForAccountFilter(
+        cashTransactionFilterParamsDto $dto,
+        cashSelectQueryParts $selectQueryParts
+    ): void {
+        if (!$this->right->hasMinimumAccessToAccount($dto->contact, $dto->filter->getAccountId())) {
+            throw new kmwaForbiddenException(_w('You have no access to this account'));
+        }
+
+        $selectQueryParts->addAndWhere('ct.account_id = i:account_id')
+            ->addParam('account_id', $dto->filter->getAccountId());
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     * @param cashSelectQueryParts           $selectQueryParts
+     *
+     * @throws kmwaForbiddenException
+     * @throws waException
+     */
+    private function makeBaseSqlForCategoryFilter(
+        cashTransactionFilterParamsDto $dto,
+        cashSelectQueryParts $selectQueryParts
+    ): void {
+        if (!$this->right->hasMinimumAccessToCategory($dto->contact, $dto->filter->getCategoryId())) {
+            throw new kmwaForbiddenException(_w('You have no access to this category'));
+        }
+
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
             $dto->contact,
-            $dto->accountId
+            'ct',
+            'account_id'
         );
-        $categoryAccessSql = cash()->getContactRights()->getSqlForCategoryJoin($dto->contact, 'ct', 'category_id');
 
-        $limits = '';
+        $sqlParams['category_id'] = $dto->filter->getCategoryId();
+
+        $selectQueryParts->addAndWhere('ct.category_id = i:category_id')
+            ->addAndWhere($accountAccessSql, 'accountAccessSql')
+            ->addParam('category_id', $dto->filter->getCategoryId());
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     * @param cashSelectQueryParts           $selectQueryParts
+     *
+     * @throws waException
+     */
+    private function makeBaseSqlForCurrencyFilter(
+        cashTransactionFilterParamsDto $dto,
+        cashSelectQueryParts $selectQueryParts
+    ): void {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $dto->contact,
+            'ct',
+            'account_id'
+        );
+
+        $selectQueryParts->addAndWhere('ca.currency = s:currency')
+            ->addAndWhere($accountAccessSql, 'accountAccessSql')
+            ->addParam('currency', $dto->filter->getCurrency());
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     * @param cashSelectQueryParts           $selectQueryParts
+     *
+     * @throws kmwaForbiddenException
+     */
+    private function makeBaseSqlForContractorFilter(
+        cashTransactionFilterParamsDto $dto,
+        cashSelectQueryParts $selectQueryParts
+    ): void {
+        if (!$this->right->isAdmin($dto->contact)) {
+            throw new kmwaForbiddenException(_w('You have no access to this contractor'));
+        }
+
+        $selectQueryParts->addAndWhere('ct.contractor_contact_id = i:contractor_contact_id')
+            ->addParam('contractor_contact_id', $dto->filter->getContractorId());
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     * @param cashSelectQueryParts           $selectQueryParts
+     *
+     * @throws kmwaForbiddenException
+     */
+    private function makeBaseSqlForImportFilter(
+        cashTransactionFilterParamsDto $dto,
+        cashSelectQueryParts $selectQueryParts
+    ): void {
+        if (!$this->right->isAdmin($dto->contact)) {
+            throw new kmwaForbiddenException(_w('You have no access to this import'));
+        }
+
+        $selectQueryParts->addAndWhere('ct.import_id = i:import_id')
+            ->addParam('import_id', $dto->filter->getImportId());
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     * @param cashSelectQueryParts           $selectQueryParts
+     *
+     * @throws waException
+     */
+    private function makeBaseSqlForSearchFilter(
+        cashTransactionFilterParamsDto $dto,
+        cashSelectQueryParts $selectQueryParts
+    ): void {
+        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
+            $dto->contact,
+            'ct',
+            'account_id'
+        );
+
+        $selectQueryParts->addAndWhere('ct.description like s:description')
+            ->addAndWhere($accountAccessSql, 'accountAccessSql')
+            ->addParam('description', $dto->filter->getSearch(), 'like');
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     *
+     * @return cashSelectQueryParts
+     * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
+     * @throws waException
+     */
+    private function getResultsSqlParts(cashTransactionFilterParamsDto $dto): cashSelectQueryParts
+    {
+        $sqlParts = new cashSelectQueryParts(cash()->getModel());
+
+        $sqlParts->select(['ct.*'])
+            ->from('cash_transaction', 'ct')
+            ->join(
+                [
+                    'join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0',
+                    'left join cash_category cc on ct.category_id = cc.id',
+                ]
+            )
+            ->andWhere(
+                [
+                    'dateBetween' => 'ct.date between s:startDate and s:endDate',
+                    'isArchived' => 'ct.is_archived = 0',
+                    'accountAccessSql' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+                        $dto->contact,
+                        $dto->filter->getCategoryId()
+                    ),
+                    'categoryAccessSql' => cash()->getContactRights()->getSqlForCategoryJoin(
+                        $dto->contact,
+                        'ct',
+                        'category_id'
+                    ),
+                ]
+            );
+
         if ($dto->start !== null && $dto->limit !== null) {
-            $limits = 'limit i:start, i:limit';
+            $sqlParts->limit($dto->limit)
+                ->offset($dto->start);
         }
 
         if ($dto->reverse) {
-            $order = 'order by ct.date desc, ct.id desc';
+            $sqlParts->orderBy(['ct.date desc', 'ct.id desc']);
         } else {
-            $order = 'order by ct.date, ct.id';
+            $sqlParts->orderBy(['ct.date', 'ct.id']);
         }
 
-        $sqlParams = [
-            'startDate' => $dto->startDate->format('Y-m-d H:i:s'),
-            'endDate' => $dto->endDate->format('Y-m-d H:i:s'),
-            'start' => $dto->start,
-            'limit' => $dto->limit,
-        ];
+        $sqlParts->params(
+            [
+                'startDate' => $dto->startDate->format('Y-m-d H:i:s'),
+                'endDate' => $dto->endDate->format('Y-m-d H:i:s'),
+                'start' => $dto->start,
+                'limit' => $dto->limit,
+            ]
+        );
 
         switch (true) {
-            case $dto->accountId:
-                if (!$rights->hasMinimumAccessToAccount($dto->contact, $dto->accountId)) {
-                    throw new kmwaForbiddenException(_w('You have no access to this account'));
-                }
-
-                $whereAccountSql = ' and ct.account_id = i:account_id';
-                $sql = <<<SQL
-select ct.*
-from cash_transaction ct
-join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-left join cash_category cc on ct.category_id = cc.id
-where ct.date between s:startDate and s:endDate
-      and ct.is_archived = 0
-      {$whereAccountSql}
-      and {$accountAccessSql}
-      and {$categoryAccessSql}
-{$order}
-{$limits}
-SQL;
-                $sqlParams['account_id'] = $dto->accountId;
+            case null !== $dto->filter->getAccountId():
+                $this->makeBaseSqlForAccountFilter($dto, $sqlParts);
 
                 break;
 
-            case $dto->categoryId:
-                if (!$rights->hasMinimumAccessToCategory($dto->contact, $dto->categoryId)) {
-                    throw new kmwaForbiddenException(_w('You have no access to this category'));
-                }
-
-                $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-                    $dto->contact,
-                    'ct',
-                    'account_id'
-                );
-
-                $whereAccountSql = ' and ct.category_id = i:category_id';
-                $joinCategory = ' join cash_category cc on ct.category_id = cc.id';
-                $sql = <<<SQL
-select ct.*
-from cash_transaction ct
-join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-{$joinCategory}
-where ct.date between s:startDate and s:endDate
-      and ct.is_archived = 0
-      {$whereAccountSql}
-      and {$accountAccessSql}
-      and {$categoryAccessSql}
-{$order}
-{$limits}
-SQL;
-                $sqlParams['category_id'] = $dto->categoryId;
+            case null !== $dto->filter->getCategoryId():
+                $this->makeBaseSqlForCategoryFilter($dto, $sqlParts);
 
                 break;
 
-            case $dto->createContactId:
-                if (!$rights->isAdmin($dto->contact)) {
-                    throw new kmwaForbiddenException(_w('You have no access to this contact'));
-                }
-
-                $whereContactSql = ' and ct.create_contact_id = i:create_contact_id';
-                $sql = <<<SQL
-select ct.*
-from cash_transaction ct
-join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-left join cash_category cc on ct.category_id = cc.id
-where ct.date between s:startDate and s:endDate
-      and ct.is_archived = 0
-      {$whereContactSql}
-      and {$accountAccessSql}
-      and {$categoryAccessSql}
-{$order}
-{$limits}
-SQL;
-                $sqlParams['create_contact_id'] = $dto->createContactId;
+            case null !== $dto->filter->getCurrency():
+                $this->makeBaseSqlForCurrencyFilter($dto, $sqlParts);
 
                 break;
 
-            case $dto->contractorContactId:
-                if (!$rights->isAdmin($dto->contact)) {
-                    throw new kmwaForbiddenException(_w('You have no access to this contractor'));
-                }
-
-                $whereContactSql = ' and ct.contractor_contact_id = i:contractor_contact_id';
-                $sql = <<<SQL
-select ct.*
-from cash_transaction ct
-join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-left join cash_category cc on ct.category_id = cc.id
-where ct.date between s:startDate and s:endDate
-      and ct.is_archived = 0
-      {$whereContactSql}
-      and {$accountAccessSql}
-      and {$categoryAccessSql}
-{$order}
-{$limits}
-SQL;
-                $sqlParams['contractor_contact_id'] = $dto->contractorContactId;
-
+            case null !== $dto->filter->getContractorId():
+                $this->makeBaseSqlForContractorFilter($dto, $sqlParts);
 
                 break;
 
-            case $dto->importId:
-                if (!$rights->isAdmin($dto->contact)) {
-                    throw new kmwaForbiddenException(_w('You have no access to this contractor'));
-                }
-
-                $sql = <<<SQL
-select ct.*,
-       (@balance := @balance + ct.amount) as balance
-from cash_transaction ct
-join (select @balance := (select ifnull(sum(ct2.amount),0) from cash_transaction ct2 where ct2.is_archived = 0 and ct2.date < s:startDate)) b
-join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-left join cash_category cc on ct.category_id = cc.id
-where ct.date between s:startDate and s:endDate
-    and ct.import_id = i:import_id
-    and ct.is_archived = 0
-    and {$accountAccessSql}
-    and {$categoryAccessSql}
-{$order}
-{$limits}
-SQL;
-                $sqlParams['import_id'] = $dto->importId;
+            case null !== $dto->filter->getImportId():
+                $this->makeBaseSqlForImportFilter($dto, $sqlParts);
 
                 break;
 
-            default:
-                $whereAccountSql = '';
-                $sql = <<<SQL
-select ct.*
-from cash_transaction ct
-join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
-left join cash_category cc on ct.category_id = cc.id
-where ct.date between s:startDate and s:endDate
-      and ct.is_archived = 0
-      {$whereAccountSql}
-      and {$accountAccessSql}
-      and {$categoryAccessSql}
-{$order}
-{$limits}
-SQL;
+            case null !== $dto->filter->getSearch():
+                $this->makeBaseSqlForSearchFilter($dto, $sqlParts);
+
+                break;
         }
 
-        $query = $this->model->query($sql, $sqlParams);
-
-        return !$dto->returnIterator ? $query->fetchAll() : $query->getIterator();
+        return $sqlParts;
     }
 }

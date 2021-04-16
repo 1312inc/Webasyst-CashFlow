@@ -5,13 +5,19 @@
  */
 interface cashTransactionExternalEntityInterface
 {
-    /**
-     * @return string
-     */
     public function getHtml(): string;
 
-    /**
-     * @return string
-     */
     public function getIcon(): string;
+
+    public function getLink(): string;
+
+    public function getAppUrl(): ?string;
+
+    public function getOrderId(): ?int;
+
+    public function getAppIcon(): ?string;
+
+    public function getAppName(): ?string;
+
+    public function getEntityName(): ?string;
 }

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <% if (NODE_ENV === "development") { %>
+      <link href="<%= VUE_APP_DEV_PROXY %>/wa-content/css/wa/wa-2.0.css?v1.14.4" rel="stylesheet">
+      <link id="wa-dark-mode" href="<%= VUE_APP_DEV_PROXY %>/wa-content/css/wa/wa-2.0-dark.css?v1.14.4" rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)">
+      <script defer="" src="<%= VUE_APP_DEV_PROXY %>/wa-content/js/fontawesome/fontawesome-all.min.js?v=513"></script>
+
+        <script>
+          window.appState = {
+            "accountName": "accountName",
+            "currencies":<%= VUE_APP_CURRENCIES %>,
+            "categories":<%= VUE_APP_CATEGORIES %>,
+            "accounts":<%= VUE_APP_ACCOUNTS %>,
+            "api_settings":<%= VUE_APP_SETTINGS %>
+        };
+        </script>
+
+    <% } %>
+
+    <% if (VUE_APP_MODE === "mobile") { %>
+      <script src="https://unpkg.com/mitt/dist/mitt.umd.js"></script>
+      <script>
+        window.emitter = mitt()
+      </script>
+    <% } %>
+
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>

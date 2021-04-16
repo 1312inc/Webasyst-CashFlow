@@ -25,25 +25,6 @@ class cashEntityPersist
         $model = cash()->getModel(get_class($entity));
         $data = cash()->getHydrator()->extract($entity, $fields, $model->getMetadata());
 
-        /**
-         * Before every entity insert
-         *
-         * @event entity_insert.before
-         *
-         * @param kmwaEventInterface $event Event with cashAbstractEntity object
-         *
-         * @return array Entity data to merge and insert
-         */
-        $event = new cashEvent(cashEventStorage::ENTITY_INSERT_BEFORE, $entity, ['data' => $data]);
-        $eventResult = cash()->waDispatchEvent($event);
-        foreach ($eventResult as $plugin => $responseData) {
-            if (!empty($responseData) && is_array($responseData)) {
-                $data = array_merge($data, $responseData);
-            }
-        }
-
-        cash()->getEventDispatcher()->dispatch($event);
-
         unset($data['id']);
 
         $id = $model->insert($data, $type);
@@ -52,18 +33,6 @@ class cashEntityPersist
             if (method_exists($entity, 'setId')) {
                 $entity->setId($id);
             }
-
-            /**
-             * After every entity insert
-             *
-             * @event entity_insert.after
-             *
-             * @param cashEvent $event Event with cashAbstractEntity object
-             *
-             * @return void
-             */
-            $event = new cashEvent(cashEventStorage::ENTITY_INSERT_AFTER, $entity);
-            cash()->getEventDispatcher()->dispatch($event);
 
             return true;
         }
@@ -80,41 +49,9 @@ class cashEntityPersist
     public function delete(cashAbstractEntity $entity)
     {
         if (method_exists($entity, 'getId')) {
-            /**
-             * Before every entity delete
-             *
-             * @event entity_delete.before
-             *
-             * @param kmwaEventInterface $event Event with cashAbstractEntity object
-             *
-             * @return bool If false - entity delete will be canceled
-             */
-            $event = new cashEvent(cashEventStorage::ENTITY_DELETE_BEFORE, $entity);
-            $eventResult = cash()->waDispatchEvent($event);
-            foreach ($eventResult as $plugin => $responseData) {
-                if ($responseData === false) {
-                    return false;
-                }
-            }
-
-            cash()->getEventDispatcher()->dispatch($event);
-
             $model = cash()->getModel(get_class($entity));
-            $deleted = $model->deleteById($entity->getId());
 
-            /**
-             * After every entity delete
-             *
-             * @event entity_delete.after
-             *
-             * @param kmwaEventInterface $event Event with cashAbstractEntity object
-             *
-             * @return void
-             */
-            $event = new cashEvent(cashEventStorage::ENTITY_DELETE_AFTER, $entity);
-            cash()->waDispatchEvent($event);
-
-            return $deleted;
+            return $model->deleteById($entity->getId());
         }
 
         throw new waException('No id in entity');
@@ -141,42 +78,9 @@ class cashEntityPersist
                 $model->getMetadata()
             );
 
-            /**
-             * Before every entity update
-             *
-             * @event entity_update.before
-             *
-             * @param kmwaEventInterface $event Event with cashAbstractEntity object
-             *
-             * @return array Entity data to merge and update
-             */
-            $event = new cashEvent(cashEventStorage::ENTITY_UPDATE_BEFORE, $entity, ['data' => $data]);
-            $eventResult = cash()->waDispatchEvent($event);
-            foreach ($eventResult as $plugin => $responseData) {
-                if (!empty($responseData) && is_array($responseData)) {
-                    $data = array_merge($data, $responseData);
-                }
-            }
-
             unset($data['id']);
 
-            $updated = $model->updateById($entity->getId(), $data);
-
-            if ($updated) {
-                /**
-                 * After every entity update
-                 *
-                 * @event entity_update.after
-                 *
-                 * @param cashEvent $event Event with cashAbstractEntity object
-                 *
-                 * @return void
-                 */
-                $event = new cashEvent(cashEventStorage::ENTITY_UPDATE_AFTER, $entity, ['data' => $data]);
-                cash()->waDispatchEvent($event);
-            }
-
-            return $updated;
+            return $model->updateById($entity->getId(), $data);
         }
 
         throw new waException('No id in entity');

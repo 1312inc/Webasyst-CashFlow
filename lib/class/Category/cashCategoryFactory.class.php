@@ -28,7 +28,9 @@ class cashCategoryFactory extends cashBaseFactory
      */
     public function createNew(): cashCategory
     {
-        return (new cashCategory)->setCreateDatetime(date('Y-m-d H:i:s'));
+        return (new cashCategory)
+            ->setCreateDatetime(date('Y-m-d H:i:s'))
+            ->setIsProfit(0);
     }
 
     /**

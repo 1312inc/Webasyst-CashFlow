@@ -34,7 +34,12 @@ class cashCategory extends cashAbstractEntity
     /**
      * @var int
      */
-    private $sort;
+    private $sort = 0;
+
+    /**
+     * @var int|bool
+     */
+    private $is_profit = 0;
 
     /**
      * @return int
@@ -176,5 +181,25 @@ class cashCategory extends cashAbstractEntity
     public function isSystem(): bool
     {
         return $this->id < 0;
+    }
+
+    /**
+     * @return bool|int
+     */
+    public function getIsProfit()
+    {
+        return $this->is_profit;
+    }
+
+    /**
+     * @param bool|int $is_profit
+     *
+     * @return cashCategory
+     */
+    public function setIsProfit($is_profit): cashCategory
+    {
+        $this->is_profit = $is_profit;
+
+        return $this;
     }
 }

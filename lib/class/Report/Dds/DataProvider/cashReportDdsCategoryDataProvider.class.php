@@ -115,7 +115,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                     $category->getId(),
                     $category->isExpense(),
                     $category->isIncome(),
-                    sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor()),
+                    sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $category->getColor()),
                     false,
                     $category->getColor()
                 ),
@@ -129,7 +129,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                 $transferCategory->getId(),
                 false,
                 true,
-                sprintf('<i class="icon16 color" style="background-color: %s"></i>', $transferCategory->getColor()),
+                sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
                 false,
                 $transferCategory->getColor()
             ),
@@ -143,14 +143,14 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
             $rawData[cashCategory::TYPE_EXPENSE] ?? []
         );
         // usual categories
-        foreach ($this->categoryRep->findAllExpense() as $category) {
+        foreach ($this->categoryRep->findAllExpenseForContact() as $category) {
             $statData[] = new cashReportDdsStatDto(
                 new cashReportDdsEntity(
                     $category->getName(),
                     $category->getId(),
                     $category->isExpense(),
                     $category->isIncome(),
-                    sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor()),
+                    sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $category->getColor()),
                     false,
                     $category->getColor()
                 ),
@@ -164,7 +164,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                 $transferCategory->getId(),
                 true,
                 false,
-                sprintf('<i class="icon16 color" style="background-color: %s"></i>', $transferCategory->getColor()),
+                sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
                 false,
                 $transferCategory->getColor()
             ),

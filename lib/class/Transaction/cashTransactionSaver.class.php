@@ -5,6 +5,9 @@
  */
 class cashTransactionSaver extends cashEntitySaver
 {
+    const MAX_AMOUNT = 1000000000000.;
+    const MIN_AMOUNT = -1000000000000.;
+
     /**
      * @var cashTransaction[]
      */
@@ -15,7 +18,7 @@ class cashTransactionSaver extends cashEntitySaver
      * @param array                        $data
      * @param cashTransactionSaveParamsDto $params
      *
-     * @return bool|cashTransaction
+     * @return bool|array<cashTransaction>
      * @throws ReflectionException
      * @throws kmwaAssertException
      * @throws kmwaLogicException
@@ -30,7 +33,7 @@ class cashTransactionSaver extends cashEntitySaver
         }
 
         if ($params->repeating) {
-            $transferTransaction = $transaction-$this->createTransfer($transaction, $params);
+            $transferTransaction = $this->createTransfer($transaction, $params);
             if ($transferTransaction) {
                 $toPersist[] = $transferTransaction;
             }
@@ -106,14 +109,12 @@ class cashTransactionSaver extends cashEntitySaver
             ->setId(null)
             ->setAmount($amount)
             ->setCategory($category)
-            ->setAccount($account)
-        ;
+            ->setAccount($account);
 
         $transaction
             ->setAmount(-abs($transaction->getAmount()))
             ->setLinkedTransaction($transferTransaction)
-            ->setCategory($category)
-        ;
+            ->setCategory($category);
 
         return $transferTransaction;
     }
@@ -146,6 +147,7 @@ class cashTransactionSaver extends cashEntitySaver
             }
 
             $model->commit();
+            unset($this->toPrsist);
             $this->toPrsist = [];
 
             return $saved;
@@ -175,6 +177,20 @@ class cashTransactionSaver extends cashEntitySaver
             return false;
         }
 
+        $data['amount'] = cashHelper::parseFloat($data['amount']);
+
+        if ($data['amount'] > self::MAX_AMOUNT) {
+            $this->error = _w('Come on, all of the world\'s money is less than the amount entered!');
+
+            return false;
+        }
+
+        if ($data['amount'] < self::MIN_AMOUNT) {
+            $this->error = _w('Come on, all of the world\'s money is less than the amount entered!');
+
+            return false;
+        }
+
         if (empty($data['account_id'])) {
             $this->error = _w('No account selected');
 
@@ -198,6 +214,14 @@ class cashTransactionSaver extends cashEntitySaver
     }
 
     /**
+     * @return cashTransaction[]
+     */
+    public function getToPersist(): array
+    {
+        return $this->toPrsist;
+    }
+
+    /**
      * @param array $data
      *
      * @return array
@@ -215,6 +239,9 @@ class cashTransactionSaver extends cashEntitySaver
                 kmwaAssert::instance($category, cashCategory::class);
                 if ($category->isExpense() && $data['amount'] > 0) {
                     $data['amount'] = -$data['amount'];
+                }
+                if ($category->isIncome() && $data['amount'] < 0) {
+                    $data['amount'] = abs($data['amount']);
                 }
             } elseif (!in_array($data['category_id'], cashCategoryFactory::getSystemIds())) {
                 $data['category_id'] = null;

@@ -18,6 +18,31 @@ class cashTransactionExternalEntityShopOrder implements cashTransactionExternalE
     private $icon = '';
 
     /**
+     * @var string|null
+     */
+    private $appUrl;
+
+    /**
+     * @var int|null
+     */
+    private $orderId;
+
+    /**
+     * @var string|null
+     */
+    private $appIcon;
+
+    /**
+     * @var string|null
+     */
+    private $appName;
+
+    /**
+     * @var string|null
+     */
+    private $entityName;
+
+    /**
      * cashTransactionExternalEntityShopOrder constructor.
      *
      * @param string $app
@@ -38,26 +63,26 @@ class cashTransactionExternalEntityShopOrder implements cashTransactionExternalE
         if (!is_array($data)) {
             $data = json_decode($data, true);
         }
-        $appName = _wd(self::APP_ID, wa(self::APP_ID)->getConfig()->getName());
+        $this->appName = _wd(self::APP_ID, wa(self::APP_ID)->getConfig()->getName());
         $appStatic = wa()->getAppStaticUrl(self::APP_ID);
 //        $appStaticAbsolute = wa()->getConfig()->getRootPath().$appStatic;
-        $appUrl = wa()->getAppUrl(self::APP_ID);
-        $appIcon = "{$appStatic}img/shop.png";
+        $this->appUrl = wa()->getAppUrl(self::APP_ID);
+        $this->appIcon = "{$appStatic}img/shop.png";
         $this->icon = <<<HTML
-<i class="icon16 pl-wa-app-icon" style="background-image: url({$appIcon}); background-size: 16px 16px;" title="{$appName}"></i>
+<i class="icon16 pl-wa-app-icon" style="background-image: url({$this->appIcon}); background-size: 16px 16px;" title="{$this->appName}"></i>
 HTML;
 
         if (isset($data['id'])) {
-            $orderId = $data['id'];
-            $encodedOrder = shopHelper::encodeOrderId($orderId);
-            $anchor = sprintf_wp('Order %s', $encodedOrder);
+            $this->orderId = (int) $data['id'];
+            $encodedOrder = shopHelper::encodeOrderId($this->orderId);
+            $this->entityName = sprintf_wp('Order %s', $encodedOrder);
             $this->icon = <<<HTML
-<i class="icon16 pl-wa-app-icon" style="background-image: url({$appIcon}); background-size: 16px 16px;" title="{$appName}"></i>
+<i class="icon16 pl-wa-app-icon" style="background-image: url({$this->appIcon}); background-size: 16px 16px;" title="{$this->appName}"></i>
 HTML;
 
             $this->html = <<<HTML
-<a href="{$appUrl}#/orders/id={$orderId}" target="_blank">
-    {$this->icon}{$anchor}
+<a href="{$this->getLink()}" target="_blank">
+    {$this->icon}{$this->entityName}
 </a>
 HTML;
         }
@@ -77,5 +102,35 @@ HTML;
     public function getIcon(): string
     {
         return $this->icon;
+    }
+
+    public function getLink(): string
+    {
+        return "{$this->appUrl}#/orders/id={$this->orderId}";
+    }
+
+    public function getAppUrl(): ?string
+    {
+        return $this->appUrl;
+    }
+
+    public function getOrderId(): ?int
+    {
+        return $this->orderId;
+    }
+
+    public function getAppIcon(): ?string
+    {
+        return $this->appIcon;
+    }
+
+    public function getAppName(): ?string
+    {
+        return $this->appName;
+    }
+
+    public function getEntityName(): ?string
+    {
+        return $this->entityName;
     }
 }

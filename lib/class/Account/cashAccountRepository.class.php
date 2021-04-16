@@ -11,17 +11,50 @@ class cashAccountRepository extends cashBaseRepository
 
     /**
      * @param waContact|null $contact
+     * @param int            $access
      *
      * @return cashAccount[]
      * @throws waException
      */
-    public function findAllActiveForContact(waContact $contact = null): array
+    public function findAllActiveForContact(
+        waContact $contact = null,
+        $access = cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
+    ): array {
+        if (!$contact) {
+            $contact = wa()->getUser();
+        }
+
+        return $this->generateWithData($this->getModel()->getAllActiveForContact($contact, $access), true);
+    }
+
+    /**
+     * @param waContact|null $contact
+     *
+     * @return cashAccount[]
+     * @throws waException
+     */
+    public function findAllActiveFullAccessForContact(waContact $contact = null): array {
+        if (!$contact) {
+            $contact = wa()->getUser();
+        }
+
+        return $this->findAllActiveForContact($contact, cashRightConfig::ACCOUNT_FULL_ACCESS);
+    }
+
+    /**
+     * @param int            $id
+     * @param waContact|null $contact
+     *
+     * @return cashAccount|null
+     * @throws waException
+     */
+    public function findByIdForContact($id, waContact $contact = null): ?cashAccount
     {
         if (!$contact) {
             $contact = wa()->getUser();
         }
 
-        return $this->generateWithData($this->getModel()->getAllActiveForContact($contact), true);
+        return $this->generateWithData($this->getModel()->getByIdForContact($id, $contact));
     }
 
     /**

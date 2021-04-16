@@ -1,0 +1,41 @@
+name: Deploy Mobile Build
+
+on:
+  push:
+    branches: [ webasyst2 ]
+    paths:
+      - 'client/dist/mobile/**'
+  pull_request:
+    branches: [ webasyst2 ]
+    paths:
+      - 'client/dist/mobile/**'
+
+jobs:
+
+  deploy_android:
+    runs-on: ubuntu-latest
+    steps:        
+      - name: Copy to Cash-app-Android
+        uses: andstor/copycat-action@v3
+        with:
+          personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
+          src_path: /client/dist/mobile/.
+          src_branch: webasyst2
+          dst_path: /cashflow/src/main/assets/spa/
+          filter: '**/!(*.html)'
+          dst_owner: 1312inc
+          dst_repo_name: Cash-app-Android
+
+  deploy_ios:
+    runs-on: ubuntu-latest
+    steps:        
+      - name: Copy to Cash-app-iOS
+        uses: andstor/copycat-action@v3
+        with:
+          personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
+          src_path: /client/dist/mobile/.
+          src_branch: webasyst2
+          dst_path: /Cashflow/Resources/SPA/
+          filter: '**/!(*.html)'
+          dst_owner: 1312inc
+          dst_repo_name: Cash-app-iOS
