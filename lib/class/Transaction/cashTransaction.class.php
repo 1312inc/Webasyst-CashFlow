@@ -49,7 +49,7 @@ class cashTransaction extends cashAbstractEntity
     private $repeating_id;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $create_contact_id;
 
@@ -102,6 +102,11 @@ class cashTransaction extends cashAbstractEntity
      * @var null|cashTransaction
      */
     protected $linkedTransaction;
+
+    /**
+     * @var bool|int
+     */
+    protected $is_onbadge = 0;
 
     /**
      * @return int
@@ -269,7 +274,7 @@ class cashTransaction extends cashAbstractEntity
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCreateContactId()
     {
@@ -277,7 +282,7 @@ class cashTransaction extends cashAbstractEntity
     }
 
     /**
-     * @param int $createContactId
+     * @param int|null $createContactId
      *
      * @return cashTransaction
      */
@@ -576,4 +581,22 @@ class cashTransaction extends cashAbstractEntity
 
         return $this;
    }
+
+    /**
+     * @return bool|int
+     */
+    public function getIsOnbadge()
+    {
+        return $this->is_onbadge;
+    }
+
+    /**
+     * @return cashTransaction
+     */
+    public function setIsOnbadge($is_onbadge)
+    {
+        $this->is_onbadge = $is_onbadge ? 1 : 0;
+
+        return $this;
+    }
 }

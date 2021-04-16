@@ -11,9 +11,17 @@ class cashReportDdsAction extends cashViewAction
      */
     protected function preExecute()
     {
-        if (!cash()->getUser()->canImport()) {
+        if (!cash()->getUser()->canSeeReport()) {
             throw new kmwaForbiddenException();
         }
+
+        if (wa()->whichUI() === '2.0') {
+            $this->setLayout(new cashStaticLayout());
+        } elseif (!waRequest::isXMLHttpRequest() && wa()->whichUI() === '1.3') {
+            $this->redirect(wa()->getAppUrl());
+        }
+
+        parent::preExecute();
     }
 
     /**
@@ -26,7 +34,7 @@ class cashReportDdsAction extends cashViewAction
     {
         $reportService = new cashReportDds();
 
-        $year = waRequest::get('year', 0, waRequest::TYPE_INT);
+        $year = waRequest::param('year', 0, waRequest::TYPE_INT);
         if (empty($year)) {
             $year = date('Y');
         }
@@ -34,7 +42,7 @@ class cashReportDdsAction extends cashViewAction
 
         $ddsTypes = $reportService->getTypes();
         /** @var cashReportDdsTypeDto|string $type */
-        $type = waRequest::get('type', cashReportDds::TYPE_CATEGORY, waRequest::TYPE_STRING_TRIM);
+        $type = waRequest::param('type', cashReportDds::TYPE_CATEGORY, waRequest::TYPE_STRING_TRIM);
         if (isset($ddsTypes[$type])) {
             $type = $ddsTypes[$type];
         } else {

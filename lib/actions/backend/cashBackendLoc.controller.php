@@ -5,6 +5,10 @@
  */
 class cashBackendLocController extends waViewController
 {
+    protected function preExecute()
+    {
+    }
+
     public function execute()
     {
         $this->executeAction(new cashBackendLocAction());

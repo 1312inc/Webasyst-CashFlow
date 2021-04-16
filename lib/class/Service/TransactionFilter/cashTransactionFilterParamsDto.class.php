@@ -6,37 +6,12 @@
 class cashTransactionFilterParamsDto
 {
     /**
-     * @var int
-     */
-    public $accountId;
-
-    /**
-     * @var int
-     */
-    public $categoryId;
-
-    /**
-     * @var int
-     */
-    public $createContactId;
-
-    /**
-     * @var int
-     */
-    public $contractorContactId;
-
-    /**
-     * @var int
-     */
-    public $importId;
-
-    /**
-     * @var DateTime
+     * @var DateTimeImmutable|null
      */
     public $startDate;
 
     /**
-     * @var DateTime
+     * @var DateTimeImmutable|null
      */
     public $endDate;
 
@@ -66,40 +41,32 @@ class cashTransactionFilterParamsDto
     public $reverse = false;
 
     /**
+     * @var cashAggregateFilter
+     */
+    public $filter;
+
+    /**
      * cashTransactionFilterParamsDto constructor.
      *
-     * @param int       $accountId
-     * @param int       $categoryId
-     * @param int       $createContactId
-     * @param int       $contractorContactId
-     * @param int       $importId
-     * @param DateTime  $startDate
-     * @param DateTime  $endDate
-     * @param waContact $contact
-     * @param int       $start
-     * @param int       $limit
-     * @param bool      $returnIterator
-     * @param bool      $reverse
+     * @param cashAggregateFilter    $filter
+     * @param DateTimeImmutable|null $startDate
+     * @param DateTimeImmutable|null $endDate
+     * @param waContact|null         $contact
+     * @param int|null               $start
+     * @param int|null               $limit
+     * @param bool                   $returnIterator
+     * @param bool                   $reverse
      */
     public function __construct(
-        int $accountId = null,
-        int $categoryId = null,
-        int $createContactId = null,
-        int $contractorContactId = null,
-        int $importId = null,
-        DateTime $startDate = null,
-        DateTime $endDate = null,
+        cashAggregateFilter $filter,
+        DateTimeImmutable $startDate = null,
+        DateTimeImmutable $endDate = null,
         waContact $contact = null,
         int $start = null,
         int $limit = null,
         bool $returnIterator = true,
         bool $reverse = true
     ) {
-        $this->accountId = $accountId;
-        $this->categoryId = $categoryId;
-        $this->createContactId = $createContactId;
-        $this->contractorContactId = $contractorContactId;
-        $this->importId = $importId;
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->contact = $contact;
@@ -107,5 +74,6 @@ class cashTransactionFilterParamsDto
         $this->start = $start;
         $this->limit = $limit;
         $this->reverse = $reverse;
+        $this->filter = $filter;
     }
 }

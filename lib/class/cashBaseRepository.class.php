@@ -109,7 +109,7 @@ class cashBaseRepository
     /**
      * @param $id
      *
-     * @return array|mixed
+     * @return array<cashAbstractEntity>|cashAbstractEntity
      * @throws waException
      */
     public function findById($id)
@@ -195,12 +195,12 @@ class cashBaseRepository
      * @param array $data
      * @param bool  $all
      *
-     * @return array
+     * @return array<cashAbstractEntity>|cashAbstractEntity|null
      */
     public function generateWithData($data, $all = false)
     {
         if (empty($data)) {
-            return [];
+            return $all ? [] : null;
         }
 
         if ($all === false) {

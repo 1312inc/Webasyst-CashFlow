@@ -9,5 +9,8 @@ return [
     ],
     cashEventStorage::ACCOUNT_ARCHIVE => [
         ['cashShopAccountArchiveListener', 'execute']
-    ]
+    ],
+    cashEventStorage::API_TRANSACTION_BEFORE_RESPONSE => [
+        ['cashApiTransactionBeforeResponseListener', 'updateExternalInfo']
+    ],
 ];

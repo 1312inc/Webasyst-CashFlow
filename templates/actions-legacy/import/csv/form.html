@@ -1,0 +1,594 @@
+{** @var $info cashCsvImportInfoDto **}
+<div>
+    <form action="?module=import&action=csvProcess" method="post">
+        <div class="c-import-preview">
+            <p>{sprintf(
+                '[`We’ve recognized <b>%d rows</b> in the uploaded CSV file. Here is the preview:`]',
+                $info->totalRows
+                )}
+            </p>
+
+            {if 0}
+                <p><i class="icon16 exclamation"></i> [`Looks like something was not properly recognized in the uploaded file. To try another encoding or a delimeter, please reload the page.`]</p>
+            {/if}
+
+            <div class="c-parsed-rows">
+                <div class="c-parsed-rows-content">
+                    <table class="zebra single-lined">
+                        <tr>
+                            {foreach $info->headers as $header}
+                                <th>{$header|escape}</th>
+                            {/foreach}
+                        </tr>
+                        {foreach $info->firstRows as $rowData}
+                            <tr>
+                                {foreach $rowData as $rowDatum}
+                                    <td>
+                                        <div>{$rowDatum|escape}</div>
+                                    </td>
+                                {/foreach}
+                            </tr>
+                        {/foreach}
+                    </table>
+                    <div class="block double-padded gray align-center">
+                        {if count($info->firstRows) == $info->totalRows}
+                            [`Showing all rows`]
+                        {else}
+                            {sprintf('[`Showing first %d rows only`]', count($info->firstRows))}
+                        {/if}
+                        <br><br><br><br><br>
+                    </div>
+                </div>
+                <div class="c-parsed-rows-shader"></div>
+            </div>
+        </div>
+        <div class="fields form">
+            <br>
+            <p>[`Configure how these rows should be imported as transactions:`]</p>
+            <div class="field">
+                <div class="name">
+                    [`Account & currency`]
+                </div>
+                <div class="value no-shift">
+                    <label>
+                        <input type="radio" name="import[account][type]" value="{cashCsvImportSettings::TYPE_SINGLE}"
+                               checked/>
+                        [`All imported transactions:`]
+                        <select name="import[account][single][column]">
+                            <option></option>
+                            {foreach $accounts as $a}
+                                <option value="{$a->id}">{$a->name|escape}</option>
+                            {/foreach}
+                        </select>
+                    </label>
+                </div>
+                <div class="value no-shift">
+                    <label>
+                        <input type="radio" name="import[account][type]"
+                               value="{cashCsvImportSettings::TYPE_MULTI}"/>
+                        [`Set according to the value in the following column:`]
+                        <select name="import[account][multi][column]"
+                                data-cash-csv-import-action="fetch-column-data"
+                                data-cash-csv-import-conditions="account">
+                            <option></option>
+                            {foreach $info->headers as $header}
+                                <option{if $header|strstr:'[`Currency`]'} selected{/if}
+                                        value="{$header}">{$header|escape}</option>
+                            {/foreach}
+                        </select>
+                    </label>
+                    <div class="block"><!-- JS-updated depenging on the column selected -->
+                        <table class="c-import-conditions" data-cash-csv-import-conditions-account></table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">
+                    [`Description`]
+                </div>
+                <div class="value no-shift">
+                    <select name="import[description]">
+                        <option></option>
+                        {foreach $info->headers as $header}
+                            <option value="{$header}"{if $header|strstr:'[`Description`]'} selected{/if}>{$header|escape}</option>
+                        {/foreach}
+                    </select>
+                    <i class="icon10 yes" style="display: none"></i>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">
+                    [`Date`]
+                </div>
+                <div class="value no-shift">
+                    <select name="import[datetime]"
+                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::DATETIME}"
+                    >
+                        <option></option>
+                        {foreach $info->headers as $header}
+                        <option value="{$header}"{if $header|strstr:'[`Date`]'} selected{/if}>{$header|escape}</option>
+                        {/foreach}
+                    </select>
+                    <span data-cash-import-csv-date-format style="display:none;">
+                        <select name="import[dateformat]">
+                            <option value="ai">[`Detect automatically`]</option>
+                            {foreach $dateFormats as $dateFormat}
+                            <option value="{$dateFormat}">{$dateFormat}</option>
+                            {/foreach}
+                            <option value="">[`Custom`]</option>
+                        </select>
+                    </span>
+                    <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
+                    <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">
+                    [`Amount`]
+                </div>
+                <div class="value no-shift">
+                    <label>
+                        <input type="radio" name="import[amount][type]" value="{cashCsvImportSettings::TYPE_SINGLE}"
+                               checked/>
+                        [`From the single column:`]
+                        <select name="import[amount][single][column]"
+                                data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
+                        >
+                            <option></option>
+                            {foreach $info->headers as $header}
+                                <option value="{$header}"{if $header|strstr:'[`Amount`]'} selected{/if}>{$header|escape}</option>
+                            {/foreach}
+                        </select>
+                        <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
+                        <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
+                    </label>
+                </div>
+                <div class="value no-shift">
+                    <label>
+                        <input type="radio" name="import[amount][type]" value="{cashCsvImportSettings::TYPE_MULTI}"/>
+                        [`From two different columns:`]
+                    </label>
+                    <div class="block">
+                        <table class="c-import-conditions">
+                            <tr>
+                                <td>
+                                    [`Income`]:
+                                    <select name="import[amount][multi][map][income]"
+                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
+                                    >
+                                        <option></option>
+                                        {foreach $info->headers as $header}
+                                            <option value="{$header}"{if $header|strstr:'[`Income`]'} selected{/if}>{$header|escape}</option>
+                                        {/foreach}
+                                    </select>
+                                    <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
+                                    <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
+                                </td>
+                                <td>
+                                    [`Expenses`]:
+                                    <select name="import[amount][multi][map][expense]"
+                                            data-cash-csv-import-validate="{cashImportCsvAbstractValidator::FULLNESS},{cashImportCsvAbstractValidator::AMOUNT}"
+                                    >
+                                        <option></option>
+                                        {foreach $info->headers as $header}
+                                            <option value="{$header}"{if $header|strstr:'[`Expense`]'} selected{/if}>{$header|escape}</option>
+                                        {/foreach}
+                                    </select>
+                                    <span class="small" data-cash-import-csv-validate-ok style="display: none"><i class="icon10 yes"></i> <span></span></span>
+                                    <span class="small" data-cash-import-csv-validate-error style="display: none"><i class="icon10 exclamation"></i> <span></span></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">
+                    [`Category`]
+                </div>
+                <div class="value no-shift">
+                    <label>
+                        <input type="radio" name="import[category][type]"
+                               value="{cashCsvImportSettings::TYPE_SINGLE}" checked/>
+                        [`Set depending on the amount:`]
+                    </label>
+                    <div class="block">
+                        <table class="c-import-conditions">
+                            <tr>
+                                <td>
+                                    [`Income (amount > 0)`]:
+                                    <select name="import[category][single][income][column]">
+                                        <option></option>
+                                        {foreach $categoriesIncome as $category}
+                                        <option value="{$category->id}">{$category->name|escape}</option>
+                                        {/foreach}
+                                    </select>
+                                </td>
+                                <td>
+                                    [`Expenses (amount < 0)`]:
+                                    <select name="import[category][single][expense][column]">
+                                        <option></option>
+                                        {foreach $categoriesExpense as $category}
+                                        <option value="{$category->id}">{$category->name|escape}</option>
+                                        {/foreach}
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="value no-shift">
+                    <label>
+                        <input type="radio" name="import[category][type]"
+                               value="{cashCsvImportSettings::TYPE_MULTI}"/>
+                        [`Set according to the value in the following column:`]
+                        <select name="import[category][multi][column]"
+                                data-cash-csv-import-action="fetch-column-data"
+                                data-cash-csv-import-conditions="category">
+                            <option></option>
+                            {foreach $info->headers as $header}
+                                <option value="{$header}">{$header|escape}</option>
+                            {/foreach}
+                        </select>
+                    </label>
+                    <div class="block"><!-- JS-updated depenging on the column selected -->
+                        <table class="c-import-conditions" data-cash-csv-import-conditions-category></table>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="value">
+                    <hr>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name">
+                    [`Duplicates`]
+                </div>
+                <div class="value no-shift">
+                    <label>
+                        <input type="hidden" name="import[options][skip_duplicates]" value="0"/>
+                        <input type="checkbox" name="import[options][skip_duplicates]" checked value="1"/>
+                        [`Skip a row if same ACCOUNT && CATEGORY && DATE && AMOUNT pair already exist`]
+                        <br>
+                        <span class="hint">[`Recommended to be on just to make sure all obvious duplicates will be skipped. Though, this depends on the data you are about to import.`]</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="value submit no-shift">
+                    <input type="submit" data-cash-csv-import-action="import" value="{sprintf('[`Import %s transactions`]', $info->totalRows)}"
+                           class="button green"/>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <div class="c-csv-configurator" id="c-import-step-3" style="display: none">
+        <div class="progressbar green">
+            <div class="progressbar-outer">
+                <div class="progressbar-inner" style="width: 0%;">
+                </div>
+            </div>
+        </div>
+        {*                    <div data-cash-csv-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
+        <div data-cash-csv-import-progress-errors style="display: none"></div>
+        <div>
+            <span data-cash-csv-import-progress-icon="loading" style="display:none;"><i class="icon16 loading"></i> <span>[`Importing...`]</span></span>
+            <span data-cash-csv-import-progress-icon="success" style="display:none;"><i class="icon16 yes"></i> <span>[`Finalizing...`]</span></span>
+            <span data-cash-csv-import-progress-icon="error" style="display:none;"><i class="icon16 no"></i> <span>[`Done`]</span></span>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="{$wa_app_static_url}js/kmlongaction.js{if !waSystemConfig::isDebug()}?v{$wa->version()}{/if}"></script>
+
+<script>
+    'use strict';
+    (function ($) {
+        var data = {
+                account: {$accounts|json_encode},
+                category: {
+                    income: {$categoriesIncome|json_encode},
+                    expense: {$categoriesExpense|json_encode},
+                }
+            },
+            transactionCounts = {$info->totalRowsByColumn|json_encode},
+            $form = $('#c-import-step-2 form'),
+            $dateFormatW = $form.find('[data-cash-import-csv-date-format]');
+
+        var fetchColumnUniqueValues = function (name, callback) {
+            $.get('?module=import&action=csvValidateColumn', { column_name: name, to_validate: '{cashImportCsvAbstractValidator::UNIQUE_VALUES}' }, callback);
+        };
+        var fetchColumnDatetimeValues = function (name, format, callback) {
+            var $status = $dateFormatW.find('[data-cash-import-csv-check-date-format]');
+            $status.hide().empty();
+            $.get('?module=import&action=csvValidateColumn', { column_name: name, dateformat: format, to_validate: '{cashImportCsvAbstractValidator::DATETIME}' }, function (r) {
+                $status.show();
+                if (r.status === 'ok') {
+                    $status.append('<i class="icon10 yes"></i>' + r.data.datetime.source + ' => ' + r.data.datetime.converted);
+                } else {
+                    $status.append('<i class="icon10 no"></i>' + r.errors.join("\n"));
+                }
+            });
+        };
+
+        $form
+            .on('submit', function (e) {
+                e.preventDefault();
+
+                var $button = $form.find('[data-cash-csv-import-action="import"]'),
+                    $progress = $('#c-import-step-3'),
+                    $progressLoading = $progress.find('[data-cash-csv-import-progress-icon="loading"]'),
+                    $progressSuccess = $progress.find('[data-cash-csv-import-progress-icon="success"]'),
+                    $progressError = $progress.find('[data-cash-csv-import-progress-icon="error"]'),
+                    $transactionStat = $progress.find('[data-cash-csv-import-progress-transactions]'),
+                    $transactionErrors = $progress.find('[data-cash-csv-import-progress-errors]');
+
+                $button.prop('disabled', true).hide();
+
+                var long = $.wa.kmLongAction();
+                long.start({
+                    process_url: $form.attr('action'),
+                    parallel: 2,
+                    debug: true,
+                    start: {
+                        data: $form.serialize(),
+                        onStart: function(r) {
+                            $progress.show();
+                            $progressLoading.show().siblings().hide();
+                        },
+                        onSuccess: function (r) {
+                            $progress.show().find('.progressbar-inner').css('width', '0%');
+                            $('#cash-import-page').trigger('stepChange.cash', 3);
+                            $form.slideUp(131.2);
+                            $('html, body').animate({ scrollTop: 0 }, 131.2);
+
+                            // $transactionStat.show();
+                        },
+                        onError: function (r) {
+                            $progressError.show().siblings().hide();
+                            $progressError.find('span').text(r.error);
+                            $button.prop('disabled', false).show();
+                            $form.slideDown(131.2);
+                            // $transactionStat.hide();
+                        }
+                    },
+                    step: {
+                        onProgress: function(r) {
+                            $progress.find('.progressbar-inner').css('width', r.progress + '%');
+                            // $transactionStat.show();
+                            // $transactionStat.find('span').text(r.transactions.ok);
+                            // $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
+                        },
+                        onReady: function (r) {
+                            $progressSuccess.show().siblings().hide();
+                            $progress.find('.progressbar-inner').css('width', r.progress + '%');
+                            window.location.hash = '#/import/view/csv/' + r.import_id;
+                            $.cash_routing.redispatch();
+                            // $button.prop('disabled', false);
+                            // $transactionStat.show();
+                            // $transactionStat.find('span').text(r.transactions.ok);
+                            // $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
+                        },
+                        onError: function (r) {
+                            $progressError.show().siblings().hide();
+                            $progressError.find('span').text(r.error);
+                            $button.prop('disabled', false).show();
+                        }
+                    }
+                });
+            })
+            .on('change.cash', '[data-cash-csv-import-action="fetch-column-data"]', function (e) {
+                var $this = $(this),
+                    name = $this.find(':selected').text(),
+                    scope = $this.data('cash-csv-import-conditions'),
+                    dataScope = 'data-cash-csv-import-conditions-' + scope,
+                    $wrapper = $('table[' + dataScope + ']'),
+                    $template = $('script[' + dataScope + ']');
+
+                $wrapper.empty();
+
+                fetchColumnUniqueValues(name, function (r) {
+                    if (r.status === 'ok') {
+                        if (!r.data['{{cashImportCsvAbstractValidator::UNIQUE_VALUES}}']) {
+                            return;
+                        }
+
+                        $.each(r.data.{{cashImportCsvAbstractValidator::UNIQUE_VALUES}}, function (index, columnValue) {
+                            $template.tmpl({
+                                columnValue: columnValue,
+                                sources: data[scope],
+                                scope: scope,
+                                translate: {
+                                    'Expense': $_('Expense'),
+                                    'Income': $_('Income'),
+                                    'Skip rows with this value': $_('Skip rows with this value')
+                                },
+                                transactions: transactionCounts[name][columnValue] + ' ' + $_('transactions')
+                            }).appendTo($wrapper);
+                        });
+                    } else {
+                        alert(r.errors.join("\n"));
+                    }
+                });
+            })
+            // .on('change.cash', '[name="import[datetime]"]', function(e) {
+            //     var $this = $(this),
+            //         $selected = $this.find(':selected');
+            //
+            //     if ($selected.val()) {
+            //         $dateFormatW.show();
+            //         fetchColumnDatetimeValues($selected.val(), $dateFormatW.find('select').val());
+            //     } else {
+            //         $dateFormatW.hide();
+            //     }
+            // })
+            .on('change.cash', '[data-cash-csv-import-conditions-category] select, [name="import[category][single][income][column]"], [name="import[category][single][expense][column]"]', function(e) {
+                var $this = $(this),
+                    $selected = $this.find(':selected'),
+                    val = $selected.val(),
+                    newCatName = '',
+                    type = '';
+
+                if (val == 'new-income') {
+                    newCatName = prompt($_('New income category: '));
+                    type = '{cashCategory::TYPE_INCOME}';
+                } else if (val == 'new-expense') {
+                    newCatName = prompt($_('New expense category: '));
+                    type = '{cashCategory::TYPE_EXPENSE}';
+                }
+
+                if (newCatName && type) {
+                    $this.prop('disabled', true);
+                    $.post('?module=category&action=save', {
+                        category: {
+                            type: type,
+                            name: newCatName
+                        }
+                    }, function (r) {
+                        $this.prop('disabled', false);
+                        if (r.status === 'ok') {
+                            var $optgroup = $form.find('[data-cash-categories-optgroup="' + type + '"]'),
+                                $expenses = $form.find('[name="import[category][single][expense][column]"]'),
+                                $incomes = $form.find('[name="import[category][single][income][column]"]'),
+                                option = '<option value="' + r.data.id + '">' + r.data.name + '</option>';
+
+                            if ($optgroup.length) {
+                                $optgroup.find('option:first').after(option);
+                            }
+
+                            data.category[type].push(r.data);
+
+                            $expenses.find('option:nth(1)').after(option);
+                            $incomes.find('option:nth(1)').after(option);
+
+                            $this.find('option[value="' + r.data.id + '"]').attr('selected', 'selected');
+                        }
+                    }, 'json');
+                }
+            })
+            .on('change.cash', '[data-cash-csv-import-validate]', function (e) {
+                var $this = $(this),
+                    name = $this.find(':selected').text(),
+                    $wrapper = $this.parent(),
+                    $error = $wrapper.find('[data-cash-import-csv-validate-error]'),
+                    $ok = $wrapper.find('[data-cash-import-csv-validate-ok]'),
+                    to_validate = $this.data('cash-csv-import-validate'),
+                    isDateformat = to_validate.indexOf('{cashImportCsvAbstractValidator::DATETIME}') !== -1;
+
+                $error.hide().find('span').html('');
+                $ok.hide().find('span').html('');
+                if (isDateformat) {
+                    $dateFormatW.hide();
+                }
+
+                if (!name) {
+                    return;
+                }
+
+                if (isDateformat) {
+                    $dateFormatW.show();
+                }
+
+                $.get('?module=import&action=csvValidateColumn', {
+                    column_name: name,
+                    to_validate: to_validate,
+                    dateformat: $dateFormatW.find('select').val()
+                }, function (r) {
+                    if (r.status === 'ok') {
+                        $ok.show();
+                        if (isDateformat) {
+                            $ok.find('span').text(r.data.datetime.source + ' => ' + r.data.datetime.converted);
+                        }
+                    } else {
+                        $error.show().find('span').html(r.errors.join('<br>'));
+                    }
+                });
+            })
+            .on('change.cash', '[name="import[description]"]', function (e) {
+                var $this = $(this),
+                    $yes = $this.closest('.field').find('.yes');
+
+                if ($this.find(':selected').val()) {
+                    $yes.show();
+                } else {
+                    $yes.hide();
+                }
+            })
+        ;
+
+        $dateFormatW.on('change.cash', 'select', function (e) {
+            var $this = $(this),
+                $selected = $this.find(':selected'),
+                value = $selected.val();
+
+            if (!value) {
+                var format = prompt($_('Enter format'));
+                if (format) {
+                    $selected
+                        .before('<option value="' + format + '" selected>' + format + '</option>')
+                        .removeAttr('selected');
+                    $this.trigger('change.cash');
+                }
+            } else {
+                $form.find('[name="import[datetime]"]').trigger('change.cash');
+            }
+        });
+
+        $form.find('[name="import[datetime]"], [name="import[amount][single][column]"]').trigger('change.cash');
+        $('#c-import-step-1').hide();
+
+    }(jQuery))
+</script>
+
+<script type="text/x-jquery-tmpl" data-cash-csv-import-conditions-category>
+{literal}
+<tr>
+    <td><span class="c-condition">${columnValue}</span></td>
+    <td>=></td>
+    <td>
+        <select name="import[category][multi][map][${columnValue}]">
+            <option value="0">${translate['Skip rows with this value']}</option>
+            <optgroup data-cash-categories-optgroup="income" label="${translate['Income']}">
+                {{each(id, name, type) sources.income}}
+                <option value="${id}">${name}</option>
+                {{/each}}
+            </optgroup>
+            <optgroup data-cash-categories-optgroup="expense" label="${translate['Expense']}">
+                {{each(id, name, type) sources.expense}}
+                <option value="${id}">${name}</option>
+                {{/each}}
+            </optgroup>
+        </select>
+    </td>
+    <td class="hint">${transactions}</td>
+</tr>
+{/literal}
+</script>
+<script type="text/x-jquery-tmpl" data-cash-csv-import-conditions-account>
+{literal}
+<tr>
+    <td><span class="c-condition">${columnValue}</span></td>
+    <td>=></td>
+    <td>
+        <select name="import[account][multi][map][${columnValue}]">
+            <option value="0">${translate['Skip rows with this value']}</option>
+            {{each(id, name, type) sources}}
+            <option value="${id}">${name}</option>
+            {{/each}}
+        </select>
+    </td>
+    <td class="hint">${transactions}</td>
+</tr>
+{/literal}
+</script>

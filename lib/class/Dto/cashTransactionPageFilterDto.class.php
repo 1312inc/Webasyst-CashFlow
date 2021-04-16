@@ -8,6 +8,7 @@ class cashTransactionPageFilterDto implements JsonSerializable
     const FILTER_ACCOUNT  = 'account';
     const FILTER_CATEGORY = 'category';
     const FILTER_IMPORT = 'import';
+    const FILTER_CURRENCY = 'currency';
 
     /**
      * @var string
@@ -30,7 +31,7 @@ class cashTransactionPageFilterDto implements JsonSerializable
     public $type = self::FILTER_ACCOUNT;
 
     /**
-     * @var cashAccount|cashCategory|cashImport
+     * @var cashAccount|cashCategory|cashImport|cashCurrencyVO
      */
     public $entity;
 
@@ -74,6 +75,8 @@ class cashTransactionPageFilterDto implements JsonSerializable
                     throw new kmwaNotFoundException(_w('Account not found'));
                 }
 
+                $this->id = $this->entity->getId();
+
                 break;
 
             case self::FILTER_CATEGORY:
@@ -85,6 +88,7 @@ class cashTransactionPageFilterDto implements JsonSerializable
                 kmwaAssert::instance($this->entity, cashCategory::class);
 
                 $this->name = $this->entity->getName();
+                $this->id = $this->entity->getId();
 
                 break;
 
@@ -100,6 +104,20 @@ class cashTransactionPageFilterDto implements JsonSerializable
                     'Imported on %s',
                     waDateTime::format('humandatetime', $this->entity->getCreateDatetime())
                 );
+                $this->id = $this->entity->getId();
+
+                break;
+
+            case self::FILTER_CURRENCY:
+                if (!$identifier) {
+                    throw new kmwaNotFoundException(_w('Currency not found'));
+                }
+
+                $this->entity = cashCurrencyVO::fromWaCurrency($identifier);
+                kmwaAssert::instance($this->entity, cashCurrencyVO::class);
+
+                $this->name = $this->entity->getTitle();
+                $this->id = $this->entity->getCode();
 
                 break;
 
@@ -108,7 +126,6 @@ class cashTransactionPageFilterDto implements JsonSerializable
         }
 
         $this->identifier = $identifier;
-        $this->id = $this->entity->getId();
     }
 
     /**

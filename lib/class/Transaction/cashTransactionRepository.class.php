@@ -19,7 +19,7 @@ class cashTransactionRepository extends cashBaseRepository
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function findByDates(
+    public function findByDatesAndFilter(
         DateTime $startDate,
         DateTime $endDate,
         cashTransactionPageFilterDto $filterDto,
@@ -27,11 +27,6 @@ class cashTransactionRepository extends cashBaseRepository
     ): array {
         /** @var cashTransactionModel $model */
         $model = cash()->getModel(cashTransaction::class);
-
-        $accountDtos = [];
-        foreach (cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact($filterDto->contact) as $a) {
-            $accountDtos[$a->getId()] = cashAccountDto::fromEntity($a);
-        }
 
         $start = null;
         $limit = null;
@@ -123,6 +118,30 @@ class cashTransactionRepository extends cashBaseRepository
 
                 break;
 
+            case cashTransactionPageFilterDto::FILTER_CURRENCY:
+                $data = $model->getByDateBoundsAndCurrency(
+                    $startDate->format('Y-m-d 00:00:00'),
+                    $endDate->format('Y-m-d 23:59:59'),
+                    $filterDto->contact,
+                    $filterDto->entity,
+                    false,
+                    $start,
+                    $limit
+                );
+
+                if ($pagination) {
+                    $pagination->setTotalRows(
+                        $model->countByDateBoundsAndCurrency(
+                            $startDate->format('Y-m-d 00:00:00'),
+                            $endDate->format('Y-m-d 23:59:59'),
+                            $filterDto->contact,
+                            $filterDto->entity
+                        )
+                    );
+                }
+
+                break;
+
             default:
                 throw new kmwaRuntimeException(_w('Wrong filter type'));
         }
@@ -132,6 +151,11 @@ class cashTransactionRepository extends cashBaseRepository
             cashCategoryDto::class,
             cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact($filterDto->contact)
         );
+
+        $accountDtos = [];
+        foreach (cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact($filterDto->contact) as $a) {
+            $accountDtos[$a->getId()] = cashAccountDto::fromEntity($a);
+        }
 
         $dtoAssembler = new cashTransactionDtoAssembler();
         $dtos = [];
@@ -228,5 +252,151 @@ class cashTransactionRepository extends cashBaseRepository
         );
 
         return $last instanceof cashTransaction ? $last : null;
+    }
+
+    public function findFirstForAccount(cashAccount $account): ?cashTransaction
+    {
+        $initialBalanceSql = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
+            ->select(['ct.*'])
+            ->from('cash_transaction', 'ct')
+            ->andWhere(
+                [
+                    'ct.is_archived = 0',
+                    'ca.is_archived = 0',
+                    'ct.account_id = i:account_id',
+                ]
+            )
+            ->addParam('account_id', $account->getId())
+            ->join(['join cash_account ca on ct.account_id = ca.id'])
+            ->orderBy(['ct.date ASC'])
+            ->limit(1);
+
+        $data = $initialBalanceSql->query()->fetchAssoc();
+
+        if (!$data) {
+            return null;
+        }
+
+        return $this->generateWithData($data);
+    }
+
+    public function findFirstForCurrency(cashCurrencyVO $currencyVO): ?cashTransaction
+    {
+        $initialBalanceSql = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
+            ->select(['ct.*'])
+            ->from('cash_transaction', 'ct')
+            ->andWhere(
+                [
+                    'ct.is_archived = 0',
+                    'ca.is_archived = 0',
+                    'ca.currency = s:currency',
+                ]
+            )
+            ->addParam('currency', $currencyVO->getCode())
+            ->join(['join cash_account ca on ct.account_id = ca.id'])
+            ->orderBy(['ct.date ASC'])
+            ->limit(1);
+
+        $data = $initialBalanceSql->query()->fetchAssoc();
+
+        if (!$data) {
+            return null;
+        }
+
+        return $this->generateWithData($data);
+    }
+
+    public function countOnTodayBeforeDate(DateTimeImmutable $date, waContact $contact): int
+    {
+        $sqlParts = new cashSelectQueryParts($this->getModel());
+
+        $sqlParts->select(['count(ct.id)'])
+            ->from('cash_transaction', 'ct')
+            ->join(
+                [
+                    'join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0',
+                    'left join cash_category cc on ct.category_id = cc.id',
+                ]
+            )
+            ->andWhere(
+                [
+                    'ct.date <= s:date',
+                    'ct.is_archived = 0',
+                    'ct.is_onbadge = 1',
+                    'accountAccessSql' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact),
+                    'categoryAccessSql' => cash()->getContactRights()->getSqlForCategoryJoin(
+                        $contact,
+                        'ct',
+                        'category_id'
+                    ),
+                ]
+            )
+            ->params(['date' => $date->format('Y-m-d')]);
+
+        return (int) $sqlParts->query()->fetchField();
+    }
+
+    public function countOnDate(DateTimeImmutable $date, waContact $contact): int
+    {
+        $sqlParts = new cashSelectQueryParts($this->getModel());
+
+        $sqlParts->select(['count(ct.id)'])
+            ->from('cash_transaction', 'ct')
+            ->join(
+                [
+                    'join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0',
+                    'left join cash_category cc on ct.category_id = cc.id',
+                ]
+            )
+            ->andWhere(
+                [
+                    'ct.date = s:date',
+                    'ct.is_archived = 0',
+                    'accountAccessSql' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact),
+                    'categoryAccessSql' => cash()->getContactRights()->getSqlForCategoryJoin(
+                        $contact,
+                        'ct',
+                        'category_id'
+                    ),
+                ]
+            )
+            ->params(['date' => $date->format('Y-m-d')]);
+
+        return (int) $sqlParts->query()->fetchField();
+    }
+
+    /**
+     * @param array  $ids
+     * @param waUser $contact
+     * @param false  $onbadge
+     *
+     * @return bool|null
+     * @throws waException
+     */
+    public function setOnBadgeByIds(array $ids, waUser $contact, $onbadge = false)
+    {
+        $this->getModel()->startTransaction();
+        try {
+            $this->getModel()->exec(
+                sprintf(
+                    'update cash_transaction 
+                    set is_onbadge = :onbadge
+                    join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0
+                    left join cash_category cc on ct.category_id = cc.id 
+                    where id in (i:ids) and %s and %s',
+                    cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact),
+                    cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id')
+                ),
+                ['onbadge' => (int) $onbadge, 'ids' => $ids]
+            );
+
+            return true;
+        } catch (Exception $exception) {
+            $this->getModel()->rollback();
+
+            cash()->getLogger()->error('Set onbadge error', $exception);
+        }
+
+        return null;
     }
 }

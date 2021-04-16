@@ -10,4 +10,5 @@ namespace PHPSTORM_META {
     override(\cashConfig::getEntityRepository(), map([
         '' => '@Repository'
     ]));
+    override(\cashApiAbstractMethod::fillRequestWithParams(), arg(0));
 }
