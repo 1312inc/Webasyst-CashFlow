@@ -29,7 +29,12 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
     public function getHtml()
     {
         $view = wa()->getView();
-        $template = wa()->getAppPath('./templates/actions/import/csv/form.html', cashConfig::APP_ID);
+
+        $legacy = '';
+        if (wa()->whichUI() === '1.3') {
+            $legacy = '-legacy';
+        }
+        $template = wa()->getAppPath("./templates/actions{$legacy}/import/csv/form.html", cashConfig::APP_ID);
 
         /** @var cashAccount[] $accounts */
         $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
@@ -46,10 +51,11 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
                 cash()->getEntityRepository(cashCategory::class)
                     ->findNoCategoryIncome()
                     ->setName(_w('New income category'))
+                    ->setId('new-income')
             )
         );
 
-        $categoriesExpense = cash()->getEntityRepository(cashCategory::class)->findAllExpense();
+        $categoriesExpense = cash()->getEntityRepository(cashCategory::class)->findAllExpenseForContact();
         /** @var cashCategoryDto[] $categoryExpenseDtos */
         $categoryExpenseDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $categoriesExpense);
         array_unshift(
@@ -59,6 +65,7 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
                 cash()->getEntityRepository(cashCategory::class)
                     ->findNoCategoryExpense()
                     ->setName(_w('New expense category'))
+                    ->setId('new-expense')
             )
         );
 

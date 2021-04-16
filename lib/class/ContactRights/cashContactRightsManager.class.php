@@ -29,6 +29,25 @@ class cashContactRightsManager
     }
 
     /**
+     * @param waContact $contact
+     *
+     * @return cashContactRightsDto
+     */
+    public function createContactRightsDto(waContact $contact): cashContactRightsDto
+    {
+        $contactRights = $this->getContactAccess($contact);
+
+        return new cashContactRightsDto(
+            $this->isAdmin($contact),
+            $contactRights->getCategoryIdsGroupedByAccess(),
+            $contactRights->getAccountIdsGroupedByAccess(),
+            $contactRights->canImport(),
+            $contactRights->canSeeReport(),
+            $contactRights->canAccessTransfers()
+        );
+    }
+
+    /**
      * @param waDbQuery $query
      * @param waContact $contact
      *
@@ -49,17 +68,20 @@ class cashContactRightsManager
     /**
      * @param waDbQuery $query
      * @param waContact $contact
+     * @param int       $access
      *
      * @return waDbQuery
-     * @throws waException
      */
-    public function filterQueryAccountsForContact(waDbQuery $query, waContact $contact): waDbQuery
-    {
+    public function filterQueryAccountsForContact(
+        waDbQuery $query,
+        waContact $contact,
+        $access = cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY
+    ): waDbQuery {
         if ($this->isAdmin($contact)) {
             return $query;
         }
 
-        $query->where('id in (i:ids)', ['ids' => $this->getAccountIdsForContact($contact)]);
+        $query->where('id in (i:ids)', ['ids' => $this->getAccountIdsForContact($contact, $access)]);
 
         return $query;
     }
@@ -107,6 +129,16 @@ class cashContactRightsManager
      *
      * @return bool
      */
+    public function canAccessTransfers(waContact $contact): bool
+    {
+        return $this->getContactAccess($contact)->canAccessTransfers();
+    }
+
+    /**
+     * @param waContact $contact
+     *
+     * @return bool
+     */
     public function canImport(waContact $contact): bool
     {
         return $this->getContactAccess($contact)->canImport();
@@ -124,12 +156,13 @@ class cashContactRightsManager
 
     /**
      * @param waContact $contact
+     * @param int       $accountId
      *
      * @return bool
      */
-    public function canSeeAccountBalance(waContact $contact): bool
+    public function canSeeAccountBalance(waContact $contact, $accountId): bool
     {
-        return $this->getContactAccess($contact)->canSeeReport();
+        return $this->hasFullAccessToAccount($contact, $accountId);
     }
 
     /**
@@ -140,7 +173,11 @@ class cashContactRightsManager
      */
     public function hasFullAccessToAccount(waContact $contact, $accountId): bool
     {
-        return $this->hasAccessToAccount($contact, $accountId, cashRightConfig::ACCOUNT_FULL_ACCESS);
+        if ($accountId instanceof cashAccount) {
+            $accountId = $accountId->getId();
+        }
+
+        return $this->hasAccessToAccount($contact, (int) $accountId, cashRightConfig::ACCOUNT_FULL_ACCESS);
     }
 
     /**
@@ -151,6 +188,10 @@ class cashContactRightsManager
      */
     public function hasMinimumAccessToAccount(waContact $contact, $accountId): bool
     {
+        if ($accountId instanceof cashAccount) {
+            $accountId = $accountId->getId();
+        }
+
         return $this->hasAccessToAccount(
             $contact,
             $accountId,
@@ -203,6 +244,10 @@ class cashContactRightsManager
     {
         if ($this->getContactAccess($contact)->isAdmin()) {
             return true;
+        }
+
+        if ($categoryId instanceof cashCategory) {
+            $categoryId = $categoryId->getId();
         }
 
         return in_array(
@@ -315,6 +360,10 @@ class cashContactRightsManager
     {
         if ($this->getContactAccess($contact)->isAdmin()) {
             return true;
+        }
+
+        if ($categoryId instanceof cashCategory) {
+            $categoryId = $categoryId->getId();
         }
 
         return in_array(
@@ -455,7 +504,6 @@ class cashContactRightsManager
 
     /**
      * @param waContact $contact
-     *
      * @param int       $access
      *
      * @return array
@@ -490,10 +538,14 @@ class cashContactRightsManager
         }
 
         if ($this->isAdmin($contact)) {
-            return $this->cacheValue($key, ' 1 /* account access */');
+            return $this->cacheValue($key, ' (1 /* account access */)');
         }
 
         $ids = $this->getAccountIdsForContact($contact, $access);
+        if (!$ids) {
+            return $this->cacheValue($key, ' (0 /* account access */)');
+        }
+
         $query = $this->model->prepare(sprintf(' %s.%s in (i:ids)  /* account access */', $alias, $field));
         $query->bindArray(['ids' => $ids]);
 

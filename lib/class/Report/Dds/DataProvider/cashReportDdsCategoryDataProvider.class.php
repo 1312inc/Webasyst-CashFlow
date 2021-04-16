@@ -42,7 +42,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
     from cash_transaction ct
              join cash_account ca on ct.account_id = ca.id
              join cash_category cc on ct.category_id = cc.id
-    where ct.date between s:start and s:end
+    where ct.date >= s:start and ct.date < s:end
       and ca.is_archived = 0
       and ct.is_archived = 0
     group by id, ca.currency, MONTH(ct.date)",
@@ -115,7 +115,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                     $category->getId(),
                     $category->isExpense(),
                     $category->isIncome(),
-                    sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor()),
+                    sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $category->getColor()),
                     false,
                     $category->getColor()
                 ),
@@ -129,7 +129,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                 $transferCategory->getId(),
                 false,
                 true,
-                sprintf('<i class="icon16 color" style="background-color: %s"></i>', $transferCategory->getColor()),
+                sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
                 false,
                 $transferCategory->getColor()
             ),
@@ -143,18 +143,18 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
             $rawData[cashCategory::TYPE_EXPENSE] ?? []
         );
         // usual categories
-        foreach ($this->categoryRep->findAllExpense() as $category) {
+        foreach ($this->categoryRep->findAllExpenseForContact() as $category) {
             $statData[] = new cashReportDdsStatDto(
                 new cashReportDdsEntity(
                     $category->getName(),
                     $category->getId(),
                     $category->isExpense(),
                     $category->isIncome(),
-                    sprintf('<i class="icon16 color" style="background-color: %s"></i>', $category->getColor()),
+                    sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $category->getColor()),
                     false,
                     $category->getColor()
                 ),
-                $rawData[$category->getId()] ?? []
+                $rawData[sprintf('%s|%s', $category->getId(), $category->getType())] ?? []
             );
         }
         // transfers
@@ -164,7 +164,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                 $transferCategory->getId(),
                 true,
                 false,
-                sprintf('<i class="icon16 color" style="background-color: %s"></i>', $transferCategory->getColor()),
+                sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
                 false,
                 $transferCategory->getColor()
             ),

@@ -37,7 +37,7 @@ class cashImportCsvViewAction extends cashViewAction
             throw new kmwaNotFoundException(_w('No import found'));
         }
 
-        list($startDate, $endDate) = cash()->getModel(cashImport::class)->getDateBounds($filterDto->identifier);
+        [$startDate, $endDate] = cash()->getModel(cashImport::class)->getDateBounds($filterDto->identifier);
         $startDate = new DateTime($startDate);
         $endDate = new DateTime($endDate);
 
@@ -67,6 +67,10 @@ class cashImportCsvViewAction extends cashViewAction
             ]
         );
 
-        $this->setTemplate('templates/actions/import/csv/view.html');
+        if (wa()->whichUI() === '1.3') {
+            $this->setTemplate('templates/actions-legacy/import/csv/view.html');
+        } else {
+            $this->setTemplate('templates/actions/import/csv/view.html');
+        }
     }
 }

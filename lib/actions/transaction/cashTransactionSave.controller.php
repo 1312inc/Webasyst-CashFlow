@@ -78,8 +78,8 @@ class cashTransactionSaveController extends cashJsonController
                 if ($repeatingSaveResult->ok) {
                     $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
                     if ($newTransactions) {
-                        foreach ($newTransactions as $newTransaction) {
-                            $newTransactionIds[$newTransaction->getId()] = true;
+                        foreach ($newTransactions as $newTransactionId) {
+                            $newTransactionIds[$newTransactionId] = true;
                         }
                         wa()->getStorage()->set('cash_just_saved_transactions', $newTransactionIds);
                     }
@@ -93,8 +93,8 @@ class cashTransactionSaveController extends cashJsonController
 
                     $newTransactions = $transactionRepeater->repeat($repeatingSaveResult->newTransaction);
                     if ($newTransactions) {
-                        foreach ($newTransactions as $newTransaction) {
-                            $newTransactionIds[$newTransaction->getId()] = true;
+                        foreach ($newTransactions as $newTransactionId) {
+                            $newTransactionIds[$newTransactionId] = true;
                         }
                         wa()->getStorage()->set('cash_just_saved_transactions', $newTransactionIds);
                     }

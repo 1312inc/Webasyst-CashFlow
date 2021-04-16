@@ -13,6 +13,7 @@ final class cashImportCsv
     const FIRST_ROWS             = 100;
     const MAX_ROWS_TO_READ       = 100500;
     const ROWS_TO_READ           = 10;
+    const EXTERNAL_SOURCE        = 'csv';
 
     /**
      * @var cashImportResponseCsv
@@ -326,7 +327,7 @@ final class cashImportCsv
             return 0;
         }
 
-        return (int)array_sum($this->csvInfoDto->totalRowsByColumn[$columnName]);
+        return (int) array_sum($this->csvInfoDto->totalRowsByColumn[$columnName]);
     }
 
     /**
@@ -336,8 +337,8 @@ final class cashImportCsv
      */
     public function canBeColumnWithUniqueValues($count)
     {
-        return (int)$count <= $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER
-            || ((int)$count > $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER
+        return (int) $count <= $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER
+            || ((int) $count > $this->getCsvInfoDto()->totalRows / self::MAX_UNIQUENESS_DIVIDER
                 && $this->getCsvInfoDto()->totalRows < self::MAX_UNIQUENESS_LIMIT);
     }
 
@@ -381,11 +382,13 @@ final class cashImportCsv
             }
 
             $transaction
+                ->setCreateContactId(null)
                 ->setAmount($amount)
                 ->setDescription($this->getDescription($data))
                 ->setDate($this->getDate($data))
                 ->setAccountId($this->getAccount($data, $infoDto))
                 ->setCategoryId($categoryId)
+                ->setExternalSource(self::EXTERNAL_SOURCE)
                 ->setImportId($infoDto->importId);
 
             $selectedCategory = $transaction->getCategoryId();
@@ -461,7 +464,7 @@ final class cashImportCsv
     {
         if ($this->encoding && is_array($a)) {
             foreach ($a as &$v) {
-                @$v = iconv($this->encoding, "utf-8//IGNORE", $v);
+                @$v = iconv($this->encoding, "utf-8//IGNORE", trim($v));
             }
         }
         unset($v);
@@ -612,9 +615,9 @@ final class cashImportCsv
         switch ($this->settings->getCategoryType()) {
             case cashCsvImportSettings::TYPE_SINGLE:
                 if ($type === cashCategory::TYPE_INCOME) {
-                    $_catId = $this->settings->getCategoryIncome();
+                    $_catId = $this->settings->getCategoryIncome() ?: cashCategoryFactory::NO_CATEGORY_INCOME_ID;
                 } else {
-                    $_catId = $this->settings->getCategoryExpense();
+                    $_catId = $this->settings->getCategoryExpense() ?: cashCategoryFactory::NO_CATEGORY_EXPENSE_ID;
                 }
                 $categoryId = isset($infoDto->categories[$_catId]) ? $infoDto->categories[$_catId]->id : null;
                 break;
@@ -623,7 +626,9 @@ final class cashImportCsv
                 $categoryMap = $this->settings->getCategoryMap();
                 $category = $this->settings->getCategory();
                 if (isset($data[$category], $categoryMap[$data[$category]])) {
-                    if ($categoryMap[$data[$category]] > 0) {
+                    if ($categoryMap[$data[$category]] > 0
+                        || in_array($categoryMap[$data[$category]], cashCategoryFactory::getSystemIds())
+                    ) {
                         $categoryId = $categoryMap[$data[$category]];
                     } elseif ($categoryMap[$data[$category]] == 0) {
                         $categoryId = 0;

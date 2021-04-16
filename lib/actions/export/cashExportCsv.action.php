@@ -25,19 +25,53 @@ class cashExportCsvAction extends cashViewAction
         switch (waRequest::request('type', waRequest::TYPE_STRING_TRIM, '')) {
             case 'upcoming':
                 $startDate = (new DateTime('tomorrow'))->modify('midnight');
-                $endDate = new DateTime($settings['end_date']);
+
+                $endDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['end_date']);
+                if (!$endDate) {
+                    $endDate = DateTime::createFromFormat('Y-m-d|', $settings['end_date']);
+                }
+                if (!$endDate) {
+                    throw new waException('Wrong end date');
+                }
+
                 break;
 
             case 'completed':
+                $startDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['start_date']);
+                if (!$startDate) {
+                    $startDate = DateTime::createFromFormat('Y-m-d|', $settings['start_date']);
+                }
+                if (!$startDate) {
+                    throw new waException('Wrong start date');
+                }
+
+                $endDate = (new DateTime())->modify('midnight');
+
+                break;
+
             default:
-                $startDate = new DateTime($settings['start_date']);
-                $endDate = new DateTime('midnight');
+                $startDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['start_date']);
+                if (!$startDate) {
+                    $startDate = DateTime::createFromFormat('Y-m-d|', $settings['start_date']);
+                }
+                if (!$startDate) {
+                    throw new waException('Wrong start date');
+                }
+
+                $endDate = DateTime::createFromFormat('Y-m-d H:i:s', $settings['end_date']);
+                if (!$endDate) {
+                    $endDate = DateTime::createFromFormat('Y-m-d|', $settings['end_date']);
+                }
+                if (!$endDate) {
+                    throw new waException('Wrong end date');
+                }
         }
+
         $filterDto = new cashTransactionPageFilterDto($settings['entity_type'], $settings['entity_id']);
 
         /** @var cashTransactionRepository $repository */
         $repository = cash()->getEntityRepository(cashTransaction::class);
-        $data = array_reverse($repository->findByDates($startDate, $endDate, $filterDto));
+        $data = array_reverse($repository->findByDatesAndFilter($startDate, $endDate, $filterDto));
         $filename = sprintf(
             'cash_%s_%s_%s_utf8.csv',
             mb_strtoupper($filterDto->name),

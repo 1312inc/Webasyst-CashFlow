@@ -8,7 +8,7 @@ class cashAutocomplete
     /**
      * Thanks to shop \shopBackendAutocompleteController::contactsAutocomplete
      *
-     * @param string   $q
+     * @param string $q
      * @param null|int $limit
      *
      * @return array
@@ -17,7 +17,7 @@ class cashAutocomplete
     public function findContacts($q, $limit = null)
     {
         $q = trim($q);
-        $key = sprintf('%s|%s', $q, (string)$limit);
+        $key = sprintf('%s|%s', $q, (string) $limit);
         $found = cash()->getCache()->get($key);
         if ($found !== null) {
             return $found;
@@ -34,6 +34,31 @@ class cashAutocomplete
         $sqls[] = "SELECT c.id, c.name, c.firstname, c.middlename, c.lastname, c.photo
                    FROM wa_contact AS c
                    WHERE c.name LIKE '" . $m->escape($q, 'like') . "%'
+                   LIMIT {LIMIT}";
+        $search_terms[] = $q;
+
+        $name_ar = preg_split('/\s+/', $q);
+        if (count($name_ar) > 1) {
+            $name_condition =
+                "((c.firstname LIKE '%" . $m->escape($name_ar[0], 'like') . "%' AND c.lastname LIKE '%" . $m->escape(
+                    $name_ar[1],
+                    'like'
+                ) . "%')
+                    OR (c.firstname LIKE '%" . $m->escape(
+                    $name_ar[1],
+                    'like'
+                ) . "%' AND c.lastname LIKE '%" . $m->escape($name_ar[0], 'like') . "%'))";
+            $sqls[] = "SELECT c.id, c.name, c.firstname, c.middlename, c.lastname, c.photo
+                   FROM wa_contact AS c
+                   WHERE $name_condition
+                   LIMIT {LIMIT}";
+            $search_terms[] = $q;
+        }
+
+        $name_condition = "c.name LIKE '_%" . $m->escape($q, 'like') . "%'";
+        $sqls[] = "SELECT c.id, c.name, c.firstname, c.middlename, c.lastname, c.photo
+                   FROM wa_contact AS c
+                   WHERE $name_condition
                    LIMIT {LIMIT}";
         $search_terms[] = $q;
 
@@ -139,7 +164,7 @@ class cashAutocomplete
                     $email = htmlspecialchars(ifset($c['email'], ''), ENT_QUOTES, 'utf-8');
                     $phone = htmlspecialchars(ifset($c['phone'], ''), ENT_QUOTES, 'utf-8');
 
-                    $terms = (array)$search_terms[$index];
+                    $terms = (array) $search_terms[$index];
                     foreach ($terms as $term) {
                         $term_safe = htmlspecialchars($term);
                         $match = false;
@@ -170,11 +195,16 @@ class cashAutocomplete
                         }
                     }
 
+                    $photo = waContact::getPhotoUrl($c['id'], $c['photo'], 96);
                     $result[$c['id']] = [
                         'id' => $c['id'],
                         'value' => $c['id'],
                         'name' => $c['name'],
+                        'firstname' => $c['firstname'],
+                        'middlename' => $c['middlename'],
+                        'lastname' => $c['lastname'],
                         'photo_url' => waContact::getPhotoUrl($c['id'], $c['photo'], 96),
+                        'photo_url_absolute' => wa()->getConfig()->getHostUrl() . $photo,
                         'label' => implode(' ', array_filter([$name, $email, $phone])),
                     ];
 
@@ -188,7 +218,11 @@ class cashAutocomplete
         foreach ($result as &$c) {
             $contact = new waContact($c['id']);
             $userpic = $contact->getPhoto(20);
-            $c['label'] = sprintf('<i class="icon16 userpic20" style="background-image: url(%s);"></i>%s', $userpic, $c['label']);
+            $c['label'] = sprintf(
+                '<i class="icon16 userpic20" style="background-image: url(%s);"></i>%s',
+                $userpic,
+                $c['label']
+            );
         }
         unset($c);
 

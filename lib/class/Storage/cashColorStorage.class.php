@@ -6,7 +6,7 @@
 final class cashColorStorage
 {
     const DEFAULT_ACCOUNT_GRAPH_COLOR = '#ffd700';
-    const TRANSFER_CATEGORY_COLOR = '#8bd5ff';
+    const TRANSFER_CATEGORY_COLOR = '#aaaaaa';
 
     /**
      * @return array

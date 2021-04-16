@@ -865,13 +865,13 @@ msgstr ""
 msgid "Tab"
 msgstr ""
 
-msgid "No amount column selected"
+msgid "No amount column"
 msgstr ""
 
-msgid "No account column selected"
+msgid "No account column"
 msgstr ""
 
-msgid "No date column selected"
+msgid "No date column"
 msgstr ""
 
 msgid "Expected %s. Got %s"
@@ -1071,6 +1071,12 @@ msgstr ""
 msgid "Can import transactions"
 msgstr ""
 
+msgid "Can access transfers"
+msgstr ""
+
+msgid "Cash"
+msgstr ""
+
 msgid "Contractors"
 msgstr ""
 
@@ -1113,14 +1119,5 @@ msgstr ""
 msgid "You are not allowed to create new accounts"
 msgstr ""
 
-msgid "Transactions related to this contractor"
-msgstr ""
-
-msgid "Imported on %s"
-msgstr ""
-
-msgid "Cash Flow"
-msgstr ""
-
-msgid "%d transactions created in the Cash Flow app:"
+msgid "Import via CSV"
 msgstr ""
