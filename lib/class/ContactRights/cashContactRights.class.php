@@ -41,6 +41,11 @@ class cashContactRights
     private $canSeeReport = false;
 
     /**
+     * @var bool
+     */
+    private $canAccessTransfers = false;
+
+    /**
      * @var array
      */
     private $rights;
@@ -61,7 +66,7 @@ class cashContactRights
             $id = 0;
             $value = (int) $value;
             if (strpos($right, '.') !== false) {
-                list($right, $id) = explode('.', $right);
+                [$right, $id] = explode('.', $right);
             }
 
             switch ($right) {
@@ -73,15 +78,18 @@ class cashContactRights
                     $this->categories[(int) $id] = $value;
                     break;
 
+                case cashRightConfig::RIGHT_ACCESS_TRANSFERS:
+                    $this->categories[cashCategoryFactory::TRANSFER_CATEGORY_ID] = cashRightConfig::CATEGORY_FULL_ACCESS;
+                    $this->canAccessTransfers = true;
+                    break;
+
                 case cashRightConfig::RIGHT_BACKEND:
                     switch ($value) {
                         case PHP_INT_MAX:
                             $this->isRoot = true;
 
                         case cashRightConfig::ADMIN_ACCESS:
-                            $this->isAdmin = true;
-                            $this->canImport = true;
-                            $this->canSeeReport = true;
+                            $this->setupAdminRights();
                     }
 
                     break;
@@ -177,6 +185,29 @@ class cashContactRights
     }
 
     /**
+     * @param string $access Access level
+     *
+     * @return array[]
+     */
+    public function getCategoryIdsGroupedByAccess($access = null): array
+    {
+        $grouped = [];
+
+        foreach ($this->categories as $categoryId => $value) {
+            if ($access !== null && $access != $value) {
+                continue;
+            }
+
+            if (!isset($grouped[$value])) {
+                $grouped[$value] = [];
+            }
+            $grouped[$value][] = $categoryId;
+        }
+
+        return $grouped;
+    }
+
+    /**
      * @return bool
      */
     public function canImport(): bool
@@ -208,5 +239,21 @@ class cashContactRights
     public function getAccountAccess($accountId): int
     {
         return $this->accounts[$accountId] ?? cashRightConfig::NO_ACCESS;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canAccessTransfers(): bool
+    {
+        return $this->canAccessTransfers;
+    }
+
+    private function setupAdminRights(): void
+    {
+        $this->isAdmin = true;
+        $this->canImport = true;
+        $this->canSeeReport = true;
+        $this->canAccessTransfers = true;
     }
 }

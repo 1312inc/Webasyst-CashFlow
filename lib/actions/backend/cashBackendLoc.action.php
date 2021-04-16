@@ -40,6 +40,9 @@ class cashBackendLocAction extends cashViewAction
             'Income',
             'transactions',
         ];
+        foreach ($translates as $s) {
+            $strings[$s] = _w($s);
+        }
 
         foreach ($translates as $s) {
             $strings[$s] = _w($s);

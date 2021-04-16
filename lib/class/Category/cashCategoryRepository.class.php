@@ -61,7 +61,7 @@ class cashCategoryRepository extends cashBaseRepository
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllExpense(waContact $contact = null): array
+    public function findAllExpenseForContact(waContact $contact = null): array
     {
         if (!$contact) {
             $contact = wa()->getUser();

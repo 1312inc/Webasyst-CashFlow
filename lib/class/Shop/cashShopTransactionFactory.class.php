@@ -84,7 +84,7 @@ class cashShopTransactionFactory
     {
         $amount = 0;
         foreach ($dto->order->items as $item) {
-            $amount += $item['purchase_price'];
+            $amount += ($item['purchase_price'] * $item['quantity']);
         }
 
         if ($amount <= 0) {
