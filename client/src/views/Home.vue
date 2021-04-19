@@ -1,5 +1,6 @@
 <template>
   <div>
+    <CashGapMessage />
     <ChartHeader>
       <template v-slot:title>
         <ChartHeaderTitle />
@@ -20,6 +21,7 @@
 </template>
 
 <script>
+import CashGapMessage from '@/components/CashGapMessage'
 import ChartHeader from '@/components/ChartHeader'
 import ChartHeaderControls from '@/components/ChartHeaderControls'
 import ChartHeaderTitle from '@/components/ChartHeaderTitle'
@@ -33,6 +35,7 @@ export default {
   mixins: [routerTransitionMixin],
 
   components: {
+    CashGapMessage,
     ChartHeader,
     ChartHeaderControls,
     ChartHeaderTitle,
