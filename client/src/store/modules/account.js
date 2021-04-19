@@ -66,6 +66,12 @@ export default {
           }, { root: true })
         }
         dispatch('getList')
+          .then(() => {
+            // redirect to the entity page if new one
+            if (method === 'create') {
+              router.push({ name: 'Account', params: { id: data.id, isFirtsTimeNavigate: true } })
+            }
+          })
       } catch (_) {
         return false
       }

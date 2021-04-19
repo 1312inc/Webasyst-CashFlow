@@ -53,8 +53,14 @@ export default {
     async update ({ dispatch }, params) {
       const method = params.id ? 'update' : 'create'
       try {
-        await api.post(`cash.category.${method}`, params)
+        const { data } = await api.post(`cash.category.${method}`, params)
         dispatch('getList')
+          .then(() => {
+            // redirect to the entity page if new one
+            if (method === 'create') {
+              router.push({ name: 'Category', params: { id: data.id, isFirtsTimeNavigate: true } })
+            }
+          })
       } catch (_) {
         return false
       }
