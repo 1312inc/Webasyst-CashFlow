@@ -51,6 +51,7 @@
             :collapseHeaderData="collapseHeaderData"
             :category="category"
             :account="account"
+            :transaction="transaction"
           />
         </div>
         <div class="c-item-amount">
