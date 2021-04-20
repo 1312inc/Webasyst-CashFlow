@@ -84,6 +84,8 @@ body.modal {
 .c-list .c-item:first-child .c-item-border { border: none; }
 .c-list .c-item:hover .c-unfold-helper-icon { opacity: 1; }
 .c-item .userpic .c-category-glyph { color: var(--white); font-size: 1.5rem; padding: 0.75rem; }
+.c-list .badge.c-time-diff-badge { padding: 0.25em 0.375em; font-weight: normal; background-color: var(--background-color-blockquote); color: var(--gray); }
+.c-list .badge.c-time-diff-badge::first-letter { text-transform: capitalize; }
 
 .c-transaction-section .c-transaction-section__header {
   margin: 0;

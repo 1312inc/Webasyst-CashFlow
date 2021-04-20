@@ -5,8 +5,7 @@
   >
     <span
       v-if="daysBefore > 0"
-      class="badge squared light-gray small"
-      style="text-transform: capitalize"
+      class="badge squared light-gray small c-time-diff-badge"
       >{{
         daysBefore === 1
           ? $t("tomorrow")
@@ -25,19 +24,13 @@
           })
         "
       >
-        {{ category.name }}
+        {{ transaction.external_source_info.name }}
       </div>
-      <div
-        v-if="transaction.external_source_info"
-        class="flexbox middle wide space-4"
-        style="flex: 0 1 auto"
+      <span class="badge light-gray small"
+        :title="`${transaction.external_source_info.name}`"
+        :style="`background:${transaction.external_source_info.color}`"
       >
-        <span>/</span>
-        <div class="text-ellipsis">
-          {{ transaction.external_source_info.name }}
-        </div>
-      </div>
-      <span class="badge light-gray small">
+        <span>&times;</span>
         {{ collapseHeaderData.ids.length }}
       </span>
       <span class="c-unfold-helper-icon">
