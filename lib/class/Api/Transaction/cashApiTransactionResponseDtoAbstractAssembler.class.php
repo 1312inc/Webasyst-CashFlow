@@ -27,8 +27,8 @@ abstract class cashApiTransactionResponseDtoAbstractAssembler
 
         return [
             'name' => $user->getName(),
-            'firstname' => $user->getContact()->get('firstname'),
-            'lastname' => $user->getContact()->get('lastname'),
+            'firstname' => $user->getFirstName(),
+            'lastname' => $user->getLastName(),
             'userpic' => wa()->getConfig()->getHostUrl() . $user->getPhotoUrl(),
         ];
     }
