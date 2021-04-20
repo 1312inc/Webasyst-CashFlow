@@ -495,6 +495,8 @@ export default {
       rangePositive.value = 0
       rangePositive.endValue = Number.MAX_SAFE_INTEGER
       rangePositive.contents.stroke = chartColors.green
+      rangePositive.contents.fill = chartColors.green
+      rangePositive.contents.fillOpacity = 0.2
 
       // Create a range to change stroke for negative values
       const rangeNegative = this.balanceAxis.createSeriesRange(this.balanceSeries)
