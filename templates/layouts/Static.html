@@ -8,7 +8,7 @@
     <link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/css/jquery-ui/jquery-ui-1.7.2.custom.css?v={$wa->version()}">
     <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/static.css{if !waSystemConfig::isDebug()}?v{$wa->version()}{/if}">
     <link type="text/css" rel="stylesheet" href="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.css?v={$wa->version()}">
-    <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/app.css">
+    <link type="text/css" rel="stylesheet" href="{$wa_app_static_url}css/app.css?v={$wa->version(true)}">
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery/jquery-1.8.2.min.js"></script>
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-plugins/jquery.tmpl.min.js"></script>
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-wa/wa.core.js{if !waSystemConfig::isDebug()}?v={$wa->version()}{/if}"></script>
@@ -26,7 +26,7 @@
     <script src="{$wa_url}wa-content/js/jquery-wa/wa.js?v={$wa->version(true)}"></script>
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-wa/wa.dialog.js?v={$wa->version()}"></script>
 
-    <link href="{$wa_app_static_url}js/sidebar/app.js?v={$wa->version()}" rel="preload" as="script">
+    <link href="{$wa_app_static_url}js/sidebar/app.js?v={$wa->version(true)}" rel="preload" as="script">
 
     <script>
         window.appState = {
@@ -74,6 +74,6 @@
             });
         });
     </script>
-    <script type="text/javascript" src="{$wa_app_static_url}js/sidebar/app.js?v={$wa->version()}"></script>
+    <script type="text/javascript" src="{$wa_app_static_url}js/sidebar/app.js?v={$wa->version(true)}"></script>
 </body>
 </html>
