@@ -4,7 +4,7 @@
     style="overflow: hidden"
   >
     <span
-      v-if="daysBefore > 0 && daysBefore < 6"
+      v-if="daysBefore > 0"
       class="badge squared light-gray small"
       style="text-transform: capitalize"
       >{{
