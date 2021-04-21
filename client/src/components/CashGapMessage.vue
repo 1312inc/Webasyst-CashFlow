@@ -2,7 +2,7 @@
   <div
     v-if="!loadingChart && message"
     :class="balanceChangeSignPoint.balance >= 0 ? 'success' : 'danger'"
-    class="alert custom-px-16-mobile custom-m-0"
+    class="alert c-cashgap-prediction-banner"
     style="text-align:center"
   >
     <i

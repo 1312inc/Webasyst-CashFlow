@@ -64,6 +64,8 @@ body.modal {
 
 .c-header { position: relative; padding: 0.75rem 2.375rem; }
 
+.alert.c-cashgap-prediction-banner { margin: -0.75rem -0.5rem 1rem; border: none; border-radius: 0; padding: 1rem; }
+
 .c-button-add-income { background: #16d15f; }
 .c-button-add-expense { background: #f7623a; }
 
@@ -152,6 +154,7 @@ body.modal {
 
 @media screen and (max-width: 760px) {
   /* mobile */
+  .alert.c-cashgap-prediction-banner { margin-top: 0; }
   .c-list .c-item { padding: 0 0 0 0.6125rem; border-radius: 0; }
   .c-item .c-item-amount { padding-right: 0.5rem; align-self: baseline; }
 }
