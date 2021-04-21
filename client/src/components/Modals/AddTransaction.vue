@@ -38,18 +38,27 @@
                 @keyup.enter="submit"
                 :signed="false"
                 :class="{ 'state-error': $v.model.amount.$error }"
+                :style="
+                  selectedCategoryColor && {
+                    color: selectedCategoryColor,
+                    'border-color': selectedCategoryColor,
+                  }
+                "
                 ref="focus"
                 type="text"
                 class="bold number"
                 placeholder="0"
               />
               <span
-                class="icon"
-                style="opacity: 1"
                 :class="{
                   'text-orange': transactionType === 'expense',
                   'text-green': transactionType === 'income',
                 }"
+                :style="
+                  selectedCategoryColor && { color: selectedCategoryColor }
+                "
+                class="icon"
+                style="opacity: 1"
               >
                 <i
                   v-if="transactionType === 'expense'"
@@ -58,9 +67,12 @@
                 <i v-if="transactionType === 'income'" class="fas fa-plus"></i>
               </span>
             </div>
-            <span v-if="selectedAccount" class="custom-ml-8">{{
-              $helper.currencySignByCode(selectedAccount.currency)
-            }}</span>
+            <span
+              v-if="selectedAccount"
+              :style="selectedCategoryColor && { color: selectedCategoryColor }"
+              class="custom-ml-8"
+              >{{ $helper.currencySignByCode(selectedAccount.currency) }}</span
+            >
           </div>
         </div>
 
@@ -476,6 +488,11 @@
               'c-button-add-expense': transactionType === 'expense',
               'c-button-add-income': transactionType === 'income',
             }"
+            :style="
+              selectedCategoryColor && {
+                'background-color': selectedCategoryColor,
+              }
+            "
             class="button"
           >
             {{
@@ -624,6 +641,10 @@ export default {
 
     selectedCategory () {
       return this.getCategoryById(this.model.category_id)
+    },
+
+    selectedCategoryColor () {
+      return this.selectedCategory?.color
     },
 
     transactionType () {

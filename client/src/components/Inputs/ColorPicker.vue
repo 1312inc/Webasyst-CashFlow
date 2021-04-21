@@ -28,10 +28,13 @@ export default {
     this.colorPicker = new iro.ColorPicker('#c-picker', {
       width: 200,
       color: this.value,
-      borderWidth: 10,
+      borderWidth: 2,
       borderColor: '#333',
       wheelLightness: false,
       layout: [
+        {
+          component: iro.ui.Slider
+        },
         {
           component: iro.ui.Wheel
         }
@@ -71,7 +74,7 @@ export default {
 
   &__wheel {
     position: absolute;
-    transform: translateY(-120px) translateX(40px);
+    transform: translateY(-160px) translateX(40px);
   }
 }
 </style>
