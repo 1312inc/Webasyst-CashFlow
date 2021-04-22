@@ -24,9 +24,7 @@
     </span>
     <!-- Userpic stack imitation block -->
     <span
-      v-if="
-        (isCollapseHeader || isRepeatingGroup)
-      "
+      v-if="isCollapseHeader || isRepeatingGroup"
       class="c-userpic-stack-imitation"
     >
       <span
