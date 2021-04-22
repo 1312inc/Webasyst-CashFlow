@@ -302,7 +302,7 @@
           </div>
         </div>
 
-        <div v-if="!isModeUpdate" class="field">
+        <div v-if="!(isModeUpdate && transaction.repeating_id)" class="field">
           <div class="name for-input">
             {{ $t("repeat") }}
           </div>
@@ -359,7 +359,7 @@
         </div>
 
         <TransitionCollapseHeight>
-          <div v-if="!isModeUpdate && model.is_repeating">
+          <div v-if="model.is_repeating">
             <div class="field custom-pt-16">
               <div class="name for-input">
                 {{ $t("howOften.name") }}
@@ -419,7 +419,7 @@
         </TransitionCollapseHeight>
 
         <TransitionCollapseHeight>
-          <div v-if="!isModeUpdate && model.is_repeating">
+          <div v-if="model.is_repeating">
             <div class="field custom-pt-16">
               <div class="name for-input">
                 {{ $t("endRepeat.name") }}
@@ -442,7 +442,6 @@
         <TransitionCollapseHeight>
           <div
             v-if="
-              !isModeUpdate &&
               model.is_repeating &&
               model.repeating_end_type !== 'never'
             "
