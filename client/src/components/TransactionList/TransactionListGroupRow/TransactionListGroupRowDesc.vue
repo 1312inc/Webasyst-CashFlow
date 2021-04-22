@@ -13,7 +13,7 @@
       }}</span
     >
     <!-- if collapsed transactions header -->
-    <template v-if="collapseHeaderData">
+    <template v-if="collapseHeaderData && transaction.external_source_info">
       <div
         class="text-ellipsis c-grouped-transaction-description"
         style="flex: 0 1 auto"
@@ -26,7 +26,8 @@
       >
         {{ transaction.external_source_info.name }}
       </div>
-      <span class="badge light-gray small"
+      <span
+        class="badge light-gray small"
         :title="`${transaction.external_source_info.name}`"
         :style="`background:${transaction.external_source_info.color}`"
       >
