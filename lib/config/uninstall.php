@@ -15,7 +15,7 @@ try {
         waLog::log(sprintf('disable fk checks for table %s', $tableName), 'cash/uninstall.log');
         $m->exec(sprintf('ALTER TABLE %s DISABLE KEYS', $tableName));
 
-        waLog::log(sprintf('truncate table %s', $tableName), 'cash/uninstall.log');
+        waLog::log(sprintf('drop table %s', $tableName), 'cash/uninstall.log');
         $m->exec('DROP TABLE IF EXISTS ' . $tableName);
     }
 } catch (Exception $ex) {
