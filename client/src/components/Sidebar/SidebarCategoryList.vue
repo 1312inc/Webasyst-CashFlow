@@ -3,6 +3,8 @@
     :list="categories"
     :disabled="!$permissions.isAdmin"
     :force-fallback="true"
+    :delay="1000"
+    :delayOnTouchOnly="true"
     @update="sortCategories()"
     tag="ul"
     class="menu"
