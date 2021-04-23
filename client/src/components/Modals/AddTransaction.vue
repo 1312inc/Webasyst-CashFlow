@@ -40,7 +40,6 @@
                 :class="{ 'state-error': $v.model.amount.$error }"
                 :style="
                   selectedCategoryColor && {
-                    color: selectedCategoryColor,
                     'border-color': selectedCategoryColor,
                   }
                 "
@@ -69,7 +68,6 @@
             </div>
             <span
               v-if="selectedAccount"
-              :style="selectedCategoryColor && { color: selectedCategoryColor }"
               class="custom-ml-8"
               >{{ $helper.currencySignByCode(selectedAccount.currency) }}</span
             >
