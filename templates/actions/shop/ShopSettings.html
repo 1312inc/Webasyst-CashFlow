@@ -51,7 +51,7 @@
                             <select name="shopscript_settings[accountId]" class="bold">
                                 {foreach $accounts as $account}
                                 <option value="{$account->id}"
-                                        {if $shopScriptSettings->getAccountId() == $account->id}selected{/if}
+                                        {if $shopScriptSettings->getAccountId() == $account->id}selected {/if}
                                 >
                                     {$account->currency->getCode()|escape} - {$account->name|escape|truncate:32} ({$account->currency->getSign()|escape})
                                 </option>
@@ -85,7 +85,7 @@
                                         <option value="0"></option>
                                         {foreach $incomes as $category}
                                         <option value="{$category->id}"
-                                                {if $shopScriptSettings->getCategoryIncomeId() == $category->id}selected{/if}
+                                                {if $shopScriptSettings->getCategoryIncomeId() == $category->id}selected {/if}
                                                 data-cash-category-color="{$category->color}"
                                         >
                                             {$category->name|escape|truncate:32}
@@ -103,7 +103,7 @@
                                 <select name="shopscript_settings[actions][income]" multiple style="min-height: 250px;">
                                     {foreach $actions as $action}
                                         <option value="{$action->getId()}"
-                                                {if in_array($action->getId(), $shopScriptSettings->getIncomeActions())}selected{/if}
+                                                {if in_array($action->getId(), $shopScriptSettings->getIncomeActions())}selected {/if}
                                         >{$action->getName()}</option>
                                     {/foreach}
                                 </select>
@@ -122,7 +122,7 @@
                                         <option value="0"></option>
                                         {foreach $expenses as $category}
                                         <option value="{$category->id}"
-                                                {if $shopScriptSettings->getCategoryExpenseId() == $category->id}selected{/if}
+                                                {if $shopScriptSettings->getCategoryExpenseId() == $category->id}selected {/if}
                                                 data-cash-category-color="{$category->color}"
                                         >
                                             {$category->name|escape|truncate:32}
@@ -140,7 +140,7 @@
                                 <select name="shopscript_settings[actions][expense]" multiple style="min-height: 130px;">
                                     {foreach $actions as $action}
                                         <option value="{$action->getId()}"
-                                                {if in_array($action->getId(), $shopScriptSettings->getExpenseActions())}selected{/if}
+                                                {if in_array($action->getId(), $shopScriptSettings->getExpenseActions())}selected {/if}
                                         >{$action->getName()}</option>
                                     {/foreach}
                                 </select>
