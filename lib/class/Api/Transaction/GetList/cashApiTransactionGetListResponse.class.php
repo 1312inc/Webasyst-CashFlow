@@ -13,7 +13,7 @@ class cashApiTransactionGetListResponse extends cashApiAbstractResponse
      * @param int                                   $offset
      * @param int                                   $limit
      */
-    public function __construct(array $transactions, $total, $offset, $limit)
+    public function __construct(array $transactions, int $total, int $offset, int $limit)
     {
         parent::__construct(200);
 

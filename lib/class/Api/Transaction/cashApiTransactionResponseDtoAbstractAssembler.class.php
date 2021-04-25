@@ -15,10 +15,17 @@ abstract class cashApiTransactionResponseDtoAbstractAssembler
      */
     private $shopIntegration;
 
+    /**
+     * @var cashRepeatingTransactionRepository
+     */
+    private $repeatingTransactionRepository;
+
     public function __construct()
     {
-        $this->userRepository = new cashUserRepository();
+        $this->userRepository = cash()->getEntityRepository(cashUser::class);
         $this->shopIntegration = new cashShopIntegration();
+        $this->repeatingTransactionRepository = cash()->getEntityRepository(cashRepeatingTransaction::class);
+
     }
 
     protected function getContactData($contactId): array
@@ -30,6 +37,18 @@ abstract class cashApiTransactionResponseDtoAbstractAssembler
             'firstname' => $user->getFirstName(),
             'lastname' => $user->getLastName(),
             'userpic' => wa()->getConfig()->getHostUrl() . $user->getPhotoUrl(),
+        ];
+    }
+
+    protected function getRepeatingData($repeatingId): array
+    {
+        /** @var cashRepeatingTransaction $repeatingTransaction */
+        $repeatingTransaction = $this->repeatingTransactionRepository->findById($repeatingId);
+
+        return [
+            'interval' => $repeatingTransaction ? $repeatingTransaction->getRepeatingInterval() : null,
+            'frequency' => $repeatingTransaction ? (int) $repeatingTransaction->getRepeatingFrequency() : null,
+            'occurrences' => $repeatingTransaction ? (int) $repeatingTransaction->getRepeatingOccurrences() : null,
         ];
     }
 
