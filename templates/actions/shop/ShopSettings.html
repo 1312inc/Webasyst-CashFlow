@@ -379,9 +379,7 @@
                                     class="button green"
                                     value="{if $ordersToImportCount}{sprintf('[`Import %d paid orders`]', $ordersToImportCount)}{else}[`Enable Shop-Script integration`]{/if}"
                             />
-                            <div class="progressbar green" style="display: none">
-                                <div class="progressbar-outer"><div class="progressbar-inner" style="width: 0%;"></div></div>
-                            </div>
+                            <div class="progressbar" style="display: none"></div>
                             {*<div data-cash-shop-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
                             <div data-cash-shop-import-progress-errors style="display: none"></div>
                             <div>
@@ -570,6 +568,13 @@
                         $progressSuccess = $progress.find('[data-cash-shop-import-progress-icon="success"]'),
                         $progressError = $progress.find('[data-cash-shop-import-progress-icon="error"]');
 
+                    $progressBar.waProgressbar({
+                            "color": "blue",
+                            "text-inside": true
+                        });
+
+                    var progressInstance = $progressBar.data("progressbar");
+
                     $.post('?module=shop&action=settingsValidate', $ssform.serialize(), function (r) {
                         var $errors = $ssform.find('[data-cash-shop-errors]');
 
@@ -601,7 +606,7 @@
                                         $progressLoading.show().siblings().hide();
                                     },
                                     onSuccess: function (r) {
-                                        $progressBar.find('.progressbar-inner').css('width', '0%');
+                                        progressInstance.set({ percentage: 0 });
                                         // $transactionStat.show();
                                     },
                                     onError: function (r) {
@@ -613,7 +618,7 @@
                                 },
                                 step: {
                                     onProgress: function (r) {
-                                        $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
+                                        progressInstance.set({ percentage: r.progress });
                                         $progressCounts.text(r.passed_orders + ' / ' + r.total_orders)
                                         // $transactionStat.show();
                                         // $transactionStat.find('span').text(r.transactions.ok);
@@ -621,7 +626,7 @@
                                     },
                                     onReady: function (r) {
                                         $progressSuccess.show().siblings().hide();
-                                        $progressBar.find('.progressbar-inner').css('width', r.progress + '%');
+                                        progressInstance.set({ percentage: r.progress });
                                         // alert('done, redirect to app');
                                         window.location = window.appState.baseUrl + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
                                         // $button.prop('disabled', false);
