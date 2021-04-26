@@ -50,6 +50,9 @@
               </div>
               <div v-if="type === 'today'" class="black">
                 {{ $t("today") }}
+                <span class="hint">
+                  {{ this.$moment.locale() === 'ru' ? this.$moment().format("D MMMM") : this.$moment().format("MMMM D") }}
+                </span>
               </div>
               <div
                 v-if="type === 'future'"
