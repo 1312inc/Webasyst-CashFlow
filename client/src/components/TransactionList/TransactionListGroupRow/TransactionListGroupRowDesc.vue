@@ -5,7 +5,7 @@
   >
     <span
       v-if="daysBefore > 0"
-      class="badge squared light-gray small c-time-diff-badge"
+      class="badge squared nowrap light-gray small c-time-diff-badge"
       >{{
         daysBefore === 1
           ? $t("tomorrow")
