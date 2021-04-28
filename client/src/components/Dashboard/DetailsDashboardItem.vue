@@ -163,7 +163,7 @@ export default {
         this.itemData.income.totalAmount,
         this.itemData.expense.totalAmount,
         this.itemData.profit.totalAmount
-      )
+      ) || 1
     }
   }
 }

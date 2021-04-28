@@ -3,6 +3,8 @@
     v-model="accounts"
     :disabled="!$permissions.isAdmin"
     :force-fallback="true"
+    :delay="1000"
+    :delayOnTouchOnly="true"
     tag="ul"
     class="menu"
   >

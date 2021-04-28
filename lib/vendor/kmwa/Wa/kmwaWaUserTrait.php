@@ -18,6 +18,16 @@ trait kmwaWaUserTrait
     /**
      * @var string
      */
+    protected $firstName = '(DELETED';
+
+    /**
+     * @var string
+     */
+    protected $lastName = 'USER)';
+
+    /**
+     * @var string
+     */
     protected $username = '(DELETED USER)';
 
     /**
@@ -254,5 +264,15 @@ trait kmwaWaUserTrait
     public function getTimezone()
     {
         return $this->timezone;
+    }
+
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
     }
 }

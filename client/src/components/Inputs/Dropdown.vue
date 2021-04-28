@@ -1,6 +1,6 @@
 <template>
   <div class="wa-select solid">
-    <select v-model="value">
+    <select v-model="value" class="c-select">
       <option v-for="item in items" :key="item.key" :value="item.value">
         {{ $t(item.key) }}
       </option>
@@ -46,3 +46,12 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.c-select {
+  @include for-mobile {
+    font-size: 0.86rem !important;
+    padding-right: 1.8rem !important;
+  }
+}
+</style>

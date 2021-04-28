@@ -8,6 +8,7 @@
         v-if="transaction.contractor_contact"
         :src="transaction.contractor_contact.userpic"
         alt=""
+        class="c-contractor"
       />
       <div v-else>
         <i class="c-category-glyph fas" :class="mainGlyph"></i>
@@ -23,10 +24,7 @@
     </span>
     <!-- Userpic stack imitation block -->
     <span
-      v-if="
-        (isCollapseHeader || isRepeatingGroup) &&
-        !transaction.contractor_contact
-      "
+      v-if="isCollapseHeader || isRepeatingGroup"
       class="c-userpic-stack-imitation"
     >
       <span
@@ -94,6 +92,12 @@ export default {
 </script>
 
 <style lang="scss">
+.userpic48 > .c-contractor {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0.125rem solid var(--background-color-blank);
+  margin-top: 0.125rem;
+}
 .userpic48 > .userstatus {
   width: 0.5625rem;
   height: 0.5625rem;

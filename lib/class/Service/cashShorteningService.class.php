@@ -14,7 +14,7 @@ class cashShorteningService
     {
         $sign = '';
         if ($amount < 0) {
-            $sign = '&minus;';
+            $sign = '−';
         }
 
         $shorten = abs((float)$amount);

@@ -1,8 +1,9 @@
 <template>
   <div
     v-if="!loadingChart && message"
-    :class="balanceChangeSignPoint.balance >= 0 ? 'text-green' : 'text-red'"
-    class="custom-mt-8 custom-px-16-mobile bold"
+    :class="balanceChangeSignPoint.balance >= 0 ? 'success' : 'danger'"
+    class="alert c-cashgap-prediction-banner"
+    style="text-align:center"
   >
     <i
       :class="
