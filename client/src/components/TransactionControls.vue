@@ -30,6 +30,7 @@
 
     <div
       v-if="$helper.isDesktopEnv && currentType"
+      ref="controlButtons"
       class="flexbox wrap-mobile space-12 middle custom-py-12"
     >
       <div v-show="currentType.type !== 'expense'">
@@ -111,6 +112,22 @@ export default {
 
     checkedRows () {
       return this.$store.state.transactionBulk.selectedTransactionsIds
+    }
+  },
+
+  watch: {
+    // add pulsar effect on the button if first time navigate
+    async '$route' (to) {
+      await this.$nextTick()
+      const pulsarButton = this.$refs.controlButtons.querySelector('button')
+      if (pulsarButton) {
+        pulsarButton.classList.remove('pulsar')
+        if (to.params.isFirtsTimeNavigate) {
+          setTimeout(() => {
+            pulsarButton.classList.add('pulsar')
+          }, 1500)
+        }
+      }
     }
   },
 

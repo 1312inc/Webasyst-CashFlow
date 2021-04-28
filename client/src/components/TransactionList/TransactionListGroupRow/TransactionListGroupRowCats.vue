@@ -1,16 +1,14 @@
-<template>
+<template functional>
   <div class="flexbox space-4 vertical-mobile small gray">
-    <div v-if="category.name && !collapseHeaderData" class="text-ellipsis">
-      {{ category.name }}
+    <div
+      v-if="props.category.name"
+      :style="`color:${props.category.color}`"
+      class="text-ellipsis"
+    >
+      {{ props.category.name }}
     </div>
-    <span v-if="!collapseHeaderData" class="desktop-and-tablet-only"> / </span>
-    <div v-if="account.name" class="text-ellipsis">
-      {{ account.name }}
+    <div v-if="props.account.name" class="text-ellipsis">
+      {{ props.account.name }}
     </div>
   </div>
 </template>
-<script>
-export default {
-  props: ['collapseHeaderData', 'category', 'account']
-}
-</script>

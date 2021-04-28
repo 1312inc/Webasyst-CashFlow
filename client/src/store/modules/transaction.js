@@ -2,6 +2,16 @@ import api from '@/plugins/api'
 import { moment } from '@/plugins/numeralMoment'
 import getDateFromLocalStorage from '../../utils/getDateFromLocalStorage'
 
+const mutationDelete = (state, ids) => {
+  ids.forEach(id => {
+    const i = state.transactions.data.findIndex(e => e.id === id)
+    if (i > -1) {
+      state.transactions.data.splice(i, 1)
+      state.transactions.total = state.transactions.data.length
+    }
+  })
+}
+
 export default {
   namespaced: true,
 
@@ -15,7 +25,7 @@ export default {
     queryParams: {
       from: '',
       to: moment().add(1, 'M').format('YYYY-MM-DD'),
-      limit: 100,
+      limit: 200,
       offset: 0,
       filter: ''
     },
@@ -109,14 +119,9 @@ export default {
       })
     },
 
-    deleteTransaction (state, data) {
-      data.forEach(id => {
-        const i = state.transactions.data.findIndex(e => e.id === id)
-        if (i > -1) {
-          state.transactions.data.splice(i, 1)
-        }
-      })
-    },
+    deleteTransaction: mutationDelete,
+
+    deleteTransactionSilent: mutationDelete,
 
     setActiveGroupTransactions (state, data) {
       state.activeGroupTransactions = data
@@ -128,6 +133,7 @@ export default {
           ...transition,
           $_flagCreated: true
         })
+        state.transactions.total = state.transactions.data.length
       })
     },
 
@@ -205,9 +211,16 @@ export default {
     },
 
     async update ({ commit, dispatch }, params) {
-      const method = params.id ? 'update' : 'create'
+      let method = params.id ? 'update' : 'create'
       try {
+        // if making transaction as repeating
+        if (method === 'update' && params.is_repeating) {
+          await dispatch('delete', { id: params.id, silent: true })
+          method = 'create'
+        }
+
         const { data } = await api.post(`cash.transaction.${method}`, params)
+
         if (!('silent' in params)) {
           if (method === 'update') {
             commit('updateTransactions', data)
@@ -222,9 +235,10 @@ export default {
     },
 
     async delete ({ commit }, params) {
+      const mutation = params.silent ? 'deleteTransactionSilent' : 'deleteTransaction'
       try {
         const { data: arrayOfIDs } = await api.post('cash.transaction.delete', params)
-        commit('deleteTransaction', arrayOfIDs)
+        commit(mutation, arrayOfIDs)
       } catch (_) {
         return false
       }

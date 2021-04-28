@@ -48,7 +48,6 @@
             :category="category"
           />
           <TransactionListGroupRowCats
-            :collapseHeaderData="collapseHeaderData"
             :category="category"
             :account="account"
           />
