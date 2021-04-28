@@ -244,7 +244,7 @@ export default {
 <style>
 @keyframes updated {
   from {
-    background-color: #dbf4e1;
+    background-color: var(--highlighted-green);
   }
   to {
     background-color: rgba(255, 255, 255, 0);

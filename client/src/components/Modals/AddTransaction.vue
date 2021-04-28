@@ -286,17 +286,20 @@
                 }}</span>
               </label>
             </div>
-            <label>
-              <span class="wa-radio">
-                <input
-                  type="radio"
-                  :value="true"
-                  v-model="model.apply_to_all_in_future"
-                />
-                <span></span>
-              </span>
-              <span class="small custom-ml-4">{{ $t("applyTo.list[1]") }}</span>
-            </label>
+            <div class="custom-mb-8">
+              <label>
+                <span class="wa-radio">
+                  <input
+                    type="radio"
+                    :value="true"
+                    v-model="model.apply_to_all_in_future"
+                  />
+                  <span></span>
+                </span>
+                <span class="small custom-ml-4">{{ $t("applyTo.list[1]") }}</span>
+              </label>
+            </div>
+            <span class="badge gray squared small">{{ repeatingInfo }}</span>
           </div>
         </div>
 
@@ -521,7 +524,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { required, requiredIf, integer } from 'vuelidate/lib/validators'
+import { required, requiredIf, integer, minValue } from 'vuelidate/lib/validators'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import InputContractor from '@/components/Inputs/InputContractor'
 import DateField from '@/components/Inputs/InputDate'
@@ -575,7 +578,8 @@ export default {
   validations: {
     model: {
       amount: {
-        required
+        required,
+        minValue: minValue(1)
       },
       date: {
         required
@@ -674,6 +678,16 @@ export default {
               'LLL'
             )
           })
+        }
+      )
+    },
+
+    repeatingInfo () {
+      return this.$tc(
+        `repeatingInfo.interval.${this.transaction.repeating_data.interval}`,
+        this.transaction.repeating_data.frequency,
+        {
+          frequency: this.transaction.repeating_data.frequency
         }
       )
     }

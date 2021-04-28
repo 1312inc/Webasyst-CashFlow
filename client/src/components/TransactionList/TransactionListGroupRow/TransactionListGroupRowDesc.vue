@@ -64,7 +64,7 @@
       <span v-if="!transaction.description" class="light-gray">{{
         $t("noDesc")
       }}</span>
-      <span v-if="transaction.repeating_id" :title="$t('repeatingTran')">
+      <span v-if="transaction.repeating_id" :title="title">
         <span class="small custom-mr-4">
           <i class="fas fa-redo opacity-50"></i>
         </span>
@@ -82,6 +82,16 @@ export default {
       return this.$moment(this.transaction.date).diff(
         this.$helper.currentDate,
         'days'
+      )
+    },
+
+    title () {
+      return this.$tc(
+        `repeatingInfo.interval.${this.transaction.repeating_data.interval}`,
+        this.transaction.repeating_data.frequency,
+        {
+          frequency: this.transaction.repeating_data.frequency
+        }
       )
     }
   }

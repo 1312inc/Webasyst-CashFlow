@@ -74,6 +74,9 @@ const routes = [
     path: '/import'
   },
   {
+    path: '/shop/settings'
+  },
+  {
     path: '/404',
     name: 'NotFound',
     component: NotFound,
