@@ -318,17 +318,17 @@
 
 
     <div class="c-csv-configurator custom-mt-24" id="c-import-step-3" style="display: none">
-        <div class="progressbar"></div>
+        <div class="progressbar" style="display: none"></div>
         {*                    <div data-cash-csv-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
-        <div data-cash-csv-import-progress-errors style="display: none"></div>
+        <div data-cash-csv-import-progress-errors style="display: none" class="box state-error" ></div>
         <div>
-            <span data-cash-csv-import-progress-icon="loading" class="alert" style="display:none;">
+            <span data-cash-csv-import-progress-icon="loading" class="box" style="display:none;">
                 <i class="fas fa-spinner loading"></i> <span>[`Importing...`]</span>
             </span>
-            <span data-cash-csv-import-progress-icon="success" class="alert success" style="display:none;">
+            <span data-cash-csv-import-progress-icon="success" class="box state-success" style="display:none;">
                 <i class="fas fa-check-circle yes"></i> <span>[`Finalizing...`]</span>
             </span>
-            <span data-cash-csv-import-progress-icon="error" class="alert danger" style="display:none;">
+            <span data-cash-csv-import-progress-icon="error" class="box state-error" style="display:none;">
                 <i class="fas fa-exclamation-triangle"></i> <span>[`Done`]</span>
             </span>
         </div>
@@ -400,39 +400,27 @@
                             $progressLoading.show().siblings().hide();
                         },
                         onSuccess: function (r) {
-                            progressInstance.set({ percentage: 0 });
+                            $bar.show();
+                            progressInstance.set({ percentage: 10 });
                             $('#cash-import-page').trigger('stepChange.cash', 3);
                             $form.slideUp(131.2);
                             $('html, body').animate({ scrollTop: 0 }, 131.2);
-
-                            // $transactionStat.show();
                         },
                         onError: function (r) {
                             $progressError.show().siblings().hide();
                             $progressError.find('span').text(r.error);
                             $button.prop('disabled', false).show();
                             $form.slideDown(131.2);
-                            // $transactionStat.hide();
                         }
                     },
                     step: {
                         onProgress: function(r) {
-                            debugger;
                             progressInstance.set({ percentage: r.progress });
-                            // $transactionStat.show();
-                            // $transactionStat.find('span').text(r.transactions.ok);
-                            // $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
                         },
                         onReady: function (r) {
                             $progressSuccess.show().siblings().hide();
                             progressInstance.set({ percentage: r.progress });
-                            debugger;
                             window.location = window.appState.baseUrl + 'import/' + r.import_id;
-                            // $.cash_routing.redispatch();
-                            // $button.prop('disabled', false);
-                            // $transactionStat.show();
-                            // $transactionStat.find('span').text(r.transactions.ok);
-                            // $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
                         },
                         onError: function (r) {
                             $progressError.show().siblings().hide();
