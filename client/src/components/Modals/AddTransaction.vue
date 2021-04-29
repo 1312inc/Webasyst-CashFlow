@@ -610,7 +610,10 @@ export default {
       transfer_incoming_amount: {
         required: requiredIf(function () {
           return this.showTransferIncomingAmount
-        })
+        }),
+        minValue: function (value) {
+          return this.showTransferIncomingAmount ? value > 0 : true
+        }
       }
     }
   },
@@ -699,6 +702,10 @@ export default {
     },
     'model.account_id' () {
       this.model.transfer_account_id = null
+      this.model.transfer_incoming_amount = null
+    },
+    'model.transfer_account_id' () {
+      this.model.transfer_incoming_amount = null
     }
   },
 
