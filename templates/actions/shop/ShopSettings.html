@@ -381,11 +381,11 @@
                             />
                             <div class="progressbar" style="display: none"></div>
                             {*<div data-cash-shop-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
-                            <div data-cash-shop-import-progress-errors style="display: none"></div>
+                            <div data-cash-shop-import-progress-errors style="display: none" class="box state-error"></div>
                             <div>
-                                <span data-cash-shop-import-progress-icon="loading" style="display:none;"><i class="fas fa-spinner"></i> <span>[`Importing`] <span data-cash-shop-import-progress-counts></span></span></span>
-                                <span data-cash-shop-import-progress-icon="success" style="display:none;"><i class="fas fa-check-circle yes"></i> <span>[`Finalizing...`]</span></span>
-                                <span data-cash-shop-import-progress-icon="error" style="display:none;"><i class="fas fa-times no"></i> <span>[`Done`]</span></span>
+                                <span data-cash-shop-import-progress-icon="loading" class="box"  style="display:none;"><i class="fas fa-spinner"></i> <span>[`Importing`] <span data-cash-shop-import-progress-counts></span></span></span>
+                                <span data-cash-shop-import-progress-icon="success" class="box state-success" style="display:none;"><i class="fas fa-check-circle yes"></i> <span>[`Finalizing...`]</span></span>
+                                <span data-cash-shop-import-progress-icon="error" class="box state-error" style="display:none;"><i class="fas fa-times no"></i> <span>[`Done`]</span></span>
                             </div>
                         </div>
 
@@ -394,7 +394,7 @@
                 </div>
 
                 <div class="field" data-cash-shop-errors {if empty($errors)}style="display:none;"{/if}>
-                    <div class="value errormsg">
+                    <div class="box state-error">
                         {$errors|implode:'<br>'}
                     </div>
                 </div>
@@ -601,38 +601,28 @@
                                         'period_after': $datePicker.val()
                                     },
                                     onStart: function (r) {
-                                        $progressBar.show();
                                         $button.hide();
                                         $progressLoading.show().siblings().hide();
                                     },
                                     onSuccess: function (r) {
-                                        progressInstance.set({ percentage: 0 });
-                                        // $transactionStat.show();
+                                        $progressBar.show();
+                                        progressInstance.set({ percentage: 10 });
                                     },
                                     onError: function (r) {
                                         $progressError.show().siblings().hide();
                                         $progressError.find('span').text(r.error);
                                         $button.prop('disabled', false).show();
-                                        // $transactionStat.hide();
                                     }
                                 },
                                 step: {
                                     onProgress: function (r) {
                                         progressInstance.set({ percentage: r.progress });
                                         $progressCounts.text(r.passed_orders + ' / ' + r.total_orders)
-                                        // $transactionStat.show();
-                                        // $transactionStat.find('span').text(r.transactions.ok);
-                                        // $transactionStat.find('a').text(r.transactions.fail).attr('href', '#');
                                     },
                                     onReady: function (r) {
                                         $progressSuccess.show().siblings().hide();
                                         progressInstance.set({ percentage: r.progress });
-                                        // alert('done, redirect to app');
                                         window.location = window.appState.baseUrl + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
-                                        // $button.prop('disabled', false);
-                                        // $transactionStat.show();
-                                        // $transactionStat.find('span').text(r.transactions.ok);
-                                        // $transactionStat.find('a').text(r.transactions.fail).attr('href', '?module=import&action=csvDownloadErrors&id='+r.import_id);
                                     },
                                     onError: function (r) {
                                         $progressError.show().siblings().hide();
