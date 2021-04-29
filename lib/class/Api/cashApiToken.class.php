@@ -5,7 +5,7 @@
  */
 class cashApiToken
 {
-    const CLIENT_ID = 'vue_backend_client';
+    const CLIENT_ID = 'backend.cash.vue';
 
     /**
      * @param waContact $contact
