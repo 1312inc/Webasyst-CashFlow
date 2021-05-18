@@ -2,11 +2,11 @@ name: Deploy Mobile Build
 
 on:
   push:
-    branches: [ webasyst2 ]
+    branches: [ dev ]
     paths:
       - 'client/dist/mobile/**'
   pull_request:
-    branches: [ webasyst2 ]
+    branches: [ dev ]
     paths:
       - 'client/dist/mobile/**'
 
@@ -20,7 +20,7 @@ jobs:
         with:
           personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
           src_path: /client/dist/mobile/.
-          src_branch: webasyst2
+          src_branch: dev
           dst_path: /cashflow/src/main/assets/spa/
           filter: '**/!(*.html)'
           dst_owner: 1312inc
@@ -34,7 +34,7 @@ jobs:
         with:
           personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
           src_path: /client/dist/mobile/.
-          src_branch: webasyst2
+          src_branch: dev
           dst_path: /Cashflow/Resources/SPA/
           filter: '**/!(*.html)'
           dst_owner: 1312inc
