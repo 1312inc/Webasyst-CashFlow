@@ -107,11 +107,20 @@ final class cashImportCsv
      */
     public function collectInfo($firstRows = self::FIRST_ROWS)
     {
+        // BOM as a string for comparison.
+        $bom = "\xef\xbb\xbf";
+
         $response = new cashImportResponseCsv();
         $row = 0;
         $handle = fopen($this->path, 'rb');
         if ($handle === false) {
             return $response;
+        }
+
+        // Progress file pointer and get first 3 characters to compare to the BOM string.
+        if (fgets($handle, 4) !== $bom) {
+            // BOM not found - rewind pointer to start of file.
+            rewind($handle);
         }
 
         $csvData = [];
@@ -126,7 +135,7 @@ final class cashImportCsv
                 $data = $this->encodeArray($data);
                 for ($column = 0, $columnsCount = count($data); $column < $columnsCount; $column++) {
                     if ($row === 1) {
-                        $this->csvInfoDto->headers[] = $data[$column];
+                        $this->csvInfoDto->headers[] = $this->sanitizeHeader($data[$column]);
                     } else {
                         if (!isset($this->csvInfoDto->headers[$column])) {
                             continue;
@@ -193,9 +202,18 @@ final class cashImportCsv
     public function process(array $headers, $startRow = 0, $rowsToRead = self::ROWS_TO_READ)
     {
         $response = new cashCsvDataDto();
+        // BOM as a string for comparison.
+        $bom = "\xef\xbb\xbf";
+
         $handle = fopen($this->path, 'rb');
         if ($handle === false) {
             return $response;
+        }
+
+        // Progress file pointer and get first 3 characters to compare to the BOM string.
+        if (fgets($handle, 4) !== $bom) {
+            // BOM not found - rewind pointer to start of file.
+            rewind($handle);
         }
 
         try {
@@ -374,7 +392,7 @@ final class cashImportCsv
                 $infoDto,
                 $amount < 0 ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME
             );
-            if ($categoryId === 0) {
+            if (!$categoryId) {
                 $infoDto->fail++;
                 $this->error = 'Skip transaction';
 
@@ -470,6 +488,11 @@ final class cashImportCsv
         unset($v);
 
         return $a;
+    }
+
+    private function sanitizeHeader($content)
+    {
+        return str_replace(["\r","\n"], ['',' '], $content);
     }
 
     /**
