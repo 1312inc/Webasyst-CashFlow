@@ -339,7 +339,8 @@
 
 <script>
     'use strict';
-    (function () {
+    debugger;
+    (function ($) {
         var data = {
                 account: {$accounts|json_encode},
                 category: {
@@ -415,7 +416,7 @@
                     },
                     step: {
                         onProgress: function(r) {
-                            progressInstance.set({ percentage: r.progress });
+                            progressInstance.set({ percentage: r.progress * 0.9 + 10 });
                         },
                         onReady: function (r) {
                             $progressSuccess.show().siblings().hide();
@@ -593,7 +594,7 @@
 
         $form.find('[name="import[datetime]"], [name="import[amount][single][column]"]').trigger('change.cash');
         $('#c-import-step-1').hide();
-    }())
+    }(jQuery))
 </script>
 
 <script type="text/x-jquery-tmpl" data-cash-csv-import-conditions-category>

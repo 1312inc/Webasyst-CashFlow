@@ -616,7 +616,7 @@
                                 },
                                 step: {
                                     onProgress: function (r) {
-                                        progressInstance.set({ percentage: r.progress });
+                                        progressInstance.set({ percentage: r.progress * 0.9 + 10 });
                                         $progressCounts.text(r.passed_orders + ' / ' + r.total_orders)
                                     },
                                     onReady: function (r) {
