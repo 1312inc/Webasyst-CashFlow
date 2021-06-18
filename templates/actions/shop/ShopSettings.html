@@ -578,14 +578,14 @@
                     $.post('?module=shop&action=settingsValidate', $ssform.serialize(), function (r) {
                         var $errors = $ssform.find('[data-cash-shop-errors]');
 
-                        $errors.find('.errormsg').empty();
+                        $errors.find('.box').empty();
                         if (r.status === 'fail') {
                             $errors.show();
                             var errors = [];
                             for(var error in r['errors']) {
                                 errors.push(r['errors'][error]);
                             }
-                            $errors.find('.errormsg').html(errors.join('<br>'));
+                            $errors.find('.box').html(errors.join('<br>'));
                         } else {
                             $errors.hide();
                             $button.prop('disabled', true).hide();
