@@ -431,7 +431,7 @@ class cashShopSettings implements JsonSerializable
      */
     public function isTurnedOn()
     {
-        return $this->enabled && !$this->savedSettings['enabled'];
+        return $this->enabled && empty($this->savedSettings['enabled']);
     }
 
     /**
@@ -439,7 +439,7 @@ class cashShopSettings implements JsonSerializable
      */
     public function isTurnedOff()
     {
-        return !$this->enabled && $this->savedSettings['enabled'];
+        return !$this->enabled && !empty($this->savedSettings['enabled']);
     }
 
     /**
@@ -447,7 +447,7 @@ class cashShopSettings implements JsonSerializable
      */
     public function forecastTurnedOn()
     {
-        return $this->enableForecast && !$this->savedSettings['enableForecast'];
+        return $this->enableForecast && empty($this->savedSettings['enableForecast']);
     }
 
     /**
@@ -455,7 +455,7 @@ class cashShopSettings implements JsonSerializable
      */
     public function forecastTurnedOff()
     {
-        return !$this->enableForecast && $this->savedSettings['enableForecast'];
+        return !$this->enableForecast && !empty($this->savedSettings['enableForecast']);
     }
 
     /**
