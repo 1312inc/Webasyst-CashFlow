@@ -329,7 +329,7 @@
                 <i class="fas fa-check-circle yes"></i> <em>[`Finalizing...`]</em>
             </span>
             <span data-cash-csv-import-progress-icon="error" class="state-error" style="display:none;">
-                <i class="fas fa-exclamation-triangle"></i> <em>[`Done`]</em>
+                <i class="fas fa-exclamation-triangle"></i> <em>[`Error`]</em>
             </span>
         </div>
     </div>
@@ -339,7 +339,6 @@
 
 <script>
     'use strict';
-    debugger;
     (function ($) {
         var data = {
                 account: {$accounts|json_encode},
@@ -409,7 +408,7 @@
                         },
                         onError: function (r) {
                             $progressError.show().siblings().hide();
-                            $progressError.find('span').text(r.error);
+                            $progressError.find('em').text(r.error);
                             $button.prop('disabled', false).show();
                             $form.slideDown(131.2);
                         }
@@ -425,7 +424,7 @@
                         },
                         onError: function (r) {
                             $progressError.show().siblings().hide();
-                            $progressError.find('span').text(r.error);
+                            $progressError.find('em').text(r.error);
                             $button.prop('disabled', false).show();
                         }
                     }

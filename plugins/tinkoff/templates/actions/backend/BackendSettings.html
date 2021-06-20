@@ -232,7 +232,6 @@
         $allSettings.on('submit', function (e) {
             e.preventDefault();
             let $form = $(this);
-            debugger;
 
             $.post('?plugin=tinkoff&module=backend&action=saveSettings', $form.serialize(), function (r) {
                 if (r.status === 'ok') {
