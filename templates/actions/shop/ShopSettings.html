@@ -385,7 +385,7 @@
                             <div class="custom-mt-16">
                                 <span data-cash-shop-import-progress-icon="loading" class="gray" style="display:none;"><em>[`Importing...`] <span data-cash-shop-import-progress-counts></span></em></span>
                                 <span data-cash-shop-import-progress-icon="success" class="state-success" style="display:none;"><i class="fas fa-check-circle yes"></i> <em>[`Finalizing...`]</em></span>
-                                <span data-cash-shop-import-progress-icon="error" class="state-error" style="display:none;"><i class="fas fa-times no"></i> <em>[`Done`]</em></span>
+                                <span data-cash-shop-import-progress-icon="error" class="state-error" style="display:none;"><i class="fas fa-times no"></i> <em>[`Error`]</em></span>
                             </div>
                         </div>
 
@@ -610,7 +610,7 @@
                                     },
                                     onError: function (r) {
                                         $progressError.show().siblings().hide();
-                                        $progressError.find('span').text(r.error);
+                                        $progressError.find('em').text(r.error);
                                         $button.prop('disabled', false).show();
                                     }
                                 },
@@ -626,7 +626,7 @@
                                     },
                                     onError: function (r) {
                                         $progressError.show().siblings().hide();
-                                        $progressError.find('span').text(r.error);
+                                        $progressError.find('em').text(r.error);
                                         $button.prop('disabled', false).show();
                                     }
                                 }
