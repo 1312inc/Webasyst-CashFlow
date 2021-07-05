@@ -478,14 +478,23 @@
                         $.waDialog({
                             html: dialogHtml,
                             onOpen: function ($dialogWrapper, d) {
-                                var $errorMsg = $dialogWrapper.find('.errormsg');
+                                var $errorMsg = $dialogWrapper.find('.errormsg'),
+                                    $submitButton = $dialogWrapper.find('.js-ok');
 
                                 setTimeout(function () {
                                     $dialogWrapper.find('[name="code"]').trigger('focus');
                                 }, 13.12);
 
                                 $errorMsg.hide();
-                                $dialogWrapper.find('.js-ok').after($.cash.$loading).on('click.cash', function (e) {
+
+                                $dialogWrapper.find('[name="code"]').on('keypress', function (e) {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        $submitButton.trigger('click');
+                                    }
+                                });
+
+                                $submitButton.after($.cash.$loading).on('click.cash', function (e) {
                                     e.preventDefault();
                                     $.post('?module=shop&action=resetImport', $dialogWrapper.find('form').serialize(), function (r) {
                                         $.cash.$loading.remove();
