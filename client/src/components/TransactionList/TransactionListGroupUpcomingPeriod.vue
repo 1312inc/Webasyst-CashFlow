@@ -31,6 +31,12 @@
 
 <script>
 export default {
+  props: {
+    upcomingBlockOpened: {
+      type: Boolean
+    }
+  },
+
   computed: {
     featurePeriod: {
       get () {
@@ -40,34 +46,19 @@ export default {
       set (val) {
         this.$store.commit('transaction/setFeaturePeriod', val)
       }
-    },
-
-    upcomingBlockOpened: {
-      get () {
-        return this.$store.state.transaction.upcomingBlockOpened
-      },
-
-      set (val) {
-        this.$store.commit('transaction/setUpcomingBlockOpened', val)
-      }
     }
   },
 
   created () {
     this.featurePeriod =
       +localStorage.getItem('upcoming_transactions_days') || this.featurePeriod
-    this.upcomingBlockOpened =
-      +localStorage.getItem('upcoming_transactions_show') === 0
-        ? 0
-        : this.upcomingBlockOpened
   },
 
   methods: {
     setFeaturePeriod (days) {
       this.featurePeriod = days
-      this.upcomingBlockOpened = 1
       localStorage.setItem('upcoming_transactions_days', days)
-      localStorage.setItem('upcoming_transactions_show', 1)
+      this.$emit('updateUpcomingBlockOpened', true)
     }
   }
 }

@@ -44,7 +44,6 @@ export default {
       items: []
     },
     featurePeriod: 7,
-    upcomingBlockOpened: 1, // TODO: Remove from the store to browser store
     chartData: [],
     chartDataCurrencyIndex: 0,
     loadingChart: true,
@@ -139,10 +138,6 @@ export default {
 
     setFeaturePeriod (state, data) {
       state.featurePeriod = data
-    },
-
-    setUpcomingBlockOpened (state, data) {
-      state.upcomingBlockOpened = data
     },
 
     setChartData (state, data) {
