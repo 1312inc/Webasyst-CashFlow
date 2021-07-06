@@ -56,7 +56,7 @@
               </div>
               <div
                 v-if="type === 'future'"
-                @click="toggleupcomingBlockOpened"
+                @click="upcomingBlockOpened = !upcomingBlockOpened"
                 :class="{ 'opacity-50': !upcomingBlockOpened }"
                 class="black flexbox middle space-8"
                 style="cursor: pointer"
@@ -74,12 +74,8 @@
                 {{ $moment(type).format("MMMM YYYY") }}
               </div>
             </h3>
-            <!-- (do we really need this for the upcoming block only?)
-            <span v-if="type === 'future'" class="badge light-gray">{{
-              filteredTransactions.length
-            }}</span>
-            -->
-            <TransactionListGroupUpcomingPeriod v-if="type === 'future'" />
+
+            <TransactionListGroupUpcomingPeriod v-if="type === 'future'" :upcomingBlockOpened=upcomingBlockOpened @updateUpcomingBlockOpened="(val) => upcomingBlockOpened = val" />
           </div>
           <div class="flexbox middle space-12">
             <div
@@ -147,7 +143,14 @@ export default {
     return {
       isHover: false,
       сollapseGroups: {},
-      activeCollapseExternalSourceIDs: []
+      activeCollapseExternalSourceIDs: [],
+      localStorage: (() => {
+        try {
+          return JSON.parse(localStorage.getItem('upcoming_transactions_show') || undefined)
+        } catch (e) {
+          return true
+        }
+      })()
     }
   },
 
@@ -174,11 +177,15 @@ export default {
     upcomingBlockOpened: {
       get () {
         if (this.type !== 'future') return true
-        return this.$store.state.transaction.upcomingBlockOpened
+        return this.localStorage
       },
 
       set (val) {
-        this.$store.commit('transaction/setUpcomingBlockOpened', val)
+        this.localStorage = val
+        localStorage.setItem(
+          'upcoming_transactions_show',
+          val
+        )
       }
     },
 
@@ -297,14 +304,6 @@ export default {
           items: this.filteredTransactions
         })
       }
-    },
-
-    toggleupcomingBlockOpened () {
-      this.upcomingBlockOpened = this.upcomingBlockOpened ? 0 : 1
-      localStorage.setItem(
-        'upcoming_transactions_show',
-        this.upcomingBlockOpened ? 1 : 0
-      )
     }
   }
 }
