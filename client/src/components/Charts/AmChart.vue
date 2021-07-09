@@ -433,7 +433,7 @@ export default {
       newSeries.adapter.add('tooltipText', (t, target) => {
         const isGrouped = !!target.tooltipDataItem.groupDataItems
         const dateFormat = isGrouped ? 'MMM yyyy' : 'd MMMM yyyy'
-        return `{dateX.formatDate('${dateFormat}')}\n{name}: {valueY.value} ${this.currencySign}`
+        return `{dateX.formatDate('${dateFormat}')}, {name}: {valueY.value} ${this.currencySign}`
       })
     },
 
@@ -456,6 +456,8 @@ export default {
       balanceSeries.stroke = am4core.color('rgba(255, 0, 0, 0)') // transparent color
       balanceSeries.strokeWidth = 3
 
+      this.balanceSeries = balanceSeries
+
       this.chart.events.on('datavalidated', (ev) => {
         // Delete cash gap ranges
         for (let i = 0; i < this.dateAxis2.axisRanges.length; i++) {
@@ -463,6 +465,9 @@ export default {
             this.dateAxis2.axisRanges.removeIndex(i).dispose()
           }
         }
+
+        // Delete positive/negative ranges
+        this.balanceAxis.axisRanges.clear()
 
         let dates = []
         let previous = null
@@ -476,35 +481,45 @@ export default {
             })
             if (i === arr.length - 1 && dates.length) {
               dates[dates.length - 1].isEnd = true
-              this.addNegativeBalanceRange(balanceSeries, dates)
+              this.addNegativeBalanceRange(this.balanceSeries, dates)
             }
           } else {
             if (dates.length) {
-              this.addNegativeBalanceRange(balanceSeries, dates)
+              this.addNegativeBalanceRange(this.balanceSeries, dates)
             }
             dates = []
           }
           previous = e.balance
         })
+
+        // Create a range to change stroke for positive values
+        const rangePositive = this.balanceAxis.createSeriesRange(this.balanceSeries)
+        rangePositive.value = 0
+        rangePositive.name = 'positive'
+        rangePositive.endValue = Number.MAX_SAFE_INTEGER
+        rangePositive.contents.stroke = chartColors.green
+
+        const gradientGreen = new am4core.LinearGradient()
+        gradientGreen.addColor(chartColors.green)
+        gradientGreen.addColor(am4core.color('white'))
+        gradientGreen.rotation = 90
+        rangePositive.contents.fill = gradientGreen
+        rangePositive.contents.fillOpacity = 0.4
+
+        // Create a range to change stroke for negative values
+        const rangeNegative = this.balanceAxis.createSeriesRange(this.balanceSeries)
+        rangeNegative.value = -1
+        rangeNegative.name = 'negative'
+        rangeNegative.endValue = Number.MIN_SAFE_INTEGER
+        rangeNegative.contents.stroke = chartColors.red
+
+        const gradientRed = new am4core.LinearGradient()
+        gradientRed.addColor(am4core.color('white'))
+        gradientRed.addColor(chartColors.red)
+        gradientRed.rotation = 90
+        rangeNegative.contents.fill = gradientRed
+        rangeNegative.contents.fillOpacity = 0.4
       })
-
-      this.balanceSeries = balanceSeries
-
-      // Create a range to change stroke for positive values
-      const rangePositive = this.balanceAxis.createSeriesRange(this.balanceSeries)
-      rangePositive.value = 0
-      rangePositive.endValue = Number.MAX_SAFE_INTEGER
-      rangePositive.contents.stroke = chartColors.green
-      rangePositive.contents.fill = chartColors.green
-      rangePositive.contents.fillOpacity = 0.2
-
-      // Create a range to change stroke for negative values
-      const rangeNegative = this.balanceAxis.createSeriesRange(this.balanceSeries)
-      rangeNegative.value = -1
-      rangeNegative.endValue = Number.MIN_SAFE_INTEGER
-      rangeNegative.contents.stroke = chartColors.red
-      rangeNegative.contents.fill = chartColors.red
-      rangeNegative.contents.fillOpacity = 0.2
 
       // Create a range to make stroke dashed in the future
       const rangeDashed = this.dateAxis2.createSeriesRange(this.balanceSeries)
