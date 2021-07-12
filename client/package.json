@@ -1,6 +1,5 @@
 {
   "name": "cash-app-webasyst",
-  "version": "2.0.0",
   "private": true,
   "scripts": {
     "serve-desktop": "vue-cli-service serve src/desktop.js --mode desktop.development",

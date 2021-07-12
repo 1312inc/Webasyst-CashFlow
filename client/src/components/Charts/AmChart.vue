@@ -447,6 +447,7 @@ export default {
       balanceSeries.tooltip.background.fill = chartColors.graydark
       balanceSeries.tooltip.label.fill = chartColors.white
       balanceSeries.tooltip.animationDuration = 500
+      balanceSeries.tooltip.zIndex = 50
       balanceSeries.tooltipText = `{dateX.formatDate('d MMMM yyyy')}\n{name}: {valueY.value} ${this.currencySign}`
       balanceSeries.yAxis = this.balanceAxis
       balanceSeries.xAxis = this.dateAxis2
