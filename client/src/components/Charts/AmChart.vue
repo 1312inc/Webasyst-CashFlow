@@ -461,14 +461,12 @@ export default {
 
       this.chart.events.on('datavalidated', (ev) => {
         // Delete cash gap ranges
-        for (let i = 0; i < this.dateAxis2.axisRanges.length; i++) {
-          if (this.dateAxis2.axisRanges.getIndex(i).name === 'CashGap') {
-            this.dateAxis2.axisRanges.removeIndex(i).dispose()
-          }
-        }
+        this.dateAxis2.axisRanges.clear()
 
         // Delete positive/negative ranges
         this.balanceAxis.axisRanges.clear()
+
+        if (this.balanceSeries.isDisposed()) return
 
         let dates = []
         let previous = null
@@ -500,12 +498,25 @@ export default {
         rangePositive.endValue = Number.MAX_SAFE_INTEGER
         rangePositive.contents.stroke = chartColors.green
 
+        let offset = this.balanceAxis.valueToPosition(0)
+        if (offset < 0) offset = 0
+        if (offset > 1) offset = 1
+
         const gradientGreen = new am4core.LinearGradient()
-        gradientGreen.addColor(chartColors.green)
-        gradientGreen.addColor(am4core.color('white'))
+        gradientGreen.stops.push({ color: chartColors.green, opacity: 1 })
+        gradientGreen.stops.push({ color: chartColors.green, offset: 1 - offset - ((1 - offset) * 0.2), opacity: 0 })
         gradientGreen.rotation = 90
         rangePositive.contents.fill = gradientGreen
         rangePositive.contents.fillOpacity = 0.4
+
+        // Create a range to make stroke dashed in the future
+        const rangeDashed = this.dateAxis2.createSeriesRange(this.balanceSeries)
+        rangeDashed.name = 'dashedLine'
+        rangeDashed.date = this.$moment().set('hour', 12).toDate()
+        rangeDashed.endDate = new Date(8640000000000000)
+        rangeDashed.contents.stroke = prefersColorSchemeDark ? chartColors.black : chartColors.graylight
+        rangeDashed.contents.strokeDasharray = '3 5'
+        rangeDashed.contents.strokeWidth = 3
 
         // Create a range to change stroke for negative values
         const rangeNegative = this.balanceAxis.createSeriesRange(this.balanceSeries)
@@ -515,20 +526,12 @@ export default {
         rangeNegative.contents.stroke = chartColors.red
 
         const gradientRed = new am4core.LinearGradient()
-        gradientRed.addColor(am4core.color('white'))
-        gradientRed.addColor(chartColors.red)
+        gradientRed.stops.push({ color: chartColors.red, offset: 1 - offset + ((1 - offset) * 0.2), opacity: 0 })
+        gradientRed.stops.push({ color: chartColors.red, opacity: 1 })
         gradientRed.rotation = 90
         rangeNegative.contents.fill = gradientRed
         rangeNegative.contents.fillOpacity = 0.4
       })
-
-      // Create a range to make stroke dashed in the future
-      const rangeDashed = this.dateAxis2.createSeriesRange(this.balanceSeries)
-      rangeDashed.date = this.$moment().set('hour', 12).toDate()
-      rangeDashed.endDate = new Date(8640000000000000)
-      rangeDashed.contents.stroke = prefersColorSchemeDark ? chartColors.black : chartColors.graylight
-      rangeDashed.contents.strokeDasharray = '3 5'
-      rangeDashed.contents.strokeWidth = 3
 
       // Add Today bullet
       const bullet = this.balanceSeries.bullets.push(new am4charts.CircleBullet())
@@ -565,10 +568,10 @@ export default {
       nbr.axisFill.tooltip.getFillFromObject = false
       nbr.axisFill.tooltip.background.fill = chartColors.red
       nbr.axisFill.tooltip.label.fill = chartColors.black
-      const p1 = (1 - this.balanceAxis.valueToPosition(minimumAmount)) * 100
+      const p1 = (1 - this.balanceAxis.valueToPosition(0)) * 100
       const p2 = 220 / 353 * 100
       const p3 = p1 / 100 * p2
-      nbr.axisFill.tooltipY = am4core.percent(p3 - 2)
+      nbr.axisFill.tooltipY = am4core.percent(p3)
       nbr.axisFill.tooltipText = this.$t('cashGapTooltip', {
         start: `${dates[0].isStart ? ' <=' : ''} ${this.$moment(startDate).format('L')}${inDaysStart}`,
         end: `${dates[dates.length - 1].isEnd ? ' >=' : ''} ${this.$moment(endDate).format('L')}${inDaysEnd}`,
