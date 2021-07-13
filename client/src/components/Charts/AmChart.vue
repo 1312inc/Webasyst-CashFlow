@@ -491,6 +491,10 @@ export default {
           previous = e.balance
         })
 
+        let offset = this.balanceAxis.valueToPosition(0)
+        if (offset < 0) offset = 0
+        if (offset > 1) offset = 1
+
         // Create a range to change stroke for positive values
         const rangePositive = this.balanceAxis.createSeriesRange(this.balanceSeries)
         rangePositive.value = 0
@@ -498,25 +502,12 @@ export default {
         rangePositive.endValue = Number.MAX_SAFE_INTEGER
         rangePositive.contents.stroke = chartColors.green
 
-        let offset = this.balanceAxis.valueToPosition(0)
-        if (offset < 0) offset = 0
-        if (offset > 1) offset = 1
-
         const gradientGreen = new am4core.LinearGradient()
         gradientGreen.stops.push({ color: chartColors.green, opacity: 1 })
         gradientGreen.stops.push({ color: chartColors.green, offset: 1 - offset - ((1 - offset) * 0.2), opacity: 0 })
         gradientGreen.rotation = 90
         rangePositive.contents.fill = gradientGreen
         rangePositive.contents.fillOpacity = 0.4
-
-        // Create a range to make stroke dashed in the future
-        const rangeDashed = this.dateAxis2.createSeriesRange(this.balanceSeries)
-        rangeDashed.name = 'dashedLine'
-        rangeDashed.date = this.$moment().set('hour', 12).toDate()
-        rangeDashed.endDate = new Date(8640000000000000)
-        rangeDashed.contents.stroke = prefersColorSchemeDark ? chartColors.black : chartColors.graylight
-        rangeDashed.contents.strokeDasharray = '3 5'
-        rangeDashed.contents.strokeWidth = 3
 
         // Create a range to change stroke for negative values
         const rangeNegative = this.balanceAxis.createSeriesRange(this.balanceSeries)
@@ -531,6 +522,15 @@ export default {
         gradientRed.rotation = 90
         rangeNegative.contents.fill = gradientRed
         rangeNegative.contents.fillOpacity = 0.4
+
+        // Create a range to make stroke dashed in the future
+        const rangeDashed = this.dateAxis2.createSeriesRange(this.balanceSeries)
+        rangeDashed.name = 'dashedLine'
+        rangeDashed.date = this.$moment().set('hour', 12).toDate()
+        rangeDashed.endDate = new Date(8640000000000000)
+        rangeDashed.contents.stroke = prefersColorSchemeDark ? chartColors.black : chartColors.graylight
+        rangeDashed.contents.strokeDasharray = '3 5'
+        rangeDashed.contents.strokeWidth = 3
       })
 
       // Add Today bullet
