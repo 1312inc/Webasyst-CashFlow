@@ -52,6 +52,7 @@ export default {
     bottom: 0;
     display: block;
     content: " ";
+    z-index: -1;
     background-color: var(--background-color-blank);
   }
 
