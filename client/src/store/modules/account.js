@@ -54,7 +54,7 @@ export default {
       try {
         const { data } = await api.post(`cash.account.${method}`, params)
         // emitting for the mobile platform
-        if (process.env.VUE_APP_MODE === 'mobile') {
+        if (process.env.VUE_APP_MODE === 'mobile' && method === 'create') {
           window.emitter.emit('createAccount', data)
         }
         // make transaction if starting balance added
