@@ -158,16 +158,7 @@ final class cashTransactionFilterService
             throw new kmwaForbiddenException(_w('You have no access to this category'));
         }
 
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $dto->contact,
-            'ct',
-            'account_id'
-        );
-
-        $sqlParams['category_id'] = $dto->filter->getCategoryId();
-
         $selectQueryParts->addAndWhere('ct.category_id = i:category_id')
-            ->addAndWhere($accountAccessSql, 'accountAccessSql')
             ->addParam('category_id', $dto->filter->getCategoryId());
     }
 
@@ -181,14 +172,7 @@ final class cashTransactionFilterService
         cashTransactionFilterParamsDto $dto,
         cashSelectQueryParts $selectQueryParts
     ): void {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $dto->contact,
-            'ct',
-            'account_id'
-        );
-
         $selectQueryParts->addAndWhere('ca.currency = s:currency')
-            ->addAndWhere($accountAccessSql, 'accountAccessSql')
             ->addParam('currency', $dto->filter->getCurrency());
     }
 
@@ -238,14 +222,7 @@ final class cashTransactionFilterService
         cashTransactionFilterParamsDto $dto,
         cashSelectQueryParts $selectQueryParts
     ): void {
-        $accountAccessSql = cash()->getContactRights()->getSqlForAccountJoinWithMinimumAccess(
-            $dto->contact,
-            'ct',
-            'account_id'
-        );
-
         $selectQueryParts->addAndWhere('ct.description like s:description')
-            ->addAndWhere($accountAccessSql, 'accountAccessSql')
             ->addParam('description', $dto->filter->getSearch(), 'like');
     }
 
@@ -275,7 +252,7 @@ final class cashTransactionFilterService
                     'isArchived' => 'ct.is_archived = 0',
                     'accountAccessSql' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
                         $dto->contact,
-                        $dto->filter->getCategoryId()
+                        $dto->filter->getAccountId()
                     ),
                     'categoryAccessSql' => cash()->getContactRights()->getSqlForCategoryJoin(
                         $dto->contact,
