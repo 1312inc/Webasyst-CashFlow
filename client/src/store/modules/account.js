@@ -53,6 +53,10 @@ export default {
       const method = params.id ? 'update' : 'create'
       try {
         const { data } = await api.post(`cash.account.${method}`, params)
+        // emitting for the mobile platform
+        if (process.env.VUE_APP_MODE === 'mobile') {
+          window.emitter.emit('createAccount', data)
+        }
         // make transaction if starting balance added
         if (parseInt(params.starting_balance) !== 0 && !isNaN(parseInt(params.starting_balance))) {
           await dispatch('transaction/update', {
