@@ -44,6 +44,10 @@ class cashApiTransactionResponseDtoAssembler extends cashApiTransactionResponseD
                 $dto->external_data['info'] = $this->getShopData($dto->external_data);
             }
 
+            if (!empty($dto->repeating_id)) {
+                $dto->repeating_data = $this->getRepeatingData($dto->repeating_id);
+            }
+
             yield $dto;
         }
     }

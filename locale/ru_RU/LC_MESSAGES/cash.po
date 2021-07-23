@@ -1035,6 +1035,9 @@ msgstr "Введите код"
 msgid "Restart the integration"
 msgstr "Перезапустить интеграцию"
 
+msgid "Delete & Restart"
+msgstr "Перезапустить интеграцию"
+
 msgid "Salary"
 msgstr "Зарплата"
 

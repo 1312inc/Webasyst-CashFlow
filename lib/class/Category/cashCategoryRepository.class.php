@@ -79,7 +79,7 @@ class cashCategoryRepository extends cashBaseRepository
         $transfers = $this->findById(cashCategoryFactory::TRANSFER_CATEGORY_ID);
         if (!$transfers instanceof cashCategory) {
             $transfers = cash()->getEntityFactory(cashCategory::class)->createNewTransferCategory();
-            cash()->getEntityPersister()->insert($transfers);
+            $this->saveNewSystemCategory($transfers);
         }
 
         return $transfers;
@@ -94,7 +94,7 @@ class cashCategoryRepository extends cashBaseRepository
         $income = $this->findById(cashCategoryFactory::NO_CATEGORY_INCOME_ID);
         if (!$income instanceof cashCategory) {
             $income = cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryIncome();
-            cash()->getEntityPersister()->insert($income);
+            $this->saveNewSystemCategory($income);
         }
 
         return $income;
@@ -109,9 +109,16 @@ class cashCategoryRepository extends cashBaseRepository
         $expense = $this->findById(cashCategoryFactory::NO_CATEGORY_EXPENSE_ID);
         if (!$expense instanceof cashCategory) {
             $expense = cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryExpense();
-            cash()->getEntityPersister()->insert($expense);
+            $this->saveNewSystemCategory($expense);
         }
 
         return $expense;
+    }
+
+    private function saveNewSystemCategory(cashCategory $category)
+    {
+        $data = cash()->getHydrator()->extract($category);
+        $data['create_datetime'] = date('Y-m-d H:i:s');
+        $this->getModel()->insert($data);
     }
 }
