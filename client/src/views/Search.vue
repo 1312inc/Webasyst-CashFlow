@@ -5,13 +5,19 @@
         <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">{{ $route.query.text }}</h1>
       </template>
     </ChartHeader>
-    <TransactionList :showTodayGroup="false" :showFutureGroup="false" />
+    <div class="flexbox">
+      <div class="wide">
+        <TransactionList :showTodayGroup="false" :showFutureGroup="false" />
+      </div>
+      <AmChartPieStickyContainer class="width-40" />
+    </div>
   </div>
 </template>
 
 <script>
 import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
+import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
@@ -19,7 +25,8 @@ export default {
 
   components: {
     ChartHeader,
-    TransactionList
+    TransactionList,
+    AmChartPieStickyContainer
   },
 
   watch: {

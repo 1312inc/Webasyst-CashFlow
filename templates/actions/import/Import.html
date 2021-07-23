@@ -32,7 +32,7 @@
                         </a>
                     </li>
                 {/foreach}
-                <li class="transparent small gray">
+                <li class="transparent small">
                     <a href="#" class="count" data-cash-action="imports-delete">
                         <i class="fas fa-trash"></i>
                         [`Clear import history`]
@@ -111,7 +111,7 @@
             $uploadForm = $('#cash-import-upload-form'),
             $uploadIframe = $('#cash-upload-file'),
             $step2 = $('#c-import-step-2'),
-            $loading = $('<div><i class="fas fa-spinner"></i></div>');
+            $loading = $('<div class="custom-mt-16"><i class="fas fa-spinner"></i></div>');
 
         $uploadForm.on('change', '[name="upload[file]"]', function () {
             $uploadForm.append($loading);

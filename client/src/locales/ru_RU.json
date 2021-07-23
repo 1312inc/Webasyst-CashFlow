@@ -84,6 +84,15 @@
   "yesterday": "Вчера",
   "overdue": "Просроченные",
   "repeatingTran": "Повторяющаяся операция",
+  "repeatingInfo": {
+    "interval": {
+      "day": "Никогда | Каждый день | Раз в {frequency} дня | Раз в {frequency} дней",
+      "week": "Никогда | Каждую неделю | Раз в {frequency} недели | Раз в {frequency} недель",
+      "month": "Никогда | Каждый месяц | Раз в {frequency} месяца | Раз в {frequency} месяцев",
+      "year": "Никогда | Каждый год | Раз в {frequency} года | Раз в {frequency} лет"
+    },
+    "occurrences": "Бесконечно | Единожды | {occurrences} повторения | {occurrences} повторений"
+  },
   "import": "Импорт",
   "emptyList": "Нет операций",
   "emptyListUpcoming": "На заданный период запланированных операций нет",

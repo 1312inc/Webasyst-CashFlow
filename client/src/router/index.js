@@ -74,6 +74,12 @@ const routes = [
     path: '/import'
   },
   {
+    path: '/shop/settings'
+  },
+  {
+    path: '/plugins'
+  },
+  {
     path: '/404',
     name: 'NotFound',
     component: NotFound,

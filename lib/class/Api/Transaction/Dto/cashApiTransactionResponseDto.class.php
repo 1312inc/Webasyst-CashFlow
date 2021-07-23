@@ -51,6 +51,11 @@ class cashApiTransactionResponseDto extends cashAbstractDto
     public $repeating_id;
 
     /**
+     * @var int|null
+     */
+    public $repeating_data;
+
+    /**
      * @var int
      */
     public $create_contact_id;

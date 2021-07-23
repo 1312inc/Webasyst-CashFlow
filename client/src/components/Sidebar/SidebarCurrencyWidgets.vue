@@ -1,7 +1,7 @@
 <template>
   <div v-if="balanceFlow.length > 0" class="custom-mt-24">
     <div class="heading">
-      {{ $t("Next 90 days") }}
+      {{ this.$moment().format("LL") }}
     </div>
     <div class="bricks">
       <SidebarCurrencyWidgetsItems

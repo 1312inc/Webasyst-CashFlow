@@ -84,6 +84,15 @@
   "yesterday": "Yesterday",
   "overdue": "Overdue",
   "repeatingTran": "Repeating transaction",
+  "repeatingInfo": {
+    "interval": {
+      "day": "Never | Every day | Every {frequency} days",
+      "week": "Never | Every week | Every {frequency} weeks",
+      "month": "Never | Every month | Every {frequency} months",
+      "year": "Never | Every year | Every {frequency} years"
+    },
+    "occurrences": "Infinitely | Once | {occurrences} occurrences"
+  },
   "import": "Import",
   "emptyList": "No transactions",
   "emptyListUpcoming": "No transactions are planned for this period",
