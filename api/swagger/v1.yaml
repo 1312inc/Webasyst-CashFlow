@@ -1,0 +1,92 @@
+openapi: 3.0.0
+info:
+  title: 'Cash API'
+  version: 1.0.0
+servers:
+  - url: /api.php
+    description: Current host server
+
+paths:
+  /cash.account.getList:
+    get:
+      tags:
+        - Счета
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        200:
+          description: Список счетов пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getAccountsListResponse'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: access_token
+
+  schemas:
+    getAccountsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/accountInfo'
+
+    accountInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Идентификатор таски
+        name:
+          type: string
+        description:
+          type: string
+        icon:
+          type: string
+        currency:
+          type: string
+        customer_contact_id:
+          type: integer
+          nullable: true
+        is_archived:
+          type: boolean
+        sort:
+          type: integer
+          minimum: 0
+        create_datetime:
+          type: string
+          format: date-time
+        update_datetime:
+          nullable: true
+          type: string
+          format: date-time
+        stat:
+          $ref: '#/components/schemas/statInfo'
+
+    statInfo:
+      type: object
+      properties:
+        income:
+          type: number
+          format: double
+        expense:
+          type: number
+          format: double
+        summary:
+          type: number
+          format: double
+        incomeShorten:
+          type: string
+          example: "41.2K"
+        expenseShorten:
+          type: string
+          example: "41.2K"
+        summaryShorten:
+          type: string
+          example: "41.2K"
