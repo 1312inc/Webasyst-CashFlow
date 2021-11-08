@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import App from './App.vue'
+import Sidebar from './components/Sidebar/Sidebar'
 import router from './router'
 import store from './store'
 import permissions from './plugins/permissions'
+import SidebarRouterFallback from './plugins/sidebarRouterFallback'
 import Helpers from './plugins/helpers'
 import { i18n } from './plugins/locale'
 import Numeral from './plugins/numeralMoment'
@@ -26,9 +28,25 @@ Vue.use(darkModeObserver)
 Vue.use(VuePortal)
 Vue.use(WAtippy)
 
-new Vue({
-  router,
-  store,
-  i18n,
-  render: h => h(App)
-}).$mount('#app')
+const contentSelector = '#app-content'
+const sidebarSelector = '#app-sidebar'
+
+if (document.querySelector(contentSelector)) {
+  new Vue({
+    router,
+    store,
+    i18n,
+    render: h => h(App)
+  }).$mount(contentSelector)
+} else {
+  Vue.use(SidebarRouterFallback)
+}
+
+if (document.querySelector(sidebarSelector)) {
+  new Vue({
+    router,
+    store,
+    i18n,
+    render: h => h(Sidebar)
+  }).$mount(sidebarSelector)
+}
