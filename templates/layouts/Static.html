@@ -26,7 +26,7 @@
     <script src="{$wa_url}wa-content/js/jquery-wa/wa.js?v={$wa->version(true)}"></script>
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-wa/wa.dialog.js?v={$wa->version()}"></script>
 
-    <link href="{$wa_app_static_url}js/sidebar/app.js?v={$wa->version()}" rel="preload" as="script">
+    <link href="{$wa_app_static_url}js/app.js?v={$wa->version()}" rel="preload" as="script">
 
     <script>
         window.appState = {
@@ -48,7 +48,7 @@
 
     <div id="wa-app">
         <div class="flexbox wrap-mobile">
-            <div id="app" class="sidebar width-16rem"></div>
+            <div id="app-sidebar" class="sidebar width-16rem"></div>
             <div class="content blank">
                 <div class="box contentbox" id="cash-content">
                     {$content}
@@ -74,6 +74,6 @@
             });
         });
     </script>
-    <script type="text/javascript" src="{$wa_app_static_url}js/sidebar/app.js?v={$wa->version()}"></script>
+    <script type="text/javascript" src="{$wa_app_static_url}js/app.js?v={$wa->version()}"></script>
 </body>
 </html>

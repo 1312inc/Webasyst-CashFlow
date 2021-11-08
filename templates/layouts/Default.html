@@ -37,7 +37,12 @@
 <div id="wa">
     {$wa->header()}
 
-    <div id="app"></div>
+    <div id="wa-app">
+        <div class="flexbox wrap-mobile">
+            <div id="app-sidebar"></div>
+            <div id="app-content"></div>
+        </div>
+    </div>
     
     <script type="text/javascript" src="{$wa_app_static_url}js/app.js?v={$wa->version()}"></script>
 </body>
