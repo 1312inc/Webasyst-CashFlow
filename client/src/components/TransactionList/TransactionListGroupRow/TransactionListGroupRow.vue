@@ -36,9 +36,9 @@
         </span>
       </div>
 
-      <div class="desktop-and-tablet-only" style="width: 8rem;">
+      <div class="desktop-and-tablet-only" style="width: 6rem;flex-shrink: 0;">
         <template v-if="showDate">
-          <div class="custom-mb-4 bold">{{ $moment(transaction.date).format("ll") }}</div>
+          <div class="custom-mb-4 bold">{{ $moment(transaction.date).format($moment.locale() === 'ru' ? 'D MMM' : 'MMM D') }}</div>
           <div class="hint">{{ $moment(transaction.date).format("dddd") }}</div>
         </template>
       </div>
