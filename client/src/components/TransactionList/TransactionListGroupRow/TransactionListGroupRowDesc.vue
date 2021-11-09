@@ -12,6 +12,13 @@
           : this.$moment(transaction.date).from($helper.currentDate)
       }}</span
     >
+    <div
+      v-if="category.name"
+      :style="`color:${category.color}`"
+      class="text-ellipsis"
+    >
+      {{ category.name }}
+    </div>
     <!-- if collapsed transactions header -->
     <template v-if="collapseHeaderData && transaction.external_source_info">
       <div
@@ -61,9 +68,6 @@
       >
         {{ transaction.description }}
       </div>
-      <span v-if="!transaction.description" class="light-gray">{{
-        $t("noDesc")
-      }}</span>
       <span v-if="transaction.repeating_id" :title="title">
         <span class="small custom-mr-4">
           <i class="fas fa-redo opacity-50"></i>

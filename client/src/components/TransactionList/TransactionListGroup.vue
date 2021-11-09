@@ -99,11 +99,12 @@
         <ul v-if="filteredTransactions.length" class="c-list list">
           <TransactionListGroupRow
             v-show="isShown(transaction)"
-            v-for="transaction in filteredTransactions"
+            v-for="(transaction, i) in filteredTransactions"
             :key="transaction.id"
             :transaction="transaction"
             :showChecker="isShowChecker"
             :collapseHeaderData="collapseHeaderData(transaction)"
+            :showDate="i === 0 ? true : filteredTransactions[i].date !== filteredTransactions[i - 1].date"
             @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
         </ul>
