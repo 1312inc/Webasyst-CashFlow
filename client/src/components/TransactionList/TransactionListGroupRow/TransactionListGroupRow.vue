@@ -5,6 +5,12 @@
     :class="classes"
     :style="isRepeatingGroup && 'cursor: initial;'"
   >
+
+    <div v-if="showDate" class="mobile-only custom-my-8">
+      {{ $moment(transaction.date).format("ll") }}
+      <span class="hint">{{ $moment(transaction.date).format("dddd") }}</span>
+    </div>
+
     <div
       @mouseover="isHover = true"
       @mouseleave="isHover = false"
@@ -29,6 +35,14 @@
           </span>
         </span>
       </div>
+
+      <div class="desktop-and-tablet-only" style="width: 8rem;">
+        <template v-if="showDate">
+          <div class="custom-mb-4 bold">{{ $moment(transaction.date).format("ll") }}</div>
+          <div class="hint">{{ $moment(transaction.date).format("dddd") }}</div>
+        </template>
+      </div>
+
       <TransactionListGroupRowGlyph
         :transaction="transaction"
         :category="category"
@@ -47,10 +61,9 @@
             :isRepeatingGroup="isRepeatingGroup"
             :category="category"
           />
-          <TransactionListGroupRowCats
-            :category="category"
-            :account="account"
-          />
+          <div v-if="account.name" class="text-ellipsis small gray">
+            {{ account.name }}
+          </div>
         </div>
         <div class="c-item-amount">
           <div class="flexbox justify-end middle custom-mb-4">
@@ -80,8 +93,8 @@
               }}
             </div>
           </div>
-          <div class="small align-right nowrap">
-            {{ $moment(transaction.date).format("ll") }}
+          <div v-if="transaction.balance" class="small align-right nowrap">
+            {{ transaction.balance }}
           </div>
         </div>
         <transition name="fade" :duration="300">
@@ -107,7 +120,6 @@ import Modal from '@/components/Modal'
 import AddTransaction from '@/components/Modals/AddTransaction'
 import TransactionListCompleteButton from './TransactionListCompleteButton'
 import TransactionListGroupRowDesc from './TransactionListGroupRowDesc'
-import TransactionListGroupRowCats from './TransactionListGroupRowCats'
 import TransactionListGroupRowGlyph from './TransactionListGroupRowGlyph'
 export default {
   props: {
@@ -128,6 +140,11 @@ export default {
     isRepeatingGroup: {
       type: Boolean,
       default: false
+    },
+
+    showDate: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -143,7 +160,6 @@ export default {
     AddTransaction,
     TransactionListCompleteButton,
     TransactionListGroupRowDesc,
-    TransactionListGroupRowCats,
     TransactionListGroupRowGlyph
   },
 
