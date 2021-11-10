@@ -7,7 +7,7 @@
   >
 
     <div v-if="showDate" class="mobile-only custom-my-8">
-      {{ $moment(transaction.date).format("ll") }}
+      {{ $moment(transaction.date).format($moment.locale() === 'ru' ? 'D MMMM' : 'MMMM D') }}
       <span class="hint">{{ $moment(transaction.date).format("dddd") }}</span>
     </div>
 
@@ -36,9 +36,9 @@
         </span>
       </div>
 
-      <div class="desktop-and-tablet-only" style="width: 6rem;flex-shrink: 0;">
+      <div class="desktop-and-tablet-only" style="width: 7rem;flex-shrink: 0;">
         <template v-if="showDate">
-          <div class="custom-mb-4 bold">{{ $moment(transaction.date).format($moment.locale() === 'ru' ? 'D MMM' : 'MMM D') }}</div>
+          <div class="custom-mb-4 bold nowrap">{{ $moment(transaction.date).format($moment.locale() === 'ru' ? 'D MMMM' : 'MMMM D') }}</div>
           <div class="hint">{{ $moment(transaction.date).format("dddd") }}</div>
         </template>
       </div>
