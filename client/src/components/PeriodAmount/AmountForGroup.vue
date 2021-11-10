@@ -1,34 +1,47 @@
 <template>
-  <div class="flexbox justify-end middle wrap space-12">
-    <div v-for="(type, i) in $_amountMixin_amountTypes" :key="i">
-      <template v-if="currencies.length">
-        <div
-          v-for="currency in currencies"
-          :key="currency"
-          :class="{
-            'text-green': type === 'income',
-            'text-red': type === 'expense',
-            'text-blue': type === 'profit'
-          }"
-          :title="
-            type === 'profit'
-              ? $t('profit')
-              : type === 'income'
-              ? $t('income')
-              : $t('expense')
-          "
-        >
-          <i v-if="type === 'profit'" class="fas fa-coins text-blue small"></i>
-          <span class="small semibold">{{
+  <div
+    v-if="currencies.length"
+    class="flexbox justify-end middle wrap space-12"
+  >
+    <div v-for="currency in currencies" :key="currency" class="flexbox middle space-12">
+      <div
+        v-for="(type, i) in $_amountMixin_amountTypes"
+        :key="i"
+        :class="{
+          'text-green': type === 'income',
+          'text-red': type === 'expense',
+          'text-blue': type === 'profit'
+        }"
+        :title="
+          type === 'profit'
+            ? $t('profit')
+            : type === 'income'
+            ? $t('income')
+            : $t('expense')
+        "
+      >
+        <i v-if="type === 'profit'" class="fas fa-coins text-blue small"></i>
+        <span class="small semibold">{{
+          $helper.toCurrency({
+            value: getTotalByCurrency(currency, type),
+            currencyCode: currency,
+            isAbs: true,
+            prefix: type === "income" ? "+ " : type === "expense" ? "− " : " "
+          })
+        }}</span>
+      </div>
+      <div :title="$t('delta')">
+        <span class="small semibold gray">
+          {{
             $helper.toCurrency({
-              value: getTotalByCurrency(currency, type),
+              value: amountDelta(currency),
               currencyCode: currency,
               isAbs: true,
-              prefix: type === "income" ? "+ " : type === "expense" ? "− " : " "
+              prefix: "&#916;&nbsp;"
             })
-          }}</span>
-        </div>
-      </template>
+          }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -60,11 +73,13 @@ export default {
 
   methods: {
     categoriesByType (type) {
-      return this.$store.state.category.categories.filter(c =>
-        type === 'profit'
-          ? c.is_profit === true
-          : c.type === type && c.is_profit === false
-      ).map(c => c.id)
+      return this.$store.state.category.categories
+        .filter(c =>
+          type === 'profit'
+            ? c.is_profit === true
+            : c.type === type && c.is_profit === false
+        )
+        .map(c => c.id)
     },
 
     getTotalByCurrency (currency, type) {
@@ -76,6 +91,14 @@ export default {
               currency
         )
         .reduce((acc, e) => acc + e.amount, 0)
+    },
+
+    amountDelta (currency) {
+      return (
+        Math.abs(this.getTotalByCurrency(currency, 'income')) -
+        Math.abs(this.getTotalByCurrency(currency, 'expense')) -
+        Math.abs(this.getTotalByCurrency(currency, 'profit'))
+      )
     }
   }
 }

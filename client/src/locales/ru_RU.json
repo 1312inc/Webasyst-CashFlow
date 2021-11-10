@@ -4,6 +4,7 @@
   "expense": "Расход",
   "income": "Доход",
   "balance": "Баланс",
+  "delta": "Delta",
   "addAccount": "Новый счет",
   "updateAccount": "Настройки счета",
   "addCategory": "Новая статья",

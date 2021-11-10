@@ -4,6 +4,7 @@
   "expense": "Expense",
   "income": "Income",
   "balance": "Balance",
+  "delta": "Delta",
   "addAccount": "New account",
   "updateAccount": "Update account",
   "addCategory": "New category",
