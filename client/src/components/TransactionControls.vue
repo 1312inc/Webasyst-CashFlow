@@ -10,7 +10,7 @@
         class="button blue"
         :class="direction === 'column' && 'custom-mb-12'"
       >
-        <i class="fas fa-arrow-right"></i> {{ $t("move") }} ({{
+        <i class="fas fa-coins"></i> {{ $t("move") }} ({{
           checkedRows.length
         }})
       </button>

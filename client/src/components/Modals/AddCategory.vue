@@ -52,7 +52,7 @@
                 </span>
                 {{ $t("profit") }}
                 <span class="text-blue">
-                  <i class="fas fa-arrow-right"></i>
+                  <i class="fas fa-coins"></i>
                 </span>
               </label>
             </div>
