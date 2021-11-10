@@ -75,6 +75,10 @@
               </div>
             </h3>
 
+            <div v-if="showFoundedCount" class="gray bold">
+              {{ $t('found', { count: filteredTransactions.length }) }}
+            </div>
+
             <TransactionListGroupUpcomingPeriod v-if="type === 'future'" :upcomingBlockOpened=upcomingBlockOpened @updateUpcomingBlockOpened="(val) => upcomingBlockOpened = val" />
           </div>
           <div class="flexbox middle space-12">
@@ -104,6 +108,7 @@
             :showChecker="isShowChecker"
             :collapseHeaderData="collapseHeaderData(transaction)"
             :showDate="i === 0 ? true : filteredTransactions[i].date !== filteredTransactions[i - 1].date"
+            :visibleSelectCheckbox="visibleSelectCheckbox"
             @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
         </ul>
@@ -130,6 +135,14 @@ export default {
     },
     index: {
       type: Number
+    },
+    visibleSelectCheckbox: {
+      type: Boolean,
+      default: false
+    },
+    showFoundedCount: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -162,12 +175,12 @@ export default {
     },
 
     isHoverComputed () {
-      if (process.env.VUE_APP_MODE === 'mobile') return true
+      if (process.env.VUE_APP_MODE === 'mobile' || this.visibleSelectCheckbox) return true
       return this.isShowChecker ? true : this.isHover
     },
 
     stickyOffset () {
-      return this.$helper.isDesktopEnv ? '{"top": 114}' : '{"top": 0}'
+      return this.$helper.isDesktopEnv ? (this.showFoundedCount ? '{"top": 56}' : '{"top": 114}') : '{"top": 0}'
     },
 
     featurePeriod () {

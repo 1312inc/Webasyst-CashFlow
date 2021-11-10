@@ -145,6 +145,11 @@ export default {
     showDate: {
       type: Boolean,
       default: true
+    },
+
+    visibleSelectCheckbox: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -188,7 +193,7 @@ export default {
     },
 
     isHoverComputed () {
-      if (process.env.VUE_APP_MODE === 'mobile') return true
+      if (process.env.VUE_APP_MODE === 'mobile' || this.visibleSelectCheckbox) return true
       return this.showChecker ? true : this.isHover
     },
 
