@@ -3,11 +3,11 @@
     <div
       @mouseover="
         isHover = true;
-        $refs.pieIcon.style.display = 'block';
+        if ($refs.pieIcon) $refs.pieIcon.style.display = 'block';
       "
       @mouseleave="
         isHover = false;
-        $refs.pieIcon.style.display = 'none';
+        if ($refs.pieIcon) $refs.pieIcon.style.display = 'none';
       "
     >
       <div
@@ -79,6 +79,7 @@
           </div>
           <div class="flexbox middle space-12">
             <div
+              v-if="filteredTransactions.length"
               @click="onStick({ sticked: true })"
               class="desktop-only c-pie-icon-helper"
               style="display: none; cursor: pointer"
@@ -86,10 +87,8 @@
             >
               <i class="fas fa-chart-pie"></i>
             </div>
-            <Amounts
+            <AmountForGroup
               :group="filteredTransactions"
-              target="Group"
-              class="flexbox justify-end middle wrap space-12"
             />
           </div>
         </div>
@@ -119,7 +118,7 @@
 <script>
 import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPeriod'
 import TransactionListGroupRow from './TransactionListGroupRow/TransactionListGroupRow'
-import Amounts from '@/components/Amounts'
+import AmountForGroup from '@/components/PeriodAmount/AmountForGroup'
 export default {
   props: {
     group: {
@@ -137,7 +136,7 @@ export default {
   components: {
     TransactionListGroupUpcomingPeriod,
     TransactionListGroupRow,
-    Amounts
+    AmountForGroup
   },
 
   data () {
