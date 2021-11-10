@@ -20,6 +20,7 @@
   "move": "Move",
   "name": "Name",
   "selected": "{count} transactions",
+  "found": "{count} transactions found",
   "currency": "Currency",
   "type": "Type",
   "color": "Color",

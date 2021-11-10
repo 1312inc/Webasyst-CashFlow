@@ -7,7 +7,12 @@
     <div v-sticky sticky-offset="{top: 80}" sticky-z-index="12">
       <div class="c-chart-pie-sticky-container__inner">
         <AmChartPieSticky
-          v-if="this.$store.state.transaction.transactions.data.length"
+          v-if="
+            this.$store.state.transaction.transactions.data.length &&
+              (!selectedOnlyMode
+                ? true
+                : $store.state.transactionBulk.selectedTransactionsIds.length)
+          "
         />
       </div>
     </div>
@@ -17,6 +22,13 @@
 <script>
 import AmChartPieSticky from './AmChartPieSticky'
 export default {
+  props: {
+    selectedOnlyMode: {
+      type: Boolean,
+      default: false
+    }
+  },
+
   components: {
     AmChartPieSticky
   }
