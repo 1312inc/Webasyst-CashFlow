@@ -30,7 +30,10 @@
           })
         }}</span>
       </div>
-      <div :title="$t('delta')">
+      <div
+        v-if="$_amountMixin_amountTypes.includes('profit')"
+        :title="$t('delta')"
+      >
         <span class="small semibold gray">
           {{
             $helper.toCurrency({

@@ -29,6 +29,7 @@
     </div>
     <div>
       <div
+        v-if="$_amountMixin_amountTypes.includes('profit')"
         :title="$t('delta')"
       >
         <div class="custom-ml-12">
