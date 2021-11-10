@@ -3,7 +3,7 @@
     <div class="flexbox space-16 custom-mb-4">
       <ButtonRound
         @click.native="openMove = true"
-        icon="fa-arrow-right"
+        icon="fa-coins"
         :tooltip="$t('move')"
       />
       <ButtonRound
