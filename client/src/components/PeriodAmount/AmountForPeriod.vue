@@ -1,8 +1,7 @@
 <template>
-  <div>
+  <div v-if="!showSkeleton">
     <div v-for="(type, i) in $_amountMixin_amountTypes" :key="i">
       <div
-        v-if="!showSkeleton"
         :class="{
           'text-green': type === 'income',
           'text-red': type === 'expense',
@@ -20,16 +19,40 @@
           <i v-if="type === 'profit'" class="fas fa-coins text-blue small"></i>
           <span class="small semibold">{{
             $helper.toCurrency({
-              value: total(type),
+              value: getTotalByType(type),
               currencyCode: currencyCode,
               prefix: type === "income" ? "+ " : type === "expense" ? "− " : " "
             })
           }}</span>
         </div>
       </div>
-      <div v-else class="skeleton">
-        <span class="skeleton-line custom-mb-4"></span>
+    </div>
+    <div>
+      <div
+        :title="$t('delta')"
+      >
+        <div class="custom-ml-12">
+          <span class="small semibold gray">
+            {{
+              $helper.toCurrency({
+                value: amountDelta,
+                currencyCode: currencyCode,
+                isAbs: true,
+                prefix: "&#916;&nbsp;"
+              })
+            }}
+          </span>
+        </div>
       </div>
+    </div>
+  </div>
+  <div v-else>
+    <div
+      v-for="i in $_amountMixin_amountTypes.length + 1"
+      :key="i"
+      class="skeleton"
+    >
+      <span class="skeleton-line custom-mb-4"></span>
     </div>
   </div>
 </template>
@@ -48,7 +71,11 @@ export default {
   mixins: [amountMixin],
 
   computed: {
-    ...mapState('transaction', ['chartData', 'chartDataCurrencyIndex', 'loadingChart']),
+    ...mapState('transaction', [
+      'chartData',
+      'chartDataCurrencyIndex',
+      'loadingChart'
+    ]),
 
     currentChartData () {
       return this.chartData[this.chartDataCurrencyIndex]
@@ -60,20 +87,27 @@ export default {
 
     showSkeleton () {
       return this.loadingChart
+    },
+
+    amountDelta () {
+      return (
+        Math.abs(this.getTotalByType('income')) -
+        Math.abs(this.getTotalByType('expense')) -
+        Math.abs(this.getTotalByType('profit'))
+      )
     }
   },
   methods: {
-    total (type) {
+    getTotalByType (type) {
       if (!this.currentChartData) return 0
 
       const itoday = this.$helper.currentDate
       const eltype = `amount${type[0].toUpperCase()}${type.slice(1)}`
-      const result = this.currentChartData.data
+      return this.currentChartData.data
         .filter(e =>
           this.period === 'to' ? e.period > itoday : e.period <= itoday
         )
         .reduce((acc, e) => acc + e[eltype], 0)
-      return result
     }
   }
 }
