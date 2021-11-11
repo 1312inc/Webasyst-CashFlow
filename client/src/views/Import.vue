@@ -7,6 +7,7 @@
         <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
           {{ $t("importResults") }}
         </h1>
+        <div v-if="importInfo" class="gray">{{ importInfo }}</div>
       </template>
     </ChartHeader>
     <div class="flexbox">
@@ -40,6 +41,13 @@ export default {
     ChartHeader,
     TransactionList,
     AmChartPieStickyContainer
+  },
+
+  computed: {
+    importInfo () {
+      const importInfo = new URL(location.href).searchParams.get('importinfo')
+      return importInfo ? atob(importInfo) : null
+    }
   },
 
   mounted () {
