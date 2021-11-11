@@ -41,7 +41,7 @@
               </span>
             </div>
 
-            <h3 class="c-transaction-section__header nowrap">
+            <h3 v-if="!showFoundedCount" class="c-transaction-section__header nowrap">
               <div v-if="type === 'overdue'" class="black">
                 {{ $t("overdue") }}
               </div>
