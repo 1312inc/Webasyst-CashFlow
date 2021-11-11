@@ -14,7 +14,7 @@ const Template = (args, { argTypes }) => ({
 })
 
 export const Move = Template.bind({})
-Move.args = { icon: 'fa-coins' }
+Move.args = { icon: 'fa-arrow-right' }
 
 export const Delete = Template.bind({})
 Delete.args = { icon: 'fa-trash-alt' }

@@ -1,8 +1,7 @@
 <template>
   <imask-input
-    :value="$attrs.value"
-    @accept="update"
-    v-on="$listeners"
+    :value="value"
+    @accept="$emit('input', $event)"
     :mask="Number"
     :scale="2"
     :signed="signed"
@@ -10,6 +9,7 @@
     :radix="delimiters.decimal"
     :mapToRadix="['.', ',']"
     :thousandsSeparator="delimiters.thousands"
+    type="text"
   />
 </template>
 
@@ -18,6 +18,9 @@ import { numeral } from '@/plugins/numeralMoment'
 import { IMaskComponent } from 'vue-imask'
 export default {
   props: {
+    value: {
+      type: String
+    },
     signed: {
       type: Boolean,
       default: true
@@ -31,12 +34,6 @@ export default {
   computed: {
     delimiters () {
       return numeral.locales[numeral.locale()].delimiters
-    }
-  },
-
-  methods: {
-    update (e) {
-      this.$emit('input', e)
     }
   }
 }
