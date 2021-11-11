@@ -34,6 +34,7 @@
           <div class="value large bold">
             <div class="state-with-inner-icon left width-80">
               <input-currency
+                ref="focus"
                 v-model="model.amount"
                 @keyup.enter="submit"
                 :signed="false"
@@ -43,8 +44,6 @@
                     'border-color': selectedCategoryColor,
                   }
                 "
-                ref="focus"
-                type="text"
                 class="bold number"
                 placeholder="0"
               />

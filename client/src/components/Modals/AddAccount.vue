@@ -55,8 +55,7 @@
             <input-currency
               v-model="model.starting_balance"
               class="number shorter"
-              :placeholder="0"
-              type="text"
+              placeholder="0"
             />
             <span v-if="model.currency" class="custom-ml-8">{{
               $helper.currencySignByCode(model.currency)
