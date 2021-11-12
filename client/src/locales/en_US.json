@@ -114,8 +114,8 @@
   "unselectAll": "Unselect all",
   "other": "Other",
   "transfer": "Transfer",
-  "fromAccount": "From account",
-  "toAccount": "To account",
+  "fromAccount": "From Account",
+  "toAccount": "To Account",
   "incomingAmount": "Incoming amount",
   "transferMessage": "You are about to make a transfer from one currency to another. Please enter the right incoming amount to make sure the conversion rate is right.",
   "-1_M": "Last 30 days",
@@ -178,5 +178,6 @@
   "404": {
     "title": "Not Found"
   },
-  "export": "Export"
+  "export": "Export",
+  "transactionDate": "Transaction Date: {date}"
 }

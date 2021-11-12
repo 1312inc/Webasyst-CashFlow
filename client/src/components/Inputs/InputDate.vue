@@ -1,5 +1,5 @@
 <template>
-  <input ref="date" type="text" />
+  <input ref="date" />
 </template>
 
 <script>
@@ -7,7 +7,21 @@ import { locale } from '@/plugins/locale'
 import flatpickr from 'flatpickr'
 import { Russian } from 'flatpickr/dist/l10n/ru.js'
 export default {
-  props: ['value', 'minDate', 'maxDate'],
+  props: {
+    value: {
+      type: String
+    },
+    minDate: {
+      type: String
+    },
+    maxDate: {
+      type: String
+    },
+    inline: {
+      type: Boolean,
+      default: false
+    }
+  },
 
   mounted () {
     this.flatpickr = flatpickr(this.$refs.date, {
@@ -20,10 +34,14 @@ export default {
       ...(this.maxDate && {
         maxDate: this.maxDate
       }),
+      inline: this.inline,
       parseDate: datestr => {
         return this.$moment(datestr).toDate()
       },
       onReady: selectedDates => {
+        if (this.inline) {
+          this.$refs.date.setAttribute('type', 'hidden')
+        }
         this.emitChanges(selectedDates[0])
       },
       onChange: selectedDates => {
