@@ -118,6 +118,14 @@ body.modal {
   opacity: 0;
 }
 
+.dropdown.state-error .dropdown-toggle.button {
+  border-color: var(--red);
+}
+
+.width-50 {
+  min-width: 0px;
+}
+
 @media screen and (max-width: 760px) {
   .slide-fade-enter,
   .slide-fade-leave-to {
