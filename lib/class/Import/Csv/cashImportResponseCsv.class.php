@@ -30,11 +30,7 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
     {
         $view = wa()->getView();
 
-        $legacy = '';
-        if (wa()->whichUI() === '1.3') {
-            $legacy = '-legacy';
-        }
-        $template = wa()->getAppPath("./templates/actions{$legacy}/import/csv/form.html", cashConfig::APP_ID);
+        $template = wa()->getAppPath('./templates/actions/import/csv/form.html', cashConfig::APP_ID);
 
         /** @var cashAccount[] $accounts */
         $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
