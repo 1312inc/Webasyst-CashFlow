@@ -25,15 +25,10 @@
         {{ transaction.external_source_info.name }}
       </div>
       <span
-        class="badge light-gray small"
-        :title="`${transaction.external_source_info.name}`"
-        :style="`background:${transaction.external_source_info.color}`"
+        v-if="transaction.external_source_info"
+        :style="`color:${transaction.external_source_info.color}`"
       >
-        <span>&times;</span>
-        {{ collapseHeaderData.ids.length }}
-      </span>
-      <span class="c-unfold-helper-icon">
-        <i class="fas fa-caret-down opacity-50"></i>
+        <i :class="transaction.external_source_info.glyph" class="fas"></i>
       </span>
     </template>
     <!-- if repeating transactions in fututre -->

@@ -65,6 +65,7 @@
         :account="account"
         :isCollapseHeader="isCollapseHeader"
         :isRepeatingGroup="isRepeatingGroup"
+        :collapseHeaderData="collapseHeaderData"
       />
       <div
         class="wide flexbox middle space-4 c-item-border"
