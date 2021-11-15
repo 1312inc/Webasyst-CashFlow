@@ -83,39 +83,22 @@
           </div>
         </div>
         <div class="c-item-amount">
-          <div class="flexbox justify-end middle custom-mb-4">
-            <span
-              v-if="
-                transaction.$_flagCreated &&
-                  transaction.affected_transactions > 1
-              "
-              class="badge light-gray small nowrap"
-            >
-              &times;
-              {{
-                transaction.affected_transactions > 100
-                  ? "99+"
-                  : transaction.affected_transactions
-              }}
-            </span>
-            <div :style="`color: ${category.color}`" class="bold nowrap">
-              {{
-                $helper.toCurrency({
-                  value: isCollapseHeader
-                    ? collapseHeaderData.totalAmount
-                    : transaction.amount,
-                  currencyCode: account.currency,
-                  isDynamics: true
-                })
-              }}
-            </div>
+          <div :style="`color: ${category.color}`" class="bold nowrap">
+            {{
+              $helper.toCurrency({
+                value: isCollapseHeader
+                  ? collapseHeaderData.totalAmount
+                  : transaction.amount,
+                currencyCode: account.currency,
+                isDynamics: true
+              })
+            }}
           </div>
-          <div v-if="transaction.balance" class="small align-right nowrap">
+          <div v-if="transaction.balance" class="small align-right nowrap custom-mt-4">
             {{
               $helper.toCurrency({
                 value: transaction.balance,
-                currencyCode: account.currency,
-                isDynamics: true
+                currencyCode: account.currency
               })
             }}
           </div>
