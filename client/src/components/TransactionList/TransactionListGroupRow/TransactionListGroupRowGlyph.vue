@@ -13,13 +13,29 @@
       <div v-else>
         <i class="c-category-glyph fas" :class="mainGlyph"></i>
       </div>
+      <!-- if repeating imported transaction -->
       <span
-        v-if="this.collapseHeaderData"
+        v-if="collapseHeaderData"
         class="badge smaller"
         :style="`background:${transaction.external_source_info.color}`"
         :title="transaction.external_source_info.name"
       >
-        &times;{{ collapseHeaderData.ids.length }}
+        &times;
+        {{ collapseHeaderData.ids.length }}
+      </span>
+      <!-- if repeated just created transaction -->
+      <span
+        v-if="
+          transaction.$_flagCreated && transaction.affected_transactions > 1
+        "
+        class="badge gray smaller"
+      >
+        &times;
+        {{
+          transaction.affected_transactions > 100
+            ? "99+"
+            : transaction.affected_transactions
+        }}
       </span>
     </span>
     <!-- Userpic stack imitation block -->
