@@ -5,9 +5,12 @@
     :class="classes"
     :style="isRepeatingGroup && 'cursor: initial;'"
   >
-
     <div v-if="showDate" class="mobile-only custom-my-8">
-      {{ $moment(transaction.date).format($moment.locale() === 'ru' ? 'D MMMM' : 'MMMM D') }}
+      {{
+        $moment(transaction.date).format(
+          $moment.locale() === "ru" ? "D MMMM" : "MMMM D"
+        )
+      }}
       <span class="hint">{{ $moment(transaction.date).format("dddd") }}</span>
     </div>
 
@@ -38,8 +41,21 @@
 
       <div class="desktop-and-tablet-only" style="width: 7rem;flex-shrink: 0;">
         <template v-if="showDate">
-          <div class="custom-mb-4 bold nowrap">{{ $moment(transaction.date).format($moment.locale() === 'ru' ? 'D MMMM' : 'MMMM D') }}</div>
-          <div class="hint">{{ $moment(transaction.date).format("dddd") }}</div>
+          <div class="custom-mb-4 bold nowrap">
+            {{
+              $moment(transaction.date).format(
+                $moment.locale() === "ru" ? "D MMMM" : "MMMM D"
+              )
+            }}
+          </div>
+          <span v-if="daysBefore > 0" class="hint">{{
+            daysBefore === 1
+              ? $t("tomorrow")
+              : this.$moment(transaction.date).from($helper.currentDate)
+          }}</span>
+          <div v-else class="hint">
+            {{ $moment(transaction.date).format("dddd") }}
+          </div>
         </template>
       </div>
 
@@ -70,7 +86,7 @@
             <span
               v-if="
                 transaction.$_flagCreated &&
-                transaction.affected_transactions > 1
+                  transaction.affected_transactions > 1
               "
               class="badge light-gray small nowrap"
             >
@@ -88,7 +104,7 @@
                     ? collapseHeaderData.totalAmount
                     : transaction.amount,
                   currencyCode: account.currency,
-                  isDynamics: true,
+                  isDynamics: true
                 })
               }}
             </div>
@@ -98,7 +114,7 @@
               $helper.toCurrency({
                 value: transaction.balance,
                 currencyCode: account.currency,
-                isDynamics: true,
+                isDynamics: true
               })
             }}
           </div>
@@ -199,8 +215,15 @@ export default {
     },
 
     isHoverComputed () {
-      if (process.env.VUE_APP_MODE === 'mobile' || this.visibleSelectCheckbox) return true
+      if (process.env.VUE_APP_MODE === 'mobile' || this.visibleSelectCheckbox) { return true }
       return this.showChecker ? true : this.isHover
+    },
+
+    daysBefore () {
+      return this.$moment(this.transaction.date).diff(
+        this.$helper.currentDate,
+        'days'
+      )
     },
 
     classes () {
