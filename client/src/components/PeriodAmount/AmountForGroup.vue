@@ -39,7 +39,7 @@
             $helper.toCurrency({
               value: amountDelta(currency),
               currencyCode: currency,
-              isAbs: true,
+              isDynamics: true,
               prefix: "&#916;&nbsp;"
             })
           }}
