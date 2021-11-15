@@ -94,7 +94,13 @@
             </div>
           </div>
           <div v-if="transaction.balance" class="small align-right nowrap">
-            {{ transaction.balance }}
+            {{
+              $helper.toCurrency({
+                value: transaction.balance,
+                currencyCode: account.currency,
+                isDynamics: true,
+              })
+            }}
           </div>
         </div>
         <transition name="fade" :duration="300">
