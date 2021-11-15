@@ -67,10 +67,6 @@ class cashImportCsvViewAction extends cashViewAction
             ]
         );
 
-        if (wa()->whichUI() === '1.3') {
-            $this->setTemplate('templates/actions-legacy/import/csv/view.html');
-        } else {
-            $this->setTemplate('templates/actions/import/csv/view.html');
-        }
+        $this->setTemplate('templates/actions/import/csv/view.html');
     }
 }
