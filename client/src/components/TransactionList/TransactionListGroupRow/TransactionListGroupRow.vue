@@ -27,7 +27,7 @@
       >
         <span
           v-show="isHoverComputed && !isRepeatingGroup"
-          @click="checkboxSelect"
+          @click.stop="checkboxSelect"
           class="wa-checkbox"
         >
           <input type="checkbox" :checked="isChecked" />
@@ -68,8 +68,7 @@
         :collapseHeaderData="collapseHeaderData"
       />
       <div
-        class="wide flexbox middle space-4 c-item-border"
-        style="overflow: hidden"
+        class="wide flexbox middle space-8 c-item-border"
       >
         <div class="wide" style="overflow: hidden">
           <TransactionListGroupRowDesc
@@ -106,8 +105,9 @@
         <transition name="fade" :duration="300">
           <TransactionListCompleteButton
             v-show="transaction.is_onbadge && $route.name === 'Upnext'"
-            :transactionId="transaction.id"
-            class="c-item-done"
+            @processEdit="openModal(true)"
+            :transaction="transaction"
+            :account="account"
           />
         </transition>
       </div>
@@ -115,7 +115,7 @@
 
     <portal>
       <Modal v-if="open" @close="open = false">
-        <AddTransaction :transaction="transaction" />
+        <AddTransaction :transaction="transaction" :offOnbadge="offBadgeInTransactionModal" />
       </Modal>
     </portal>
   </li>
@@ -162,7 +162,8 @@ export default {
   data () {
     return {
       open: false,
-      isHover: false
+      isHover: false,
+      offBadgeInTransactionModal: false
     }
   },
 
@@ -236,25 +237,12 @@ export default {
       } else if (this.isRepeatingGroup) {
         e.preventDefault()
       } else {
-        this.openModal(e)
+        this.openModal()
       }
     },
 
-    openModal ({ target }) {
-      const path = []
-      let currentElem = target
-      while (currentElem) {
-        path.push(currentElem)
-        currentElem = currentElem.parentElement
-      }
-
-      if (
-        path.some(
-          e => e.className === 'wa-checkbox' || e.className === 'c-item-done'
-        )
-      ) {
-        return
-      }
+    openModal (offOnbadge = false) {
+      this.offBadgeInTransactionModal = offOnbadge
       if (process.env.VUE_APP_MODE === 'mobile') {
         // emitting for the mobile platform
         window.emitter.emit('editTransaction', this.transaction)
@@ -292,19 +280,5 @@ export default {
   animation-timing-function: linear;
   animation-direction: alternate;
   animation-iteration-count: 1;
-}
-
-.c-item-done {
-  margin-left: 0.75rem;
-  margin-top: 0.375rem;
-}
-
-@media screen and (max-width: 760px) {
-  /* mobile */
-  .c-item-done {
-    margin-right: 0.6125rem;
-    margin-left: 0;
-    align-self: normal;
-  }
 }
 </style>

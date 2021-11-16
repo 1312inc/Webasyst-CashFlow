@@ -144,6 +144,9 @@
   "setDates": "Выбрать даты",
   "close": "Закрыть",
   "Done": "Выполнено",
+  "Process": "Провести",
+  "processToday": "Провести сегодня",
+  "processEdits": "Провести с правками",
   "profit": "Прибыль (вывод денег)",
   "incomeCategoryExplained": "Доходные операции увеличивают баланс счета.",
   "expenseCategoryExplained": "Расходные операции уменьшают баланс счета.",
@@ -179,5 +182,6 @@
     "title": "Не найдено"
   },
   "export": "Экспорт",
-  "transactionDate": "Дата операции: {date}"
+  "transactionDate": "Дата операции: {date}",
+  "amountOnDate": "{amount}, {date}"
 }
