@@ -57,8 +57,7 @@
 
           <div v-if="model.is_onbadge" class="custom-mt-8">
             <div class="hint">
-              {{ $t("notifyMeAlert") }}
-              <span class="badge smaller">1</span>
+              {{ $t("notifyMeAlert") }}&nbsp;<span class="badge smaller">1</span>
             </div>
           </div>
         </div>
@@ -499,6 +498,11 @@ export default {
     defaultCategoryType: {
       type: String,
       default: 'income'
+    },
+
+    offOnbadge: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -702,6 +706,19 @@ export default {
 
     if (this.transactionType === 'transfer') {
       this.model.category_id = -1312
+    }
+
+    // is_onbadge prop manipulations
+    if (!this.isModeUpdate) {
+      // auto set is_onbadge if future date or repeating
+      this.$watch((vm) => [vm.model.date, vm.model.is_repeating], () => {
+        this.model.is_onbadge = this.$moment(this.model.date).isAfter() || this.model.is_repeating
+      })
+    } else {
+      // switch off is_onbadge
+      if (this.offOnbadge) {
+        this.model.is_onbadge = false
+      }
     }
   },
 
