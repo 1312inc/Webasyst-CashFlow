@@ -281,6 +281,8 @@ export default {
         this.isShown(transaction) &&
         !this.activeCollapseExternalSourceIDs.includes(key)
       ) {
+        // TODO: need refactor
+        // console.log(this.сollapseGroups[key])
         return this.сollapseGroups[key]
       } else {
         return null
@@ -301,6 +303,8 @@ export default {
       const ids = items.map(e => e.id)
       const method = this.isCheckedAllInGroup(items) ? 'unselect' : 'select'
       this.$store.commit(`transactionBulk/${method}`, ids)
+      // reset last checkbox selection
+      this.$store.commit('transactionBulk/setLastCheckboxIndex', -1)
     },
 
     isCheckedAllInGroup (items) {

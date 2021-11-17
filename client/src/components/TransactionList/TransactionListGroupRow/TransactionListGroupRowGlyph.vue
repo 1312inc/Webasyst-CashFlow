@@ -17,8 +17,8 @@
       <span
         v-if="collapseHeaderData"
         class="badge smaller"
-        :style="`background:${transaction.external_source_info.color}`"
-        :title="transaction.external_source_info.name"
+        :style="transaction.external_source_info ? `background:${transaction.external_source_info.color}` : ''"
+        :title="transaction.external_source_info ? transaction.external_source_info.name : ''"
       >
         &times;
         {{ collapseHeaderData.ids.length }}

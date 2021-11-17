@@ -67,9 +67,7 @@
         :isRepeatingGroup="isRepeatingGroup"
         :collapseHeaderData="collapseHeaderData"
       />
-      <div
-        class="wide flexbox middle space-8 c-item-border"
-      >
+      <div class="wide flexbox middle space-8 c-item-border">
         <div class="wide" style="overflow: hidden">
           <TransactionListGroupRowDesc
             :transaction="transaction"
@@ -93,7 +91,10 @@
               })
             }}
           </div>
-          <div v-if="transaction.balance" class="small align-right nowrap custom-mt-4">
+          <div
+            v-if="transaction.balance"
+            class="small align-right nowrap custom-mt-4"
+          >
             {{
               $helper.toCurrency({
                 value: transaction.balance,
@@ -115,7 +116,10 @@
 
     <portal>
       <Modal v-if="open" @close="open = false">
-        <AddTransaction :transaction="transaction" :offOnbadge="offBadgeInTransactionModal" />
+        <AddTransaction
+          :transaction="transaction"
+          :offOnbadge="offBadgeInTransactionModal"
+        />
       </Modal>
     </portal>
   </li>
@@ -200,7 +204,9 @@ export default {
     },
 
     isHoverComputed () {
-      if (process.env.VUE_APP_MODE === 'mobile' || this.visibleSelectCheckbox) { return true }
+      if (process.env.VUE_APP_MODE === 'mobile' || this.visibleSelectCheckbox) {
+        return true
+      }
       return this.showChecker ? true : this.isHover
     },
 
@@ -251,13 +257,34 @@ export default {
       }
     },
 
-    checkboxSelect () {
+    checkboxSelect (event) {
       const method = this.isChecked ? 'unselect' : 'select'
       let ids = [this.transaction.id]
+      // if collapsed with multiple transactions
       if (this.isCollapseHeader) {
-        ids = this.collapseHeaderData.ids
+        ids = [...this.collapseHeaderData.ids]
       }
+
+      const transactions = this.$store.state.transaction.transactions.data
+      const lastCheckboxIndex = this.$store.state.transactionBulk
+        .lastCheckboxIndex
+      const currentIndex = transactions.indexOf(this.transaction)
+
+      // with Shift key selection
+      if (event.shiftKey && lastCheckboxIndex > -1) {
+        transactions
+          .slice(
+            Math.min(currentIndex, lastCheckboxIndex) + 1,
+            Math.max(currentIndex, lastCheckboxIndex)
+          )
+          .forEach(e => ids.push(e.id))
+        ids.push(transactions[lastCheckboxIndex].id)
+      }
+
+      ids = ids.filter((e, i, a) => a.indexOf(e) === i)
+
       this.$store.commit(`transactionBulk/${method}`, ids)
+      this.$store.commit('transactionBulk/setLastCheckboxIndex', currentIndex)
     }
   }
 }

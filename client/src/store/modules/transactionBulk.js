@@ -4,7 +4,8 @@ export default {
   namespaced: true,
 
   state: () => ({
-    selectedTransactionsIds: []
+    selectedTransactionsIds: [],
+    lastCheckboxIndex: -1
   }),
 
   getters: {
@@ -35,6 +36,10 @@ export default {
 
     emptySelectedTransactionsIds (state) {
       state.selectedTransactionsIds = []
+    },
+
+    setLastCheckboxIndex (state, index) {
+      state.lastCheckboxIndex = index
     }
   },
 
