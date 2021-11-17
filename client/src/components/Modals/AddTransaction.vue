@@ -725,6 +725,7 @@ export default {
   mounted () {
     if (this.$refs.focus) {
       this.$refs.focus.$el.focus()
+      this.$refs.focus.$el.select()
     }
   },
 
