@@ -450,8 +450,10 @@
                             if (!transactionCounts[name][columnValue]) {
                                 return;
                             }
+                            
+                            var relationsStorage = JSON.parse(localStorage.getItem('relationsStorage') || '{}');
 
-                            $template.tmpl({
+                            var $tpl = $template.tmpl({
                                 columnValue: columnValue,
                                 sources: data[scope],
                                 scope: scope,
@@ -461,7 +463,18 @@
                                     'Skip rows with this value': $_('Skip rows with this value')
                                 },
                                 transactions: transactionCounts[name][columnValue] + ' ' + $_('transactions')
+                            }).on('change', 'select', function () {
+                                relationsStorage[columnValue] = $(this).find('option:selected').text();
+                                localStorage.setItem('relationsStorage', JSON.stringify(relationsStorage));
                             }).appendTo($wrapper);
+
+                            if (relationsStorage[columnValue]) {
+                                var $select = $tpl.find('select'),
+                                    val = $select.find("option").filter(function () {
+                                        return $(this).text() == relationsStorage[columnValue];
+                                    }).val();
+                                $select.val(val).change();
+                            }
                         });
                     } else {
                         alert(r.errors.join("\n"));
@@ -603,7 +616,7 @@
     <td>=></td>
     <td>
         <div class="wa-select small" style="max-width: 300px;">
-            <select name="import[category][multi][map][${columnValue}]">
+             <select name="import[category][multi][map][${columnValue}]">
                 <option value="0">${translate['Skip rows with this value']}</option>
                 <optgroup data-cash-categories-optgroup="income" label="${translate['Income']}">
                     {{each(id, name, type) sources.income}}
