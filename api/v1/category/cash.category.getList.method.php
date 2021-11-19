@@ -1,14 +1,12 @@
 <?php
 
-/**
- * Class cashCategoryGetListMethod
- */
-class cashCategoryGetListMethod extends cashApiAbstractMethod
+final class cashCategoryGetListMethod extends cashApiNewAbstractMethod
 {
     protected $method = self::METHOD_GET;
 
     /**
      * @return cashApiCategoryGetListResponse
+     *
      * @throws waException
      */
     public function run(): cashApiResponseInterface

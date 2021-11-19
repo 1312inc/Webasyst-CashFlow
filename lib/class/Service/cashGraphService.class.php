@@ -553,7 +553,9 @@ class cashGraphService
                 break;
 
             case null !== $paramsDto->filter->getCategoryId():
-                $sqlParts->addAndWhere('ct.category_id = i:category_id')
+                $childIds = cash()->getModel(cashCategory::class)->getChildIds($paramsDto->filter->getCategoryId());
+
+                $sqlParts->addAndWhere('ct.category_id in (i:category_ids)')
                     ->addSelect(
                         "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|0', ct.amount, null)) expenseAmount",
                         'expenseAmount'
@@ -566,7 +568,7 @@ class cashGraphService
                         "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|1', ct.amount, null)) profitAmount",
                         'profitAmount'
                     )
-                    ->addParam('category_id', $paramsDto->filter->getCategoryId());
+                    ->addParam('category_ids', array_merge([$paramsDto->filter->getCategoryId()], $childIds));
 
                 break;
 

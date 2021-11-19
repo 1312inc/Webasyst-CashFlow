@@ -36,9 +36,8 @@ final class cashTransactionFilterService
     }
 
     /**
-     * @param cashTransactionFilterParamsDto $dto
-     *
      * @return array|waDbResultIterator|int
+     *
      * @throws kmwaForbiddenException
      * @throws kmwaRuntimeException
      * @throws waException
@@ -158,8 +157,10 @@ final class cashTransactionFilterService
             throw new kmwaForbiddenException(_w('You have no access to this category'));
         }
 
-        $selectQueryParts->addAndWhere('ct.category_id = i:category_id')
-            ->addParam('category_id', $dto->filter->getCategoryId());
+        $categoryChildIds = cash()->getModel(cashCategory::class)->getChildIds($dto->filter->getCategoryId());
+
+        $selectQueryParts->addAndWhere('ct.category_id in (i:category_ids)')
+            ->addParam('category_ids', array_merge([$dto->filter->getCategoryId()], $categoryChildIds));
     }
 
     /**

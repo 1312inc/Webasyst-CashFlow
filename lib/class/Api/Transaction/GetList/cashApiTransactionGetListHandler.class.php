@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashApiTransactionGetListHandler
- */
-class cashApiTransactionGetListHandler implements cashApiHandlerInterface
+final class cashApiTransactionGetListHandler implements cashApiHandlerInterface
 {
     /**
      * @var cashApiTransactionResponseDtoAssembler
@@ -19,18 +16,20 @@ class cashApiTransactionGetListHandler implements cashApiHandlerInterface
      * @param cashApiTransactionGetListRequest $request
      *
      * @return array<cashApiTransactionResponseDto>
-     * @throws waException
+     *
      * @throws kmwaForbiddenException
+     * @throws kmwaRuntimeException
+     * @throws waException
      */
     public function handle($request)
     {
         $filterDto = new cashTransactionFilterParamsDto(
-            cashAggregateFilter::createFromHash($request->filter),
-            $request->from,
-            $request->to,
+            cashAggregateFilter::createFromHash($request->getFilter()),
+            $request->getFrom(),
+            $request->getTo(),
             wa()->getUser(),
-            $request->offset,
-            $request->limit
+            $request->getOffset(),
+            $request->getLimit()
         );
 
         $transactionFilter = new cashTransactionFilterService();

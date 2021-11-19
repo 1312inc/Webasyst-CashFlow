@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashApiCategoryResponseDto
- */
-class cashApiCategoryResponseDto
+final class cashApiCategoryResponseDto
 {
     /**
      * @var int
@@ -46,6 +43,16 @@ class cashApiCategoryResponseDto
     public $is_profit;
 
     /**
+     * @var int|null
+     */
+    public $parent_category_id;
+
+    /**
+     * @var string|null
+     */
+    public $glyph;
+
+    /**
      * @param cashCategory $category
      *
      * @return cashApiCategoryResponseDto
@@ -60,7 +67,9 @@ class cashApiCategoryResponseDto
         $dto->sort = (int) $category->getSort();
         $dto->create_datetime = $category->getCreateDatetime();
         $dto->update_datetime = $category->getUpdateDatetime();
-        $dto->is_profit = (bool) $category->getIsProfit();
+        $dto->is_profit = $category->getIsProfit();
+        $dto->glyph = $category->getGlyph();
+        $dto->parent_category_id = $category->getCategoryParentId();
 
         return $dto;
     }

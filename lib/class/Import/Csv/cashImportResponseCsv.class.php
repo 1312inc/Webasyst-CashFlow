@@ -5,6 +5,9 @@
  */
 final class cashImportResponseCsv implements cashImportFileUploadedEventResponseInterface
 {
+    public const NEW_INCOME_ID = -1111111111;
+    public const NEW_EXPENSE_ID = -2222222222;
+
     /**
      * @var cashCsvImportInfoDto
      */
@@ -37,9 +40,22 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
         /** @var cashAccountDto[] $accountDtos */
         $accountDtos = cashDtoFromEntityFactory::fromEntities(cashAccountDto::class, $accounts);
 
+        $catWithParent = cash()->getModel(cashCategory::class)->getAllWithParent();
+        $addParentNameFunc = static function (cashCategoryDto $categoryDto) use ($catWithParent) {
+            if ($categoryDto->category_parent_id && isset($catWithParent[$categoryDto->id])) {
+                $categoryDto->name = sprintf(
+                    '%s -> %s',
+                    $catWithParent[$categoryDto->id]['parent_name'],
+                    $categoryDto->name
+                );
+            }
+        };
+
         $categoriesIncome = cash()->getEntityRepository(cashCategory::class)->findAllIncomeForContact();
         /** @var cashCategoryDto[] $categoryIncomeDtos */
         $categoryIncomeDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $categoriesIncome);
+        array_map($addParentNameFunc, $categoryIncomeDtos);
+
         array_unshift(
             $categoryIncomeDtos,
             cashDtoFromEntityFactory::fromEntity(
@@ -47,13 +63,15 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
                 cash()->getEntityRepository(cashCategory::class)
                     ->findNoCategoryIncome()
                     ->setName(_w('New income category'))
-                    ->setId('new-income')
+                    ->setId(self::NEW_INCOME_ID)
             )
         );
 
         $categoriesExpense = cash()->getEntityRepository(cashCategory::class)->findAllExpenseForContact();
         /** @var cashCategoryDto[] $categoryExpenseDtos */
         $categoryExpenseDtos = cashDtoFromEntityFactory::fromEntities(cashCategoryDto::class, $categoriesExpense);
+        array_map($addParentNameFunc, $categoryExpenseDtos);
+
         array_unshift(
             $categoryExpenseDtos,
             cashDtoFromEntityFactory::fromEntity(
@@ -61,7 +79,7 @@ final class cashImportResponseCsv implements cashImportFileUploadedEventResponse
                 cash()->getEntityRepository(cashCategory::class)
                     ->findNoCategoryExpense()
                     ->setName(_w('New expense category'))
-                    ->setId('new-expense')
+                    ->setId(self::NEW_EXPENSE_ID)
             )
         );
 
