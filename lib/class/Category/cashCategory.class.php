@@ -29,7 +29,7 @@ class cashCategory extends cashAbstractEntity
     private $color;
 
     /**
-     * @var int
+     * @var null|int
      */
     private $sort = 0;
 
@@ -98,10 +98,10 @@ class cashCategory extends cashAbstractEntity
 
     public function getSort(): int
     {
-        return $this->sort;
+        return (int) $this->sort;
     }
 
-    public function setSort(int $sort): cashCategory
+    public function setSort(?int $sort): cashCategory
     {
         $this->sort = $sort;
 
