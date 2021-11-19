@@ -15,10 +15,10 @@ final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterfa
     {
         $paramsDto = new cashAggregateChartDataFilterParamsDto(
             wa()->getUser(),
-            $request->from,
-            $request->to,
-            $request->group_by,
-            cashAggregateFilter::createFromHash($request->filter)
+            $request->getFrom(),
+            $request->getTo(),
+            $request->getGroupBy(),
+            cashAggregateFilter::createFromHash($request->getFilter())
         );
 
         $graphService = new cashGraphService();

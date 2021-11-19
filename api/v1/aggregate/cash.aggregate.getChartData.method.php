@@ -1,9 +1,11 @@
 <?php
 
-/**
- * Class cashAggregateGetChartDataMethod
- */
-class cashAggregateGetChartDataMethod extends cashApiAbstractMethod
+use ApiPack1312\ApiParamsCaster;
+use ApiPack1312\Exception\ApiException;
+use ApiPack1312\Exception\ApiMissingParamException;
+use ApiPack1312\Exception\ApiWrongParamException;
+
+final class cashAggregateGetChartDataMethod extends cashApiNewAbstractMethod
 {
     const MAX_DAYS = 10000;
 
@@ -11,18 +13,32 @@ class cashAggregateGetChartDataMethod extends cashApiAbstractMethod
 
     /**
      * @return cashApiAccountCreateResponse
-     * @throws waAPIException
+     *
+     * @throws ApiException
+     * @throws ApiMissingParamException
+     * @throws ApiWrongParamException
      * @throws waException
      */
     public function run(): cashApiResponseInterface
     {
-        /** @var cashApiAggregateGetChartDataRequest $request */
-        $request = $this->fillRequestWithParams(new cashApiAggregateGetChartDataRequest());
-        $request->to = DateTimeImmutable::createFromFormat('Y-m-d|', $request->to);
-        $request->from = DateTimeImmutable::createFromFormat('Y-m-d|', $request->from);
+        $request = new cashApiAggregateGetChartDataRequest(
+            $this->getApiParamsFetcher()->get('from', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d|'),
+            $this->getApiParamsFetcher()->get('to', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d|'),
+            $this->getApiParamsFetcher()->get(
+                'group_by',
+                true,
+                ApiParamsCaster::CAST_ENUM,
+                [
+                    cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY,
+                    cashAggregateChartDataFilterParamsDto::GROUP_BY_MONTH,
+                    cashAggregateChartDataFilterParamsDto::GROUP_BY_YEAR,
+                ]
+            ),
+            $this->getApiParamsFetcher()->get('filter', true, ApiParamsCaster::CAST_STRING)
+        );
 
-        if ($request->group_by === cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY
-            && $request->from->diff($request->to)->days > self::MAX_DAYS
+        if ($request->getGroupBy() === cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY
+            && $request->getFrom()->diff($request->getTo())->days > self::MAX_DAYS
         ) {
             return new cashApiErrorResponse(
                 sprintf_wp(

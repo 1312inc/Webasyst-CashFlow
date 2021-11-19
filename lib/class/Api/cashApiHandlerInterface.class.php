@@ -6,9 +6,9 @@
 interface cashApiHandlerInterface
 {
     /**
-     * @param $request
+     * @param object|null $request
      *
-     * @return array
+     * @return mixed
      */
     public function handle($request);
 }

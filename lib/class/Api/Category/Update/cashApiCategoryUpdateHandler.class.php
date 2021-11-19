@@ -8,7 +8,7 @@ class cashApiCategoryUpdateHandler implements cashApiHandlerInterface
     /**
      * @param cashApiCategoryUpdateRequest $request
      *
-     * @return array|cashApiCategoryResponseDto
+     * @return cashApiCategoryResponseDto
      * @throws kmwaForbiddenException
      * @throws kmwaNotFoundException
      * @throws kmwaRuntimeException
@@ -18,9 +18,15 @@ class cashApiCategoryUpdateHandler implements cashApiHandlerInterface
     {
         /** @var cashCategoryRepository $repository */
         $repository = cash()->getEntityRepository(cashCategory::class);
-        $category = $repository->findById($request->id);
+
+        /** @var cashCategory|null $category */
+        $category = $repository->findById($request->getId());
         if (!$category) {
             throw new kmwaNotFoundException(_w('No category'));
+        }
+
+        if (!$category->isSystem()) {
+            throw new kmwaForbiddenException(_w('You can`t do anything with system categories'));
         }
 
         if (!cash()->getContactRights()->hasFullAccessToCategory(wa()->getUser(), $category)) {
@@ -28,8 +34,7 @@ class cashApiCategoryUpdateHandler implements cashApiHandlerInterface
         }
 
         $saver = new cashCategorySaver();
-        $data = (array) $request;
-        if ($saver->saveFromArray($category, $data)) {
+        if ($saver->saveFromApi($category, $request)) {
             return cashApiCategoryResponseDto::fromCategory($category);
         }
 
