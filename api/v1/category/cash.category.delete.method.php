@@ -23,7 +23,7 @@ final class cashCategoryDeleteMethod extends cashApiNewAbstractMethod
     public function run(): cashApiResponseInterface
     {
         $request = new cashApiCategoryDeleteRequest(
-            $this->getApiParamsFetcher()->post('id', true, ApiParamsCaster::CAST_INT)
+            $this->fromPost('id', true, ApiParamsCaster::CAST_INT)
         );
 
         if ((new cashApiCategoryDeleteHandler())->handle($request)) {

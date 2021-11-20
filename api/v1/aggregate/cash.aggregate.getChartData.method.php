@@ -22,9 +22,9 @@ final class cashAggregateGetChartDataMethod extends cashApiNewAbstractMethod
     public function run(): cashApiResponseInterface
     {
         $request = new cashApiAggregateGetChartDataRequest(
-            $this->getApiParamsFetcher()->get('from', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d|'),
-            $this->getApiParamsFetcher()->get('to', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d|'),
-            $this->getApiParamsFetcher()->get(
+            $this->fromGet('from', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d|'),
+            $this->fromGet('to', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d|'),
+            $this->fromGet(
                 'group_by',
                 true,
                 ApiParamsCaster::CAST_ENUM,
@@ -34,7 +34,7 @@ final class cashAggregateGetChartDataMethod extends cashApiNewAbstractMethod
                     cashAggregateChartDataFilterParamsDto::GROUP_BY_YEAR,
                 ]
             ),
-            $this->getApiParamsFetcher()->get('filter', true, ApiParamsCaster::CAST_STRING)
+            $this->fromGet('filter', true, ApiParamsCaster::CAST_STRING)
         );
 
         if ($request->getGroupBy() === cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY

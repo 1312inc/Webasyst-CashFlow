@@ -22,18 +22,18 @@ final class cashCategoryCreateMethod extends cashApiNewAbstractMethod
     public function run(): cashApiResponseInterface
     {
         $request = new cashApiCategoryCreateRequest(
-            $this->getApiParamsFetcher()->post('name', true, ApiParamsCaster::CAST_STRING_TRIM),
-            $this->getApiParamsFetcher()->post(
+            $this->fromPost('name', true, ApiParamsCaster::CAST_STRING_TRIM),
+            $this->fromPost(
                 'type',
                 true,
                 ApiParamsCaster::CAST_ENUM,
                 [cashCategory::TYPE_EXPENSE, cashCategory::TYPE_INCOME]
             ),
-            $this->getApiParamsFetcher()->post('color', true, ApiParamsCaster::CAST_STRING_TRIM),
-            $this->getApiParamsFetcher()->post('sort', false, ApiParamsCaster::CAST_INT),
-            $this->getApiParamsFetcher()->post('is_profit', false, ApiParamsCaster::CAST_BOOLEAN),
-            $this->getApiParamsFetcher()->post('parent_category_id', false, ApiParamsCaster::CAST_INT),
-            $this->getApiParamsFetcher()->post('glyph', false, ApiParamsCaster::CAST_STRING_TRIM)
+            $this->fromPost('color', true, ApiParamsCaster::CAST_STRING_TRIM),
+            $this->fromPost('sort', false, ApiParamsCaster::CAST_INT),
+            $this->fromPost('is_profit', false, ApiParamsCaster::CAST_BOOLEAN),
+            $this->fromPost('parent_category_id', false, ApiParamsCaster::CAST_INT),
+            $this->fromPost('glyph', false, ApiParamsCaster::CAST_STRING_TRIM)
         );
 
         $response = (new cashApiCategoryCreateHandler())->handle($request);
