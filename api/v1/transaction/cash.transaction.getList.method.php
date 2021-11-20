@@ -22,7 +22,7 @@ final class cashTransactionGetListMethod extends cashApiNewAbstractMethod
      */
     public function run(): cashApiResponseInterface
     {
-        $from = $this->getApiParamsFetcher()->get('from', false, ApiParamsCaster::CAST_STRING_TRIM);
+        $from = $this->fromGet('from', false, ApiParamsCaster::CAST_STRING_TRIM);
         if ($from) {
             $from = DateTimeImmutable::createFromFormat('Y-m-d|', $from);
             if (!$from) {
@@ -30,7 +30,7 @@ final class cashTransactionGetListMethod extends cashApiNewAbstractMethod
             }
         }
 
-        $to = $this->getApiParamsFetcher()->get('to', false, ApiParamsCaster::CAST_STRING_TRIM);
+        $to = $this->fromGet('to', false, ApiParamsCaster::CAST_STRING_TRIM);
         if ($to) {
             $to = DateTimeImmutable::createFromFormat('Y-m-d|', $to);
             if (!$to) {
@@ -41,9 +41,9 @@ final class cashTransactionGetListMethod extends cashApiNewAbstractMethod
         $request = new cashApiTransactionGetListRequest(
             $from ?: null,
             $to ?: null,
-            $this->getApiParamsFetcher()->get('offset', false, ApiParamsCaster::CAST_INT),
-            $this->getApiParamsFetcher()->get('limit', false, ApiParamsCaster::CAST_INT),
-            $this->getApiParamsFetcher()->get('filter', false, ApiParamsCaster::CAST_STRING_TRIM)
+            $this->fromGet('offset', false, ApiParamsCaster::CAST_INT),
+            $this->fromGet('limit', false, ApiParamsCaster::CAST_INT),
+            $this->fromGet('filter', false, ApiParamsCaster::CAST_STRING_TRIM)
         );
 
         if ($request->getFilter()

@@ -22,7 +22,7 @@ final class cashCategorySortMethod extends cashApiNewAbstractMethod
     public function run(): cashApiResponseInterface
     {
         $request = new cashApiCategorySortRequest(
-            $this->getApiParamsFetcher()->post('order', true, ApiParamsCaster::CAST_ARRAY)
+            $this->fromPost('order', true, ApiParamsCaster::CAST_ARRAY)
         );
 
         (new cashApiCategorySortHandler())->handle($request);

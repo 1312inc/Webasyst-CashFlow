@@ -1,6 +1,9 @@
 <?php
 
 use ApiPack1312\ApiParamsFetcher;
+use ApiPack1312\Exception\ApiException;
+use ApiPack1312\Exception\ApiMissingParamException;
+use ApiPack1312\Exception\ApiWrongParamException;
 
 /**
  * Class cashApiAbstractMethod
@@ -46,11 +49,23 @@ abstract class cashApiNewAbstractMethod extends waAPIMethod
     abstract function run(): cashApiResponseInterface;
 
     /**
-     * @return ApiParamsFetcher
+     * @throws ApiMissingParamException
+     * @throws ApiWrongParamException
+     * @throws ApiException
      */
-    public function getApiParamsFetcher(): ApiParamsFetcher
+    public function fromPost(string $name, bool $required = false, string $type = null, $format = null)
     {
-        return $this->apiParamsFetcher;
+        return $this->apiParamsFetcher->post($name, $required, $type, $format);
+    }
+
+    /**
+     * @throws ApiMissingParamException
+     * @throws ApiException
+     * @throws ApiWrongParamException
+     */
+    public function fromGet(string $name, bool $required = false, string $type = null, $format = null)
+    {
+        return $this->apiParamsFetcher->get($name, $required, $type, $format);
     }
 
     /**

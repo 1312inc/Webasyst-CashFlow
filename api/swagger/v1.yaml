@@ -7,6 +7,58 @@ servers:
     description: Current host server
 
 paths:
+  /cash.transaction.create:
+    post:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionCreateRequest'
+      responses:
+        200:
+          description: Список созданных транзакций
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getTransactionsListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.transaction.bulkCreate:
+    post:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TransactionCreateRequest'
+      responses:
+        200:
+          description: Список созданных транзакций
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getTransactionsListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.transaction.getList:
     get:
       tags:
@@ -619,6 +671,89 @@ components:
         userpic:
           type: string
           example: "http://pl2wa.local/wa-data/public/contacts/photos/01/00/1/1606603675.96x96.jpg"
+
+    TransactionCreateRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          minimum: -1000000000000.0
+          maximum: 1000000000000.0
+          default: 1312.11
+        date:
+          type: string
+          format: date
+        account_id:
+          type: integer
+          minimum: 1
+        category_id:
+          type: integer
+        contractor_contact_id:
+          type: integer
+          minimum: 0
+          nullable: true
+          default: null
+        contractor:
+          type: string
+          minLength: 2
+          nullable: true
+          default: null
+        description:
+          type: string
+          minLength: 2
+          nullable: true
+          default: null
+        is_repeating:
+          type: boolean
+          default: false
+          nullable: true
+        repeating_frequency:
+          type: integer
+          minimum: 1
+          nullable: true
+          default: null
+        repeating_interval:
+          type: string
+          nullable: true
+          default: null
+          enum:
+            - 'day'
+            - 'week'
+            - 'month'
+            - 'year'
+        repeating_end_type:
+          type: string
+          nullable: true
+          default: null
+          enum:
+            - 'after'
+            - 'ondate'
+        repeating_end_after:
+          type: integer
+          nullable: true
+          default: null
+        repeating_end_ondate:
+          type: string
+          format: date
+          nullable: true
+          default: null
+        transfer_account_id:
+          type: integer
+          nullable: true
+          default: null
+        transfer_incoming_amount:
+          type: number
+          nullable: true
+          default: null
+        is_onbadge:
+          type: boolean
+          nullable: true
+          default: null
+      required:
+        - amount
+        - date
+        - account_id
+        - category_id
 
     Error:
       type: object
