@@ -1,0 +1,19 @@
+{
+    "name": "1312/apipack",
+    "description": "Useful api tools for WA apps",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Kirill Maramygin",
+            "email": "kirill.maramygin@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ApiPack1312\\": "src"
+        }
+    }
+}

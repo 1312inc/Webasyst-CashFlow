@@ -1,12 +1,19 @@
 <?php
 
-/**
- * Class cashApiCategoryDeleteRequest
- */
-class cashApiCategoryDeleteRequest
+final class cashApiCategoryDeleteRequest
 {
     /**
      * @var int
      */
-    public $id = 0;
+    private $id;
+
+    public function __construct(int $id)
+    {
+        $this->id = $id;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
 }

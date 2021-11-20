@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashApiCategorySortHandler
- */
-class cashApiCategorySortHandler implements cashApiHandlerInterface
+final class cashApiCategorySortHandler implements cashApiHandlerInterface
 {
     /**
      * @param cashApiCategorySortRequest $request
@@ -19,7 +16,7 @@ class cashApiCategorySortHandler implements cashApiHandlerInterface
         }
 
         $saver = new cashCategorySaver();
-        if (!$saver->sort($request->order)) {
+        if (!$saver->sort($request->getOrder())) {
             throw new kmwaRuntimeException($saver->getError());
         }
     }

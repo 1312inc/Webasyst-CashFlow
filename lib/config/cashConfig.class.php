@@ -287,6 +287,7 @@ class cashConfig extends waAppConfig
     /**
      * The method returns a counter to show in backend header near applications' icons.
      * Three types of response are allowed.
+     *
      * @return string|int|array - A prime number in the form of a int or string
      * @return array - Array with keys 'count' - the value of the counter and 'url' - icon url
      * @return array - An associative array in which the key is the object key from app.php, from the header_items.
@@ -338,5 +339,7 @@ class cashConfig extends waAppConfig
             require_once $appPath;
             (new kmwaWaConfigHelper)->loadKmwaClasses(self::APP_ID);
         }
+
+        require_once __DIR__ . '/../vendor/autoload.php';
     }
 }

@@ -24,8 +24,11 @@ return array(
         'create_datetime' => array('datetime', 'null' => 0),
         'update_datetime' => array('datetime'),
         'is_profit' => array('tinyint', 4, 'default' => '0'),
+        'category_parent_id' => array('int', 11),
+        'glyph' => array('varchar', 32),
         ':keys' => array(
             'PRIMARY' => 'id',
+            'cash_category_category_parent_id_index' => 'category_parent_id',
         ),
     ),
     'cash_import' => array(

@@ -59,39 +59,31 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
         )->fetchAll();
 
         $rawData = [];
+        $categoriesWithChild = cash()->getModel(cashCategory::class)->getChildIdsWithParentIds();
 
         foreach ($data as $datum) {
             [$id, $type] = explode('|', $datum['id']);
 
             if (!isset($rawData[cashCategory::TYPE_INCOME][$datum['month']][$datum['currency']])) {
-                foreach ($period->getGrouping() as $groupingDto) {
-                    $initVals = [
-                        'id' => $type,
-                        'currency' => $datum['currency'],
-                        'month' => $groupingDto->key,
-                        'per_month' => .0,
-                    ];
-                    $rawData[cashCategory::TYPE_INCOME][$groupingDto->key][$datum['currency']] = $initVals;
-                    $rawData[cashCategory::TYPE_EXPENSE][$groupingDto->key][$datum['currency']] = $initVals;
-                }
-                $rawData[cashCategory::TYPE_INCOME]['total'][$datum['currency']]['per_month'] = .0;
-                $rawData[cashCategory::TYPE_EXPENSE]['total'][$datum['currency']]['per_month'] = .0;
+                $this->initTotalAmountPerPeriod($period, $rawData, $datum, $type);
             }
 
             if (!isset($rawData[$datum['id']][$datum['month']][$datum['currency']])) {
-                foreach ($period->getGrouping() as $groupingDto) {
-                    $rawData[$datum['id']][$groupingDto->key][$datum['currency']] = [
-                        'id' => $id,
-                        'currency' => $datum['currency'],
-                        'month' => $groupingDto->key,
-                        'per_month' => .0,
-                    ];
-                }
-                $rawData[$datum['id']]['total'][$datum['currency']]['per_month'] = .0;
+                $this->initAmountPerPeriod($period, $rawData, $datum['id'], $datum['currency'], $id);
             }
 
             $rawData[$datum['id']][$datum['month']][$datum['currency']]['per_month'] = (float) $datum['per_month'];
             $rawData[$datum['id']]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+
+            // просуммируем в родительскую
+            if (isset($categoriesWithChild[$id])) {
+                $parentIdType = "{$categoriesWithChild[$id]}|{$type}";
+                if (!isset($rawData[$parentIdType][$datum['month']][$datum['currency']])) {
+                    $this->initAmountPerPeriod($period, $rawData, $parentIdType, $datum['currency'], $id);
+                }
+                $rawData[$parentIdType][$datum['month']][$datum['currency']]['per_month'] = (float) $datum['per_month'];
+                $rawData[$parentIdType]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+            }
 
             $rawData[$type][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
             $rawData[$type]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
@@ -107,21 +99,12 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
             new cashReportDdsEntity(_w('All income'), cashReportDds::ALL_INCOME_KEY, false, true, '', true),
             $rawData[cashCategory::TYPE_INCOME] ?? []
         );
+
         // usual categories
         foreach ($this->categoryRep->findAllIncomeForContact() as $category) {
-            $statData[] = new cashReportDdsStatDto(
-                new cashReportDdsEntity(
-                    $category->getName(),
-                    $category->getId(),
-                    $category->isExpense(),
-                    $category->isIncome(),
-                    sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $category->getColor()),
-                    false,
-                    $category->getColor()
-                ),
-                $rawData[sprintf('%s|%s', $category->getId(), $category->getType())] ?? []
-            );
+            $statData[] = $this->createDdsStatDto($category, $rawData);
         }
+
         // transfers
         $statData[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(
@@ -129,7 +112,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                 $transferCategory->getId(),
                 false,
                 true,
-                sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
+                sprintf('<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
                 false,
                 $transferCategory->getColor()
             ),
@@ -137,26 +120,18 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
         );
 
         // expenses
+
         // total
         $statData[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(_w('All expenses'), cashReportDds::ALL_EXPENSE_KEY, true, false, '', true),
             $rawData[cashCategory::TYPE_EXPENSE] ?? []
         );
+
         // usual categories
         foreach ($this->categoryRep->findAllExpenseForContact() as $category) {
-            $statData[] = new cashReportDdsStatDto(
-                new cashReportDdsEntity(
-                    $category->getName(),
-                    $category->getId(),
-                    $category->isExpense(),
-                    $category->isIncome(),
-                    sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $category->getColor()),
-                    false,
-                    $category->getColor()
-                ),
-                $rawData[sprintf('%s|%s', $category->getId(), $category->getType())] ?? []
-            );
+            $statData[] = $this->createDdsStatDto($category, $rawData);
         }
+
         // transfers
         $statData[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(
@@ -164,14 +139,61 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                 $transferCategory->getId(),
                 true,
                 false,
-                sprintf( wa()->whichUI() == '1.3' ? '<i class="icon16 color" style="background-color: %s"></i>' : '<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
+                sprintf('<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
                 false,
                 $transferCategory->getColor()
             ),
             $rawData[sprintf('%s|%s', $transferCategory->getId(), cashCategory::TYPE_EXPENSE)] ?? []
         );
 
-
         return $statData ?: [];
+    }
+
+    private function createDdsStatDto(cashCategory $category, $rawData): cashReportDdsStatDto
+    {
+        return new cashReportDdsStatDto(
+            new cashReportDdsEntity(
+                $category->getName(),
+                $category->getId(),
+                $category->isExpense(),
+                $category->isIncome(),
+                $category->getCategoryParentId() && $category->getGlyph()
+                    ? sprintf('<i class="fas %s"></i>', $category->getGlyph())
+                    : sprintf('<i class="icon rounded" style="background-color: %s"></i>', $category->getColor()),
+                false,
+                $category->getColor(),
+                (bool) $category->getCategoryParentId()
+            ),
+            $rawData[sprintf('%s|%s', $category->getId(), $category->getType())] ?? []
+        );
+    }
+
+    private function initAmountPerPeriod(cashReportDdsPeriod $period, &$rawData, $datumId, $datumCurrency, $id): void
+    {
+        foreach ($period->getGrouping() as $groupingDto) {
+            $rawData[$datumId][$groupingDto->key][$datumCurrency] = [
+                'id' => $id,
+                'currency' => $datumCurrency,
+                'month' => $groupingDto->key,
+                'per_month' => .0,
+            ];
+        }
+        $rawData[$datumId]['total'][$datumCurrency]['per_month'] = .0;
+    }
+
+    private function initTotalAmountPerPeriod(cashReportDdsPeriod $period, &$rawData, $datum, $type): void
+    {
+        foreach ($period->getGrouping() as $groupingDto) {
+            $initVals = [
+                'id' => $type,
+                'currency' => $datum['currency'],
+                'month' => $groupingDto->key,
+                'per_month' => .0,
+            ];
+            $rawData[cashCategory::TYPE_INCOME][$groupingDto->key][$datum['currency']] = $initVals;
+            $rawData[cashCategory::TYPE_EXPENSE][$groupingDto->key][$datum['currency']] = $initVals;
+        }
+        $rawData[cashCategory::TYPE_INCOME]['total'][$datum['currency']]['per_month'] = .0;
+        $rawData[cashCategory::TYPE_EXPENSE]['total'][$datum['currency']]['per_month'] = .0;
     }
 }

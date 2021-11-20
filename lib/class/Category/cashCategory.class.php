@@ -1,15 +1,12 @@
 <?php
 
-/**
- * Class cashCategory
- */
 class cashCategory extends cashAbstractEntity
 {
     use kmwaEntityDatetimeTrait;
 
-    const TYPE_INCOME = 'income';
-    const TYPE_EXPENSE = 'expense';
-    const TYPE_TRANSFER = 'transfer';
+    public const TYPE_INCOME  = 'income';
+    public const TYPE_EXPENSE  = 'expense';
+    public const TYPE_TRANSFER = 'transfer';
 
     /**
      * @var int
@@ -27,114 +24,84 @@ class cashCategory extends cashAbstractEntity
     private $type;
 
     /**
-     * @var string
+     * @var null|string
      */
     private $color;
 
     /**
-     * @var int
+     * @var null|int
      */
     private $sort = 0;
 
     /**
-     * @var int|bool
+     * @var bool
      */
-    private $is_profit = 0;
+    private $is_profit = false;
 
     /**
-     * @return int
+     * @var int|null
      */
-    public function getId()
+    private $category_parent_id;
+
+    /**
+     * @var string|null
+     */
+    private $glyph;
+
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return cashCategory
-     */
-    public function setId($id)
+    public function setId(int $id): cashCategory
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return cashCategory
-     */
-    public function setName($name)
+    public function setName(string $name): cashCategory
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return cashCategory
-     */
-    public function setType($type)
+    public function setType(string $type): cashCategory
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getColor()
+    public function getColor(): string
     {
         return $this->color;
     }
 
-    /**
-     * @param string $color
-     *
-     * @return cashCategory
-     */
-    public function setColor($color)
+    public function setColor(?string $color): cashCategory
     {
         $this->color = $color;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getSort()
+    public function getSort(): int
     {
-        return $this->sort;
+        return (int) $this->sort;
     }
 
-    /**
-     * @param int $sort
-     *
-     * @return cashCategory
-     */
-    public function setSort($sort)
+    public function setSort(?int $sort): cashCategory
     {
         $this->sort = $sort;
 
@@ -151,55 +118,69 @@ class cashCategory extends cashAbstractEntity
         return true;
     }
 
-    /**
-     * @return bool
-     */
     public function isExpense(): bool
     {
         return $this->type === self::TYPE_EXPENSE;
     }
 
-    /**
-     * @return bool
-     */
     public function isIncome(): bool
-    {
+    {   
         return $this->type === self::TYPE_INCOME;
     }
 
-    /**
-     * @return bool
-     */
     public function isTransfer(): bool
     {
         return $this->type === self::TYPE_TRANSFER;
     }
 
-    /**
-     * @return bool
-     */
     public function isSystem(): bool
     {
         return $this->id < 0;
     }
 
-    /**
-     * @return bool|int
-     */
-    public function getIsProfit()
+    public function getIsProfit(): bool
     {
         return $this->is_profit;
     }
 
-    /**
-     * @param bool|int $is_profit
-     *
-     * @return cashCategory
-     */
-    public function setIsProfit($is_profit): cashCategory
+    public function setIsProfit(bool $is_profit): cashCategory
     {
         $this->is_profit = $is_profit;
 
         return $this;
+    }
+
+    public function getCategoryParentId(): ?int
+    {
+        return $this->category_parent_id;
+    }
+
+    public function setCategoryParentId(?int $parent_category_id): cashCategory
+    {
+        $this->category_parent_id = $parent_category_id;
+
+        return $this;
+    }
+
+    public function getGlyph(): ?string
+    {
+        return $this->glyph;
+    }
+
+    public function setGlyph(?string $glyph): cashCategory
+    {
+        $this->glyph = $glyph;
+
+        return $this;
+    }
+
+    public function afterHydrate($data = [])
+    {
+        $this->is_profit = (bool) $data['is_profit'];
+    }
+
+    public function afterExtract(array &$fields)
+    {
+        $fields['is_profit'] = (int) $fields['is_profit'];
     }
 }

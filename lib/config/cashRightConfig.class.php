@@ -1,25 +1,22 @@
 <?php
 
-/**
- * Class cashRightConfig
- */
-class cashRightConfig extends waRightConfig
+final class cashRightConfig extends waRightConfig
 {
-    const RIGHT_CAN_ACCESS_ACCOUNT  = 'can_access_account';
-    const RIGHT_CAN_ACCESS_CATEGORY = 'can_access_category';
-    const RIGHT_BACKEND             = 'backend';
-    const RIGHT_IMPORT_TRANSACTIONS = 'can_import_transactions';
-    const RIGHT_SEE_REPORTS         = 'can_see_reports';
-    const RIGHT_ACCESS_TRANSFERS    = 'can_access_transfers';
+    public const RIGHT_CAN_ACCESS_ACCOUNT  = 'can_access_account';
+    public const RIGHT_CAN_ACCESS_CATEGORY = 'can_access_category';
+    public const RIGHT_BACKEND             = 'backend';
+    public const RIGHT_IMPORT_TRANSACTIONS = 'can_import_transactions';
+    public const RIGHT_SEE_REPORTS         = 'can_see_reports';
+    public const RIGHT_ACCESS_TRANSFERS    = 'can_access_transfers';
 
-    const ACCOUNT_FULL_ACCESS                                  = 99;
-    const ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS = 2;
-    const ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY      = 1;
-    const CATEGORY_FULL_ACCESS                                 = 1;
+    public const ACCOUNT_FULL_ACCESS                                  = 99;
+    public const ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS = 2;
+    public const ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY      = 1;
+    public const CATEGORY_FULL_ACCESS                                 = 1;
 
-    const ADMIN_ACCESS = 2;
-    const YES_ACCESS = 1;
-    const NO_ACCESS  = 0;
+    public const ADMIN_ACCESS = 2;
+    public const YES_ACCESS   = 1;
+    public const NO_ACCESS    = 0;
 
     /**
      * @var int
@@ -61,24 +58,59 @@ class cashRightConfig extends waRightConfig
                     self::ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS => _w(
                         'Accountant: can view & manage transactions created by others'
                     ),
-                    self::ACCOUNT_FULL_ACCESS => _w('Full access: can see the account balance & manage all transactions'),
+                    self::ACCOUNT_FULL_ACCESS => _w(
+                        'Full access: can see the account balance & manage all transactions'
+                    ),
                 ],
             ]
         );
 
-        $items = [];
-        foreach (cash()->getEntityRepository(cashCategory::class)->findAllIncomeForContact() as $category) {
-            $items[$category->getId()] = $category->getName();
+        $items = [
+            cashCategory::TYPE_INCOME => [],
+            cashCategory::TYPE_EXPENSE => [],
+        ];
+        $categories = cash()->getModel(cashCategory::class)->getAllWithParent();
+        foreach ($categories as $category) {
+            if ($category['type'] === cashCategory::TYPE_TRANSFER) {
+                continue;
+            }
+
+            $i = $category['category_parent_id']
+                ? sprintf('%s.%s', $category['category_parent_id'], $category['id'])
+                : $category['id'];
+            $items[$category['type']][$i] = [
+                'id' => $category['id'],
+                'name' => $category['category_parent_id']
+                    ? sprintf('%s -> %s', $category['parent_name'], $category['name'])
+                    : $category['name'],
+            ];
         }
 
-        $this->addItem(self::RIGHT_CAN_ACCESS_CATEGORY, _w('Income'), 'list', ['items' => $items]);
+        ksort($items[cashCategory::TYPE_INCOME]);
+        ksort($items[cashCategory::TYPE_EXPENSE]);
 
-        $items = [];
-        foreach (cash()->getEntityRepository(cashCategory::class)->findAllExpenseForContact() as $category) {
-            $items[$category->getId()] = $category->getName();
-        }
-
-        $this->addItem(self::RIGHT_CAN_ACCESS_CATEGORY, _w('Expense'), 'list', ['items' => $items]);
+        $this->addItem(
+            self::RIGHT_CAN_ACCESS_CATEGORY,
+            _w('Income'),
+            'list',
+            [
+                'items' => array_combine(
+                    array_column($items[cashCategory::TYPE_INCOME], 'id'),
+                    array_column($items[cashCategory::TYPE_INCOME], 'name')
+                ),
+            ]
+        );
+        $this->addItem(
+            self::RIGHT_CAN_ACCESS_CATEGORY,
+            _w('Expense'),
+            'list',
+            [
+                'items' => array_combine(
+                    array_column($items[cashCategory::TYPE_EXPENSE], 'id'),
+                    array_column($items[cashCategory::TYPE_EXPENSE], 'name')
+                ),
+            ]
+        );
 
         /**
          * @event rights.config
@@ -94,6 +126,8 @@ class cashRightConfig extends waRightConfig
      * @param int $contact_id
      *
      * @return array
+     *
+     * @throws waException
      */
     public function getDefaultRights($contact_id): array
     {
@@ -101,8 +135,8 @@ class cashRightConfig extends waRightConfig
             self::RIGHT_CAN_ACCESS_ACCOUNT => self::NO_ACCESS,
         ];
 
-        $categories = cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact(wa()->getUser());
-        /** @var cashCategory $category */
+        /** @var cashCategory[] $categories */
+        $categories = cash()->getEntityRepository(cashCategory::class)->findAll();
         foreach ($categories as $category) {
             if ($category->isTransfer()) {
                 continue;
