@@ -1,6 +1,7 @@
 <?php
 
 use ApiPack1312\ApiParamsCaster;
+use ApiPack1312\Exception\ApiCastParamException;
 use ApiPack1312\Exception\ApiException;
 use ApiPack1312\Exception\ApiMissingParamException;
 use ApiPack1312\Exception\ApiWrongParamException;
@@ -21,9 +22,25 @@ final class cashTransactionGetListMethod extends cashApiNewAbstractMethod
      */
     public function run(): cashApiResponseInterface
     {
+        $from = $this->getApiParamsFetcher()->get('from', false, ApiParamsCaster::CAST_STRING_TRIM);
+        if ($from) {
+            $from = DateTimeImmutable::createFromFormat('Y-m-d|', $from);
+            if (!$from) {
+                throw new ApiCastParamException(sprintf('Wrong format for param %s', 'from'));
+            }
+        }
+
+        $to = $this->getApiParamsFetcher()->get('to', false, ApiParamsCaster::CAST_STRING_TRIM);
+        if ($to) {
+            $to = DateTimeImmutable::createFromFormat('Y-m-d|', $to);
+            if (!$to) {
+                throw new ApiCastParamException(sprintf('Wrong format for param %s', 'to'));
+            }
+        }
+
         $request = new cashApiTransactionGetListRequest(
-            $this->getApiParamsFetcher()->get('from', false, ApiParamsCaster::CAST_DATETIME, 'Y-m-d'),
-            $this->getApiParamsFetcher()->get('to', false, ApiParamsCaster::CAST_DATETIME, 'Y-m-d'),
+            $from ?: null,
+            $to ?: null,
             $this->getApiParamsFetcher()->get('offset', false, ApiParamsCaster::CAST_INT),
             $this->getApiParamsFetcher()->get('limit', false, ApiParamsCaster::CAST_INT),
             $this->getApiParamsFetcher()->get('filter', false, ApiParamsCaster::CAST_STRING_TRIM)
