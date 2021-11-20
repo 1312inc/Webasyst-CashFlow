@@ -124,7 +124,7 @@ class cashCategory extends cashAbstractEntity
     }
 
     public function isIncome(): bool
-    {
+    {   
         return $this->type === self::TYPE_INCOME;
     }
 
