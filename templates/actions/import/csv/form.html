@@ -499,10 +499,10 @@
                     newCatName = '',
                     type = '';
 
-                if (val == 'new-income') {
+                if (val == {cashImportResponseCsv::NEW_INCOME_ID}) {
                     newCatName = prompt($_('New income category: '));
                     type = '{cashCategory::TYPE_INCOME}';
-                } else if (val == 'new-expense') {
+                } else if (val == {cashImportResponseCsv::NEW_EXPENSE_ID}) {
                     newCatName = prompt($_('New expense category: '));
                     type = '{cashCategory::TYPE_EXPENSE}';
                 }

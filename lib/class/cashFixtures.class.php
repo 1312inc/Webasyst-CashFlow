@@ -107,7 +107,7 @@ class cashFixtures
                     ->setType($type)
                     ->setColor($data[1])
                     ->setName($data[0])
-                    ->setIsProfit((int) $data[2])
+                    ->setIsProfit((bool) $data[2])
                     ->setSort($sort++);
                 $this->perister->insert($this->categories[$name]);
             }

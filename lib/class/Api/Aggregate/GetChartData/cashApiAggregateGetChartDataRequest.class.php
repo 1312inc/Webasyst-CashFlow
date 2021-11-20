@@ -6,22 +6,50 @@
 final class cashApiAggregateGetChartDataRequest
 {
     /**
-     * @var string|DateTimeImmutable
+     * @var DateTimeImmutable
      */
-    public $from = '';
+    private $from;
 
     /**
-     * @var string|DateTimeImmutable
+     * @var DateTimeImmutable
      */
-    public $to = '';
-
-    /**
-     * @var string
-     */
-    public $group_by = cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY;
+    private $to;
 
     /**
      * @var string
      */
-    public $filter = '';
+    private $groupBy;
+
+    /**
+     * @var string
+     */
+    private $filter;
+
+    public function __construct(DateTimeImmutable $from, DateTimeImmutable $to, string $groupBy, string $filter)
+    {
+        $this->from = $from;
+        $this->to = $to;
+        $this->groupBy = $groupBy;
+        $this->filter = $filter;
+    }
+
+    public function getFrom(): DateTimeImmutable
+    {
+        return $this->from;
+    }
+
+    public function getTo(): DateTimeImmutable
+    {
+        return $this->to;
+    }
+
+    public function getGroupBy(): string
+    {
+        return $this->groupBy;
+    }
+
+    public function getFilter(): string
+    {
+        return $this->filter;
+    }
 }

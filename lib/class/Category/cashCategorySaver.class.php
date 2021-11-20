@@ -39,6 +39,62 @@ class cashCategorySaver extends cashEntitySaver
     }
 
     /**
+     * @return bool|cashCategory
+     *
+     * @throws waException
+     */
+    public function saveFromApi(
+        cashCategory $category,
+        cashApiCategoryCreateRequest $createRequest,
+        ?cashTransactionSaveParamsDto $params = null
+    ) {
+        if ($createRequest->getParentCategoryId()) {
+            /** @var cashCategory $parentCategory */
+            $parentCategory = cash()->getEntityRepository(cashCategory::class)
+                ->findById($createRequest->getParentCategoryId());
+
+            if (!$parentCategory) {
+                $this->error = sprintf('No parent category with id %s', $createRequest->getParentCategoryId());
+
+                return false;
+            }
+
+            if ($parentCategory->getCategoryParentId()) {
+                $this->error = 'There is already parent for passed parent. One level is allowed';
+
+                return false;
+            }
+        }
+
+        try {
+            $category->setSort($createRequest->getSort())
+                ->setName($createRequest->getName())
+                ->setType($createRequest->getType())
+                ->setGlyph($createRequest->getGlyph())
+                ->setIsProfit($createRequest->getIsProfit())
+                ->setColor($createRequest->getColor())
+                ->setCategoryParentId($createRequest->getParentCategoryId());
+
+            if (isset($parentCategory)) {
+                $category->setType($parentCategory->getType());
+            }
+
+            if (empty($category->getColor())) {
+                $colors = cashColorStorage::getColorsByType($category->getType());
+                $category->setColor($colors[array_rand($colors)]);
+            }
+
+            cash()->getEntityPersister()->save($category);
+
+            return $category;
+        } catch (Exception $ex) {
+            $this->error = $ex->getMessage();
+        }
+
+        return false;
+    }
+
+    /**
      * @param array $data
      *
      * @return bool

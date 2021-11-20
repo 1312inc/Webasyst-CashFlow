@@ -46,6 +46,16 @@ class cashCategoryDto extends cashAbstractDto
     public $is_profit = false;
 
     /**
+     * @var null|int
+     */
+    public $category_parent_id;
+
+    /**
+     * @var null|string
+     */
+    public $glyph;
+
+    /**
      * cashCategoryDto constructor.
      *
      * @param array $data

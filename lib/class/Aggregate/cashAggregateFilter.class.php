@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashAggregateFilter
- */
-class cashAggregateFilter
+final class cashAggregateFilter
 {
     public const FILTER_ACCOUNT    = 'account';
     public const FILTER_CATEGORY   = 'category';
@@ -42,11 +39,6 @@ class cashAggregateFilter
      */
     private $search;
 
-    /**
-     * @param string|null $hash
-     *
-     * @return cashAggregateFilter
-     */
     public static function createFromHash(?string $hash): cashAggregateFilter
     {
         $self = new self;
@@ -66,49 +58,31 @@ class cashAggregateFilter
         return $self;
     }
 
-    /**
-     * @return int|null
-     */
     public function getAccountId(): ?int
     {
         return $this->account;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCategoryId(): ?int
     {
         return $this->category;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCurrency(): ?string
     {
         return $this->currency;
     }
 
-    /**
-     * @return int|null
-     */
     public function getContractorId(): ?int
     {
         return $this->contractor;
     }
 
-    /**
-     * @return int|null
-     */
     public function getImportId(): ?int
     {
         return $this->import;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSearch(): ?string
     {
         return $this->search;

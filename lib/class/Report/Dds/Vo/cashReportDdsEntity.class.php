@@ -41,24 +41,19 @@ class cashReportDdsEntity
     private $color;
 
     /**
-     * cashReportDdsEntity constructor.
-     *
-     * @param        $name
-     * @param        $id
-     * @param bool   $expense
-     * @param bool   $income
-     * @param string $icon
-     * @param bool   $isHeader
-     * @param null   $color
+     * @var bool
      */
+    private $isChild;
+
     public function __construct(
-        $name,
-        $id,
-        $expense = false,
-        $income = false,
-        $icon = '',
-        $isHeader = false,
-        $color = null
+        string $name,
+        string $id,
+        bool $expense = false,
+        bool $income = false,
+        string $icon = '',
+        bool $isHeader = false,
+        ?string $color = null,
+        bool $isChild = false
     ) {
         $this->name = $name;
         $this->id = $id;
@@ -67,61 +62,46 @@ class cashReportDdsEntity
         $this->expense = $expense;
         $this->income = $income;
         $this->color = $color;
+        $this->isChild = $isChild;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getIcon(): string
     {
         return $this->icon;
     }
 
-    /**
-     * @return bool
-     */
     public function isHeader(): bool
     {
         return $this->isHeader;
     }
 
-    /**
-     * @return bool
-     */
     public function isExpense(): bool
     {
         return $this->expense;
     }
 
-    /**
-     * @return bool
-     */
     public function isIncome(): bool
     {
         return $this->income;
     }
 
-    /**
-     * @return string|null
-     */
     public function getColor(): ?string
     {
         return $this->color;
+    }
+
+    public function isChild(): bool
+    {
+        return $this->isChild;
     }
 }

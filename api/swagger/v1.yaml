@@ -7,6 +7,153 @@ servers:
     description: Current host server
 
 paths:
+  /cash.transaction.create:
+    post:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionCreateRequest'
+      responses:
+        200:
+          description: Список созданных транзакций
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getTransactionsListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.transaction.bulkCreate:
+    post:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/TransactionCreateRequest'
+      responses:
+        200:
+          description: Список созданных транзакций
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getTransactionsListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.transaction.getList:
+    get:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: from
+          required: false
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          required: false
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: filter
+          required: false
+          description: category/5, account/3, currency/USD, null, search/DESCRIPTION, import/1
+          schema:
+            type: string
+        - in: query
+          name: offset
+          required: false
+          description: номер записи, с которой начать (не номер страницы, а именно номер записи; как в SQL)
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - in: query
+          name: limit
+          required: false
+          description: максимальное количество записей, которое вернет метод (позволяет ограничить количество записей на странице)
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 500
+            default: 100
+      responses:
+        200:
+          description: Список транзакций
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getTransactionsListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /cash.transaction.getShrinkList:
+    get:
+      tags:
+        - Транзакции
+      description: Return max 13 transactions from date to date. If there are more then 1 with same repeating_id - they will be grouped to first one.
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: from
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: filter
+          required: true
+          description: category/5, account/3, currency/USD, null, search/DESCRIPTION, import/1
+          schema:
+            type: string
+      responses:
+        200:
+          description: Список транзакций
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getTransactionsListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.account.getList:
     get:
       tags:
@@ -20,6 +167,254 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getAccountsListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.category.getList:
+    get:
+      tags:
+        - Категории
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        200:
+          description: Список категорий
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getCategoriesListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.category.create:
+    post:
+      tags:
+        - Категории
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                type:
+                  type: string
+                  enum:
+                    - 'expense'
+                    - 'income'
+                color:
+                  type: string
+                  minLength: 1
+                sort:
+                  type: integer
+                  minimum: 0
+                  nullable: true
+                is_profit:
+                  type: boolean
+                  default: false
+                  nullable: true
+                parent_category_id:
+                  type: integer
+                  minimum: 1
+                  nullable: true
+                glyph:
+                  type: string
+                  minLength: 1
+                  nullable: true
+              required:
+                - name
+                - type
+                - color
+      responses:
+        200:
+          description: Cозданная категория
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryInfo'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.category.update:
+    post:
+      tags:
+        - Категории
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  minimum: 1
+                name:
+                  type: string
+                  minLength: 1
+                type:
+                  type: string
+                  enum:
+                    - 'expense'
+                    - 'income'
+                color:
+                  type: string
+                  minLength: 0
+                sort:
+                  type: integer
+                  minimum: 0
+                  nullable: true
+                is_profit:
+                  type: boolean
+                  default: false
+                  nullable: true
+                parent_category_id:
+                  type: integer
+                  minimum: 0
+                  nullable: true
+                glyph:
+                  type: string
+                  minLength: 1
+                  nullable: true
+              required:
+                - id
+                - name
+                - type
+                - color
+                - sort
+                - is_profit
+                - parent_category_id
+                - glyph
+      responses:
+        200:
+          description: Обновленная категория
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryInfo'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.category.delete:
+    post:
+      tags:
+        - Категории
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  minimum: 1
+              required:
+                - id
+      responses:
+        200:
+          description: Пустой ответ в случае успеха
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.category.sort:
+    post:
+      tags:
+        - Категории
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: integer
+              required:
+                - order
+      responses:
+        200:
+          description: Пустой ответ в случае успеха
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.aggregate.getChartData:
+    get:
+      tags:
+        - Агрегация данных
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: from
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: group_by
+          required: true
+          schema:
+            type: string
+            enum:
+              - 'day'
+              - 'month'
+              - 'year'
+        - in: query
+          name: filter
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        200:
+          description: Пустой ответ в случае успеха
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   securitySchemes:
@@ -30,14 +425,31 @@ components:
 
   schemas:
     getAccountsListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/AccountInfo'
+    getCategoriesListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/CategoryInfo'
+    getTransactionsListResponse:
       type: object
       properties:
+        offset:
+          type: integer
+          minimum: 0
+        limit:
+          type: integer
+          maximum: 500
+        total:
+          type: integer
+          minimum: 0
         data:
           type: array
           items:
-            $ref: '#/components/schemas/accountInfo'
+            $ref: '#/components/schemas/TransactionInfo'
 
-    accountInfo:
+    AccountInfo:
       type: object
       properties:
         id:
@@ -67,9 +479,9 @@ components:
           type: string
           format: date-time
         stat:
-          $ref: '#/components/schemas/statInfo'
+          $ref: '#/components/schemas/StatInfo'
 
-    statInfo:
+    StatInfo:
       type: object
       properties:
         income:
@@ -90,3 +502,266 @@ components:
         summaryShorten:
           type: string
           example: "41.2K"
+
+    CategoryInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 0
+        name:
+          type: string
+          minLength: 1
+        type:
+          type: string
+          enum:
+            - 'income'
+            - 'expense'
+            - 'transfer'
+          nullable: true
+        color:
+          type: string
+        sort:
+          type: integer
+          minimum: 0
+        create_datetime:
+          type: string
+          format: datetime
+        update_datetime:
+          type: string
+          format: datetime
+          nullable: true
+        is_profit:
+          type: boolean
+          default: false
+        parent_category_id:
+          type: integer
+          minimum: 0
+          nullable: true
+        glyph:
+          type: string
+          minLength: 1
+          nullable: true
+
+    TransactionInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 0
+        date:
+          type: string
+          format: date
+          description: Дата транзакции
+          example: "2024-07-20 20:05:00"
+        datetime:
+          type: string
+          format: datetime
+          description: Дата создания транзакции
+        amount:
+          type: number
+          example: 193241.3
+        amountShorten:
+          type: string
+          description: Человекочитаемый формат суммы
+          example: "193К"
+        balance:
+          type: number
+          nullable: true
+          description: Баланс на счете (только для выборок по счетам)
+        balanceShorten:
+          type: string
+          nullable: true
+          description: Человекочитаемый формат баланса
+          example: "193К"
+        description:
+          type: string
+          nullable: true
+        repeating_id:
+          type: integer
+          nullable: true
+          description: Идентификатор повторяющейся транзакции, от которой создалась эта
+        repeating_data:
+          type: object
+          nullable: true
+          description: Настройки повторяющейся транзакции
+          properties:
+            interval:
+              description: Интервал повторения
+              type: string
+              nullable: true
+              enum:
+                - "year"
+                - "month"
+                - "week"
+                - "day"
+                - "none"
+            frequency:
+              type: integer
+              nullable: true
+              description: Частота повторения
+            occurrences:
+              type: integer
+              nullable: true
+              description: Количество повторений
+        create_contact_id:
+          type: integer
+        create_contact:
+          $ref: '#/components/schemas/TransactionContactInfo'
+        create_datetime:
+          type: string
+          format: datetime
+          description: Дата сохранения
+        update_datetime:
+          type: string
+          format: datetime
+          nullable: true
+          description: Дата обновления
+        category_id:
+          type: integer
+        account_id:
+          type: integer
+        planned:
+          type: boolean
+          description: Запланирована на будущее
+        is_archived:
+          type: boolean
+        external_source_info:
+          type: object
+          nullable: true
+          description: Информация о связанных сущностях из внешнего проложений (например ShopScript)
+        external_source:
+          type: string
+          nullable: true
+          description: Идентификатор внешнего приложения
+          example: "shop"
+        contractor_contact_id:
+          type: integer
+          nullable: true
+          description: Id контрагента
+        is_onbadge:
+          type: boolean
+        contractor_contact:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/TransactionContactInfo'
+        affected_transactions:
+          type: integer
+          nullable: true
+          description: Сколько транзакций создалось при создании этой (актуально для повторящихся). Заполняется только в ответе после создания/редактирования транзакции
+        affected_transaction_ids:
+          type: array
+          nullable: true
+          description: Массив id транзакций, которые создались при создании этой (актуально для повторящихся). Заполняется только в ответе после создания/редактирования транзакции
+          items:
+            type: integer
+
+    TransactionContactInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "admin"
+        firstname:
+          type: string
+          example: "ad"
+        lastname:
+          type: string
+          example: "min"
+        userpic:
+          type: string
+          example: "http://pl2wa.local/wa-data/public/contacts/photos/01/00/1/1606603675.96x96.jpg"
+
+    TransactionCreateRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          minimum: -1000000000000.0
+          maximum: 1000000000000.0
+          default: 1312.11
+        date:
+          type: string
+          format: date
+        account_id:
+          type: integer
+          minimum: 1
+        category_id:
+          type: integer
+        contractor_contact_id:
+          type: integer
+          minimum: 0
+          nullable: true
+          default: null
+        contractor:
+          type: string
+          minLength: 2
+          nullable: true
+          default: null
+        description:
+          type: string
+          minLength: 2
+          nullable: true
+          default: null
+        is_repeating:
+          type: boolean
+          default: false
+          nullable: true
+        repeating_frequency:
+          type: integer
+          minimum: 1
+          nullable: true
+          default: null
+        repeating_interval:
+          type: string
+          nullable: true
+          default: null
+          enum:
+            - 'day'
+            - 'week'
+            - 'month'
+            - 'year'
+        repeating_end_type:
+          type: string
+          nullable: true
+          default: null
+          enum:
+            - 'after'
+            - 'ondate'
+        repeating_end_after:
+          type: integer
+          nullable: true
+          default: null
+        repeating_end_ondate:
+          type: string
+          format: date
+          nullable: true
+          default: null
+        transfer_account_id:
+          type: integer
+          nullable: true
+          default: null
+        transfer_incoming_amount:
+          type: number
+          nullable: true
+          default: null
+        is_onbadge:
+          type: boolean
+          nullable: true
+          default: null
+      required:
+        - amount
+        - date
+        - account_id
+        - category_id
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        error_description:
+          type: string
+        trace:
+          type: string
+          nullable: true
