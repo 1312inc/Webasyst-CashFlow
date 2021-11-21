@@ -108,6 +108,7 @@ return array(
             'cash_transaction_date_category_id_index' => array('date', 'category_id'),
             'cash_transaction_date_contractor_contact_id_index' => array('date', 'contractor_contact_id'),
             'cash_transaction_cash_category_id_fk' => 'category_id',
+            'cash_transaction_contractor_contact_id_index' => 'contractor_contact_id',
         ),
     ),
 );
