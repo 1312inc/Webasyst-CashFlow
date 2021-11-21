@@ -75,44 +75,18 @@
           <!-- End Toggle type section -->
 
           <!-- Start Currency Input section -->
-          <div class="bold custom-mb-16">
-            <div class="state-with-inner-icon left">
-              <input-currency
-                ref="focus"
-                v-model="model.amount"
-                @keyup.enter="submit"
-                :signed="false"
-                :class="{ 'state-error': $v.model.amount.$error }"
-                :style="
-                  selectedCategoryColor && {
-                    'border-color': selectedCategoryColor,
-                  }
-                "
-                class="bold number short"
-                placeholder="0"
-              />
-              <span
-                :class="{
-                  'text-orange': transactionType === 'expense',
-                  'text-green': transactionType === 'income',
-                }"
-                :style="
-                  selectedCategoryColor && { color: selectedCategoryColor }
-                "
-                class="icon"
-                style="opacity: 1"
-              >
-                <span v-show="transactionType === 'expense'">
-                  <i class="fas fa-minus"></i>
-                </span>
-                <span v-show="transactionType === 'income'">
-                  <i class="fas fa-plus"></i>
-                </span>
-              </span>
-            </div>
-            <span v-if="selectedAccount" class="custom-ml-4">{{
-              $helper.currencySignByCode(selectedAccount.currency)
-            }}</span>
+          <div class="custom-mb-16">
+            <input-currency
+              v-model="model.amount"
+              @keyEnter="submit"
+              :signed="false"
+              :categoryId="model.category_id"
+              :accountId="model.account_id"
+              :error="$v.model.amount.$error"
+              :transactionType="transactionType"
+              :focused="true"
+              placeholder="0"
+            />
           </div>
           <!-- End Currency Input section -->
 
@@ -123,7 +97,7 @@
                 v-model="model.category_id"
                 :class="{ 'state-error': $v.model.category_id.$error }"
                 :label="$t('category')"
-                :items="categoriesInSelect"
+                :items="getCategoryByType(transactionType)"
                 valuePropName="id"
                 :rowModificator="
                   (obj) =>
@@ -197,27 +171,13 @@
           <TransitionCollapseHeight>
             <div v-if="showTransferIncomingAmount" class="custom-mb-16">
               <!-- {{ $t("incomingAmount") }} -->
-              <div class="bold">
-                <input-currency
-                  v-model="model.transfer_incoming_amount"
-                  :signed="false"
-                  :class="{
-                    'state-error':
-                      $v.model.transfer_incoming_amount.$error,
-                  }"
-                  class="bold number short"
-                  placeholder="0"
-                />
-                <span
-                  v-if="selectedAccountTransfer"
-                  class="custom-ml-4"
-                  >{{
-                    $helper.currencySignByCode(
-                      selectedAccountTransfer.currency
-                    )
-                  }}</span
-                >
-              </div>
+              <input-currency
+                v-model="model.transfer_incoming_amount"
+                :signed="false"
+                :currencyCode="selectedAccountTransfer.currency"
+                :error="$v.model.transfer_incoming_amount.$error"
+                placeholder="0"
+              />
               <div class="state-caution-hint custom-mt-8 custom-mb-0">
                 <i class="fas fa-exclamation-triangle"></i>
                 <strong>
@@ -448,8 +408,8 @@
               'c-button-add-income': transactionType === 'income',
             }"
             :style="
-              selectedCategoryColor && {
-                'background-color': selectedCategoryColor,
+              selectedCategory && {
+                'background-color': selectedCategory.color,
               }
             "
             class="button"
@@ -615,14 +575,6 @@ export default {
       return this.getCategoryById(this.model.category_id)
     },
 
-    selectedCategoryColor () {
-      return this.selectedCategory?.color
-    },
-
-    categoriesInSelect () {
-      return this.getCategoryByType(this.transactionType)
-    },
-
     showTransferIncomingAmount () {
       return (
         this.transactionType === 'transfer' &&
@@ -719,13 +671,6 @@ export default {
       if (this.offOnbadge) {
         this.model.is_onbadge = false
       }
-    }
-  },
-
-  mounted () {
-    if (this.$refs.focus) {
-      this.$refs.focus.$el.focus()
-      this.$refs.focus.$el.select()
     }
   },
 

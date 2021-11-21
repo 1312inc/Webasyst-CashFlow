@@ -123,6 +123,10 @@ body.modal {
   border-color: var(--red);
 }
 
+.bold.state-error {
+  font-weight: bold;
+}
+
 .width-50 {
   min-width: 0px;
 }

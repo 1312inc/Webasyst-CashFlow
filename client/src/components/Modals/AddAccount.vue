@@ -54,12 +54,11 @@
           <div class="value">
             <input-currency
               v-model="model.starting_balance"
-              class="number shorter"
+              :currencyCode="model.currency"
+              :showSign="false"
+              :short="true"
               placeholder="0"
             />
-            <span v-if="model.currency" class="custom-ml-8">{{
-              $helper.currencySignByCode(model.currency)
-            }}</span>
           </div>
         </div>
 
