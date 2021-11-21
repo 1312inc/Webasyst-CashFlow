@@ -48,7 +48,7 @@ class cashCategory extends cashAbstractEntity
      */
     private $glyph;
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -124,7 +124,7 @@ class cashCategory extends cashAbstractEntity
     }
 
     public function isIncome(): bool
-    {   
+    {
         return $this->type === self::TYPE_INCOME;
     }
 
