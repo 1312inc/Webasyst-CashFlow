@@ -25,7 +25,7 @@ class cashApiCategoryUpdateHandler implements cashApiHandlerInterface
             throw new kmwaNotFoundException(_w('No category'));
         }
 
-        if (!$category->isSystem()) {
+        if ($category->isSystem()) {
             throw new kmwaForbiddenException(_w('You can`t do anything with system categories'));
         }
 
