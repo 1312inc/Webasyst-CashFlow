@@ -44,6 +44,20 @@ export default {
   },
 
   actions: {
+    async bulkCreate ({ commit }, transactions) {
+      try {
+        const { data: createdTransactions } = await api.post(
+          'cash.transaction.bulkCreate',
+          transactions
+        )
+        commit('transaction/createTransactions', createdTransactions, {
+          root: true
+        })
+      } catch (_) {
+        return false
+      }
+    },
+
     async bulkDelete ({ dispatch, state, commit }) {
       const ids = state.selectedTransactionsIds
       try {
