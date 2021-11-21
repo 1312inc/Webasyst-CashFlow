@@ -193,7 +193,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /cash.category.create:
     post:
       tags:
@@ -250,7 +249,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /cash.category.update:
     post:
       tags:
@@ -315,7 +313,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /cash.category.delete:
     post:
       tags:
@@ -342,7 +339,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /cash.category.sort:
     post:
       tags:
@@ -416,6 +412,45 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /cash.system.searchContacts:
+    get:
+      tags:
+        - Разное
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: term
+          required: false
+          schema:
+            type: string
+            minLength: 0
+        - in: query
+          name: category_id
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            maximum: 30
+      responses:
+        200:
+          description: Пустой ответ в случае успеха
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/searchContactsResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -448,6 +483,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TransactionInfo'
+    searchContactsResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/SearchContactInfo'
+
+    SearchContactInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+        value:
+          type: string
+        name:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        photo_url:
+          type: string
+        photo_url_absolute:
+          type: string
+        label:
+          type: string
 
     AccountInfo:
       type: object

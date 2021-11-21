@@ -51,7 +51,10 @@ class cashJsonActions extends kmwaWaJsonActions
         try {
             $term = waRequest::get('term', '', waRequest::TYPE_STRING_TRIM);
             if ($term) {
-                $this->response = (new cashAutocomplete())->findContacts($term, 10);
+                $this->response = (new cashAutocomplete())->findContacts(
+                    new cashAutocompleteParamsDto($term, null),
+                    10
+                );
             }
         } catch (Exception $exception) {
             // tsss.. silence

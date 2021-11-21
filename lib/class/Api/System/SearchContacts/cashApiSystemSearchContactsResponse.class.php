@@ -14,6 +14,17 @@ class cashApiSystemSearchContactsResponse extends cashApiAbstractResponse
     {
         parent::__construct(200);
 
-        $this->response = $data;
+        foreach ($data as $datum) {
+            $this->response[] = new cashApiSystemSearchContactDto(
+                $datum['id'],
+                $datum['value'],
+                $datum['name'],
+                $datum['firstname'],
+                $datum['lastname'],
+                $datum['photo_url'],
+                $datum['photo_url_absolute'],
+                $datum['label']
+            );
+        }
     }
 }
