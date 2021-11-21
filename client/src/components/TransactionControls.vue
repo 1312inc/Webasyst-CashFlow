@@ -59,6 +59,14 @@
           </span>
         </button>
       </div>
+      <div>
+        <button @click="openAddBulk = true" class="button light-gray">
+          <span>
+            <i class="fas fa-layer-group"></i>
+            <span class="desktop-only custom-ml-8">{{ $t("addMany") }}</span>
+          </span>
+        </button>
+      </div>
     </div>
 
     <portal>
@@ -72,6 +80,12 @@
         <TransactionMove />
       </Modal>
     </portal>
+
+    <portal>
+      <Modal v-if="openAddBulk" @close="openAddBulk = false">
+        <AddTransactionBulk />
+      </Modal>
+    </portal>
   </div>
 </template>
 
@@ -79,6 +93,7 @@
 import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/Modals/AddTransaction'
+import AddTransactionBulk from '@/components/Modals/AddTransactionBulk'
 import TransactionMove from '@/components/Modals/TransactionMove'
 export default {
   props: {
@@ -94,6 +109,7 @@ export default {
   components: {
     Modal,
     AddTransaction,
+    AddTransactionBulk,
     TransactionMove
   },
 
@@ -101,7 +117,8 @@ export default {
     return {
       open: false,
       categoryType: '',
-      openMove: false
+      openMove: false,
+      openAddBulk: false
     }
   },
 
