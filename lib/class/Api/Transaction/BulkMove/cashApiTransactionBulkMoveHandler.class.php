@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashApiTransactionBulkMoveHandler
- */
-class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
+final class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
 {
     /**
      * @var cashApiTransactionResponseDtoAssembler
@@ -19,13 +16,20 @@ class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
      * @param cashApiTransactionBulkMoveRequest $request
      *
      * @return array|cashApiTransactionResponseDto[]
+     *
+     * @throws ReflectionException
+     * @throws kmwaAssertException
      * @throws kmwaForbiddenException
+     * @throws kmwaLogicException
+     * @throws kmwaNotImplementedException
+     * @throws kmwaRuntimeException
+     * @throws waDbException
      * @throws waException
      */
     public function handle($request)
     {
         /** @var cashTransaction[] $transactions */
-        $transactions = cash()->getEntityRepository(cashTransaction::class)->findById($request->ids);
+        $transactions = cash()->getEntityRepository(cashTransaction::class)->findById($request->getIds());
         if (!$transactions) {
             return [];
         }
@@ -34,9 +38,9 @@ class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
         $updateData = [];
 
         $account = null;
-        if ($request->account_id) {
+        if ($request->getAccountId()) {
             /** @var cashAccount $account */
-            $account = cash()->getEntityRepository(cashAccount::class)->findById($request->account_id);
+            $account = cash()->getEntityRepository(cashAccount::class)->findById($request->getAccountId());
             kmwaAssert::instance($account, cashAccount::class);
 
             if (!cash()->getContactRights()->hasMinimumAccessToAccount(wa()->getUser(), $account->getId())) {
@@ -46,9 +50,9 @@ class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
             $updateData['account_id'] = $account->getId();
         }
 
-        if ($request->category_id) {
+        if ($request->getCategoryId()) {
             /** @var cashAccount $category */
-            $category = cash()->getEntityRepository(cashCategory::class)->findById($request->category_id);
+            $category = cash()->getEntityRepository(cashCategory::class)->findById($request->getCategoryId());
             kmwaAssert::instance($category, cashCategory::class);
 
             if (!cash()->getContactRights()->hasMinimumAccessToCategory(wa()->getUser(), $category->getId())) {
@@ -58,9 +62,16 @@ class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
             $updateData['category_id'] = $category->getId();
         }
 
-
-        if (!$updateData['account_id'] && !$updateData['category_id']) {
-            throw new kmwaRuntimeException(_w('No valid category'));
+        if ($request->getContractorContactId()) {
+            $contractorContact = new waContact($request->getContractorContactId());
+            if ($contractorContact->exists()) {
+                $updateData['contractor_contact_id'] = $contractorContact->getId();
+            }
+        } elseif ($request->getContractorName()) {
+            $newContractor = new waContact();
+            $newContractor->set('name', $request->getContractorName());
+            $newContractor->save();
+            $updateData['contractor_contact_id'] = $newContractor->getId();
         }
 
         $fields = cash()->getModel(cashTransaction::class)->getMetadata();
