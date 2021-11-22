@@ -450,8 +450,6 @@
                             if (!transactionCounts[name][columnValue]) {
                                 return;
                             }
-                            
-                            var relationsStorage = JSON.parse(localStorage.getItem('relationsStorage') || '{}');
 
                             var $tpl = $template.tmpl({
                                 columnValue: columnValue,
@@ -464,14 +462,23 @@
                                 },
                                 transactions: transactionCounts[name][columnValue] + ' ' + $_('transactions')
                             }).on('change', 'select', function () {
-                                relationsStorage[columnValue] = $(this).find('option:selected').text();
-                                localStorage.setItem('relationsStorage', JSON.stringify(relationsStorage));
+                                var relations = JSON.parse(localStorage.getItem('relationsStorage') || '{}'),
+                                    optionValue = $(this).find('option:selected').val();
+                                
+                                // Exclude Skip rows and New Category options
+                                if (['0', '-1111111111', '-2222222222'].includes(optionValue)) {
+                                    delete relations[columnValue]
+                                } else {
+                                    relations[columnValue] = $(this).find('option:selected').text();
+                                }
+                                localStorage.setItem('relationsStorage', JSON.stringify(relations));
                             }).appendTo($wrapper);
 
-                            if (relationsStorage[columnValue]) {
+                            var relationsFromStorage = JSON.parse(localStorage.getItem('relationsStorage') || '{}');
+                            if (relationsFromStorage[columnValue]) {
                                 var $select = $tpl.find('select'),
                                     val = $select.find("option").filter(function () {
-                                        return $(this).text() == relationsStorage[columnValue];
+                                        return $(this).text() == relationsFromStorage[columnValue];
                                     }).val();
                                 $select.val(val).change();
                             }
