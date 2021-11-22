@@ -11,50 +11,7 @@
         :key="i"
         class="flexbox middle custom-mb-12 space-8"
       >
-        <input-currency
-          v-model="row.amount"
-          :signed="false"
-          :categoryId="row.category_id"
-          :accountId="row.account_id"
-          :error="$v.data.$each[i].amount.$error"
-          placeholder="0"
-        />
-
-        <div class="wa-select solid">
-          <select
-            v-model="row.category_id"
-            :class="{
-              'state-error': $v.data.$each[i].category_id.$error
-            }"
-          >
-            <option
-              :value="category.id"
-              v-for="category in $store.state.category.categories"
-              :key="category.id"
-            >
-              {{ category.name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="wa-select solid">
-          <select
-            v-model="row.account_id"
-            :class="{
-              'state-error': $v.data.$each[i].account_id.$error
-            }"
-          >
-            <option
-              :value="account.id"
-              v-for="account in $store.state.account.accounts"
-              :key="account.id"
-            >
-              {{ account.name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="state-with-inner-icon left">
+        <div class="state-with-inner-icon left width-25">
           <DateField
             v-model="row.date"
             :class="{
@@ -64,7 +21,49 @@
           <span class="icon"><i class="fas fa-calendar"></i></span>
         </div>
 
-        <div>
+        <div class="width-25">
+          <DropdownWa
+            v-model="row.category_id"
+            :items="
+              $store.state.category.categories.filter(c => c.id !== -1312)
+            "
+            valuePropName="id"
+            :error="$v.data.$each[i].category_id.$error"
+            :rowModificator="
+              obj =>
+                `<span class='icon'><i class='rounded' style='background-color:${obj.color};'></i></span><span>${obj.name}</span>`
+            "
+            :maxHeight="200"
+            class="width-100"
+          />
+        </div>
+
+        <div class="width-25">
+          <DropdownWa
+            v-model="row.account_id"
+            :items="$store.state.account.accounts"
+            valuePropName="id"
+            :error="$v.data.$each[i].account_id.$error"
+            :rowModificator="
+              obj => `${obj.name} (${$helper.currencySignByCode(obj.currency)})`
+            "
+            :maxHeight="200"
+            class="width-100"
+          />
+        </div>
+
+        <div class="width-25">
+          <input-currency
+            v-model="row.amount"
+            :signed="false"
+            :categoryId="row.category_id"
+            :accountId="row.account_id"
+            :error="$v.data.$each[i].amount.$error"
+            placeholder="0"
+          />
+        </div>
+
+        <div v-if="data.length > 1">
           <a @click.prevent="data.splice(i, 1)" href="#">
             <i class="fas fa-times"></i>
           </a>
@@ -99,10 +98,12 @@
 import { minLength, requiredIf } from 'vuelidate/lib/validators'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import DateField from '@/components/Inputs/InputDate'
+import DropdownWa from '@/components/Inputs/DropdownWa'
 export default {
   components: {
     InputCurrency,
-    DateField
+    DateField,
+    DropdownWa
   },
   data () {
     return {

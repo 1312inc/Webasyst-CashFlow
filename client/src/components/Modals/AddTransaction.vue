@@ -95,7 +95,7 @@
             <div v-if="transactionType !== 'transfer'" class="width-50">
               <DropdownWa
                 v-model="model.category_id"
-                :class="{ 'state-error': $v.model.category_id.$error }"
+                :error="$v.model.category_id.$error"
                 :label="$t('category')"
                 :items="getCategoryByType(transactionType)"
                 valuePropName="id"
@@ -118,7 +118,7 @@
               <div :class="{ 'width-50': transactionType === 'transfer' }">
                 <DropdownWa
                   v-model="model.account_id"
-                  :class="{ 'state-error': $v.model.account_id.$error }"
+                  :error="$v.model.account_id.$error"
                   :label="
                     transactionType === 'transfer' ||
                     transactionType === 'expense'
@@ -147,9 +147,7 @@
               >
                 <DropdownWa
                   v-model="model.transfer_account_id"
-                  :class="{
-                    'state-error': $v.model.transfer_account_id.$error,
-                  }"
+                  :error="$v.model.transfer_account_id.$error"
                   :label="$t('toAccount')"
                   :items="accountsTransfer"
                   valuePropName="id"
