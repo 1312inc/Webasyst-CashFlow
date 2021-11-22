@@ -63,6 +63,8 @@ paths:
                   type: string
                   minLength: 1
                   default: null
+              required:
+                - ids
       responses:
         200:
           description: Список транзакций
@@ -70,6 +72,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getTransactionsListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /cash.transaction.bulkComplete:
+    post:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 1
+              required:
+                - ids
+      responses:
+        200:
+          description: Список id обновленных транзакций
+          content:
+            application/json:
+              schema:
+                type: string
+                default: "ok"
         400:
           description: Ошибка
           content:
