@@ -100,6 +100,8 @@ final class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
         $response = [];
         foreach ($saved as $savedT) {
             $dto = $this->transactionResponseDtoAssembler->generateResponseFromEntity($savedT);
+            $dto->affected_transaction_ids = [$dto->id];
+            $dto->affected_transactions = 1;
             $response[] = $dto;
         }
 
