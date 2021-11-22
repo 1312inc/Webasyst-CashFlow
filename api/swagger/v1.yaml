@@ -173,7 +173,103 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
+  /cash.account.create:
+    post:
+      tags:
+        - Счета
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                currency:
+                  type: string
+                  minLength: 3
+                icon:
+                  type: string
+                  minLength: 1
+                icon_link:
+                  type: string
+                  minLength: 1
+                  nullable: true
+                description:
+                  type: string
+                  minLength: 1
+                  nullable: true
+              required:
+                - name
+                - currency
+                - icon
+      responses:
+        200:
+          description: Cозданный счет
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountInfo'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /cash.account.update:
+    post:
+      tags:
+        - Счета
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  minimum: 1
+                name:
+                  type: string
+                  minLength: 1
+                currency:
+                  type: string
+                  minLength: 3
+                icon:
+                  type: string
+                  minLength: 1
+                icon_link:
+                  type: string
+                  minLength: 1
+                  nullable: true
+                description:
+                  type: string
+                  minLength: 1
+                  nullable: true
+              required:
+                - id
+                - name
+                - currency
+                - icon
+                - description
+      responses:
+        200:
+          description: Cозданный счет
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountInfo'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /cash.category.getList:
     get:
       tags:
@@ -462,7 +558,14 @@ components:
     getAccountsListResponse:
       type: array
       items:
-        $ref: '#/components/schemas/AccountInfo'
+        allOf:
+          - $ref: '#/components/schemas/AccountInfo'
+          - type: object
+            required:
+              - stat
+            properties:
+              stat:
+                $ref: '#/components/schemas/StatInfo'
     getCategoriesListResponse:
       type: array
       items:
@@ -538,10 +641,12 @@ components:
           type: string
           format: date-time
         stat:
-          $ref: '#/components/schemas/StatInfo'
+          type: object
+          nullable: true
 
     StatInfo:
       type: object
+      nullable: false
       properties:
         income:
           type: number
@@ -597,10 +702,12 @@ components:
           type: integer
           minimum: 0
           nullable: true
+          default: null
         glyph:
           type: string
           minLength: 1
           nullable: true
+          default: null
 
     TransactionInfo:
       type: object

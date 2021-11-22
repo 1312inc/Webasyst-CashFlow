@@ -6,8 +6,8 @@
 class cashAccountSaver extends cashEntitySaver
 {
     /**
-     * @param cashAccount                  $account
-     * @param array                        $data
+     * @param cashAccount $account
+     * @param array $data
      * @param cashTransactionSaveParamsDto $params
      *
      * @return bool
@@ -27,6 +27,28 @@ class cashAccountSaver extends cashEntitySaver
             }
 
             cash()->getHydrator()->hydrate($account, $data);
+            cash()->getEntityPersister()->save($account);
+
+            return true;
+        } catch (Exception $ex) {
+            $this->error = $ex->getMessage();
+        }
+
+        return false;
+    }
+
+    public function saveFromApi(
+        cashAccount $account,
+        cashApiAccountCreateRequest $request,
+        cashTransactionSaveParamsDto $params = null
+    ): bool {
+        try {
+            $account->setDescription($request->getDescription())
+                ->setName($request->getName())
+                ->setIcon($request->getIcon())
+                ->setCurrency($request->getCurrency())
+                ->setCustomerContactId(wa()->getUser()->getId());
+
             cash()->getEntityPersister()->save($account);
 
             return true;
