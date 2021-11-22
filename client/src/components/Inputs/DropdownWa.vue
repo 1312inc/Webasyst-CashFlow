@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="{ 'is-opened': open }"
+    :class="{ 'is-opened': open, 'state-error': error }"
     v-click-outside="() => (open = false)"
     class="dropdown"
   >
@@ -79,6 +79,10 @@ export default {
     maxHeight: {
       type: Number,
       default: 500
+    },
+    error: {
+      type: Boolean,
+      default: false
     }
   },
 
