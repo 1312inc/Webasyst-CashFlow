@@ -31,7 +31,51 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
+  /cash.transaction.bulkMove:
+    post:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 1
+                category_id:
+                  type: integer
+                  minimum: 1
+                  default: null
+                account_id:
+                  type: integer
+                  minimum: 1
+                  default: null
+                contractor_contact_id:
+                  type: integer
+                  minimum: 1
+                  default: null
+                contractor_contact:
+                  type: string
+                  minLength: 1
+                  default: null
+      responses:
+        200:
+          description: Список транзакций
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getTransactionsListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /cash.transaction.bulkCreate:
     post:
       tags:
@@ -58,7 +102,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
   /cash.transaction.getList:
     get:
       tags:

@@ -166,6 +166,8 @@ trait kmwaWaUserTrait
             $this->exists = $this->contact->get('is_user') != -1;
             $this->email = $this->contact->get('email', 'default');
             $this->timezone = $this->contact->getTimezone();
+            $this->firstName = $this->contact->get('firstname');
+            $this->lastName = $this->contact->get('lastname');
         }
 
         return $this;

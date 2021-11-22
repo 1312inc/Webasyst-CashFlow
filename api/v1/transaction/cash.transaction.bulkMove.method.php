@@ -1,28 +1,40 @@
 <?php
 
-/**
- * Class cashTransactionBulkMoveMethod
- */
-class cashTransactionBulkMoveMethod extends cashApiAbstractMethod
-{
-    private const MAX_IDS = 500;
+use ApiPack1312\ApiParamsCaster;
+use ApiPack1312\Exception\ApiException;
+use ApiPack1312\Exception\ApiMissingParamException;
+use ApiPack1312\Exception\ApiWrongParamException;
 
-    protected $method = [self::METHOD_POST, self::METHOD_DELETE];
+final class cashTransactionBulkMoveMethod extends cashApiNewAbstractMethod
+{
+    protected $method = self::METHOD_POST;
 
     /**
      * @return cashApiTransactionBulkMoveResponse|cashApiErrorResponse
+     *
+     * @todo: omg
+     * @throws ApiException
+     * @throws ApiMissingParamException
+     * @throws ApiWrongParamException
+     * @throws ReflectionException
+     * @throws cashValidateException
+     * @throws kmwaAssertException
      * @throws kmwaForbiddenException
-     * @throws waAPIException
+     * @throws kmwaLogicException
+     * @throws kmwaNotImplementedException
+     * @throws kmwaRuntimeException
+     * @throws waDbException
      * @throws waException
      */
     public function run(): cashApiResponseInterface
     {
-        /** @var cashApiTransactionBulkMoveRequest $request */
-        $request = $this->fillRequestWithParams(new cashApiTransactionBulkMoveRequest());
-
-        if (count($request->ids) > self::MAX_IDS) {
-            return new cashApiErrorResponse(sprintf_wp('Too many transactions to move. Max limit is %d', self::MAX_IDS));
-        }
+        $request = new cashApiTransactionBulkMoveRequest(
+            $this->fromPost('ids', true, ApiParamsCaster::CAST_ARRAY),
+            $this->fromPost('category_id', false, ApiParamsCaster::CAST_INT),
+            $this->fromPost('account_id', false, ApiParamsCaster::CAST_INT),
+            $this->fromPost('contractor_contact_id', false, ApiParamsCaster::CAST_INT),
+            $this->fromPost('contractor_contact', false, ApiParamsCaster::CAST_STRING_TRIM)
+        );
 
         $transactions = (new cashApiTransactionBulkMoveHandler())->handle($request);
 
