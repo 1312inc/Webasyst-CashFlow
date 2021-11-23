@@ -115,12 +115,6 @@ export default {
         this.itemsList[0]
       )
     }
-  },
-
-  created () {
-    if (this.value === this.$options.props.value.default) {
-      this.$emit('input', this.itemsList[0][this.valuePropName])
-    }
   }
 }
 </script>
