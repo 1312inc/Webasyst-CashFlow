@@ -67,7 +67,7 @@
   "endRepeat": {
     "name": "End repeat",
     "list": [
-      "Never",
+      "Repeat forever",
       "Limit the number of occurrences",
       "Until the date"
     ],
