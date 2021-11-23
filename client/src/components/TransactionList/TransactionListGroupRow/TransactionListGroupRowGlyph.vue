@@ -7,7 +7,8 @@
       <img
         v-if="transaction.contractor_contact"
         :src="transaction.contractor_contact.userpic"
-        alt=""
+        :alt="transaction.contractor_contact.name"
+        :title="transaction.contractor_contact.name"
         class="c-contractor"
       />
       <div v-else>
@@ -16,7 +17,7 @@
       <!-- if repeating imported transaction -->
       <span
         v-if="collapseHeaderData"
-        class="badge small"
+        class="badge smaller"
         :style="transaction.external_source_info ? `background:${transaction.external_source_info.color}` : ''"
         :title="transaction.external_source_info ? transaction.external_source_info.name : ''"
       >
@@ -102,7 +103,8 @@ export default {
 .userpic48 > .badge {
   position: absolute;
   bottom: -0.125rem;
-  right: -0.5rem;
+  right: -0.125rem;
+  border: 2px solid var(--background-color-blank);
 }
 
 .c-userpic-stack-imitation {

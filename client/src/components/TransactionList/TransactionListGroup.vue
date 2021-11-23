@@ -112,7 +112,7 @@
             @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
         </ul>
-        <div v-else class="align-center custom-py-24">
+        <div v-else class="align-center small custom-py-24">
           {{ $t("emptyList") }}
         </div>
       </div>
