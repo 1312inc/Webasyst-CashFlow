@@ -65,7 +65,7 @@
 
         <div v-if="data.length > 1">
           <a @click.prevent="data.splice(i, 1)" href="#">
-            <i class="fas fa-times"></i>
+            <i class="fas fa-times-circle text-light-gray"></i>
           </a>
         </div>
       </div>
@@ -75,7 +75,7 @@
           @click.prevent="data.push({ ...model })"
           href="#"
           class="small"
-          >{{ $t("add") }}</a
+          >{{ $t("addmore") }}</a
         >
       </div>
     </div>
