@@ -63,7 +63,7 @@
         <button @click="openAddBulk = true" class="button nobutton gray">
           <span>
             <i class="fas fa-list-ul"></i>
-            <span class="desktop-only custom-ml-8 text-black">{{ $t("addMany") }}</span>
+            <span class="desktop-only custom-ml-8 black">{{ $t("addMany") }}</span>
           </span>
         </button>
       </div>
