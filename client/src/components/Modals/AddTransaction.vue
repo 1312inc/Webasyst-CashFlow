@@ -515,7 +515,10 @@ export default {
         required
       },
       category_id: {
-        required
+        required,
+        mustBeTheSameTransactionType: function () {
+          return this.selectedCategory?.type === this.transactionType
+        }
       },
       repeating_frequency: {
         required: requiredIf(function () {
@@ -612,13 +615,6 @@ export default {
   },
 
   watch: {
-    transactionType () {
-      if (!this.isModeUpdate) {
-        this.model.category_id = null
-        this.model.account_id = null
-        this.model.transfer_account_id = null
-      }
-    },
     'model.repeating_interval' (val) {
       if (val !== 'custom') this.model.repeating_frequency = 1
     },

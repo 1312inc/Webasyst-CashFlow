@@ -60,7 +60,7 @@ DropdownCats.args = {
 
 export const DropdownAccounts = Template.bind({})
 DropdownAccounts.args = {
-  value: 1,
+  value: null,
   items: window.appState.accounts,
   valuePropName: 'id',
   label: 'На счет',
