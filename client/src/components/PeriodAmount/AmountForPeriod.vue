@@ -16,8 +16,8 @@
         "
       >
         <div class="custom-ml-12">
-          <i v-if="type === 'profit'" class="fas fa-coins text-blue small"></i>
-          <span class="small semibold">{{
+          <i v-if="type === 'profit'" class="fas fa-coins text-blue smaller"></i>
+          <span class="smaller semibold">{{
             $helper.toCurrency({
               value: getTotalByType(type),
               currencyCode: currencyCode,
@@ -33,7 +33,7 @@
         :title="$t('delta')"
       >
         <div class="custom-ml-12">
-          <span class="small semibold gray">
+          <span class="smaller semibold gray">
             {{
               $helper.toCurrency({
                 value: amountDelta,

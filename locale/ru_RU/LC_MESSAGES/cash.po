@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: utf-8\n"
 "Language: ru_RU\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 3.0\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -1130,3 +1130,9 @@ msgstr "У вас нет доступа к созданию новых счет�
 
 msgid "Import via CSV"
 msgstr "Импорт из CSV"
+
+msgid "Review and manage previous import results:"
+msgstr "Проверьте результаты прошлых импортов:"
+
+msgid "Dismiss import history"
+msgstr "Очистить историю импортов"

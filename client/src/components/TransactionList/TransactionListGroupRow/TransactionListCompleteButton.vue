@@ -6,21 +6,20 @@
     class="dropdown"
   >
     <button @click.stop="" class="light-gray small nowrap rounded">
-      <i class="fas fa-check"></i>
+      <i class="fas fa-check-circle text-red"></i>
       <span class="desktop-only">
         {{ $t("Process") }}
+         <i class="fas fa-chevron-down text-light-gray fa-xs"></i>
       </span>
     </button>
-    <div class="dropdown-body">
+    <div class="dropdown-body right" style="min-width: 250px;">
       <ul class="menu">
         <li>
           <a @click.prevent.stop="handleComplete" href="#" class="custom-p-8">
-            <div>
-              <div>
-                <i class="fas fa-check"></i
-                ><span>{{ $t("processToday") }}</span>
-              </div>
-              <span class="hint">
+            <i class="fas fa-check text-red"></i>
+            <span>
+              <span class="semibold">{{ $t("processToday") }}</span>
+              <p class="hint custom-mt-4">
                 {{
                   $t("amountOnDate", {
                     amount: $helper.toCurrency({
@@ -30,8 +29,8 @@
                     date: $moment(transaction.date).format("LL")
                   })
                 }}
-              </span>
-            </div>
+              </p>
+            </span>
           </a>
         </li>
         <li>
@@ -41,7 +40,7 @@
             class="custom-p-8"
           >
             <i class="fas fa-pencil-alt"></i
-            ><span>{{ $t("processEdits") }}</span></a
+            ><span class="semibold">{{ $t("processEdits") }}</span></a
           >
         </li>
       </ul>

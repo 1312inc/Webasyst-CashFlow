@@ -1,5 +1,5 @@
 <template>
-  <div class="dialog-body" style="width: 700px">
+  <div class="dialog-body" style="width: 750px">
     <div class="dialog-header">
       <div class="flexbox middle">
         <div class="wide flexbox middle">
@@ -26,9 +26,9 @@
     </div>
 
     <div class="dialog-content">
-      <div class="flexbox space-16">
-        <div class="width-50">
-          <div class="custom-mb-16">
+      <div class="flexbox space-24 wrap-mobile">
+        <div style="flex: 0;">
+          <div class="custom-mb-16 c-inline-calendar">
             <DateField
               v-model="model.date"
               :inline="true"
@@ -61,7 +61,7 @@
             </div>
           </div>
         </div>
-        <div class="width-50">
+        <div class="wide custom-mt-24-mobile">
           <!-- Start Toggle type section -->
           <div v-if="!isModeUpdate" class="toggle custom-mb-16">
             <span
@@ -85,6 +85,7 @@
               :error="$v.model.amount.$error"
               :transactionType="transactionType"
               :focused="true"
+              class="larger"
               placeholder="0"
             />
           </div>
@@ -107,7 +108,7 @@
                 class="width-100"
               />
             </div>
-            <div v-if="transactionType !== 'transfer'" class="custom-px-4 gray" :style="transactionType === 'expense' ? 'transform: rotate(180deg);' : ''">
+            <div v-if="transactionType !== 'transfer'" class="custom-px-8 gray" :style="transactionType === 'expense' ? 'transform: rotate(180deg);' : ''">
               <i class="fas fa-arrow-right"></i>
             </div>
             <div
@@ -211,7 +212,7 @@
           <div class="custom-mb-16">
             <textarea
               v-model="model.description"
-              class="width-100 bold"
+              class="width-100"
               rows="3"
               style="resize: none; height: auto"
               :placeholder="$t('desc')"

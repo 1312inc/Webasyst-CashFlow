@@ -1,5 +1,5 @@
 <template>
-  <div sticky-container class="custom-mt-24 c-transaction-section">
+  <div sticky-container class="custom-mt-16 c-transaction-section">
     <div
       @mouseover="
         isHover = true;
@@ -41,7 +41,7 @@
               </span>
             </div>
 
-            <h3 v-if="!showFoundedCount" class="c-transaction-section__header nowrap">
+            <h4 v-if="!showFoundedCount" class="c-transaction-section__header nowrap">
               <div v-if="type === 'overdue'" class="black">
                 {{ $t("overdue") }}
               </div>
@@ -73,7 +73,7 @@
               >
                 {{ $moment(type).format("MMMM YYYY") }}
               </div>
-            </h3>
+            </h4>
 
             <div v-if="showFoundedCount" class="gray bold">
               {{ $t('found', { count: filteredTransactions.length }) }}

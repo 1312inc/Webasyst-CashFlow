@@ -76,11 +76,11 @@
             :category="category"
           />
           <div v-if="account.name" class="text-ellipsis small gray">
-            {{ account.name }}
+            / {{ account.name }} /
           </div>
         </div>
         <div class="c-item-amount">
-          <div :style="`color: ${category.color}`" class="bold nowrap">
+          <div :style="`color: ${category.color}`" class="bold nowrap custom-mb-4">
             {{
               $helper.toCurrency({
                 value: isCollapseHeader
@@ -91,16 +91,19 @@
               })
             }}
           </div>
-          <div
-            v-if="transaction.balance"
-            class="small align-right nowrap custom-mt-4"
-          >
-            {{
-              $helper.toCurrency({
-                value: transaction.balance,
-                currencyCode: account.currency
-              })
-            }}
+          <div v-if="account.name" class="text-ellipsis small gray">
+            {{ account.name }}
+            <span
+              v-if="transaction.balance"
+              class="nowrap text-black"
+            >
+              {{
+                $helper.toCurrency({
+                  value: transaction.balance,
+                  currencyCode: account.currency
+                })
+              }}
+            </span>
           </div>
         </div>
         <transition name="fade" :duration="300">

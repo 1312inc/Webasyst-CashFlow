@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="transactionsJustCreated.length"
-    class="custom-mb-24 c-transaction-section"
+    class="custom-mb-16 c-transaction-section"
   >
     <div class="flexbox middle custom-py-8">
       <div class="flexbox middle space-12 wide">
