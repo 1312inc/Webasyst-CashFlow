@@ -41,7 +41,7 @@
 
       <div class="desktop-and-tablet-only" style="width: 7rem;flex-shrink: 0;">
         <template v-if="showDate">
-          <div class="custom-mb-4 bold nowrap">
+          <div class="custom-mb-4 bold nowrap c-group-date">
             {{
               $moment(transaction.date).format(
                 $moment.locale() === "ru" ? "D MMMM" : "MMMM D"
@@ -75,8 +75,19 @@
             :isRepeatingGroup="isRepeatingGroup"
             :category="category"
           />
-          <div v-if="account.name" class="text-ellipsis small gray">
-            / {{ account.name }} /
+          <div
+            v-if="transaction.description"
+            class="black small text-ellipsis"
+            style="flex-shrink: 1"
+          >
+            {{ transaction.description }}
+          </div>
+          <div
+            v-if="transaction.contractor_contact && !transaction.description"
+            class="gray small text-ellipsis"
+            style="flex-shrink: 1"
+          >
+            {{ transaction.contractor_contact.name }}
           </div>
         </div>
         <div class="c-item-amount">
@@ -92,10 +103,13 @@
             }}
           </div>
           <div v-if="account.name" class="text-ellipsis small gray">
-            {{ account.name }}
+            {{ account.name | truncate 32 }}
             <span
               v-if="transaction.balance"
-              class="nowrap text-black"
+              class="nowrap black"
+              :title="
+                $t('accountBalanceTransactionListHint')
+              "
             >
               {{
                 $helper.toCurrency({

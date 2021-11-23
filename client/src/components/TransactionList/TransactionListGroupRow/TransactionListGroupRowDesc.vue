@@ -12,26 +12,16 @@
     </div>
     <!-- if collapsed transactions header -->
     <template v-if="collapseHeaderData && transaction.external_source_info">
-      <div
-        class="text-ellipsis c-grouped-transaction-description"
-        style="flex: 0 1 auto"
-        :title="
-          $t('collapseTransactionDesc', {
-            category: category.name,
-            count: collapseHeaderData.ids.length
-          })
-        "
-      >
-        {{ transaction.external_source_info.name }}
-      </div>
       <span
         v-if="transaction.external_source_info"
         :style="`color:${transaction.external_source_info.color}`"
+        :title="transaction.external_source_info.name"
+        class="small"
       >
         <i :class="transaction.external_source_info.glyph" class="fas"></i>
       </span>
     </template>
-    <!-- if repeating transactions in fututre -->
+    <!-- if repeating transactions in future -->
     <template v-else-if="isRepeatingGroup">
       <div
         class="black text-ellipsis"
@@ -42,20 +32,23 @@
           })
         "
       >
-        {{ transaction.description }}
+        <span class="smaller custom-mr-4">
+          <i class="fas fa-redo opacity-50"></i>
+        </span>
       </div>
     </template>
-    <!-- mormal transaction -->
+    <!-- regular transaction -->
     <template v-else>
-      <div
-        v-if="transaction.description"
-        class="black text-ellipsis"
-        style="flex-shrink: 1"
-      >
-        {{ transaction.description }}
-      </div>
+      <span
+        v-if="transaction.external_source_info"
+        :style="`color:${transaction.external_source_info.color}`"
+        :title="transaction.external_source_info.name"
+        class="small"
+    >
+        <i :class="transaction.external_source_info.glyph" class="fas"></i>
+      </span>
       <span v-if="transaction.repeating_id" :title="title">
-        <span class="small custom-mr-4">
+        <span class="smaller custom-mr-4">
           <i class="fas fa-redo opacity-50"></i>
         </span>
       </span>

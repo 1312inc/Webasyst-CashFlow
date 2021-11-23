@@ -186,5 +186,6 @@
   },
   "export": "Экспорт",
   "transactionDate": "Дата операции: {date}",
-  "amountOnDate": "{amount}, {date}"
+  "amountOnDate": "{amount}, {date}",
+  "accountBalanceTransactionListHint": "Баланс счета после проведения этой операции"
 }

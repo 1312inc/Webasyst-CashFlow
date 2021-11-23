@@ -186,5 +186,6 @@
   },
   "export": "Export",
   "transactionDate": "Transaction date: {date}",
-  "amountOnDate": "{amount} on {date}"
+  "amountOnDate": "{amount} on {date}",
+  "accountBalanceTransactionListHint": "Account balance after the transaction has been processed"
 }
