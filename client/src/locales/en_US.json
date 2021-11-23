@@ -23,6 +23,7 @@
   "name": "Name",
   "selected": "{count} transactions",
   "found": "{count} transactions found",
+  "notFound": "Not found",
   "currency": "Currency",
   "type": "Type",
   "color": "Color",
