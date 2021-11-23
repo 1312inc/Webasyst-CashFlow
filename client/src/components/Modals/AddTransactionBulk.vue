@@ -113,7 +113,7 @@ export default {
         account_id: null,
         date: null
       },
-      data: new Array(5).fill(null).map(() => ({ ...this.model })),
+      data: [],
       controlsDisabled: true
     }
   },
@@ -137,6 +137,12 @@ export default {
     }
   },
 
+  computed: {
+    accounts () {
+      return this.$store.state.account.accounts
+    }
+  },
+
   watch: {
     data: {
       handler (val) {
@@ -144,6 +150,19 @@ export default {
       },
       deep: true
     }
+  },
+
+  created () {
+    const currentType = this.$store.state.currentType
+    if (currentType === 'account' || currentType === 'category') {
+      this.model[`${currentType}_id`] = this.$store.state.currentTypeId
+    }
+
+    if (this.accounts.length === 1) {
+      this.model.account_id = this.accounts[0].id
+    }
+
+    this.data = new Array(5).fill(null).map(() => ({ ...this.model }))
   },
 
   methods: {

@@ -103,7 +103,7 @@
             }}
           </div>
           <div v-if="account.name" class="text-ellipsis small gray">
-            {{ account.name | truncate 32 }}
+            {{ account.name }}
             <span
               v-if="transaction.balance"
               class="nowrap black"
