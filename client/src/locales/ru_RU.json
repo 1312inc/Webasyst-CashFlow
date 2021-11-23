@@ -23,6 +23,7 @@
   "name": "Название",
   "selected": "{count} операций",
   "found": "найдено {count} операций",
+  "notFound": "Не найдено",
   "currency": "Валюта",
   "type": "Тип",
   "color": "Цвет",
