@@ -154,7 +154,7 @@
   "expenseCategoryExplained": "Expense transactions decrease the account balance.",
   "profitCategoryExplained": "For business, profit is similar to expense because its taking money out of business and thus decreasing the account balance. The Profit checkbox allows you to visually group this kind of expenses into separate blue columns.",
   "notifyMe": "Remind to process when due",
-  "notifyMeAlert": "When the transaction date comes, the app will highlight it on the app icon and on the Up Next list and kindly remind you to manually confirm and process the transaction as is or with some changes",
+  "notifyMeAlert": "When the transaction date comes, a tiny little notification on the app icon will emerge and remind you to process (confirm) this transaction",
   "error": {
     "http": "Request failed",
     "api": "API error"
