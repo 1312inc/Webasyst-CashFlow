@@ -77,6 +77,10 @@ class cashApiTransactionResponseDtoAssembler extends cashApiTransactionResponseD
             $dto->contractor_contact = $this->getContactData($dto->contractor_contact_id);
         }
 
+        if (!empty($dto->repeating_id)) {
+            $dto->repeating_data = $this->getRepeatingData($dto->repeating_id);
+        }
+
         return $dto;
     }
 
@@ -92,6 +96,10 @@ class cashApiTransactionResponseDtoAssembler extends cashApiTransactionResponseD
         $dto->create_contact = $this->getContactData($dto->create_contact_id);
         if ($dto->contractor_contact_id) {
             $dto->contractor_contact = $this->getContactData($dto->contractor_contact_id);
+        }
+
+        if (!empty($dto->repeating_id)) {
+            $dto->repeating_data = $this->getRepeatingData($dto->repeating_id);
         }
 
         return $dto;

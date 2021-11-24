@@ -31,6 +31,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /cash.transaction.update:
+    post:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionUpdateRequest'
+      responses:
+        200:
+          description: Список созданных транзакций
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getTransactionsListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /cash.transaction.bulkMove:
     post:
       tags:
@@ -993,6 +1017,97 @@ components:
           nullable: true
           default: null
       required:
+        - amount
+        - date
+        - account_id
+        - category_id
+    TransactionUpdateRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 1
+        apply_to_all_in_future:
+          type: boolean
+          default: false
+          description: Применяет изменения для всех повторяющихся транзакций в будущем
+        amount:
+          type: number
+          minimum: -1000000000000.0
+          maximum: 1000000000000.0
+          default: 1312.11
+        date:
+          type: string
+          format: date
+        account_id:
+          type: integer
+          minimum: 1
+        category_id:
+          type: integer
+        contractor_contact_id:
+          type: integer
+          minimum: 0
+          nullable: true
+          default: null
+        contractor:
+          type: string
+          minLength: 2
+          nullable: true
+          default: null
+        description:
+          type: string
+          minLength: 2
+          nullable: true
+          default: null
+        is_repeating:
+          type: boolean
+          default: false
+          nullable: true
+        repeating_frequency:
+          type: integer
+          minimum: 1
+          nullable: true
+          default: null
+        repeating_interval:
+          type: string
+          nullable: true
+          default: null
+          enum:
+            - 'day'
+            - 'week'
+            - 'month'
+            - 'year'
+        repeating_end_type:
+          type: string
+          nullable: true
+          default: null
+          enum:
+            - 'after'
+            - 'ondate'
+        repeating_end_after:
+          type: integer
+          nullable: true
+          default: null
+        repeating_end_ondate:
+          type: string
+          format: date
+          nullable: true
+          default: null
+        transfer_account_id:
+          type: integer
+          nullable: true
+          default: null
+        transfer_incoming_amount:
+          type: number
+          nullable: true
+          default: null
+        is_onbadge:
+          type: boolean
+          nullable: true
+          default: null
+      required:
+        - id
+        - apply_to_all_in_future
         - amount
         - date
         - account_id
