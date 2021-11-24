@@ -27,7 +27,6 @@ class cashTransactionUpdateMethod extends cashApiAbstractMethod
 
         $response = (new cashApiTransactionUpdateHandler())->handle($request);
 
-
         cash()->getEventDispatcher()->dispatch(
             new cashEvent(cashEventStorage::API_TRANSACTION_BEFORE_RESPONSE, new ArrayIterator([$response]))
         );
