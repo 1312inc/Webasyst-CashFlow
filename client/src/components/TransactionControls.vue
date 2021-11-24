@@ -49,7 +49,8 @@
         v-if="
           currentType.type !== 'expense' &&
           currentType.type !== 'income' &&
-          $permissions.canAccessTransfers
+          $permissions.canAccessTransfers &&
+          $store.state.account.accounts.length > 1
         "
       >
         <button @click="addTransaction('transfer')" class="button light-gray">
