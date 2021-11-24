@@ -43,7 +43,7 @@ class cashApiCategoryCreateRequest
         string $name,
         string $type,
         string $color,
-        int $sort,
+        ?int $sort,
         ?bool $isProfit,
         ?int $parentCategoryId,
         ?string $glyph
@@ -55,7 +55,7 @@ class cashApiCategoryCreateRequest
         $this->name = $name;
         $this->type = $type;
         $this->color = $color;
-        $this->sort = $sort;
+        $this->sort = (int) $sort;
         $this->isProfit = $isProfit;
         $this->parentCategoryId = $parentCategoryId;
         $this->glyph = $glyph;
