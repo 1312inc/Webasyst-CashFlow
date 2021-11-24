@@ -84,7 +84,7 @@ class cashCategory extends cashAbstractEntity
         return $this;
     }
 
-    public function getColor(): string
+    public function getColor(): ?string
     {
         return $this->color;
     }
