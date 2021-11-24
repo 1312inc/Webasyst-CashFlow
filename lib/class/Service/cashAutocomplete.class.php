@@ -253,7 +253,7 @@ SQL;
         $found = array_values($result);
         cash()->getCache()->set($key, $found, 30);
 
-        return $found;
+        return $found ?: [];
     }
 
 
