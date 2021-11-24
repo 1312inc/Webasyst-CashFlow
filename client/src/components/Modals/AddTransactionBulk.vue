@@ -1,11 +1,11 @@
 <template>
-  <div class="dialog-body" style="width: 700px;">
+  <div class="dialog-body" style="width: 700px; overflow: initial;">
     <div class="dialog-header">
       <h2 class="custom-mb-0">
         {{ $t("addMany") }}
       </h2>
     </div>
-    <div class="dialog-content">
+    <div class="dialog-content" style="overflow: initial;">
       <div
         v-for="(row, i) in data"
         :key="i"
