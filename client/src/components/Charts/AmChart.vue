@@ -135,7 +135,7 @@ export default {
 
       // Balance Axis
       const balanceAxis = chart.yAxes.push(new am4charts.ValueAxis())
-      balanceAxis.height = 220
+      balanceAxis.height = 120
       balanceAxis.align = 'right'
       balanceAxis.cursorTooltipEnabled = false
       balanceAxis.numberFormatter = new am4core.NumberFormatter()
@@ -585,7 +585,7 @@ export default {
 
 <style lang="scss">
   .c-chart-main {
-    height: 450px;
+    height: 300px;
     margin: 0 1.25rem 0 1rem;
 
     @media (max-width: 760px) {
