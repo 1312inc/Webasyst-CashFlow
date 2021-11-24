@@ -66,7 +66,12 @@ export default {
 @import "~flatpickr/dist/flatpickr.css";
 [data-theme="dark"] {
   .flatpickr-calendar {
-    background: transparent;
+    background: var(--background-color-blank);
+    box-shadow: none;
+  }
+  .flatpickr-calendar.arrowTop:before,
+  .flatpickr-calendar.arrowTop:after {
+    border-bottom-color: var(--background-color-blank);
   }
   .flatpickr-months .flatpickr-month,
   .flatpickr-months .flatpickr-prev-month,
