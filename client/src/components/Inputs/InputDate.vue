@@ -62,6 +62,40 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 @import "~flatpickr/dist/flatpickr.css";
+[data-theme="dark"] {
+  .flatpickr-calendar {
+    background: transparent;
+  }
+  .flatpickr-months .flatpickr-month,
+  .flatpickr-months .flatpickr-prev-month,
+  .flatpickr-months .flatpickr-next-month,
+  span.flatpickr-weekday,
+  .flatpickr-day:not(.selected) {
+    color: var(--text-color);
+  }
+  .flatpickr-months .flatpickr-prev-month,
+  .flatpickr-months .flatpickr-next-month {
+    fill: var(--text-color);
+  }
+  .flatpickr-day.flatpickr-disabled,
+  .flatpickr-day.flatpickr-disabled:hover,
+  .flatpickr-day.prevMonthDay,
+  .flatpickr-day.nextMonthDay,
+  .flatpickr-day.notAllowed,
+  .flatpickr-day.notAllowed.prevMonthDay,
+  .flatpickr-day.notAllowed.nextMonthDay {
+    color: var(--text-color-hint);
+  }
+  .numInputWrapper span {
+    border-color: var(--text-color);
+  }
+  .flatpickr-current-month .numInputWrapper span.arrowDown:after {
+    border-top-color: var(--text-color);
+  }
+  .flatpickr-current-month .numInputWrapper span.arrowUp:after {
+    border-bottom-color: var(--text-color);
+  }
+}
 </style>
