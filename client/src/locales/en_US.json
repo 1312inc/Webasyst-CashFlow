@@ -187,5 +187,8 @@
   "export": "Export",
   "transactionDate": "Transaction date: {date}",
   "amountOnDate": "{amount} on {date}",
-  "accountBalanceTransactionListHint": "Account balance after the transaction has been processed"
+  "accountBalanceTransactionListHint": "Account balance after the transaction has been processed",
+  "specify": "Specify",
+  "recipient": "recipient",
+  "payee": "payee"
 }
