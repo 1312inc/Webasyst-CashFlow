@@ -57,6 +57,23 @@
             </div>
           </div>
         </div>
+
+        <!-- Start Contractor section -->
+        <div class="field">
+          <div class="name for-input">{{ $t("contractor") }}</div>
+          <div class="value">
+            <InputContractor
+              @changeContractor="
+                id => {
+                  model.contractor_contact_id = id;
+                }
+              "
+              :createNewContractor="false"
+            />
+          </div>
+        </div>
+        <!-- End Contractor section -->
+
         <div class="field">
           <div class="name"></div>
           <div class="value">
@@ -93,12 +110,18 @@
 
 <script>
 import { mapState } from 'vuex'
+import InputContractor from '@/components/Inputs/InputContractor'
 export default {
+  components: {
+    InputContractor
+  },
+
   data () {
     return {
       model: {
         account_id: 0,
-        category_id: 0
+        category_id: 0,
+        contractor_contact_id: null
       },
       controlsDisabled: false
     }

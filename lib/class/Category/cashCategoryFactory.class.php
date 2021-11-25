@@ -30,7 +30,7 @@ class cashCategoryFactory extends cashBaseFactory
     {
         return (new cashCategory)
             ->setCreateDatetime(date('Y-m-d H:i:s'))
-            ->setIsProfit(0);
+            ->setIsProfit(false);
     }
 
     /**

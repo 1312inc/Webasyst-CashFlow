@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashApiTransactionBulkCompleteHandler
- */
-class cashApiTransactionBulkCompleteHandler implements cashApiHandlerInterface
+final class cashApiTransactionBulkCompleteHandler implements cashApiHandlerInterface
 {
     /**
      * @param cashApiTransactionBulkCompleteRequest $request
@@ -14,7 +11,7 @@ class cashApiTransactionBulkCompleteHandler implements cashApiHandlerInterface
     public function handle($request)
     {
         /** @var cashTransaction[] $transactions */
-        $transactions = cash()->getEntityRepository(cashTransaction::class)->findById($request->ids);
+        $transactions = cash()->getEntityRepository(cashTransaction::class)->findById($request->getIds());
         if (!$transactions) {
             return true;
         }
@@ -25,7 +22,8 @@ class cashApiTransactionBulkCompleteHandler implements cashApiHandlerInterface
                 throw new kmwaForbiddenException(_w('You are not allowed to edit this transaction'));
             }
 
-            $transaction->setIsOnbadge(false);
+            $transaction->setIsOnbadge(false)
+                ->setDate(date('Y-m-d'));
             $saver->addToPersist($transaction);
         }
 

@@ -1,24 +1,30 @@
 <?php
 
-/**
- * Class cashCategoryDeleteMethod
- */
-class cashCategoryDeleteMethod extends cashApiAbstractMethod
+use ApiPack1312\ApiParamsCaster;
+use ApiPack1312\Exception\ApiException;
+use ApiPack1312\Exception\ApiMissingParamException;
+use ApiPack1312\Exception\ApiWrongParamException;
+
+final class cashCategoryDeleteMethod extends cashApiNewAbstractMethod
 {
-    protected $method = [self::METHOD_POST, self::METHOD_DELETE];
+    protected $method = self::METHOD_POST;
 
     /**
      * @return cashApiCategoryDeleteResponse|cashApiErrorResponse
+     *
+     * @throws ApiException
+     * @throws ApiMissingParamException
+     * @throws ApiWrongParamException
      * @throws kmwaForbiddenException
      * @throws kmwaNotFoundException
      * @throws kmwaRuntimeException
-     * @throws waAPIException
      * @throws waException
      */
     public function run(): cashApiResponseInterface
     {
-        /** @var cashApiCategoryDeleteRequest $request */
-        $request = $this->fillRequestWithParams(new cashApiCategoryDeleteRequest());
+        $request = new cashApiCategoryDeleteRequest(
+            $this->fromPost('id', true, ApiParamsCaster::CAST_INT)
+        );
 
         if ((new cashApiCategoryDeleteHandler())->handle($request)) {
             return new cashApiCategoryDeleteResponse();

@@ -1,9 +1,11 @@
 <?php
 
-/**
- * Class cashTransactionBulkCompleteMethod
- */
-class cashTransactionBulkCompleteMethod extends cashApiAbstractMethod
+use ApiPack1312\ApiParamsCaster;
+use ApiPack1312\Exception\ApiException;
+use ApiPack1312\Exception\ApiMissingParamException;
+use ApiPack1312\Exception\ApiWrongParamException;
+
+final class cashTransactionBulkCompleteMethod extends cashApiNewAbstractMethod
 {
     private const MAX_IDS = 500;
 
@@ -11,17 +13,19 @@ class cashTransactionBulkCompleteMethod extends cashApiAbstractMethod
 
     /**
      * @return cashApiResponseInterface
-     * @throws waAPIException
+     *
+     * @throws ApiException
+     * @throws ApiMissingParamException
+     * @throws ApiWrongParamException
+     * @throws cashValidateException
+     * @throws kmwaForbiddenException
      * @throws waException
      */
     public function run(): cashApiResponseInterface
     {
-        /** @var cashApiTransactionBulkCompleteRequest $request */
-        $request = $this->fillRequestWithParams(new cashApiTransactionBulkCompleteRequest());
-
-        if (count($request->ids) > self::MAX_IDS) {
-            return new cashApiErrorResponse(sprintf_wp('Too many transactions to complete. Max limit is %d', self::MAX_IDS));
-        }
+        $request = new cashApiTransactionBulkCompleteRequest(
+            $this->fromPost('ids', true, ApiParamsCaster::CAST_ARRAY)
+        );
 
         $result = (new cashApiTransactionBulkCompleteHandler())->handle($request);
 

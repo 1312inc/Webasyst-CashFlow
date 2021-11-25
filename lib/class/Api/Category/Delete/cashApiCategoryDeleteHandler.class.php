@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashApiCategoryDeleteHandler
- */
-class cashApiCategoryDeleteHandler implements cashApiHandlerInterface
+final class cashApiCategoryDeleteHandler implements cashApiHandlerInterface
 {
     /**
      * @param cashApiCategoryDeleteRequest $request
@@ -14,13 +11,13 @@ class cashApiCategoryDeleteHandler implements cashApiHandlerInterface
      * @throws kmwaForbiddenException
      * @throws kmwaRuntimeException
      */
-    public function handle($request)
+    public function handle($request): bool
     {
         /** @var cashCategoryRepository $repository */
         $repository = cash()->getEntityRepository(cashCategory::class);
 
         /** @var cashCategory $category */
-        $category = $repository->findById($request->id);
+        $category = $repository->findById($request->getId());
         if (!$category) {
             throw new kmwaNotFoundException(_w('No category'));
         }

@@ -25,18 +25,27 @@ class cashShopOrderActionListener extends waEventHandler
         try {
             $createTransactionDto = new cashShopCreateTransactionDto($params);
 
-            if (in_array($params['action_id'], $settings->getIncomeActions(), true)) {
-                cash()->getLogger()->debug(
-                    sprintf('Okay, lets create new income transaction for action %s', $params['action_id'])
-                );
+            if ($createTransactionDto->order->paid_date) {
+                if (in_array($params['action_id'], $settings->getIncomeActions(), true)) {
+                    cash()->getLogger()->debug(
+                        sprintf('Okay, lets create new income transaction for action %s', $params['action_id'])
+                    );
 
-                $shopTransactionFactory->createIncomeTransaction($createTransactionDto);
-            } elseif (in_array($params['action_id'], $settings->getExpenseActions(), true)) {
-                cash()->getLogger()->debug(
-                    sprintf('Okay, lets create new expense transaction for action %s', $params['action_id'])
-                );
+                    $shopTransactionFactory->createIncomeTransaction($createTransactionDto);
+                } elseif (in_array($params['action_id'], $settings->getExpenseActions(), true)) {
+                    cash()->getLogger()->debug(
+                        sprintf('Okay, lets create new expense transaction for action %s', $params['action_id'])
+                    );
 
-                $shopTransactionFactory->createExpenseTransaction($createTransactionDto);
+                    $shopTransactionFactory->createExpenseTransaction($createTransactionDto);
+                }
+            } else {
+                cash()->getLogger()->log(
+                    sprintf(
+                        'No paid date in order %s. Cant create transaction!',
+                        $createTransactionDto->params['order_id']
+                    )
+                );
             }
 
             if ($createTransactionDto->mainTransaction instanceof cashTransaction) {

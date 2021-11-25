@@ -8,7 +8,8 @@ export default {
     defaultContractor: {
       name: 'тест тестович',
       userpic: 'http://localhost:8888/wa-content/img/userpic96.jpg'
-    }
+    },
+    createNewContractor: true
   },
   argTypes: {
     newContractor: { action: 'Update name of New Contractor' },
@@ -16,17 +17,19 @@ export default {
   }
 }
 
-export const Contractor = (args, { argTypes }) => {
+const Template = (args, { argTypes }) => {
   return ({
     props: Object.keys(argTypes),
     i18n,
     components: { InputContractor },
-    template: `
-    <InputContractor
-      :defaultContractor="defaultContractor"
-      @newContractor="newContractor"
-      @changeContractor="changeContractor"
-    />
-    `
+    template: '<InputContractor v-bind="$props" v-on="$props" />'
   })
+}
+
+export const Contractor = Template.bind({})
+Contractor.args = {}
+
+export const ContractorNoCreate = Template.bind({})
+ContractorNoCreate.args = {
+  createNewContractor: false
 }

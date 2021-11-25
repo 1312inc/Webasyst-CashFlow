@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashApiCategoryCreateHandler
- */
-class cashApiCategoryCreateHandler implements cashApiHandlerInterface
+final class cashApiCategoryCreateHandler implements cashApiHandlerInterface
 {
     /**
      * @param cashApiCategoryCreateRequest $request
@@ -13,7 +10,7 @@ class cashApiCategoryCreateHandler implements cashApiHandlerInterface
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function handle($request)
+    public function handle($request): cashApiCategoryResponseDto
     {
         if (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
             throw new kmwaForbiddenException(_w('You can not create any category at all'));
@@ -24,9 +21,8 @@ class cashApiCategoryCreateHandler implements cashApiHandlerInterface
         $category = $factory->createNew();
 
         $saver = new cashCategorySaver();
-        $data = (array) $request;
 
-        if ($saver->saveFromArray($category, $data)) {
+        if ($saver->saveFromApi($category, $request)) {
             return cashApiCategoryResponseDto::fromCategory($category);
         }
 

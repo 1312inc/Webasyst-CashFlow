@@ -1,0 +1,59 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "42635934bc935a344ceec917d5ac5cb0",
+    "packages": [
+        {
+            "name": "1312/apipack",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/1312inc/webasyst-apipack.git",
+                "reference": "7fa65a1963da3eb00f103f944ddcf6020cebb173"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/1312inc/webasyst-apipack/zipball/7fa65a1963da3eb00f103f944ddcf6020cebb173",
+                "reference": "7fa65a1963da3eb00f103f944ddcf6020cebb173",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ApiPack1312\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Kirill Maramygin",
+                    "email": "kirill.maramygin@gmail.com"
+                }
+            ],
+            "description": "Useful api tools for WA apps",
+            "support": {
+                "issues": "https://github.com/1312inc/webasyst-apipack/issues",
+                "source": "https://github.com/1312inc/webasyst-apipack/tree/main"
+            },
+            "time": "2021-11-16T05:04:41+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "1312/apipack": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.1.0"
+}

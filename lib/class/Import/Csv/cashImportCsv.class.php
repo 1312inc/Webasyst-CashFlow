@@ -387,16 +387,23 @@ final class cashImportCsv
             cash()->getLogger()->debug($data, 'import');
 
             $amount = $this->getAmount($data);
-            $categoryId = $this->getCategory(
-                $data,
-                $infoDto,
-                $amount < 0 ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME
-            );
+            $categoryId = $this->getCategory($data, $infoDto, $amount);
             if (!$categoryId) {
-                $infoDto->fail++;
-                $this->error = 'Skip transaction';
+                if ($categoryId === null) {
+                    throw new kmwaLogicException('No category');
+                }
 
                 return false;
+            }
+
+            if (count($amount) === 1) {
+                $amount = reset($amount);
+            } else {
+                $amount = $amount[$infoDto->categories[$categoryId]->type];
+            }
+
+            if (empty($amount)) {
+                throw new kmwaLogicException('No amount in imported data');
             }
 
             $transaction
@@ -519,30 +526,30 @@ final class cashImportCsv
     }
 
     /**
+     * Вернет массив с суммой. Если сумма из одной колонки, то в массиве только 1 элемент. Если из 2-х, то соответственно 2 элемента с нужными ключами.
+     *
      * @param array $data
      *
-     * @return float
+     * @return array<float>
      * @throws kmwaLogicException
      */
     private function getAmount(array $data)
     {
-        $amount = 0;
+        $amount = [];
         switch ($this->settings->getAmountType()) {
             case cashCsvImportSettings::TYPE_SINGLE:
-                $amount = cashHelper::parseFloat($data[$this->settings->getAmount()]);
+                $amount[] = cashHelper::parseFloat($data[$this->settings->getAmount()]);
                 break;
 
             case cashCsvImportSettings::TYPE_MULTI:
                 if (!empty($data[$this->settings->getIncome()])) {
-                    $amount = abs(cashHelper::parseFloat($data[$this->settings->getIncome()]));
-                } elseif (!empty($data[$this->settings->getExpense()])) {
-                    $amount = -abs(cashHelper::parseFloat($data[$this->settings->getExpense()]));
+                    $amount[cashCategory::TYPE_INCOME] = abs(cashHelper::parseFloat($data[$this->settings->getIncome()]));
+                }
+
+                if (!empty($data[$this->settings->getExpense()])) {
+                    $amount[cashCategory::TYPE_EXPENSE] = -abs(cashHelper::parseFloat($data[$this->settings->getExpense()]));
                 }
                 break;
-        }
-
-        if (empty($amount)) {
-            throw new kmwaLogicException('No amount in imported data');
         }
 
         return $amount;
@@ -627,16 +634,25 @@ final class cashImportCsv
     /**
      * @param array                       $data
      * @param cashCsvImportProcessInfoDto $infoDto
-     * @param string                      $type
+     * @param array                       $amount
      *
      * @return int|null
      */
-    private function getCategory(array $data, cashCsvImportProcessInfoDto $infoDto, $type = cashCategory::TYPE_INCOME)
+    private function getCategory(array $data, cashCsvImportProcessInfoDto $infoDto, array $amount)
     {
         $categoryId = null;
 
         switch ($this->settings->getCategoryType()) {
             case cashCsvImportSettings::TYPE_SINGLE:
+                // если у нас две суммы (2 столбца), то по идее должно быть одно нулевое (либо income, либо expense)
+                $amount = array_filter($amount);
+                // в противном случае непонятно какое значение брать
+                if (count($amount) > 1) {
+                    throw new kmwaLogicException('There should be only one non-zero value for amount from two columns');
+                }
+
+                $type = reset($amount) < 0 ? cashCategory::TYPE_EXPENSE : cashCategory::TYPE_INCOME;
+
                 if ($type === cashCategory::TYPE_INCOME) {
                     $_catId = $this->settings->getCategoryIncome() ?: cashCategoryFactory::NO_CATEGORY_INCOME_ID;
                 } else {

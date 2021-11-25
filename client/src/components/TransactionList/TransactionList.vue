@@ -13,6 +13,8 @@
           :group="group.items"
           :type="group.name"
           :index="index"
+          :visibleSelectCheckbox="visibleSelectCheckbox"
+          :showFoundedCount="showFoundedCount"
         />
       </div>
       <Observer
@@ -53,6 +55,14 @@ export default {
       default: true
     },
     showYesterdayGroup: {
+      type: Boolean,
+      default: false
+    },
+    visibleSelectCheckbox: {
+      type: Boolean,
+      default: false
+    },
+    showFoundedCount: {
       type: Boolean,
       default: false
     }

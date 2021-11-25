@@ -1,13 +1,13 @@
 <template>
-  <div sticky-container class="custom-mt-24 c-transaction-section">
+  <div sticky-container class="custom-mt-16 c-transaction-section">
     <div
       @mouseover="
         isHover = true;
-        $refs.pieIcon.style.display = 'block';
+        if ($refs.pieIcon) $refs.pieIcon.style.display = 'block';
       "
       @mouseleave="
         isHover = false;
-        $refs.pieIcon.style.display = 'none';
+        if ($refs.pieIcon) $refs.pieIcon.style.display = 'none';
       "
     >
       <div
@@ -41,7 +41,7 @@
               </span>
             </div>
 
-            <h3 class="c-transaction-section__header nowrap">
+            <h4 v-if="!showFoundedCount" class="c-transaction-section__header nowrap">
               <div v-if="type === 'overdue'" class="black">
                 {{ $t("overdue") }}
               </div>
@@ -73,12 +73,17 @@
               >
                 {{ $moment(type).format("MMMM YYYY") }}
               </div>
-            </h3>
+            </h4>
+
+            <div v-if="showFoundedCount" class="gray bold">
+              {{ $t('found', { count: filteredTransactions.length }) }}
+            </div>
 
             <TransactionListGroupUpcomingPeriod v-if="type === 'future'" :upcomingBlockOpened=upcomingBlockOpened @updateUpcomingBlockOpened="(val) => upcomingBlockOpened = val" />
           </div>
           <div class="flexbox middle space-12">
             <div
+              v-if="filteredTransactions.length"
               @click="onStick({ sticked: true })"
               class="desktop-only c-pie-icon-helper"
               style="display: none; cursor: pointer"
@@ -86,10 +91,8 @@
             >
               <i class="fas fa-chart-pie"></i>
             </div>
-            <Amounts
+            <AmountForGroup
               :group="filteredTransactions"
-              target="Group"
-              class="flexbox justify-end middle wrap space-12"
             />
           </div>
         </div>
@@ -99,15 +102,17 @@
         <ul v-if="filteredTransactions.length" class="c-list list">
           <TransactionListGroupRow
             v-show="isShown(transaction)"
-            v-for="transaction in filteredTransactions"
+            v-for="(transaction, i) in filteredTransactions"
             :key="transaction.id"
             :transaction="transaction"
             :showChecker="isShowChecker"
             :collapseHeaderData="collapseHeaderData(transaction)"
+            :showDate="i === 0 ? true : filteredTransactions[i].date !== filteredTransactions[i - 1].date"
+            :visibleSelectCheckbox="visibleSelectCheckbox"
             @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
         </ul>
-        <div v-else class="align-center custom-py-24">
+        <div v-else class="align-center small custom-py-24">
           {{ $t("emptyList") }}
         </div>
       </div>
@@ -118,7 +123,7 @@
 <script>
 import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPeriod'
 import TransactionListGroupRow from './TransactionListGroupRow/TransactionListGroupRow'
-import Amounts from '@/components/Amounts'
+import AmountForGroup from '@/components/PeriodAmount/AmountForGroup'
 export default {
   props: {
     group: {
@@ -130,13 +135,21 @@ export default {
     },
     index: {
       type: Number
+    },
+    visibleSelectCheckbox: {
+      type: Boolean,
+      default: false
+    },
+    showFoundedCount: {
+      type: Boolean,
+      default: false
     }
   },
 
   components: {
     TransactionListGroupUpcomingPeriod,
     TransactionListGroupRow,
-    Amounts
+    AmountForGroup
   },
 
   data () {
@@ -162,12 +175,12 @@ export default {
     },
 
     isHoverComputed () {
-      if (process.env.VUE_APP_MODE === 'mobile') return true
+      if (process.env.VUE_APP_MODE === 'mobile' || this.visibleSelectCheckbox) return true
       return this.isShowChecker ? true : this.isHover
     },
 
     stickyOffset () {
-      return this.$helper.isDesktopEnv ? '{"top": 114}' : '{"top": 0}'
+      return this.$helper.isDesktopEnv ? (this.showFoundedCount ? '{"top": 56}' : '{"top": 114}') : '{"top": 0}'
     },
 
     featurePeriod () {
@@ -268,6 +281,8 @@ export default {
         this.isShown(transaction) &&
         !this.activeCollapseExternalSourceIDs.includes(key)
       ) {
+        // TODO: need refactor
+        // console.log(this.сollapseGroups[key])
         return this.сollapseGroups[key]
       } else {
         return null
@@ -288,6 +303,8 @@ export default {
       const ids = items.map(e => e.id)
       const method = this.isCheckedAllInGroup(items) ? 'unselect' : 'select'
       this.$store.commit(`transactionBulk/${method}`, ids)
+      // reset last checkbox selection
+      this.$store.commit('transactionBulk/setLastCheckboxIndex', -1)
     },
 
     isCheckedAllInGroup (items) {
