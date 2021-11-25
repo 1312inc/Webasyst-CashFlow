@@ -7,19 +7,36 @@
       <img
         v-if="transaction.contractor_contact"
         :src="transaction.contractor_contact.userpic"
-        alt=""
+        :alt="transaction.contractor_contact.name"
+        :title="transaction.contractor_contact.name"
         class="c-contractor"
       />
       <div v-else>
         <i class="c-category-glyph fas" :class="mainGlyph"></i>
       </div>
+      <!-- if repeating imported transaction -->
       <span
-        v-if="transaction.external_source_info"
-        :style="`background:${transaction.external_source_info.color}`"
-        :title="transaction.external_source_info.name"
-        class="userstatus"
+        v-if="collapseHeaderData"
+        class="badge smaller"
+        :style="transaction.external_source_info ? `background:${transaction.external_source_info.color}` : ''"
+        :title="transaction.external_source_info ? transaction.external_source_info.name : ''"
       >
-        <i :class="externalGlyphClass">{{ externalGlyphSymbol }}</i>
+        &times;
+        {{ collapseHeaderData.ids.length }}
+      </span>
+      <!-- if repeated just created transaction -->
+      <span
+        v-if="
+          transaction.$_flagCreated && transaction.affected_transactions > 1
+        "
+        class="badge gray smaller"
+      >
+        &times;
+        {{
+          transaction.affected_transactions > 100
+            ? "99+"
+            : transaction.affected_transactions
+        }}
       </span>
     </span>
     <!-- Userpic stack imitation block -->
@@ -47,7 +64,8 @@ export default {
     'category',
     'account',
     'isCollapseHeader',
-    'isRepeatingGroup'
+    'isRepeatingGroup',
+    'collapseHeaderData'
   ],
 
   computed: {
@@ -69,23 +87,6 @@ export default {
         return 'fa-arrow-up'
       }
       return ''
-    },
-
-    externalGlyph () {
-      return this.transaction.external_source_info?.glyph
-    },
-
-    // check if glyph is symbol or string
-    isExternalGlyphIcon () {
-      return this.externalGlyph?.length > 1
-    },
-
-    externalGlyphClass () {
-      return this.isExternalGlyphIcon ? this.externalGlyph : ''
-    },
-
-    externalGlyphSymbol () {
-      return !this.isExternalGlyphIcon ? this.externalGlyph : ''
     }
   }
 }
@@ -98,36 +99,12 @@ export default {
   border: 0.125rem solid var(--background-color-blank);
   margin-top: 0.125rem;
 }
-.userpic48 > .userstatus {
-  width: 0.5625rem;
-  height: 0.5625rem;
-  bottom: 0;
-  right: 0;
-  transition: 0.1s;
-  font-size: 0;
 
-  i {
-    display: none;
-    font-style: normal;
-    font-size: 0.75rem;
-    font-weight: bold;
-  }
-}
-.userpic48:hover > .userstatus > i {
-  display: block;
-}
-.userpic48 > .userstatus > svg {
-  display: none;
-}
-.userpic48:hover > .userstatus {
-  width: 1.25rem;
-  height: 1.25rem;
-  font-size: 1rem;
-  bottom: -0.375rem;
-  right: -0.375rem;
-}
-.userpic48:hover > .userstatus > svg {
-  display: block;
+.userpic48 > .badge {
+  position: absolute;
+  bottom: -0.125rem;
+  right: -0.125rem;
+  border: 2px solid var(--background-color-blank);
 }
 
 .c-userpic-stack-imitation {

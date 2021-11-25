@@ -1,90 +1,59 @@
 <?php
 
-/**
- * Class cashTransactionGetListMethod
- *
- * Request:
- * <code>
- * {
- *      "from": "2018-03-01",
- *      "to": "2020-04-01",
- *      "limit": "100",
- *      "start": "0",
- *      "filter": "category/2"
- * }
- * </code>
- *
- * from, to - date limits,
- * limit - how many transactions to get,
- * start - starting from,
- * filter - hash to filter transaction list, can be "category/X", "account/X", "contractor/X", "currency/XXX"
- *
- * all params are required
- *
- * Response:
- * <code>
- * [
- *  {
- *      "id": 2,
- *      "date": "2019-11-22",
- *      "datetime": "2019-11-22 00:00:00",
- *      "amount": 192000,
- *      "amountShorten": "192K",
- *      "balance": null,
- *      "balanceShorten": "0",
- *      "description": "Взяли кредит в банке",
- *      "repeating_id": null,
- *      "create_contact_id": 1,
- *      "create_datetime": "2020-10-22 20:33:34",
- *      "update_datetime": null,
- *      "category_id": 2,
- *      "account_id": 2,
- *      "planned": false,
- *      "is_archived": false,
- *      "external_hash": null,
- *      "external_source": null,
- *      "external_data": null,
- *      "contractor_contact_id": null
- *  }
- * ]
- * </code>
- */
-class cashTransactionGetListMethod extends cashApiAbstractMethod
+use ApiPack1312\ApiParamsCaster;
+use ApiPack1312\Exception\ApiCastParamException;
+use ApiPack1312\Exception\ApiException;
+use ApiPack1312\Exception\ApiMissingParamException;
+use ApiPack1312\Exception\ApiWrongParamException;
+
+final class cashTransactionGetListMethod extends cashApiNewAbstractMethod
 {
     protected $method = self::METHOD_GET;
 
     /**
      * @return cashApiTransactionGetListResponse
+     *
+     * @throws ApiException
+     * @throws ApiMissingParamException
+     * @throws ApiWrongParamException
      * @throws kmwaForbiddenException
-     * @throws waAPIException
+     * @throws kmwaRuntimeException
      * @throws waException
      */
     public function run(): cashApiResponseInterface
     {
-        /** @var cashApiTransactionGetListRequest $request */
-        $request = $this->fillRequestWithParams(new cashApiTransactionGetListRequest());
-        $request->offset = (int) $request->offset;
-        if (!$request->limit || $request->limit > 500) {
-            $request->limit = 500;
+        $from = $this->fromGet('from', false, ApiParamsCaster::CAST_STRING_TRIM);
+        if ($from) {
+            $from = DateTimeImmutable::createFromFormat('Y-m-d|', $from);
+            if (!$from) {
+                throw new ApiCastParamException(sprintf('Wrong format for param %s', 'from'));
+            }
         }
 
-        if ($request->filter
-            && (empty($request->to) && empty($request->from))
-            && strpos($request->filter, cashAggregateFilter::FILTER_SEARCH . '/') === false
-            && strpos($request->filter, cashAggregateFilter::FILTER_IMPORT . '/') === false
+        $to = $this->fromGet('to', false, ApiParamsCaster::CAST_STRING_TRIM);
+        if ($to) {
+            $to = DateTimeImmutable::createFromFormat('Y-m-d|', $to);
+            if (!$to) {
+                throw new ApiCastParamException(sprintf('Wrong format for param %s', 'to'));
+            }
+        }
+
+        $request = new cashApiTransactionGetListRequest(
+            $from ?: null,
+            $to ?: null,
+            $this->fromGet('offset', false, ApiParamsCaster::CAST_INT),
+            $this->fromGet('limit', false, ApiParamsCaster::CAST_INT),
+            $this->fromGet('filter', false, ApiParamsCaster::CAST_STRING_TRIM)
+        );
+
+        if ($request->getFilter()
+            && !$request->getTo()
+            && !$request->getFrom()
+            && strpos($request->getFilter(), cashAggregateFilter::FILTER_SEARCH . '/') === false
+            && strpos($request->getFilter(), cashAggregateFilter::FILTER_IMPORT . '/') === false
         ) {
-            throw new cashApiMissingParamException('to, from');
+            throw new ApiMissingParamException('to, from');
         }
-
-        if (empty($request->to)) {
-            $request->to = date('Y-m-d', strtotime('+25 years'));
-        }
-
-        if (empty($request->from)) {
-            $request->from = date('Y-m-d', strtotime('-25 years'));
-        }
-        $request->from = DateTimeImmutable::createFromFormat('Y-m-d|', $request->from);
-        $request->to = DateTimeImmutable::createFromFormat('Y-m-d|', $request->to);
 
         $transactions = (new cashApiTransactionGetListHandler())->handle($request);
 
@@ -100,8 +69,8 @@ class cashTransactionGetListMethod extends cashApiAbstractMethod
         return new cashApiTransactionGetListResponse(
             $transactions['data'],
             (int) $transactions['total'],
-            $request->offset,
-            $request->limit
+            $request->getOffset(),
+            $request->getLimit()
         );
     }
 }

@@ -451,7 +451,7 @@
                                 return;
                             }
 
-                            $template.tmpl({
+                            var $tpl = $template.tmpl({
                                 columnValue: columnValue,
                                 sources: data[scope],
                                 scope: scope,
@@ -461,7 +461,27 @@
                                     'Skip rows with this value': $_('Skip rows with this value')
                                 },
                                 transactions: transactionCounts[name][columnValue] + ' ' + $_('transactions')
+                            }).on('change', 'select', function () {
+                                var relations = JSON.parse(localStorage.getItem('relationsStorage') || '{}'),
+                                    optionValue = $(this).find('option:selected').val();
+                                
+                                // Exclude Skip rows and New Category options
+                                if (['0', '-1111111111', '-2222222222'].includes(optionValue)) {
+                                    delete relations[columnValue]
+                                } else {
+                                    relations[columnValue] = $(this).find('option:selected').text();
+                                }
+                                localStorage.setItem('relationsStorage', JSON.stringify(relations));
                             }).appendTo($wrapper);
+
+                            var relationsFromStorage = JSON.parse(localStorage.getItem('relationsStorage') || '{}');
+                            if (relationsFromStorage[columnValue]) {
+                                var $select = $tpl.find('select'),
+                                    val = $select.find("option").filter(function () {
+                                        return $(this).text() == relationsFromStorage[columnValue];
+                                    }).val();
+                                $select.val(val).change();
+                            }
                         });
                     } else {
                         alert(r.errors.join("\n"));
@@ -486,10 +506,10 @@
                     newCatName = '',
                     type = '';
 
-                if (val == 'new-income') {
+                if (val == {cashImportResponseCsv::NEW_INCOME_ID}) {
                     newCatName = prompt($_('New income category: '));
                     type = '{cashCategory::TYPE_INCOME}';
-                } else if (val == 'new-expense') {
+                } else if (val == {cashImportResponseCsv::NEW_EXPENSE_ID}) {
                     newCatName = prompt($_('New expense category: '));
                     type = '{cashCategory::TYPE_EXPENSE}';
                 }
@@ -603,7 +623,7 @@
     <td>=></td>
     <td>
         <div class="wa-select small" style="max-width: 300px;">
-            <select name="import[category][multi][map][${columnValue}]">
+             <select name="import[category][multi][map][${columnValue}]">
                 <option value="0">${translate['Skip rows with this value']}</option>
                 <optgroup data-cash-categories-optgroup="income" label="${translate['Income']}">
                     {{each(id, name, type) sources.income}}

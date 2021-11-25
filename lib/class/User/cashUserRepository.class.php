@@ -1,6 +1,6 @@
 <?php
 
-final class cashUserRepository
+final class cashUserRepository extends cashBaseRepository
 {
     /**
      * @var array<cashUser>

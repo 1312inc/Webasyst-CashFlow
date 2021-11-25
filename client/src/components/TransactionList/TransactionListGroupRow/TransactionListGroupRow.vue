@@ -5,6 +5,15 @@
     :class="classes"
     :style="isRepeatingGroup && 'cursor: initial;'"
   >
+    <div v-if="showDate" class="mobile-only custom-my-8">
+      {{
+        $moment(transaction.date).format(
+          $moment.locale() === "ru" ? "D MMMM" : "MMMM D"
+        )
+      }}
+      <span class="hint">{{ $moment(transaction.date).format("dddd") }}</span>
+    </div>
+
     <div
       @mouseover="isHover = true"
       @mouseleave="isHover = false"
@@ -18,7 +27,7 @@
       >
         <span
           v-show="isHoverComputed && !isRepeatingGroup"
-          @click="checkboxSelect"
+          @click.stop="checkboxSelect"
           class="wa-checkbox"
         >
           <input type="checkbox" :checked="isChecked" />
@@ -29,17 +38,36 @@
           </span>
         </span>
       </div>
+
+      <div class="desktop-and-tablet-only" style="width: 7rem;flex-shrink: 0;">
+        <template v-if="showDate">
+          <div class="custom-mb-4 bold nowrap c-group-date">
+            {{
+              $moment(transaction.date).format(
+                $moment.locale() === "ru" ? "D MMMM" : "MMMM D"
+              )
+            }}
+          </div>
+          <span v-if="daysBefore > 0" class="hint">{{
+            daysBefore === 1
+              ? $t("tomorrow")
+              : this.$moment(transaction.date).from($helper.currentDate)
+          }}</span>
+          <div v-else class="hint">
+            {{ $moment(transaction.date).format("dddd") }}
+          </div>
+        </template>
+      </div>
+
       <TransactionListGroupRowGlyph
         :transaction="transaction"
         :category="category"
         :account="account"
         :isCollapseHeader="isCollapseHeader"
         :isRepeatingGroup="isRepeatingGroup"
+        :collapseHeaderData="collapseHeaderData"
       />
-      <div
-        class="wide flexbox middle space-4 c-item-border"
-        style="overflow: hidden"
-      >
+      <div class="wide flexbox middle space-8 c-item-border">
         <div class="wide" style="overflow: hidden">
           <TransactionListGroupRowDesc
             :transaction="transaction"
@@ -47,48 +75,57 @@
             :isRepeatingGroup="isRepeatingGroup"
             :category="category"
           />
-          <TransactionListGroupRowCats
-            :category="category"
-            :account="account"
-          />
+          <div
+            v-if="transaction.description"
+            class="black small text-ellipsis"
+            style="flex-shrink: 1"
+          >
+            {{ transaction.description }}
+          </div>
+          <div
+            v-if="transaction.contractor_contact && !transaction.description"
+            class="gray small text-ellipsis"
+            style="flex-shrink: 1"
+          >
+            {{ transaction.contractor_contact.name }}
+          </div>
         </div>
         <div class="c-item-amount">
-          <div class="flexbox justify-end middle custom-mb-4">
+          <div :style="`color: ${category.color}`" class="bold nowrap custom-mb-4">
+            {{
+              $helper.toCurrency({
+                value: isCollapseHeader
+                  ? collapseHeaderData.totalAmount
+                  : transaction.amount,
+                currencyCode: account.currency,
+                isDynamics: true
+              })
+            }}
+          </div>
+          <div v-if="account.name" class="text-ellipsis small gray">
+            {{ account.name }}
             <span
-              v-if="
-                transaction.$_flagCreated &&
-                transaction.affected_transactions > 1
+              v-if="transaction.balance"
+              class="nowrap black"
+              :title="
+                $t('accountBalanceTransactionListHint')
               "
-              class="badge light-gray small nowrap"
             >
-              &times;
-              {{
-                transaction.affected_transactions > 100
-                  ? "99+"
-                  : transaction.affected_transactions
-              }}
-            </span>
-            <div :style="`color: ${category.color}`" class="bold nowrap">
               {{
                 $helper.toCurrency({
-                  value: isCollapseHeader
-                    ? collapseHeaderData.totalAmount
-                    : transaction.amount,
-                  currencyCode: account.currency,
-                  isDynamics: true,
+                  value: transaction.balance,
+                  currencyCode: account.currency
                 })
               }}
-            </div>
-          </div>
-          <div class="small align-right nowrap">
-            {{ $moment(transaction.date).format("ll") }}
+            </span>
           </div>
         </div>
         <transition name="fade" :duration="300">
           <TransactionListCompleteButton
             v-show="transaction.is_onbadge && $route.name === 'Upnext'"
-            :transactionId="transaction.id"
-            class="c-item-done"
+            @processEdit="openModal(true)"
+            :transaction="transaction"
+            :account="account"
           />
         </transition>
       </div>
@@ -96,7 +133,10 @@
 
     <portal>
       <Modal v-if="open" @close="open = false">
-        <AddTransaction :transaction="transaction" />
+        <AddTransaction
+          :transaction="transaction"
+          :offOnbadge="offBadgeInTransactionModal"
+        />
       </Modal>
     </portal>
   </li>
@@ -107,7 +147,6 @@ import Modal from '@/components/Modal'
 import AddTransaction from '@/components/Modals/AddTransaction'
 import TransactionListCompleteButton from './TransactionListCompleteButton'
 import TransactionListGroupRowDesc from './TransactionListGroupRowDesc'
-import TransactionListGroupRowCats from './TransactionListGroupRowCats'
 import TransactionListGroupRowGlyph from './TransactionListGroupRowGlyph'
 export default {
   props: {
@@ -128,13 +167,24 @@ export default {
     isRepeatingGroup: {
       type: Boolean,
       default: false
+    },
+
+    showDate: {
+      type: Boolean,
+      default: true
+    },
+
+    visibleSelectCheckbox: {
+      type: Boolean,
+      default: false
     }
   },
 
   data () {
     return {
       open: false,
-      isHover: false
+      isHover: false,
+      offBadgeInTransactionModal: false
     }
   },
 
@@ -143,7 +193,6 @@ export default {
     AddTransaction,
     TransactionListCompleteButton,
     TransactionListGroupRowDesc,
-    TransactionListGroupRowCats,
     TransactionListGroupRowGlyph
   },
 
@@ -172,8 +221,17 @@ export default {
     },
 
     isHoverComputed () {
-      if (process.env.VUE_APP_MODE === 'mobile') return true
+      if (process.env.VUE_APP_MODE === 'mobile' || this.visibleSelectCheckbox) {
+        return true
+      }
       return this.showChecker ? true : this.isHover
+    },
+
+    daysBefore () {
+      return this.$moment(this.transaction.date).diff(
+        this.$helper.currentDate,
+        'days'
+      )
     },
 
     classes () {
@@ -202,25 +260,12 @@ export default {
       } else if (this.isRepeatingGroup) {
         e.preventDefault()
       } else {
-        this.openModal(e)
+        this.openModal()
       }
     },
 
-    openModal ({ target }) {
-      const path = []
-      let currentElem = target
-      while (currentElem) {
-        path.push(currentElem)
-        currentElem = currentElem.parentElement
-      }
-
-      if (
-        path.some(
-          e => e.className === 'wa-checkbox' || e.className === 'c-item-done'
-        )
-      ) {
-        return
-      }
+    openModal (offOnbadge = false) {
+      this.offBadgeInTransactionModal = offOnbadge
       if (process.env.VUE_APP_MODE === 'mobile') {
         // emitting for the mobile platform
         window.emitter.emit('editTransaction', this.transaction)
@@ -229,13 +274,34 @@ export default {
       }
     },
 
-    checkboxSelect () {
+    checkboxSelect (event) {
       const method = this.isChecked ? 'unselect' : 'select'
       let ids = [this.transaction.id]
+      // if collapsed with multiple transactions
       if (this.isCollapseHeader) {
-        ids = this.collapseHeaderData.ids
+        ids = [...this.collapseHeaderData.ids]
       }
+
+      const transactions = this.$store.state.transaction.transactions.data
+      const lastCheckboxIndex = this.$store.state.transactionBulk
+        .lastCheckboxIndex
+      const currentIndex = transactions.indexOf(this.transaction)
+
+      // with Shift key selection
+      if (event.shiftKey && lastCheckboxIndex > -1) {
+        transactions
+          .slice(
+            Math.min(currentIndex, lastCheckboxIndex) + 1,
+            Math.max(currentIndex, lastCheckboxIndex)
+          )
+          .forEach(e => ids.push(e.id))
+        ids.push(transactions[lastCheckboxIndex].id)
+      }
+
+      ids = ids.filter((e, i, a) => a.indexOf(e) === i)
+
       this.$store.commit(`transactionBulk/${method}`, ids)
+      this.$store.commit('transactionBulk/setLastCheckboxIndex', currentIndex)
     }
   }
 }
@@ -258,19 +324,5 @@ export default {
   animation-timing-function: linear;
   animation-direction: alternate;
   animation-iteration-count: 1;
-}
-
-.c-item-done {
-  margin-left: 0.75rem;
-  margin-top: 0.375rem;
-}
-
-@media screen and (max-width: 760px) {
-  /* mobile */
-  .c-item-done {
-    margin-right: 0.6125rem;
-    margin-left: 0;
-    align-self: normal;
-  }
 }
 </style>

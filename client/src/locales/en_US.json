@@ -4,12 +4,15 @@
   "expense": "Expense",
   "income": "Income",
   "balance": "Balance",
+  "delta": "Delta = Income − Expenses − Profit",
   "addAccount": "New account",
   "updateAccount": "Update account",
   "addCategory": "New category",
   "updateCategory": "Update category",
   "newTransfer": "New transfer",
   "add": "Add",
+  "addmore": "Add more",
+  "addMany": "Add many",
   "update": "Update",
   "updateAll": "@:update all",
   "or": "or",
@@ -19,11 +22,13 @@
   "move": "Move",
   "name": "Name",
   "selected": "{count} transactions",
+  "found": "{count} transactions found",
+  "notFound": "Not found",
   "currency": "Currency",
   "type": "Type",
   "color": "Color",
   "icon": "Logo",
-  "desc": "Description",
+  "desc": "Comment",
   "noDesc": "no description",
   "addTransaction": "Add transaction",
   "updateTransaction": "Update transaction",
@@ -62,7 +67,7 @@
   "endRepeat": {
     "name": "End repeat",
     "list": [
-      "Never",
+      "Repeat forever",
       "Limit the number of occurrences",
       "Until the date"
     ],
@@ -142,12 +147,15 @@
   "setDates": "Adjust dates",
   "close": "Close",
   "Done": "Done",
+  "Process": "Process",
+  "processToday": "Mark as processed today",
+  "processEdits": "Process with edits",
   "profit": "Profit (cash out)",
   "incomeCategoryExplained": "Income transactions increase the account balance.",
   "expenseCategoryExplained": "Expense transactions decrease the account balance.",
   "profitCategoryExplained": "For business, profit is similar to expense because its taking money out of business and thus decreasing the account balance. The Profit checkbox allows you to visually group this kind of expenses into separate blue columns.",
-  "notifyMe": "Notify me",
-  "notifyMeAlert": "When due, the app will count & show this transaction right on the app icon",
+  "notifyMe": "Remind to process when due",
+  "notifyMeAlert": "When the transaction date comes, a tiny little notification on the app icon will emerge and remind you to process (confirm) this transaction",
   "error": {
     "http": "Request failed",
     "api": "API error"
@@ -176,5 +184,8 @@
   "404": {
     "title": "Not Found"
   },
-  "export": "Export"
+  "export": "Export",
+  "transactionDate": "Transaction date: {date}",
+  "amountOnDate": "{amount} on {date}",
+  "accountBalanceTransactionListHint": "Account balance after the transaction has been processed"
 }

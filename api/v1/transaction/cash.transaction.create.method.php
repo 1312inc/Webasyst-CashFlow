@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * @todo: test & refactor
+ *
  * Class cashTransactionCreateMethod
  *
  * @return array of transactions

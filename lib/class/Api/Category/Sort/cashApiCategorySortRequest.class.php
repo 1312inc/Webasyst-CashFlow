@@ -1,9 +1,16 @@
 <?php
 
-/**
- * Class cashApiCategorySortRequest
- */
-class cashApiCategorySortRequest
+final class cashApiCategorySortRequest
 {
-    public $order = [];
+    private $order;
+
+    public function __construct(array $order)
+    {
+        $this->order = $order;
+    }
+
+    public function getOrder(): array
+    {
+        return $this->order;
+    }
 }

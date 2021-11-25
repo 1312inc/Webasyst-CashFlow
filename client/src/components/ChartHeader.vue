@@ -1,7 +1,7 @@
 <template>
   <div class="c-header custom-p-0-mobile">
     <div class="flexbox wrap-mobile full-width" sticky-ref="controls">
-      <div>
+      <div class="width-100">
         <slot v-if="$helper.isDesktopEnv" name="title"></slot>
         <div
           v-if="showStickyHeader"
@@ -26,6 +26,13 @@
 <script>
 import TransactionControls from '@/components/TransactionControls'
 export default {
+  props: {
+    showControls: {
+      type: Boolean,
+      default: true
+    }
+  },
+
   components: {
     TransactionControls
   },
@@ -33,9 +40,9 @@ export default {
   computed: {
     showStickyHeader () {
       return (
-        (!this.$helper.isDesktopEnv &&
+        ((!this.$helper.isDesktopEnv &&
           this.$store.state.transactionBulk.selectedTransactionsIds.length) ||
-        this.$helper.isDesktopEnv
+        this.$helper.isDesktopEnv) && this.showControls
       )
     }
   }

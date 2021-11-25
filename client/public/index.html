@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <% if (NODE_ENV === "development") { %>
-      <link href="<%= VUE_APP_DEV_PROXY %>/wa-content/css/wa/wa-2.0.css?v1.14.4" rel="stylesheet">
-      <link id="wa-dark-mode" href="<%= VUE_APP_DEV_PROXY %>/wa-content/css/wa/wa-2.0-dark.css?v1.14.4" rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)">
-      <script defer="" src="<%= VUE_APP_DEV_PROXY %>/wa-content/js/fontawesome/fontawesome-all.min.js?v=513"></script>
+      <link href="<%= VUE_APP_DEV_PROXY %>/wa-content/css/wa/wa-2.0.css" rel="stylesheet">
+      <script src="<%= VUE_APP_DEV_PROXY %>/wa-content/js/jquery-wa/wa.switch-mode.js"></script>
+      <script src="<%= VUE_APP_DEV_PROXY %>/wa-content/js/fontawesome/fontawesome-all.min.js"></script>
 
         <script>
           window.appState = {
@@ -23,14 +23,20 @@
     <% if (VUE_APP_MODE === "mobile") { %>
       <script src="https://unpkg.com/mitt/dist/mitt.umd.js"></script>
       <script>
-        window.emitter = mitt()
+        window.emitter = mitt();
       </script>
     <% } %>
 
+    <!-- tippy allready in WA -->
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="wa-app">
+      <div class="flexbox wrap-mobile">
+        <div id="app-sidebar"></div>
+        <div id="app-content"></div>
+      </div>
+    </div>
   </body>
 </html>

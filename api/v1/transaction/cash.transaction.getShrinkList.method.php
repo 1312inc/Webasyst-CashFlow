@@ -1,18 +1,29 @@
 <?php
 
-class cashTransactionGetShrinkListMethod extends cashApiAbstractMethod
+use ApiPack1312\ApiParamsCaster;
+use ApiPack1312\Exception\ApiException;
+use ApiPack1312\Exception\ApiMissingParamException;
+use ApiPack1312\Exception\ApiWrongParamException;
+
+final class cashTransactionGetShrinkListMethod extends cashApiNewAbstractMethod
 {
     protected $method = self::METHOD_GET;
 
     /**
      * @return cashApiTransactionGetShrinkListResponse
-     * @throws waAPIException
+     *
+     * @throws ApiException
+     * @throws ApiMissingParamException
+     * @throws ApiWrongParamException
      * @throws waException
      */
     public function run(): cashApiResponseInterface
     {
-        /** @var cashApiTransactionGetShrinkListRequest $request */
-        $request = $this->fillRequestWithParams(new cashApiTransactionGetShrinkListRequest());
+        $request = new cashApiTransactionGetShrinkListRequest(
+            $this->fromGet('from', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d|'),
+            $this->fromGet('to', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d|'),
+            $this->fromGet('from', true, ApiParamsCaster::CAST_STRING_TRIM)
+        );
 
         $transactions = (new cashApiTransactionGetShrinkListHandler())->handle($request);
 

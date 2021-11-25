@@ -1,8 +1,7 @@
 import Vue from 'vue'
 
-const initialDarkMode = window.appState?.theme === 'dark' ||
-  (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ||
-  document.getElementById('wa-dark-mode')?.getAttribute('media') === '(prefers-color-scheme: light)'
+const initialDarkMode =
+  document.documentElement.getAttribute('data-theme') === 'dark'
 
 const DarkModeObserver = new Vue({
   data () {
@@ -24,29 +23,19 @@ const DarkModeObserver = new Vue({
   methods: {
     addDarkModeObserver () {
       // listen Cash mode switch method
-      const targetNode = document.getElementById('wa-dark-mode')
+      const targetNode = document.documentElement
       if (targetNode) {
         const config = { attributes: true }
-        const callback = (mutationsList) => {
+        const callback = mutationsList => {
           for (const mutation of mutationsList) {
-            if (mutation.attributeName === 'media') {
-              return this.switchMode(targetNode.getAttribute('media'))
+            if (mutation.attributeName === 'data-theme') {
+              this.darkMode = targetNode.getAttribute('data-theme') === 'dark'
             }
           }
         }
         this.darkModeObserver = new MutationObserver(callback)
         this.darkModeObserver.observe(targetNode, config)
       }
-
-      // listen native mode switch
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        const newColorScheme = e.matches ? 'dark' : 'light'
-        this.switchMode(newColorScheme)
-      })
-    },
-
-    switchMode (scheme) {
-      this.darkMode = scheme === '(prefers-color-scheme: light)' || scheme === 'dark'
     }
   }
 })

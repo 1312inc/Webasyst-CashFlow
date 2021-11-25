@@ -1,8 +1,5 @@
 <?php
 
-/**
- * Class cashApiErrorResponse
- */
 class cashApiErrorResponse implements cashApiResponseInterface, JsonSerializable
 {
     /**
@@ -25,25 +22,13 @@ class cashApiErrorResponse implements cashApiResponseInterface, JsonSerializable
      */
     private $status;
 
-    /**
-     * cashApiErrorResponse constructor.
-     *
-     * @param string $errorMessage
-     * @param string $error
-     * @param int    $status
-     */
-    public function __construct($errorMessage, $error = 'fail', $status = 400)
+    public function __construct(string $errorMessage, string $error = 'fail', int $status = 400)
     {
         $this->errorMessage = $errorMessage;
         $this->error = $error;
         $this->status = $status;
     }
 
-    /**
-     * @param Exception $ex
-     *
-     * @return cashApiErrorResponse
-     */
     public static function fromException(Exception $ex): cashApiErrorResponse
     {
         $response = new self($ex->getMessage(), 'error', $ex->getCode());
@@ -52,9 +37,6 @@ class cashApiErrorResponse implements cashApiResponseInterface, JsonSerializable
         return $response;
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         $data = [
@@ -69,17 +51,11 @@ class cashApiErrorResponse implements cashApiResponseInterface, JsonSerializable
         return $data;
     }
 
-    /**
-     * @return $this
-     */
     public function getResponseBody(): cashApiErrorResponse
     {
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getStatus(): int
     {
         return (int) $this->status;

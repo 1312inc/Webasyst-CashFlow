@@ -83,9 +83,7 @@ export default {
 
     async delete ({ dispatch, commit }, id) {
       try {
-        await api.delete('cash.account.delete', {
-          params: { id }
-        })
+        await api.post('cash.account.delete', { id })
         commit('transaction/resetTransactions', null, { root: true })
         dispatch('getList')
           .then(() => {

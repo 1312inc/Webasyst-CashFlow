@@ -29,6 +29,8 @@
           ? $t("noContact")
           : isNewContractor
           ? $t("newContact")
+          : isNotFound
+          ? $t("notFound")
           : $t("linkContact")
       }}
     </div>
@@ -65,7 +67,16 @@
 <script>
 import api from '@/plugins/api'
 export default {
-  props: ['defaultContractor'],
+  props: {
+    defaultContractor: {
+      type: Object
+    },
+
+    createNewContractor: {
+      type: Boolean,
+      default: true
+    }
+  },
 
   data () {
     return {
@@ -73,7 +84,8 @@ export default {
       photo: '',
       aciveMenuIndex: null,
       response: [],
-      isNewContractor: false
+      isNewContractor: false,
+      isNotFound: false
     }
   },
 
@@ -121,8 +133,13 @@ export default {
           if (i > -1) {
             this.select(i)
           } else {
-            this.$emit('newContractor', this.inputValue)
-            this.isNewContractor = true
+            if (this.createNewContractor) {
+              this.$emit('newContractor', this.inputValue)
+              this.isNewContractor = true
+            } else {
+              this.$emit('changeContractor', null)
+              this.isNotFound = true
+            }
           }
         })
         .catch(e => {})
@@ -130,8 +147,9 @@ export default {
 
     select (index) {
       if (index !== null) {
-        this.$emit('changeContractor', this.response[index].id)
+        this.$emit('changeContractor', +this.response[index].id)
         this.isNewContractor = false
+        this.isNotFound = false
         this.inputValue = this.response[index].name
         this.photo = this.response[index].photo_url_absolute
         this.response = []

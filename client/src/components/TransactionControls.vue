@@ -10,7 +10,7 @@
         class="button blue"
         :class="direction === 'column' && 'custom-mb-12'"
       >
-        <i class="fas fa-arrow-right"></i> {{ $t("move") }} ({{
+        <i class="fas fa-coins"></i> {{ $t("move") }} ({{
           checkedRows.length
         }})
       </button>
@@ -49,13 +49,22 @@
         v-if="
           currentType.type !== 'expense' &&
           currentType.type !== 'income' &&
-          $permissions.canAccessTransfers
+          $permissions.canAccessTransfers &&
+          $store.state.account.accounts.length > 1
         "
       >
         <button @click="addTransaction('transfer')" class="button light-gray">
           <span>
             <i class="fas fa-exchange-alt"></i>
             <span class="desktop-only custom-ml-8">{{ $t("transfer") }}</span>
+          </span>
+        </button>
+      </div>
+      <div>
+        <button @click="openAddBulk = true" class="button nobutton gray">
+          <span>
+            <i class="fas fa-list-ul"></i>
+            <span class="desktop-only custom-ml-8 black">{{ $t("addMany") }}</span>
           </span>
         </button>
       </div>
@@ -72,6 +81,12 @@
         <TransactionMove />
       </Modal>
     </portal>
+
+    <portal>
+      <Modal v-if="openAddBulk" @close="openAddBulk = false">
+        <AddTransactionBulk />
+      </Modal>
+    </portal>
   </div>
 </template>
 
@@ -79,6 +94,7 @@
 import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/Modals/AddTransaction'
+import AddTransactionBulk from '@/components/Modals/AddTransactionBulk'
 import TransactionMove from '@/components/Modals/TransactionMove'
 export default {
   props: {
@@ -94,6 +110,7 @@ export default {
   components: {
     Modal,
     AddTransaction,
+    AddTransactionBulk,
     TransactionMove
   },
 
@@ -101,7 +118,8 @@ export default {
     return {
       open: false,
       categoryType: '',
-      openMove: false
+      openMove: false,
+      openAddBulk: false
     }
   },
 
