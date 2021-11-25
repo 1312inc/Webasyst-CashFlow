@@ -4,7 +4,7 @@
  * Class cashShopImportProcessController
  *
  * @todo move process to service
- * @property cashShopImportProcessDto  data['info']
+ * @property cashShopImportProcessDto data['info']
  */
 class cashShopImportProcessController extends waLongActionController
 {
@@ -121,6 +121,12 @@ SQL;
         foreach ($orders as $orderId) {
             try {
                 $dto = new cashShopCreateTransactionDto(['order_id' => $orderId]);
+                if (!$dto->order->paid_date) {
+                    throw new Exception(
+                        sprintf('No paid date in order %s. Cant create transaction!', $dto->params['order_id'])
+                    );
+                }
+                
                 $shopIntegration->getTransactionFactory()->createIncomeTransaction($dto);
                 $shopIntegration->saveTransactions($dto);
 
