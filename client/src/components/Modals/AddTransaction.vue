@@ -57,7 +57,9 @@
 
           <div v-if="model.is_onbadge" class="custom-mt-8">
             <div class="hint">
-              {{ $t("notifyMeAlert") }}&nbsp;<span class="badge smaller">1</span>
+              {{ $t("notifyMeAlert") }}&nbsp;<span class="badge smaller"
+                >1</span
+              >
             </div>
           </div>
         </div>
@@ -101,19 +103,29 @@
                 :items="getCategoryByType(transactionType)"
                 valuePropName="id"
                 :rowModificator="
-                  (obj) =>
+                  obj =>
                     `<span class='icon'><i class='rounded' style='background-color:${obj.color};'></i></span><span>${obj.name}</span>`
                 "
                 :maxHeight="200"
                 class="width-100"
               />
             </div>
-            <div v-if="transactionType !== 'transfer'" class="custom-px-8 gray" :style="transactionType === 'expense' ? 'transform: rotate(180deg);' : ''">
+            <div
+              v-if="transactionType !== 'transfer'"
+              class="custom-px-8 gray"
+              :style="
+                transactionType === 'expense'
+                  ? 'transform: rotate(180deg);'
+                  : ''
+              "
+            >
               <i class="fas fa-arrow-right"></i>
             </div>
             <div
               :class="
-                transactionType === 'transfer' ? 'flexbox middle width-100' : 'width-50'
+                transactionType === 'transfer'
+                  ? 'flexbox middle width-100'
+                  : 'width-50'
               "
             >
               <div :class="{ 'width-50': transactionType === 'transfer' }">
@@ -129,7 +141,7 @@
                   :items="accounts"
                   valuePropName="id"
                   :rowModificator="
-                    (obj) =>
+                    obj =>
                       `${obj.name} (${$helper.currencySignByCode(
                         obj.currency
                       )})`
@@ -139,7 +151,10 @@
                   class="width-100"
                 />
               </div>
-              <div v-if="transactionType === 'transfer'" class="custom-px-4 gray">
+              <div
+                v-if="transactionType === 'transfer'"
+                class="custom-px-4 gray"
+              >
                 <i class="fas fa-arrow-right"></i>
               </div>
               <div
@@ -153,7 +168,7 @@
                   :items="accountsTransfer"
                   valuePropName="id"
                   :rowModificator="
-                    (obj) =>
+                    obj =>
                       `${obj.name} (${$helper.currencySignByCode(
                         obj.currency
                       )})`
@@ -189,22 +204,31 @@
           </TransitionCollapseHeight>
 
           <!-- Start Contractor section -->
-          <div v-if="transactionType !== 'transfer'" class="custom-mb-16">
-            <InputContractor
-              :defaultContractor="model.contractor_contact"
-              @newContractor="
-                (name) => {
-                  model.contractor = name;
-                  model.contractor_contact_id = null;
-                }
-              "
-              @changeContractor="
-                (id) => {
-                  model.contractor = null;
-                  model.contractor_contact_id = id;
-                }
-              "
-            />
+          <div class="custom-mb-16">
+            <div v-if="!showContractorInput">
+              {{ $t("specify") }}
+              <a @click.prevent="showContractorInput = true" href="#">{{
+                transactionType === "expense" ? $t("recipient") : $t("payee")
+              }}</a>
+            </div>
+            <div v-if="showContractorInput && transactionType !== 'transfer'">
+              <InputContractor
+                :defaultRequest="`category_id/${model.category_id}`"
+                :focus="true"
+                @newContractor="
+                  name => {
+                    model.contractor = name;
+                    model.contractor_contact_id = null;
+                  }
+                "
+                @changeContractor="
+                  id => {
+                    model.contractor = null;
+                    model.contractor_contact_id = id;
+                  }
+                "
+              />
+            </div>
           </div>
           <!-- End Contractor section -->
 
@@ -220,8 +244,8 @@
             <div
               v-if="
                 isModeUpdate &&
-                transaction.external_source_info &&
-                transaction.external_source_info.entity_url
+                  transaction.external_source_info &&
+                  transaction.external_source_info.entity_url
               "
               class="custom-mt-8 flexbox middle space-8"
             >
@@ -323,7 +347,7 @@
               <input
                 v-model.number="model.repeating_frequency"
                 :class="{
-                  'state-error': $v.model.repeating_frequency.$error,
+                  'state-error': $v.model.repeating_frequency.$error
                 }"
                 type="text"
                 class="shortest small custom-ml-4 number"
@@ -382,7 +406,7 @@
                   type="text"
                   class="shortest small number"
                   :class="{
-                    'state-error': $v.model.repeating_end_after.$error,
+                    'state-error': $v.model.repeating_end_after.$error
                   }"
                 />
                 <span class="small custom-ml-8">{{
@@ -404,11 +428,11 @@
             :disabled="controlsDisabled"
             :class="{
               'c-button-add-expense': transactionType === 'expense',
-              'c-button-add-income': transactionType === 'income',
+              'c-button-add-income': transactionType === 'income'
             }"
             :style="
               selectedCategory && {
-                'background-color': selectedCategory.color,
+                'background-color': selectedCategory.color
               }
             "
             class="button"
@@ -442,7 +466,12 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { required, requiredIf, integer, minValue } from 'vuelidate/lib/validators'
+import {
+  required,
+  requiredIf,
+  integer,
+  minValue
+} from 'vuelidate/lib/validators'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import InputContractor from '@/components/Inputs/InputContractor'
 import DateField from '@/components/Inputs/InputDate'
@@ -498,7 +527,8 @@ export default {
         apply_to_all_in_future: false
       },
       custom_interval: 'month',
-      controlsDisabled: false
+      controlsDisabled: false,
+      showContractorInput: false
     }
   },
 
@@ -649,7 +679,8 @@ export default {
       this.model.amount = `${Math.abs(this.model.amount)}`
     }
 
-    this.transactionType = this.selectedCategory?.type || this.defaultCategoryType
+    this.transactionType =
+      this.selectedCategory?.type || this.defaultCategoryType
 
     if (this.transactionType === 'transfer') {
       this.model.category_id = -1312
@@ -658,9 +689,13 @@ export default {
     // is_onbadge prop manipulations
     if (!this.isModeUpdate) {
       // auto set is_onbadge if future date or repeating
-      this.$watch((vm) => [vm.model.date, vm.model.is_repeating], () => {
-        this.model.is_onbadge = this.$moment(this.model.date).isAfter() || this.model.is_repeating
-      })
+      this.$watch(
+        vm => [vm.model.date, vm.model.is_repeating],
+        () => {
+          this.model.is_onbadge =
+            this.$moment(this.model.date).isAfter() || this.model.is_repeating
+        }
+      )
     } else {
       // switch off is_onbadge
       if (this.offOnbadge) {

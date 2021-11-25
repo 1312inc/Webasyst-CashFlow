@@ -187,5 +187,8 @@
   "export": "Экспорт",
   "transactionDate": "Дата операции: {date}",
   "amountOnDate": "{amount}, {date}",
-  "accountBalanceTransactionListHint": "Баланс счета после проведения этой операции"
+  "accountBalanceTransactionListHint": "Баланс счета после проведения этой операции",
+  "specify": "Указать",
+  "recipient": "получателя",
+  "payee": "плательщика"
 }
