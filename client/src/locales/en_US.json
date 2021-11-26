@@ -190,5 +190,6 @@
   "accountBalanceTransactionListHint": "Account balance after the transaction has been processed",
   "specify": "Specify",
   "recipient": "recipient",
-  "payee": "payee"
+  "payee": "payee",
+  "parentCategory": "Parent category"
 }
