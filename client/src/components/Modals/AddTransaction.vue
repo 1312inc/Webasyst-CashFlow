@@ -67,7 +67,7 @@
           <!-- Start Toggle type section -->
           <div v-if="!isModeUpdate" class="toggle custom-mb-16">
             <span
-              v-for="(type, i) in ['income', 'expense', 'transfer']"
+              v-for="(type, i) in ['income', 'expense', ...(accounts.length > 1 ? ['transfer'] : [])]"
               :key="i"
               @click="transactionType = type"
               :class="{ selected: transactionType === type }"
