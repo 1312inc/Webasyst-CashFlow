@@ -1,11 +1,11 @@
 <template>
-  <div class="dialog-body">
+  <div class="dialog-body" style="overflow: initial;">
     <div class="dialog-header">
       <h2>
         {{ isModeUpdate ? $t("updateCategory") : $t("addCategory") }}
       </h2>
     </div>
-    <div class="dialog-content">
+    <div class="dialog-content" style="overflow: initial;">
       <div class="fields">
         <div class="field">
           <div class="name for-input">
@@ -71,7 +71,31 @@
           </div>
         </div>
 
-        <div class="field" v-if="model.type">
+        <div class="field">
+          <div class="name for-input">
+            {{ $t("parentCategory") }}
+          </div>
+          <div class="value">
+            <DropdownWa
+              v-model="model.parent_category_id"
+              :defaultValue="$t('noCategory')"
+              :items="categories"
+              valuePropName="id"
+              :rowModificator="
+                obj =>
+                  `<span class='icon'><i class='rounded' style='background-color:${obj.color};'></i></span><span>${obj.name}</span>`
+              "
+              :maxHeight="200"
+              class="width-100"
+            />
+            <div v-if="model.parent_category_id" class="hint custom-mt-8">
+              This category will be shown in the app under the selected parent
+              category
+            </div>
+          </div>
+        </div>
+
+        <div class="field" v-if="!model.parent_category_id">
           <div class="name for-input">
             {{ $t("color") }}
           </div>
@@ -112,6 +136,7 @@
 <script>
 import { required } from 'vuelidate/lib/validators'
 import updateEntityMixin from '@/mixins/updateEntityMixin'
+import DropdownWa from '@/components/Inputs/DropdownWa'
 import ColorPicker from '@/components/Inputs/ColorPicker'
 export default {
   mixins: [updateEntityMixin],
@@ -129,7 +154,8 @@ export default {
   },
 
   components: {
-    ColorPicker
+    ColorPicker,
+    DropdownWa
   },
 
   data () {
@@ -139,7 +165,8 @@ export default {
         name: '',
         type: '',
         color: '',
-        is_profit: false
+        is_profit: false,
+        parent_category_id: null
       }
     }
   },
@@ -155,7 +182,22 @@ export default {
     }
   },
 
+  computed: {
+    categories () {
+      return this.$store.state.category.categories.filter(
+        c => c.parent_category_id === null && c.type === this.model.type
+      )
+    }
+  },
+
   watch: {
+    'model.parent_category_id' (val) {
+      this.model.color = val
+        ? this.$store.getters['category/getById'](val).color
+        : this.model.type === 'income'
+          ? '#00FF00'
+          : '#E57373'
+    },
     'model.type' () {
       if (!this.isModeUpdate) {
         this.model.is_profit = false
