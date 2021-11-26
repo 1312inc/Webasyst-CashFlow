@@ -102,10 +102,7 @@
                 :label="$t('category')"
                 :items="getCategoryByType(transactionType)"
                 valuePropName="id"
-                :rowModificator="
-                  obj =>
-                    `<span class='icon'><i class='rounded' style='background-color:${obj.color};'></i></span><span>${obj.name}</span>`
-                "
+                :rowModificator="$_rowModificatorMixin_rowModificator_category"
                 :maxHeight="200"
                 class="width-100"
               />
@@ -477,6 +474,7 @@ import InputContractor from '@/components/Inputs/InputContractor'
 import DateField from '@/components/Inputs/InputDate'
 import DropdownWa from '@/components/Inputs/DropdownWa'
 import TransitionCollapseHeight from '@/components/Transitions/TransitionCollapseHeight'
+import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 export default {
   props: {
     transaction: {
@@ -493,6 +491,8 @@ export default {
       default: false
     }
   },
+
+  mixins: [rowModificatorMixin],
 
   components: {
     InputCurrency,
