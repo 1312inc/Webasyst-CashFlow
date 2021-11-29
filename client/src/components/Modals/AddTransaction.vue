@@ -705,7 +705,7 @@ export default {
   },
 
   methods: {
-    submit () {
+    submit (event) {
       this.$v.$touch()
       if (!this.$v.$invalid) {
         this.controlsDisabled = true
@@ -720,7 +720,11 @@ export default {
         this.$store
           .dispatch('transaction/update', model)
           .then(() => {
-            this.close()
+            if (event.shiftKey) {
+              this.$parent.$emit('reOpen')
+            } else {
+              this.close()
+            }
           })
           .finally(() => {
             this.controlsDisabled = false

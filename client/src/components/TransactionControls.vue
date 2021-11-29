@@ -71,7 +71,7 @@
     </div>
 
     <portal>
-      <Modal v-if="open" @close="open = false">
+      <Modal v-if="open" @close="open = false" @reOpen="reOpen">
         <AddTransaction :defaultCategoryType="categoryType" />
       </Modal>
     </portal>
@@ -163,6 +163,12 @@ export default {
 
     unselectAll () {
       this.$store.commit('transactionBulk/emptySelectedTransactionsIds')
+    },
+
+    async reOpen () {
+      this.open = false
+      await this.$nextTick()
+      this.open = true
     }
   }
 }

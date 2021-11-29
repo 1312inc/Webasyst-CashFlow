@@ -167,6 +167,7 @@ body.modal {
 .c-mobile-build .c-chart-container { padding: 1rem; }
 .c-mobile-build .c-transaction-section .c-transaction-section__header { font-size: 1.25rem; }
 
+.c-inline-calendar { width: 300px; height: 300px; }
 .c-inline-calendar .flatpickr-calendar { box-shadow: none; margin: -0.25rem; }
 
 @media screen and (min-width: 761px) {
