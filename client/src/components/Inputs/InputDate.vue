@@ -1,5 +1,5 @@
 <template>
-  <input ref="date" />
+  <input ref="date" type="hidden" />
 </template>
 
 <script>
