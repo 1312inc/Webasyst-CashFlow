@@ -49,7 +49,7 @@ class cashCategoryModel extends cashModel
                 'SELECT c.*, cp.name as parent_name 
                 FROM cash_category c
                 LEFT JOIN cash_category cp ON c.category_parent_id = cp.id
-                ORDER BY sort'
+                ORDER BY sort ASC, id DESC'
             )
             ->fetchAll('id');
     }
@@ -67,10 +67,20 @@ class cashCategoryModel extends cashModel
         }
 
         return cash()->getContactRights()->filterQueryCategoriesForContact(
-            $this
-                ->select('*')
-                ->order('sort ASC, id DESC'),
+            $this->getAllSortedQuery(),
             $contact
         )->fetchAll('id');
+    }
+
+    public function getAllSorted($key = null, $normalize = false): array
+    {
+        return $this->getAllSortedQuery()->fetchAll($key, $normalize);
+    }
+
+    private function getAllSortedQuery(): waDbQuery
+    {
+        return $this
+            ->select('*')
+            ->order('sort ASC, id DESC');
     }
 }
