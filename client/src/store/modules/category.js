@@ -9,13 +9,8 @@ export default {
   }),
 
   getters: {
-    getById: state => id => {
-      return state.categories.find(category => category.id === id)
-    },
-
-    getByType: state => category => {
-      return state.categories
-        .filter(e => e.type === category)
+    sortedCategories: (state) => {
+      const initialAcc = state.categories
         .sort((a, b) => {
           if (a.sort > b.sort) {
             return 1
@@ -25,12 +20,37 @@ export default {
           }
           return 0
         })
+
+      return initialAcc.reduce((acc, cat) => {
+        if (cat.parent_category_id !== null) {
+          const currentIndex = acc.findIndex(c => c.id === cat.id)
+          acc.splice(currentIndex, 1)
+          const parentIndex = acc.findIndex(c => c.id === cat.parent_category_id)
+          acc.splice(parentIndex + 1, 0, cat)
+        }
+        return acc
+      }, [...initialAcc])
+    },
+
+    getById: state => id => {
+      return state.categories.find(category => category.id === id)
+    },
+
+    getByType: (state, getters) => category => {
+      return getters.sortedCategories.filter(e => e.type === category)
     }
   },
 
   mutations: {
     setCategories (state, data) {
       state.categories = data
+    },
+
+    updateCategory (state, data) {
+      const index = state.categories.findIndex(c => c.id === data.id)
+      if (index > -1) {
+        state.categories.splice(index, 1, data)
+      }
     },
 
     updateSort (state, data) {
@@ -50,17 +70,14 @@ export default {
       }
     },
 
-    async update ({ dispatch }, params) {
+    async update ({ commit }, params) {
       const method = params.id ? 'update' : 'create'
       try {
         const { data } = await api.post(`cash.category.${method}`, params)
-        dispatch('getList')
-          .then(() => {
-            // redirect to the entity page if new one
-            if (method === 'create') {
-              router.push({ name: 'Category', params: { id: data.id, isFirtsTimeNavigate: true } })
-            }
-          })
+        commit('updateCategory', data)
+        if (method === 'create') {
+          router.push({ name: 'Category', params: { id: data.id, isFirtsTimeNavigate: true } })
+        }
       } catch (_) {
         return false
       }

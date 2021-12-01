@@ -580,7 +580,6 @@ export default {
 
   computed: {
     ...mapState('account', ['accounts']),
-    ...mapState('category', ['categories']),
     ...mapGetters({
       getAccountById: 'account/getById',
       getCategoryById: 'category/getById',

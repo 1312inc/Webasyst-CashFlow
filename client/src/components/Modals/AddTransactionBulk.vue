@@ -25,7 +25,7 @@
           <DropdownWa
             v-model="row.category_id"
             :items="
-              $store.state.category.categories.filter(c => c.id !== -1312)
+              $store.getters['category/sortedCategories'].filter(c => c.id !== -1312)
             "
             valuePropName="id"
             :error="$v.data.$each[i].category_id.$error"
