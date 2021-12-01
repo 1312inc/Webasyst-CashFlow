@@ -68,7 +68,7 @@ export default {
             ids: [this.transaction.id],
             props: {
               is_onbadge: null,
-              date: this.$moment().format('LL') // set current date
+              date: this.$moment().format('YYYY-MM-DD') // set current date
             }
           })
         })
