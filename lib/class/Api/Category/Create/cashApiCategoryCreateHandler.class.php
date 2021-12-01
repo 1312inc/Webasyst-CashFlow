@@ -23,6 +23,8 @@ final class cashApiCategoryCreateHandler implements cashApiHandlerInterface
         $saver = new cashCategorySaver();
 
         if ($saver->saveFromApi($category, $request)) {
+            $saver->resort();
+
             return cashApiCategoryResponseDto::fromCategory($category);
         }
 

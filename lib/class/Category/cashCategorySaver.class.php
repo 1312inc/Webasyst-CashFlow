@@ -94,12 +94,7 @@ class cashCategorySaver extends cashEntitySaver
         return false;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return bool
-     */
-    public function validate(array &$data)
+    public function validate(array &$data): bool
     {
         $data['name'] = trim($data['name']);
         if ($data['name'] === '') {
@@ -111,39 +106,58 @@ class cashCategorySaver extends cashEntitySaver
         return true;
     }
 
-    /**
-     * @param array $order
-     *
-     * @return bool
-     */
-    public function sort(array $order)
+    public function sort(array $order): bool
     {
-        try {
-            /** @var cashCategoryRepository $rep */
-            $rep = cash()->getEntityRepository(cashCategory::class);
-            /** @var cashCategory[] $categories */
-            $categories = $rep->findById(
-                array_column(
-                    cash()->getModel(cashCategory::class)
-                        ->select('*')
-                        ->where('id in (i:ids)', ['ids' => $order])
-                        ->fetchAll(),
-                    'id'
-                )
-            );
-            $i = 0;
-            foreach ($order as $categoryId) {
-                if (!isset($categories[$categoryId])) {
-                    continue;
-                }
+        $categories = array_column(
+            cash()->getModel(cashCategory::class)
+                ->select('id')
+                ->where('id in (i:ids)', ['ids' => $order])
+                ->fetchAll(),
+            'id'
+        );
 
-                $categories[$categoryId]->setSort($i++);
-                cash()->getEntityPersister()->save($categories[$categoryId]);
+        $i = 0;
+        foreach ($order as $categoryId) {
+            if (!isset($categories[$categoryId])) {
+                continue;
             }
 
-            return true;
-        } catch (Exception $exception) {
-            $this->error = $exception->getMessage();
+            cash()->getModel(cashCategory::class)
+                ->updateById($categoryId, ['sort' => $i++]);
+        }
+
+        return true;
+    }
+
+    public function resort(): bool
+    {
+        $categories = cash()->getModel(cashCategory::class)
+            ->getAllSorted('category_parent_id', 2);
+        $sort = [];
+        $i = 0;
+        foreach ($categories as $cats) {
+            foreach ($cats as $cat) {
+                if (isset($sort[$cat['id']])) {
+                    continue 2;
+                }
+
+                $sort[$cat['id']] = $i++;
+                if (isset($categories[$cat['id']])) {
+                    foreach ($categories[$cat['id']] as $c) {
+                        $sort[$c['id']] = $i++;
+                    }
+                }
+            }
+        }
+
+        // system categories hack
+        $sort[cashCategoryFactory::TRANSFER_CATEGORY_ID] = 1312;
+        $sort[cashCategoryFactory::NO_CATEGORY_EXPENSE_ID] = -1312;
+        $sort[cashCategoryFactory::NO_CATEGORY_INCOME_ID] = -1312;
+
+        foreach ($sort as $id => $pos) {
+            cash()->getModel(cashCategory::class)
+                ->updateById($id, ['sort' => $pos]);
         }
 
         return false;
