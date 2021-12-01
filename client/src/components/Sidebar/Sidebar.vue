@@ -116,7 +116,6 @@ export default {
 
   computed: {
     ...mapState('account', ['accounts']),
-    ...mapState('category', ['categories']),
     ...mapGetters({
       categoriesByType: ['category/getByType']
     }),

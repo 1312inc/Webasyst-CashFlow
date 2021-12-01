@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import InputContractor from '@/components/Inputs/InputContractor'
 export default {
   components: {
@@ -129,18 +129,20 @@ export default {
 
   computed: {
     ...mapState('account', ['accounts']),
-    ...mapState('category', ['categories']),
+    ...mapGetters({
+      getCategoryByType: 'category/getByType'
+    }),
 
     ids () {
       return this.$store.state.transactionBulk.selectedTransactionsIds
     },
 
     categoriesIncome () {
-      return this.categories.filter(c => c.type === 'income')
+      return this.getCategoryByType('income')
     },
 
     categoriesExpense () {
-      return this.categories.filter(c => c.type === 'expense')
+      return this.getCategoryByType('expense')
     },
 
     count () {
