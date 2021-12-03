@@ -23,13 +23,16 @@
       <SidebarHeading updatingEntityName="Account">
         {{ $t("accounts") }}
       </SidebarHeading>
-      <SidebarAccountList>
-        <SidebarAccountListItem
+      <SortableList
+        :items="accounts"
+        sortingTarget="account"
+        :group="{name: 'accounts', pull: false}">
+        <SortableItemAccount
           v-for="account in accounts"
           :key="account.id"
           :account="account"
         />
-      </SidebarAccountList>
+      </SortableList>
 
       <!-- Categories list block -->
       <SidebarHeading
@@ -39,24 +42,30 @@
       >
         {{ $t("income") }}
       </SidebarHeading>
-      <SidebarCategoryList :categories="categoriesIncome">
-        <SidebarCategoryListItem
+      <SortableList
+        :items="categoriesIncome"
+        sortingTarget="category"
+        :group="{name: 'categoriesIncome', pull: false}">
+        <SortableItemCategory
           v-for="category in categoriesIncome"
           :key="category.id"
           :category="category"
         />
-      </SidebarCategoryList>
+      </SortableList>
 
       <SidebarHeading updatingEntityName="Category" type="expense">
         {{ $t("expense") }}
       </SidebarHeading>
-      <SidebarCategoryList :categories="categoriesExpense">
-        <SidebarCategoryListItem
+      <SortableList
+        :items="categoriesExpense"
+        sortingTarget="category"
+        :group="{name: 'categoriesExpense', pull: false}">
+        <SortableItemCategory
           v-for="category in categoriesExpense"
           :key="category.id"
           :category="category"
         />
-      </SidebarCategoryList>
+      </SortableList>
 
       <div v-if="$permissions.canAccessTransfers" class="custom-mt-24">
         <h6 class="heading"><span>{{ $t("other") }}</span></h6>
@@ -85,10 +94,9 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import SidebarAccountList from './SidebarAccountList'
-import SidebarAccountListItem from './SidebarAccountListItem'
-import SidebarCategoryList from './SidebarCategoryList'
-import SidebarCategoryListItem from './SidebarCategoryListItem'
+import SortableList from './Sortable/SortableList'
+import SortableItemCategory from './Sortable/SortableItemCategory'
+import SortableItemAccount from './Sortable/SortableItemAccount'
 import SidebarHeading from './SidebarHeading'
 import SidebarFooter from './SidebarFooter'
 import SearchField from '@/components/Inputs/SearchField'
@@ -97,10 +105,9 @@ import Bricks from '@/components/Bricks/Bricks'
 
 export default {
   components: {
-    SidebarAccountList,
-    SidebarAccountListItem,
-    SidebarCategoryList,
-    SidebarCategoryListItem,
+    SortableList,
+    SortableItemCategory,
+    SortableItemAccount,
     SidebarHeading,
     SidebarFooter,
     SearchField,
@@ -116,17 +123,16 @@ export default {
 
   computed: {
     ...mapState('account', ['accounts']),
-    ...mapState('category', ['categories']),
     ...mapGetters({
       categoriesByType: ['category/getByType']
     }),
 
     categoriesIncome () {
-      return this.categoriesByType('income')
+      return this.categoriesByType('income').filter(c => c.parent_category_id === null)
     },
 
     categoriesExpense () {
-      return this.categoriesByType('expense')
+      return this.categoriesByType('expense').filter(c => c.parent_category_id === null)
     },
 
     categoriesTransfer () {

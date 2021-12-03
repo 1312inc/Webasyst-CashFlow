@@ -4,11 +4,11 @@
     style="overflow: hidden"
   >
     <div
-      v-if="category.name"
+      v-if="category"
       :style="`color:${category.color}`"
       class="text-ellipsis"
     >
-      {{ category.name }}
+      {{ categoryComputed }}
     </div>
     <!-- if collapsed transactions header -->
     <template v-if="collapseHeaderData && transaction.external_source_info">
@@ -44,7 +44,7 @@
         :style="`color:${transaction.external_source_info.color}`"
         :title="transaction.external_source_info.name"
         class="small"
-    >
+      >
         <i :class="transaction.external_source_info.glyph" class="fas"></i>
       </span>
       <span v-if="transaction.repeating_id" :title="title">
@@ -69,6 +69,17 @@ export default {
           frequency: this.transaction.repeating_data.frequency
         }
       )
+    },
+
+    categoryComputed () {
+      const parent = this.category.parent_category_id
+        ? `${
+            this.$store.getters['category/getById'](
+              this.category.parent_category_id
+            ).name
+          } / `
+        : ''
+      return `${parent}${this.category.name}`
     }
   }
 }

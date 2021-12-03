@@ -8,12 +8,10 @@
       @click.prevent="open = !open"
       class="dropdown-toggle button light-gray width-100"
     >
-      <div v-if="label" class="smaller gray custom-mb-8 align-left">
-        {{ label }}
-      </div>
       <div
         class="flexbox space-8 middle wrap-mobile align-left"
-        v-html="activeItem.name ? rowModificator(activeItem, true) : '&nbsp;'"
+        :class="{ gray: activeItem.name === defaultValue }"
+        v-html="rowModificator(activeItem)"
       />
     </button>
     <div
@@ -53,7 +51,7 @@ export default {
     },
     valuePropName: {
       type: String,
-      default: () => 'value'
+      default: 'value'
     },
     useDefaultValue: {
       type: Boolean,
@@ -61,7 +59,7 @@ export default {
     },
     defaultValue: {
       type: String,
-      default: ''
+      default: 'no select'
     },
     rowModificator: {
       type: Function,
@@ -72,9 +70,6 @@ export default {
     isRight: {
       type: Boolean,
       default: false
-    },
-    label: {
-      type: String
     },
     maxHeight: {
       type: Number,
@@ -110,10 +105,7 @@ export default {
     },
 
     activeItem () {
-      return (
-        this.itemsList.find(i => i[this.valuePropName] === this.value) ||
-        this.itemsList[0]
-      )
+      return this.itemsList.find(i => i[this.valuePropName] === this.value)
     }
   }
 }
@@ -121,11 +113,11 @@ export default {
 
 <style lang="scss" scoped>
 .dropdown-toggle {
-    div {
-        white-space: nowrap;
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-        display: block;
-    }
+  div {
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
 }
 </style>
