@@ -78,13 +78,9 @@
           <div class="value">
             <DropdownWa
               v-model="model.parent_category_id"
-              :defaultValue="$t('noCategory')"
               :items="categories"
               valuePropName="id"
-              :rowModificator="
-                obj =>
-                  `<span class='icon'><i class='rounded' style='background-color:${obj.color};'></i></span><span>${obj.name}</span>`
-              "
+              :rowModificator="$_rowModificatorMixin_rowModificator_category"
               :maxHeight="200"
               class="width-100"
             />
@@ -136,10 +132,11 @@
 <script>
 import { required } from 'vuelidate/lib/validators'
 import updateEntityMixin from '@/mixins/updateEntityMixin'
+import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 import DropdownWa from '@/components/Inputs/DropdownWa'
 import ColorPicker from '@/components/Inputs/ColorPicker'
 export default {
-  mixins: [updateEntityMixin],
+  mixins: [updateEntityMixin, rowModificatorMixin],
 
   props: {
     editedItem: {
@@ -184,8 +181,8 @@ export default {
 
   computed: {
     categories () {
-      return this.$store.state.category.categories.filter(
-        c => c.parent_category_id === null && c.type === this.model.type
+      return this.$store.getters['category/sortedCategories'].filter(
+        c => c.parent_category_id === null && c.type === this.model.type && ![-1, -2].includes(c.id)
       )
     }
   },
