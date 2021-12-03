@@ -25,14 +25,11 @@
           <DropdownWa
             v-model="row.category_id"
             :items="
-              $store.state.category.categories.filter(c => c.id !== -1312)
+              $store.getters['category/sortedCategories'].filter(c => c.id !== -1312)
             "
             valuePropName="id"
             :error="$v.data.$each[i].category_id.$error"
-            :rowModificator="
-              obj =>
-                `<span class='icon'><i class='rounded' style='background-color:${obj.color};'></i></span><span>${obj.name}</span>`
-            "
+            :rowModificator="$_rowModificatorMixin_rowModificator_category"
             :maxHeight="200"
             class="width-100"
           />
@@ -99,12 +96,16 @@ import { minLength, requiredIf } from 'vuelidate/lib/validators'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import DateField from '@/components/Inputs/InputDate'
 import DropdownWa from '@/components/Inputs/DropdownWa'
+import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 export default {
   components: {
     InputCurrency,
     DateField,
     DropdownWa
   },
+
+  mixins: [rowModificatorMixin],
+
   data () {
     return {
       model: {

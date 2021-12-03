@@ -190,5 +190,6 @@
   "accountBalanceTransactionListHint": "Баланс счета после проведения этой операции",
   "specify": "Указать",
   "recipient": "получателя",
-  "payee": "плательщика"
+  "payee": "плательщика",
+  "parentCategory": "Родительская категория"
 }
