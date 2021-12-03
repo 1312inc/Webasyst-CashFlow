@@ -10,7 +10,8 @@
     >
       <div
         class="flexbox space-8 middle wrap-mobile align-left"
-        v-html="activeItem.name ? rowModificator(activeItem, true) : '&nbsp;'"
+        :class="{ gray: activeItem.name === defaultValue }"
+        v-html="rowModificator(activeItem)"
       />
     </button>
     <div
@@ -104,10 +105,7 @@ export default {
     },
 
     activeItem () {
-      return (
-        this.itemsList.find(i => i[this.valuePropName] === this.value) ||
-        this.itemsList[0]
-      )
+      return this.itemsList.find(i => i[this.valuePropName] === this.value)
     }
   }
 }
@@ -115,11 +113,11 @@ export default {
 
 <style lang="scss" scoped>
 .dropdown-toggle {
-    div {
-        white-space: nowrap;
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-        display: block;
-    }
+  div {
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
 }
 </style>

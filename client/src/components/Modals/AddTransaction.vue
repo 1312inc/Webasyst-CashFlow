@@ -137,12 +137,7 @@
                   "
                   :items="accounts"
                   valuePropName="id"
-                  :rowModificator="
-                    obj =>
-                      `${obj.name} (${$helper.currencySignByCode(
-                        obj.currency
-                      )})`
-                  "
+                  :rowModificator="$_rowModificatorMixin_rowModificator_account"
                   :isRight="transactionType !== 'transfer'"
                   :maxHeight="200"
                   class="width-100"
@@ -164,12 +159,7 @@
                   :label="$t('toAccount')"
                   :items="accountsTransfer"
                   valuePropName="id"
-                  :rowModificator="
-                    obj =>
-                      `${obj.name} (${$helper.currencySignByCode(
-                        obj.currency
-                      )})`
-                  "
+                  :rowModificator="$_rowModificatorMixin_rowModificator_account"
                   :isRight="true"
                   :maxHeight="200"
                   class="width-100"
