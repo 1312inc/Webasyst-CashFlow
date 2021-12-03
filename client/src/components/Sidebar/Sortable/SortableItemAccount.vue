@@ -1,5 +1,5 @@
 <template>
-  <li :class="{'selected': isActive}">
+  <li :class="{ selected: isActive }">
     <router-link :to="`/account/${account.id}`" class="flexbox middle">
       <span class="icon">
         <img
@@ -29,11 +29,19 @@
 <script>
 import currencyIcons from '@/utils/currencyIcons'
 export default {
-  props: ['account'],
+  props: {
+    account: {
+      type: Object,
+      required: true
+    }
+  },
 
   computed: {
     isActive () {
-      return this.$store.state.currentType === 'account' && this.$store.state.currentTypeId === this.account.id
+      return (
+        this.$store.state.currentType === 'account' &&
+        this.$store.state.currentTypeId === this.account.id
+      )
     },
 
     accountIcon () {

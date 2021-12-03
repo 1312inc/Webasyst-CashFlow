@@ -9,8 +9,8 @@ export default {
   }),
 
   getters: {
-    sortedCategories: (state) => {
-      const initialAcc = state.categories
+    sortedCategories: state => {
+      const input = state.categories
         .sort((a, b) => {
           if (a.sort > b.sort) {
             return 1
@@ -21,15 +21,21 @@ export default {
           return 0
         })
 
-      return initialAcc.reduce((acc, cat) => {
-        if (cat.parent_category_id !== null) {
-          const currentIndex = acc.findIndex(c => c.id === cat.id)
-          acc.splice(currentIndex, 1)
-          const parentIndex = acc.findIndex(c => c.id === cat.parent_category_id)
-          acc.splice(parentIndex + 1, 0, cat)
-        }
-        return acc
-      }, [...initialAcc])
+      const assemble = (arr, parentId = null, result = []) => {
+        arr.forEach(el => {
+          if (el.parent_category_id === parentId) {
+            result.push(el)
+            assemble(arr, el.id, result)
+          }
+        })
+        return result
+      }
+
+      return assemble(input)
+    },
+
+    getChildren: (state, getters) => id => {
+      return getters.sortedCategories.filter(c => c.parent_category_id === id)
     },
 
     getById: state => id => {
@@ -50,6 +56,8 @@ export default {
       const index = state.categories.findIndex(c => c.id === data.id)
       if (index > -1) {
         state.categories.splice(index, 1, data)
+      } else {
+        state.categories.unshift(data)
       }
     },
 
@@ -78,6 +86,17 @@ export default {
         if (method === 'create') {
           router.push({ name: 'Category', params: { id: data.id, isFirtsTimeNavigate: true } })
         }
+      } catch (_) {
+        return false
+      }
+    },
+
+    async updateParams ({ commit, getters }, params) {
+      try {
+        const item = getters.getById(params.id)
+        const reqParams = { ...item, ...params }
+        const { data } = await api.post('cash.category.update', reqParams)
+        commit('updateCategory', data)
       } catch (_) {
         return false
       }
