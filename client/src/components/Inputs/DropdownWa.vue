@@ -8,6 +8,9 @@
       @click.prevent="open = !open"
       class="dropdown-toggle button light-gray width-100"
     >
+      <div v-if="label" class="smaller gray custom-mb-8 align-left">
+        {{ label }}
+      </div>
       <div
         class="flexbox space-8 middle wrap-mobile align-left"
         :class="{ gray: activeItem.name === defaultValue }"
@@ -70,6 +73,9 @@ export default {
     isRight: {
       type: Boolean,
       default: false
+    },
+    label: {
+      type: String
     },
     maxHeight: {
       type: Number,
