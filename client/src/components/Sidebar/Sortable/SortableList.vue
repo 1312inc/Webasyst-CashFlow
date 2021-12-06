@@ -42,6 +42,16 @@ export default {
     draggable
   },
 
+  data () {
+    return {
+      oldOrder: []
+    }
+  },
+
+  created () {
+    this.oldOrder = this.items.map(e => e.id)
+  },
+
   methods: {
     add (e) {
       const data = {
@@ -51,12 +61,14 @@ export default {
       this.$store.dispatch(`${this.sortingTarget}/updateParams`, data)
     },
 
-    sort () {
-      const ids = this.items.map(e => e.id)
-      if (ids.length) {
-        this.$store.dispatch(`${this.sortingTarget}/sort`, {
-          order: ids
+    async sort () {
+      const newOrder = this.items.map(e => e.id)
+      if (newOrder.length) {
+        await this.$store.dispatch(`${this.sortingTarget}/sort`, {
+          oldOrder: this.oldOrder,
+          newOrder
         })
+        this.oldOrder = newOrder
       }
     }
   }

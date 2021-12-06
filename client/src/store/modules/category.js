@@ -91,13 +91,15 @@ export default {
       }
     },
 
-    async updateParams ({ commit, getters }, params) {
+    async updateParams ({ commit, getters, dispatch }, params) {
+      const item = getters.getById(params.id)
+      const stateBefore = { ...item }
       try {
-        const item = getters.getById(params.id)
         const reqParams = { ...item, ...params }
-        const { data } = await api.post('cash.category.update', reqParams)
-        commit('updateCategory', data)
+        commit('updateCategory', reqParams)
+        await api.post('cash.category.update', reqParams)
       } catch (_) {
+        commit('updateCategory', stateBefore)
         return false
       }
     },
@@ -115,11 +117,14 @@ export default {
       }
     },
 
-    sort ({ commit }, params) {
+    async sort ({ commit }, params) {
       try {
-        commit('updateSort', params.order)
-        api.post('cash.category.sort', params)
+        commit('updateSort', params.newOrder)
+        await api.post('cash.category.sort', {
+          order: params.newOrder
+        })
       } catch (_) {
+        commit('updateSort', params.oldOrder)
         return false
       }
     }
