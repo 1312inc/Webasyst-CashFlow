@@ -94,11 +94,14 @@ export default {
       }
     },
 
-    sort ({ commit }, params) {
+    async sort ({ commit }, params) {
       try {
-        commit('updateSort', params.order)
-        api.post('cash.account.sort', params)
+        commit('updateSort', params.newOrder)
+        await api.post('cash.account.sort', {
+          order: params.newOrder
+        })
       } catch (_) {
+        commit('updateSort', params.oldOrder)
         return false
       }
     }
