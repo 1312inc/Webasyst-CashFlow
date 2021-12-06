@@ -633,6 +633,10 @@ export default {
   },
 
   watch: {
+    transactionType () {
+      // reset category_id if transaction type toggler touched
+      this.model.category_id = null
+    },
     'model.repeating_interval' (val) {
       if (val !== 'custom') this.model.repeating_frequency = 1
     },

@@ -111,7 +111,10 @@ export default {
     },
 
     activeItem () {
-      return this.itemsList.find(i => i[this.valuePropName] === this.value)
+      return (
+        this.itemsList.find(i => i[this.valuePropName] === this.value) ||
+        this.itemsList[0]
+      )
     }
   }
 }
