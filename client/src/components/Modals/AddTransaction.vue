@@ -22,6 +22,17 @@
             <img :src="transaction.create_contact.userpic" alt="" />
           </span>
         </div>
+        <!-- Start Toggle type section -->
+        <div v-if="!isModeUpdate" class="toggle">
+          <span
+            v-for="(type, i) in ['income', 'expense', ...(accounts.length > 1 ? ['transfer'] : [])]"
+            :key="i"
+            @click="transactionType = type"
+            :class="{ selected: transactionType === type }"
+            >{{ $t(type) }}</span
+          >
+        </div>
+        <!-- End Toggle type section -->
       </div>
     </div>
 
@@ -64,18 +75,6 @@
           </div>
         </div>
         <div class="wide custom-mt-24-mobile">
-          <!-- Start Toggle type section -->
-          <div v-if="!isModeUpdate" class="toggle custom-mb-16">
-            <span
-              v-for="(type, i) in ['income', 'expense', ...(accounts.length > 1 ? ['transfer'] : [])]"
-              :key="i"
-              @click="transactionType = type"
-              :class="{ selected: transactionType === type }"
-              >{{ $t(type) }}</span
-            >
-          </div>
-          <!-- End Toggle type section -->
-
           <!-- Start Currency Input section -->
           <div class="custom-mb-16">
             <input-currency
