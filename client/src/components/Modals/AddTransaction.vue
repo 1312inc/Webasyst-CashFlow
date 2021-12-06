@@ -1,7 +1,7 @@
 <template>
   <div class="dialog-body" style="width: 750px">
     <div class="dialog-header">
-      <div class="flexbox middle">
+      <div class="flexbox middle wrap-mobile">
         <div class="wide flexbox middle">
           <h2 v-if="transactionType === 'transfer'" class="custom-mb-0">
             {{ $t("newTransfer") }}
@@ -23,7 +23,7 @@
           </span>
         </div>
         <!-- Start Toggle type section -->
-        <div v-if="!isModeUpdate" class="toggle">
+        <div v-if="!isModeUpdate" class="toggle custom-mt-8">
           <span
             v-for="(type, i) in ['income', 'expense', ...(accounts.length > 1 ? ['transfer'] : [])]"
             :key="i"
