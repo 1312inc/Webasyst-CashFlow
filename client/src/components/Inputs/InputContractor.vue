@@ -8,7 +8,13 @@
         @keyup.down="down"
         @keyup.enter="select(aciveMenuIndex)"
         @blur="reset"
-        @focus="onFocus"
+        @focus="
+          e => {
+            if (focus) {
+              input(e);
+            }
+          }
+        "
         ref="input"
         type="text"
         autocomplete="off"
@@ -132,6 +138,7 @@ export default {
     input ({ target }) {
       this.inputValue = target.value
       this.photo = ''
+      this.isNotFound = false
 
       // prevent search request if empty string
       if (!target.value.trim()) {
@@ -209,12 +216,6 @@ export default {
         } else {
           this.aciveMenuIndex = null
         }
-      }
-    },
-
-    onFocus (e) {
-      if (this.defaultRequest) {
-        this.input(e)
       }
     }
   }
