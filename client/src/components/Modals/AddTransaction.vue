@@ -190,16 +190,17 @@
           </TransitionCollapseHeight>
 
           <!-- Start Contractor section -->
-          <div class="custom-mb-16">
+          <div v-if="transactionType !== 'transfer'" class="custom-mb-16">
             <div v-if="!showContractorInput">
               {{ $t("specify") }}
               <a @click.prevent="showContractorInput = true" href="#">{{
                 transactionType === "expense" ? $t("recipient") : $t("payee")
               }}</a>
             </div>
-            <div v-if="showContractorInput && transactionType !== 'transfer'">
+            <div v-if="showContractorInput">
               <InputContractor
                 :defaultRequest="`category_id/${model.category_id}`"
+                :defaultContractor="model.contractor_contact"
                 :focus="true"
                 @newContractor="
                   name => {
@@ -633,10 +634,6 @@ export default {
   },
 
   watch: {
-    transactionType () {
-      // reset category_id if transaction type toggler touched
-      this.model.category_id = null
-    },
     'model.repeating_interval' (val) {
       if (val !== 'custom') this.model.repeating_frequency = 1
     },
