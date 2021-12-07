@@ -201,7 +201,7 @@
               <InputContractor
                 :defaultRequest="`category_id/${model.category_id}`"
                 :defaultContractor="model.contractor_contact"
-                :focus="true"
+                :focus="model.contractor_contact === null"
                 @newContractor="
                   name => {
                     model.contractor = name;
@@ -673,6 +673,10 @@ export default {
 
     if (this.transactionType === 'transfer') {
       this.model.category_id = -1312
+    }
+
+    if (this.model.contractor_contact) {
+      this.showContractorInput = true
     }
 
     // is_onbadge prop manipulations
