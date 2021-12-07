@@ -71,14 +71,14 @@
           </div>
         </div>
 
-        <div class="field">
+        <div v-if="showSelectParent" class="field">
           <div class="name for-input">
             {{ $t("parentCategory") }}
           </div>
           <div class="value">
             <DropdownWa
               v-model="model.parent_category_id"
-              :items="categories"
+              :items="parentsList"
               valuePropName="id"
               :rowModificator="$_rowModificatorMixin_rowModificator_category"
               :maxHeight="200"
@@ -180,10 +180,21 @@ export default {
   },
 
   computed: {
-    categories () {
+    parentsList () {
       return this.$store.getters['category/sortedCategories'].filter(
-        c => c.parent_category_id === null && c.type === this.model.type && ![-1, -2].includes(c.id)
+        c =>
+          c.parent_category_id === null &&
+          this.editedItem?.id !== c.id &&
+          c.type === this.model.type &&
+          ![-1, -2].includes(c.id)
       )
+    },
+
+    showSelectParent () {
+      return this.editedItem
+        ? this.$store.getters['category/getChildren'](this.editedItem.id)
+          .length < 1
+        : true
     }
   },
 
