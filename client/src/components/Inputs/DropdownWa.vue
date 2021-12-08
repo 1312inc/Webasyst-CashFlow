@@ -13,8 +13,11 @@
       </div>
       <div
         class="flexbox space-8 middle wrap-mobile align-left"
-        :class="{ gray: activeItem.name === defaultValue }"
-        v-html="rowModificator(activeItem)"
+        v-html="
+          activeItem[valuePropName] !== $options.props.value.default
+            ? rowModificator(activeItem)
+            : '&nbsp;'
+        "
       />
     </button>
     <div
@@ -70,7 +73,9 @@ export default {
     },
     defaultValue: {
       type: String,
-      default: 'no select'
+      default: function () {
+        return this.$t('notSelected')
+      }
     },
     rowModificator: {
       type: Function,
@@ -111,7 +116,9 @@ export default {
 
   computed: {
     itemsGroups () {
-      const groups = this.items.every(e => Array.isArray(e)) ? [...this.items] : [[...this.items]]
+      const groups = this.items.every(e => Array.isArray(e))
+        ? [...this.items]
+        : [[...this.items]]
 
       return this.useDefaultValue
         ? [
