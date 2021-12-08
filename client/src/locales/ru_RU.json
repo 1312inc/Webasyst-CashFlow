@@ -191,5 +191,6 @@
   "specify": "Указать",
   "recipient": "получателя",
   "payee": "плательщика",
-  "parentCategory": "Родительская категория"
+  "parentCategory": "Родительская категория",
+  "notSelected": "Не выбрано"
 }

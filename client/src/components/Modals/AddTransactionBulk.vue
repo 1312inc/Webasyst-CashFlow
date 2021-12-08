@@ -40,9 +40,7 @@
             :items="$store.state.account.accounts"
             valuePropName="id"
             :error="$v.data.$each[i].account_id.$error"
-            :rowModificator="
-              obj => `${obj.name} (${$helper.currencySignByCode(obj.currency)})`
-            "
+            :rowModificator="$_rowModificatorMixin_rowModificator_account"
             :maxHeight="200"
             class="width-100"
           />
