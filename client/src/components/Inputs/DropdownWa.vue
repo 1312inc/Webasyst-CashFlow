@@ -22,19 +22,27 @@
       :style="`max-height:${maxHeight}px`"
       class="dropdown-body"
     >
-      <ul class="menu">
-        <li v-for="(item, i) in itemsList" :key="i">
-          <a
-            v-if="item.name"
-            @click.prevent="
-              $emit('input', item[valuePropName]);
-              open = false;
-            "
-            v-html="rowModificator(item)"
-            href="#"
-          ></a>
-        </li>
-      </ul>
+      <div v-for="(group, i) in itemsGroups" :key="i">
+        <div
+          v-if="groupsLabels[useDefaultValue ? i - 1 : i]"
+          class="smaller gray uppercase custom-px-16 custom-py-8"
+        >
+          {{ groupsLabels[useDefaultValue ? i - 1 : i] }}
+        </div>
+        <ul class="menu">
+          <li v-for="(item, j) in group" :key="j">
+            <a
+              v-if="item.name"
+              @click.prevent="
+                $emit('input', item[valuePropName]);
+                open = false;
+              "
+              v-html="rowModificator(item)"
+              href="#"
+            ></a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -77,6 +85,10 @@ export default {
     label: {
       type: String
     },
+    groupsLabels: {
+      type: Array,
+      default: () => []
+    },
     maxHeight: {
       type: Number,
       default: 500
@@ -98,22 +110,26 @@ export default {
   },
 
   computed: {
-    itemsList () {
+    itemsGroups () {
+      const groups = this.items.every(e => Array.isArray(e)) ? [...this.items] : [[...this.items]]
+
       return this.useDefaultValue
         ? [
-          {
-            [this.valuePropName]: this.$options.props.value.default,
-            name: this.defaultValue
-          },
-   ***REMOVED***this.items
+          [
+            {
+              [this.valuePropName]: this.$options.props.value.default,
+              name: this.defaultValue
+            }
+          ],
+   ***REMOVED***groups
         ]
-        : [...this.items]
+        : groups
     },
 
     activeItem () {
+      const flated = this.itemsGroups.flat()
       return (
-        this.itemsList.find(i => i[this.valuePropName] === this.value) ||
-        this.itemsList[0]
+        flated.find(i => i[this.valuePropName] === this.value) || flated[0]
       )
     }
   }
@@ -121,6 +137,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.dropdown {
+  .menu {
+    margin: 0;
+  }
+}
 .dropdown-toggle {
   div {
     white-space: nowrap;
