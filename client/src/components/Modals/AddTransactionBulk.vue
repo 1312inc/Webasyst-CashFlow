@@ -24,9 +24,8 @@
         <div class="width-25">
           <DropdownWa
             v-model="row.category_id"
-            :items="
-              $store.getters['category/sortedCategories'].filter(c => c.id !== -1312)
-            "
+            :items="[$store.getters['category/getByType']('income'), $store.getters['category/getByType']('expense')]"
+            :groupsLabels="[$t('income'), $t('expense')]"
             valuePropName="id"
             :error="$v.data.$each[i].category_id.$error"
             :rowModificator="$_rowModificatorMixin_rowModificator_category"
