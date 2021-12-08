@@ -3,7 +3,7 @@
     <div class="dialog-header">
       <div class="flexbox middle wrap-mobile">
         <div class="wide flexbox middle">
-          <h2 v-if="transactionType === 'transfer'" class="custom-mb-0">
+          <h2 v-if="transactionType === 'transfer' && !isModeUpdate" class="custom-mb-0">
             {{ $t("newTransfer") }}
           </h2>
           <h2 v-else class="custom-mb-0">
@@ -25,7 +25,11 @@
         <!-- Start Toggle type section -->
         <div v-if="!isModeUpdate" class="toggle custom-mt-8">
           <span
-            v-for="(type, i) in ['income', 'expense', ...(accounts.length > 1 ? ['transfer'] : [])]"
+            v-for="(type, i) in [
+              'income',
+              'expense',
+              ...(accounts.length > 1 ? ['transfer'] : [])
+            ]"
             :key="i"
             @click="transactionType = type"
             :class="{ selected: transactionType === type }"
@@ -117,53 +121,53 @@
             >
               <i class="fas fa-arrow-right"></i>
             </div>
+
             <div
               :class="
-                transactionType === 'transfer'
-                  ? 'flexbox middle width-100'
+                transactionType === 'transfer' && isModeUpdate
+                  ? 'width-100'
                   : 'width-50'
               "
             >
-              <div :class="{ 'width-50': transactionType === 'transfer' }">
-                <DropdownWa
-                  v-model="model.account_id"
-                  :error="$v.model.account_id.$error"
-                  :label="
-                    transactionType === 'transfer' ||
-                    transactionType === 'expense'
-                      ? $t('fromAccount')
-                      : $t('toAccount')
-                  "
-                  :items="accounts"
-                  valuePropName="id"
-                  :rowModificator="$_rowModificatorMixin_rowModificator_account"
-                  :isRight="transactionType !== 'transfer'"
-                  :maxHeight="200"
-                  class="width-100"
-                />
-              </div>
-              <div
-                v-if="transactionType === 'transfer'"
-                class="custom-px-4 gray"
-              >
-                <i class="fas fa-arrow-right"></i>
-              </div>
-              <div
-                :class="{ 'width-50': transactionType === 'transfer' }"
-                v-if="transactionType === 'transfer'"
-              >
-                <DropdownWa
-                  v-model="model.transfer_account_id"
-                  :error="$v.model.transfer_account_id.$error"
-                  :label="$t('toAccount')"
-                  :items="accountsTransfer"
-                  valuePropName="id"
-                  :rowModificator="$_rowModificatorMixin_rowModificator_account"
-                  :isRight="true"
-                  :maxHeight="200"
-                  class="width-100"
-                />
-              </div>
+              <DropdownWa
+                v-model="model.account_id"
+                :error="$v.model.account_id.$error"
+                :label="
+                transactionType === 'transfer' && isModeUpdate ? $t('account') :
+                  transactionType === 'transfer' ||
+                  transactionType === 'expense'
+                    ? $t('fromAccount')
+                    : $t('toAccount')
+                "
+                :items="accounts"
+                valuePropName="id"
+                :rowModificator="$_rowModificatorMixin_rowModificator_account"
+                :isRight="transactionType !== 'transfer'"
+                :maxHeight="200"
+                class="width-100"
+              />
+            </div>
+            <div
+              v-if="transactionType === 'transfer' && !isModeUpdate"
+              class="custom-px-8 gray"
+            >
+              <i class="fas fa-arrow-right"></i>
+            </div>
+            <div
+              v-if="transactionType === 'transfer' && !isModeUpdate"
+              class="width-50"
+            >
+              <DropdownWa
+                v-model="model.transfer_account_id"
+                :error="$v.model.transfer_account_id.$error"
+                :label="$t('toAccount')"
+                :items="accountsTransfer"
+                valuePropName="id"
+                :rowModificator="$_rowModificatorMixin_rowModificator_account"
+                :isRight="true"
+                :maxHeight="200"
+                class="width-100"
+              />
             </div>
           </div>
           <!-- End Categories section -->
@@ -554,16 +558,13 @@ export default {
       },
       transfer_account_id: {
         required: requiredIf(function () {
-          return this.transactionType === 'transfer'
+          return this.transactionType === 'transfer' && !this.isModeUpdate
         })
       },
       transfer_incoming_amount: {
         required: requiredIf(function () {
           return this.showTransferIncomingAmount
-        }),
-        minValue: function (value) {
-          return this.showTransferIncomingAmount ? value > 0 : true
-        }
+        })
       }
     }
   },

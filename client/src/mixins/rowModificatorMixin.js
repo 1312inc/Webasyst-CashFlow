@@ -9,7 +9,7 @@ export default {
     },
 
     $_rowModificatorMixin_rowModificator_account (obj) {
-      return `${obj.name}${obj.currency ? `(${this.$helper.currencySignByCode(
+      return `${obj.name}${obj.currency ? `&nbsp;(${this.$helper.currencySignByCode(
         obj.currency
       )})` : ''}`
     }
