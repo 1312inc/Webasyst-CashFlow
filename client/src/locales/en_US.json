@@ -27,7 +27,7 @@
   "currency": "Currency",
   "type": "Type",
   "color": "Color",
-  "icon": "Logo",
+  "icon": "Icon",
   "desc": "Comment",
   "noDesc": "no description",
   "addTransaction": "Add transaction",

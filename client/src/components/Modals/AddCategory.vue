@@ -99,6 +99,15 @@
             <ColorPicker v-model="model.color" />
           </div>
         </div>
+
+        <div class="field">
+          <div class="name for-input">
+            {{ $t("icon") }}
+          </div>
+          <div class="value">
+            <FontAwsomeSelector v-model="model.glyph" />
+          </div>
+        </div>
       </div>
     </div>
 
@@ -135,6 +144,7 @@ import updateEntityMixin from '@/mixins/updateEntityMixin'
 import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 import DropdownWa from '@/components/Inputs/DropdownWa'
 import ColorPicker from '@/components/Inputs/ColorPicker'
+import FontAwsomeSelector from '../Inputs/FontAwsomeSelector.vue'
 export default {
   mixins: [updateEntityMixin, rowModificatorMixin],
 
@@ -152,7 +162,8 @@ export default {
 
   components: {
     ColorPicker,
-    DropdownWa
+    DropdownWa,
+    FontAwsomeSelector
   },
 
   data () {
@@ -163,7 +174,8 @@ export default {
         type: '',
         color: '',
         is_profit: false,
-        parent_category_id: null
+        parent_category_id: null,
+        glyph: null
       }
     }
   },
