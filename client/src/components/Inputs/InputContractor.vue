@@ -30,7 +30,7 @@
       ></i>
     </div>
 
-    <div class="hint custom-mt-8">
+    <div v-if="!initialState || initialState !== inputValue" class="hint custom-mt-8">
       {{
         inputLabel.trim() === ""
           ? $t("noContact")
@@ -101,6 +101,7 @@ export default {
 
   data () {
     return {
+      initialState: '',
       inputValue: '',
       photo: '',
       aciveMenuIndex: null,
@@ -129,6 +130,7 @@ export default {
   },
 
   mounted () {
+    this.initialState = this.$refs.input.value
     if (this.focus) {
       this.$refs.input.focus()
     }
