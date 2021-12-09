@@ -192,5 +192,7 @@
   "recipient": "recipient",
   "payee": "payee",
   "parentCategory": "Parent category",
-  "notSelected": "Not selected"
+  "notSelected": "Not selected",
+  "shortMonth": "mo",
+  "forecasted": "Forecasted balance dynamic based on all planned future transactions"
 }

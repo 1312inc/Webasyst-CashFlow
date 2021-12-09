@@ -13,10 +13,14 @@
         {{
           $helper.toCurrency({
             value: balance,
-            currencyCode: currentEntity.currency,
+            currencyCode: currentEntity.currency
           })
         }}
+
       </div>
+
+      <chart-header-title-average :currencyCode="currentEntity.currency" />
+
       <div v-if="currentEntity.id > 0 && $permissions.isAdmin">
         <button @click="update(currentEntity)" class="button nobutton">
           <i class="fas fa-edit"></i>
@@ -35,11 +39,13 @@
 import Modal from '@/components/Modal'
 import Account from '@/components/Modals/AddAccount'
 import Category from '@/components/Modals/AddCategory'
+import ChartHeaderTitleAverage from './ChartHeaderTitleAverage.vue'
 export default {
   components: {
     Modal,
     Account,
-    Category
+    Category,
+    ChartHeaderTitleAverage
   },
 
   data () {
