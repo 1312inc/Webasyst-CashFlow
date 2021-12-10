@@ -1121,3 +1121,9 @@ msgstr ""
 
 msgid "Import via CSV"
 msgstr ""
+
+msgid "Withdrawal to %s"
+msgstr ""
+
+msgid "Receipt from %s"
+msgstr ""
