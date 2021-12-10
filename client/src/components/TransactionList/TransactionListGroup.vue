@@ -48,6 +48,9 @@
               <div v-if="type === 'yesterday'" class="black">
                 {{ $t("yesterday") }}
               </div>
+              <div v-if="type === 'tomorrow'" class="black">
+                {{ $t("tomorrow") }}
+              </div>
               <div v-if="type === 'today'" class="black">
                 {{ $t("today") }}
                 <span class="hint">

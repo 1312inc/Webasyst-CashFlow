@@ -194,5 +194,7 @@
   "parentCategory": "Parent category",
   "notSelected": "Not selected",
   "shortMonth": "mo",
-  "forecasted": "Forecasted balance dynamic based on all planned future transactions"
+  "forecasted": "Forecasted balance dynamic based on all planned future transactions",
+  "transactions": "Transactions",
+  "allTransactions": "All transactions"
 }

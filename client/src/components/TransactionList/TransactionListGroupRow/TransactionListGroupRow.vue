@@ -122,7 +122,7 @@
         </div>
         <transition name="fade" :duration="300">
           <TransactionListCompleteButton
-            v-show="transaction.is_onbadge && $route.name === 'Upnext'"
+            v-show="transaction.is_onbadge"
             @processEdit="openModal(true)"
             :transaction="transaction"
             :account="account"

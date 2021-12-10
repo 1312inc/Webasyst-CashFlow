@@ -13,7 +13,7 @@
     <DetailsDashboard />
     <div class="flexbox">
       <div class="wide">
-        <TransactionList />
+        <TransactionList :showTomorrowGroup="true" :showYesterdayGroup="true" />
       </div>
       <AmChartPieStickyContainer class="width-30" />
     </div>
