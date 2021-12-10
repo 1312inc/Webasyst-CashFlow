@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import History from '../views/History.vue'
+import Transactions from '../views/Transactions.vue'
 import Upnext from '../views/Upnext.vue'
 import Search from '../views/Search.vue'
 import Import from '../views/Import.vue'
@@ -40,6 +41,14 @@ const routes = [
     component: History,
     meta: {
       title: `${i18n.t('history')} — ${accountName}`
+    }
+  },
+  {
+    path: '/transactions',
+    name: 'Transactions',
+    component: Transactions,
+    meta: {
+      title: `${i18n.t('transactions')} — ${accountName}`
     }
   },
   {

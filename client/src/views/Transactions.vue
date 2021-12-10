@@ -2,14 +2,14 @@
   <div>
     <ChartHeader>
       <template v-slot:title>
-        <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">{{ $t("upnext") }}</h1>
+        <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">{{ $t("allTransactions") }}</h1>
       </template>
     </ChartHeader>
     <div class="flexbox">
       <div class="wide">
-        <TransactionList :observer="false" :upnext="true" :showTomorrowGroup="true" :showTodayGroup="false" />
+        <TransactionList :showFutureGroup="false" :showYesterdayGroup="true" :showOverdueGroup="true" />
       </div>
-      <AmChartPieStickyContainer class="width-30" />
+      <AmChartPieStickyContainer class="width-40" />
     </div>
   </div>
 </template>
@@ -30,7 +30,12 @@ export default {
   },
 
   mounted () {
-    this.$store.dispatch('transaction/fetchUpNextTransactions')
+    this.$store.dispatch('transaction/fetchTransactions', {
+      from: '',
+      to: this.$moment().format('YYYY-MM-DD'),
+      offset: 0,
+      filter: ''
+    })
   }
 }
 </script>
