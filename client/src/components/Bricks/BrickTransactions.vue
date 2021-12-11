@@ -12,9 +12,6 @@
     >
     <span
       class="icon"
-      :style="{
-        color: (todayCount.onbadge > 0 || todayCount.today > 0) && 'gold'
-      }"
       ><i class="fas fa-list"></i
     ></span>
     {{ $t("transactions") }}
