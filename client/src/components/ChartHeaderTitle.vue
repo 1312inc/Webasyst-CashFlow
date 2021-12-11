@@ -1,7 +1,7 @@
 <template>
   <div v-if="currentEntity" class="custom-p-16-mobile custom-pb-0-mobile">
     <div>{{ this.$moment().format("LL") }}</div>
-    <div class="flexbox middle space-12">
+    <div class="flexbox middle space-12 wrap-mobile">
       <div class="h2 custom-mb-0">
         {{ currentEntity.name || currentEntity.currency }}
       </div>
@@ -22,7 +22,7 @@
       <chart-header-title-average :currencyCode="currentEntity.currency" />
 
       <div v-if="currentEntity.id > 0 && $permissions.isAdmin">
-        <button @click="update(currentEntity)" class="button nobutton">
+        <button @click="update(currentEntity)" class="button nobutton circle">
           <i class="fas fa-edit"></i>
         </button>
       </div>

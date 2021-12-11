@@ -15,7 +15,7 @@
       :style="{
         color: (todayCount.onbadge > 0 || todayCount.today > 0) && 'gold'
       }"
-      ><i class="fas fa-history"></i
+      ><i class="fas fa-list"></i
     ></span>
     {{ $t("transactions") }}
   </router-link>

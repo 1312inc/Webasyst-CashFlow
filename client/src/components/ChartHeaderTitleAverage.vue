@@ -3,9 +3,8 @@
     v-if="average !== 0 && !this.$store.state.transaction.loadingChart"
     :class="average >= 0 ? 'text-green' : 'text-red'"
     :title="$t('forecasted')"
-    class="opacity-50"
+    class="opacity-50 nowrap"
   >
-    <i class="fas fa-chart-line" />
     ≈
     {{
       $helper.toCurrency({

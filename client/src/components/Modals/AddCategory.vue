@@ -84,10 +84,6 @@
               :maxHeight="200"
               class="width-100"
             />
-            <div v-if="model.parent_category_id" class="hint custom-mt-8">
-              This category will be shown in the app under the selected parent
-              category
-            </div>
           </div>
         </div>
 

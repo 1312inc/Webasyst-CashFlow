@@ -80,7 +80,7 @@
   "addExpense": "Расход",
   "changeSettings": "Настройки статьи",
   "details": "Подробнее",
-  "optional": "Опционально",
+  "optional": "Можно не заполнять",
   "transactionsListCount": "{count} ОПЕРАЦИЙ",
   "transactionDeleteWarning": "Операция будет удалена. Уверены?",
   "cashOnHand": "Деньги",
