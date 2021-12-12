@@ -10,11 +10,6 @@
     <div class="dropdown-body" ref="dropdown">
       <ul class="menu">
         <li>
-          <a href="#" @click.prevent="setFeaturePeriod(1)"
-            ><span>{{ $t("tomorrow") }}</span></a
-          >
-        </li>
-        <li>
           <a href="#" @click.prevent="setFeaturePeriod(7)"
             ><span>{{ $t("nextDays", { count: 7 }) }}</span></a
           >

@@ -64,8 +64,7 @@
                 class="black flexbox middle space-8"
                 style="cursor: pointer"
               >
-                <span v-if="featurePeriod === 1">{{ $t("tomorrow") }}</span>
-                <span v-else>{{
+                <span>{{
                   $t("nextDays", { count: featurePeriod })
                 }}</span>
               </div>
