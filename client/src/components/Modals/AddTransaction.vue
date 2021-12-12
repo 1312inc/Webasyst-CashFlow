@@ -460,8 +460,7 @@ import { mapState, mapGetters } from 'vuex'
 import {
   required,
   requiredIf,
-  integer,
-  minValue
+  integer
 } from 'vuelidate/lib/validators'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import InputContractor from '@/components/Inputs/InputContractor'
@@ -529,8 +528,7 @@ export default {
   validations: {
     model: {
       amount: {
-        required,
-        minValue: minValue(1)
+        required
       },
       date: {
         required
