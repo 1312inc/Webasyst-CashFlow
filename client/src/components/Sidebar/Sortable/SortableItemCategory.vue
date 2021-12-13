@@ -1,9 +1,12 @@
 <template>
   <li :class="classes" :data-itemid="category.id">
     <router-link :to="`/category/${category.id}`" class="flexbox middle">
-      <span class="icon"
-        ><i class="rounded" :style="`background-color:${category.color};`"></i
-      ></span>
+      <span v-if="category.glyph" :key="category.color" class="icon">
+        <i :class="category.glyph" :style="`color:${category.color};`"></i>
+      </span>
+      <span v-else class="icon">
+        <i class="rounded" :style="`background-color:${category.color};`"></i>
+      </span>
       <span>{{ category.name }}</span>
       <span class="count small" v-if="category.is_profit" :title="$t('profit')"
         ><i class="fas fa-coins"></i
@@ -15,7 +18,7 @@
       sortingTarget="category"
       :group="{
         name: $parent.$attrs.group.name,
-        put: () => allowChildren ? $parent.$attrs.group.name : false
+        put: () => (allowChildren ? $parent.$attrs.group.name : false)
       }"
     >
       <SortableItemCategory

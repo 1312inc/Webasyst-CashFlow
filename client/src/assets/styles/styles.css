@@ -129,6 +129,9 @@ body.modal {
 .dropdown.state-error .dropdown-toggle.button {
   border-color: var(--red);
 }
+.dropdown-toggle .custom-ml-12 {
+  margin-left: 0 !important;
+}
 
 .bold.state-error {
   font-weight: bold;

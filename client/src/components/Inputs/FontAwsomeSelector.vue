@@ -2,12 +2,18 @@
   <div>
     <div v-if="value" class="flexbox middle space-8">
       <div>
-        <div @click="$emit('input', null)" class="c-icon-item selected">
+        <div
+          @click="$emit('input', null)"
+          class="c-icon-item selected"
+          :style="`background-color: ${color};color: #FFFFFF;`"
+        >
           <i :class="value"></i>
         </div>
       </div>
       <div>
-        <a @click.prevent="$emit('input', null)" class="small" href="#">{{ $t("change") }}</a>
+        <a @click.prevent="$emit('input', null)" class="small" href="#">{{
+          $t("change")
+        }}</a>
       </div>
     </div>
     <div v-show="!value" class="c-icon-list">
@@ -17,6 +23,7 @@
         @click="$emit('input', icon)"
         :class="{ selected: i === $options.icons.indexOf(value) }"
         class="c-icon-item"
+        :style="`color: ${color}`"
       >
         <i :class="icon"></i>
       </div>
@@ -95,6 +102,9 @@ export default {
   props: {
     value: {
       type: String
+    },
+    color: {
+      type: String
     }
   }
 }
@@ -112,13 +122,11 @@ export default {
   height: 2.25em;
   display: inline-grid;
   place-items: center;
-  color: var(--menu-glyph-color);
   margin: 0 !important;
 
   &:hover,
   &.selected {
-    background-color: var(--menu-selected-background-color);
-    color: var(--black);
+    background-color: var(--alert-background-color);
     cursor: pointer;
   }
 }

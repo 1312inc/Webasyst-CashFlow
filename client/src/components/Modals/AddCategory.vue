@@ -101,7 +101,7 @@
             {{ $t("icon") }}
           </div>
           <div class="value">
-            <FontAwsomeSelector v-model="model.glyph" />
+            <FontAwsomeSelector v-model="model.glyph" :color="model.color" />
           </div>
         </div>
       </div>
