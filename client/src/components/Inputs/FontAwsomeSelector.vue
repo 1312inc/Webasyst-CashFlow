@@ -1,27 +1,29 @@
 <template>
   <div>
-    <div v-if="value" class="flexbox middle space-8">
+    <div v-if="!open" class="flexbox middle space-8">
       <div>
         <div
-          @click="$emit('input', null)"
-          class="c-icon-item selected"
-          :style="`background-color: ${color};color: #FFFFFF;`"
+          @click="open = true"
+          class="c-icon-item"
+          :style="`color: ${color};`"
         >
-          <i :class="value"></i>
+          <i :class="value || $options.icons[0]"></i>
         </div>
       </div>
       <div>
-        <a @click.prevent="$emit('input', null)" class="small" href="#">{{
+        <a @click.prevent="open = true" class="small" href="#">{{
           $t("change")
         }}</a>
       </div>
     </div>
-    <div v-show="!value" class="c-icon-list">
+    <div v-show="open" class="c-icon-list">
       <div
         v-for="(icon, i) in $options.icons"
         :key="i"
-        @click="$emit('input', icon)"
-        :class="{ selected: i === $options.icons.indexOf(value) }"
+        @click="
+          $emit('input', i === 0 ? null : icon);
+          open = false;
+        "
         class="c-icon-item"
         :style="`color: ${color}`"
       >
@@ -32,7 +34,7 @@
 </template>
 <script>
 const icons = [
-  'fas fa-user-friends',
+  'fas fa-circle',
   'fas fa-user-tie',
   'fas fa-flag',
   'fas fa-syringe',
@@ -105,6 +107,11 @@ export default {
     },
     color: {
       type: String
+    }
+  },
+  data () {
+    return {
+      open: false
     }
   }
 }
