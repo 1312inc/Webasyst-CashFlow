@@ -91,7 +91,10 @@
           </div>
         </div>
         <div class="c-item-amount">
-          <div :style="`color: ${category.color}`" class="bold nowrap custom-mb-4">
+          <div
+            :style="`color: ${category.color}`"
+            class="bold nowrap custom-mb-4"
+          >
             {{
               $helper.toCurrency({
                 value: isCollapseHeader
@@ -107,9 +110,7 @@
             <span
               v-if="transaction.balance"
               class="nowrap black"
-              :title="
-                $t('accountBalanceTransactionListHint')
-              "
+              :title="$t('accountBalanceTransactionListHint')"
             >
               {{
                 $helper.toCurrency({
@@ -227,6 +228,13 @@ export default {
       return this.showChecker ? true : this.isHover
     },
 
+    isOverdue () {
+      return (
+        this.transaction.date < this.$helper.currentDate &&
+        this.transaction.is_onbadge
+      )
+    },
+
     daysBefore () {
       return this.$moment(this.transaction.date).diff(
         this.$helper.currentDate,
@@ -237,7 +245,10 @@ export default {
     classes () {
       return {
         'c-transaction-group': this.isCollapseHeader || this.isRepeatingGroup, // styles for the collapsed transactions
-        'c-upcoming': this.$moment(this.transaction.date) > this.$moment() // styles for the upcoming transactions
+        'c-upcoming': this.$moment(this.transaction.date) > this.$moment(), // styles for the upcoming transactions
+        highlighted: this.isOverdue,
+        orange: this.isOverdue,
+        'c-item-selected': this.isChecked
       }
     }
   },
