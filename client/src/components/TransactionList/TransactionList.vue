@@ -165,7 +165,7 @@ export default {
       }
 
       // add Overdue object
-      if (this.showOverdueGroup) {
+      if (this.showOverdueGroup && this.transactionsByCurrency.some(e => e.date < today && e.is_onbadge)) {
         result.unshift({
           name: 'overdue',
           items: []
