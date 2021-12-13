@@ -1,11 +1,14 @@
 <template>
   <div>
-    <div
-      v-if="value"
-      @click="$emit('input', null)"
-      class="c-icon-item selected"
-    >
-      <i :class="value"></i>
+    <div v-if="value" class="flexbox middle space-8">
+      <div>
+        <div @click="$emit('input', null)" class="c-icon-item selected">
+          <i :class="value"></i>
+        </div>
+      </div>
+      <div>
+        <a @click.prevent="$emit('input', null)" class="small" href="#">{{ $t("change") }}</a>
+      </div>
     </div>
     <div v-show="!value" class="c-icon-list">
       <div
