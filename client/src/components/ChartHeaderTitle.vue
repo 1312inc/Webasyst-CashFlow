@@ -19,7 +19,8 @@
 
       </div>
 
-      <chart-header-title-average :currencyCode="currentEntity.currency" />
+      <!-- TODO: make current curency as getter -->
+      <chart-header-title-average :currencyCode="$store.getters['transaction/activeCurrencyCode']" />
 
       <div v-if="currentEntity.id > 0 && $permissions.isAdmin">
         <button @click="update(currentEntity)" class="button nobutton circle">
