@@ -158,7 +158,9 @@
   "notifyMeAlert": "When the transaction date comes, a tiny little notification on the app icon will emerge and remind you to process (confirm) this transaction",
   "error": {
     "http": "Request failed",
-    "api": "API error"
+    "api": "API error",
+    "nonJsonTitle": "Something's wrong with the API (api.php). Not a JSON response",
+    "nonJsonText": "Please contact your hosting provider or admin who had been configuring Webasyst on your server"
   },
   "arrow": {
     "up": "Going out of cash gap on",

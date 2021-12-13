@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '../store'
-import { locale } from './locale'
+import { i18n } from './locale'
 
 const baseApiUrl = window.appState?.baseApiUrl || ''
 const accessToken = window.appState?.token || ''
@@ -19,8 +19,8 @@ api.interceptors.response.use((response) => {
   if (!response.headers['content-type'].includes('application/json')) {
     store.commit('errors/error', {
       title: 'error.api',
-      method: locale === 'ru_RU' ? 'Что-то не так с API (api.php). Ответ не в формате JSON' : "Something's wrong with the API (api.php). Not a JSON response",
-      message: locale === 'ru_RU' ? 'Пожалуйста, свяжитесь со своим хостинг-провайдером или администратором, который настраивал вам Webasyst' : 'Please contact your hosting provider or admin who had been configuring Webasyst on your server'
+      method: i18n.t('error.nonJsonTitle'),
+      message: i18n.t('error.nonJsonText')
     })
   }
   if (response.data?.error) {
@@ -32,6 +32,14 @@ api.interceptors.response.use((response) => {
   }
   return response
 }, (error) => {
+  if (!error.response.headers['content-type'].includes('application/json')) {
+    store.commit('errors/error', {
+      title: 'error.api',
+      method: error.response.config.url,
+      message: i18n.t('error.nonJsonTitle')
+    })
+    return Promise.reject(error)
+  }
   if (error.response.data?.error) {
     store.commit('errors/error', {
       title: 'error.api',
