@@ -1,6 +1,6 @@
 <template>
   <button
-    class="button rounded light-gray"
+    class="button rounded"
     :aria-label="tooltip"
     data-microtip-position="top"
     role="tooltip"
@@ -21,10 +21,5 @@ export default {
   width: 42px;
   height: 42px;
   padding: 0;
-  color: var(--gray);
-
-  &:hover {
-    color: var(--light-gray);
-  }
 }
 </style>
