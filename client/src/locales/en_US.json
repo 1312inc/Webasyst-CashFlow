@@ -108,7 +108,7 @@
   "justCreated": "Just now",
   "deleteWarning": "DANGER: This will permanently delete the entire {type} and ALL TRANSACTIONS without the ability to restore. Are you sure?",
   "offlineMessage": "No Internet connection",
-  "bulkDeleteWarning": "Please be sure to select the right account and the right category type applicable to all selected transactions to avoid wrong currency conversion effects.",
+  "bulkDeleteWarning": "DANGER: This will permanently delete all selected transactions. Are you sure?",
   "moveTransactions": "Move {count} transactions",
   "updateTransactions": "Update {count} transactions",
   "bulkMoveWarning": "Please be sure to select the right account and the right category type applicable to all selected transactions to avoid wrong currency conversion effects.",
