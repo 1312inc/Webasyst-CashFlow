@@ -5,12 +5,14 @@
     :class="classes"
     :style="isRepeatingGroup && 'cursor: initial;'"
   >
-    <div v-if="showDate" class="mobile-only custom-my-8">
-      {{
-        $moment(transaction.date).format(
-          $moment.locale() === "ru" ? "D MMMM" : "MMMM D"
-        )
-      }}
+    <div v-if="showDate" class="mobile-only custom-py-8">
+      <strong>
+        {{
+          $moment(transaction.date).format(
+            $moment.locale() === "ru" ? "D MMMM" : "MMMM D"
+          )
+        }}
+      </strong>
       <span class="hint">{{ $moment(transaction.date).format("dddd") }}</span>
     </div>
 
@@ -235,6 +237,13 @@ export default {
       )
     },
 
+    isToday () {
+      return (
+        this.transaction.date === this.$helper.currentDate &&
+        this.transaction.is_onbadge
+      )
+    },
+
     daysBefore () {
       return this.$moment(this.transaction.date).diff(
         this.$helper.currentDate,
@@ -246,8 +255,8 @@ export default {
       return {
         'c-transaction-group': this.isCollapseHeader || this.isRepeatingGroup, // styles for the collapsed transactions
         'c-upcoming': this.$moment(this.transaction.date) > this.$moment(), // styles for the upcoming transactions
-        highlighted: this.isOverdue,
-        orange: this.isOverdue,
+        'c-item-overdue': this.isOverdue,
+        'c-item-red-process': this.isOverdue || this.isToday,
         'c-item-selected': this.isChecked
       }
     }

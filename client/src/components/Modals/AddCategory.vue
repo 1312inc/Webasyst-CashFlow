@@ -211,8 +211,8 @@ export default {
       this.model.color = val
         ? this.$store.getters['category/getById'](val).color
         : this.model.type === 'income'
-          ? '#00FF00'
-          : '#E57373'
+          ? '#11CC22'
+          : '#EF4B35'
     },
     'model.type' () {
       if (!this.isModeUpdate) {
@@ -224,7 +224,7 @@ export default {
   created () {
     if (this.type) {
       this.model.type = this.type
-      this.model.color = this.model.type === 'income' ? '#00FF00' : '#E57373'
+      this.model.color = this.model.type === 'income' ? '#11CC22' : '#EF4B35'
     }
   },
 
