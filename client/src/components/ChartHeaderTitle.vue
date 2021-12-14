@@ -1,25 +1,27 @@
 <template>
   <div v-if="currentEntity" class="custom-p-16-mobile custom-pb-0-mobile">
     <div>{{ this.$moment().format("LL") }}</div>
-    <div class="flexbox middle space-12 wrap-mobile">
-      <div class="h2 custom-mb-0">
-        {{ currentEntity.name || currentEntity.currency }}
-      </div>
-      <div
-        v-if="balance"
-        :class="balance >= 0 ? 'text-green' : 'text-red'"
-        class="h2 nowrap custom-mb-0"
-      >
-        {{
-          $helper.toCurrency({
-            value: balance,
-            currencyCode: currentEntity.currency
-          })
-        }}
+    <div class="flexbox middle space-12 wrap">
+      <div class="flexbox space-12 middle wrap-mobile">
+        <div class="h2 custom-mb-0">
+          {{ currentEntity.name || currentEntity.currency }}
+        </div>
+        <div
+          v-if="balance"
+          :class="balance >= 0 ? 'text-green' : 'text-red'"
+          class="h2 nowrap custom-mb-0"
+        >
+          {{
+            $helper.toCurrency({
+              value: balance,
+              currencyCode: currentEntity.currency
+            })
+          }}
 
+        </div>
       </div>
 
-      <!-- TODO: make current curency as getter -->
+      <!-- TODO: make current currency as getter -->
       <chart-header-title-average :currencyCode="$store.getters['transaction/activeCurrencyCode']" />
 
       <div v-if="currentEntity.id > 0 && $permissions.isAdmin">
