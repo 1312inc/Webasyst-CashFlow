@@ -1,6 +1,6 @@
 <template>
   <router-link
-    :to="{ name: 'Upnext' }"
+    to="/upnext"
     :class="{ selected: $route.name === 'Upnext' }"
     class="brick custom-mb-0"
   >
