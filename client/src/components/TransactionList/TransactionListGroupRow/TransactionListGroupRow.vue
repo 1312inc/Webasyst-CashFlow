@@ -257,7 +257,8 @@ export default {
         'c-upcoming': this.$moment(this.transaction.date) > this.$moment(), // styles for the upcoming transactions
         'c-item-overdue': this.isOverdue,
         'c-item-red-process': this.isOverdue || this.isToday,
-        'c-item-selected': this.isChecked
+        'c-item-selected': this.isChecked,
+        highlighted: this.transaction.$_flagCreated
       }
     }
   },
