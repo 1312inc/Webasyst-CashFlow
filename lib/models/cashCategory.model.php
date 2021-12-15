@@ -60,27 +60,38 @@ class cashCategoryModel extends cashModel
      * @return array
      * @throws waException
      */
-    public function getAllActiveForContact(waContact $contact = null): array
+    public function getAllActiveForContact(waContact $contact = null, $type = null): array
     {
         if (!$contact) {
             $contact = wa()->getUser();
         }
 
         return cash()->getContactRights()->filterQueryCategoriesForContact(
-            $this->getAllSortedQuery(),
+            $this->getAllSortedQuery($type),
             $contact
         )->fetchAll('id');
     }
 
-    public function getAllSorted($key = null, $normalize = false): array
+    public function getAllSorted($type = null, $key = null, $normalize = false): array
     {
-        return $this->getAllSortedQuery()->fetchAll($key, $normalize);
+        return $this->getAllSortedQuery($type)
+            ->fetchAll($key, $normalize);
     }
 
-    private function getAllSortedQuery(): waDbQuery
+    private function getAllSortedQuery($type = null): waDbQuery
     {
-        return $this
+        $q = $this
             ->select('*')
             ->order('sort ASC, id DESC');
+
+        if ($type === cashCategory::TYPE_EXPENSE) {
+            $q->where("`type` = 'expense'");
+        }
+
+        if ($type === cashCategory::TYPE_INCOME) {
+            $q->where("`type` = 'income'");
+        }
+
+        return $q;
     }
 }

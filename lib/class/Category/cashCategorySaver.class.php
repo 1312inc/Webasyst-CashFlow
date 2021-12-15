@@ -118,7 +118,7 @@ class cashCategorySaver extends cashEntitySaver
 
         $i = 0;
         foreach ($order as $categoryId) {
-            if (!isset($categories[$categoryId])) {
+            if (!in_array($categoryId, $categories)) {
                 continue;
             }
 
@@ -129,10 +129,10 @@ class cashCategorySaver extends cashEntitySaver
         return true;
     }
 
-    public function resort(): bool
+    public function resort($type): bool
     {
         $categories = cash()->getModel(cashCategory::class)
-            ->getAllSorted('category_parent_id', 2);
+            ->getAllSorted($type, 'category_parent_id', 2);
         $sort = [];
         $i = 0;
         foreach ($categories as $cats) {
@@ -151,9 +151,9 @@ class cashCategorySaver extends cashEntitySaver
         }
 
         // system categories hack
-        $sort[cashCategoryFactory::TRANSFER_CATEGORY_ID] = 1312;
-        $sort[cashCategoryFactory::NO_CATEGORY_EXPENSE_ID] = -1312;
-        $sort[cashCategoryFactory::NO_CATEGORY_INCOME_ID] = -1312;
+//        $sort[cashCategoryFactory::TRANSFER_CATEGORY_ID] = 1312;
+//        $sort[cashCategoryFactory::NO_CATEGORY_EXPENSE_ID] = -1312;
+//        $sort[cashCategoryFactory::NO_CATEGORY_INCOME_ID] = -1312;
 
         foreach ($sort as $id => $pos) {
             cash()->getModel(cashCategory::class)
