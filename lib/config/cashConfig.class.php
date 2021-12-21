@@ -305,7 +305,7 @@ class cashConfig extends waAppConfig
             $response = (new cashApiTransactionGetTodayCountHandler())->handle($request);
             if ($response->onBadge) {
                 if (wa()->whichUI(self::APP_ID) === '2.0') {
-                    $url .= 'upnext';
+                    $url .= 'transactions';
                 }
 
                 return ['count' => $response->onBadge, 'url' => $url];
