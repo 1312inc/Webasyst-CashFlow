@@ -25,15 +25,13 @@
 
             <tbody>
             {foreach $data as $datum}
-                <tr>
+                <tr{if $datum->entity->isChild()} class="c-row-white"{/if}>
                     {if !empty($datum->valuesPerPeriods)}
                     <td class="nowrap c-column-sticky-left">
-                        <div title="{$datum->entity->getName()|escape}" style="overflow: hidden;">
+                        <div title="{$datum->entity->getName()|escape}" style="overflow: hidden;"{if $datum->entity->isChild()} class="custom-pl-16{/if}">
                             {if $datum->entity->isHeader()}<b class="large">{/if}
                             {$datum->entity->getIcon()}
-                            {if $datum->entity->isChild()}<span class="small">{/if}
                             {$datum->entity->getName()|escape|truncate:32}
-                            {if $datum->entity->isChild()}</span>{/if}
                             {if $datum->entity->isHeader()}</b>{/if}
                         </div>
                     </td>
