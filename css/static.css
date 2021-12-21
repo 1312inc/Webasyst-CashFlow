@@ -24,6 +24,8 @@ table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1
 .c-report-dds-inner table { table-layout: fixed; }
 .c-report-dds-inner table th { width: 100px; }
 .c-report-dds-inner table td { width: 100px; background: var(--background-color-table-row-hover); vertical-align: top; }
+.c-report-dds-inner table tr.c-row-white th,
+.c-report-dds-inner table tr.c-row-white td { background: var(--background-color-blank); font-size: 0.75rem; }
 .c-report-dds-inner table .c-column-sticky-left { position: absolute; left: 0; width: 130px; background: transparent; border-color: transparent; color: var(--text-color-stronger); }
 .c-report-dds-inner table .c-column-sticky-left .icon { margin-right: 0.25rem; }
 .c-report-dds-inner table .c-column-sticky-right-totals { position: absolute; right: 200px; width: 150px; background: var(--background-color-blank); }

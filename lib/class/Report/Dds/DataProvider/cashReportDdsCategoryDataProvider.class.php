@@ -157,8 +157,8 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                 $category->getId(),
                 $category->isExpense(),
                 $category->isIncome(),
-                $category->getCategoryParentId() && $category->getGlyph()
-                    ? sprintf('<i class="fas %s"></i>', $category->getGlyph())
+                $category->getGlyph()
+                    ? sprintf('<i class="fas %s" style="color: %s"></i>', $category->getGlyph(), $category->getColor())
                     : sprintf('<i class="icon rounded" style="background-color: %s"></i>', $category->getColor()),
                 false,
                 $category->getColor(),
