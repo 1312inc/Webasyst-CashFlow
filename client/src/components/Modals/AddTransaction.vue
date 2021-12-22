@@ -716,6 +716,13 @@ export default {
               this.$parent.$emit('reOpen')
             } else {
               this.close()
+              // scroll top to see the new transaction
+              if (!this.model.id) {
+                window.scrollTo({
+                  top: 0,
+                  behavior: 'smooth'
+                })
+              }
             }
           })
           .finally(() => {
