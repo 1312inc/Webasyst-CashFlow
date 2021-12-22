@@ -23,7 +23,7 @@ class cashContactsProfileTabListener extends waEventHandler
             wa(cashConfig::APP_ID, 1);
 
             if (!cash()->getContactRights()->hasAccessToApp(wa()->getUser())) {
-                throw new waRightsException();
+                return null;
             }
 
             $backend_url = cash()->getBackendUrl(true);
