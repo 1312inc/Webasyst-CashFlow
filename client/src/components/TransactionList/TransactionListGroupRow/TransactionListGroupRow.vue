@@ -258,18 +258,7 @@ export default {
         'c-item-overdue': this.isOverdue,
         'c-item-red-process': this.isOverdue || this.isToday,
         'c-item-selected': this.isChecked,
-        highlighted: this.transaction.$_flagCreated
-      }
-    }
-  },
-
-  watch: {
-    transaction (val) {
-      if (val.$_flagUpdated) {
-        this.$refs.row.addEventListener('animationend', () => {
-          this.$refs.row.classList.remove('c-item--updated')
-        })
-        this.$refs.row.classList.add('c-item--updated')
+        'c-item--updated': this.transaction.$_flagUpdated || this.transaction.$_flagCreated
       }
     }
   },
@@ -341,7 +330,6 @@ export default {
 .c-item--updated {
   animation-name: updated;
   animation-duration: 3s;
-  animation-fill-mode: forwards;
   animation-timing-function: linear;
   animation-direction: alternate;
   animation-iteration-count: 1;
