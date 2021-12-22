@@ -20,6 +20,10 @@ class cashTransactionDtoAssembler
         $initialBalance = null
     ) {
         foreach ($data as $datum) {
+            if (!isset($accounts[$datum['account_id']])) {
+                continue;
+            }
+
             if ($initialBalance !== null && !isset($datum['balance'])) {
                 $datum['balance'] = $initialBalance;
             }
