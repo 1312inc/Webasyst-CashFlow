@@ -608,6 +608,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /cash.aggregate.getBreakDown:
+    get:
+      tags:
+        - Агрегация данных
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: from
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: filter
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        200:
+          description: Агрегрованные данные по заданным параметрам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/aggregateGetBreakDownResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.system.searchContacts:
     get:
@@ -691,6 +729,44 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/SearchContactInfo'
+
+    aggregateGetBreakDownResponse:
+      type: object
+      properties:
+        currency:
+          type: string
+          example: "USD"
+        income:
+          $ref: '#/components/schemas/GetBreakDownInfo'
+        expense:
+          $ref: '#/components/schemas/GetBreakDownInfo'
+        profit:
+          $ref: '#/components/schemas/GetBreakDownInfo'
+
+    GetBreakDownInfo:
+      type: object
+      properties:
+        totalAmount:
+          type: integer
+          minimum: 0
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetBreakDownInfoData'
+
+    GetBreakDownInfoData:
+      type: object
+      properties:
+        amount:
+          type: number
+          example: 1000.1
+        category_name:
+          type: string
+        category_color:
+          type: string
+          description: Hex
+        category_id:
+          type: integer
 
     SearchContactInfo:
       type: object
