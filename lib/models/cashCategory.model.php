@@ -49,7 +49,7 @@ class cashCategoryModel extends cashModel
                 'SELECT c.*, cp.name as parent_name 
                 FROM cash_category c
                 LEFT JOIN cash_category cp ON c.category_parent_id = cp.id
-                ORDER BY sort'
+                ORDER BY sort ASC, id DESC'
             )
             ->fetchAll('id');
     }
@@ -60,17 +60,38 @@ class cashCategoryModel extends cashModel
      * @return array
      * @throws waException
      */
-    public function getAllActiveForContact(waContact $contact = null): array
+    public function getAllActiveForContact(waContact $contact = null, $type = null): array
     {
         if (!$contact) {
             $contact = wa()->getUser();
         }
 
         return cash()->getContactRights()->filterQueryCategoriesForContact(
-            $this
-                ->select('*')
-                ->order('sort ASC, id DESC'),
+            $this->getAllSortedQuery($type),
             $contact
         )->fetchAll('id');
+    }
+
+    public function getAllSorted($type = null, $key = null, $normalize = false): array
+    {
+        return $this->getAllSortedQuery($type)
+            ->fetchAll($key, $normalize);
+    }
+
+    private function getAllSortedQuery($type = null): waDbQuery
+    {
+        $q = $this
+            ->select('*')
+            ->order('sort ASC, id DESC');
+
+        if ($type === cashCategory::TYPE_EXPENSE) {
+            $q->where("`type` = 'expense'");
+        }
+
+        if ($type === cashCategory::TYPE_INCOME) {
+            $q->where("`type` = 'income'");
+        }
+
+        return $q;
     }
 }

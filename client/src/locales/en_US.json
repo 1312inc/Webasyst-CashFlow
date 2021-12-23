@@ -27,7 +27,7 @@
   "currency": "Currency",
   "type": "Type",
   "color": "Color",
-  "icon": "Logo",
+  "icon": "Icon",
   "desc": "Comment",
   "noDesc": "no description",
   "addTransaction": "Add transaction",
@@ -108,7 +108,7 @@
   "justCreated": "Just now",
   "deleteWarning": "DANGER: This will permanently delete the entire {type} and ALL TRANSACTIONS without the ability to restore. Are you sure?",
   "offlineMessage": "No Internet connection",
-  "bulkDeleteWarning": "Please be sure to select the right account and the right category type applicable to all selected transactions to avoid wrong currency conversion effects.",
+  "bulkDeleteWarning": "DANGER: This will permanently delete all selected transactions. Are you sure?",
   "moveTransactions": "Move {count} transactions",
   "updateTransactions": "Update {count} transactions",
   "bulkMoveWarning": "Please be sure to select the right account and the right category type applicable to all selected transactions to avoid wrong currency conversion effects.",
@@ -158,7 +158,9 @@
   "notifyMeAlert": "When the transaction date comes, a tiny little notification on the app icon will emerge and remind you to process (confirm) this transaction",
   "error": {
     "http": "Request failed",
-    "api": "API error"
+    "api": "API error",
+    "nonJsonTitle": "Something's wrong with the API (api.php). Not a JSON response",
+    "nonJsonText": "Please contact your hosting provider or admin who had been configuring Webasyst on your server"
   },
   "arrow": {
     "up": "Going out of cash gap on",
@@ -187,5 +189,15 @@
   "export": "Export",
   "transactionDate": "Transaction date: {date}",
   "amountOnDate": "{amount} on {date}",
-  "accountBalanceTransactionListHint": "Account balance after the transaction has been processed"
+  "accountBalanceTransactionListHint": "Account balance after the transaction has been processed",
+  "specify": "Specify",
+  "recipient": "recipient",
+  "payee": "payee",
+  "parentCategory": "Parent category",
+  "notSelected": "Not selected",
+  "shortMonth": "mo",
+  "forecasted": "Forecasted balance dynamic based on all planned future transactions",
+  "transactions": "Transactions",
+  "allTransactions": "All transactions",
+  "change": "Change"
 }

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!showSkeleton">
+  <div v-if="!loadingChart">
     <div v-for="(type, i) in $_amountMixin_amountTypes" :key="i">
       <div
         :class="{
@@ -19,7 +19,7 @@
           <i v-if="type === 'profit'" class="fas fa-coins text-blue smaller"></i>
           <span class="smaller semibold">{{
             $helper.toCurrency({
-              value: getTotalByType(type),
+              value: $_amountMixin_getTotalByType(type, period),
               currencyCode: currencyCode,
               prefix: type === "income" ? "+ " : type === "expense" ? "− " : " "
             })
@@ -36,7 +36,7 @@
           <span class="smaller semibold gray">
             {{
               $helper.toCurrency({
-                value: amountDelta,
+                value: $_amountMixin_amountDelta(period),
                 currencyCode: currencyCode,
                 isDynamics: true,
                 prefix: "&#916;&nbsp;"
@@ -78,37 +78,8 @@ export default {
       'loadingChart'
     ]),
 
-    currentChartData () {
-      return this.chartData[this.chartDataCurrencyIndex]
-    },
-
     currencyCode () {
-      return this.currentChartData?.currency
-    },
-
-    showSkeleton () {
-      return this.loadingChart
-    },
-
-    amountDelta () {
-      return (
-        Math.abs(this.getTotalByType('income')) -
-        Math.abs(this.getTotalByType('expense')) -
-        Math.abs(this.getTotalByType('profit'))
-      )
-    }
-  },
-  methods: {
-    getTotalByType (type) {
-      if (!this.currentChartData) return 0
-
-      const itoday = this.$helper.currentDate
-      const eltype = `amount${type[0].toUpperCase()}${type.slice(1)}`
-      return this.currentChartData.data
-        .filter(e =>
-          this.period === 'to' ? e.period > itoday : e.period <= itoday
-        )
-        .reduce((acc, e) => acc + e[eltype], 0)
+      return this.chartData[this.chartDataCurrencyIndex]?.currency
     }
   }
 }

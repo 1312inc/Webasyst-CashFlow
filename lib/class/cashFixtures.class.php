@@ -55,28 +55,28 @@ class cashFixtures
         $this->fixtures = [
             cashCategory::TYPE_INCOME => array_reverse(
                 [
-                    'Sales' => [_wd(cashConfig::APP_ID, 'Sales'), '#00CC66', false],
-                    'Investment' => [_wd(cashConfig::APP_ID, 'Investment'), '#00CCCC', false],
-                    'Cashback' => [_wd(cashConfig::APP_ID, 'Cashback'), '#00CCFF', false],
-                    'Took a loan' => [_wd(cashConfig::APP_ID, 'Took a loan'), '#6699FF', false],
-                    'Unexpected profit' => [_wd(cashConfig::APP_ID, 'Unexpected profit'), '#6666FF', false],
+                    'Sales' => [_wd(cashConfig::APP_ID, 'Sales'), '#00CC66', false, null],
+                    'Investment' => [_wd(cashConfig::APP_ID, 'Investment'), '#00CCCC', false, null],
+                    'Cashback' => [_wd(cashConfig::APP_ID, 'Cashback'), '#00CCFF', false, null],
+                    'Took a loan' => [_wd(cashConfig::APP_ID, 'Took a loan'), '#6699FF', false, null],
+                    'Unexpected profit' => [_wd(cashConfig::APP_ID, 'Unexpected profit'), '#6666FF', false, null],
                 ],
                 true
             ),
             cashCategory::TYPE_EXPENSE => array_reverse(
                 [
-                    'Office rent' => [_wd(cashConfig::APP_ID, 'Office rent'), '#880E4F', false],
-                    'Salaries' => [_wd(cashConfig::APP_ID, 'Salaries'), '#E91E63', false],
-                    'Purchasing & supply' => [_wd(cashConfig::APP_ID, 'Purchasing & supply'), '#E91E63', false],
-                    'Shipping' => [_wd(cashConfig::APP_ID, 'Shipping'), '#EC407A', false],
-                    'Marketing' => [_wd(cashConfig::APP_ID, 'Marketing'), '#F48FB1', false],
-                    'Hosting' => [_wd(cashConfig::APP_ID, 'Hosting'), '#F8BBD0', false],
-                    'Taxes' => [_wd(cashConfig::APP_ID, 'Taxes'), '#FF8A65', false],
-                    'Commissions & fees' => [_wd(cashConfig::APP_ID, 'Commissions & fees'), '#FB8C20', false],
-                    'Refunds' => [_wd(cashConfig::APP_ID, 'Refunds'), '#FF1312', false],
-                    'Loan payouts' => [_wd(cashConfig::APP_ID, 'Loan payouts'), '#EE2222', false],
-                    'Unexpected loss' => [_wd(cashConfig::APP_ID, 'Unexpected loss'), '#FF1312', false],
-                    'Dividend payouts' => [_wd(cashConfig::APP_ID, 'Dividend payouts'), '#2EA2FD', true],
+                    'Office rent' => [_wd(cashConfig::APP_ID, 'Office rent'), '#880E4F', false, null],
+                    'Salaries' => [_wd(cashConfig::APP_ID, 'Salaries'), '#E91E63', false, null],
+                    'Purchasing & supply' => [_wd(cashConfig::APP_ID, 'Purchasing & supply'), '#E91E63', false, null],
+                    'Shipping' => [_wd(cashConfig::APP_ID, 'Shipping'), '#EC407A', false, null],
+                    'Marketing' => [_wd(cashConfig::APP_ID, 'Marketing'), '#F48FB1', false, null],
+                    'Hosting' => [_wd(cashConfig::APP_ID, 'Hosting'), '#F8BBD0', false, null],
+                    'Taxes' => [_wd(cashConfig::APP_ID, 'Taxes'), '#FF8A65', false, null],
+                    'Commissions & fees' => [_wd(cashConfig::APP_ID, 'Commissions & fees'), '#FB8C20', false, null],
+                    'Refunds' => [_wd(cashConfig::APP_ID, 'Refunds'), '#FF1312', false, null],
+                    'Loan payouts' => [_wd(cashConfig::APP_ID, 'Loan payouts'), '#EE2222', false, null],
+                    'Unexpected loss' => [_wd(cashConfig::APP_ID, 'Unexpected loss'), '#FF1312', false, null],
+                    'Dividend payouts' => [_wd(cashConfig::APP_ID, 'Dividend payouts'), '#2EA2FD', true, null],
                 ],
                 true
             ),
@@ -108,7 +108,8 @@ class cashFixtures
                     ->setColor($data[1])
                     ->setName($data[0])
                     ->setIsProfit((bool) $data[2])
-                    ->setSort($sort++);
+                    ->setSort($sort++)
+                    ->setGlyph($data[3]);
                 $this->perister->insert($this->categories[$name]);
             }
         }
@@ -335,8 +336,6 @@ class cashFixtures
                 ->setCategory($this->categories['Loan payouts']);
             $this->perister->insert($tx);
             $repeater->repeat($tx);
-
-
         } catch (Exception $ex) {
             cash()->getLogger()->error('Demo init error', $ex);
         }

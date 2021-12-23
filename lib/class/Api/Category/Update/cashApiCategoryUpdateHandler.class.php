@@ -35,6 +35,8 @@ class cashApiCategoryUpdateHandler implements cashApiHandlerInterface
 
         $saver = new cashCategorySaver();
         if ($saver->saveFromApi($category, $request)) {
+            $saver->resort($category->getType());
+
             return cashApiCategoryResponseDto::fromCategory($category);
         }
 

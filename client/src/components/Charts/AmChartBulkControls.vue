@@ -10,6 +10,7 @@
         @click.native="$_transactionActionsMixin_bulkDelete"
         icon="fa-trash-alt"
         :tooltip="$t('delete')"
+        class="red"
       />
     </div>
     <button

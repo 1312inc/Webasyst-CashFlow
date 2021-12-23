@@ -1,24 +1,31 @@
 <template>
   <div v-if="currentEntity" class="custom-p-16-mobile custom-pb-0-mobile">
     <div>{{ this.$moment().format("LL") }}</div>
-    <div class="flexbox middle space-12">
-      <div class="h2 custom-mb-0">
-        {{ currentEntity.name || currentEntity.currency }}
+    <div class="flexbox middle space-12 wrap">
+      <div class="flexbox space-12 middle wrap-mobile">
+        <div class="h2 custom-mb-0">
+          {{ currentEntity.name || currentEntity.currency }}
+        </div>
+        <div
+          v-if="balance"
+          :class="balance >= 0 ? 'text-green' : 'text-red'"
+          class="h2 nowrap custom-mb-0"
+        >
+          {{
+            $helper.toCurrency({
+              value: balance,
+              currencyCode: currentEntity.currency
+            })
+          }}
+
+        </div>
       </div>
-      <div
-        v-if="balance"
-        :class="balance >= 0 ? 'text-green' : 'text-red'"
-        class="h2 nowrap custom-mb-0"
-      >
-        {{
-          $helper.toCurrency({
-            value: balance,
-            currencyCode: currentEntity.currency,
-          })
-        }}
-      </div>
+
+      <!-- TODO: make current currency as getter -->
+      <chart-header-title-average :currencyCode="$store.getters['transaction/activeCurrencyCode']" />
+
       <div v-if="currentEntity.id > 0 && $permissions.isAdmin">
-        <button @click="update(currentEntity)" class="button nobutton">
+        <button @click="update(currentEntity)" class="button nobutton circle">
           <i class="fas fa-edit"></i>
         </button>
       </div>
@@ -35,11 +42,13 @@
 import Modal from '@/components/Modal'
 import Account from '@/components/Modals/AddAccount'
 import Category from '@/components/Modals/AddCategory'
+import ChartHeaderTitleAverage from './ChartHeaderTitleAverage.vue'
 export default {
   components: {
     Modal,
     Account,
-    Category
+    Category,
+    ChartHeaderTitleAverage
   },
 
   data () {

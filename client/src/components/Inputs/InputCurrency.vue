@@ -5,7 +5,7 @@
         ref="input"
         :value="value"
         @accept="$emit('input', $event)"
-        @keyup.enter="$emit('keyEnter')"
+        @keyup.enter="$emit('keyEnter', $event)"
         :mask="Number"
         :scale="2"
         :signed="signed"

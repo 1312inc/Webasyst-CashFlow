@@ -1,11 +1,11 @@
 <template>
-  <div class="dialog-body">
+  <div class="dialog-body" style="overflow: initial;">
     <div class="dialog-header">
       <h2>
         {{ isModeUpdate ? $t("updateCategory") : $t("addCategory") }}
       </h2>
     </div>
-    <div class="dialog-content">
+    <div class="dialog-content" style="overflow: initial;">
       <div class="fields">
         <div class="field">
           <div class="name for-input">
@@ -71,12 +71,37 @@
           </div>
         </div>
 
-        <div class="field" v-if="model.type">
+        <div v-if="showSelectParent" class="field">
+          <div class="name for-input">
+            {{ $t("parentCategory") }}
+          </div>
+          <div class="value">
+            <DropdownWa
+              v-model="model.parent_category_id"
+              :items="parentsList"
+              valuePropName="id"
+              :rowModificator="$_rowModificatorMixin_rowModificator_category"
+              :maxHeight="200"
+              class="width-100"
+            />
+          </div>
+        </div>
+
+        <div class="field" v-if="!model.parent_category_id">
           <div class="name for-input">
             {{ $t("color") }}
           </div>
           <div class="value">
             <ColorPicker v-model="model.color" />
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="name for-input">
+            {{ $t("icon") }}
+          </div>
+          <div class="value">
+            <FontAwsomeSelector v-model="model.glyph" :color="model.color" />
           </div>
         </div>
       </div>
@@ -112,9 +137,12 @@
 <script>
 import { required } from 'vuelidate/lib/validators'
 import updateEntityMixin from '@/mixins/updateEntityMixin'
+import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
+import DropdownWa from '@/components/Inputs/DropdownWa'
 import ColorPicker from '@/components/Inputs/ColorPicker'
+import FontAwsomeSelector from '../Inputs/FontAwsomeSelector.vue'
 export default {
-  mixins: [updateEntityMixin],
+  mixins: [updateEntityMixin, rowModificatorMixin],
 
   props: {
     editedItem: {
@@ -129,7 +157,9 @@ export default {
   },
 
   components: {
-    ColorPicker
+    ColorPicker,
+    DropdownWa,
+    FontAwsomeSelector
   },
 
   data () {
@@ -139,7 +169,9 @@ export default {
         name: '',
         type: '',
         color: '',
-        is_profit: false
+        is_profit: false,
+        parent_category_id: null,
+        glyph: null
       }
     }
   },
@@ -155,7 +187,33 @@ export default {
     }
   },
 
+  computed: {
+    parentsList () {
+      return this.$store.getters['category/sortedCategories'].filter(
+        c =>
+          c.parent_category_id === null &&
+          this.editedItem?.id !== c.id &&
+          c.type === this.model.type &&
+          ![-1, -2].includes(c.id)
+      )
+    },
+
+    showSelectParent () {
+      return this.editedItem
+        ? this.$store.getters['category/getChildren'](this.editedItem.id)
+          .length < 1
+        : true
+    }
+  },
+
   watch: {
+    'model.parent_category_id' (val) {
+      this.model.color = val
+        ? this.$store.getters['category/getById'](val).color
+        : this.model.type === 'income'
+          ? '#11CC22'
+          : '#EF4B35'
+    },
     'model.type' () {
       if (!this.isModeUpdate) {
         this.model.is_profit = false
@@ -166,7 +224,7 @@ export default {
   created () {
     if (this.type) {
       this.model.type = this.type
-      this.model.color = this.model.type === 'income' ? '#00FF00' : '#E57373'
+      this.model.color = this.model.type === 'income' ? '#11CC22' : '#EF4B35'
     }
   },
 
