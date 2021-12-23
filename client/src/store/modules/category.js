@@ -9,13 +9,8 @@ export default {
   }),
 
   getters: {
-    getById: state => id => {
-      return state.categories.find(category => category.id === id)
-    },
-
-    getByType: state => category => {
-      return state.categories
-        .filter(e => e.type === category)
+    sortedCategories: state => {
+      const input = state.categories
         .sort((a, b) => {
           if (a.sort > b.sort) {
             return 1
@@ -25,12 +20,45 @@ export default {
           }
           return 0
         })
+
+      const assemble = (arr, parentId = null, result = []) => {
+        arr.forEach(el => {
+          if (el.parent_category_id === parentId) {
+            result.push(el)
+            assemble(arr, el.id, result)
+          }
+        })
+        return result
+      }
+
+      return assemble(input)
+    },
+
+    getChildren: (state, getters) => id => {
+      return getters.sortedCategories.filter(c => c.parent_category_id === id)
+    },
+
+    getById: state => id => {
+      return state.categories.find(category => category.id === id)
+    },
+
+    getByType: (state, getters) => category => {
+      return getters.sortedCategories.filter(e => e.type === category)
     }
   },
 
   mutations: {
     setCategories (state, data) {
       state.categories = data
+    },
+
+    updateCategory (state, data) {
+      const index = state.categories.findIndex(c => c.id === data.id)
+      if (index > -1) {
+        state.categories.splice(index, 1, data)
+      } else {
+        state.categories.unshift(data)
+      }
     },
 
     updateSort (state, data) {
@@ -50,18 +78,28 @@ export default {
       }
     },
 
-    async update ({ dispatch }, params) {
+    async update ({ commit }, params) {
       const method = params.id ? 'update' : 'create'
       try {
         const { data } = await api.post(`cash.category.${method}`, params)
-        dispatch('getList')
-          .then(() => {
-            // redirect to the entity page if new one
-            if (method === 'create') {
-              router.push({ name: 'Category', params: { id: data.id, isFirtsTimeNavigate: true } })
-            }
-          })
+        commit('updateCategory', data)
+        if (method === 'create') {
+          router.push({ name: 'Category', params: { id: data.id, isFirtsTimeNavigate: true } })
+        }
       } catch (_) {
+        return false
+      }
+    },
+
+    async updateParams ({ commit, getters, dispatch }, params) {
+      const item = getters.getById(params.id)
+      const stateBefore = { ...item }
+      try {
+        const reqParams = { ...item, ...params }
+        commit('updateCategory', reqParams)
+        await api.post('cash.category.update', reqParams)
+      } catch (_) {
+        commit('updateCategory', stateBefore)
         return false
       }
     },
@@ -79,11 +117,14 @@ export default {
       }
     },
 
-    sort ({ commit }, params) {
+    async sort ({ commit }, params) {
       try {
-        commit('updateSort', params.order)
-        api.post('cash.category.sort', params)
+        commit('updateSort', params.newOrder)
+        await api.post('cash.category.sort', {
+          order: params.newOrder
+        })
       } catch (_) {
+        commit('updateSort', params.oldOrder)
         return false
       }
     }

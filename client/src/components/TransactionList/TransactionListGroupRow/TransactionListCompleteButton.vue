@@ -18,7 +18,7 @@
           <a @click.prevent.stop="handleComplete" href="#" class="custom-p-8">
             <i class="fas fa-check text-red"></i>
             <span>
-              <span class="semibold">{{ $t("processToday") }}</span>
+              <span class="semibold black">{{ $t("processToday") }}</span>
               <p class="hint custom-mt-4">
                 {{
                   $t("amountOnDate", {
@@ -40,7 +40,7 @@
             class="custom-p-8"
           >
             <i class="fas fa-pencil-alt"></i
-            ><span class="semibold">{{ $t("processEdits") }}</span></a
+            ><span class="semibold black">{{ $t("processEdits") }}</span></a
           >
         </li>
       </ul>
@@ -68,7 +68,7 @@ export default {
             ids: [this.transaction.id],
             props: {
               is_onbadge: null,
-              date: this.$moment().format('LL') // set current date
+              date: this.$moment().format('YYYY-MM-DD') // set current date
             }
           })
         })

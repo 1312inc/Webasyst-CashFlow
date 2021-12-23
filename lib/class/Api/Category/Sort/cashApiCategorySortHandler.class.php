@@ -19,5 +19,7 @@ final class cashApiCategorySortHandler implements cashApiHandlerInterface
         if (!$saver->sort($request->getOrder())) {
             throw new kmwaRuntimeException($saver->getError());
         }
+        $saver->resort(cashCategory::TYPE_INCOME);
+        $saver->resort(cashCategory::TYPE_EXPENSE);
     }
 }

@@ -12,7 +12,9 @@
         class="c-contractor"
       />
       <div v-else>
-        <i class="c-category-glyph fas" :class="mainGlyph"></i>
+        <div :key="mainGlyph">
+          <i class="c-category-glyph fas" :class="mainGlyph"></i>
+        </div>
       </div>
       <!-- if repeating imported transaction -->
       <span
@@ -70,6 +72,10 @@ export default {
 
   computed: {
     mainGlyph () {
+      // if category has glyph
+      if (this.category.glyph) {
+        return this.category.glyph
+      }
       // if account currency has icon
       if (currencyIcons[this.account.currency]) {
         return currencyIcons[this.account.currency]
@@ -97,7 +103,6 @@ export default {
   width: 2.5rem;
   height: 2.5rem;
   border: 0.125rem solid var(--background-color-blank);
-  margin-top: 0.125rem;
 }
 
 .userpic48 > .badge {

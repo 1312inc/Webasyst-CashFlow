@@ -27,7 +27,7 @@
   "currency": "Валюта",
   "type": "Тип",
   "color": "Цвет",
-  "icon": "Логотип",
+  "icon": "Иконка",
   "desc": "Комментарий",
   "noDesc": "нет описания",
   "addTransaction": "Добавить операцию",
@@ -80,7 +80,7 @@
   "addExpense": "Расход",
   "changeSettings": "Настройки статьи",
   "details": "Подробнее",
-  "optional": "Опционально",
+  "optional": "Можно не заполнять",
   "transactionsListCount": "{count} ОПЕРАЦИЙ",
   "transactionDeleteWarning": "Операция будет удалена. Уверены?",
   "cashOnHand": "Деньги",
@@ -158,7 +158,9 @@
   "notifyMeAlert": "Когда наступит день операции, в счетчике на иконке приложения появится уведомление с напоминанием провести (подтвердить) эту операцию",
   "error": {
     "http": "Ошибка получения данных",
-    "api": "Ошибка API"
+    "api": "Ошибка API",
+    "nonJsonTitle": "Что-то не так с API (api.php). Ответ не в формате JSON",
+    "nonJsonText": "Пожалуйста, свяжитесь со своим хостинг-провайдером или администратором, который настраивал вам Webasyst"
   },
   "arrow": {
     "up": "Выходим в плюс —",
@@ -187,5 +189,15 @@
   "export": "Экспорт",
   "transactionDate": "Дата операции: {date}",
   "amountOnDate": "{amount}, {date}",
-  "accountBalanceTransactionListHint": "Баланс счета после проведения этой операции"
+  "accountBalanceTransactionListHint": "Баланс счета после проведения этой операции",
+  "specify": "Указать",
+  "recipient": "получателя",
+  "payee": "плательщика",
+  "parentCategory": "Родительская категория",
+  "notSelected": "Не выбрано",
+  "shortMonth": "мес.",
+  "forecasted": "Средняя скорость изменения баланса на основе запланированных операций",
+  "transactions": "Операции",
+  "allTransactions": "Все операции",
+  "change": "Изменить"
 }

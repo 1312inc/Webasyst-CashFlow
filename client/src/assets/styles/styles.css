@@ -1,6 +1,11 @@
 html {
     --red:    #ff421a;
     --green:  #0abe5a;
+    --highlighted-overdue: #ffd4d4;
+}
+
+html[data-theme='dark'] {
+    --highlighted-overdue: var(--highlighted-orange);
 }
 
 #wa-app {
@@ -85,6 +90,13 @@ body.modal {
 .c-list .c-item.selected { background: var(--background-color-table-row-selected); }
 .c-list .c-item.c-upcoming .c-group-date { color: var(--gray); }
 .c-list .c-item.c-upcoming .userpic { opacity: 0.5; }
+.c-list .c-item.c-item-overdue { border-radius: 0; background: var(--highlighted-overdue); }
+.c-list .c-item.c-item-overdue:hover { background: var(--highlighted-overdue); }
+.c-list .c-item.c-item-red-process button.light-gray { background: var(--red); color: var(--white); }
+.c-list .c-item.c-item-red-process button.light-gray * { color: var(--white) !important; }
+.c-list .c-item.c-item-selected { background: var(--accent-color) !important; border-radius: 0; color: var(--white) !important; }
+.c-list .c-item.c-item-selected * { color: var(--white) !important; }
+.c-list .c-item.c-item-selected .dropdown-body * { color: var(--text-color-stronger) !important; }
 .c-list .c-item.c-transaction-group .c-grouped-transaction-description { color: var(--gray); }
 .c-list .c-item.c-transaction-group .userpic { position: relative; z-index: 1; }
 .c-list .c-item .c-unfold-helper-icon { opacity: 0; }
@@ -92,7 +104,8 @@ body.modal {
 .c-list .c-item .c-item-amount { text-align: right; }
 .c-list .c-item:first-child .c-item-border { border: none; }
 .c-list .c-item:hover .c-unfold-helper-icon { opacity: 1; }
-.c-item .userpic .c-category-glyph { color: var(--white); font-size: 1.5rem; padding: 0.75rem; }
+.c-item .userpic {display: flex; justify-content: center; align-items: center;}
+.c-item .userpic .c-category-glyph { color: var(--white); font-size: 1.5rem; }
 .c-list .badge.c-time-diff-badge { padding: 0.25em 0.375em; font-weight: normal; background-color: var(--background-color-blockquote); color: var(--gray); }
 .c-list .badge.c-time-diff-badge::first-letter { text-transform: capitalize; }
 
@@ -127,6 +140,9 @@ body.modal {
 
 .dropdown.state-error .dropdown-toggle.button {
   border-color: var(--red);
+}
+.dropdown-toggle .custom-ml-12 {
+  margin-left: 0 !important;
 }
 
 .bold.state-error {
@@ -167,6 +183,7 @@ body.modal {
 .c-mobile-build .c-chart-container { padding: 1rem; }
 .c-mobile-build .c-transaction-section .c-transaction-section__header { font-size: 1.25rem; }
 
+.c-inline-calendar { width: 300px; height: 300px; }
 .c-inline-calendar .flatpickr-calendar { box-shadow: none; margin: -0.25rem; }
 
 @media screen and (min-width: 761px) {

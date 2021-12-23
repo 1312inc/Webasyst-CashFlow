@@ -5,12 +5,14 @@
     :class="classes"
     :style="isRepeatingGroup && 'cursor: initial;'"
   >
-    <div v-if="showDate" class="mobile-only custom-my-8">
-      {{
-        $moment(transaction.date).format(
-          $moment.locale() === "ru" ? "D MMMM" : "MMMM D"
-        )
-      }}
+    <div v-if="showDate" class="mobile-only custom-py-8">
+      <strong>
+        {{
+          $moment(transaction.date).format(
+            $moment.locale() === "ru" ? "D MMMM" : "MMMM D"
+          )
+        }}
+      </strong>
       <span class="hint">{{ $moment(transaction.date).format("dddd") }}</span>
     </div>
 
@@ -91,7 +93,10 @@
           </div>
         </div>
         <div class="c-item-amount">
-          <div :style="`color: ${category.color}`" class="bold nowrap custom-mb-4">
+          <div
+            :style="`color: ${category.color}`"
+            class="bold nowrap custom-mb-4"
+          >
             {{
               $helper.toCurrency({
                 value: isCollapseHeader
@@ -107,9 +112,7 @@
             <span
               v-if="transaction.balance"
               class="nowrap black"
-              :title="
-                $t('accountBalanceTransactionListHint')
-              "
+              :title="$t('accountBalanceTransactionListHint')"
             >
               {{
                 $helper.toCurrency({
@@ -122,7 +125,7 @@
         </div>
         <transition name="fade" :duration="300">
           <TransactionListCompleteButton
-            v-show="transaction.is_onbadge && $route.name === 'Upnext'"
+            v-show="transaction.is_onbadge"
             @processEdit="openModal(true)"
             :transaction="transaction"
             :account="account"
@@ -227,6 +230,20 @@ export default {
       return this.showChecker ? true : this.isHover
     },
 
+    isOverdue () {
+      return (
+        this.transaction.date < this.$helper.currentDate &&
+        this.transaction.is_onbadge
+      )
+    },
+
+    isToday () {
+      return (
+        this.transaction.date === this.$helper.currentDate &&
+        this.transaction.is_onbadge
+      )
+    },
+
     daysBefore () {
       return this.$moment(this.transaction.date).diff(
         this.$helper.currentDate,
@@ -237,18 +254,11 @@ export default {
     classes () {
       return {
         'c-transaction-group': this.isCollapseHeader || this.isRepeatingGroup, // styles for the collapsed transactions
-        'c-upcoming': this.$moment(this.transaction.date) > this.$moment() // styles for the upcoming transactions
-      }
-    }
-  },
-
-  watch: {
-    transaction (val) {
-      if (val.$_flagUpdated) {
-        this.$refs.row.addEventListener('animationend', () => {
-          this.$refs.row.classList.remove('c-item--updated')
-        })
-        this.$refs.row.classList.add('c-item--updated')
+        'c-upcoming': this.$moment(this.transaction.date) > this.$moment(), // styles for the upcoming transactions
+        'c-item-overdue': this.isOverdue,
+        'c-item-red-process': this.isOverdue || this.isToday,
+        'c-item-selected': this.isChecked,
+        'c-item--updated': this.transaction.$_flagUpdated || this.transaction.$_flagCreated
       }
     }
   },
@@ -320,7 +330,6 @@ export default {
 .c-item--updated {
   animation-name: updated;
   animation-duration: 3s;
-  animation-fill-mode: forwards;
   animation-timing-function: linear;
   animation-direction: alternate;
   animation-iteration-count: 1;

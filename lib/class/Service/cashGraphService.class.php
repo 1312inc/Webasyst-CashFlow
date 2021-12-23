@@ -1074,8 +1074,10 @@ SQL;
                 break;
 
             case null !== $paramsDto->filter->getCategoryId():
-                $sqlParts->addAndWhere('ct.category_id = i:category_id')
-                    ->addParam('category_id', $paramsDto->filter->getCategoryId());
+                $categories = cash()->getModel(cashCategory::class)->getChildIds($paramsDto->filter->getCategoryId());
+                $categories[] = $paramsDto->filter->getCategoryId();
+                $sqlParts->addAndWhere('ct.category_id in (i:category_ids)')
+                    ->addParam('category_ids', $categories);
 
                 break;
 

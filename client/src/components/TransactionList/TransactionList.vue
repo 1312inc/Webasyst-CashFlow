@@ -6,7 +6,7 @@
     <div v-else>
       <TransactionListCreated />
       <div
-        v-for="(group, index) in upnext ? [...groups].reverse() : groups"
+        v-for="(group, index) in groups"
         :key="group.name"
       >
         <TransactionListGroup
@@ -46,6 +46,10 @@ export default {
       type: Boolean,
       default: false
     },
+    showOverdueGroup: {
+      type: Boolean,
+      default: false
+    },
     showFutureGroup: {
       type: Boolean,
       default: true
@@ -55,6 +59,10 @@ export default {
       default: true
     },
     showYesterdayGroup: {
+      type: Boolean,
+      default: false
+    },
+    showTomorrowGroup: {
       type: Boolean,
       default: false
     },
@@ -99,6 +107,11 @@ export default {
       const yesterday = this.$moment()
         .add(-1, 'day')
         .format('YYYY-MM-DD')
+      const tomorrow = this.$moment()
+        .add(1, 'day')
+        .format('YYYY-MM-DD')
+      const result = []
+
       const add = (name, transaction, reverse = false) => {
         const t = result.find(e => e.name === name)
         if (!t) {
@@ -114,18 +127,25 @@ export default {
           }
         }
       }
-      const result = []
 
       // add Future object
-      if (this.showFutureGroupComputed && !result.find(e => e.name === 'future')) {
+      if (this.showFutureGroupComputed) {
         result.push({
           name: 'future',
           items: []
         })
       }
 
+      // add tomorrow object
+      if (this.showTomorrowGroup) {
+        result.push({
+          name: 'tomorrow',
+          items: []
+        })
+      }
+
       // add today object
-      if (this.showTodayGroupComputed && !result.find(e => e.name === 'today')) {
+      if (this.showTodayGroupComputed) {
         result.push({
           name: 'today',
           items: []
@@ -133,12 +153,21 @@ export default {
       }
 
       // add yesterday object
-      if (
-        this.showYesterdayGroup &&
-        !result.find(e => e.name === 'yesterday')
-      ) {
+      if (this.showYesterdayGroup) {
         result.push({
           name: 'yesterday',
+          items: []
+        })
+      }
+
+      if (this.upnext) {
+        result.reverse()
+      }
+
+      // add Overdue object
+      if (this.showOverdueGroup && this.transactionsByCurrency.some(e => e.date < today && e.is_onbadge)) {
+        result.unshift({
+          name: 'overdue',
           items: []
         })
       }
@@ -149,13 +178,18 @@ export default {
           return add('ungroup', e)
         }
 
+        // if overdue
+        if (e.date < today && e.is_onbadge && this.showOverdueGroup) {
+          return add('overdue', e)
+        }
+
+        // if tomorrow
+        if (e.date === tomorrow && this.showTomorrowGroup) {
+          return add('tomorrow', e)
+        }
+
         // if future and not details mode
-        if (
-          e.date > today &&
-          this.showFutureGroupComputed &&
-          !this.$store.state.transaction.detailsInterval.from &&
-          !this.$store.state.transaction.detailsInterval.to
-        ) {
+        if (e.date > today && this.showFutureGroupComputed) {
           return add('future', e, this.upnext)
         }
 
@@ -169,11 +203,11 @@ export default {
           return add('yesterday', e)
         }
 
+        // if past is not needed
+        if (this.upnext) return
+
         // if past
-        const month = this.upnext
-          ? 'overdue'
-          : this.$moment(e.date).format('YYYY-MM')
-        add(month, e)
+        add(this.$moment(e.date).format('YYYY-MM'), e)
       })
 
       return result

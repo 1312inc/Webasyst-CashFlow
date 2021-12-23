@@ -8,6 +8,13 @@
         @keyup.down="down"
         @keyup.enter="select(aciveMenuIndex)"
         @blur="reset"
+        @focus="
+          e => {
+            if (focus) {
+              input(e);
+            }
+          }
+        "
         ref="input"
         type="text"
         autocomplete="off"
@@ -23,7 +30,7 @@
       ></i>
     </div>
 
-    <div class="hint custom-mt-8">
+    <div v-if="!initialState || initialState !== inputValue" class="hint custom-mt-8">
       {{
         inputLabel.trim() === ""
           ? $t("noContact")
@@ -38,9 +45,11 @@
     <ul
       v-if="response.length"
       ref="menu"
-      :style="`top:${
-        $refs.input.offsetTop + $refs.input.offsetHeight + 1
-      }px;width:${$refs.input.offsetWidth}px;`"
+      :style="
+        `top:${$refs.input.offsetTop + $refs.input.offsetHeight + 1}px;width:${
+          $refs.input.offsetWidth
+        }px;`
+      "
       tabindex="0"
       class="c-autocomplete-menu custom-m-0 custom-p-0 z-20"
     >
@@ -55,7 +64,9 @@
         <div class="small flexbox middle space-8 custom-py-8 custom-px-12">
           <i
             class="icon userpic"
-            :style="`background-image: url(${item.photo_url_absolute});opacity: 1;`"
+            :style="
+              `background-image: url(${item.photo_url_absolute});opacity: 1;`
+            "
           ></i>
           <span>{{ item.name }}</span>
         </div>
@@ -75,11 +86,22 @@ export default {
     createNewContractor: {
       type: Boolean,
       default: true
+    },
+
+    defaultRequest: {
+      type: String,
+      default: ''
+    },
+
+    focus: {
+      type: Boolean,
+      default: false
     }
   },
 
   data () {
     return {
+      initialState: '',
       inputValue: '',
       photo: '',
       aciveMenuIndex: null,
@@ -101,28 +123,41 @@ export default {
   },
 
   created () {
-    this.inputValue = this.defaultContractor?.name || ''
-    this.photo = this.defaultContractor?.userpic || ''
+    if (this.defaultContractor) {
+      this.inputValue = this.defaultContractor.name
+      this.photo = this.defaultContractor.userpic
+    }
+  },
+
+  mounted () {
+    this.initialState = this.$refs.input.value
+    if (this.focus) {
+      this.$refs.input.focus()
+    }
   },
 
   methods: {
     input ({ target }) {
       this.inputValue = target.value
       this.photo = ''
+      this.isNotFound = false
 
       // prevent search request if empty string
       if (!target.value.trim()) {
         this.inputValue = ''
         this.reset()
-        this.$emit('changeContractor', null)
-        return false
+
+        if (!this.defaultRequest) {
+          this.$emit('changeContractor', null)
+          return false
+        }
       }
 
       // make search request
       api
         .get('cash.system.searchContacts', {
           params: {
-            term: target.value.trim()
+            term: target.value.trim() || this.defaultRequest
           }
         })
         .then(({ data }) => {
@@ -133,7 +168,7 @@ export default {
           if (i > -1) {
             this.select(i)
           } else {
-            if (this.createNewContractor) {
+            if (this.createNewContractor && this.inputValue) {
               this.$emit('newContractor', this.inputValue)
               this.isNewContractor = true
             } else {

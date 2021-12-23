@@ -31,16 +31,16 @@
     <div
       v-if="$helper.isDesktopEnv && currentType"
       ref="controlButtons"
-      class="flexbox wrap-mobile space-12 middle custom-py-12"
+      class="flexbox wrap space-12 middle custom-pt-12"
     >
-      <div v-show="currentType.type !== 'expense'">
-        <button @click="addTransaction('income')" class="button c-button-add-income">
+      <div v-show="currentType.type !== 'expense'" class="custom-pb-12">
+        <button @click="addTransaction('income')" class="button c-button-add-income nowrap">
           <i class="fas fa-plus"></i>
           <span class="custom-ml-8">{{ $t("addIncome") }}</span>
         </button>
       </div>
-      <div v-show="currentType.type !== 'income'">
-        <button @click="addTransaction('expense')" class="button c-button-add-expense">
+      <div v-show="currentType.type !== 'income'" class="custom-pb-12">
+        <button @click="addTransaction('expense')" class="button c-button-add-expense nowrap">
           <i class="fas fa-minus"></i>
           <span class="custom-ml-8">{{ $t("addExpense") }}</span>
         </button>
@@ -52,16 +52,17 @@
           $permissions.canAccessTransfers &&
           $store.state.account.accounts.length > 1
         "
+        class="custom-pb-12"
       >
-        <button @click="addTransaction('transfer')" class="button light-gray">
+        <button @click="addTransaction('transfer')" class="button light-gray nowrap">
           <span>
             <i class="fas fa-exchange-alt"></i>
             <span class="desktop-only custom-ml-8">{{ $t("transfer") }}</span>
           </span>
         </button>
       </div>
-      <div>
-        <button @click="openAddBulk = true" class="button nobutton gray">
+      <div class="custom-pb-12">
+        <button @click="openAddBulk = true" class="button nobutton gray nowrap">
           <span>
             <i class="fas fa-list-ul"></i>
             <span class="desktop-only custom-ml-8 black">{{ $t("addMany") }}</span>
@@ -71,7 +72,7 @@
     </div>
 
     <portal>
-      <Modal v-if="open" @close="open = false">
+      <Modal v-if="open" @close="open = false" @reOpen="reOpen">
         <AddTransaction :defaultCategoryType="categoryType" />
       </Modal>
     </portal>
@@ -163,6 +164,12 @@ export default {
 
     unselectAll () {
       this.$store.commit('transactionBulk/emptySelectedTransactionsIds')
+    },
+
+    async reOpen () {
+      this.open = false
+      await this.$nextTick()
+      this.open = true
     }
   }
 }

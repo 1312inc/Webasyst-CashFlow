@@ -277,7 +277,7 @@ export default {
         commit('setLoading', true)
         const { data } = await api.get('cash.transaction.getUpNextList', {
           params: {
-            today: moment().format('YYYY-MM-DD')
+            today: moment().add(1, 'day').format('YYYY-MM-DD')
           }
         })
         commit('setTransactions', data)

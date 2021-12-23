@@ -1,29 +1,24 @@
 <template>
-  <div class="dialog-body">
+  <div class="dialog-body" style="overflow: initial;">
     <div class="dialog-header">
-      <h2>{{ $t("moveTransactions", { count: count }) }}</h2>
+      <h2>{{ $t("moveTransactions", { count: ids.length }) }}</h2>
     </div>
-    <div class="dialog-content">
+    <div class="dialog-content" style="overflow: initial;">
       <div class="fields">
         <div class="field">
           <div class="name for-input">
             {{ $t("account") }}
           </div>
           <div class="value">
-            <div class="wa-select">
-              <select v-model="model.account_id">
-                <option value="0">{{ $t("dontChange") }}</option>
-                <option
-                  :value="account.id"
-                  v-for="account in accounts"
-                  :key="account.id"
-                >
-                  {{ account.currency }} – {{ account.name }} ({{
-                    $helper.currencySignByCode(account.currency)
-                  }})
-                </option>
-              </select>
-            </div>
+            <DropdownWa
+              v-model="model.account_id"
+              :items="[{ id: 0, name: $t('dontChange') }, ...accounts]"
+              :useDefaultValue="false"
+              valuePropName="id"
+              :rowModificator="$_rowModificatorMixin_rowModificator_account"
+              :maxHeight="200"
+              class="width-100"
+            />
           </div>
         </div>
 
@@ -32,29 +27,20 @@
             {{ $t("category") }}
           </div>
           <div class="value">
-            <div class="wa-select">
-              <select v-model="model.category_id">
-                <option :value="0">{{ $t("dontChange") }}</option>
-                <optgroup :label="$t('income')">
-                  <option
-                    :value="category.id"
-                    v-for="category in categoriesIncome"
-                    :key="category.id"
-                  >
-                    {{ category.name }}
-                  </option>
-                </optgroup>
-                <optgroup :label="$t('expense')">
-                  <option
-                    :value="category.id"
-                    v-for="category in categoriesExpense"
-                    :key="category.id"
-                  >
-                    {{ category.name }}
-                  </option>
-                </optgroup>
-              </select>
-            </div>
+            <DropdownWa
+              v-model="model.category_id"
+              :items="[
+                [{ id: 0, name: $t('dontChange') }],
+                $store.getters['category/getByType']('income'),
+                $store.getters['category/getByType']('expense')
+              ]"
+              :groupsLabels="['', $t('income'), $t('expense')]"
+              :useDefaultValue="false"
+              valuePropName="id"
+              :rowModificator="$_rowModificatorMixin_rowModificator_category"
+              :maxHeight="200"
+              class="width-100"
+            />
           </div>
         </div>
 
@@ -97,7 +83,7 @@
             :disabled="controlsDisabled"
             class="button purple"
           >
-            {{ $t("updateTransactions", { count: count }) }}
+            {{ $t("updateTransactions", { count: ids.length }) }}
           </button>
           <button @click="close" class="button light-gray">
             {{ $t("cancel") }}
@@ -111,10 +97,15 @@
 <script>
 import { mapState } from 'vuex'
 import InputContractor from '@/components/Inputs/InputContractor'
+import DropdownWa from '@/components/Inputs/DropdownWa'
+import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 export default {
   components: {
-    InputContractor
+    InputContractor,
+    DropdownWa
   },
+
+  mixins: [rowModificatorMixin],
 
   data () {
     return {
@@ -129,22 +120,8 @@ export default {
 
   computed: {
     ...mapState('account', ['accounts']),
-    ...mapState('category', ['categories']),
-
     ids () {
       return this.$store.state.transactionBulk.selectedTransactionsIds
-    },
-
-    categoriesIncome () {
-      return this.categories.filter(c => c.type === 'income')
-    },
-
-    categoriesExpense () {
-      return this.categories.filter(c => c.type === 'expense')
-    },
-
-    count () {
-      return this.ids.length
     }
   },
 

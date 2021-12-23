@@ -72,7 +72,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                 $this->initAmountPerPeriod($period, $rawData, $datum['id'], $datum['currency'], $id);
             }
 
-            $rawData[$datum['id']][$datum['month']][$datum['currency']]['per_month'] = (float) $datum['per_month'];
+            $rawData[$datum['id']][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
             $rawData[$datum['id']]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
 
             // просуммируем в родительскую
@@ -81,7 +81,7 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                 if (!isset($rawData[$parentIdType][$datum['month']][$datum['currency']])) {
                     $this->initAmountPerPeriod($period, $rawData, $parentIdType, $datum['currency'], $id);
                 }
-                $rawData[$parentIdType][$datum['month']][$datum['currency']]['per_month'] = (float) $datum['per_month'];
+                $rawData[$parentIdType][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
                 $rawData[$parentIdType]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
             }
 
@@ -157,8 +157,8 @@ class cashReportDdsCategoryDataProvider implements cashReportDdsDataProviderInte
                 $category->getId(),
                 $category->isExpense(),
                 $category->isIncome(),
-                $category->getCategoryParentId() && $category->getGlyph()
-                    ? sprintf('<i class="fas %s"></i>', $category->getGlyph())
+                $category->getGlyph()
+                    ? sprintf('<i class="fas %s" style="color: %s"></i>', $category->getGlyph(), $category->getColor())
                     : sprintf('<i class="icon rounded" style="background-color: %s"></i>', $category->getColor()),
                 false,
                 $category->getColor(),

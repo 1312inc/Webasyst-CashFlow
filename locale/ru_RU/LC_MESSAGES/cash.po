@@ -1136,3 +1136,9 @@ msgstr "Проверьте результаты прошлых импортов:
 
 msgid "Dismiss import history"
 msgstr "Очистить историю импортов"
+
+msgid "Withdrawal to %s"
+msgstr "Списание на %s"
+
+msgid "Receipt from %s"
+msgstr "Поступление с %s"

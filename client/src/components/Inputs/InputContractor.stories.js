@@ -5,11 +5,9 @@ export default {
   title: 'Cash/Inputs/Contractor',
   component: InputContractor,
   args: {
-    defaultContractor: {
-      name: 'тест тестович',
-      userpic: 'http://localhost:8888/wa-content/img/userpic96.jpg'
-    },
-    createNewContractor: true
+    createNewContractor: true,
+    defaultRequest: '',
+    defaultContractor: null
   },
   argTypes: {
     newContractor: { action: 'Update name of New Contractor' },
@@ -27,9 +25,19 @@ const Template = (args, { argTypes }) => {
 }
 
 export const Contractor = Template.bind({})
-Contractor.args = {}
+Contractor.args = {
+  defaultContractor: {
+    name: 'тест тестович',
+    userpic: 'http://localhost:8888/wa-content/img/userpic96.jpg'
+  }
+}
 
 export const ContractorNoCreate = Template.bind({})
 ContractorNoCreate.args = {
   createNewContractor: false
+}
+
+export const ContractorWithInitRequest = Template.bind({})
+ContractorWithInitRequest.args = {
+  defaultRequest: 'category_id/33'
 }
