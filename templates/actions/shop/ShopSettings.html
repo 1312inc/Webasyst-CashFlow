@@ -160,7 +160,7 @@
                                             <option value="0">[`Don’t import`]</option>
                                             {foreach $expenses as $category}
                                                 <option value="{$category->id}"
-                                                        {if $category->id == $shopScriptSettings->getCategoryPurchaseId()}selected{/if}
+                                                        {if $category->id == $shopScriptSettings->getCategoryPurchaseId()}selected {/if}
                                                         data-cash-category-color="{$category->color}"
                                                 >{$category->name|escape|truncate:32}</option>
                                             {/foreach}
@@ -184,7 +184,7 @@
                                             <option value="0">[`Don’t import`]</option>
                                             {foreach $expenses as $category}
                                                 <option value="{$category->id}"
-                                                        {if $category->id == $shopScriptSettings->getCategoryShippingId()}selected{/if}
+                                                        {if $category->id == $shopScriptSettings->getCategoryShippingId()}selected {/if}
                                                         data-cash-category-color="{$category->color}"
                                                 >{$category->name|escape|truncate:32}</option>
                                             {/foreach}
@@ -208,7 +208,7 @@
                                             <option value="0">[`Don’t import`]</option>
                                             {foreach $expenses as $category}
                                                 <option value="{$category->id}"
-                                                        {if $category->id == $shopScriptSettings->getCategoryTaxId()}selected{/if}
+                                                        {if $category->id == $shopScriptSettings->getCategoryTaxId()}selected {/if}
                                                         data-cash-category-color="{$category->color}"
                                                 >{$category->name|escape|truncate:32}</option>
                                             {/foreach}
