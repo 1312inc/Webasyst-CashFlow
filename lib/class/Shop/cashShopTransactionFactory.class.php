@@ -109,6 +109,7 @@ class cashShopTransactionFactory
             ->setExternalHash($externalHash)
             ->setDate($dto->mainTransaction->getDate())
             ->setExternalSource('shop')
+            ->setExternalId((int) $dto->order->getId())
             ->setExternalData(
                 [
                     'id' => $dto->order->getId(),
