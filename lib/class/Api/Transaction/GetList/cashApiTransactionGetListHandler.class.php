@@ -34,6 +34,10 @@ final class cashApiTransactionGetListHandler implements cashApiHandlerInterface
 
         $transactionFilter = new cashTransactionFilterService();
 
+        if ($filterDto->filter->getTrash() !== null && !wa()->getUser()->isAdmin(cashConfig::APP_ID)) {
+            throw new kmwaForbiddenException('Trash only for admins');
+        }
+
         $total = $transactionFilter->getResultsCount($filterDto);
         $data = $transactionFilter->getResults($filterDto);
 

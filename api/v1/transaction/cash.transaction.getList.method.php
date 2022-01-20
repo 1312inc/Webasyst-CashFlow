@@ -51,6 +51,7 @@ final class cashTransactionGetListMethod extends cashApiNewAbstractMethod
             && !$request->getFrom()
             && strpos($request->getFilter(), cashAggregateFilter::FILTER_SEARCH . '/') === false
             && strpos($request->getFilter(), cashAggregateFilter::FILTER_IMPORT . '/') === false
+            && strpos($request->getFilter(), cashAggregateFilter::FILTER_TRASH . '/') === false
         ) {
             throw new ApiMissingParamException('to, from');
         }

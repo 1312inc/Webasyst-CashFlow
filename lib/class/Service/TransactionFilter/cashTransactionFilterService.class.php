@@ -229,6 +229,19 @@ final class cashTransactionFilterService
 
     /**
      * @param cashTransactionFilterParamsDto $dto
+     * @param cashSelectQueryParts           $selectQueryParts
+     *
+     * @throws waException
+     */
+    private function makeBaseSqlForTrashFilter(
+        cashTransactionFilterParamsDto $dto,
+        cashSelectQueryParts $selectQueryParts
+    ): void {
+        $selectQueryParts->addAndWhere('ct.is_archived = 1', 'isArchived');
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
      *
      * @return cashSelectQueryParts
      * @throws kmwaForbiddenException
@@ -311,6 +324,11 @@ final class cashTransactionFilterService
 
             case null !== $dto->filter->getSearch():
                 $this->makeBaseSqlForSearchFilter($dto, $sqlParts);
+
+                break;
+
+            case null !== $dto->filter->getTrash():
+                $this->makeBaseSqlForTrashFilter($dto, $sqlParts);
 
                 break;
         }
