@@ -6,6 +6,7 @@ final class cashAggregateFilter
     public const FILTER_CATEGORY   = 'category';
     public const FILTER_CONTRACTOR = 'contractor';
     public const FILTER_IMPORT     = 'import';
+    public const FILTER_TRASH      = 'trash';
     public const FILTER_CURRENCY   = 'currency';
     public const FILTER_SEARCH     = 'search';
 
@@ -39,6 +40,11 @@ final class cashAggregateFilter
      */
     private $search;
 
+    /**
+     * @var int|null
+     */
+    private $trash;
+
     public static function createFromHash(?string $hash): cashAggregateFilter
     {
         $self = new self;
@@ -49,7 +55,13 @@ final class cashAggregateFilter
             if (property_exists($self, $filter)) {
                 $self->$filter = in_array(
                     $filter,
-                    [self::FILTER_ACCOUNT, self::FILTER_CATEGORY, self::FILTER_CONTRACTOR, self::FILTER_IMPORT],
+                    [
+                        self::FILTER_ACCOUNT,
+                        self::FILTER_CATEGORY,
+                        self::FILTER_CONTRACTOR,
+                        self::FILTER_IMPORT,
+                        self::FILTER_TRASH,
+                    ],
                     true
                 ) ? (int) $identifier : (string) $identifier;
             }
@@ -86,6 +98,11 @@ final class cashAggregateFilter
     public function getSearch(): ?string
     {
         return $this->search;
+    }
+
+    public function getTrash(): ?int
+    {
+        return $this->trash;
     }
 
     public function isFilterByCurrency(): bool

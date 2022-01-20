@@ -134,6 +134,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /cash.transaction.purge:
+    post:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 1
+              required:
+                - ids
+      responses:
+        200:
+          description: Список успешно и неуспешно удаленных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OkAndFailIds'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /cash.transaction.restore:
+    post:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 1
+              required:
+                - ids
+      responses:
+        200:
+          description: Список успешно и неуспешно восстановленных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OkAndFailIds'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /cash.transaction.bulkCreate:
     post:
       tags:
@@ -1199,3 +1261,15 @@ components:
         trace:
           type: string
           nullable: true
+
+    OkAndFailIds:
+      type: object
+      properties:
+        ok:
+          type: array
+          items:
+            type: integer
+        fail:
+          type: array
+          items:
+            type: integer
