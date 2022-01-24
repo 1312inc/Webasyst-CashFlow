@@ -50,13 +50,17 @@
               )
             }}
           </div>
-          <span v-if="daysBefore > 0" class="hint">{{
-            daysBefore === 1
-              ? $t("tomorrow")
-              : this.$moment(transaction.date).from($helper.currentDate)
-          }}</span>
-          <div v-else class="hint">
-            {{ $moment(transaction.date).format("dddd") }}
+
+          <div class="hint">
+            {{
+              $moment().year() == $moment(transaction.date).year()
+                ? daysBefore > 0
+                  ? daysBefore === 1
+                    ? $t("tomorrow")
+                    : $moment(transaction.date).from($helper.currentDate)
+                  : $moment(transaction.date).format("dddd")
+                : $moment(transaction.date).year()
+            }}
           </div>
         </template>
       </div>
@@ -258,7 +262,8 @@ export default {
         'c-item-overdue': this.isOverdue,
         'c-item-red-process': this.isOverdue || this.isToday,
         'c-item-selected': this.isChecked,
-        'c-item--updated': this.transaction.$_flagUpdated || this.transaction.$_flagCreated
+        'c-item--updated':
+          this.transaction.$_flagUpdated || this.transaction.$_flagCreated
       }
     }
   },
