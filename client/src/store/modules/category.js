@@ -10,7 +10,7 @@ export default {
 
   getters: {
     sortedCategories: state => {
-      const input = state.categories
+      const input = [...state.categories]
         .sort((a, b) => {
           if (a.sort > b.sort) {
             return 1

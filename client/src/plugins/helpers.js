@@ -48,6 +48,10 @@ export default {
 
       showMultiSelect () {
         return store.state.multiSelectMode
+      },
+
+      isHeader () {
+        return !!document.querySelector('#wa-header')
       }
     }
   }

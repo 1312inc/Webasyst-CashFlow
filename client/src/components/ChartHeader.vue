@@ -6,7 +6,7 @@
         <div
           v-if="showStickyHeader"
           v-sticky="$helper.isDesktopEnv"
-          sticky-offset="{top:64}"
+          :sticky-offset="`{top: ${this.$helper.isHeader() ? 64 : 0}}`"
           sticky-z-index="12"
           sticky-width-ref="controls"
           class="c-sticky-header-controls"

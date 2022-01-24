@@ -182,7 +182,7 @@ export default {
     },
 
     stickyOffset () {
-      return this.$helper.isDesktopEnv ? (this.showFoundedCount ? '{"top": 56}' : '{"top": 114}') : '{"top": 0}'
+      return this.$helper.isDesktopEnv ? (this.showFoundedCount ? '{"top": 56}' : `{"top": ${this.$helper.isHeader() ? 114 : 56}}`) : '{"top": 0}'
     },
 
     featurePeriod () {
