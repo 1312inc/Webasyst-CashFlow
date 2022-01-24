@@ -13,6 +13,7 @@ Vue.use(VueRouter)
 
 // TODO: make settings file
 const accountName = window.appState?.accountName || ''
+const baseUrl = window.appState?.baseUrl || '/'
 
 const routes = [
   {
@@ -101,7 +102,7 @@ const routes = [
 
 const router = new VueRouter({
   mode: process.env.VUE_APP_MODE === 'desktop' ? 'history' : 'hash',
-  base: window?.appState?.baseUrl || '/',
+  base: baseUrl,
   routes,
   scrollBehavior (to, from, savedPosition) {
     return { x: 0, y: 0 }
