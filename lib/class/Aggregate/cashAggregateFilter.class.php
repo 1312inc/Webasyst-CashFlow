@@ -9,6 +9,7 @@ final class cashAggregateFilter
     public const FILTER_TRASH      = 'trash';
     public const FILTER_CURRENCY   = 'currency';
     public const FILTER_SEARCH     = 'search';
+    public const FILTER_EXTERNAL   = 'external';
 
     /**
      * @var int|null
@@ -45,6 +46,16 @@ final class cashAggregateFilter
      */
     private $trash;
 
+    /**
+     * @var int|null
+     */
+    private $external;
+
+    /**
+     * @var string|null
+     */
+    private $externalSource;
+
     public static function createFromHash(?string $hash): cashAggregateFilter
     {
         $self = new self;
@@ -52,7 +63,13 @@ final class cashAggregateFilter
         if ($hash) {
             [$filter, $identifier] = explode('/', $hash);
 
-            if (property_exists($self, $filter)) {
+            if ($filter === self::FILTER_EXTERNAL) {
+                $externalData = explode('.', $identifier);
+                if (count($externalData) === 2) {
+                    $self->externalSource = $externalData[0];
+                    $self->external = (int) $externalData[1];
+                }
+            } elseif (property_exists($self, $filter)) {
                 $self->$filter = in_array(
                     $filter,
                     [
@@ -113,5 +130,15 @@ final class cashAggregateFilter
     public function isFilterByAccount(): bool
     {
         return !empty($this->account);
+    }
+
+    public function getExternalId(): ?int
+    {
+        return $this->external;
+    }
+
+    public function getExternalSource(): ?string
+    {
+        return $this->externalSource;
     }
 }

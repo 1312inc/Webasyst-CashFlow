@@ -217,6 +217,26 @@ final class cashTransactionFilterService
      * @param cashTransactionFilterParamsDto $dto
      * @param cashSelectQueryParts           $selectQueryParts
      *
+     * @throws kmwaForbiddenException
+     */
+    private function makeBaseSqlForExternalFilter(
+        cashTransactionFilterParamsDto $dto,
+        cashSelectQueryParts $selectQueryParts
+    ): void {
+        if (!$this->right->isAdmin($dto->contact)) {
+            throw new kmwaForbiddenException(_w('You have no access to this import'));
+        }
+
+        $selectQueryParts->addAndWhere('ct.external_source = s:external_source')
+            ->addAndWhere('ct.external_id = i:external_id')
+            ->addParam('external_id', $dto->filter->getExternalId())
+            ->addParam('external_source', $dto->filter->getExternalSource());
+    }
+
+    /**
+     * @param cashTransactionFilterParamsDto $dto
+     * @param cashSelectQueryParts           $selectQueryParts
+     *
      * @throws waException
      */
     private function makeBaseSqlForSearchFilter(
@@ -329,6 +349,11 @@ final class cashTransactionFilterService
 
             case null !== $dto->filter->getTrash():
                 $this->makeBaseSqlForTrashFilter($dto, $sqlParts);
+
+                break;
+
+            case null !== $dto->filter->getExternalId() && null !== $dto->filter->getExternalSource():
+                $this->makeBaseSqlForExternalFilter($dto, $sqlParts);
 
                 break;
         }

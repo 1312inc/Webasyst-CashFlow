@@ -5,13 +5,13 @@ final class cashApiTransactionGetShrinkListHandler implements cashApiHandlerInte
     private const SHRINK_LIMIT = 13;
 
     /**
-     * @var cashApiShrinkTransactionResponseDtoAssembler
+     * @var cashApiTransactionResponseDtoAssembler
      */
-    private $shrinkTransactionResponseDtoAssembler;
+    private $transactionResponseDtoAssembler;
 
     public function __construct()
     {
-        $this->shrinkTransactionResponseDtoAssembler = new cashApiShrinkTransactionResponseDtoAssembler();
+        $this->transactionResponseDtoAssembler = new cashApiTransactionResponseDtoAssembler();
     }
 
     /**
@@ -37,7 +37,7 @@ final class cashApiTransactionGetShrinkListHandler implements cashApiHandlerInte
         $data = $transactionFilter->getShrinkResults($filterDto);
 
         $response = [];
-        $iterator = $this->shrinkTransactionResponseDtoAssembler->fromModelIterator($data);
+        $iterator = $this->transactionResponseDtoAssembler->fromModelIterator($data);
         foreach ($iterator as $item) {
             $response[] = $item;
         }
