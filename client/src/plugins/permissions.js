@@ -1,6 +1,10 @@
 
+const permissions = window.appState?.api_settings?.rights || {}
+
+export { permissions }
+
 export default {
   install (Vue) {
-    Vue.prototype.$permissions = window.appState?.api_settings?.rights || {}
+    Vue.prototype.$permissions = permissions
   }
 }

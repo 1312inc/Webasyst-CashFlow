@@ -46,6 +46,8 @@ export default (store) => {
           }
           break
         case 'transactionBulk/bulkMove':
+        case 'transactionBulk/restore':
+        case 'transactionBulk/purge':
           return Promise.all([
             store.dispatch('transaction/fetchTransactions'),
             dispatchAll(store)

@@ -6,8 +6,10 @@ import Transactions from '../views/Transactions.vue'
 import Upnext from '../views/Upnext.vue'
 import Search from '../views/Search.vue'
 import Import from '../views/Import.vue'
+import Trash from '../views/Trash.vue'
 import NotFound from '../views/NotFound.vue'
 import { i18n } from '../plugins/locale'
+import { permissions } from '../plugins/permissions'
 
 Vue.use(VueRouter)
 
@@ -78,6 +80,15 @@ const routes = [
     }
   },
   {
+    path: '/trash',
+    name: 'Trash',
+    component: Trash,
+    meta: {
+      requiresAdminRights: true,
+      title: `${i18n.t('trash')} — ${accountName}`
+    }
+  },
+  {
     path: '/report/dds'
   },
   {
@@ -110,9 +121,18 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAdminRights)) {
+    if (!permissions.isAdmin) {
+      next({
+        name: 'Home'
+      })
+    }
+  }
+
   if (to.meta.title) {
     document.title = to.meta.title
   }
+
   next()
 })
 

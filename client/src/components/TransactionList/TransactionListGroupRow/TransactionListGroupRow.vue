@@ -129,7 +129,7 @@
         </div>
         <transition name="fade" :duration="300">
           <TransactionListCompleteButton
-            v-show="transaction.is_onbadge"
+            v-show="transaction.is_onbadge && !archive"
             @processEdit="openModal(true)"
             :transaction="transaction"
             :account="account"
@@ -185,6 +185,10 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+
+  inject: {
+    archive: { default: false }
   },
 
   data () {
@@ -256,6 +260,11 @@ export default {
     },
 
     classes () {
+      if (this.archive) {
+        return {
+          'c-item-archived': true
+        }
+      }
       return {
         'c-transaction-group': this.isCollapseHeader || this.isRepeatingGroup, // styles for the collapsed transactions
         'c-upcoming': this.$moment(this.transaction.date) > this.$moment(), // styles for the upcoming transactions
