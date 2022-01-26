@@ -7,6 +7,7 @@ import Upnext from '../views/Upnext.vue'
 import Search from '../views/Search.vue'
 import Import from '../views/Import.vue'
 import Trash from '../views/Trash.vue'
+import Order from '../views/Order.vue'
 import NotFound from '../views/NotFound.vue'
 import { i18n } from '../plugins/locale'
 import { permissions } from '../plugins/permissions'
@@ -87,6 +88,14 @@ const routes = [
       requiresAdminRights: true,
       title: `${i18n.t('trash')} — ${accountName}`
     }
+  },
+  {
+    path: '/external/shop/order/:id',
+    name: 'Order',
+    component: Order
+    // meta: {
+    //   title: `${i18n.t('trash')} — ${accountName}`
+    // }
   },
   {
     path: '/report/dds'
