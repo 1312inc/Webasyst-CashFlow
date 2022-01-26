@@ -268,7 +268,7 @@ SQL;
     }
 
     /**
-     * @param null $limit
+     * @param null|int $limit
      *
      * @return cashSelectQueryParts
      */
@@ -284,7 +284,7 @@ SQL;
     }
 
     /**
-     * @param null $offset
+     * @param null|int $offset
      *
      * @return cashSelectQueryParts
      */
