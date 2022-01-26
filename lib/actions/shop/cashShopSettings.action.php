@@ -46,6 +46,16 @@ class cashShopSettingsAction extends cashViewAction
         $settingsData = waRequest::post('shopscript_settings', [], waRequest::TYPE_ARRAY_TRIM);
 
         if (waRequest::getMethod() === 'post') {
+            if (isset($settingsData['accounts_payment'])) {
+                $settingsData['accountIdByPayment'] = array_filter(
+                    array_combine(
+                        $settingsData['accounts_payment']['payment_method'],
+                        $settingsData['accounts_payment']['account']
+                    )
+                );
+                unset($settingsData['accounts_payment']);
+            }
+
             (new cashShopIntegrationManager())->setup($shopIntegration, $settingsData);
         }
 
@@ -61,6 +71,7 @@ class cashShopSettingsAction extends cashViewAction
         $actions = [];
         $avg = 0;
         $shopCurrencyExists = true;
+        $paymentMethods = [];
         if ($shopIntegration->shopExists()) {
             $storefronts = cashHelper::getAllStorefronts() ?: [];
             $storefronts[] = 'backend';
@@ -70,6 +81,8 @@ class cashShopSettingsAction extends cashViewAction
             $avg = round($shopIntegration->getShopAvgAmount($account->getCurrency()), 2);
             $shopCurrencyExists = (bool) (new shopCurrencyModel())->getById($account->getCurrency());
             $dateBounds = $shopIntegration->getOrderBounds();
+
+            $paymentMethods = (new cashShopUtils())->loadPaymentMethods();
         } else {
             if ($settings->isEnabled()) {
                 $settings->setEnabled(false)->save();
@@ -97,6 +110,7 @@ class cashShopSettingsAction extends cashViewAction
                 'hasErrors' => !empty($settings->getErrors()),
                 'errors' => $settings->getErrors(),
                 'shopOrderDateBounds' => $dateBounds,
+                'paymentMethods' => $paymentMethods,
             ]
         );
     }
