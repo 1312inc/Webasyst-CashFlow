@@ -165,6 +165,7 @@ class cashShopTransactionFactory
             ->setExternalHash($externalHash)
             ->setDate($dto->mainTransaction->getDate())
             ->setExternalSource('shop')
+            ->setExternalId($dto->order->getId())
             ->setExternalData(
                 [
                     'id' => $dto->order->getId(),
@@ -220,6 +221,7 @@ class cashShopTransactionFactory
             ->setExternalHash($externalHash)
             ->setDate($dto->mainTransaction->getDate())
             ->setExternalSource('shop')
+            ->setExternalId($dto->order->getId())
             ->setExternalData(
                 [
                     'id' => $dto->order->getId(),
@@ -282,9 +284,17 @@ class cashShopTransactionFactory
         /** @var cashAccountRepository $rep */
         $rep = cash()->getEntityRepository(cashAccount::class);
 
-        $accountId = $this->shopIntegration->getSettings()->getAccountId();
+        if ($order->payment_plugin) {
+            $paymentType = $order->payment_plugin->getId();
+            $accountId = $this->shopIntegration->getSettings()->getAccountIdForPaymentMethod($paymentType);
+        }
+
         if (empty($accountId)) {
-            $storefront = isset($order['params']['storefront']) ? $order['params']['storefront'] : 'backend';
+            $accountId = $this->shopIntegration->getSettings()->getAccountId();
+        }
+
+        if (empty($accountId)) {
+            $storefront = $order['params']['storefront'] ?? 'backend';
             $accountId = $this->shopIntegration->getSettings()->getAccountByStorefront($storefront);
             if (empty($accountId)) {
                 throw new kmwaRuntimeException(sprintf('No account for storefront %s', $storefront));
@@ -409,6 +419,7 @@ class cashShopTransactionFactory
             ->setDate($dto->order->paid_date)
             ->setExternalSource('shop')
             ->setExternalData(['id' => $dto->order->getId()])
+            ->setExternalId($dto->order->getId())
             ->setContractorContactId($dto->order->contact->getId());
 
         // конвертнем валюту заказа в валюту аккаунта

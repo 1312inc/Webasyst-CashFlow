@@ -58,8 +58,37 @@
                                 {/foreach}
                             </select>
                         </div>
+                        <a href="#" class="smaller" data-cash-shop-configure-actions="account">[`More gibkosti`]</a>
                         <p class="hint">{sprintf('[`In case of different currencies for orders and the account, an order amount will be converted to the selected account currency according to the conversion rate defined <a href="%s">in Shop-Script settings</a>.`]', $wa_backend_url|cat:'shop/?action=settings#/currencies/')}</p>
                         {if !$shopCurrencyExists}<p class="state-caution-hint"><i class="fas fa-exclamation-triangle"></i> [`The currency of the selected account is not defined in Shop-Script settings. Conversion won’t work well.`]</p>{/if}
+
+                        <div class="custom-mb-24" style="{if !$shopScriptSettings->hasAccountIdForPayment()}display: none{/if}" data-cash-shop-configure-actions-account>
+                            <div class="custom-mb-12 small">[`Select Shop-Script:`]</div>
+                            {foreach $paymentMethods as $paymentMethod => $paymentMethodName}
+                                <div class="flexbox middle space-1rem custom-mb-24" data-cash-category-color-icon>
+                                    <div>
+                                        <input type="hidden" name="shopscript_settings[accounts_payment][payment_method][]" value="{$paymentMethod}"/>
+                                        {$paymentMethodName}&nbsp;&rarr;
+                                    </div>
+                                    <div>
+                                        <div class="wa-select small solid custom-mx-8">
+                                            {strip}
+                                                <select name="shopscript_settings[accounts_payment][account][]" class="custom-pl-4" style="min-width: 0;">
+                                                    <option value=""></option>
+                                                    {foreach $accounts as $account}
+                                                        <option value="{$account->id}"
+                                                                {if $shopScriptSettings->getAccountIdForPaymentMethod($paymentMethod) == $account->id} selected {/if}
+                                                        >
+                                                            {$account->currency->getCode()|escape} - {$account->name|escape|truncate:32} ({$account->currency->getSign()|escape})
+                                                        </option>
+                                                    {/foreach}
+                                                </select>
+                                            {/strip}
+                                        </div>
+                                    </div>
+                                </div>
+                            {/foreach}
+                        </div>
                     </div>
                 </div>
 
