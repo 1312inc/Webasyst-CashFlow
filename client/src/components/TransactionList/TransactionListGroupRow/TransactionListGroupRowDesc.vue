@@ -6,7 +6,7 @@
     <div
       v-if="category"
       :style="`color:${category.color}`"
-      class="text-ellipsis"
+      class="c-item-category text-ellipsis"
     >
       {{ categoryComputed }}
     </div>
