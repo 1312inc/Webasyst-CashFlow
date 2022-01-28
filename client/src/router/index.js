@@ -98,18 +98,6 @@ const routes = [
     // }
   },
   {
-    path: '/report/dds'
-  },
-  {
-    path: '/import'
-  },
-  {
-    path: '/shop/settings'
-  },
-  {
-    path: '/plugins'
-  },
-  {
     path: '/404',
     name: 'NotFound',
     component: NotFound,
@@ -121,7 +109,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: process.env.VUE_APP_MODE === 'desktop' ? 'history' : 'hash',
+  mode: 'hash',
   base: baseUrl,
   routes,
   scrollBehavior (to, from, savedPosition) {
