@@ -34,16 +34,21 @@
     </script>
 </head>
 <body>
-<div id="wa">
-    {$wa->header()}
+    <div id="wa">
+        {$wa->header()}
 
-    <div id="wa-app">
-        <div class="flexbox wrap-mobile">
-            <div id="app-sidebar"></div>
-            <div id="app-content"></div>
+        <div id="wa-app">
+            <div class="flexbox wrap-mobile">
+                <div id="app-sidebar"></div>
+                <div id="app-content"></div>
+            </div>
         </div>
     </div>
     
     <script type="text/javascript" src="{$wa_app_static_url}js/app.js?v={$wa->version()}"></script>
+    <script src="{$wa_app_static_url}js/thirdPartyPlugin.js"></script>
+    <script src="{$wa_app_static_url}js/thirdPartyPlugin2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@coinpaprika/widget-currency/dist/widget.min.js"></script>
+    
 </body>
 </html>
