@@ -39,7 +39,10 @@ final class cashApiTransactionGetListHandler implements cashApiHandlerInterface
         }
 
         $total = $transactionFilter->getResultsCount($filterDto);
+        /** @var Iterator $data */
         $data = $transactionFilter->getResults($filterDto);
+
+        $lastTransaction = $data->current();
 
         $initialBalance = null;
         if ($filterDto->filter->getAccountId()
@@ -48,12 +51,14 @@ final class cashApiTransactionGetListHandler implements cashApiHandlerInterface
                 $filterDto->filter->getAccountId()
             )
         ) {
-            $initialBalance = cash()->getModel(cashAccount::class)->getStatDataForAccounts(
-                '1970-01-01 00:00:00',
-                $filterDto->endDate->format('Y-m-d 23:59:59'),
-                $filterDto->contact,
-                [$filterDto->filter->getAccountId()]
-            );
+            $endDate = min($lastTransaction['date'] . ' 23:59:59', $filterDto->endDate->format('Y-m-d 23:59:59'));
+            $initialBalance = cash()->getModel(cashAccount::class)
+                ->getStatDataForAccounts(
+                    '1970-01-01 00:00:00',
+                    $endDate,
+                    $filterDto->contact,
+                    [$filterDto->filter->getAccountId()]
+                );
             $initialBalance = (float) ifset($initialBalance, $filterDto->filter->getAccountId(), 'summary', 0.0);
         }
 
