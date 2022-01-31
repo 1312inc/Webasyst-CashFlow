@@ -46,16 +46,6 @@ class cashShopSettingsAction extends cashViewAction
         $settingsData = waRequest::post('shopscript_settings', [], waRequest::TYPE_ARRAY_TRIM);
 
         if (waRequest::getMethod() === 'post') {
-            if (isset($settingsData['accounts_payment'])) {
-                $settingsData['accountIdByPayment'] = array_filter(
-                    array_combine(
-                        $settingsData['accounts_payment']['payment_method'],
-                        $settingsData['accounts_payment']['account']
-                    )
-                );
-                unset($settingsData['accounts_payment']);
-            }
-
             (new cashShopIntegrationManager())->setup($shopIntegration, $settingsData);
         }
 
