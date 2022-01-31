@@ -202,6 +202,8 @@
   "allTransactions": "All transactions",
   "change": "Change",
   "trash": "Trash",
+  "trashInfo": "Deleted transactions are not counted in any cash flow and balance reports and are visible to the app admin unless restored or purged permanently.",
   "restore": "Restore",
+  "restoreInfo": "Please restore this operation to be able to edit it.",
   "purge": "Purge"
 }

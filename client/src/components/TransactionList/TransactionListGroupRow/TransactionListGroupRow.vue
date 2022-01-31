@@ -289,6 +289,10 @@ export default {
     },
 
     openModal (offOnbadge = false) {
+      if (this.archive) {
+        alert(this.$t('restoreInfo'))
+        return
+      }
       this.offBadgeInTransactionModal = offOnbadge
       if (process.env.VUE_APP_MODE === 'mobile') {
         // emitting for the mobile platform

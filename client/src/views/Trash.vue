@@ -1,22 +1,33 @@
 <template>
   <div>
-    <ChartHeader>
+    <ChartHeader
+      :showControls="false"
+    >
       <template v-slot:title>
         <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
           {{ $t("trash") }}
         </h1>
       </template>
     </ChartHeader>
+
+    <div class="custom-mx-40 alert info">
+      {{ $t("trashInfo") }}
+    </div>
+
     <div class="flexbox">
       <div class="wide">
         <TransactionList
-          :showFutureGroup="false"
-          :showYesterdayGroup="false"
-          :showOverdueGroup="false"
           :showTodayGroup="false"
+          :showFutureGroup="false"
+          :grouping="false"
+          :visibleSelectCheckbox="true"
+          :showFoundedCount="true"
         />
       </div>
-      <AmChartPieStickyContainer class="width-40" />
+      <AmChartPieStickyContainer
+        :selectedOnlyMode="true"
+        class="width-40"
+      />
     </div>
   </div>
 </template>
