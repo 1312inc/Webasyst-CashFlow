@@ -7,7 +7,8 @@ export default {
   args: {
     createNewContractor: true,
     defaultRequest: '',
-    defaultContractor: null
+    defaultContractor: null,
+    focus: false
   },
   argTypes: {
     newContractor: { action: 'Update name of New Contractor' },
