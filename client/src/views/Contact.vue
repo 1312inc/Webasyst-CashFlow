@@ -3,7 +3,7 @@
     <ChartHeader>
       <template v-slot:title>
         <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
-          Contact {{ $route.params.id }}
+          Contact {{ $route.query.name || $route.params.id }}
         </h1>
       </template>
     </ChartHeader>
