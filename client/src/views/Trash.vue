@@ -7,12 +7,11 @@
         <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
           {{ $t("trash") }}
         </h1>
+        <p class="small custom-px-16-mobile">
+          {{ $t("trashInfo") }}
+        </p>
       </template>
     </ChartHeader>
-
-    <div class="custom-mx-40 alert info">
-      {{ $t("trashInfo") }}
-    </div>
 
     <div class="flexbox">
       <div class="wide">
