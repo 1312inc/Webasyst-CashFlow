@@ -82,19 +82,28 @@
             :category="category"
           />
           <div
-            v-if="transaction.description"
+            v-if="transaction.description || transaction.contractor_contact"
             class="black small text-ellipsis"
             style="flex-shrink: 1"
           >
-            {{ transaction.description }}
+            <span
+              v-if="transaction.description"
+            >
+              {{ transaction.description }}
+            </span>
+            <span
+              v-if="transaction.contractor_contact"
+              class="gray"
+            >
+              {{ transaction.contractor_contact.name }}
+            </span>
           </div>
-          <div
-            v-if="transaction.contractor_contact && !transaction.description"
-            class="gray small text-ellipsis"
-            style="flex-shrink: 1"
+          <span
+            v-if="!transaction.contractor_contact && !transaction.description"
+            class="gray small"
           >
-            {{ transaction.contractor_contact.name }}
-          </div>
+            {{ $t('noDesc') }}
+          </span>
         </div>
         <div class="c-item-amount">
           <div
