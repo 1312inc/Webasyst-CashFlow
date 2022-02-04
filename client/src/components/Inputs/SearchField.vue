@@ -88,7 +88,7 @@ export default {
     },
 
     input (val) {
-      if (!val) {
+      if (!val || val === '0') {
         this.resetAutocomplete()
         return
       }
