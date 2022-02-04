@@ -1,5 +1,5 @@
 <template>
-  <div style="position:relative; top: 2px;">
+  <div style="position:relative; top: 1px;">
     <span
       :style="`background-color:${category.color};`"
       class="userpic userpic48 align-center"
@@ -100,9 +100,7 @@ export default {
 
 <style lang="scss">
 .userpic48 > .c-contractor {
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 0.125rem solid var(--background-color-blank);
+  border: 1px solid var(--border-color-soft);
 }
 
 .userpic48 > .badge {
