@@ -77,7 +77,7 @@
               </div>
             </h4>
 
-            <div v-if="showFoundedCount" class="gray bold">
+            <div v-if="showFoundedCount" class="gray bold nowrap custom-mr-4">
               {{ $t('found', { count: filteredTransactions.length }) }}
             </div>
 

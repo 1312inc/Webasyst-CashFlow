@@ -88,7 +88,9 @@ body.modal {
 }
 .c-list .c-item:hover { background: var(--background-color-table-row-hover); }
 .c-list .c-item.selected { background: var(--background-color-table-row-selected); }
-.c-list .c-item.c-item-archived .c-item-category { text-decoration: line-through; }
+.c-list .c-item.c-item-archived .c-group-date { color: var(--gray); }
+.c-list .c-item.c-item-archived .c-item-category { text-decoration: line-through; opacity: 0.75; }
+.c-list .c-item.c-item-archived .userpic { opacity: 0.5; }
 .c-list .c-item.c-upcoming .c-group-date { color: var(--gray); }
 .c-list .c-item.c-upcoming .userpic { opacity: 0.5; }
 .c-list .c-item.c-item-overdue { border-radius: 0; background: var(--highlighted-overdue); }

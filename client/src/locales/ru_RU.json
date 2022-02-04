@@ -202,8 +202,8 @@
   "allTransactions": "Все операции",
   "change": "Изменить",
   "trash": "Корзина",
-  "trashInfo": "Deleted transactions are not counted in any cash flow and balance reports and are visible to the app admin unless restored or purged permanently.",
+  "trashInfo": "Удаленные операции не учитываются в балансе и видны только пользователям с полными правами доступа. Выберите одну или несколько операций, чтобы восстановить или окончательно удалить их.",
   "restore": "Восстановить",
-  "restoreInfo": "Please restore this operation to be able to edit it.",
+  "restoreInfo": "Редактировать удаленные операции нельзя. Выберите одну или несколько операций и нажмите «Восстановить», чтобы редактирование заработало.",
   "purge": "Удалить навсегда"
 }
