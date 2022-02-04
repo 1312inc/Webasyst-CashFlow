@@ -22,7 +22,7 @@
             $refs.input.offsetWidth
           }px;`
         "
-        class="c-autocomplete-menu"
+        class="c-autocomplete-menu menu"
       >
         <li
           @mousedown="select(i)"
@@ -31,15 +31,13 @@
           :class="{ active: i === aciveMenuIndex }"
           class="c-autocomplete-menu__item"
         >
-          <div class="small flexbox middle space-8 custom-py-8 custom-px-12">
-            <i
-              class="icon userpic"
-              :style="
-                `background-image: url(${item.photo_url_absolute});`
-              "
-            ></i>
+          <a href="javascript:void(0);">
+            <i v-if="!item.photo_url_absolute" class="fas fa-search"></i>
+            <span v-else class="icon">
+              <img :src="item.photo_url_absolute" class="userpic" alt="" />
+            </span>
             <span>{{ item.name }}</span>
-          </div>
+          </a>
         </li>
       </ul>
       <button class="icon"><i class="fas fa-search"></i></button>
@@ -74,10 +72,13 @@ export default {
 
   methods: {
     submit () {
-      if (this.aciveMenuIndex !== null) {
+      if (this.aciveMenuIndex > 0) {
         this.$router.push({
           name: 'Contact',
-          params: { id: this.results[this.aciveMenuIndex].id }
+          params: { id: this.results[this.aciveMenuIndex].id },
+          query: {
+            name: this.results[this.aciveMenuIndex].name
+          }
         })
         return
       }
@@ -98,7 +99,7 @@ export default {
           }
         })
         .then(({ data }) => {
-          this.results = data
+          this.results = [{ id: -1, name: val }, ...data]
         })
         .catch(e => {})
     },
