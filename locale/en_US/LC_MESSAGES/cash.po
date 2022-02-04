@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 3.0\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -1126,4 +1126,10 @@ msgid "Withdrawal to %s"
 msgstr ""
 
 msgid "Receipt from %s"
+msgstr ""
+
+msgid "Set up by payment type"
+msgstr ""
+
+msgid "Set account based on the order payment type:"
 msgstr ""
