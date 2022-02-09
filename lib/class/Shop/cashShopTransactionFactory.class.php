@@ -284,9 +284,8 @@ class cashShopTransactionFactory
         /** @var cashAccountRepository $rep */
         $rep = cash()->getEntityRepository(cashAccount::class);
 
-        if ($order->payment_plugin) {
-            $paymentType = $order->payment_plugin->getId();
-            $accountId = $this->shopIntegration->getSettings()->getAccountIdForPaymentMethod($paymentType);
+        if (!empty($order['params']['payment_id'])) {
+            $accountId = $this->shopIntegration->getSettings()->getAccountIdForPaymentMethod($order->params['payment_id']);
         }
 
         if (empty($accountId)) {
