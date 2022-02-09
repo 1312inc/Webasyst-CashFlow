@@ -66,6 +66,35 @@ class cashTransactionSaver extends cashEntitySaver
 
         $data = $this->addCategoryId($data);
 
+        if (!empty($data['external_source'])) {
+            switch ($data['external_source']) {
+                case 'shop':
+                    $integration = new cashShopIntegration();
+                    if ($integration->shopExists()) {
+                        try {
+                            $order = new shopOrder($data['external_id']);
+                        } catch (waException $exception) {
+                            $this->error = 'No order with such id';
+
+                            return false;
+                        }
+
+                        $data['external_hash'] = $integration->getTransactionFactory()->generateExternalHash(
+                            $order,
+                            cashShopTransactionFactory::CUSTOM . time(),
+                            $data['amount']
+                        );
+                        $data['external_id'] = $order->getId();
+                        $data['external_data'] = array_merge($data['external_data'] ?? [], ['id' => $order->getId()]);
+                    }
+            }
+        } else {
+            $data['external_source'] = null;
+            $data['external_hash'] = null;
+            $data['external_id'] = null;
+            $data['external_data'] = null;
+        }
+
         cash()->getHydrator()->hydrate($transaction, $data);
 
         return $transaction;
