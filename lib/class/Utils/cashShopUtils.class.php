@@ -12,7 +12,7 @@ class cashShopUtils
         foreach ($instances as &$instance) {
             $instance['installed'] = isset($plugins[$instance['plugin']]);
             if ($instance['installed']) {
-                $data[$instance['plugin']] = $instance['info']['name'];
+                $data[$instance['id']] = $instance['name'];
             }
             unset($instance);
         }
