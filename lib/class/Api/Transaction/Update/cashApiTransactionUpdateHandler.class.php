@@ -39,17 +39,17 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
     public function handle($request)
     {
         $repeatingDto = new cashRepeatingTransactionSettingsDto([]);
-        $repeatingDto->end_type = $request->repeating_end_type;
-        $repeatingDto->interval = $request->repeating_interval;
-        $repeatingDto->frequency = $request->repeating_frequency;
-        $repeatingDto->apply_to_all_in_future = $request->apply_to_all_in_future;
+        $repeatingDto->end_type = $request->getRepeatingEndType();
+        $repeatingDto->interval = $request->getRepeatingInterval();
+        $repeatingDto->frequency = $request->getRepeatingFrequency();
         $repeatingDto->end = [
-            'after' => $request->repeating_end_after,
-            'ondate' => $request->repeating_end_ondate,
+            'after' => $request->getRepeatingEndAfter(),
+            'ondate' => $request->getRepeatingEndOndate() ? $request->getRepeatingEndOndate()->format('Y-m-d') : '',
         ];
+        $repeatingDto->apply_to_all_in_future = $request->isApplyToAllInFuture();
 
         /** @var cashTransaction $transaction */
-        $transaction = cash()->getEntityRepository(cashTransaction::class)->findById($request->id);
+        $transaction = cash()->getEntityRepository(cashTransaction::class)->findById($request->getId());
         if (!$transaction) {
             throw new kmwaNotFoundException(_w('No transaction'));
         }
@@ -59,36 +59,59 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
         }
 
         $paramsDto = new cashTransactionSaveParamsDto();
-        if ($request->transfer_account_id) {
+        if ($request->getTransferAccountId()) {
             $paramsDto->transfer = [
-                'account_id' => $request->transfer_account_id,
-                'incoming_amount' => $request->transfer_incoming_amount,
+                'account_id' => $request->getTransferAccountId(),
+                'incoming_amount' => $request->getTransferIncomingAmount(),
             ];
         }
 
         /** @var cashCategory $category */
         $category = cash()->getEntityRepository(cashCategory::class)
-            ->findById($request->category_id);
+            ->findById($request->getCategoryId());
         if (!$category) {
             throw new kmwaNotFoundException(_w('Category not found'));
         }
 
         $account = cash()->getEntityRepository(cashAccount::class)
-            ->findById($request->account_id);
+            ->findById($request->getAccountId());
         if (!$account) {
             throw new kmwaNotFoundException(_w('Account not found'));
         }
 
         $paramsDto->categoryType = $category->getType();
 
-        if (empty($request->contractor_contact_id) && !empty($request->contractor)) {
+        if (!$request->getContractorContactId() && !empty($request->getContractor())) {
             $newContractor = new waContact();
-            $newContractor->set('name', $request->contractor);
+            $newContractor->set('name', $request->getContractor());
             $newContractor->save();
-            $request->contractor_contact_id = $newContractor->getId();
+            $request->setContractorContactId($newContractor->getId());
         }
 
-        $data = (array) $request;
+        $data = [
+            'amount' => $request->getAmount(),
+            'date' => $request->getDate()->format('Y-m-d'),
+            'account_id' => $request->getAccountId(),
+            'category_id' => $request->getCategoryId(),
+            'contractor_contact_id' => $request->getContractorContactId(),
+            'contractor' => $request->getContractor(),
+            'is_repeating' => $request->getIsRepeating(),
+            'repeating_frequency' => $request->getRepeatingFrequency(),
+            'repeating_interval' => $request->getRepeatingInterval(),
+            'repeating_end_type' => $request->getRepeatingEndType(),
+            'repeating_end_after' => $request->getRepeatingEndAfter(),
+            'repeating_end_ondate' => $request->getRepeatingEndOndate() ? $request->getRepeatingEndOndate()->format('Y-m-d') : null,
+            'transfer_account_id' => $request->getTransferAccountId(),
+            'transfer_incoming_amount' => $request->getTransferIncomingAmount(),
+            'is_onbadge' => $request->isOnbadge(),
+        ];
+
+        if ($request->getExternal()) {
+            $data['external_source'] = $request->getExternal()->getSource();
+            $data['external_id'] = $request->getExternal()->getId();
+            $data['external_data'] = $request->getExternal()->getData();
+        }
+
         $newTransactionIds = [];
 
         if ($repeatingDto->apply_to_all_in_future) {

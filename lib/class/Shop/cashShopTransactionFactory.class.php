@@ -8,7 +8,8 @@ class cashShopTransactionFactory
     const
         INCOME = 'income',
         EXPENSE = 'expense',
-        HASH_FORECAST = 'forecast';
+        HASH_FORECAST = 'forecast',
+        CUSTOM = 'custom';
 
     /**
      * @var cashShopIntegration
@@ -271,6 +272,11 @@ class cashShopTransactionFactory
         return $transaction;
     }
 
+    public function generateExternalHash(shopOrder $order, string $type, float $amount): string
+    {
+        return md5(sprintf('%s/%s/%s', $order->getId(), $type, $amount));
+    }
+
     /**
      * @param shopOrder $order
      *
@@ -363,18 +369,6 @@ class cashShopTransactionFactory
         $amount = $type === self::INCOME ? $amount : -$amount;
 
         return $amount;
-    }
-
-    /**
-     * @param shopOrder $order
-     * @param string    $type
-     * @param int|float $amount
-     *
-     * @return string
-     */
-    private function generateExternalHash(shopOrder $order, $type, $amount): string
-    {
-        return md5(sprintf('%s/%s/%s', $order->getId(), $type, $amount));
     }
 
     /**
