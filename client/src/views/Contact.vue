@@ -16,7 +16,7 @@
           :showTodayGroup="false"
         />
       </div>
-      <AmChartPieStickyContainer class="width-40" />
+      <AmChartPieStickyContainer />
     </div>
   </div>
 </template>

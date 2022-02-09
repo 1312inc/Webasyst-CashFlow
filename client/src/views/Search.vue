@@ -21,7 +21,6 @@
       </div>
       <AmChartPieStickyContainer
         :selectedOnlyMode="true"
-        class="width-40"
       />
     </div>
   </div>
