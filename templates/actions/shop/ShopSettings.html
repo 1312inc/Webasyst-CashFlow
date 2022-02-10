@@ -654,12 +654,12 @@
                                 },
                                 step: {
                                     onProgress: function (r) {
-                                        progressInstance.set({ percentage: r.progress * 0.9 + 10 });
+                                        progressInstance.set({ percentage: Math.round( r.progress * 0.9) + 10 });
                                         $progressCounts.text(r.passed_orders + ' / ' + r.total_orders)
                                     },
                                     onReady: function (r) {
                                         $progressSuccess.show().siblings().hide();
-                                        progressInstance.set({ percentage: r.progress });
+                                        progressInstance.set({ percentage: Math.round(r.progress) });
                                         window.location = window.appState.baseUrl + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
                                     },
                                     onError: function (r) {
