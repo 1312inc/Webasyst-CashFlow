@@ -46,9 +46,14 @@
     </div>
     
     <script type="text/javascript" src="{$wa_app_static_url}js/app.js?v={$wa->version()}"></script>
-    <script src="{$wa_app_static_url}js/thirdPartyPlugin.js"></script>
-    <script src="{$wa_app_static_url}js/thirdPartyPlugin2.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@coinpaprika/widget-currency/dist/widget.min.js"></script>
-    
+
+    {* @event backend_layout.%plugin_id%.js *}
+    <!-- plugin hook: 'backend_layout.%plugin_id%.js' -->
+    {foreach $backend_layout_plugins as $plugin_name => $backend_layout_plugin}
+        <!-- {$plugin_name} -->
+        {$backend_layout_plugin.js|default:''}
+    {/foreach}
+    <!-- /plugin hook: 'backend_layout.%plugin_id%.js' -->
+
 </body>
 </html>
