@@ -51,7 +51,8 @@ final class cashApiTransactionGetListHandler implements cashApiHandlerInterface
                 $filterDto->filter->getAccountId()
             )
         ) {
-            $endDate = min($lastTransaction['date'] . ' 23:59:59', $filterDto->endDate->format('Y-m-d 23:59:59'));
+            $endDate = $filterDto->endDate->format('Y-m-d 23:59:59');
+            $endDate = $lastTransaction ?  min($lastTransaction['date'] . ' 23:59:59', $endDate) : $endDate;
             $initialBalance = cash()->getModel(cashAccount::class)
                 ->getStatDataForAccounts(
                     '1970-01-01 00:00:00',
