@@ -111,6 +111,8 @@ class ApiParamsFetcher
         try {
             return $value === null ? $value : $this->caster->cast($value, $type, $format);
         } catch (ApiCastParamException $exception) {
+            $exception->setName($name);
+
             throw $exception;
         } catch (Exception $exception) {
             throw new ApiWrongParamException($name, $exception->getMessage(), $exception);

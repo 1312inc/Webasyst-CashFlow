@@ -10,4 +10,9 @@ class ApiCastParamException extends ApiException
     {
         parent::__construct($error, $errorDescription, 400, $previous);
     }
+
+    public function setName($name)
+    {
+        $this->message .= ". Field name: {$name}";
+    }
 }

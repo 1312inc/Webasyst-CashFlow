@@ -45,7 +45,7 @@ class ApiParamsCaster
             case self::CAST_DATETIME:
                 $var = DateTimeImmutable::createFromFormat($format, $var);
                 if ($var === false) {
-                    throw new ApiCastParamException(sprintf('Wrong format %s for value %s', $format, $var));
+                    throw new ApiCastParamException(sprintf('Wrong format "%s" for value "%s"', $format, $var));
                 }
 
                 return $var;
@@ -53,7 +53,7 @@ class ApiParamsCaster
             case self::CAST_ENUM:
                 if (is_array($format) && !in_array($var, $format, true)) {
                     throw new ApiCastParamException(
-                        sprintf('Wrong value %s. Expected one of %s', $var, implode(', ', $format))
+                        sprintf('Wrong value "%s". Expected one of "%s"', $var, implode(', ', $format))
                     );
                 }
                 break;
