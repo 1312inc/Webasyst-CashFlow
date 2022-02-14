@@ -747,6 +747,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /cash.system.getExternalEntity:
+    get:
+      tags:
+        - Разное
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: source
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: string
+            minimum: 1
+      responses:
+        200:
+          description: Данные о внешней сущности
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getExternalEntityResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   securitySchemes:
@@ -787,10 +825,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TransactionInfo'
+
     searchContactsResponse:
       type: array
       items:
         $ref: '#/components/schemas/SearchContactInfo'
+
+    getExternalEntityResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/ExternalEntity'
 
     aggregateGetBreakDownResponse:
       type: object
@@ -849,6 +893,27 @@ components:
           type: string
         label:
           type: string
+
+    ExternalEntity:
+      type: object
+      properties:
+        app:
+          type: string
+        app_name:
+          type: string
+        app_icon_url:
+          type: string
+        entity_id:
+          type: integer
+        entity_title:
+          type: string
+        entity_url:
+          type: string
+        entity_icon:
+          type: string
+        entity_data:
+          type: array
+          nullable: true
 
     AccountInfo:
       type: object
