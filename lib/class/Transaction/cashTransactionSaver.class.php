@@ -62,6 +62,12 @@ class cashTransactionSaver extends cashEntitySaver
             $data['amount'] = -abs($data['amount']);
         } elseif ($params->categoryType === cashCategory::TYPE_INCOME) {
             $data['amount'] = abs($data['amount']);
+        } elseif($params->categoryType === cashCategory::TYPE_TRANSFER) {
+            if ($transaction->getAmount() < 0) {
+                $data['amount'] = -abs($data['amount']);
+            } else {
+                $data['amount'] = abs($data['amount']);
+            }
         }
 
         $data = $this->addCategoryId($data);
@@ -231,7 +237,6 @@ class cashTransactionSaver extends cashEntitySaver
             return false;
         }
 
-        $data['amount'] = cashHelper::parseFloat($data['amount']);
         if (empty($data['contractor_contact_id'])) {
             $data['contractor_contact_id'] = null;
         }

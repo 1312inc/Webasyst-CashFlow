@@ -89,6 +89,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
             'transfer_account_id' => $request->getTransferAccountId(),
             'transfer_incoming_amount' => $request->getTransferIncomingAmount(),
             'is_onbadge' => $request->isOnbadge(),
+            'description' => $request->getDescription(),
         ];
 
         if ($request->getExternal()) {
