@@ -501,7 +501,7 @@ export default {
       model: {
         id: null,
         amount: null,
-        date: '',
+        date: null,
         account_id: null,
         category_id: null,
         contractor: null,
@@ -514,7 +514,7 @@ export default {
         repeating_interval: 'month',
         repeating_end_type: 'never',
         repeating_end_after: null,
-        repeating_end_ondate: '',
+        repeating_end_ondate: null,
         transfer_account_id: null,
         transfer_incoming_amount: null,
         apply_to_all_in_future: false
