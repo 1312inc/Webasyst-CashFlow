@@ -1,6 +1,7 @@
 <?php
 
 use ApiPack1312\ApiParamsCaster;
+use ApiPack1312\Exception\ApiCastParamException;
 
 /**
  * @return array of transactions
@@ -32,6 +33,19 @@ class cashTransactionCreateMethod extends cashApiNewAbstractMethod
             $externalDto = cashApiTransactionCreateExternalDto::fromArray($external);
         }
 
+        $repeatingOnDateStr = $this->fromPost('repeating_end_ondate');
+        if (!empty($repeatingOnDateStr)) {
+            $repeatingOnDate = DateTimeImmutable::createFromFormat('Y-m-d', $repeatingOnDateStr);
+
+            if ($repeatingOnDate === false) {
+                throw new ApiCastParamException(
+                    sprintf('Wrong format "%s" for value "%s"', 'Y-m-d', $repeatingOnDateStr)
+                );
+            }
+        } else {
+            $repeatingOnDate = null;
+        }
+
         $request = new cashApiTransactionCreateRequest(
             $this->fromPost('amount', true, ApiParamsCaster::CAST_FLOAT),
             $this->fromPost('date', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d'),
@@ -55,7 +69,7 @@ class cashTransactionCreateMethod extends cashApiNewAbstractMethod
                 array_keys(cashRepeatingTransaction::getRepeatingEndTypes())
             ),
             $this->fromPost('repeating_end_after', false, ApiParamsCaster::CAST_INT),
-            $this->fromPost('repeating_end_ondate', false, ApiParamsCaster::CAST_DATETIME, 'Y-m-d'),
+            $repeatingOnDate,
             $this->fromPost('transfer_account_id', false, ApiParamsCaster::CAST_INT),
             $this->fromPost('transfer_incoming_amount', false, ApiParamsCaster::CAST_FLOAT),
             $this->fromPost('is_onbadge', false, ApiParamsCaster::CAST_BOOLEAN),
