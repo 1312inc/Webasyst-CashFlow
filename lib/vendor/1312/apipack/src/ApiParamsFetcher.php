@@ -43,6 +43,14 @@ class ApiParamsFetcher
     }
 
     /**
+     * @return array
+     */
+    public function getJsonParams()
+    {
+        return $this->jsonParams;
+    }
+
+    /**
      * @param string            $name
      * @param bool              $required
      * @param string|null       $type
@@ -77,11 +85,28 @@ class ApiParamsFetcher
     }
 
     /**
-     * @param string      $globalMethod
+     * @param array       $params
      * @param string      $name
      * @param bool        $required
-     * @param null|string $type
-     * @param mixed       $format
+     * @param string|null $type
+     * @param             $format
+     *
+     * @return array|DateTimeImmutable|float|int|string|null
+     * @throws ApiException
+     * @throws ApiMissingParamException
+     * @throws ApiWrongParamException
+     */
+    public function fromArray(array $params, string $name, bool $required = false, ?string $type = null, $format = null)
+    {
+        return $this->param($params, $name, $required, $type, $format);
+    }
+
+    /**
+     * @param string|array $globalMethodOrArray
+     * @param string       $name
+     * @param bool         $required
+     * @param null|string  $type
+     * @param mixed        $format
      *
      * @return array|DateTimeImmutable|float|int|string|null
      *
@@ -90,17 +115,23 @@ class ApiParamsFetcher
      * @throws ApiWrongParamException
      */
     private function param(
-        string $globalMethod,
+        $globalMethodOrArray,
         string $name,
         bool $required = false,
         ?string $type = null,
         $format = ''
     ) {
-        if ($this->jsonParams && array_key_exists($name, $this->jsonParams)) {
+        if (is_array($globalMethodOrArray)) {
+            if ($required && !isset($globalMethodOrArray[$name])) {
+                throw new ApiMissingParamException($name);
+            }
+
+            $value = $globalMethodOrArray[$name];
+        } elseif ($this->jsonParams && array_key_exists($name, $this->jsonParams)) {
             $value = $this->jsonParams[$name];
         } else {
             try {
-                $value = $this->fromWaRequest($globalMethod, $name, $required);
+                $value = $this->fromWaRequest($globalMethodOrArray, $name, $required);
             } catch (ApiMissingParamException $exception) {
                 throw $exception;
             } catch (Exception $exception) {

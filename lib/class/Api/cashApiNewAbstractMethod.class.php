@@ -60,12 +60,27 @@ abstract class cashApiNewAbstractMethod extends waAPIMethod
 
     /**
      * @throws ApiMissingParamException
+     * @throws ApiWrongParamException
+     * @throws ApiException
+     */
+    public function fromArray(array $data, string $name, bool $required = false, string $type = null, $format = null)
+    {
+        return $this->apiParamsFetcher->fromArray($data, $name, $required, $type, $format);
+    }
+
+    /**
+     * @throws ApiMissingParamException
      * @throws ApiException
      * @throws ApiWrongParamException
      */
     public function fromGet(string $name, bool $required = false, string $type = null, $format = null)
     {
         return $this->apiParamsFetcher->get($name, $required, $type, $format);
+    }
+
+    public function getApiParamsFetcher(): ApiParamsFetcher
+    {
+        return $this->apiParamsFetcher;
     }
 
     /**
