@@ -1329,7 +1329,7 @@ components:
         source:
           type: string
         id:
-          type: string
+          type: integer
         data:
           type: array
       required:
