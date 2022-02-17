@@ -7,8 +7,7 @@ import Upnext from '../views/Upnext.vue'
 import Search from '../views/Search.vue'
 import Import from '../views/Import.vue'
 import Trash from '../views/Trash.vue'
-import Order from '../views/Order.vue'
-import Contact from '../views/Contact.vue'
+import Entity from '../views/Entity.vue'
 import NotFound from '../views/NotFound.vue'
 import { i18n } from '../plugins/locale'
 import { permissions } from '../plugins/permissions'
@@ -93,18 +92,20 @@ const routes = [
   {
     path: '/external/shop/order/:id',
     name: 'Order',
-    component: Order
-    // meta: {
-    //   title: `${i18n.t('trash')} — ${accountName}`
-    // }
+    component: Entity,
+    meta: {
+      getExternalEntitySource: 'shop',
+      fetchTransactionsFilter: (id) => `external/shop.${id}`
+    }
   },
   {
     path: '/contact/:id',
     name: 'Contact',
-    component: Contact
-    // meta: {
-    //   title: `${i18n.t('trash')} — ${accountName}`
-    // }
+    component: Entity,
+    meta: {
+      getExternalEntitySource: 'contacts',
+      fetchTransactionsFilter: (id) => `contractor/${id}`
+    }
   },
   {
     path: '/report/dds'

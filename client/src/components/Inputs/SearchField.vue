@@ -75,11 +75,8 @@ export default {
       if (this.aciveMenuIndex > 0) {
         this.$router.push({
           name: 'Contact',
-          params: { id: this.results[this.aciveMenuIndex].id },
-          query: {
-            name: this.results[this.aciveMenuIndex].name
-          }
-        })
+          params: { id: this.results[this.aciveMenuIndex].id }
+        }).catch(() => {})
         return
       }
       if (this.queryText && this.queryText !== this.$route.query.text) {

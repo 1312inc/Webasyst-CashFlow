@@ -124,7 +124,7 @@ export default {
 
   created () {
     if (this.defaultContractor) {
-      this.inputValue = this.defaultContractor.name
+      this.inputValue = this.defaultContractor.name || ''
       this.photo = this.defaultContractor.userpic
     }
   },
