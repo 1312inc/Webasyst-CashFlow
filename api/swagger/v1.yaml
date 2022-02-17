@@ -905,7 +905,7 @@ components:
           type: string
         entity_id:
           type: integer
-        entity_title:
+        entity_name:
           type: string
         entity_url:
           type: string

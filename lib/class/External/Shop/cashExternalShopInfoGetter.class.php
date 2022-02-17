@@ -25,7 +25,7 @@ class cashExternalShopInfoGetter implements cashExternalSourceInfoGetterInterfac
             $info['name'],
             sprintf('%s/%s', $rootUrl, $info['img']),
             (int) $id,
-            shopHelper::encodeOrderId((int) $id),
+            sprintf_wp('Order %s', shopHelper::encodeOrderId((int) $id)),
             sprintf('%s/%s', $rootUrl, $info['img']),
             sprintf(
                 '%s%s%s/?action=orders#/order/%d/',
