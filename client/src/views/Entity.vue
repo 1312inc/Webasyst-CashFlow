@@ -5,7 +5,7 @@
         <h1
           class="flexbox space-12 items-middle custom-m-0 custom-px-16-mobile custom-pt-16-mobile"
         >
-          <img class="userpic userpic-48" v-if="entity.entity_icon" :src="entity.entity_icon" />
+          <img v-if="entity.entity_icon" :src="entity.entity_icon" class="userpic" style="width:40px;" />
           <a :href="entity.entity_url" target="_blank">{{
             entity.entity_name
           }}</a>
