@@ -16,6 +16,7 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
         cashApiTransactionResponseDto $cashApiTransactionResponseDto
     ): cashEventApiTransactionExternalInfoResponseInterface {
 
+        $entityId = null;
         $entityName = null;
         $entityUrl = null;
         $entityIcon = null;
@@ -27,6 +28,7 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
                     $data = json_decode($data['external_data'], true);
                     $externalEntity = cashTransactionExternalEntityFactory::createFromSource('shop', $data);
                     if ($externalEntity) {
+                        $entityId = $externalEntity->getId();
                         $entityIcon = wa()->getConfig()->getHostUrl() . $externalEntity->getAppIcon();
                         $entityUrl = sprintf(
                             '%s%sshop%s',
@@ -43,6 +45,7 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
         }
 
         return new cashEventApiTransactionExternalInfoResponse(
+            $entityId,
             '#27bf52',
             'Shop-Script',
             'fas fa-shopping-cart',

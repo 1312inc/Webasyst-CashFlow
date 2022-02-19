@@ -13,7 +13,7 @@ interface cashTransactionExternalEntityInterface
 
     public function getAppUrl(): ?string;
 
-    public function getOrderId(): ?int;
+    public function getId(): ?int;
 
     public function getAppIcon(): ?string;
 
