@@ -15,6 +15,11 @@ class cashEventApiTransactionExternalInfoResponse implements cashEventApiTransac
     /**
      * @var string
      */
+    private $id;
+
+    /**
+     * @var string
+     */
     private $glyph;
 
     /**
@@ -33,6 +38,7 @@ class cashEventApiTransactionExternalInfoResponse implements cashEventApiTransac
     private $entityName;
 
     public function __construct(
+        int $id,
         string $color,
         string $name,
         string $glyph = '',
@@ -46,11 +52,13 @@ class cashEventApiTransactionExternalInfoResponse implements cashEventApiTransac
         $this->entityUrl = $entityUrl;
         $this->entityIcon = $entityIcon;
         $this->entityName = $entityName;
+        $this->id = $id;
     }
 
     public function jsonSerialize(): array
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'color' => $this->color,
             'glyph' => $this->glyph,
