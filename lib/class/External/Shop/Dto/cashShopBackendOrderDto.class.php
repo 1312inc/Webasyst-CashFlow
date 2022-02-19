@@ -3,7 +3,7 @@
 class cashShopBackendOrderDto
 {
     /**
-     * @var float
+     * @var array
      */
     public $income;
 
@@ -13,7 +13,7 @@ class cashShopBackendOrderDto
     public $incomeCount;
 
     /**
-     * @var float
+     * @var array
      */
     public $expense;
 
@@ -23,7 +23,7 @@ class cashShopBackendOrderDto
     public $expenseCount;
 
     /**
-     * @var float
+     * @var array
      */
     public $profit;
 
@@ -33,7 +33,7 @@ class cashShopBackendOrderDto
     public $profitCount;
 
     /**
-     * @var float
+     * @var array
      */
     public $delta;
 
@@ -42,34 +42,55 @@ class cashShopBackendOrderDto
      */
     public $link;
 
-    /**
-     * @var string
-     */
-    public $currency;
-
     public function __construct(
-        float $income,
+        array $income,
         int $incomeCount,
-        float $expense,
+        array $expense,
         int $expenseCount,
-        float $profit,
+        array $profit,
         string $profitCount,
-        string $link,
-        string $currency
+        string $link
     ) {
         $this->income = $income;
+        array_walk($this->income, static function (&$value, $currency) {
+            $value = sprintf('+ %s %s', abs($value), cashCurrencyVO::fromWaCurrency($currency)->getSign());
+        });
         $this->incomeCount = $incomeCount;
+
         $this->expense = $expense;
+        array_walk($this->expense, static function (&$value, $currency) {
+            $value = sprintf('&minus; %s %s', abs($value), cashCurrencyVO::fromWaCurrency($currency)->getSign());
+        });
         $this->expenseCount = $expenseCount;
+
         $this->profit = $profit;
+        array_walk($this->profit, static function (&$value, $currency) {
+            $value = sprintf('&minus; %s %s', abs($value), cashCurrencyVO::fromWaCurrency($currency)->getSign());
+        });
         $this->profitCount = $profitCount;
 
         $this->link = $link;
-        $this->currency = $currency;
 
-        $this->delta = $this->income
-            + ($this->expense > 0 ? -$this->expense : $this->expense)
-            + ($this->profit > 0 ? -$this->profit : $this->profit);
+        $allCurrencies = array_merge(array_keys($income), array_keys($expense), array_keys($profit));
+
+        $this->delta = [];
+        foreach ($allCurrencies as $currency) {
+            $deltaInc = $income[$currency] ?? 0;
+            $deltaExp = $expense[$currency] ?? 0;
+            $deltaProf = $profit[$currency] ?? 0;
+            $delta = $deltaInc
+                + ($deltaExp > 0 ? -$deltaExp : $deltaExp)
+                + ($deltaProf > 0 ? -$deltaProf : $deltaProf);
+
+            if ($delta) {
+                $this->delta[$currency] = sprintf(
+                    '%s %s %s',
+                    $delta > 0.0 ? '+' : '&minus;',
+                    abs($delta),
+                    cashCurrencyVO::fromWaCurrency($currency)->getSign()
+                );
+            }
+        }
     }
 
     /**
@@ -80,24 +101,21 @@ class cashShopBackendOrderDto
     public static function createFromTransactions(array $transactions, string $link): self
     {
         $params = [
-            'income' => 0.0,
+            'income' => [],
             'incomeCount' => 0,
-            'profit' => 0.0,
+            'profit' => [],
             'profitCount' => 0,
-            'expense' => 0.0,
+            'expense' => [],
             'expenseCount' => 0,
         ];
-
-        $firstTransaction = reset($transactions);
-        $currency = $firstTransaction->getAccount()
-            ->getCurrency();
-
-        $currency = cashCurrencyVO::fromWaCurrency($currency);
 
         foreach ($transactions as $transaction) {
             if ($transaction->getCategory()->isTransfer()) {
                 continue;
             }
+
+            $currency = $transaction->getAccount()
+                ->getCurrency();
 
             if ($transaction->getCategory()->getIsProfit()) {
                 $type = 'profit';
@@ -105,7 +123,11 @@ class cashShopBackendOrderDto
                 $type = $transaction->getCategory()->getType();
             }
 
-            $params[$type] += $transaction->getAmount();
+            if (!isset($params[$type][$currency])) {
+                $params[$type][$currency] = 0.0;
+            }
+
+            $params[$type][$currency] += $transaction->getAmount();
             $params[$type . 'Count']++;
         }
 
@@ -116,8 +138,7 @@ class cashShopBackendOrderDto
             $params['expenseCount'],
             $params['profit'],
             $params['profitCount'],
-            $link,
-            $currency->getSign()
+            $link
         );
     }
 }
