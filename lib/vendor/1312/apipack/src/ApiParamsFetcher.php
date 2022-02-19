@@ -126,7 +126,7 @@ class ApiParamsFetcher
                 throw new ApiMissingParamException($name);
             }
 
-            $value = $globalMethodOrArray[$name];
+            $value = $globalMethodOrArray[$name] ?? null;
         } elseif ($this->jsonParams && array_key_exists($name, $this->jsonParams)) {
             $value = $this->jsonParams[$name];
         } else {
