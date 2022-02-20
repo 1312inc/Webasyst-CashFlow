@@ -6,7 +6,7 @@ class cashEventApiTransactionExternalInfoCsvHandler implements cashEventApiTrans
         cashApiTransactionResponseDto $cashApiTransactionResponseDto
     ): cashEventApiTransactionExternalInfoResponseInterface {
 
-        return new cashEventApiTransactionExternalInfoResponse('#499b5e', _w('Import via CSV'), 'fas fa-file-excel');
+        return new cashEventApiTransactionExternalInfoResponse(random_int(0, 1312), '#499b5e', _w('Import via CSV'), 'fas fa-file-excel');
     }
 
     public function getSource(): string
