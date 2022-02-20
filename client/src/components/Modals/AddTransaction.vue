@@ -674,6 +674,13 @@ export default {
         this.model[prop] = this.transaction[prop] || this.model[prop]
       }
       this.model.amount = `${Math.abs(this.model.amount)}`
+      // Fill external source
+      if (this.externalSourceInfo) {
+        this.model.external = {
+          source: this.transaction.external_source,
+          id: this.transaction.external_source_info.id
+        }
+      }
     }
 
     this.transactionType =
