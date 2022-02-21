@@ -6,7 +6,7 @@
 class cashShopIntegration
 {
     const DAYS_FOR_AVG_BILL_CALCULATION = 30;
-    const SESSION_SSIMPORT = 'cash.shopscript_import';
+    const SESSION_SSIMPORT              = 'cash.shopscript_import';
 
     /**
      * @var cashShopSettings
@@ -69,7 +69,7 @@ class cashShopIntegration
      */
     public function shopIsOld(): bool
     {
-        return (bool)version_compare(wa()->getVersion('shop'), '8.0.0.0', '<');
+        return (bool) version_compare(wa()->getVersion('shop'), '8.0.0.0', '<');
     }
 
     /**
@@ -212,16 +212,18 @@ SQL;
 
         $date = new DateTime("-{$lastNDays} days");
 
-        return round((float)(new shopOrderModel())->query(
-            $sql,
-            ['date' => $date->format('Y-m-d'), 'storefront' => $storefront]
-        )->fetchField());
+        return round(
+            (float) (new shopOrderModel())->query(
+                $sql,
+                ['date' => $date->format('Y-m-d'), 'storefront' => $storefront]
+            )->fetchField()
+        );
     }
 
 
     /**
      * @param string $currency
-     * @param int $days
+     * @param int    $days
      *
      * @return float
      * @throws waException
@@ -353,7 +355,7 @@ SQL;
             // запишем в лог заказа
             if ($this->settings->isWriteToOrderLog() && !empty($dto->params['order_id'])) {
                 $message = sprintf(
-                    _w('%d transactions created in the Cash Flow app:').'%s%s',
+                    _w('%d transactions created in the Cash Flow app:') . '%s%s',
                     count($transactionListMessage),
                     '<br>',
                     implode('<br>', $transactionListMessage)
@@ -396,7 +398,7 @@ SQL;
         return cash()->getEntityRepository(cashTransaction::class)->findByFields(
             [
                 'external_source' => 'shop',
-                'external_hash' => cashShopTransactionFactory::HASH_FORECAST,
+                'is_self_destruct_when_due' => 1,
                 'date' => $dateTime->format('Y-m-d'),
             ]
         ) ?: null;
@@ -408,34 +410,36 @@ SQL;
      */
     public function getForecastRepeatingTransaction(): ?cashRepeatingTransaction
     {
-        return cash()->getEntityRepository(cashRepeatingTransaction::class)->findByFields(
-            [
-                'external_source' => 'shop',
-                'external_hash' => cashShopTransactionFactory::HASH_FORECAST,
-            ]
-        ) ?: null;
+        return cash()->getEntityRepository(cashRepeatingTransaction::class)
+            ->findByFields(
+                [
+                    'external_source' => 'shop',
+                    'is_self_destruct_when_due' => 1,
+                ]
+            ) ?: null;
     }
 
     /**
      * @param DateTime $dateTime
-     * @param bool     $include
+     * @param bool     $includeDateTime
      *
      * @return null
      * @throws waException
      */
-    public function deleteForecastTransactionBeforeDate(DateTime $dateTime, $include = false)
+    public function deleteForecastTransactionBeforeDate(DateTime $dateTime, bool $includeDateTime = false)
     {
-        return cash()->getModel(cashTransaction::class)->exec(
-            sprintf(
-                'delete from cash_transaction where date %s s:date and external_source = s:external_source and external_hash = s:external_hash',
-                $include ? '<=' : '<'
-            ),
-            [
-                'external_source' => 'shop',
-                'external_hash' => cashShopTransactionFactory::HASH_FORECAST,
-                'date' => $dateTime->format('Y-m-d'),
-            ]
-        );
+        return cash()->getModel(cashTransaction::class)
+            ->exec(
+                sprintf(
+                    'DELETE FROM cash_transaction WHERE date %s s:date AND external_source = s:external_source',
+                    $includeDateTime ? '<=' : '<'
+                ),
+                [
+                    'external_source' => 'shop',
+                    'is_self_destruct_when_due' => 1,
+                    'date' => $dateTime->format('Y-m-d'),
+                ]
+            );
     }
 
     /**
@@ -476,8 +480,7 @@ SQL;
      */
     public function isShopForecastRepeatingTransaction(cashRepeatingTransaction $transaction): bool
     {
-        return $transaction->getExternalSource() === 'shop'
-            && $transaction->getExternalHash() === cashShopTransactionFactory::HASH_FORECAST;
+        return $transaction->getExternalSource() === 'shop' && $transaction->getIsSelfDestructWhenDue();
     }
 
     /**
@@ -488,7 +491,7 @@ SQL;
     public function countOrdersToProcess(DateTime $after = null): int
     {
         if ($this->shopExists()) {
-            return (int)(new shopOrderModel())
+            return (int) (new shopOrderModel())
                 ->select('count(*)')
                 ->where(
                     sprintf('paid_date is not null %s', $after ? 'and create_datetime >= s:after' : ''),
@@ -532,16 +535,14 @@ SQL;
             $dateToDelete->modify('yesterday');
         }
 
-        cash()->getModel(cashTransaction::class)->deleteBySourceAndHashAfterDate(
-            'shop',
-            cashShopTransactionFactory::HASH_FORECAST,
-            $dateToDelete->format('Y-m-d')
-        );
+        cash()->getModel(cashTransaction::class)
+            ->deleteSelfDestructBySourceAfterDate(
+                'shop',
+                $dateToDelete->format('Y-m-d')
+            );
 
-        cash()->getModel(cashRepeatingTransaction::class)->deleteAllBySourceAndHash(
-            'shop',
-            cashShopTransactionFactory::HASH_FORECAST
-        );
+        cash()->getModel(cashRepeatingTransaction::class)
+            ->deleteAllSelfDestructBySource('shop');
     }
 
     /**
@@ -553,9 +554,8 @@ SQL;
      */
     private function updateShopTransactionsAfterDate(DateTime $date, cashTransaction $transaction)
     {
-        return cash()->getModel(cashTransaction::class)->updateAmountBySourceAndHashAfterDate(
+        return cash()->getModel(cashTransaction::class)->updateAmountForSelfDestructBySourceAfterDate(
             'shop',
-            cashShopTransactionFactory::HASH_FORECAST,
             $date->format('Y-m-d'),
             [
                 ['f', 'amount', $transaction->getAmount()],

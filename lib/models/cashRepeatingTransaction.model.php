@@ -1,30 +1,18 @@
 <?php
 
-/**
- * Class cashRepeatingTransactionModel
- */
 class cashRepeatingTransactionModel extends cashModel
 {
     protected $table = 'cash_repeating_transaction';
 
-    /**
-     * @param string $source
-     * @param string $hash
-     *
-     * @return bool|resource
-     */
-    public function deleteAllBySourceAndHash($source, $hash)
+    public function deleteAllSelfDestructBySource(string $source): bool
     {
-        return $this->deleteByField(['external_source' => $source, 'external_hash' => $hash]);
+        return $this->deleteByField(['external_source' => $source, 'is_self_destruct_when_due' => 1]);
     }
 
     /**
-     * @param int $oldCategoryId
-     * @param int $newCategoryId
-     *
      * @return bool|waDbResultUpdate|null
      */
-    public function changeCategoryId($oldCategoryId, $newCategoryId)
+    public function changeCategoryId(int $oldCategoryId, int $newCategoryId)
     {
         return $this->updateByField('category_id', $oldCategoryId, ['category_id' => $newCategoryId]);
     }

@@ -1296,18 +1296,11 @@ SQL;
             ->fetchField();
     }
 
-    /**
-     * @param string $source
-     * @param string $hash
-     * @param string $date
-     *
-     * @return bool|resource
-     */
-    public function deleteBySourceAndHashAfterDate($source, $hash, $date)
+    public function deleteSelfDestructBySourceAfterDate(string $source, string $date): bool
     {
         return $this->exec(
             "delete from {$this->table} where external_source = s:source and date > s:date",
-            ['source' => $source, 'hash' => $hash, 'date' => $date]
+            ['source' => $source, 'date' => $date]
         );
     }
 
@@ -1325,20 +1318,15 @@ SQL;
     }
 
     /**
-     * @param string $source
-     * @param string $hash
-     * @param string $date
-     * @param array  $data
-     *
      * @return bool|resource
      */
-    public function updateAmountBySourceAndHashAfterDate($source, $hash, $date, array $data)
+    public function updateAmountForSelfDestructBySourceAfterDate(string $source, string $date, array $data): bool
     {
         return $this->exec(
             sprintf(
                 "update {$this->table} 
                 set %s, update_datetime = s:datetime 
-                where external_source = s:source and date >= s:date and external_hash = s:hash",
+                where external_source = s:source and date >= s:date and is_self_destruct_when_due = 1",
                 implode(
                     ',',
                     array_reduce(
@@ -1354,7 +1342,6 @@ SQL;
             ),
             [
                 'source' => $source,
-                'hash' => $hash,
                 'date' => $date,
                 'datetime' => date('Y-m-d H:i:s'),
             ] + array_reduce(

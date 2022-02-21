@@ -5,10 +5,9 @@
  */
 class cashShopTransactionFactory
 {
-    const
+    public const
         INCOME = 'income',
         EXPENSE = 'expense',
-        HASH_FORECAST = 'forecast',
         CUSTOM = 'custom';
 
     /**
@@ -263,7 +262,7 @@ class cashShopTransactionFactory
             ->setDescription(_wd(cashConfig::APP_ID, 'Planned online store sales'))
             ->setAccount($account)
             ->setCategory($category)
-            ->setExternalHash(self::HASH_FORECAST)
+            ->setIsSelfDestructWhenDue(1)
             ->setAmount($amount)
             ->setDate($date->format('Y-m-d'))
             ->setDatetime($date->format('Y-m-d H:i:s'))
