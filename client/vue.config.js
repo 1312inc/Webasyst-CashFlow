@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 module.exports = {
-  publicPath: '',
+  publicPath: '/',
   productionSourceMap: false,
   filenameHashing: false,
   devServer: {
