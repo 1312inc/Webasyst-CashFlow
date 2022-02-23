@@ -77,6 +77,18 @@ export default {
       } catch (_) {
         return false
       }
+    },
+
+    async restore ({ state, commit }) {
+      const ids = state.selectedTransactionsIds
+      await api.post('cash.transaction.restore', { ids })
+      commit('emptySelectedTransactionsIds')
+    },
+
+    async purge ({ state, commit }) {
+      const ids = state.selectedTransactionsIds
+      await api.post('cash.transaction.purge', { ids })
+      commit('emptySelectedTransactionsIds')
     }
   }
 

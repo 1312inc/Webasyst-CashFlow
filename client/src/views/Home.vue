@@ -15,7 +15,7 @@
       <div class="wide">
         <TransactionList :showTomorrowGroup="true" :showYesterdayGroup="true" />
       </div>
-      <AmChartPieStickyContainer class="width-30" />
+      <AmChartPieStickyContainer />
     </div>
   </div>
 </template>

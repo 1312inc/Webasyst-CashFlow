@@ -3,11 +3,11 @@
   "private": true,
   "scripts": {
     "lint": "vue-cli-service lint",
-    "build-desktop": "vue-cli-service build src/desktop.js --dest dist/desktop --mode desktop.production --report && npm run copycss && npm run copyjs",
-    "build-mobile": "vue-cli-service build src/mobile.js --dest dist/mobile --mode mobile.production --report",
+    "build-desktop": "vue-cli-service build src/desktop.js --dest dist/desktop --mode desktop.production && npm run copycss && npm run copyjs",
+    "build-mobile": "vue-cli-service build src/mobile.js --dest dist/mobile --mode mobile.production",
     "build-storybook": "build-storybook",
-    "copycss": "copyfiles dist/desktop/css/*.css ../css --flat",
-    "copyjs": "copyfiles dist/desktop/js/*.js ../js --flat",
+    "copycss": "copyfiles dist/desktop/css/app.css ../css --flat",
+    "copyjs": "copyfiles dist/desktop/js/app.js ../js --flat",
     "serve-desktop": "vue-cli-service serve src/desktop.js --mode desktop.development",
     "serve-mobile": "vue-cli-service serve src/mobile.js --mode mobile.development",
     "storybook": "start-storybook -p 6006"

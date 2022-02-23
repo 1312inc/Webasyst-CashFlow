@@ -114,7 +114,7 @@ HTML;
         return $this->appUrl;
     }
 
-    public function getOrderId(): ?int
+    public function getId(): ?int
     {
         return $this->orderId;
     }

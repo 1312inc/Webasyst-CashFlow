@@ -12,5 +12,11 @@
         <span>{{ $t("import") }}</span>
       </a>
     </li>
+    <li v-if="$permissions.isAdmin">
+      <router-link to="/trash">
+        <i class="fas fa-trash-alt"></i>
+        <span>{{ $t("trash") }}</span>
+      </router-link>
+    </li>
   </ul>
 </template>

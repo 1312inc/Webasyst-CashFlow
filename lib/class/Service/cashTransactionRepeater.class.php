@@ -32,13 +32,21 @@ final class cashTransactionRepeater
      * @throws kmwaRuntimeException
      * @throws waException
      */
-    public function repeat(cashRepeatingTransaction $repeatingTransaction, DateTime $startDate = null): array
-    {
+    public function repeat(
+        cashRepeatingTransaction $repeatingTransaction,
+        DateTime $startDate = null,
+        bool $startWithNext = false
+    ): array {
         $data = cash()->getHydrator()->extract($repeatingTransaction);
         $endSettings = $repeatingTransaction->getRepeatingEndConditions();
         unset($data['id'], $data['create_datetime'], $data['create_datetime'], $data['update_datetime']);
         $data['repeating_id'] = $repeatingTransaction->getId();
+
+        if ($startDate) {
+            $this->modifyStartDate($startDate, $repeatingTransaction);
+        }
         $startDate = $startDate ?: new DateTime($repeatingTransaction->getDate());
+
         $tIds = [];
 
         switch ($repeatingTransaction->getRepeatingEndType()) {
@@ -178,6 +186,13 @@ final class cashTransactionRepeater
             return null;
         }
 
+        $this->modifyStartDate($startDate, $transaction);
+
+        return $t;
+    }
+
+    private function modifyStartDate(DateTime $startDate, cashRepeatingTransaction $transaction): void
+    {
         if ($transaction->getRepeatingInterval() === cashRepeatingTransaction::INTERVAL_MONTH) {
             cashDatetimeHelper::addMonthToDate(
                 $startDate,
@@ -189,8 +204,6 @@ final class cashTransactionRepeater
                 sprintf('+%d %s', $transaction->getRepeatingFrequency(), $transaction->getRepeatingInterval())
             );
         }
-
-        return $t;
     }
 
     /**

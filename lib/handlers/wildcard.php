@@ -8,6 +8,12 @@ return [
         'method' => ['execute'],
     ],
     [
+        'event_app_id' => 'shop',
+        'event' => 'backend_order',
+        'class' => 'cashShopBackendOrderListener',
+        'method' => ['execute'],
+    ],
+    [
         'event_app_id' => 'cash',
         'event' => 'backend_import.file_uploaded',
         'class' => 'cashBackendImportListener',

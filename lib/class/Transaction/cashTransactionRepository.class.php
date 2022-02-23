@@ -235,6 +235,24 @@ class cashTransactionRepository extends cashBaseRepository
     }
 
     /**
+     * @param string $source
+     * @param int    $id
+     *
+     * @return cashTransaction[]
+     * @throws waException
+     */
+    public function findAllByExternalSourceAndId(string $source, int $id): array
+    {
+        return $this->findByQuery(
+            $this->getModel()->select('*')
+                ->where(
+                    'external_source = s:external_source AND external_id = i:external_id and is_archived = 0',
+                    ['external_source' => $source, 'external_id' => $id]
+                )
+        );
+    }
+
+    /**
      * @param $repeatingId
      *
      * @return cashTransaction|null

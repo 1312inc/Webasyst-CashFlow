@@ -8,7 +8,8 @@ class cashShopTransactionFactory
     const
         INCOME = 'income',
         EXPENSE = 'expense',
-        HASH_FORECAST = 'forecast';
+        HASH_FORECAST = 'forecast',
+        CUSTOM = 'custom';
 
     /**
      * @var cashShopIntegration
@@ -109,6 +110,7 @@ class cashShopTransactionFactory
             ->setExternalHash($externalHash)
             ->setDate($dto->mainTransaction->getDate())
             ->setExternalSource('shop')
+            ->setExternalId((int) $dto->order->getId())
             ->setExternalData(
                 [
                     'id' => $dto->order->getId(),
@@ -164,6 +166,7 @@ class cashShopTransactionFactory
             ->setExternalHash($externalHash)
             ->setDate($dto->mainTransaction->getDate())
             ->setExternalSource('shop')
+            ->setExternalId($dto->order->getId())
             ->setExternalData(
                 [
                     'id' => $dto->order->getId(),
@@ -219,6 +222,7 @@ class cashShopTransactionFactory
             ->setExternalHash($externalHash)
             ->setDate($dto->mainTransaction->getDate())
             ->setExternalSource('shop')
+            ->setExternalId($dto->order->getId())
             ->setExternalData(
                 [
                     'id' => $dto->order->getId(),
@@ -268,6 +272,11 @@ class cashShopTransactionFactory
         return $transaction;
     }
 
+    public function generateExternalHash(shopOrder $order, string $type, float $amount): string
+    {
+        return md5(sprintf('%s/%s/%s', $order->getId(), $type, $amount));
+    }
+
     /**
      * @param shopOrder $order
      *
@@ -281,9 +290,16 @@ class cashShopTransactionFactory
         /** @var cashAccountRepository $rep */
         $rep = cash()->getEntityRepository(cashAccount::class);
 
-        $accountId = $this->shopIntegration->getSettings()->getAccountId();
+        if (!empty($order['params']['payment_id'])) {
+            $accountId = $this->shopIntegration->getSettings()->getAccountIdForPaymentMethod($order->params['payment_id']);
+        }
+
         if (empty($accountId)) {
-            $storefront = isset($order['params']['storefront']) ? $order['params']['storefront'] : 'backend';
+            $accountId = $this->shopIntegration->getSettings()->getAccountId();
+        }
+
+        if (empty($accountId)) {
+            $storefront = $order['params']['storefront'] ?? 'backend';
             $accountId = $this->shopIntegration->getSettings()->getAccountByStorefront($storefront);
             if (empty($accountId)) {
                 throw new kmwaRuntimeException(sprintf('No account for storefront %s', $storefront));
@@ -356,18 +372,6 @@ class cashShopTransactionFactory
     }
 
     /**
-     * @param shopOrder $order
-     * @param string    $type
-     * @param int|float $amount
-     *
-     * @return string
-     */
-    private function generateExternalHash(shopOrder $order, $type, $amount): string
-    {
-        return md5(sprintf('%s/%s/%s', $order->getId(), $type, $amount));
-    }
-
-    /**
      * @param cashShopCreateTransactionDto $dto
      * @param string                       $type
      *
@@ -408,6 +412,7 @@ class cashShopTransactionFactory
             ->setDate($dto->order->paid_date)
             ->setExternalSource('shop')
             ->setExternalData(['id' => $dto->order->getId()])
+            ->setExternalId($dto->order->getId())
             ->setContractorContactId($dto->order->contact->getId());
 
         // конвертнем валюту заказа в валюту аккаунта

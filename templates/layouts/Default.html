@@ -34,16 +34,26 @@
     </script>
 </head>
 <body>
-<div id="wa">
-    {$wa->header()}
+ ***REMOVED***
+ ***REMOVED***
 
-    <div id="wa-app">
-        <div class="flexbox wrap-mobile">
-            <div id="app-sidebar"></div>
-            <div id="app-content"></div>
+        <div id="wa-app">
+            <div class="flexbox wrap-mobile">
+                <div id="app-sidebar"></div>
+                <div id="app-content"></div>
+            </div>
         </div>
     </div>
     
     <script type="text/javascript" src="{$wa_app_static_url}js/app.js?v={$wa->version()}"></script>
+
+    {* @event backend_layout.%plugin_id%.js *}
+    <!-- plugin hook: 'backend_layout.%plugin_id%.js' -->
+    {foreach $backend_layout_plugins as $plugin_name => $backend_layout_plugin}
+        <!-- {$plugin_name} -->
+        {$backend_layout_plugin.js|default:''}
+    {/foreach}
+    <!-- /plugin hook: 'backend_layout.%plugin_id%.js' -->
+
 </body>
 </html>

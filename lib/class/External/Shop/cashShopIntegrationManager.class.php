@@ -10,6 +10,16 @@ final class cashShopIntegrationManager
      */
     public function setup(cashShopIntegration $shopIntegration, array $settingsData): bool
     {
+        if (isset($settingsData['accounts_payment'])) {
+            $settingsData['accountIdByPayment'] = array_filter(
+                array_combine(
+                    $settingsData['accounts_payment']['payment_method'],
+                    $settingsData['accounts_payment']['account']
+                )
+            );
+            unset($settingsData['accounts_payment']);
+        }
+
         $settings = $shopIntegration->getSettings();
 
         try {

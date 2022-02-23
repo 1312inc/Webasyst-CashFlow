@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar flexbox hide-scrollbar width-16rem mobile-friendly z-50">
+  <div ref="sidebar" class="sidebar flexbox hide-scrollbar width-16rem mobile-friendly z-50">
     <nav class="sidebar-mobile-toggle">
       <div class="box align-center">
         <a @click.prevent="mobileMenuOpen = !mobileMenuOpen" href="#">
@@ -12,7 +12,7 @@
         >
       </div>
     </nav>
-    <div class="sidebar-body hide-scrollbar" ref="sidebarBody">
+    <div class="sidebar-body hide-scrollbar">
       <SearchField />
       <Bricks />
 
@@ -145,6 +145,14 @@ export default {
       this.mobileMenuOpen = false
     },
     mobileMenuOpen: 'mobileMenuToggle'
+  },
+
+  mounted () {
+    // Remove top margin if no WA header
+    if (!this.$helper.isHeader()) {
+      this.$refs.sidebar.style.top = 0
+      this.$refs.sidebar.style.height = '100vh'
+    }
   },
 
   methods: {

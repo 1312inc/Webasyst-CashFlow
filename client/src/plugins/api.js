@@ -7,11 +7,9 @@ const accessToken = window.appState?.token || ''
 
 const api = axios.create({
   baseURL: baseApiUrl,
-  params: {
-    access_token: accessToken
-  },
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${accessToken}`
   }
 })
 

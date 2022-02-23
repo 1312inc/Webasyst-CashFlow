@@ -21,6 +21,11 @@ class cashShopSettings implements JsonSerializable
     private $accountId = 0;
 
     /**
+     * @var array
+     */
+    private $accountIdByPayment = [];
+
+    /**
      * @var cashAccount
      */
     private $account;
@@ -92,6 +97,7 @@ class cashShopSettings implements JsonSerializable
         'enabled',
         'accountId',
         'accountByStorefronts',
+        'accountIdByPayment',
         'categoryIncomeId',
         'categoryExpenseId',
         'categoryPurchaseId',
@@ -181,7 +187,7 @@ class cashShopSettings implements JsonSerializable
      *
      * @return bool
      */
-    public function validate(array $data):bool
+    public function validate(array $data): bool
     {
         if (empty($data['categoryIncomeId'])) {
             $this->errors['categoryIncomeId'] = _w('Sales category must be set');
@@ -203,7 +209,7 @@ class cashShopSettings implements JsonSerializable
     {
         $data = array_merge($this->savedSettings, $data);
         foreach (get_class_vars(__CLASS__) as $varname => $value) {
-            if (!in_array($varname, $this->jsonSerializableProperties)) {
+            if (!in_array($varname, $this->jsonSerializableProperties, true)) {
                 continue;
             }
 
@@ -276,7 +282,7 @@ class cashShopSettings implements JsonSerializable
      */
     public function getAccountByStorefront($storefront)
     {
-        return isset($this->accountByStorefronts[$storefront]) ? $this->accountByStorefronts[$storefront] : 0;
+        return $this->accountByStorefronts[$storefront] ?? 0;
     }
 
     /**
@@ -357,7 +363,7 @@ class cashShopSettings implements JsonSerializable
         $this->settingsModel->set(
             cashConfig::APP_ID,
             'shopscript_integration_first_time',
-            (int)$this->isFirstTime()
+            (int) $this->isFirstTime()
         );
     }
 
@@ -411,7 +417,7 @@ class cashShopSettings implements JsonSerializable
      */
     public function getTodayTransactions()
     {
-        return (int)$this->todayTransactions;
+        return (int) $this->todayTransactions;
     }
 
     /**
@@ -667,5 +673,15 @@ class cashShopSettings implements JsonSerializable
         }
 
         return $this->account;
+    }
+
+    public function getAccountIdForPaymentMethod($paymentMethod): int
+    {
+        return $this->accountIdByPayment[$paymentMethod] ?? 0;
+    }
+
+    public function hasAccountIdForPayment(): bool
+    {
+        return !empty($this->accountIdByPayment);
     }
 }

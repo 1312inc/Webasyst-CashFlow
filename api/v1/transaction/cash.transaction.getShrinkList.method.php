@@ -22,7 +22,7 @@ final class cashTransactionGetShrinkListMethod extends cashApiNewAbstractMethod
         $request = new cashApiTransactionGetShrinkListRequest(
             $this->fromGet('from', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d|'),
             $this->fromGet('to', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d|'),
-            $this->fromGet('from', true, ApiParamsCaster::CAST_STRING_TRIM)
+            $this->fromGet('filter', true, ApiParamsCaster::CAST_STRING_TRIM)
         );
 
         $transactions = (new cashApiTransactionGetShrinkListHandler())->handle($request);
