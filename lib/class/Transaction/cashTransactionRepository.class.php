@@ -246,7 +246,7 @@ class cashTransactionRepository extends cashBaseRepository
         return $this->findByQuery(
             $this->getModel()->select('*')
                 ->where(
-                    'external_source = s:external_source AND external_id = i:external_id',
+                    'external_source = s:external_source AND external_id = i:external_id and is_archived = 0',
                     ['external_source' => $source, 'external_id' => $id]
                 )
         );
