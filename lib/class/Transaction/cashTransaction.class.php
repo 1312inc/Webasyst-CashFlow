@@ -84,6 +84,11 @@ class cashTransaction extends cashAbstractEntity
     protected $external_data = null;
 
     /**
+     * @var null|int
+     */
+    protected $external_id = null;
+
+    /**
      * @var cashCategory|null
      */
     protected $category;
@@ -596,6 +601,21 @@ class cashTransaction extends cashAbstractEntity
     public function setIsOnbadge($is_onbadge)
     {
         $this->is_onbadge = $is_onbadge ? 1 : 0;
+
+        return $this;
+    }
+
+    public function getExternalId(): ?int
+    {
+        return $this->external_id;
+    }
+
+    /**
+     * @param int|null $external_id
+     */
+    public function setExternalId($external_id): cashTransaction
+    {
+        $this->external_id = $external_id;
 
         return $this;
     }

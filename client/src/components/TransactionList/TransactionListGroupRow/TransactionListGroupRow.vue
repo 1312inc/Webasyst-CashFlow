@@ -50,13 +50,17 @@
               )
             }}
           </div>
-          <span v-if="daysBefore > 0" class="hint">{{
-            daysBefore === 1
-              ? $t("tomorrow")
-              : this.$moment(transaction.date).from($helper.currentDate)
-          }}</span>
-          <div v-else class="hint">
-            {{ $moment(transaction.date).format("dddd") }}
+
+          <div class="hint">
+            {{
+              $moment().year() == $moment(transaction.date).year()
+                ? daysBefore > 0
+                  ? daysBefore === 1
+                    ? $t("tomorrow")
+                    : $moment(transaction.date).from($helper.currentDate)
+                  : $moment(transaction.date).format("dddd")
+                : $moment(transaction.date).year()
+            }}
           </div>
         </template>
       </div>
@@ -78,19 +82,28 @@
             :category="category"
           />
           <div
-            v-if="transaction.description"
+            v-if="transaction.description || transaction.contractor_contact"
             class="black small text-ellipsis"
             style="flex-shrink: 1"
           >
-            {{ transaction.description }}
+            <span
+              v-if="transaction.description"
+            >
+              {{ transaction.description }}
+            </span>
+            <span
+              v-if="transaction.contractor_contact"
+              class="gray"
+            >
+              {{ transaction.contractor_contact.name }}
+            </span>
           </div>
-          <div
-            v-if="transaction.contractor_contact && !transaction.description"
-            class="gray small text-ellipsis"
-            style="flex-shrink: 1"
+          <span
+            v-if="!transaction.contractor_contact && !transaction.description"
+            class="gray small"
           >
-            {{ transaction.contractor_contact.name }}
-          </div>
+            {{ $t('noDesc') }}
+          </span>
         </div>
         <div class="c-item-amount">
           <div
@@ -125,7 +138,7 @@
         </div>
         <transition name="fade" :duration="300">
           <TransactionListCompleteButton
-            v-show="transaction.is_onbadge"
+            v-show="transaction.is_onbadge && !archive"
             @processEdit="openModal(true)"
             :transaction="transaction"
             :account="account"
@@ -181,6 +194,10 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+
+  inject: {
+    archive: { default: false }
   },
 
   data () {
@@ -252,13 +269,19 @@ export default {
     },
 
     classes () {
+      if (this.archive) {
+        return {
+          'c-item-archived': true
+        }
+      }
       return {
         'c-transaction-group': this.isCollapseHeader || this.isRepeatingGroup, // styles for the collapsed transactions
         'c-upcoming': this.$moment(this.transaction.date) > this.$moment(), // styles for the upcoming transactions
         'c-item-overdue': this.isOverdue,
         'c-item-red-process': this.isOverdue || this.isToday,
         'c-item-selected': this.isChecked,
-        'c-item--updated': this.transaction.$_flagUpdated || this.transaction.$_flagCreated
+        'c-item--updated':
+          this.transaction.$_flagUpdated || this.transaction.$_flagCreated
       }
     }
   },
@@ -275,6 +298,10 @@ export default {
     },
 
     openModal (offOnbadge = false) {
+      if (this.archive) {
+        alert(this.$t('restoreInfo'))
+        return
+      }
       this.offBadgeInTransactionModal = offOnbadge
       if (process.env.VUE_APP_MODE === 'mobile') {
         // emitting for the mobile platform

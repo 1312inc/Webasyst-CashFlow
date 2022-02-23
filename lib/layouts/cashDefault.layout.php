@@ -23,6 +23,14 @@ class cashDefaultLayout extends waLayout
         $categories = (new cashApiCategoryGetListHandler())->handle(null);
         $accounts = (new cashApiAccountGetListHandler())->handle(null);
 
+        /**
+         * Include js after main app.js
+         *
+         * @event backend_layout
+         * @return array[string]string $return[%plugin_id%][js]
+         */
+        $backendPlugins = wa()->event('backend_layout', $params);
+
         $this->view->assign(
             [
                 'token' => $token,
@@ -35,6 +43,7 @@ class cashDefaultLayout extends waLayout
                 'currencies' => json_encode($currencies, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'categories' => json_encode($categories, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'accounts' => json_encode($accounts, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
+                'backend_layout_plugins' => $backendPlugins
             ]
         );
     }

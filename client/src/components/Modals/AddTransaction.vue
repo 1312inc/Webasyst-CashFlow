@@ -233,27 +233,23 @@
               :placeholder="$t('desc')"
             ></textarea>
             <div
-              v-if="
-                isModeUpdate &&
-                  transaction.external_source_info &&
-                  transaction.external_source_info.entity_url
-              "
+              v-if="externalSourceInfo"
               class="custom-mt-8 flexbox middle space-8"
             >
               <span
-                v-if="transaction.external_source_info.entity_icon"
+                v-if="externalSourceInfo.entity_icon"
                 class="icon userpic size-20"
               >
                 <img
-                  :src="transaction.external_source_info.entity_icon"
+                  :src="externalSourceInfo.entity_icon"
                   alt=""
                 />
               </span>
               <a
-                :href="transaction.external_source_info.entity_url"
+                :href="externalSourceInfo.entity_url"
                 target="_blank"
                 class="small"
-                >{{ transaction.external_source_info.entity_name }}</a
+                >{{ externalSourceInfo.entity_name }}</a
               >
             </div>
           </div>
@@ -501,7 +497,7 @@ export default {
       model: {
         id: null,
         amount: null,
-        date: '',
+        date: null,
         account_id: null,
         category_id: null,
         contractor: null,
@@ -514,10 +510,16 @@ export default {
         repeating_interval: 'month',
         repeating_end_type: 'never',
         repeating_end_after: null,
-        repeating_end_ondate: '',
+        repeating_end_ondate: null,
         transfer_account_id: null,
         transfer_incoming_amount: null,
-        apply_to_all_in_future: false
+        apply_to_all_in_future: false,
+        ...(this.$route.name === 'Order' ? {
+          external: {
+            source: this.$store.state.entity.entity.app,
+            id: this.$store.state.entity.entity.entity_id
+          }
+        } : {})
       },
       custom_interval: 'month',
       controlsDisabled: false,
@@ -629,6 +631,13 @@ export default {
           frequency: this.transaction.repeating_data.frequency
         }
       )
+    },
+
+    externalSourceInfo () {
+      if (this.$route.name === 'Order') {
+        return this.$store.state.entity.entity
+      }
+      return this.transaction?.external_source_info
     }
   },
 
@@ -665,6 +674,13 @@ export default {
         this.model[prop] = this.transaction[prop] || this.model[prop]
       }
       this.model.amount = `${Math.abs(this.model.amount)}`
+      // Fill external source
+      if (this.externalSourceInfo) {
+        this.model.external = {
+          source: this.transaction.external_source,
+          id: this.transaction.external_source_info.id
+        }
+      }
     }
 
     this.transactionType =
@@ -674,7 +690,7 @@ export default {
       this.model.category_id = -1312
     }
 
-    if (this.model.contractor_contact) {
+    if (this.model.contractor_contact?.name) {
       this.showContractorInput = true
     }
 

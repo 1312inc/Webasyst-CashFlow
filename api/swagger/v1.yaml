@@ -134,6 +134,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /cash.transaction.purge:
+    post:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 1
+              required:
+                - ids
+      responses:
+        200:
+          description: Список успешно и неуспешно удаленных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OkAndFailIds'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /cash.transaction.restore:
+    post:
+      tags:
+        - Транзакции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                    minimum: 1
+              required:
+                - ids
+      responses:
+        200:
+          description: Список успешно и неуспешно восстановленных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OkAndFailIds'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /cash.transaction.bulkCreate:
     post:
       tags:
@@ -685,6 +747,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /cash.system.getExternalEntity:
+    get:
+      tags:
+        - Разное
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: source
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: string
+            minimum: 1
+      responses:
+        200:
+          description: Данные о внешней сущности
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getExternalEntityResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   securitySchemes:
@@ -725,10 +825,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TransactionInfo'
+
     searchContactsResponse:
       type: array
       items:
         $ref: '#/components/schemas/SearchContactInfo'
+
+    getExternalEntityResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/ExternalEntity'
 
     aggregateGetBreakDownResponse:
       type: object
@@ -787,6 +893,27 @@ components:
           type: string
         label:
           type: string
+
+    ExternalEntity:
+      type: object
+      properties:
+        app:
+          type: string
+        app_name:
+          type: string
+        app_icon_url:
+          type: string
+        entity_id:
+          type: integer
+        entity_name:
+          type: string
+        entity_url:
+          type: string
+        entity_icon:
+          type: string
+        entity_data:
+          type: array
+          nullable: true
 
     AccountInfo:
       type: object
@@ -1092,6 +1219,10 @@ components:
           type: boolean
           nullable: true
           default: null
+        external:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/TransactionExternalData'
       required:
         - amount
         - date
@@ -1181,6 +1312,10 @@ components:
           type: boolean
           nullable: true
           default: null
+        external:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/TransactionExternalData'
       required:
         - id
         - apply_to_all_in_future
@@ -1188,6 +1323,18 @@ components:
         - date
         - account_id
         - category_id
+    TransactionExternalData:
+      type: object
+      properties:
+        source:
+          type: string
+        id:
+          type: integer
+        data:
+          type: array
+      required:
+          - source
+          - id
 
     Error:
       type: object
@@ -1199,3 +1346,15 @@ components:
         trace:
           type: string
           nullable: true
+
+    OkAndFailIds:
+      type: object
+      properties:
+        ok:
+          type: array
+          items:
+            type: integer
+        fail:
+          type: array
+          items:
+            type: integer

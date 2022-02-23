@@ -1489,7 +1489,21 @@ SQL;
     public function countAllRepeatingAfterTransaction($repeatingId, $transactionId)
     {
         return (int) $this->query(
-            'count(id) from cash_transaction where repeating_id = i:rid and id > i:tid and is_archived = 0',
+            'select count(id) from cash_transaction where repeating_id = i:rid and id > i:tid and is_archived = 0',
+            ['rid' => $repeatingId, 'tid' => $transactionId]
+        )->fetchField();
+    }
+
+    /**
+     * @param int $repeatingId
+     * @param int $transactionId
+     *
+     * @return bool|resource
+     */
+    public function countAllArchivedRepeatingAfterTransaction($repeatingId, $transactionId)
+    {
+        return (int) $this->query(
+            'select count(id) from cash_transaction where repeating_id = i:rid and id > i:tid and is_archived = 1',
             ['rid' => $repeatingId, 'tid' => $transactionId]
         )->fetchField();
     }

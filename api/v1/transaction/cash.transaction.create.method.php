@@ -1,13 +1,16 @@
 <?php
 
+use ApiPack1312\ApiParamsCaster;
+use ApiPack1312\Exception\ApiCastParamException;
+
 /**
+ * @return array of transactions
  * @todo: test & refactor
  *
  * Class cashTransactionCreateMethod
  *
- * @return array of transactions
  */
-class cashTransactionCreateMethod extends cashApiAbstractMethod
+class cashTransactionCreateMethod extends cashApiNewAbstractMethod
 {
     protected $method = self::METHOD_POST;
 
@@ -24,15 +27,62 @@ class cashTransactionCreateMethod extends cashApiAbstractMethod
      */
     public function run(): cashApiResponseInterface
     {
-        /** @var cashApiTransactionCreateRequest $request */
-        $request = $this->fillRequestWithParams(new cashApiTransactionCreateRequest());
-        if ($request->transfer_account_id && $request->category_id !== cashCategoryFactory::TRANSFER_CATEGORY_ID) {
+        $external = $this->fromPost('external', false, ApiParamsCaster::CAST_ARRAY);
+        $externalDto = null;
+        if ($external) {
+            $externalDto = cashApiTransactionCreateExternalDto::fromArray($external);
+        }
+
+        $repeatingOnDateStr = $this->fromPost('repeating_end_ondate');
+        if (!empty($repeatingOnDateStr)) {
+            $repeatingOnDate = DateTimeImmutable::createFromFormat('Y-m-d', $repeatingOnDateStr);
+
+            if ($repeatingOnDate === false) {
+                throw new ApiCastParamException(
+                    sprintf('Wrong format "%s" for value "%s"', 'Y-m-d', $repeatingOnDateStr)
+                );
+            }
+        } else {
+            $repeatingOnDate = null;
+        }
+
+        $request = new cashApiTransactionCreateRequest(
+            $this->fromPost('amount', true, ApiParamsCaster::CAST_FLOAT),
+            $this->fromPost('date', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d'),
+            $this->fromPost('account_id', true, ApiParamsCaster::CAST_INT),
+            $this->fromPost('category_id', true, ApiParamsCaster::CAST_INT),
+            $this->fromPost('contractor_contact_id', false, ApiParamsCaster::CAST_INT),
+            $this->fromPost('contractor', false, ApiParamsCaster::CAST_STRING_TRIM),
+            $this->fromPost('description', false, ApiParamsCaster::CAST_STRING_TRIM),
+            $this->fromPost('is_repeating', false, ApiParamsCaster::CAST_BOOLEAN),
+            $this->fromPost('repeating_frequency', false, ApiParamsCaster::CAST_INT),
+            $this->fromPost(
+                'repeating_interval',
+                false,
+                ApiParamsCaster::CAST_ENUM,
+                array_keys(cashRepeatingTransaction::getRepeatingIntervals())
+            ),
+            $this->fromPost(
+                'repeating_end_type',
+                false,
+                ApiParamsCaster::CAST_ENUM,
+                array_keys(cashRepeatingTransaction::getRepeatingEndTypes())
+            ),
+            $this->fromPost('repeating_end_after', false, ApiParamsCaster::CAST_INT),
+            $repeatingOnDate,
+            $this->fromPost('transfer_account_id', false, ApiParamsCaster::CAST_INT),
+            $this->fromPost('transfer_incoming_amount', false, ApiParamsCaster::CAST_FLOAT),
+            $this->fromPost('is_onbadge', false, ApiParamsCaster::CAST_BOOLEAN),
+            $externalDto
+        );
+
+        if ($request->getTransferAccountId() && $request->getCategoryId() !== cashCategoryFactory::TRANSFER_CATEGORY_ID) {
             return new cashApiErrorResponse(
                 'Transfer category may not be other than ' . cashCategoryFactory::TRANSFER_CATEGORY_ID
             );
         }
 
-        if ($request->category_id == cashCategoryFactory::TRANSFER_CATEGORY_ID && !$request->transfer_account_id) {
+        if ($request->getCategoryId() === cashCategoryFactory::TRANSFER_CATEGORY_ID && !$request->getTransferAccountId()) {
             return new cashApiErrorResponse('Missing transfer information');
         }
 

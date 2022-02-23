@@ -9,7 +9,7 @@
       <div class="wide">
         <TransactionList :showFutureGroup="false" :showYesterdayGroup="true" :showOverdueGroup="true" />
       </div>
-      <AmChartPieStickyContainer class="width-40" />
+      <AmChartPieStickyContainer />
     </div>
   </div>
 </template>

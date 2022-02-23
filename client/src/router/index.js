@@ -6,13 +6,17 @@ import Transactions from '../views/Transactions.vue'
 import Upnext from '../views/Upnext.vue'
 import Search from '../views/Search.vue'
 import Import from '../views/Import.vue'
+import Trash from '../views/Trash.vue'
+import Entity from '../views/Entity.vue'
 import NotFound from '../views/NotFound.vue'
 import { i18n } from '../plugins/locale'
+import { permissions } from '../plugins/permissions'
 
 Vue.use(VueRouter)
 
 // TODO: make settings file
 const accountName = window.appState?.accountName || ''
+const baseUrl = window.appState?.baseUrl || '/'
 
 const routes = [
   {
@@ -77,6 +81,33 @@ const routes = [
     }
   },
   {
+    path: '/trash',
+    name: 'Trash',
+    component: Trash,
+    meta: {
+      requiresAdminRights: true,
+      title: `${i18n.t('trash')} — ${accountName}`
+    }
+  },
+  {
+    path: '/external/shop/order/:id',
+    name: 'Order',
+    component: Entity,
+    meta: {
+      getExternalEntitySource: 'shop',
+      fetchTransactionsFilter: (id) => `external/shop.${id}`
+    }
+  },
+  {
+    path: '/contact/:id',
+    name: 'Contact',
+    component: Entity,
+    meta: {
+      getExternalEntitySource: 'contacts',
+      fetchTransactionsFilter: (id) => `contractor/${id}`
+    }
+  },
+  {
     path: '/report/dds'
   },
   {
@@ -101,7 +132,7 @@ const routes = [
 
 const router = new VueRouter({
   mode: process.env.VUE_APP_MODE === 'desktop' ? 'history' : 'hash',
-  base: window?.appState?.baseUrl || '/',
+  base: baseUrl,
   routes,
   scrollBehavior (to, from, savedPosition) {
     return { x: 0, y: 0 }
@@ -109,9 +140,18 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAdminRights)) {
+    if (!permissions.isAdmin) {
+      next({
+        name: 'Home'
+      })
+    }
+  }
+
   if (to.meta.title) {
     document.title = to.meta.title
   }
+
   next()
 })
 

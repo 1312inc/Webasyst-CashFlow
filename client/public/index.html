@@ -3,19 +3,28 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <% if (NODE_ENV === "development") { %>
-      <link href="<%= VUE_APP_DEV_PROXY %>/wa-content/css/wa/wa-2.0.css" rel="stylesheet">
-      <script src="<%= VUE_APP_DEV_PROXY %>/wa-content/js/jquery-wa/wa.switch-mode.js"></script>
-      <script src="<%= VUE_APP_DEV_PROXY %>/wa-content/js/fontawesome/fontawesome-all.min.js"></script>
+    <!-- banch of WA deps for the dev mode -->
+    <link href="css/wa-2.0.css" rel="stylesheet">
+    <script src="js/wa.switch-mode.js"></script>
+    <script src="js/fontawesome-all.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/tippy-bundle.umd.min.js"></script>
 
+    <% if (NODE_ENV === "development") { %>
+        <!--
+          Initial State for the dev mode.
+          Envs from vue.config.js
+         -->
         <script>
           window.appState = {
             "accountName": "accountName",
+            "baseApiUrl": "/api.php",
+            "token": "<%= VUE_APP_API_TOKEN %>",
             "currencies":<%= VUE_APP_CURRENCIES %>,
             "categories":<%= VUE_APP_CATEGORIES %>,
             "accounts":<%= VUE_APP_ACCOUNTS %>,
             "api_settings":<%= VUE_APP_SETTINGS %>
-        };
+          };
         </script>
 
     <% } %>
@@ -27,9 +36,6 @@
       </script>
     <% } %>
 
-    <!-- tippy allready in WA -->
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://unpkg.com/tippy.js@6"></script>
   </head>
   <body>
     <div id="wa-app">
