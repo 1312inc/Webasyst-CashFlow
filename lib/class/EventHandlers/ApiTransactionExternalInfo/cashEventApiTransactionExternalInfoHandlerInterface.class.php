@@ -6,5 +6,5 @@ interface cashEventApiTransactionExternalInfoHandlerInterface
 
     public function getResponse(
         cashApiTransactionResponseDto $cashApiTransactionResponseDto
-    ): cashEventApiTransactionExternalInfoResponseInterface;
+    ): ?cashEventApiTransactionExternalInfoResponseInterface;
 }
