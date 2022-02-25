@@ -23,15 +23,20 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
                     cash()->getLogger()->debug(print_r($data, 1));
                     $externalEntity = cashTransactionExternalEntityFactory::createFromSource('shop', $data);
                     if ($externalEntity) {
-                        $entityId = $externalEntity->getId();
-                        $entityIcon = wa()->getConfig()->getHostUrl() . $externalEntity->getAppIcon();
-                        $entityUrl = sprintf(
-                            '%s%sshop%s',
-                            wa()->getConfig()->getHostUrl(),
-                            wa('shop')->getConfig()->getBackendUrl(true),
-                            $externalEntity->getLink()
+                        return new cashEventApiTransactionExternalInfoResponse(
+                            $externalEntity->getId(),
+                            '#27bf52',
+                            'Shop-Script',
+                            'fas fa-shopping-cart',
+                            sprintf(
+                                '%s%sshop%s',
+                                wa()->getConfig()->getHostUrl(),
+                                wa('shop')->getConfig()->getBackendUrl(true),
+                                $externalEntity->getLink()
+                            ),
+                            wa()->getConfig()->getHostUrl() . $externalEntity->getAppIcon(),
+                            $externalEntity->getEntityName()
                         );
-                        $entityName = $externalEntity->getEntityName();
                     }
                 }
             }
