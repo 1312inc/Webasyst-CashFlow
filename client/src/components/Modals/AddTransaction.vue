@@ -464,6 +464,8 @@ import DateField from '@/components/Inputs/InputDate'
 import DropdownWa from '@/components/Inputs/DropdownWa'
 import TransitionCollapseHeight from '@/components/Transitions/TransitionCollapseHeight'
 import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
+import entityPageMixin from '@/mixins/entityPageMixin'
+
 export default {
   props: {
     transaction: {
@@ -481,7 +483,7 @@ export default {
     }
   },
 
-  mixins: [rowModificatorMixin],
+  mixins: [rowModificatorMixin, entityPageMixin],
 
   components: {
     InputCurrency,
@@ -513,13 +515,7 @@ export default {
         repeating_end_ondate: null,
         transfer_account_id: null,
         transfer_incoming_amount: null,
-        apply_to_all_in_future: false,
- ***REMOVED***(this.$route.name === 'Order' ? {
-          external: {
-            source: this.$store.state.entity.entity.app,
-            id: this.$store.state.entity.entity.entity_id
-          }
-        } : {})
+        apply_to_all_in_future: false
       },
       custom_interval: 'month',
       controlsDisabled: false,
@@ -634,10 +630,7 @@ export default {
     },
 
     externalSourceInfo () {
-      if (this.$route.name === 'Order') {
-        return this.$store.state.entity.entity
-      }
-      return this.transaction?.external_source_info
+      return this.model.external ? this.$store.state.entity.entity || this.transaction?.external_source_info : null
     }
   },
 
@@ -675,7 +668,8 @@ export default {
       }
       this.model.amount = `${Math.abs(this.model.amount)}`
       // Fill external source
-      if (this.externalSourceInfo) {
+      // TODO: move to entityPageMixin ??
+      if (this.transaction.external_source_info) {
         this.model.external = {
           source: this.transaction.external_source,
           id: this.transaction.external_source_info.id
