@@ -94,6 +94,8 @@ import InputCurrency from '@/components/Inputs/InputCurrency'
 import DateField from '@/components/Inputs/InputDate'
 import DropdownWa from '@/components/Inputs/DropdownWa'
 import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
+import entityPageMixin from '@/mixins/entityPageMixin'
+
 export default {
   components: {
     InputCurrency,
@@ -101,7 +103,7 @@ export default {
     DropdownWa
   },
 
-  mixins: [rowModificatorMixin],
+  mixins: [rowModificatorMixin, entityPageMixin],
 
   data () {
     return {
