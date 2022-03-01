@@ -37,11 +37,17 @@ class cashEventApiTransactionExternalInfoResponse implements cashEventApiTransac
      */
     private $entityName;
 
+    /**
+     * @var bool
+     */
+    private $isSelfDestructWhenDue;
+
     public function __construct(
         int $id,
         string $color,
         string $name,
         string $glyph = '',
+        bool $isSelfDestructWhenDue = false,
         ?string $entityUrl = null,
         ?string $entityIcon = null,
         ?string $entityName = null
@@ -53,6 +59,7 @@ class cashEventApiTransactionExternalInfoResponse implements cashEventApiTransac
         $this->entityIcon = $entityIcon;
         $this->entityName = $entityName;
         $this->id = $id;
+        $this->isSelfDestructWhenDue = $isSelfDestructWhenDue;
     }
 
     public function jsonSerialize(): array
@@ -65,6 +72,7 @@ class cashEventApiTransactionExternalInfoResponse implements cashEventApiTransac
             'entity_icon' => $this->entityIcon,
             'entity_url' => $this->entityUrl,
             'entity_name' => $this->entityName,
+            'is_self_destruct_when_due' => $this->isSelfDestructWhenDue,
         ];
     }
 }
