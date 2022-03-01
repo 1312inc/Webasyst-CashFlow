@@ -43,6 +43,11 @@ class cashTransactionExternalEntityShopOrder implements cashTransactionExternalE
     private $entityName;
 
     /**
+     * @var bool
+     */
+    private $isSelfDestructWhenDue;
+
+    /**
      * cashTransactionExternalEntityShopOrder constructor.
      *
      * @param string $app
@@ -50,7 +55,7 @@ class cashTransactionExternalEntityShopOrder implements cashTransactionExternalE
      *
      * @throws waException
      */
-    public function __construct(string $app, $data)
+    public function __construct(string $app, $data, ?string $hash = null)
     {
         if ($app !== self::APP_ID) {
             return;
@@ -59,6 +64,8 @@ class cashTransactionExternalEntityShopOrder implements cashTransactionExternalE
         if (!wa()->appExists(self::APP_ID)) {
             return;
         }
+
+        $this->isSelfDestructWhenDue = ($hash === cashShopTransactionFactory::HASH_FORECAST);
 
         if (!is_array($data)) {
             $data = json_decode($data, true);
@@ -132,5 +139,10 @@ HTML;
     public function getEntityName(): ?string
     {
         return $this->entityName;
+    }
+
+    public function isSelfDestructWhenDue(): bool
+    {
+        return $this->isSelfDestructWhenDue;
     }
 }

@@ -23,10 +23,10 @@ class cashTransactionExternalEntityFactory
      * @return cashTransactionExternalEntityInterface
      * @throws waException
      */
-    public static function createFromSource($source, $data)
+    public static function createFromSource(string $source, $data, ?string $hash = null)
     {
         if ($source === 'shop') {
-            return new cashTransactionExternalEntityShopOrder($source, $data);
+            return new cashTransactionExternalEntityShopOrder($source, $data, $hash);
         }
 
         return null;

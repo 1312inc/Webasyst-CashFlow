@@ -19,15 +19,20 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
             if ($this->shopIntegration->shopExists()) {
                 $data = $cashApiTransactionResponseDto->getData();
                 if (isset($data['external_data'])) {
-                    $data = json_decode($data['external_data'], true);
+                    $externalData = json_decode($data['external_data'], true);
                     cash()->getLogger()->debug(print_r($data, 1));
-                    $externalEntity = cashTransactionExternalEntityFactory::createFromSource('shop', $data);
+                    $externalEntity = cashTransactionExternalEntityFactory::createFromSource(
+                        'shop',
+                        $externalData,
+                        $data['external_hash'] ?? null
+                    );
                     if ($externalEntity) {
                         return new cashEventApiTransactionExternalInfoResponse(
                             $externalEntity->getId(),
                             '#27bf52',
                             'Shop-Script',
                             'fas fa-shopping-cart',
+                            $externalEntity->isSelfDestructWhenDue(),
                             sprintf(
                                 '%s%sshop%s',
                                 wa()->getConfig()->getHostUrl(),
