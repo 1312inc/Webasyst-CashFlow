@@ -116,6 +116,11 @@ class cashApiTransactionResponseDto extends cashAbstractDto
     public $is_onbadge;
 
     /**
+     * @var int|null
+     */
+    public $is_self_destruct_when_due;
+
+    /**
      * @var array|null
      */
     public $contractor_contact = null;
@@ -155,8 +160,10 @@ class cashApiTransactionResponseDto extends cashAbstractDto
         $this->category_id = (int) $this->category_id;
         $this->account_id = (int) $this->account_id;
         $this->account_id = (int) $this->account_id;
-        $this->is_archived = $this->is_archived ? true : false;
-        $this->is_onbadge = $this->is_onbadge ? true : false;
+        $this->is_archived = (bool) $this->is_archived;
+        $this->is_onbadge = (bool) $this->is_onbadge;
+        $this->is_onbadge = (bool) $this->is_onbadge;
+        $this->is_self_destruct_when_due = (bool) $this->is_self_destruct_when_due;
 
         $this->planned = $this->date > date('Y-m-d');
         $this->amountShorten = cashShorteningService::money($this->amount);

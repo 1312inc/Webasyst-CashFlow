@@ -267,4 +267,11 @@ class cashRepeatingTransaction extends cashTransaction
 
         return $this;
     }
+
+    public function __clone()
+    {
+        $this->id = null;
+        $this->create_datetime = date('Y-m-d H:i:s');
+        $this->update_datetime = null;
+    }
 }

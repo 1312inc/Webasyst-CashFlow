@@ -116,7 +116,9 @@ final class cashTransactionBulkCreateMethod extends cashApiNewAbstractMethod
             $this->fromArray($data, 'transfer_account_id', false, ApiParamsCaster::CAST_INT),
             $this->fromArray($data, 'transfer_incoming_amount', false, ApiParamsCaster::CAST_FLOAT),
             $this->fromArray($data, 'is_onbadge', false, ApiParamsCaster::CAST_BOOLEAN),
-            $externalDto
+            $externalDto,
+            $this->fromArray($data, 'is_self_destruct_when_due', false, ApiParamsCaster::CAST_BOOLEAN)
+
         );
     }
 }

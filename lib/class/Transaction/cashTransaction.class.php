@@ -114,6 +114,11 @@ class cashTransaction extends cashAbstractEntity
     protected $is_onbadge = 0;
 
     /**
+     * @var bool|int
+     */
+    protected $is_self_destruct_when_due = 0;
+
+    /**
      * @return int
      */
     public function getId()
@@ -601,6 +606,26 @@ class cashTransaction extends cashAbstractEntity
     public function setIsOnbadge($is_onbadge)
     {
         $this->is_onbadge = $is_onbadge ? 1 : 0;
+
+        return $this;
+    }
+
+    /**
+     * @return bool|int
+     */
+    public function getIsSelfDestructWhenDue()
+    {
+        return $this->is_self_destruct_when_due;
+    }
+
+    /**
+     * @param bool|int $is_self_destruct_when_due
+     *
+     * @return cashTransaction
+     */
+    public function setIsSelfDestructWhenDue($is_self_destruct_when_due)
+    {
+        $this->is_self_destruct_when_due = $is_self_destruct_when_due;
 
         return $this;
     }

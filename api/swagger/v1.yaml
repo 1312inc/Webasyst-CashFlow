@@ -1111,6 +1111,8 @@ components:
           description: Id контрагента
         is_onbadge:
           type: boolean
+        is_self_destruct_when_due:
+          type: boolean
         contractor_contact:
           nullable: true
           allOf:
@@ -1219,6 +1221,10 @@ components:
           type: boolean
           nullable: true
           default: null
+        is_self_destruct_when_due:
+          type: boolean
+          nullable: true
+          default: null
         external:
           nullable: true
           allOf:
@@ -1309,6 +1315,10 @@ components:
           nullable: true
           default: null
         is_onbadge:
+          type: boolean
+          nullable: true
+          default: null
+        is_self_destruct_when_due:
           type: boolean
           nullable: true
           default: null
