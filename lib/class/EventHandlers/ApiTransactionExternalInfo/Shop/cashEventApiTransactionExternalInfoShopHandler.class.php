@@ -32,7 +32,6 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
                             '#27bf52',
                             'Shop-Script',
                             'fas fa-shopping-cart',
-                            $externalEntity->isSelfDestructWhenDue(),
                             sprintf(
                                 '%s%sshop%s',
                                 wa()->getConfig()->getHostUrl(),

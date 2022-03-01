@@ -93,6 +93,11 @@ class cashApiTransactionCreateRequest
     private $isOnbadge = null;
 
     /**
+     * @var bool|null
+     */
+    private $isSelfDestructWhenDue = null;
+
+    /**
      * @var null|cashApiTransactionCreateExternalDto
      */
     private $external = null;
@@ -114,7 +119,8 @@ class cashApiTransactionCreateRequest
         ?int $transferAccountId,
         ?string $transferIncomingAmount,
         ?bool $isOnbadge,
-        ?cashApiTransactionCreateExternalDto $external
+        ?cashApiTransactionCreateExternalDto $external,
+        ?bool $isSelfDestructWhenDue
     ) {
         $this->amount = $amount;
         $this->date = $date;
@@ -133,6 +139,7 @@ class cashApiTransactionCreateRequest
         $this->transferIncomingAmount = $transferIncomingAmount;
         $this->isOnbadge = $isOnbadge;
         $this->external = $external;
+        $this->isSelfDestructWhenDue = $isSelfDestructWhenDue;
     }
 
     public function getAmount(): float
@@ -225,5 +232,10 @@ class cashApiTransactionCreateRequest
     public function getExternal(): ?cashApiTransactionCreateExternalDto
     {
         return $this->external;
+    }
+
+    public function isSelfDestructWhenDue(): ?bool
+    {
+        return $this->isSelfDestructWhenDue;
     }
 }

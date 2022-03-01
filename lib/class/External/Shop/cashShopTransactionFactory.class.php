@@ -264,6 +264,7 @@ class cashShopTransactionFactory
             ->setAccount($account)
             ->setCategory($category)
             ->setExternalHash(self::HASH_FORECAST)
+            ->setIsSelfDestructWhenDue(1)
             ->setAmount($amount)
             ->setDate($date->format('Y-m-d'))
             ->setDatetime($date->format('Y-m-d H:i:s'))

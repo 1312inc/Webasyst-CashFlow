@@ -20,6 +20,4 @@ interface cashTransactionExternalEntityInterface
     public function getAppName(): ?string;
 
     public function getEntityName(): ?string;
-
-    public function isSelfDestructWhenDue(): bool;
 }

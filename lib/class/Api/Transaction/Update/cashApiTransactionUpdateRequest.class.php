@@ -112,6 +112,11 @@ class cashApiTransactionUpdateRequest
      */
     private $external = null;
 
+    /**
+     * @var bool|null
+     */
+    private $isSelfDestructWhenDue = null;
+
     public function __construct(
         int $id,
         bool $applyToAllInFuture,
@@ -131,7 +136,8 @@ class cashApiTransactionUpdateRequest
         ?int $transferAccountId,
         ?string $transferIncomingAmount,
         ?bool $isOnbadge,
-        ?cashApiTransactionCreateExternalDto $external
+        ?cashApiTransactionCreateExternalDto $external,
+        ?bool $isSelfDestructWhenDue
     ) {
         $this->amount = $amount;
         $this->date = $date;
@@ -152,6 +158,7 @@ class cashApiTransactionUpdateRequest
         $this->external = $external;
         $this->id = $id;
         $this->applyToAllInFuture = $applyToAllInFuture;
+        $this->isSelfDestructWhenDue = $isSelfDestructWhenDue;
     }
 
     public function getAmount(): float
@@ -254,5 +261,10 @@ class cashApiTransactionUpdateRequest
     public function isApplyToAllInFuture(): bool
     {
         return $this->applyToAllInFuture;
+    }
+
+    public function isSelfDestructWhenDue(): ?bool
+    {
+        return $this->isSelfDestructWhenDue;
     }
 }
