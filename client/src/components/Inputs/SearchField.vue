@@ -16,7 +16,7 @@
         name="query"
       />
       <ul
-        v-if="results.length"
+        v-if="results.length > 1"
         :style="
           `top:${$refs.input.offsetTop + $refs.input.offsetHeight}px;width:${
             $refs.input.offsetWidth
@@ -25,18 +25,30 @@
         class="c-autocomplete-menu menu"
       >
         <li
-          @mousedown="select(i)"
           v-for="(item, i) in results"
-          :key="item.id"
-          :class="{ active: i === aciveMenuIndex }"
+          :key="i"
+          @mousedown="activeMenuIndex = i;submit()"
+          :class="{ active: i === activeMenuIndex }"
           class="c-autocomplete-menu__item"
         >
           <a href="javascript:void(0);">
-            <i v-if="!item.photo_url_absolute" class="fas fa-search"></i>
-            <span v-else class="icon">
-              <img :src="item.photo_url_absolute" class="userpic" alt="" />
+            <span v-if="item.entityIcon" class="icon">
+              <img :src="item.entityIcon" class="userpic" alt="" />
             </span>
-            <span>{{ item.name }}</span>
+            <span v-else-if="item.entityGlyph" class="icon">
+              <i
+                :class="item.entityGlyph"
+                :style="`color: ${item.entityColor};`"
+              ></i>
+            </span>
+            <span v-else-if="item.entityColor" class="icon">
+              <i
+                class="rounded"
+                :style="`background-color: ${item.entityColor};`"
+              ></i>
+            </span>
+            <i v-else class="fas fa-search"></i>
+            <span>{{ item.entityName }}</span>
           </a>
         </li>
       </ul>
@@ -52,19 +64,13 @@ export default {
   data () {
     return {
       queryText: '',
-      results: [],
-      aciveMenuIndex: null
+      activeMenuIndex: null,
+      results: []
     }
   },
 
   watch: {
-    $route (val) {
-      this.resetAutocomplete()
-
-      if (val.name !== 'Search') {
-        this.queryText = ''
-      }
-    },
+    $route: 'resetAutocomplete',
     queryText: debounce(function (val) {
       this.input(val)
     }, 500)
@@ -72,65 +78,100 @@ export default {
 
   methods: {
     submit () {
-      if (this.aciveMenuIndex > 0) {
-        this.$router.push({
-          name: 'Contact',
-          params: { id: this.results[this.aciveMenuIndex].id }
-        }).catch(() => {})
-        return
-      }
-      if (this.queryText && this.queryText !== this.$route.query.text) {
-        this.$router.push({ name: 'Search', query: { text: this.queryText } })
-      }
+      const routeParams =
+        this.activeMenuIndex > 0
+          ? { params: { id: this.results[this.activeMenuIndex].entityId } }
+          : { query: { text: this.queryText } }
+
+      this.$router
+        .push({
+          name:
+            this.activeMenuIndex > 0
+              ? this.results[this.activeMenuIndex].entityType
+              : 'Search',
+   ***REMOVED***routeParams
+        })
+        .catch(() => {})
     },
 
-    input (val) {
-      if (!val || val === '0') {
+    async input (searchString) {
+      if (!searchString || searchString === '0') {
         this.resetAutocomplete()
         return
       }
-      api
-        .get('cash.system.searchContacts', {
-          params: {
-            term: val
-          }
-        })
-        .then(({ data }) => {
-          this.results = [{ id: -1, name: val }, ...data]
-        })
-        .catch(e => {})
+
+      const searchedContacts = await this.searchContacts(searchString)
+      const searchedCategories = this.searchCategories(searchString)
+      this.results = [
+        this.makeSearchListObjectFromEntity(searchString),
+ ***REMOVED***searchedCategories,
+ ***REMOVED***searchedContacts
+      ]
+    },
+
+    searchCategories (searchString) {
+      const cats = this.$store.state.category.categories.filter(c =>
+        c.name.toLowerCase().includes(searchString.toLowerCase())
+      )
+      return cats.map(cat =>
+        this.makeSearchListObjectFromEntity(cat, 'Category')
+      )
+    },
+
+    async searchContacts (searchString) {
+      const { data } = await api.get('cash.system.searchContacts', {
+        params: {
+          term: searchString
+        }
+      })
+      return data.map(e => this.makeSearchListObjectFromEntity(e, 'Contact'))
+    },
+
+    makeSearchListObjectFromEntity (entity, entityType) {
+      if (typeof entity === 'string') {
+        return {
+          entityName: entity
+        }
+      }
+      return {
+        entityId: entity.id,
+        entityName: entity.name,
+        entityIcon: entity.photo_url_absolute,
+        entityGlyph: entity.glyph,
+        entityColor: entity.color,
+        entityType
+      }
     },
 
     resetAutocomplete () {
       this.results = []
-      this.aciveMenuIndex = null
-    },
+      this.activeMenuIndex = null
 
-    select (index) {
-      this.aciveMenuIndex = index
-      this.submit()
+      if (this.$route.name !== 'Search') {
+        this.queryText = ''
+      }
     },
 
     up () {
       if (this.results.length) {
-        if (this.aciveMenuIndex === null) {
-          this.aciveMenuIndex = this.results.length - 1
-        } else if (this.aciveMenuIndex > 0) {
-          this.aciveMenuIndex = this.aciveMenuIndex - 1
+        if (this.activeMenuIndex === null) {
+          this.activeMenuIndex = this.results.length - 1
+        } else if (this.activeMenuIndex > 0) {
+          this.activeMenuIndex = this.activeMenuIndex - 1
         } else {
-          this.aciveMenuIndex = null
+          this.activeMenuIndex = null
         }
       }
     },
 
     down () {
       if (this.results.length) {
-        if (this.aciveMenuIndex === null) {
-          this.aciveMenuIndex = 0
-        } else if (this.aciveMenuIndex < this.results.length - 1) {
-          this.aciveMenuIndex = this.aciveMenuIndex + 1
+        if (this.activeMenuIndex === null) {
+          this.activeMenuIndex = 0
+        } else if (this.activeMenuIndex < this.results.length - 1) {
+          this.activeMenuIndex = this.activeMenuIndex + 1
         } else {
-          this.aciveMenuIndex = null
+          this.activeMenuIndex = null
         }
       }
     }
