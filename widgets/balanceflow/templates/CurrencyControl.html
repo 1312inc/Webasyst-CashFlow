@@ -1,0 +1,8 @@
+UI: {$ui}
+<select name="{$name}" id="">
+    {foreach $currencies as $currency}
+        <option value="{$currency->getCode()}" {if $currency->getCode() === $current_currency}selected{/if}>
+            {$currency->getTitle()}
+        </option>
+    {/foreach}
+</select>
