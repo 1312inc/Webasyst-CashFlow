@@ -1,12 +1,9 @@
 <?php
 
-/**
- * Class cashApiSystemSearchContactsHandler
- */
-class cashApiSystemSearchContactsHandler implements cashApiHandlerInterface
+final class cashApiContactSearchHandler implements cashApiHandlerInterface
 {
     /**
-     * @param cashApiSystemSearchContactsRequest $request
+     * @param cashApiContactSearchRequest $request
      *
      * @return array
      * @throws waException

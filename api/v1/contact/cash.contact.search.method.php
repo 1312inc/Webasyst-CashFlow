@@ -5,12 +5,12 @@ use ApiPack1312\Exception\ApiException;
 use ApiPack1312\Exception\ApiMissingParamException;
 use ApiPack1312\Exception\ApiWrongParamException;
 
-final class cashSystemSearchContactsMethod extends cashApiNewAbstractMethod
+final class cashContactSearchMethod extends cashApiNewAbstractMethod
 {
     protected $method = self::METHOD_GET;
 
     /**
-     * @return cashApiSystemSearchContactsResponse
+     * @return cashApiContactSearchResponse
      *
      * @throws ApiException
      * @throws ApiMissingParamException
@@ -19,7 +19,7 @@ final class cashSystemSearchContactsMethod extends cashApiNewAbstractMethod
      */
     public function run(): cashApiResponseInterface
     {
-        $request = new cashApiSystemSearchContactsRequest(
+        $request = new cashApiContactSearchRequest(
             $this->fromGet('term', false, ApiParamsCaster::CAST_STRING_TRIM),
             $this->fromGet('category_id', false, ApiParamsCaster::CAST_INT),
             $this->fromGet('limit', false, ApiParamsCaster::CAST_INT)
@@ -29,6 +29,6 @@ final class cashSystemSearchContactsMethod extends cashApiNewAbstractMethod
             throw new ApiMissingParamException('term, category_id');
         }
 
-        return new cashApiSystemSearchContactsResponse((new cashApiSystemSearchContactsHandler())->handle($request));
+        return new cashApiContactSearchResponse((new cashApiContactSearchHandler())->handle($request));
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-final class cashApiSystemSearchContactDto
+final class cashApiContactSearchInfoDto
 {
     /**
      * @var int

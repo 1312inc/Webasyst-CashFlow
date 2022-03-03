@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashApiSystemSearchContactsResponse
- */
-class cashApiSystemSearchContactsResponse extends cashApiAbstractResponse
+final class cashApiContactSearchResponse extends cashApiAbstractResponse
 {
     /**
      * cashApiSystemSearchContactsResponse constructor.
@@ -16,7 +13,7 @@ class cashApiSystemSearchContactsResponse extends cashApiAbstractResponse
 
         $this->response = [];
         foreach ($data as $datum) {
-            $this->response[] = new cashApiSystemSearchContactDto(
+            $this->response[] = new cashApiContactSearchInfoDto(
                 $datum['id'],
                 $datum['value'],
                 $datum['name'],

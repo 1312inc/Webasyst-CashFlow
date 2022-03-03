@@ -709,10 +709,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /cash.system.searchContacts:
+  /cash.contact.search:
     get:
       tags:
-        - Разное
+        - Контакты
       security:
         - ApiKeyAuth: [ ]
       parameters:
@@ -736,17 +736,51 @@ paths:
             maximum: 30
       responses:
         200:
-          description: Пустой ответ в случае успеха
+          description: Список найденных
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/searchContactsResponse'
+                $ref: '#/components/schemas/contactSearchResponse'
         400:
           description: Ошибка
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /cash.contact.getList:
+    get:
+      tags:
+        - Контакты
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 30
+      responses:
+        200:
+          description: Список контактов с стат инфой, отсортированные по последней операцие
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/contactListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.system.getExternalEntity:
     get:
       tags:
@@ -805,10 +839,12 @@ components:
             properties:
               stat:
                 $ref: '#/components/schemas/StatInfo'
+
     getCategoriesListResponse:
       type: array
       items:
         $ref: '#/components/schemas/CategoryInfo'
+
     getTransactionsListResponse:
       type: object
       properties:
@@ -826,10 +862,36 @@ components:
           items:
             $ref: '#/components/schemas/TransactionInfo'
 
-    searchContactsResponse:
+    contactSearchResponse:
       type: array
       items:
         $ref: '#/components/schemas/SearchContactInfo'
+
+    contactListResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: number
+          name:
+            type: string
+          firstname:
+            type: string
+          lastname:
+            type: string
+          photo_url:
+            type: string
+          photo_url_absolute:
+            type: string
+          stat:
+            type: object
+            properties:
+              currency:
+                type: string
+                example: RUB
+              data:
+                $ref: '#/components/schemas/StatInfo'
 
     getExternalEntityResponse:
       type: array
