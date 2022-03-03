@@ -24,8 +24,8 @@ final class cashContactGetListMethod extends cashApiNewAbstractMethod
         }
 
         $request = new cashApiContactGetListRequest(
-            $this->fromGet('offset', false, ApiParamsCaster::CAST_INT),
-            $this->fromGet('limit', false, ApiParamsCaster::CAST_INT)
+            $this->fromGet('offset', false, ApiParamsCaster::CAST_INT) ?? 0,
+            $this->fromGet('limit', false, ApiParamsCaster::CAST_INT) ?? cashApiContactGetListRequest::MAX_LIMIT
         );
 
         return new cashApiContactGetListResponse((new cashApiContactGetListHandler())->handle($request));

@@ -2,7 +2,7 @@
 
 final class cashApiContactGetListRequest
 {
-    private const MAX_LIMIT = 30;
+    public const MAX_LIMIT = 30;
 
     /**
      * @var int
