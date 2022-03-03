@@ -1,6 +1,6 @@
 <?php
 
-final class cashApiSystemSearchContactsRequest
+final class cashApiContactSearchRequest
 {
     private const MAX_LIMIT = 30;
 
