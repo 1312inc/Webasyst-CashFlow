@@ -172,6 +172,7 @@
   "cashGapOut": "Going out of cash gap in {inDays} days ({date})",
   "inDays": "(in {days} days)",
   "fileUploaderLabel": "Drop here or browse",
+  "contacts": "Contacts",
   "noContact": "Search for existing contact or enter any new contact name",
   "linkContact": "Transaction will be linked with the selected contractor",
   "newContact": "New contact will be created",
