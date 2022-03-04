@@ -119,7 +119,7 @@ export default {
     },
 
     async searchContacts (searchString) {
-      const { data } = await api.get('cash.system.searchContacts', {
+      const { data } = await api.get('cash.system.search', {
         params: {
           term: searchString
         }

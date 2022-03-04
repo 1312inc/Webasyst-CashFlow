@@ -34,38 +34,45 @@
         />
       </SortableList>
 
-      <!-- Categories list block -->
-      <SidebarHeading
-        class="custom-mt-24"
-        updatingEntityName="Category"
-        type="income"
-      >
-        {{ $t("income") }}
-      </SidebarHeading>
-      <SortableList
-        :items="categoriesIncome"
-        sortingTarget="category"
-        :group="{name: 'categoriesIncome', pull: false}">
-        <SortableItemCategory
-          v-for="category in categoriesIncome"
-          :key="category.id"
-          :category="category"
-        />
-      </SortableList>
+      <Toggler>
+        <template v-slot:categories>
+          <!-- Categories list block -->
+          <SidebarHeading
+            class="custom-mt-24"
+            updatingEntityName="Category"
+            type="income"
+          >
+            {{ $t("income") }}
+          </SidebarHeading>
+          <SortableList
+            :items="categoriesIncome"
+            sortingTarget="category"
+            :group="{name: 'categoriesIncome', pull: false}">
+            <SortableItemCategory
+              v-for="category in categoriesIncome"
+              :key="category.id"
+              :category="category"
+            />
+          </SortableList>
 
-      <SidebarHeading updatingEntityName="Category" type="expense">
-        {{ $t("expense") }}
-      </SidebarHeading>
-      <SortableList
-        :items="categoriesExpense"
-        sortingTarget="category"
-        :group="{name: 'categoriesExpense', pull: false}">
-        <SortableItemCategory
-          v-for="category in categoriesExpense"
-          :key="category.id"
-          :category="category"
-        />
-      </SortableList>
+          <SidebarHeading updatingEntityName="Category" type="expense">
+            {{ $t("expense") }}
+          </SidebarHeading>
+          <SortableList
+            :items="categoriesExpense"
+            sortingTarget="category"
+            :group="{name: 'categoriesExpense', pull: false}">
+            <SortableItemCategory
+              v-for="category in categoriesExpense"
+              :key="category.id"
+              :category="category"
+            />
+          </SortableList>
+        </template>
+        <template v-slot:contacts>
+          <ContactsList />
+        </template>
+      </Toggler>
 
       <div v-if="$permissions.canAccessTransfers" class="custom-mt-24">
         <h6 class="heading"><span>{{ $t("other") }}</span></h6>
@@ -101,6 +108,8 @@ import SidebarHeading from './SidebarHeading'
 import SidebarFooter from './SidebarFooter'
 import SearchField from '@/components/Inputs/SearchField'
 import SidebarCurrencyWidgets from './SidebarCurrencyWidgets'
+import ContactsList from '@/components/ContactsList/ContactsList'
+import Toggler from '@/components/Toggler/Toggler'
 import Bricks from '@/components/Bricks/Bricks'
 
 export default {
@@ -112,7 +121,9 @@ export default {
     SidebarFooter,
     SearchField,
     SidebarCurrencyWidgets,
-    Bricks
+    Bricks,
+    ContactsList,
+    Toggler
   },
 
   data () {
