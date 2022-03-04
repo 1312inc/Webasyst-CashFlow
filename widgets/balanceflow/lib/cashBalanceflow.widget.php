@@ -36,6 +36,9 @@ class cashBalanceflowWidget extends waWidget
             'token' => $token,
             'info' => $this->getInfo(),
             'currency_code' => self::getSettingsCurrencyCode($this->id),
+            'locale' => wa()->getUser()->getLocale(),
+            'url_root_absolute' => wa()->getRootUrl(true),
+            'url_root' => wa()->getRootUrl(),
         ]);
     }
 
