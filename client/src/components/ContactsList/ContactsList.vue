@@ -8,7 +8,7 @@
           selected: $route.params.id === contact.id && $route.name === 'Contact'
         }"
       >
-        <router-link :to="{ name: 'Contact', params: { id: contact.id } }">
+        <router-link :to="`/contact/${contact.id}`">
           <span class="icon"
             ><img :src="contact.photo_url_absolute" alt="" class="userpic"
           /></span>
