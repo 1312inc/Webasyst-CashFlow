@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="custom-mt-32">
     <div v-if="$permissions.isAdmin" class="custom-px-16">
-      <div class="toggle">
+      <div class="toggle width-100">
         <span
           v-for="(tab, i) in tabs"
           :key="i"
@@ -21,7 +21,13 @@ export default {
   data () {
     return {
       tabs: ['categories', 'contacts'],
-      activeTab: 0
+      activeTab: +localStorage.getItem('cashTogglerActiveTab') || 0
+    }
+  },
+
+  watch: {
+    activeTab (val) {
+      localStorage.setItem('cashTogglerActiveTab', val)
     }
   }
 }
