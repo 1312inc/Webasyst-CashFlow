@@ -1,7 +1,5 @@
-<script src="{$url_root}wa-apps/cash/widgets/balanceflow/js/chartsD3Lib.umd.min.js"></script>
-
 <a href="{$url_root_absolute}webasyst/cash/currency/{$currency_code}">
-  <div class="block custom-p-16">
+  <div class="cash-widget-{$info['id']} block custom-p-16">
     <div class="flexbox middle custom-mb-4">
       <div
         class="wide black bold {if $info['size'] === '2x1'}large{/if} {if $info['size'] === '2x2'}larger{/if} nowrap cash-widget-balance"
@@ -24,25 +22,23 @@
 
 <script>
   {
-    const currencyCode = "{$currency_code}";
-    const d = new Date();
-    const startDate = d.setMonth(d.getMonth() - 1);
-    const endDate = d.setMonth(d.getMonth() + 3);
-    const widgetSize = "{$info['size']}";
-    const locale = "{$locale}".replace("_", "-");
+      if (typeof chartsD3Lib === 'undefined') {
+        const lib = document.createElement('script');
+        lib.src = '{$url_root}wa-apps/cash/widgets/balanceflow/js/chartsD3Lib.umd.min.js';
+        document.body.appendChild(lib);
+      }
 
-    fetch(
-      "{$url_root}api.php/cash.aggregate.getBalanceFlow?access_token={$token}&from=" +
-        new Date(startDate).toISOString().slice(0, 10) +
-        "&to=" +
-        new Date(endDate).toISOString().slice(0, 10) +
-        "&group_by=day"
-    )
-      .then((response) => response.json())
-      .then((result) => {
+      const currencyCode = "{$currency_code}";
+      const d = new Date();
+      const startDate = d.setMonth(d.getMonth() - 1);
+      const endDate = d.setMonth(d.getMonth() + 3);
+      const widgetSize = "{$info['size']}";
+      const locale = "{$locale}".replace("_", "-");
+
+      const handleResult = (result) => {
         const chartData = result.find((d) => d.currency === currencyCode);
         if (chartData) {
-          document.querySelector(".cash-widget-balance").innerHTML =
+          document.querySelector(".cash-widget-{$info['id']} .cash-widget-balance").innerHTML =
             new Intl.NumberFormat(locale).format(
               chartData.balances.now.amount
             ) +
@@ -50,7 +46,7 @@
             currencyCode;
 
           if (widgetSize === "2x2") {
-            const $average = document.querySelector(".cash-widget-average");
+            const $average = document.querySelector(".cash-widget-{$info['id']} .cash-widget-average");
             const averageAmount = (
               (chartData.balances.to.amount - chartData.balances.now.amount) /
               3
@@ -68,13 +64,38 @@
           }
 
           const chart = new chartsD3Lib.CurrencyChartD3(
-            document.querySelector(".cash-widget-chart"),
+            document.querySelector(".cash-widget-{$info['id']} .cash-widget-chart"),
             widgetSize === "1x1" ? 106 : 268,
             widgetSize === "2x2" ? 100 : 80,
             new Date(startDate),
             new Date(endDate)
           ).renderChart(chartData.data);
         }
+      };
+
+      if (!window.chartDataFetchInProccess) {
+        window.chartDataFetchInProccess = true;
+        fetch(
+          "{$url_root}api.php/cash.aggregate.getBalanceFlow?access_token={$token}&from=" +
+          new Date(startDate).toISOString().slice(0, 10) +
+          "&to=" +
+          new Date(endDate).toISOString().slice(0, 10) +
+          "&group_by=day"
+        )
+          .then((response) => response.json())
+          .then((result) => {
+            window.chartDataFetchInProccess = false;
+            window.dispatchEvent(new CustomEvent('chartDataFetchFinished', {
+              detail: {
+                result: result
+              }
+            }));
+          });
+      }
+
+      window.addEventListener('chartDataFetchFinished', (e) => {
+        handleResult(e.detail.result);
       });
-  }
+
+    }
 </script>
