@@ -206,5 +206,7 @@
   "trashInfo": "Deleted transactions are not counted in any cash flow and balance reports and are visible to the app admins only. Select one or more transactions to purge or restore.",
   "restore": "Restore",
   "restoreInfo": "Editing is disabled for deleted transactions. Select this transaction and restore it first.",
-  "purge": "Purge"
+  "purge": "Purge",
+  "selfDestructLabel": "Delete the transaction when due",
+  "selfDestructText": "Useful when transactions are imported in bulk from banks and spreadsheets, and this transaction should be treated as planned and to be replaced with the imported one."
 }
