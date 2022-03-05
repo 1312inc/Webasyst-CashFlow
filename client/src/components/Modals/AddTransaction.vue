@@ -58,25 +58,48 @@
             }}
           </div>
 
-          <label @click.prevent="model.is_onbadge = !model.is_onbadge">
-            <span class="wa-checkbox">
-              <input type="checkbox" :checked="model.is_onbadge" />
-              <span>
-                <span class="icon">
-                  <i class="fas fa-check"></i>
+          <div>
+            <label @click.prevent="model.is_onbadge = !model.is_onbadge">
+              <span class="wa-checkbox">
+                <input type="checkbox" :checked="model.is_onbadge" />
+                <span>
+                  <span class="icon">
+                    <i class="fas fa-check"></i>
+                  </span>
                 </span>
               </span>
-            </span>
-            {{ $t("notifyMe") }}
-          </label>
+              {{ $t("notifyMe") }}
+            </label>
 
-          <div v-if="model.is_onbadge" class="custom-mt-8">
-            <div class="hint">
-              {{ $t("notifyMeAlert") }}&nbsp;<span class="badge smaller"
-                >1</span
-              >
+            <div v-if="model.is_onbadge" class="custom-mt-8">
+              <div class="hint">
+                {{ $t("notifyMeAlert") }}&nbsp;<span class="badge smaller"
+                  >1</span
+                >
+              </div>
             </div>
           </div>
+
+          <div v-if="(new Date(model.date)).getTime() > new Date().getTime()" class="custom-mt-16">
+            <label @click.prevent="model.is_self_destruct_when_due = !model.is_self_destruct_when_due">
+              <span class="wa-checkbox">
+                <input type="checkbox" :checked="model.is_self_destruct_when_due" />
+                <span>
+                  <span class="icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                </span>
+              </span>
+              {{ $t("selfDestructLabel") }}
+            </label>
+
+            <div class="custom-mt-8">
+              <div class="hint">
+                {{ $t("selfDestructText") }}
+              </div>
+            </div>
+          </div>
+
         </div>
         <div class="wide custom-mt-24-mobile">
           <!-- Start Currency Input section -->
@@ -515,7 +538,8 @@ export default {
         repeating_end_ondate: null,
         transfer_account_id: null,
         transfer_incoming_amount: null,
-        apply_to_all_in_future: false
+        apply_to_all_in_future: false,
+        is_self_destruct_when_due: false
       },
       custom_interval: 'month',
       controlsDisabled: false,
@@ -644,6 +668,11 @@ export default {
     },
     'model.transfer_account_id' () {
       this.model.transfer_incoming_amount = null
+    },
+    'model.date' (val) {
+      if ((new Date(val)).getTime() <= new Date().getTime()) {
+        this.model.is_self_destruct_when_due = false
+      }
     }
   },
 
