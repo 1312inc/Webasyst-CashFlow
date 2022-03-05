@@ -3,8 +3,9 @@
   "private": true,
   "scripts": {
     "lint": "vue-cli-service lint",
-    "build-desktop": "vue-cli-service build src/desktop.js --dest dist/desktop --mode desktop.production && npm run copycss && npm run copyjs",
+    "build-desktop": "vue-cli-service build src/desktop.js --dest dist/desktop --mode desktop.production && npm run copycss && npm run copyjs && npm run build-widgets",
     "build-mobile": "vue-cli-service build src/mobile.js --dest dist/mobile --mode mobile.production",
+    "build-widgets": "vue-cli-service build --target lib --formats umd-min --dest ../widgets/balanceflow/js  --name chartsD3Lib src/utils/currencyChartD3.js",
     "build-storybook": "build-storybook",
     "copycss": "copyfiles dist/desktop/css/app.css ../css --flat",
     "copyjs": "copyfiles dist/desktop/js/app.js ../js --flat",

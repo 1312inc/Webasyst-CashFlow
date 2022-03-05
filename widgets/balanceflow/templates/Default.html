@@ -1,13 +1,80 @@
-<div class="block">
-    UI: {$ui}
-    <br>
-    token: {$token}
-    <br>
-    widget info: {$info|print_r}
-    <br>
-    current currency: {$currency_code}
-    <br>
-    root: {$url_root} | {$url_root_absolute} | {$url_root}api.php | {$url_root}wa-apps/cash/
-    <br>
-    locale: {$locale}
-</div>
+<script src="{$url_root}wa-apps/cash/widgets/balanceflow/js/chartsD3Lib.umd.min.js"></script>
+
+<a href="{$url_root_absolute}webasyst/cash/currency/{$currency_code}">
+  <div class="block custom-p-16">
+    <div class="flexbox middle custom-mb-4">
+      <div
+        class="wide black bold {if $info['size'] === '2x1'}large{/if} {if $info['size'] === '2x2'}larger{/if} nowrap cash-widget-balance"
+      ></div>
+      <div class="custom-ml-4">
+        <!-- <span title="Cash gap is expected on March 5" class="badge small squared nowrap">
+        <i class="fas custom-mr-4 fa-exclamation-triangle" style="color: white;"></i> March 5
+      </span> -->
+      </div>
+    </div>
+
+    <svg
+      class="cash-widget-chart"
+      style="width:{if $info['size'] === '1x1'}106{else}268{/if}px;height:{if $info['size'] === '2x2'}100{else}80{/if}px;"
+    ></svg>
+
+    <div class="cash-widget-average custom-mt-4"></div>
+  </div>
+</a>
+
+<script>
+  {
+    const currencyCode = "{$currency_code}";
+    const d = new Date();
+    const startDate = d.setMonth(d.getMonth() - 1);
+    const endDate = d.setMonth(d.getMonth() + 3);
+    const widgetSize = "{$info['size']}";
+    const locale = "{$locale}".replace("_", "-");
+
+    fetch(
+      "{$url_root}api.php/cash.aggregate.getBalanceFlow?access_token={$token}&from=" +
+        new Date(startDate).toISOString().slice(0, 10) +
+        "&to=" +
+        new Date(endDate).toISOString().slice(0, 10) +
+        "&group_by=day"
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        const chartData = result.find((d) => d.currency === currencyCode);
+        if (chartData) {
+          document.querySelector(".cash-widget-balance").innerHTML =
+            new Intl.NumberFormat(locale).format(
+              chartData.balances.now.amount
+            ) +
+            " " +
+            currencyCode;
+
+          if (widgetSize === "2x2") {
+            const $average = document.querySelector(".cash-widget-average");
+            const averageAmount = (
+              (chartData.balances.to.amount - chartData.balances.now.amount) /
+              3
+            ).toFixed(2);
+            $average.classList.add(
+              averageAmount >= 0 ? "text-green" : "text-red"
+            );
+            $average.innerHTML =
+              '<i class="fas fa-tachometer-alt"></i>' +
+              " " +
+              new Intl.NumberFormat(locale).format(averageAmount) +
+              " " +
+              currencyCode +
+              "/m";
+          }
+
+          const chart = new chartsD3Lib.CurrencyChartD3(
+            document.querySelector(".cash-widget-chart"),
+            widgetSize === "1x1" ? 106 : 268,
+            widgetSize === "2x2" ? 100 : 80,
+            new Date(startDate),
+            new Date(endDate)
+          ).renderChart(chartData.data);
+        }
+      });
+  }
+</script>
