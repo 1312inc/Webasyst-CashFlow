@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashShopOrderActionListener
- */
-class cashShopOrderActionListener extends waEventHandler
+final class cashShopOrderActionListener extends waEventHandler
 {
     /**
      * @param $params

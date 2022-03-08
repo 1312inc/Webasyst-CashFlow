@@ -1,13 +1,8 @@
 <?php
 
-/**
- * Class cashShopAccountArchiveListener
- */
-class cashShopAccountArchiveListener
+final class cashShopAccountArchiveListener
 {
     /**
-     * @param cashEvent $event
-     *
      * @throws kmwaRuntimeException
      * @throws waException
      */

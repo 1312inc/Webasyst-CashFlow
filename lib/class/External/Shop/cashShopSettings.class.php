@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashShopSettings
- */
-class cashShopSettings implements JsonSerializable
+final class cashShopSettings implements JsonSerializable
 {
     use cashDtoJsonSerializableTrait;
 

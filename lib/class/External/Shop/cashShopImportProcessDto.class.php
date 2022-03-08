@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashShopImportProcessDto
- */
-class cashShopImportProcessDto implements JsonSerializable
+final class cashShopImportProcessDto implements JsonSerializable
 {
     public $totalOrders = 0;
 
@@ -62,6 +59,6 @@ class cashShopImportProcessDto implements JsonSerializable
      */
     public function __toString()
     {
-        return (string)json_encode($this, JSON_UNESCAPED_UNICODE);
+        return (string) json_encode($this, JSON_UNESCAPED_UNICODE);
     }
 }
