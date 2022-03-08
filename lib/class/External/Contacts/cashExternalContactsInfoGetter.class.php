@@ -1,6 +1,6 @@
 <?php
 
-class cashExternalContactsInfoGetter implements cashExternalSourceInfoGetterInterface
+final class cashExternalContactsInfoGetter implements cashExternalSourceInfoGetterInterface
 {
     private const APP = 'contacts';
 

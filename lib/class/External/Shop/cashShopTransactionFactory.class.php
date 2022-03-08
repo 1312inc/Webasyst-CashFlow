@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashShopTransactionFactory
- */
-class cashShopTransactionFactory
+final class cashShopTransactionFactory
 {
     const
         INCOME = 'income',
