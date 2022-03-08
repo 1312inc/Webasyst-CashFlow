@@ -19,6 +19,7 @@ SELECT ct.contractor_contact_id contact_id
 FROM cash_transaction ct
 JOIN wa_contact wc ON ct.contractor_contact_id = wc.id
 WHERE ct.contractor_contact_id IS NOT NULL
+GROUP BY ct.contractor_contact_id
 ORDER BY wc.create_datetime DESC
 LIMIT i:offset, i:limit
 SQL;
