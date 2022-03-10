@@ -24,3 +24,6 @@ msgstr ""
 
 msgid "Currency"
 msgstr ""
+
+msgid "m"
+msgstr "mo"

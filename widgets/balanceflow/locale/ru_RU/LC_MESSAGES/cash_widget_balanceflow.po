@@ -24,3 +24,6 @@ msgstr "Приближается кассовый разрыв"
 
 msgid "Currency"
 msgstr "Валюта"
+
+msgid "m"
+msgstr "мес."
