@@ -244,7 +244,7 @@ paths:
         - in: query
           name: filter
           required: false
-          description: category/5, account/3, currency/USD, null, search/DESCRIPTION, import/1
+          description: category/1, account/1, currency/USD, null, search/DESCRIPTION, import/1, contractor/1, import/1, external/shop.1, trash/0
           schema:
             type: string
         - in: query
@@ -658,6 +658,7 @@ paths:
         - in: query
           name: filter
           required: true
+          description: category/1, account/1, currency/USD, null, search/DESCRIPTION, import/1, contractor/1, import/1, external/shop.1, trash/0
           schema:
             type: string
             minLength: 1
