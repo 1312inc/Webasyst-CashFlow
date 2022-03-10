@@ -17,7 +17,7 @@ final class cashQueryGetContractors
         $sql = <<<SQL
 SELECT ct.contractor_contact_id contact_id
 FROM cash_transaction ct
-JOIN wa_contact wc ON ct.contractor_contact_id = wc.id
+    JOIN wa_contact wc ON ct.contractor_contact_id = wc.id
 WHERE ct.contractor_contact_id IS NOT NULL
 GROUP BY ct.contractor_contact_id
 ORDER BY wc.create_datetime DESC
@@ -59,6 +59,28 @@ SQL;
         return $result;
     }
 
+    public function getTotalContractors(waContact $contact): int
+    {
+        $accountTransactionRights = cash()->getContactRights()->getSqlForFilterTransactionsByAccount($contact);
+//        $accountRights = cash()->getContactRights()->getSqlForAccountJoinWithFullAccess($contact);
+
+        $sql = <<<SQL
+SELECT COUNT(DISTINCT ct.contractor_contact_id)
+FROM cash_transaction ct
+         JOIN cash_account ca ON ct.account_id = ca.id
+         JOIN wa_contact wc ON ct.contractor_contact_id = wc.id
+WHERE ca.is_archived = 0
+  AND ct.is_archived = 0
+  AND ct.category_id != i:transfer_id
+  AND ct.contractor_contact_id IS NOT NULL
+  AND {$accountTransactionRights}
+SQL;
+
+        return (int) $this->model
+            ->query($sql, ['transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID])
+            ->fetchField();
+    }
+
     private function getStatDataForContractors(waContact $contact, array $contractorIds = []): array
     {
         $contractorFilterSql = '';
@@ -80,6 +102,7 @@ FROM cash_transaction ct
          JOIN wa_contact wc ON ct.contractor_contact_id = wc.id
 WHERE ca.is_archived = 0
   AND ct.is_archived = 0
+  AND ct.category_id != i:transfer_id
   AND ct.contractor_contact_id IS NOT NULL
   AND {$accountTransactionRights}
   {$contractorFilterSql}
@@ -87,7 +110,7 @@ GROUP BY ct.contractor_contact_id, ca.currency
 SQL;
 
         return $this->model
-            ->query($sql, ['contractor_ids' => $contractorIds, 'transfer_type' => cashCategory::TYPE_TRANSFER])
+            ->query($sql, ['contractor_ids' => $contractorIds, 'transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID])
             ->fetchAll('contractor_id', 2);
     }
 }
