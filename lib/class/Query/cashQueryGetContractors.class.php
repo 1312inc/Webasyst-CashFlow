@@ -15,31 +15,35 @@ final class cashQueryGetContractors
     public function getContractors(int $offset, int $limit, waContact $contact): array
     {
         $sql = <<<SQL
-SELECT ct.contractor_contact_id contact_id
+SELECT ct.contractor_contact_id contact_id,
+       MAX(ct.date)             last_transaction_date
 FROM cash_transaction ct
-    JOIN wa_contact wc ON ct.contractor_contact_id = wc.id
-WHERE ct.contractor_contact_id IS NOT NULL
+        JOIN cash_account ca ON ct.account_id = ca.id
+        JOIN wa_contact wc ON ct.contractor_contact_id = wc.id
+WHERE ca.is_archived = 0
+    AND ct.is_archived = 0
+    AND ct.contractor_contact_id IS NOT NULL
+    AND ct.category_id != -1312
 GROUP BY ct.contractor_contact_id
-ORDER BY wc.create_datetime DESC
+ORDER BY last_transaction_date DESC, ct.contractor_contact_id
 LIMIT i:offset, i:limit
 SQL;
 
-        $contacts = array_column(
-            $this->model
-                ->query($sql, ['limit' => $limit, 'offset' => $offset])
-                ->fetchAll(),
-            'contact_id'
-        );
+        $contacts = $this->model
+            ->query($sql, ['limit' => $limit, 'offset' => $offset])
+            ->fetchAll();
+        $contactIds = array_column($contacts, 'contact_id');
         $result = [];
-        $stat = $this->getStatDataForContractors($contact, $contacts);
-        foreach ($contacts as $contactId) {
+        $stat = $this->getStatDataForContractors($contact, $contactIds);
+        foreach ($contacts as $contactData) {
             $r = [
-                'contact_id' => $contactId,
+                'contact_id' => (int) $contactData['contact_id'],
+                'last_transaction_date' => $contactData['last_transaction_date'],
                 'stat' => [],
             ];
 
-            if (isset($stat[$contactId])) {
-                $r['stat'] = array_reduce($stat[$contactId], static function ($carry, array $statData) {
+            if (isset($stat[$contactData['contact_id']])) {
+                $r['stat'] = array_reduce($stat[$contactData['contact_id']], static function ($carry, array $statData) {
                     $carry[] = [
                         'currency' => $statData['currency'],
                         'stat' => [
@@ -110,7 +114,10 @@ GROUP BY ct.contractor_contact_id, ca.currency
 SQL;
 
         return $this->model
-            ->query($sql, ['contractor_ids' => $contractorIds, 'transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID])
+            ->query(
+                $sql,
+                ['contractor_ids' => $contractorIds, 'transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID]
+            )
             ->fetchAll('contractor_id', 2);
     }
 }

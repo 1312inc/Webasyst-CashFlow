@@ -24,6 +24,7 @@ final class cashApiContactGetListHandler implements cashApiHandlerInterface
             $photo = waContact::getPhotoUrl($contact->getId(), $contact->get('photo'), 96);
             $dto = new cashApiContactGetListDto(
                 $contact->getId(),
+                $datum['last_transaction_date'],
                 $contact->getName(),
                 $contact->get('firstname'),
                 $contact->get('lastname'),

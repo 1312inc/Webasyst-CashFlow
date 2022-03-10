@@ -889,6 +889,10 @@ components:
                 type: number
               name:
                 type: string
+              last_transaction_date:
+                type: string
+                format: date
+                example: "2022-03-22"
               firstname:
                 type: string
               lastname:
