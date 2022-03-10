@@ -41,8 +41,8 @@
     </div>
 
     <div class="dialog-content">
-      <div class="flexbox space-24 wrap-mobile">
-        <div style="flex: 0;">
+      <div class="flexbox space-24 wrap-mobile reverse-mobile">
+        <div class="custom-mt-24-mobile" style="flex: 0;">
           <div class="custom-mb-16 c-inline-calendar">
             <DateField
               v-model="model.date"
@@ -53,9 +53,11 @@
           </div>
 
           <div class="custom-mb-16">
-            {{
-              $t("transactionDate", { date: $moment(model.date).format("LL") })
-            }}
+            <i18n path="transactionDate">
+              <template v-slot:date>
+                <strong>{{ $moment(model.date).format("LL") }}</strong>
+              </template>
+            </i18n>
           </div>
 
           <div>
@@ -68,16 +70,11 @@
                   </span>
                 </span>
               </span>
-              {{ $t("notifyMe") }}
+              {{ $t("notifyMe") }} <span v-if="model.is_onbadge"><span class="badge smaller">1</span>&nbsp;</span>
+              <span v-wa-tippy="$t('notifyMeAlert')">
+                <i class="fas fa-info-circle"></i>
+              </span>
             </label>
-
-            <div v-if="model.is_onbadge" class="custom-mt-8">
-              <div class="hint">
-                {{ $t("notifyMeAlert") }}&nbsp;<span class="badge smaller"
-                  >1</span
-                >
-              </div>
-            </div>
           </div>
 
           <div v-if="(new Date(model.date)).getTime() > new Date().getTime()" class="custom-mt-16">
@@ -91,17 +88,14 @@
                 </span>
               </span>
               {{ $t("selfDestructLabel") }}
+              <span v-wa-tippy="$t('selfDestructText')">
+                <i class="fas fa-info-circle"></i>
+              </span>
             </label>
-
-            <div class="custom-mt-8">
-              <div class="hint">
-                {{ $t("selfDestructText") }}
-              </div>
-            </div>
           </div>
 
         </div>
-        <div class="wide custom-mt-24-mobile">
+        <div class="wide">
           <!-- Start Currency Input section -->
           <div class="custom-mb-16">
             <input-currency

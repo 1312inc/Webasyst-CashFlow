@@ -33,6 +33,12 @@ html[data-theme='dark'] {
   margin-right: 0;
 }
 
+@media screen and (max-width: 760px) {
+  .flexbox.reverse-mobile {
+    flex-direction: column-reverse;
+  }
+}
+
 .content {
   min-width: 1px;
 }
