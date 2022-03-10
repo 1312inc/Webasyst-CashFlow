@@ -79,7 +79,7 @@ function makeBallanceFlowWidget (options) {
         $containerAlert.style.display = 'block';
         $containerAlert.innerHTML = `
             <span title="${alert.amount >= 0 ? options.alertMessage.arrowUp : options.alertMessage.arrowDown}" class="badge small squared nowrap ${alert.amount >= 0 ? 'green' : 'red'}">
-              <i class="fas custom-mr-4 ${alert.amount >= 0 ? 'fa-arrow-circle-up' : 'fa-exclamation-triangle'}" style="color: white;"></i> ${(new Date(alert.period)).toLocaleDateString(options.locale)}
+              <i class="fas custom-mr-4 ${alert.amount >= 0 ? 'fa-arrow-circle-up' : 'fa-exclamation-triangle'}" style="color: white;"></i> ${(new Date(alert.period)).toLocaleDateString(options.locale, { month: 'long', day: 'numeric' })}
             </span>
             `;
     }
