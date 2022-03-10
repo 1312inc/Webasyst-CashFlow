@@ -10,6 +10,11 @@ final class cashApiContactGetListDto
     /**
      * @var string
      */
+    private $lastTransactionDate;
+
+    /**
+     * @var string
+     */
     private $name;
 
     /**
@@ -25,12 +30,12 @@ final class cashApiContactGetListDto
     /**
      * @var string
      */
-    private $photo_url;
+    private $photoUrl;
 
     /**
      * @var string
      */
-    private $photo_url_absolute;
+    private $photoUrlAbsolute;
 
     /**
      * @var array
@@ -39,25 +44,24 @@ final class cashApiContactGetListDto
 
     public function __construct(
         int $id,
+        string $lastTransactionDate,
         string $name,
         string $firstname,
         string $lastname,
-        string $photo_url,
-        string $photo_url_absolute,
+        string $photoUrl,
+        string $photoUrlAbsolute,
         array $stat
     ) {
         $this->id = $id;
         $this->name = $name;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
-        $this->photo_url = $photo_url;
-        $this->photo_url_absolute = $photo_url_absolute;
+        $this->photoUrl = $photoUrl;
+        $this->photoUrlAbsolute = $photoUrlAbsolute;
         $this->stat = $stat;
+        $this->lastTransactionDate = $lastTransactionDate;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
@@ -80,16 +84,21 @@ final class cashApiContactGetListDto
 
     public function getPhotoUrl(): string
     {
-        return $this->photo_url;
+        return $this->photoUrl;
     }
 
     public function getPhotoUrlAbsolute(): string
     {
-        return $this->photo_url_absolute;
+        return $this->photoUrlAbsolute;
     }
 
     public function getStat(): array
     {
         return $this->stat;
+    }
+
+    public function getLastTransactionDate(): string
+    {
+        return $this->lastTransactionDate;
     }
 }
