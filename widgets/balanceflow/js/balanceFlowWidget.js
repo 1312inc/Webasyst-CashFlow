@@ -11,9 +11,10 @@ import './chartsD3Lib.umd.min.js';
  * @param {string} options.currencySign
  * @param {string} options.size
  * @param {string} options.locale
- * @param {Object[]} options.alertMessage
- * @param {string} options.alertMessage.arrowUp
- * @param {string} options.alertMessage.arrowDown
+ * @param {Object[]} options.localeMessages
+ * @param {string} options.localeMessages.arrowUp
+ * @param {string} options.localeMessages.arrowDown
+ * @param {string} options.localeMessages.month
  * @returns
  */
 function makeBallanceFlowWidget (options) {
@@ -39,7 +40,9 @@ function makeBallanceFlowWidget (options) {
         $containerBalance.classList.add('text-red');
     }
     $containerBalance.innerHTML =
-        new Intl.NumberFormat(options.locale).format(
+        new Intl.NumberFormat(options.locale, {
+            minimumFractionDigits: chartData.balances.now.amount % 1 === 0 ? 0 : 2
+        }).format(
             chartData.balances.now.amount
         ) +
         " " +
@@ -61,7 +64,8 @@ function makeBallanceFlowWidget (options) {
         new Intl.NumberFormat(options.locale).format(averageAmount) +
         " " +
         options.currencySign +
-        "/mo";
+        "/" +
+        options.localeMessages.month;
 
     // Make alert element
     const now = chartData.balances.now.date;
@@ -78,7 +82,7 @@ function makeBallanceFlowWidget (options) {
         const $containerAlert = options.size === '1x1' ? options.container.querySelector('.cash-widget-average') : options.container.querySelector('.cash-widget-alert');
         $containerAlert.style.display = 'block';
         $containerAlert.innerHTML = `
-            <span title="${alert.amount >= 0 ? options.alertMessage.arrowUp : options.alertMessage.arrowDown}" class="badge small squared nowrap ${alert.amount >= 0 ? 'green' : 'red'}">
+            <span title="${alert.amount >= 0 ? options.localeMessages.arrowUp : options.localeMessages.arrowDown}" class="badge small squared nowrap ${alert.amount >= 0 ? 'green' : 'red'}">
               <i class="fas custom-mr-4 ${alert.amount >= 0 ? 'fa-arrow-circle-up' : 'fa-exclamation-triangle'}" style="color: white;"></i> ${(new Date(alert.period)).toLocaleDateString(options.locale, { month: 'long', day: 'numeric' })}
             </span>
             `;
