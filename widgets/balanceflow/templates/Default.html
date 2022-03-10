@@ -20,7 +20,7 @@
 
   if (!window.balanceflowWidgetDataFetchInProccess) {
     window.balanceflowWidgetDataFetchInProccess = true;
-    
+
     import('{$url_root}wa-apps/cash/widgets/balanceflow/js/balanceFlowWidget.js')
     .then((module) => {
 
@@ -41,9 +41,9 @@
             }
           }));
         });
-      
+
     });
-    
+
   }
 
   const handler = function (e) {
@@ -59,8 +59,8 @@
       size: "{$info['size']}",
       locale: "{$locale}".replace("_", "-"),
       alertMessage: {
-        arrowUp: '[`arrowUp`]',
-        arrowDown: '[`arrowDown`]'
+        arrowUp: '[`Going positive!`]',
+        arrowDown: '[`Cash gap is coming`]'
       }
     })
   }
@@ -68,4 +68,3 @@
   window.addEventListener('balanceflowWidgetDataFetchFinished', handler);
 }
 </script>
-
