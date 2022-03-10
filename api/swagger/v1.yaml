@@ -869,30 +869,42 @@ components:
         $ref: '#/components/schemas/SearchContactInfo'
 
     contactListResponse:
-      type: array
-      items:
-        type: object
-        properties:
-          id:
-            type: number
-          name:
-            type: string
-          firstname:
-            type: string
-          lastname:
-            type: string
-          photo_url:
-            type: string
-          photo_url_absolute:
-            type: string
-          stat:
+      type: object
+      properties:
+        offset:
+          type: integer
+          minimum: 0
+        limit:
+          type: integer
+          maximum: 30
+        total:
+          type: integer
+          minimum: 0
+        data:
+          type: array
+          items:
             type: object
             properties:
-              currency:
+              id:
+                type: number
+              name:
                 type: string
-                example: RUB
-              data:
-                $ref: '#/components/schemas/StatInfo'
+              firstname:
+                type: string
+              lastname:
+                type: string
+              photo_url:
+                type: string
+              photo_url_absolute:
+                type: string
+              stat:
+                type: object
+                properties:
+                  currency:
+                    type: string
+                    example: RUB
+                  data:
+                    $ref: '#/components/schemas/StatInfo'
 
     getExternalEntityResponse:
       type: array

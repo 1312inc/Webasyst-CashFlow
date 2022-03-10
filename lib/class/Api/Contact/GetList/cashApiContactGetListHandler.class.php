@@ -5,16 +5,18 @@ final class cashApiContactGetListHandler implements cashApiHandlerInterface
     /**
      * @param cashApiContactGetListRequest $request
      *
-     * @return array<cashApiContactSearchInfoDto>
+     * @return array<int, array<cashApiContactSearchInfoDto>>
      * @throws waException
      */
     public function handle($request)
     {
-        $data = (new cashQueryGetContractors())->getContractors(
+        $query = new cashQueryGetContractors();
+        $data = $query->getContractors(
             $request->getOffset(),
             $request->getLimit(),
             wa()->getUser()
         );
+        $total = $query->getTotalContractors(wa()->getUser());
 
         $response = [];
         foreach ($data as $datum) {
@@ -38,6 +40,6 @@ final class cashApiContactGetListHandler implements cashApiHandlerInterface
             $response[] = $dto;
         }
 
-        return $response;
+        return [$total, $response];
     }
 }

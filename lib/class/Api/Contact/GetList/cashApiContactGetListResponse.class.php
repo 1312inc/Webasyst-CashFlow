@@ -5,13 +5,18 @@ final class cashApiContactGetListResponse extends cashApiAbstractResponse
     /**
      * @param array<cashApiContactGetListDto> $data
      */
-    public function __construct($data)
+    public function __construct(int $total, array $data, int $offset, int $limit)
     {
         parent::__construct(200);
 
-        $this->response = [];
+        $this->response = [
+            'offset' => $offset,
+            'limit' => $limit,
+            'total' => $total,
+            'data' => [],
+        ];
         foreach ($data as $datum) {
-            $this->response[] = [
+            $this->response['data'][] = [
                 'id' => $datum->getId(),
                 'name' => $datum->getName(),
                 'firstname' => $datum->getFirstname(),
