@@ -1,14 +1,14 @@
 <a href="{$url_root_absolute}webasyst/cash/currency/{$currency_code}">
   <div class="cash-widget-{$info['id']} block custom-p-16">
     <div class="flexbox middle custom-mb-4">
-      <div class="wide black bold nowrap cash-widget-balance cash-widget-balance-{$info['id']}"></div>
+      <div class="wide black bold {if $info['size'] != '1x1'}large {/if}nowrap cash-widget-balance cash-widget-balance-{$info['id']}"></div>
       <div class="cash-widget-alert custom-ml-4" style="display: none;"></div>
     </div>
     <svg
       class="cash-widget-chart"
       style="width:{if $info['size'] === '1x1'}106{else}268{/if}px;height: 70px;"
     ></svg>
-    <div class="cash-widget-average custom-mt-4"></div>
+    <div class="cash-widget-average small align-center custom-mt-8"></div>
   </div>
 </a>
 

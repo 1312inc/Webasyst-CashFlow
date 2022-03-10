@@ -14,7 +14,7 @@ import './chartsD3Lib.umd.min.js';
  * @param {Object[]} options.alertMessage
  * @param {string} options.alertMessage.arrowUp
  * @param {string} options.alertMessage.arrowDown
- * @returns 
+ * @returns
  */
 function makeBallanceFlowWidget (options) {
 
@@ -57,10 +57,11 @@ function makeBallanceFlowWidget (options) {
     $average.innerHTML =
         '<i class="fas fa-tachometer-alt"></i>' +
         " " +
+        ( averageAmount > 0 ? '+' : '' ) +
         new Intl.NumberFormat(options.locale).format(averageAmount) +
         " " +
         options.currencySign +
-        "/m";
+        "/mo";
 
     // Make alert element
     const now = chartData.balances.now.date;
