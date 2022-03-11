@@ -72,7 +72,7 @@
               </span>
               {{ $t("notifyMe") }} <span v-if="model.is_onbadge"><span class="badge smaller">1</span>&nbsp;</span>
               <span v-wa-tippy="$t('notifyMeAlert')">
-                <i class="fas fa-info-circle"></i>
+                <i class="fas fa-info-circle opacity-40"></i>
               </span>
             </label>
           </div>
@@ -89,7 +89,7 @@
               </span>
               {{ $t("selfDestructLabel") }}
               <span v-wa-tippy="$t('selfDestructText')">
-                <i class="fas fa-info-circle"></i>
+                <i class="fas fa-info-circle opacity-40"></i>
               </span>
             </label>
           </div>
