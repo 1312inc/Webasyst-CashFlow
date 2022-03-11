@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul v-if="list.length" class="menu" style="margin-bottom: 0;">
+    <ul v-if="list.length" class="menu">
       <li
         v-for="contact in list"
         :key="contact.id"
@@ -37,7 +37,7 @@
       </template>
     </ul>
     <div v-if="list.length < total" class="custom-mx-16">
-      <a @click.prevent="offset += limit" href="#" class="smaller">{{
+      <a @click.prevent="offset += limit" href="#" class="button light-gray rounded smaller">{{
         $t("showMore")
       }}</a>
     </div>
