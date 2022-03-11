@@ -156,7 +156,7 @@
   "expenseCategoryExplained": "Expense transactions decrease the account balance.",
   "profitCategoryExplained": "For business, profit is similar to expense because its taking money out of business and thus decreasing the account balance. The Profit checkbox allows you to visually group this kind of expenses into separate blue columns.",
   "notifyMe": "Remind to process when due",
-  "notifyMeAlert": "When the transaction date comes, a tiny little notification on the app icon will emerge and remind you to process (confirm) this transaction",
+  "notifyMeAlert": "When the transaction date comes, a tiny little notification on the app icon will emerge and remind you to process (confirm) this transaction.",
   "error": {
     "http": "Request failed",
     "api": "API error",
@@ -208,6 +208,6 @@
   "restore": "Restore",
   "restoreInfo": "Editing is disabled for deleted transactions. Select this transaction and restore it first.",
   "purge": "Purge",
-  "selfDestructLabel": "Delete the transaction when due",
-  "selfDestructText": "Useful when transactions are imported in bulk from banks and spreadsheets, and this transaction should be treated as planned and to be replaced with the imported one."
+  "selfDestructLabel": "Automatically delete this transaction when its planned date comes",
+  "selfDestructText": "Useful when real transactions are imported in bulk from banks and spreadsheets, and this particular transaction must be treated as a planned one that needs to be replaced with the imported ones."
 }
