@@ -36,38 +36,7 @@
 
       <Toggler>
         <template v-slot:categories>
-          <!-- Categories list block -->
-          <SidebarHeading
-            class="custom-mt-24"
-            updatingEntityName="Category"
-            type="income"
-          >
-            {{ $t("income") }}
-          </SidebarHeading>
-          <SortableList
-            :items="categoriesIncome"
-            sortingTarget="category"
-            :group="{name: 'categoriesIncome', pull: false}">
-            <SortableItemCategory
-              v-for="category in categoriesIncome"
-              :key="category.id"
-              :category="category"
-            />
-          </SortableList>
-
-          <SidebarHeading updatingEntityName="Category" type="expense">
-            {{ $t("expense") }}
-          </SidebarHeading>
-          <SortableList
-            :items="categoriesExpense"
-            sortingTarget="category"
-            :group="{name: 'categoriesExpense', pull: false}">
-            <SortableItemCategory
-              v-for="category in categoriesExpense"
-              :key="category.id"
-              :category="category"
-            />
-          </SortableList>
+          <SidebarCategories />
         </template>
         <template v-slot:contacts>
           <ContactsList />
@@ -102,9 +71,9 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import SortableList from './Sortable/SortableList'
-import SortableItemCategory from './Sortable/SortableItemCategory'
 import SortableItemAccount from './Sortable/SortableItemAccount'
 import SidebarHeading from './SidebarHeading'
+import SidebarCategories from './SidebarCategories'
 import SidebarFooter from './SidebarFooter'
 import SearchField from '@/components/Inputs/SearchField'
 import SidebarCurrencyWidgets from './SidebarCurrencyWidgets'
@@ -115,8 +84,8 @@ import Bricks from '@/components/Bricks/Bricks'
 export default {
   components: {
     SortableList,
-    SortableItemCategory,
     SortableItemAccount,
+    SidebarCategories,
     SidebarHeading,
     SidebarFooter,
     SearchField,
@@ -137,14 +106,6 @@ export default {
     ...mapGetters({
       categoriesByType: ['category/getByType']
     }),
-
-    categoriesIncome () {
-      return this.categoriesByType('income').filter(c => c.parent_category_id === null)
-    },
-
-    categoriesExpense () {
-      return this.categoriesByType('expense').filter(c => c.parent_category_id === null)
-    },
 
     categoriesTransfer () {
       return this.categoriesByType('transfer')

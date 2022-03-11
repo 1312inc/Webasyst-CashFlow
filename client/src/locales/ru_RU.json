@@ -178,6 +178,7 @@
   "newContact": "Будет создан новый контакт",
   "hide": "Скрыть",
   "show": "Показать",
+  "showMore": "Показать еще",
   "navigation": "{action} меню",
   "collapseTransactionDesc": "{count} операций ({category})",
   "repeatingTransactionDesc": "{repeats} операций",
