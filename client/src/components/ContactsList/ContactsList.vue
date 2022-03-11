@@ -1,11 +1,11 @@
 <template>
   <div>
-    <ul v-if="list.length" class="menu">
+    <ul v-if="list.length" class="menu" style="margin-bottom: 0;">
       <li
         v-for="contact in list"
         :key="contact.id"
         :class="{
-          selected: $route.params.id === contact.id && $route.name === 'Contact'
+          selected: +$route.params.id === contact.id && $route.name === 'Contact'
         }"
       >
         <router-link :to="`/contact/${contact.id}`">
@@ -14,18 +14,33 @@
           /></span>
           <span>{{ contact.name }}</span>
           <span class="count">
-            <span v-for="currency in contact.stat" :key="currency.currency">
-              {{ currency.data.summaryShorten }} {{ currency.currency }}
+            <span
+              v-for="(currency, i) in contact.stat"
+              :key="currency.currency"
+            >
+              {{ currency.data.summaryShorten }}
+              {{ $helper.currencySignByCode(currency.currency) }}
+              <span v-if="i < contact.stat.length - 1">,</span>
             </span>
           </span>
         </router-link>
       </li>
+      <template v-if="loading">
+        <li
+          v-for="i in limit"
+          :key="i"
+          class="skeleton custom-px-16"
+          style="padding: 6px 0;"
+        >
+          <span class="skeleton-list" style="margin-bottom: 0;"></span>
+        </li>
+      </template>
     </ul>
-    <ul v-if="loading" class="skeleton menu">
-      <li v-for="i in 5" :key="i" class="custom-px-16">
-        <span class="skeleton-list"></span>
-      </li>
-    </ul>
+    <div v-if="list.length < total" class="custom-mx-16">
+      <a @click.prevent="offset += limit" href="#" class="smaller">{{
+        $t("showMore")
+      }}</a>
+    </div>
   </div>
 </template>
 
@@ -35,15 +50,31 @@ export default {
   data () {
     return {
       list: [],
-      loading: false
+      loading: false,
+      offset: 0,
+      limit: 15,
+      total: 0
     }
   },
 
-  async created () {
-    this.loading = true
-    const { data } = await api.get('cash.contact.getList?offset=0&limit=15')
-    this.list = data
-    this.loading = false
+  watch: {
+    offset: 'fetch'
+  },
+
+  mounted () {
+    this.fetch()
+  },
+
+  methods: {
+    async fetch () {
+      this.loading = true
+      const { data } = await api.get(
+        `cash.contact.getList?offset=${this.offset}&limit=${this.limit}`
+      )
+      this.list = [...this.list, ...data.data]
+      this.total = data.total
+      this.loading = false
+    }
   }
 }
 </script>

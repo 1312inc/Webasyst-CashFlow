@@ -178,6 +178,7 @@
   "newContact": "New contact will be created",
   "hide": "Hide",
   "show": "Show",
+  "showMore": "Show more",
   "navigation": "{action} menu",
   "collapseTransactionDesc": "{count} transactions ({category})",
   "repeatingTransactionDesc": "{repeats} transactions",
