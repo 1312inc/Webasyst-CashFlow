@@ -36,7 +36,7 @@
         </li>
       </template>
     </ul>
-    <div v-if="list.length < total" class="custom-mx-16">
+    <div v-if="list.length < total" class="custom-mx-16 align-center">
       <a @click.prevent="offset += limit" href="#" class="button light-gray rounded smaller">{{
         $t("showMore")
       }}</a>
