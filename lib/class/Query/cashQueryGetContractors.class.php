@@ -23,14 +23,23 @@ FROM cash_transaction ct
 WHERE ca.is_archived = 0
     AND ct.is_archived = 0
     AND ct.contractor_contact_id IS NOT NULL
-    AND ct.category_id != -1312
+    AND ct.category_id != i:transfer_id
+    AND ct.date <= s:date
 GROUP BY ct.contractor_contact_id
 ORDER BY last_transaction_date DESC, ct.contractor_contact_id
 LIMIT i:offset, i:limit
 SQL;
 
         $contacts = $this->model
-            ->query($sql, ['limit' => $limit, 'offset' => $offset])
+            ->query(
+                $sql,
+                [
+                    'limit' => $limit,
+                    'offset' => $offset,
+                    'date' => date('Y-m-d'),
+                    'transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,
+                ]
+            )
             ->fetchAll();
         $contactIds = array_column($contacts, 'contact_id');
         $result = [];
@@ -77,11 +86,12 @@ WHERE ca.is_archived = 0
   AND ct.is_archived = 0
   AND ct.category_id != i:transfer_id
   AND ct.contractor_contact_id IS NOT NULL
+  AND ct.date <= s:date
   AND {$accountTransactionRights}
 SQL;
 
         return (int) $this->model
-            ->query($sql, ['transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID])
+            ->query($sql, ['transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID, 'date' => date('Y-m-d')])
             ->fetchField();
     }
 
@@ -108,6 +118,7 @@ WHERE ca.is_archived = 0
   AND ct.is_archived = 0
   AND ct.category_id != i:transfer_id
   AND ct.contractor_contact_id IS NOT NULL
+  AND ct.date <= s:date
   AND {$accountTransactionRights}
   {$contractorFilterSql}
 GROUP BY ct.contractor_contact_id, ca.currency
@@ -116,7 +127,11 @@ SQL;
         return $this->model
             ->query(
                 $sql,
-                ['contractor_ids' => $contractorIds, 'transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID]
+                [
+                    'contractor_ids' => $contractorIds,
+                    'transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,
+                    'date' => date('Y-m-d'),
+                ]
             )
             ->fetchAll('contractor_id', 2);
     }
