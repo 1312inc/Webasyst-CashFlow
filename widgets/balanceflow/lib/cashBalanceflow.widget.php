@@ -91,7 +91,7 @@ class cashBalanceflowWidget extends waWidget
         $settings = self::getSettingModel()->get($widgetId);
         $firstCurrency = reset($currencies);
 
-        return $settings['currency'] ?: ($firstCurrency ? $firstCurrency->getCode() : '');
+        return $settings['currency'] ?? ($firstCurrency ? $firstCurrency->getCode() : '');
     }
 
     private static function getSettingModel(): waWidgetSettingsModel
