@@ -64,9 +64,11 @@ final class cashShopTransactionFactory
     public function createExpenseTransaction(cashShopCreateTransactionDto $dto): bool
     {
         $dto->mainTransaction = $this->createTransaction($dto, self::EXPENSE);
-        $dto->mainTransaction->setDescription(
-            sprintf_wp('Refund for order %s by %s', $dto->encodedOrderId, $dto->order->contact->getName())
-        );
+        $dto->mainTransaction
+            ->setDescription(
+                sprintf_wp('Refund for order %s by %s', $dto->encodedOrderId, $dto->order->contact->getName())
+            )
+            ->setDate(date('Y-m-d')); // refund сегодняшним днем
 
         return true;
     }
@@ -289,7 +291,9 @@ final class cashShopTransactionFactory
         $rep = cash()->getEntityRepository(cashAccount::class);
 
         if (!empty($order['params']['payment_id'])) {
-            $accountId = $this->shopIntegration->getSettings()->getAccountIdForPaymentMethod($order->params['payment_id']);
+            $accountId = $this->shopIntegration->getSettings()->getAccountIdForPaymentMethod(
+                $order->params['payment_id']
+            );
         }
 
         if (empty($accountId)) {
@@ -359,7 +363,7 @@ final class cashShopTransactionFactory
     private function getAmount(shopOrder $order, $type, $params = [])
     {
         if (isset($params['params']['refund_amount'])) {
-            $amount = abs((float)$params['params']['refund_amount']);
+            $amount = abs((float) $params['params']['refund_amount']);
         } else {
             $amount = abs($order->total);
         }
