@@ -5,24 +5,37 @@
         v-for="contact in list"
         :key="contact.id"
         :class="{
-          selected: +$route.params.id === contact.id && $route.name === 'Contact'
+          selected:
+            +$route.params.id === contact.id && $route.name === 'Contact'
         }"
       >
         <router-link :to="`/contact/${contact.id}`">
-          <span class="icon"
-            ><img :src="contact.photo_url_absolute" alt="" class="userpic"
-          /></span>
-          <span>{{ contact.name }}</span>
-          <span class="count">
-            <span
-              v-for="(currency, i) in contact.stat"
-              :key="currency.currency"
-            >
-              {{ currency.data.summaryShorten }}
-              {{ $helper.currencySignByCode(currency.currency) }}
-              <span v-if="i < contact.stat.length - 1">,</span>
-            </span>
-          </span>
+          <div class="wide">
+            <div class="flexbox">
+              <span class="icon"
+                ><img :src="contact.photo_url_absolute" alt="" class="userpic"
+              /></span>
+              <div class="wide">
+                <span>{{ contact.name }}</span>
+              </div>
+              <span class="count">
+                <span
+                  v-for="(currency, i) in contact.stat"
+                  :key="currency.currency"
+                >
+                  {{ currency.data.summaryShorten }} {{ $helper.currencySignByCode(currency.currency) }}<span v-if="i < contact.stat.length - 1">,</span>
+                </span>
+              </span>
+            </div>
+            <div class="flexbox">
+              <span class="icon"></span>
+              <div class="smaller hint custom-mt-4">
+                {{
+                  $moment(contact.last_transaction_date).format("D MMMM YYYY")
+                }}
+              </div>
+            </div>
+          </div>
         </router-link>
       </li>
       <template v-if="loading">
@@ -37,9 +50,12 @@
       </template>
     </ul>
     <div v-if="list.length < total" class="custom-mx-16 align-center">
-      <a @click.prevent="offset += limit" href="#" class="button light-gray rounded smaller">{{
-        $t("showMore")
-      }}</a>
+      <a
+        @click.prevent="offset += limit"
+        href="#"
+        class="button light-gray rounded smaller"
+        >{{ $t("showMore") }}</a
+      >
     </div>
   </div>
 </template>
