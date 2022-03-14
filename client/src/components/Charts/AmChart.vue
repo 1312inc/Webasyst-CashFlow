@@ -48,10 +48,14 @@ export default {
     detailsInterval (val) {
       if (!val.from) {
         this.dateAxis.zoom({ start: 0, end: 1 })
-        this.dateAxis2.zoom({ start: 0, end: 1 })
+        if (!this.dateAxis2.disabled) {
+          this.dateAxis2.zoom({ start: 0, end: 1 })
+        }
       } else {
         this.dateAxis.zoomToDates(new Date(val.from), new Date(val.to))
-        this.dateAxis2.zoomToDates(new Date(val.from), new Date(val.to))
+        if (!this.dateAxis2.disabled) {
+          this.dateAxis2.zoomToDates(new Date(val.from), new Date(val.to))
+        }
       }
     },
 
@@ -318,7 +322,9 @@ export default {
       })
 
       if (newChartData) {
-        this.balanceAxis.disabled = newChartData.data[0].balance === null
+        this.balanceAxis.disabled =
+        this.dateAxis2.disabled = newChartData.data[0].balance === null
+
         this.chart.scrollbarX.disabled = false
         this.chart.cursor.disabled = false;
         ['amountIncome', 'amountExpense', 'amountProfit', 'balance'].forEach((dataField) => {
@@ -362,7 +368,8 @@ export default {
           }
         })
       } else {
-        this.balanceAxis.disabled = true
+        this.balanceAxis.disabled =
+        this.dateAxis2.disabled = true
         this.chart.scrollbarX.disabled = true
         this.chart.cursor.disabled = true;
         ['amountIncome', 'amountExpense', 'amountProfit', 'balance'].forEach((dataField) => {
