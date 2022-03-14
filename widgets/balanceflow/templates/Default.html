@@ -1,59 +1,31 @@
-<a href="{$url_root_absolute}webasyst/cash/currency/{$currency_code}">
+
   <div class="cash-widget-{$info['id']} block custom-p-16">
-    <div class="flexbox middle custom-mb-4">
-      <div class="wide black bold {if $info['size'] != '1x1'}large {/if}nowrap cash-widget-balance cash-widget-balance-{$info['id']}"></div>
-      <div class="cash-widget-alert custom-ml-4" style="display: none;"></div>
-    </div>
-    <svg
-      class="cash-widget-chart"
-      style="width:{if $info['size'] === '1x1'}106{else}268{/if}px;height: 70px;"
-    ></svg>
-    <div class="cash-widget-average small align-center custom-mt-8"></div>
+    <a href="{$url_root_absolute}webasyst/cash/currency/{$currency_code}">
+      <div class="flexbox middle custom-mb-4">
+        <div class="wide black bold {if $info['size'] != '1x1'}large {/if}nowrap cash-widget-balance cash-widget-balance-{$info['id']}"></div>
+        <div class="cash-widget-alert custom-ml-4" style="display: none;"></div>
+      </div>
+      <svg
+        class="cash-widget-chart"
+        style="width:{if $info['size'] === '1x1'}106{else}268{/if}px;height: 70px;"
+      ></svg>
+      <div class="cash-widget-average small align-center custom-mt-8"></div>
+    </a>
   </div>
-</a>
+
 
 <script type="module">
-{
-  const d = new Date();
-  const startDate = d.setMonth(d.getMonth() - 1);
-  const endDate = d.setMonth(d.getMonth() + 3);
-
-  if (!window.balanceflowWidgetDataFetchInProccess) {
-    window.balanceflowWidgetDataFetchInProccess = true;
-
-    import('{$url_root}wa-apps/cash/widgets/balanceflow/js/balanceFlowWidget.js')
-    .then((module) => {
-
-      fetch(
-        "{$url_root}api.php/cash.aggregate.getBalanceFlow?access_token={$token}&from=" +
-        new Date(startDate).toISOString().slice(0, 10) +
-        "&to=" +
-        new Date(endDate).toISOString().slice(0, 10) +
-        "&group_by=day"
-      )
-        .then((response) => response.json())
-        .then((result) => {
-          window.balanceflowWidgetDataFetchInProccess = false;
-          window.dispatchEvent(new CustomEvent('balanceflowWidgetDataFetchFinished', {
-            detail: {
-              makeBallanceFlowWidget: module.makeBallanceFlowWidget,
-              result: result
-            }
-          }));
-        });
-
-    });
-
-  }
-
-  const handler = function (e) {
-    window.removeEventListener('balanceflowWidgetDataFetchFinished', handler);
-
+  import { fetchData } from '{$url_root}wa-apps/cash/widgets/balanceflow/js/balanceFlowWidget.js';
+  fetchData({
+    baseUrl: '{$url_root}',
+    token: '{$token}'
+  });
+  
+  window.addEventListener('balanceflowWidgetDataFetchFinished', function (e) {
+    window.removeEventListener('balanceflowWidgetDataFetchFinished', this);
     e.detail.makeBallanceFlowWidget({
       container: document.querySelector(".cash-widget-{$info['id']}"),
-      chartData: e.detail.result,
-      startDate: startDate,
-      endDate: endDate,
+      data: e.detail.result,
       currencyCode: "{$currency_code}",
       currencySign: "{$currencies[$currency_code]->getSign()}",
       size: "{$info['size']}",
@@ -64,8 +36,6 @@
         month: '[`m`]'
       }
     })
-  }
+  });
 
-  window.addEventListener('balanceflowWidgetDataFetchFinished', handler);
-}
 </script>
