@@ -11,7 +11,12 @@
           }}</a>
         </h1>
       </template>
+      <template v-slot:controls>
+        <ChartHeaderControls />
+      </template>
     </ChartHeader>
+    <AmChartContainer />
+    <DetailsDashboard />
     <div class="flexbox">
       <div class="wide">
         <TransactionList
@@ -28,6 +33,9 @@
 
 <script>
 import ChartHeader from '@/components/ChartHeader'
+import ChartHeaderControls from '@/components/ChartHeaderControls'
+import AmChartContainer from '@/components/Charts/AmChartContainer'
+import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
@@ -40,6 +48,9 @@ export default {
 
   components: {
     ChartHeader,
+    ChartHeaderControls,
+    AmChartContainer,
+    DetailsDashboard,
     TransactionList,
     AmChartPieStickyContainer
   },
@@ -70,6 +81,9 @@ export default {
       `cash.system.getExternalEntity?source=${this.$route.meta.getExternalEntitySource}&id=${this.$route.params.id}`
         )
         this.$store.commit('entity/setEntity', data)
+
+        this.$store.commit('transaction/updateQueryParams', { filter: this.$route.meta.fetchTransactionsFilter(this.entity.entity_id) })
+        this.$store.dispatch('transaction/getChartData')
 
         this.$store.dispatch('transaction/fetchTransactions', {
           from: '',
