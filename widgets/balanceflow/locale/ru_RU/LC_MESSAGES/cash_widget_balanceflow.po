@@ -27,3 +27,6 @@ msgstr "Валюта"
 
 msgid "m"
 msgstr "мес."
+
+msgid "noAccess"
+msgstr "Нет доступа"
