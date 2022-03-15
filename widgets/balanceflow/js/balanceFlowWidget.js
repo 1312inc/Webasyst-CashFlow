@@ -43,16 +43,31 @@ function fetchData ({ baseUrl, token }) {
  * @param {string} options.localeMessages.arrowUp
  * @param {string} options.localeMessages.arrowDown
  * @param {string} options.localeMessages.month
+ * @param {string} options.localeMessages.noAccess
  * @returns
  */
 function makeBallanceFlowWidget (options) {
-    if (options.data.error) {
+
+    const alertMessage = (message) => {
         const $error = document.createElement("div");
         $error.innerHTML =
-            '<div class="align-center small gray" style="position: absolute; top: 50%;left: 50%; transform: translateX(-50%) translateY(-50%);">' +
-            options.data.error_description +
-            "</div>";
+            `<div class="align-center small gray" style="position: absolute; top: 50%;left: 50%; transform: translateX(-50%) translateY(-50%);">${message}</div>`;
         options.container.appendChild($error);
+    };
+
+    const spinner = options.container.querySelector('.cash-widget-spinner');
+    if (spinner) {
+        spinner.remove();
+    }
+    
+    if (options.data.error) {
+        alertMessage(options.data.error_description);
+        return;
+    }
+
+    // if empty data
+    if (!options.data.length) {
+        alertMessage(options.localeMessages.noAccess);
         return;
     }
 
