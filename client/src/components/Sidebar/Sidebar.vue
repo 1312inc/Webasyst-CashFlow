@@ -12,7 +12,7 @@
         >
       </div>
     </nav>
-    <div class="sidebar-body hide-scrollbar">
+    <div ref="sidebarBody" class="sidebar-body hide-scrollbar">
       <SearchField />
       <Bricks />
 
@@ -62,7 +62,7 @@
       </div>
     </div>
 
-    <div class="sidebar-footer shadowed" ref="sidebarFooter">
+    <div ref="sidebarFooter" class="sidebar-footer shadowed">
       <SidebarFooter />
     </div>
   </div>
@@ -103,6 +103,7 @@ export default {
 
   computed: {
     ...mapState('account', ['accounts']),
+
     ...mapGetters({
       categoriesByType: ['category/getByType']
     }),
@@ -116,7 +117,9 @@ export default {
     $route () {
       this.mobileMenuOpen = false
     },
-    mobileMenuOpen: 'mobileMenuToggle'
+    mobileMenuOpen (val) {
+      val ? this.menuOpen() : this.menuClose()
+    }
   },
 
   mounted () {
@@ -128,13 +131,6 @@ export default {
   },
 
   methods: {
-    mobileMenuToggle (val) {
-      if (val) {
-        this.menuOpen()
-      } else {
-        this.menuClose()
-      }
-    },
     menuOpen () {
       ;['Body', 'Footer'].forEach(h => {
         this.$refs[`sidebar${h}`].style['max-height'] =
