@@ -77,7 +77,7 @@
             </label>
           </div>
 
-          <div v-if="(new Date(model.date)).getTime() > new Date().getTime()" class="custom-mt-16">
+          <div v-if="(new Date(model.date)).getTime() > new Date().getTime() || model.is_repeating" class="custom-mt-16">
             <label @click.prevent="model.is_self_destruct_when_due = !model.is_self_destruct_when_due">
               <span class="wa-checkbox">
                 <input type="checkbox" :checked="model.is_self_destruct_when_due" />
