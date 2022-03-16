@@ -7,8 +7,8 @@ const endDate = d.setMonth(d.getMonth() + 3);
 let balanceflowWidgetDataFetchInProccess = false;
 
 /**
- * Fetch balance flow api data 
- * @param {Object} param0 
+ * Fetch balance flow api data
+ * @param {Object} param0
  */
 function fetchData ({ baseUrl, token }) {
     if (!balanceflowWidgetDataFetchInProccess) {
@@ -51,7 +51,7 @@ function makeBallanceFlowWidget (options) {
     const alertMessage = (message) => {
         const $error = document.createElement("div");
         $error.innerHTML =
-            `<div class="align-center small gray" style="position: absolute; top: 50%;left: 50%; transform: translateX(-50%) translateY(-50%);">${message}</div>`;
+            `<div class="align-center gray" style="position: absolute; top: 50%;left: 50%; transform: translateX(-50%) translateY(-50%);">${message}</div>`;
         options.container.appendChild($error);
     };
 
@@ -59,7 +59,7 @@ function makeBallanceFlowWidget (options) {
     if (spinner) {
         spinner.remove();
     }
-    
+
     if (options.data.error) {
         alertMessage(options.data.error_description);
         return;
