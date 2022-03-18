@@ -42,7 +42,7 @@
                     <td{if $smarty.foreach.foreach_month_columns.iteration == 13} class="c-column-sticky-right-totals"{/if}>
                     {foreach $values as $currency => $value}
                         <div class="nowrap align-right{if $smarty.foreach.foreach_month_columns.iteration == 13} black bold{/if}">
-                            {if $datum->entity->getId() !== 'all_income' && $datum->entity->getId() !== 'all_expense'}
+                            {if $datum->entity->getId() !== 'all_income' && $datum->entity->getId() !== 'all_expense' && $currenciesTotals[$value.currency]}
                                 {$size = 30 * round(abs($value.per_month/$currenciesTotals[$value.currency]['per_month']),2)}
                                 <div style="width: {$size}px; height: {$size}px; border-radius: 50%; background-color: {$datum->entity->getColor()};margin: 4px auto;"></div>
                             {/if}
