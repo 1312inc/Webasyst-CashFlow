@@ -51,12 +51,6 @@ return [
     ],
     [
         'event_app_id' => 'cash',
-        'event' => 'backend_reports_menu_item',
-        'class' => 'cashReportMenuItemListener',
-        'method' => ['handle'],
-    ],
-    [
-        'event_app_id' => 'cash',
         'event' => 'api_transaction_response_external_data',
         'class' => 'cashApiTransactionBeforeResponseListener',
         'method' => ['getExternalInfoHandlers'],
