@@ -55,4 +55,16 @@ return [
         'class' => 'cashApiTransactionBeforeResponseListener',
         'method' => ['getExternalInfoHandlers'],
     ],
+    [
+        'event_app_id' => 'cash',
+        'event' => 'backend_reports_menu_item',
+        'class' => 'cashReportInternalMenuItemListener',
+        'method' => ['handle'],
+    ],
+    [
+        'event_app_id' => 'cash',
+        'event' => 'backend_reports_handle',
+        'class' => 'cashReportInternalHandlerListener',
+        'method' => ['handle'],
+    ],
 ];
