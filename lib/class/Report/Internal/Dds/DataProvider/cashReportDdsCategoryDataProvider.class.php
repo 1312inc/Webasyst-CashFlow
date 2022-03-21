@@ -71,6 +71,10 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
 
             $rawData[$datum['id']][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
             $rawData[$datum['id']]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+            $rawData[$datum['id']]['max'][$datum['currency']]['per_month'] = max(
+                (float) $datum['per_month'],
+                $rawData[$datum['id']]['max'][$datum['currency']]['per_month']
+            );
 
             // просуммируем в родительскую
             if (isset($categoriesWithChild[$id])) {
@@ -80,10 +84,18 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
                 }
                 $rawData[$parentIdType][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
                 $rawData[$parentIdType]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+                $rawData[$parentIdType]['max'][$datum['currency']]['per_month'] = max(
+                    (float) $datum['per_month'],
+                    $rawData[$parentIdType]['max'][$datum['currency']]['per_month']
+                );
             }
 
             $rawData[$type][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
             $rawData[$type]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+            $rawData[$type]['max'][$datum['currency']]['per_month'] = max(
+                (float) $datum['per_month'],
+                $rawData[$type]['max'][$datum['currency']]['per_month']
+            );
         }
 
         $statData = [];
@@ -176,6 +188,7 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
             ];
         }
         $rawData[$datumId]['total'][$datumCurrency]['per_month'] = .0;
+        $rawData[$datumId]['max'][$datumCurrency]['per_month'] = .0;
     }
 
     private function initTotalAmountPerPeriod(cashReportDdsPeriod $period, &$rawData, $datum, $type): void
@@ -191,6 +204,8 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
             $rawData[cashCategory::TYPE_EXPENSE][$groupingDto->key][$datum['currency']] = $initVals;
         }
         $rawData[cashCategory::TYPE_INCOME]['total'][$datum['currency']]['per_month'] = .0;
+        $rawData[cashCategory::TYPE_INCOME]['max'][$datum['currency']]['per_month'] = .0;
         $rawData[cashCategory::TYPE_EXPENSE]['total'][$datum['currency']]['per_month'] = .0;
+        $rawData[cashCategory::TYPE_EXPENSE]['max'][$datum['currency']]['per_month'] = .0;
     }
 }
