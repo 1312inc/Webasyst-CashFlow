@@ -9,9 +9,6 @@
 {function name="_render_cashflow_report_table" data=[] type=[]}
 <div class="c-report-dds-outer">
     <div class="c-report-dds-inner">
-
-        {$currenciesTotals = $data[0]->valuesPerPeriods['total']}
-
         <table class="small">
             <thead>
                 <tr>
@@ -41,11 +38,14 @@
                     {foreach $datum->valuesPerPeriods as $values name=foreach_month_columns}
                     <td{if $smarty.foreach.foreach_month_columns.iteration == 13} class="c-column-sticky-right-totals"{/if}>
                     {foreach $values as $currency => $value}
-                        <div class="nowrap align-right{if $smarty.foreach.foreach_month_columns.iteration == 13} black bold{/if}">
-                            {if $datum->entity->getId() !== 'all_income' && $datum->entity->getId() !== 'all_expense' && isset($value.currency) && $currenciesTotals[$value.currency]}
-                                {$size = 30 * round(abs($value.per_month/$currenciesTotals[$value.currency]['per_month']),2)}
+                        <div class="nowrap align-right{if $smarty.foreach.foreach_month_columns.iteration == 13} black bold{/if} {if $smarty.foreach.foreach_month_columns.iteration == 14} hidden{/if}">
+                            {$currenciesMax = $datum->valuesPerPeriods['max']} 
+                            {if $datum->entity->getId() !== 'all_income' && $datum->entity->getId() !== 'all_expense' && isset($value.currency) && $currenciesMax[$value.currency]['per_month'] > 0}
+                                {$size = 30 * abs($value.per_month/$currenciesMax[$value.currency]['per_month'])}
                                 {$size = ($size > 0 && $size < 6) ? 6 : $size}
-                                <div style="width: {$size}px; height: {$size}px; border-radius: 50%; background-color: {$datum->entity->getColor()};margin: 4px 2px 4px auto;"></div>
+                                <div style="display:flex;align-items:center; justify-content: end; height: 34px;">
+                                    <div style="width: {$size}px; height: {$size}px; border-radius: 50%; background-color: {$datum->entity->getColor()};"></div>
+                                </div>
                             {/if}
                             {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false} {$datum->currencies[$currency]->getSign()}
                         </div>
