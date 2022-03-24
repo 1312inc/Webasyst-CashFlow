@@ -64,11 +64,11 @@
 
                         <div class="custom-mb-24" style="{if !$shopScriptSettings->hasAccountIdForPayment()}display: none{/if}" data-cash-shop-configure-actions-account>
                             <div class="custom-my-12 small">[`Set account based on the order payment type:`]</div>
-                            {foreach $paymentMethods as $paymentMethod => $paymentMethodName}
+                            {foreach $paymentMethods as $paymentMethod => $paymentMethodData}
                                 <div class="flexbox middle small space-16 custom-mb-16" data-cash-category-color-icon>
                                     <div>
                                         <input type="hidden" name="shopscript_settings[accounts_payment][payment_method][]" value="{$paymentMethod}"/>
-                                        {$paymentMethodName}&nbsp;&rarr;
+                                        <span {if !$paymentMethodData.enable}class="gray" {/if}>{$paymentMethodData.name}&nbsp;&rarr;</span>
                                     </div>
                                     <div>
                                         <div class="wa-select small solid custom-mx-8">
