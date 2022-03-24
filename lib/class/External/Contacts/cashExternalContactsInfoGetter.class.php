@@ -22,10 +22,13 @@ final class cashExternalContactsInfoGetter implements cashExternalSourceInfoGett
             sprintf('%s/%s', $rootUrl, $info['icon']['96'] ?? $info['img']),
             (int) $id,
             $contact->getName(),
-            sprintf('%s%s', $rootUrl, $contact->getPhoto(96)),
             sprintf(
-                '%s%s%s/#/contact/%d/',
-                $rootUrl,
+                '%s%s',
+                wa()->getConfig()->getHostUrl(),
+                waContact::getPhotoUrl($contact->getId(), $contact->get('photo'), 96)
+            ),
+            sprintf(
+                '%s%s/#/contact/%d/',
                 wa()->getConfig()->getBackendUrl(true),
                 self::APP,
                 $id
