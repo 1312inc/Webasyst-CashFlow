@@ -32,7 +32,9 @@ final class cashApiContactGetListHandler implements cashApiHandlerInterface
                 $contact->get('lastname'),
                 $photo,
                 wa()->getConfig()->getHostUrl() . $photo,
-                array_map(function (array $statData) {
+                array_map(static function (array $statData) {
+                    $statData['stat']['summary'] = abs($statData['stat']['summary']);
+
                     return [
                         'currency' => $statData['currency'],
                         'data' => cashStatOnDateDto::createFromArray($statData['stat']),
