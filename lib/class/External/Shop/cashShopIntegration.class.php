@@ -111,11 +111,16 @@ final class cashShopIntegration
      */
     public function enableForecast(): bool
     {
+        cash()->getLogger()->debug('enable forecast', 'forecast');
+
         $this->deleteFutureForecastTransactions();
+        cash()->getLogger()->debug('delete future transaction', 'forecast');
 
         /** @var cashAccount $account */
         $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
         if (!$account) {
+            cash()->getLogger()->debug('no main account', 'forecast');
+
             return false;
         }
 
@@ -123,13 +128,20 @@ final class cashShopIntegration
             ? $this->getShopAvgAmount($account->getCurrency())
             : $this->settings->getManualForecast();
 
+        cash()->getLogger()->debug(sprintf('amount to plan %s', $amount), 'forecast');
+
         $category = cash()->getEntityRepository(cashCategory::class)->findById($this->settings->getCategoryIncomeId());
         if (!$category) {
+            cash()->getLogger()->debug('no income category', 'forecast');
+
             return false;
         }
 
         if ($amount) {
             $transaction = $this->getTransactionFactory()->createForecastTransaction($amount, $account, $category);
+
+            cash()->getLogger()->debug('repeating transaction', 'forecast');
+            cash()->getLogger()->debug($transaction, 'forecast');
 
             $saver = new cashRepeatingTransactionSaver();
             $repeatingSettings = new cashRepeatingTransactionSettingsDto();
@@ -139,6 +151,8 @@ final class cashShopIntegration
             $repeatingTransaction = $saver->saveFromTransaction($transaction, $repeatingSettings, true);
 
             (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction, new DateTime('tomorrow'));
+
+            cash()->getLogger()->debug('transaction repeated', 'forecast');
         }
 
         return true;
@@ -153,6 +167,8 @@ final class cashShopIntegration
      */
     public function changeForecastType(): void
     {
+        cash()->getLogger()->debug('change forecast type', 'forecast');
+
         $transaction = $this->getForecastRepeatingTransaction();
         if (!$transaction instanceof cashRepeatingTransaction) {
             $this->enableForecast();
@@ -160,6 +176,9 @@ final class cashShopIntegration
             $amount = $this->settings->isAutoForecast()
                 ? $this->getShopAvgAmount($this->settings->getAccount()->getCurrency())
                 : $this->settings->getManualForecast();
+
+            cash()->getLogger()->debug(sprintf('amount to plan %s', $amount), 'forecast');
+
             if ($amount) {
                 $transaction
                     ->setAmount($amount)
