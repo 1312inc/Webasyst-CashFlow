@@ -18,20 +18,20 @@
               <div class="wide">
                 <span>{{ contact.name }}</span>
               </div>
-              <span class="count">
+              <!-- <span class="count">
                 <span
                   v-for="(currency, i) in contact.stat"
                   :key="currency.currency"
                 >
                   {{ currency.data.summaryShorten }} {{ $helper.currencySignByCode(currency.currency) }}<span v-if="i < contact.stat.length - 1">,</span>
                 </span>
-              </span>
+              </span> -->
             </div>
             <div class="flexbox">
               <span class="icon"></span>
               <div class="smaller hint custom-mt-4">
                 {{ contact.last_transaction.amountShorten }}
-                {{ contact.last_transaction.currency }},
+                {{ $helper.currencySignByCode(contact.last_transaction.currency) }},
                 {{
                   $moment(contact.last_transaction.date).format("D MMMM")
                 }}
