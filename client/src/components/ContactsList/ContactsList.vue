@@ -30,8 +30,10 @@
             <div class="flexbox">
               <span class="icon"></span>
               <div class="smaller hint custom-mt-4">
+                {{ contact.last_transaction.amountShorten }}
+                {{ contact.last_transaction.currency }},
                 {{
-                  $moment(contact.last_transaction_date).format("D MMMM YYYY")
+                  $moment(contact.last_transaction.date).format("D MMMM")
                 }}
               </div>
             </div>
