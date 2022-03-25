@@ -889,10 +889,22 @@ components:
                 type: number
               name:
                 type: string
-              last_transaction_date:
-                type: string
-                format: date
-                example: "2022-03-22"
+              last_transaction:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                    example: "2022-03-22"
+                  amount:
+                    type: number
+                    format: double
+                  amountShorten:
+                    type: string
+                    example: "41.2K"
+                  currency:
+                    type: string
+                    example: RUB
               firstname:
                 type: string
               lastname:

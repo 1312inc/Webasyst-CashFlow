@@ -25,6 +25,8 @@ final class cashApiContactGetListHandler implements cashApiHandlerInterface
             $dto = new cashApiContactGetListDto(
                 $contact->getId(),
                 $datum['last_transaction_date'],
+                $datum['last_transaction_amount'],
+                $datum['last_transaction_currency'],
                 $contact->getName(),
                 $contact->get('firstname'),
                 $contact->get('lastname'),

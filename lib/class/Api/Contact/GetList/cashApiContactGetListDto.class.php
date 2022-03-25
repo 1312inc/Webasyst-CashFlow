@@ -42,9 +42,21 @@ final class cashApiContactGetListDto
      */
     private $stat;
 
+    /**
+     * @var float
+     */
+    private $lastTransactionAmount;
+
+    /**
+     * @var string
+     */
+    private $lastTransactionCurrency;
+
     public function __construct(
         int $id,
         string $lastTransactionDate,
+        float $lastTransactionAmount,
+        string $lastTransactionCurrency,
         string $name,
         string $firstname,
         string $lastname,
@@ -60,6 +72,8 @@ final class cashApiContactGetListDto
         $this->photoUrlAbsolute = $photoUrlAbsolute;
         $this->stat = $stat;
         $this->lastTransactionDate = $lastTransactionDate;
+        $this->lastTransactionAmount = $lastTransactionAmount;
+        $this->lastTransactionCurrency = $lastTransactionCurrency;
     }
 
     public function getId(): int
@@ -100,5 +114,15 @@ final class cashApiContactGetListDto
     public function getLastTransactionDate(): string
     {
         return $this->lastTransactionDate;
+    }
+
+    public function getLastTransactionAmount(): float
+    {
+        return $this->lastTransactionAmount;
+    }
+
+    public function getLastTransactionCurrency(): string
+    {
+        return $this->lastTransactionCurrency;
     }
 }

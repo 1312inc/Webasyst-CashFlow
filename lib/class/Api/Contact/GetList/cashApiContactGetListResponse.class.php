@@ -19,7 +19,12 @@ final class cashApiContactGetListResponse extends cashApiAbstractResponse
             $this->response['data'][] = [
                 'id' => $datum->getId(),
                 'name' => $datum->getName(),
-                'last_transaction_date' => $datum->getLastTransactionDate(),
+                'last_transaction' => [
+                    'date' => $datum->getLastTransactionDate(),
+                    'amount' => $datum->getLastTransactionAmount(),
+                    'amountShorten' => cashShorteningService::money($datum->getLastTransactionAmount()),
+                    'currency' => $datum->getLastTransactionCurrency(),
+                ],
                 'firstname' => $datum->getFirstname(),
                 'lastname' => $datum->getFirstname(),
                 'photo_url' => $datum->getPhotoUrl(),

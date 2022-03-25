@@ -15,18 +15,27 @@ final class cashQueryGetContractors
     public function getContractors(int $offset, int $limit, waContact $contact): array
     {
         $sql = <<<SQL
-SELECT ct.contractor_contact_id contact_id,
-       MAX(ct.date)             last_transaction_date
+SELECT MAX(ct.id) last_transaction_id,
+       ct.date    last_transaction_date,
+       ct.amount  last_transaction_amount,
+       ca.currency last_transaction_currency,
+       ct.contractor_contact_id contact_id
 FROM cash_transaction ct
-        JOIN cash_account ca ON ct.account_id = ca.id
-        JOIN wa_contact wc ON ct.contractor_contact_id = wc.id
-WHERE ca.is_archived = 0
-    AND ct.is_archived = 0
-    AND ct.contractor_contact_id IS NOT NULL
-    AND ct.category_id != i:transfer_id
-    AND ct.date <= s:date
-GROUP BY ct.contractor_contact_id
-ORDER BY last_transaction_date DESC, ct.contractor_contact_id
+         INNER JOIN (
+    SELECT ct2.contractor_contact_id, MAX(ct2.date) AS date
+    FROM cash_transaction ct2
+             JOIN cash_account ca ON ct2.account_id = ca.id
+    WHERE ca.is_archived = 0
+      AND ct2.is_archived = 0
+      AND ct2.contractor_contact_id IS NOT NULL
+      AND ct2.category_id != i:transfer_id
+      AND ct2.date <= s:date
+    GROUP BY ct2.contractor_contact_id
+) ct2 ON ct2.contractor_contact_id = ct.contractor_contact_id AND ct2.date = ct.date
+         JOIN wa_contact wc ON ct.contractor_contact_id = wc.id
+         JOIN cash_account ca ON ct.account_id = ca.id
+GROUP BY ct.contractor_contact_id, ct.date
+ORDER BY ct.date DESC, ct.contractor_contact_id
 LIMIT i:offset, i:limit
 SQL;
 
@@ -48,6 +57,8 @@ SQL;
             $r = [
                 'contact_id' => (int) $contactData['contact_id'],
                 'last_transaction_date' => $contactData['last_transaction_date'],
+                'last_transaction_amount' => (float) $contactData['last_transaction_amount'],
+                'last_transaction_currency' => $contactData['last_transaction_currency'],
                 'stat' => [],
             ];
 
