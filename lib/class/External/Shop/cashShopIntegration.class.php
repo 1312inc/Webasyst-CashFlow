@@ -150,7 +150,7 @@ final class cashShopIntegration
             $repeatingSettings->frequency = cashRepeatingTransaction::DEFAULT_REPEATING_FREQUENCY;
             $repeatingTransaction = $saver->saveFromTransaction($transaction, $repeatingSettings, true);
 
-            (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction, new DateTime('tomorrow'));
+            (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction, new DateTime());
 
             cash()->getLogger()->debug('transaction repeated', 'forecast');
         }
@@ -171,15 +171,23 @@ final class cashShopIntegration
 
         $transaction = $this->getForecastRepeatingTransaction();
         if (!$transaction instanceof cashRepeatingTransaction) {
+            cash()->getLogger()->debug('no forecast repeating transaction, enable forecast', 'forecast');
+
             $this->enableForecast();
         } else {
             $amount = $this->settings->isAutoForecast()
                 ? $this->getShopAvgAmount($this->settings->getAccount()->getCurrency())
                 : $this->settings->getManualForecast();
 
-            cash()->getLogger()->debug(sprintf('amount to plan %s', $amount), 'forecast');
-
             if ($amount) {
+                cash()->getLogger()->debug(sprintf('amount to plan %s', $amount), 'forecast');
+
+                if ($amount == $transaction->getAmount()) {
+                    cash()->getLogger()->debug('amount not changed, skip update', 'forecast');
+
+                    return;
+                }
+
                 $transaction
                     ->setAmount($amount)
                     ->setAccount(
@@ -190,6 +198,8 @@ final class cashShopIntegration
                 cash()->getEntityPersister()->update($transaction);
 
                 $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);
+            } else {
+                cash()->getLogger()->debug('no amount to update', 'forecast');
             }
         }
     }
@@ -259,16 +269,24 @@ SQL;
     public function actualizeForecastTransaction(): void
     {
         if (!$this->settings->isEnabled()) {
+            cash()->getLogger()->debug('ss integration is off', 'forecast');
+
             return;
         }
 
         if (!$this->settings->isEnableForecast()) {
+            cash()->getLogger()->debug('ss forecast is off', 'forecast');
+
             return;
         }
 
         if (!$this->settings->isAutoForecast()) {
+            cash()->getLogger()->debug('ss forecast amount is manual', 'forecast');
+
             return;
         }
+
+        cash()->getLogger()->debug('actualize forecast amount', 'forecast');
 
         $this->changeForecastType();
     }
