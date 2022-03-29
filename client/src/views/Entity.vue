@@ -11,12 +11,14 @@
           }}</a>
         </h1>
       </template>
-      <template v-slot:controls>
+      <template v-slot:controls v-if="$route.meta.showChart">
         <ChartHeaderControls />
       </template>
     </ChartHeader>
-    <AmChartContainer />
-    <DetailsDashboard />
+    <template v-if="$route.meta.showChart">
+      <AmChartContainer />
+      <DetailsDashboard />
+    </template>
     <div class="flexbox">
       <div class="wide">
         <TransactionList
@@ -40,8 +42,6 @@ import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import api from '@/plugins/api'
-
-// TODO: Add vue-meta
 
 export default {
   mixins: [routerTransitionMixin],
@@ -90,7 +90,9 @@ export default {
         this.$store.commit('entity/setEntity', data)
 
         this.$store.commit('transaction/updateQueryParams', { filter: this.$route.meta.fetchTransactionsFilter(this.entity.entity_id) })
-        this.$store.dispatch('transaction/getChartData')
+        if (this.$route.meta.showChart) {
+          this.$store.dispatch('transaction/getChartData')
+        }
 
         this.$store.dispatch('transaction/fetchTransactions', {
           from: '',

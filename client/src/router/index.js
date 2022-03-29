@@ -94,6 +94,7 @@ const routes = [
     name: 'Order',
     component: Entity,
     meta: {
+      showChart: false,
       getExternalEntitySource: 'shop',
       fetchTransactionsFilter: (id) => `external/shop.${id}`
     }
@@ -103,6 +104,7 @@ const routes = [
     name: 'Contact',
     component: Entity,
     meta: {
+      showChart: true,
       getExternalEntitySource: 'contacts',
       fetchTransactionsFilter: (id) => `contractor/${id}`
     }
