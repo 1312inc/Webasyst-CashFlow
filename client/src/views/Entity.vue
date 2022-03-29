@@ -55,6 +55,13 @@ export default {
     AmChartPieStickyContainer
   },
 
+  metaInfo () {
+    return {
+      title: this.entity?.entity_name || '',
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
+  },
+
   beforeRouteLeave (to, from, next) {
     this.$store.commit('entity/resetEntity')
     next()
