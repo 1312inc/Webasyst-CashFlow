@@ -12,6 +12,7 @@ import Sticky from './plugins/sticky'
 import darkModeObserver from './plugins/darkModeObserver'
 import VuePortal from '@linusborg/vue-simple-portal'
 import IsOnline from './plugins/isOnline'
+import VueMeta from 'vue-meta'
 import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
@@ -25,6 +26,7 @@ Vue.use(Sticky)
 Vue.use(darkModeObserver)
 Vue.use(VuePortal)
 Vue.use(IsOnline)
+Vue.use(VueMeta)
 
 new Vue({
   router,
