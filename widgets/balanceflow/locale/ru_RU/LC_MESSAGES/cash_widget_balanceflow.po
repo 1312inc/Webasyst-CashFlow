@@ -33,3 +33,6 @@ msgstr "мес."
 
 msgid "noAccess"
 msgstr "Нет доступа"
+
+msgid "SwitchToWebasyst2"
+msgstr "Переключитесь в новый режим интерфейса Webasyst 2, чтобы этот виджет заработал"

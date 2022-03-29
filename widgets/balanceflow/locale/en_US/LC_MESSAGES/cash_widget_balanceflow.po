@@ -33,3 +33,6 @@ msgstr "mo"
 
 msgid "noAccess"
 msgstr "No access"
+
+msgid "SwitchToWebasyst2"
+msgstr "Switch to Webasyst 2 new UI to see the balance flow chart"
