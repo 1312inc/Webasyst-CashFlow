@@ -1,4 +1,7 @@
 
+
+{if $ui == '2.0'}
+
   <div class="cash-widget-{$info['id']} block custom-p-16">
     <div class="cash-widget-spinner" style="position: absolute; top: 50%;left: 50%; transform: translateX(-60%) translateY(-50%);">
       <i class="fas fa-spinner wa-animation-spin speed-2000"></i>
@@ -43,3 +46,12 @@
   });
 
 </script>
+
+{else}
+
+<div class="block">
+  <div class="align-center hint" style="font-size: 1rem;width: 100%;position: absolute;top: 50%;left: 50%;transform: translateX(-50%) translateY(-50%);">[`SwitchToWebasyst2`]</div>
+</div>
+
+{/if}
+
