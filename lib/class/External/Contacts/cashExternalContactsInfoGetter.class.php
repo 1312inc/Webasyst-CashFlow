@@ -2,7 +2,7 @@
 
 final class cashExternalContactsInfoGetter implements cashExternalSourceInfoGetterInterface
 {
-    private const APP = 'contacts';
+    private const APP = 'webasyst';
 
     public function info(string $id): ?cashExternalInfoDto
     {
@@ -19,7 +19,7 @@ final class cashExternalContactsInfoGetter implements cashExternalSourceInfoGett
         return new cashExternalInfoDto(
             self::APP,
             $info['name'],
-            sprintf('%s/%s', $rootUrl, $info['icon']['96'] ?? $info['img']),
+            sprintf('%s/%s', $rootUrl, $info['icon']['96'] ?? $info['img'] ?? ''),
             (int) $id,
             $contact->getName(),
             sprintf(
