@@ -40,6 +40,7 @@ class cashBalanceflowWidget extends waWidget
             'locale' => wa()->getUser()->getLocale(),
             'url_root_absolute' => wa()->getRootUrl(true),
             'url_root' => wa()->getRootUrl(),
+            'webasyst_ui' => wa()->whichUI('webasyst'),
         ]);
     }
 
@@ -49,6 +50,7 @@ class cashBalanceflowWidget extends waWidget
             return '';
         }
         $assign['ui'] = wa()->whichUI(wa()->getConfig()->getApplication());
+        $assign['webasyst_ui'] = wa()->whichUI('webasyst');
 
         $view = wa()->getView();
         $old_vars = $view->getVars();
