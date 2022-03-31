@@ -27,7 +27,6 @@
   });
 
   window.addEventListener('balanceflowWidgetDataFetchFinished', function (e) {
-    window.removeEventListener('balanceflowWidgetDataFetchFinished', this);
     e.detail.makeBallanceFlowWidget({
       container: document.querySelector(".cash-widget-{$info['id']}"),
       data: e.detail.result,
@@ -42,7 +41,7 @@
         noAccess: '[`noAccess`]'
       }
     })
-  });
+  }, { once: true });
 
 </script>
 
