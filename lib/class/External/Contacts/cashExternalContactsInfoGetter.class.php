@@ -30,7 +30,7 @@ final class cashExternalContactsInfoGetter implements cashExternalSourceInfoGett
             sprintf(
                 '%s%s/#/contact/%d/',
                 wa()->getConfig()->getBackendUrl(true),
-                self::APP,
+                'contacts',
                 $id
             ),
             []
