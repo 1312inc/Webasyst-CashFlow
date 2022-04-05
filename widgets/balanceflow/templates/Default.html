@@ -1,6 +1,14 @@
 
 {if $webasyst_ui == '2.0'}
 
+  <style>
+    /* make chart responsive on TV dashboard */
+    body.tv .cash-widget-{$info['id']} .cash-widget-chart {
+      width: auto !important;
+      height: auto !important;
+    }
+  </style>
+
   <div class="cash-widget-{$info['id']} block custom-p-16">
     <div class="cash-widget-spinner" style="position: absolute; top: 50%;left: 50%; transform: translateX(-60%) translateY(-50%);">
       <i class="fas fa-spinner wa-animation-spin speed-2000"></i>
@@ -43,6 +51,16 @@
     })
   }, { once: true });
 
+</script>
+
+<script>
+  (function () {
+      setTimeout(function () {
+          try {
+              DashboardWidgets[{$info['id']}].renderWidget();
+          } catch (e) { }
+      }, 10 * 60 * 1000);
+  })();
 </script>
 
 {else}
