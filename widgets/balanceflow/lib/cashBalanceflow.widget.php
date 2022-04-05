@@ -1,18 +1,13 @@
 <?php
 
-class cashBalanceflowWidget extends waWidget
+class cashBalanceflowWidget extends cashAbstractWidget
 {
     /**
      * @var array<cashCurrencyVO>
      */
     private static $currencies;
 
-    /**
-     * @var waWidgetSettingsModel
-     */
-    private static $settingsModel;
-
-    public static function getCurrencyFilterControl($name, $params)
+    public static function getCurrencyFilterControl($name, $params): string
     {
         $templatePath = sprintf('%s/templates/CurrencyControl.html', dirname(__FILE__, 2));
 
@@ -28,8 +23,10 @@ class cashBalanceflowWidget extends waWidget
         ]);
     }
 
-    public function defaultAction()
+    public function defaultAction(): void
     {
+        $this->incognitoUser();
+
         $token = (new cashApiToken())->retrieveToken(cash()->getUser()->getContact());
 
         $this->display([
@@ -42,25 +39,8 @@ class cashBalanceflowWidget extends waWidget
             'url_root' => wa()->getRootUrl(),
             'webasyst_ui' => wa()->whichUI('webasyst'),
         ]);
-    }
 
-    protected static function renderTemplate($template, $assign = []): string
-    {
-        if (!file_exists($template)) {
-            return '';
-        }
-        $assign['ui'] = wa()->whichUI(wa()->getConfig()->getApplication());
-        $assign['webasyst_ui'] = wa()->whichUI('webasyst');
-
-        $view = wa()->getView();
-        $old_vars = $view->getVars();
-        $view->clearAllAssign();
-        $view->assign($assign);
-        $html = $view->fetch($template);
-        $view->clearAllAssign();
-        $view->assign($old_vars);
-
-        return $html;
+        $this->incognitoLogout();
     }
 
     /**
@@ -94,14 +74,5 @@ class cashBalanceflowWidget extends waWidget
         $firstCurrency = reset($currencies);
 
         return $settings['currency'] ?? ($firstCurrency ? $firstCurrency->getCode() : '');
-    }
-
-    private static function getSettingModel(): waWidgetSettingsModel
-    {
-        if (self::$settingsModel === null) {
-            self::$settingsModel = new waWidgetSettingsModel();
-        }
-
-        return self::$settingsModel;
     }
 }
