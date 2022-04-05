@@ -5,7 +5,8 @@ return [
         ['cashRepeatTransactionRepeater', 'afterTransactionPagePreExecute'],
     ],
     cashEventStorage::ON_COUNT => [
-        ['cashShopIntegration', 'onCount']
+        ['cashShopIntegration', 'onCount'],
+        ['cashSelfDestructWhenDueDeleter', 'onCount']
     ],
     cashEventStorage::ACCOUNT_ARCHIVE => [
         ['cashShopAccountArchiveListener', 'execute']

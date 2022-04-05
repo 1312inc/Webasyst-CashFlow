@@ -73,25 +73,31 @@ class cashTransactionSaver extends cashEntitySaver
         $data = $this->addCategoryId($data);
 
         if (!empty($data['external_source'])) {
+            // todo: event для плагинов
             switch ($data['external_source']) {
                 case 'shop':
                     $integration = new cashShopIntegration();
                     if ($integration->shopExists()) {
-                        try {
-                            $order = new shopOrder($data['external_id']);
-                        } catch (waException $exception) {
-                            $this->error = 'No order with such id';
+                        if (empty($data['is_self_destruct_when_due'])) {
+                            try {
+                                $order = new shopOrder($data['external_id']);
+                            } catch (waException $exception) {
+                                $this->error = 'No order with such id';
 
-                            return false;
+                                return false;
+                            }
+
+                            $data['external_hash'] = $integration->getTransactionFactory()->generateExternalHash(
+                                $order,
+                                cashShopTransactionFactory::CUSTOM . time(),
+                                $data['amount']
+                            );
+                            $data['external_id'] = $order->getId();
+                            $data['external_data'] = array_merge($data['external_data'] ?? [], ['id' => $order->getId()]
+                            );
+                        } else {
+                            $data['external_hash'] = cashShopTransactionFactory::HASH_FORECAST;
                         }
-
-                        $data['external_hash'] = $integration->getTransactionFactory()->generateExternalHash(
-                            $order,
-                            cashShopTransactionFactory::CUSTOM . time(),
-                            $data['amount']
-                        );
-                        $data['external_id'] = $order->getId();
-                        $data['external_data'] = array_merge($data['external_data'] ?? [], ['id' => $order->getId()]);
                     }
             }
         } else {

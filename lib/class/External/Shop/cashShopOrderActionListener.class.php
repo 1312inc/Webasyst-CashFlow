@@ -1,9 +1,6 @@
 <?php
 
-/**
- * Class cashShopOrderActionListener
- */
-class cashShopOrderActionListener extends waEventHandler
+final class cashShopOrderActionListener extends waEventHandler
 {
     /**
      * @param $params
@@ -24,6 +21,10 @@ class cashShopOrderActionListener extends waEventHandler
         $shopTransactionFactory = $integration->getTransactionFactory();
         try {
             $createTransactionDto = new cashShopCreateTransactionDto($params);
+            cash()->getLogger()->debug(
+                sprintf('new paid shop order %s', $createTransactionDto->order->getId()),
+                'forecast'
+            );
 
             if ($createTransactionDto->order->paid_date) {
                 if (in_array($params['action_id'], $settings->getIncomeActions(), true)) {
@@ -50,7 +51,10 @@ class cashShopOrderActionListener extends waEventHandler
 
             if ($createTransactionDto->mainTransaction instanceof cashTransaction) {
                 if ($settings->isEnableForecast()) {
+                    cash()->getLogger()->debug('forecast is enabled', 'forecast');
+
                     $integration->deleteForecastTransactionBeforeDate(new DateTime(), true);
+                    cash()->getLogger()->debug('forecast transactions before today deleted', 'forecast');
                 }
 
                 $integration->saveTransactions($createTransactionDto);

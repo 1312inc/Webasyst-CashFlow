@@ -1,6 +1,6 @@
 <?php
 
-class cashShopBackendOrderDto
+final class cashShopBackendOrderDto
 {
     /**
      * @var array

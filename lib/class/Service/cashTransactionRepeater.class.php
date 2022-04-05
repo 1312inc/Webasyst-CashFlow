@@ -106,7 +106,9 @@ final class cashTransactionRepeater
                     )
                 );
 
-                while ($startDate <= $endDate) {
+                $infLoopMaxCount = 1500;
+                while ($startDate <= $endDate && $infLoopMaxCount) {
+                    $infLoopMaxCount--;
                     $ids = $this->createRepeating($repeatingTransaction, $data, $startDate);
                     if (is_array($ids)) {
                         array_map(

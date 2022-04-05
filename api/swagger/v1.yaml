@@ -244,7 +244,7 @@ paths:
         - in: query
           name: filter
           required: false
-          description: category/5, account/3, currency/USD, null, search/DESCRIPTION, import/1
+          description: category/1, account/1, currency/USD, null, search/DESCRIPTION, import/1, contractor/1, import/1, external/shop.1, trash/0
           schema:
             type: string
         - in: query
@@ -658,6 +658,7 @@ paths:
         - in: query
           name: filter
           required: true
+          description: category/1, account/1, currency/USD, null, search/DESCRIPTION, import/1, contractor/1, import/1, external/shop.1, trash/0
           schema:
             type: string
             minLength: 1
@@ -709,10 +710,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /cash.system.searchContacts:
+  /cash.contact.search:
     get:
       tags:
-        - Разное
+        - Контакты
       security:
         - ApiKeyAuth: [ ]
       parameters:
@@ -736,17 +737,51 @@ paths:
             maximum: 30
       responses:
         200:
-          description: Пустой ответ в случае успеха
+          description: Список найденных
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/searchContactsResponse'
+                $ref: '#/components/schemas/contactSearchResponse'
         400:
           description: Ошибка
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /cash.contact.getList:
+    get:
+      tags:
+        - Контакты
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 30
+      responses:
+        200:
+          description: Список контактов с стат инфой, отсортированные по последней операцие
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/contactListResponse'
+        400:
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.system.getExternalEntity:
     get:
       tags:
@@ -805,10 +840,12 @@ components:
             properties:
               stat:
                 $ref: '#/components/schemas/StatInfo'
+
     getCategoriesListResponse:
       type: array
       items:
         $ref: '#/components/schemas/CategoryInfo'
+
     getTransactionsListResponse:
       type: object
       properties:
@@ -826,10 +863,64 @@ components:
           items:
             $ref: '#/components/schemas/TransactionInfo'
 
-    searchContactsResponse:
+    contactSearchResponse:
       type: array
       items:
         $ref: '#/components/schemas/SearchContactInfo'
+
+    contactListResponse:
+      type: object
+      properties:
+        offset:
+          type: integer
+          minimum: 0
+        limit:
+          type: integer
+          maximum: 30
+        total:
+          type: integer
+          minimum: 0
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+              last_transaction:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                    example: "2022-03-22"
+                  amount:
+                    type: number
+                    format: double
+                  amountShorten:
+                    type: string
+                    example: "41.2K"
+                  currency:
+                    type: string
+                    example: RUB
+              firstname:
+                type: string
+              lastname:
+                type: string
+              photo_url:
+                type: string
+              photo_url_absolute:
+                type: string
+              stat:
+                type: object
+                properties:
+                  currency:
+                    type: string
+                    example: RUB
+                  data:
+                    $ref: '#/components/schemas/StatInfo'
 
     getExternalEntityResponse:
       type: array
@@ -1111,6 +1202,8 @@ components:
           description: Id контрагента
         is_onbadge:
           type: boolean
+        is_self_destruct_when_due:
+          type: boolean
         contractor_contact:
           nullable: true
           allOf:
@@ -1219,6 +1312,10 @@ components:
           type: boolean
           nullable: true
           default: null
+        is_self_destruct_when_due:
+          type: boolean
+          nullable: true
+          default: null
         external:
           nullable: true
           allOf:
@@ -1309,6 +1406,10 @@ components:
           nullable: true
           default: null
         is_onbadge:
+          type: boolean
+          nullable: true
+          default: null
+        is_self_destruct_when_due:
           type: boolean
           nullable: true
           default: null

@@ -1,8 +1,8 @@
 <?php
 
-class cashExternalContactsInfoGetter implements cashExternalSourceInfoGetterInterface
+final class cashExternalContactsInfoGetter implements cashExternalSourceInfoGetterInterface
 {
-    private const APP = 'contacts';
+    private const APP = 'webasyst';
 
     public function info(string $id): ?cashExternalInfoDto
     {
@@ -19,15 +19,18 @@ class cashExternalContactsInfoGetter implements cashExternalSourceInfoGetterInte
         return new cashExternalInfoDto(
             self::APP,
             $info['name'],
-            sprintf('%s/%s', $rootUrl, $info['icon']['96'] ?? $info['img']),
+            sprintf('%s/%s', $rootUrl, $info['icon']['96'] ?? $info['img'] ?? ''),
             (int) $id,
             $contact->getName(),
-            sprintf('%s%s', $rootUrl, $contact->getPhoto(96)),
             sprintf(
-                '%s%s%s/#/contact/%d/',
-                $rootUrl,
+                '%s%s',
+                wa()->getConfig()->getHostUrl(),
+                waContact::getPhotoUrl($contact->getId(), $contact->get('photo'), 96)
+            ),
+            sprintf(
+                '%s%s/#/contact/%d/',
                 wa()->getConfig()->getBackendUrl(true),
-                self::APP,
+                'contacts',
                 $id
             ),
             []

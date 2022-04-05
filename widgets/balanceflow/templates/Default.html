@@ -1,0 +1,72 @@
+
+{if $webasyst_ui == '2.0'}
+
+  <style>
+    /* make chart responsive on TV dashboard */
+    body.tv .cash-widget-{$info['id']} .cash-widget-chart {
+      width: auto !important;
+      height: auto !important;
+    }
+  </style>
+
+  <div class="cash-widget-{$info['id']} block custom-p-16">
+    <div class="cash-widget-spinner" style="position: absolute; top: 50%;left: 50%; transform: translateX(-60%) translateY(-50%);">
+      <i class="fas fa-spinner wa-animation-spin speed-2000"></i>
+    </div>
+    <a href="{$url_root_absolute}webasyst/cash/currency/{$currency_code}">
+      <div class="flexbox middle custom-mb-4">
+        <div class="wide black bold {if $info['size'] != '1x1'}large {/if}nowrap cash-widget-balance cash-widget-balance-{$info['id']}"></div>
+        <div class="cash-widget-alert custom-ml-4" style="display: none;"></div>
+      </div>
+      <svg
+        class="cash-widget-chart"
+        style="width:{if $info['size'] === '1x1'}106{else}268{/if}px;height: 70px;"
+      ></svg>
+      <div class="cash-widget-average small align-center custom-mt-8"></div>
+    </a>
+  </div>
+
+
+<script type="module">
+  import { fetchData } from '{$url_root}wa-apps/cash/widgets/balanceflow/js/balanceFlowWidget.js';
+  fetchData({
+    baseUrl: '{$url_root}',
+    token: '{$token}'
+  });
+
+  window.addEventListener('balanceflowWidgetDataFetchFinished', function (e) {
+    e.detail.makeBallanceFlowWidget({
+      container: document.querySelector(".cash-widget-{$info['id']}"),
+      data: e.detail.result,
+      currencyCode: "{$currency_code}",
+      currencySign: "{$currencies[$currency_code]->getSign()}",
+      size: "{$info['size']}",
+      locale: "{$locale}".replace("_", "-"),
+      localeMessages: {
+        arrowUp: '[`Going positive!`]',
+        arrowDown: '[`Cash gap is coming`]',
+        month: '[`m`]',
+        noAccess: '[`noAccess`]'
+      }
+    })
+  }, { once: true });
+
+</script>
+
+<script>
+  (function () {
+      setTimeout(function () {
+          try {
+              DashboardWidgets[{$info['id']}].renderWidget();
+          } catch (e) { }
+      }, 10 * 60 * 1000);
+  })();
+</script>
+
+{else}
+
+<div class="block">
+  <div class="align-center hint" style="font-size: 1rem;width: 80%;position: absolute;top: 50%;left: 50%;transform: translateX(-50%) translateY(-50%);">[`SwitchToWebasyst2`]</div>
+</div>
+
+{/if}

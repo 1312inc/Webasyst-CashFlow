@@ -1324,6 +1324,14 @@ SQL;
         );
     }
 
+    public function deleteSelfDestructWhenDueBeforeDate(DateTimeImmutable $dueDate): bool
+    {
+        return $this->exec(
+            "DELETE FROM {$this->table} WHERE is_self_destruct_when_due > 0 AND date <= s:date",
+            ['date' => $dueDate->format('Y-m-d')]
+        );
+    }
+
     /**
      * @param string $source
      * @param string $hash

@@ -11,6 +11,17 @@ final class cashAggregateFilter
     public const FILTER_SEARCH     = 'search';
     public const FILTER_EXTERNAL   = 'external';
 
+    private const FILTERS = [
+        self::FILTER_ACCOUNT,
+        self::FILTER_CATEGORY,
+        self::FILTER_CONTRACTOR,
+        self::FILTER_IMPORT,
+        self::FILTER_TRASH,
+        self::FILTER_CURRENCY,
+        self::FILTER_SEARCH,
+        self::FILTER_EXTERNAL,
+    ];
+
     /**
      * @var int|null
      */
@@ -62,6 +73,12 @@ final class cashAggregateFilter
 
         if ($hash) {
             [$filter, $identifier] = explode('/', $hash);
+
+            if (!in_array($filter, self::FILTERS, true)) {
+                throw new cashValidateException(
+                    sprintf('Unknown filter: %s. Allowed only: %s', $filter, implode(', ', self::FILTERS))
+                );
+            }
 
             if ($filter === self::FILTER_EXTERNAL) {
                 $externalData = explode('.', $identifier);

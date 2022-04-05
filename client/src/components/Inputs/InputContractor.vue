@@ -155,7 +155,7 @@ export default {
 
       // make search request
       api
-        .get('cash.system.searchContacts', {
+        .get('cash.contact.search', {
           params: {
             term: target.value.trim() || this.defaultRequest
           }

@@ -156,7 +156,7 @@
   "expenseCategoryExplained": "Expense transactions decrease the account balance.",
   "profitCategoryExplained": "For business, profit is similar to expense because its taking money out of business and thus decreasing the account balance. The Profit checkbox allows you to visually group this kind of expenses into separate blue columns.",
   "notifyMe": "Remind to process when due",
-  "notifyMeAlert": "When the transaction date comes, a tiny little notification on the app icon will emerge and remind you to process (confirm) this transaction",
+  "notifyMeAlert": "When the transaction date comes, a tiny little notification on the app icon will emerge and remind you to process (confirm) this transaction.",
   "error": {
     "http": "Request failed",
     "api": "API error",
@@ -172,11 +172,13 @@
   "cashGapOut": "Going out of cash gap in {inDays} days ({date})",
   "inDays": "(in {days} days)",
   "fileUploaderLabel": "Drop here or browse",
+  "contacts": "Contacts",
   "noContact": "Search for existing contact or enter any new contact name",
   "linkContact": "Transaction will be linked with the selected contractor",
   "newContact": "New contact will be created",
   "hide": "Hide",
   "show": "Show",
+  "showMore": "Show more",
   "navigation": "{action} menu",
   "collapseTransactionDesc": "{count} transactions ({category})",
   "repeatingTransactionDesc": "{repeats} transactions",
@@ -205,5 +207,7 @@
   "trashInfo": "Deleted transactions are not counted in any cash flow and balance reports and are visible to the app admins only. Select one or more transactions to purge or restore.",
   "restore": "Restore",
   "restoreInfo": "Editing is disabled for deleted transactions. Select this transaction and restore it first.",
-  "purge": "Purge"
+  "purge": "Purge",
+  "selfDestructLabel": "Automatically delete this transaction when its planned date comes",
+  "selfDestructText": "Useful when real transactions are imported in bulk from banks and spreadsheets, and this particular transaction must be treated as a planned one that needs to be replaced with the imported ones."
 }

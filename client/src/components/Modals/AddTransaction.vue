@@ -41,8 +41,8 @@
     </div>
 
     <div class="dialog-content">
-      <div class="flexbox space-24 wrap-mobile">
-        <div style="flex: 0;">
+      <div class="flexbox space-24 wrap-mobile reverse-mobile">
+        <div class="custom-mt-24-mobile" style="flex: 0;">
           <div class="custom-mb-16 c-inline-calendar">
             <DateField
               v-model="model.date"
@@ -53,32 +53,49 @@
           </div>
 
           <div class="custom-mb-16">
-            {{
-              $t("transactionDate", { date: $moment(model.date).format("LL") })
-            }}
+            <i18n path="transactionDate">
+              <template v-slot:date>
+                <strong>{{ $moment(model.date).format("LL") }}</strong>
+              </template>
+            </i18n>
           </div>
 
-          <label @click.prevent="model.is_onbadge = !model.is_onbadge">
-            <span class="wa-checkbox">
-              <input type="checkbox" :checked="model.is_onbadge" />
-              <span>
-                <span class="icon">
-                  <i class="fas fa-check"></i>
+          <div>
+            <label @click.prevent="model.is_onbadge = !model.is_onbadge">
+              <span class="wa-checkbox">
+                <input type="checkbox" :checked="model.is_onbadge" />
+                <span>
+                  <span class="icon">
+                    <i class="fas fa-check"></i>
+                  </span>
                 </span>
               </span>
-            </span>
-            {{ $t("notifyMe") }}
-          </label>
-
-          <div v-if="model.is_onbadge" class="custom-mt-8">
-            <div class="hint">
-              {{ $t("notifyMeAlert") }}&nbsp;<span class="badge smaller"
-                >1</span
-              >
-            </div>
+              {{ $t("notifyMe") }} <span v-if="model.is_onbadge"><span class="badge smaller">1</span>&nbsp;</span>
+              <span v-wa-tippy="$t('notifyMeAlert')">
+                <i class="fas fa-info-circle opacity-40"></i>
+              </span>
+            </label>
           </div>
+
+          <div v-if="(new Date(model.date)).getTime() > new Date().getTime() || model.is_repeating" class="custom-mt-16">
+            <label @click.prevent="model.is_self_destruct_when_due = !model.is_self_destruct_when_due">
+              <span class="wa-checkbox">
+                <input type="checkbox" :checked="model.is_self_destruct_when_due" />
+                <span>
+                  <span class="icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                </span>
+              </span>
+              {{ $t("selfDestructLabel") }}
+              <span v-wa-tippy="$t('selfDestructText')">
+                <i class="fas fa-info-circle opacity-40"></i>
+              </span>
+            </label>
+          </div>
+
         </div>
-        <div class="wide custom-mt-24-mobile">
+        <div class="wide">
           <!-- Start Currency Input section -->
           <div class="custom-mb-16">
             <input-currency
@@ -464,6 +481,8 @@ import DateField from '@/components/Inputs/InputDate'
 import DropdownWa from '@/components/Inputs/DropdownWa'
 import TransitionCollapseHeight from '@/components/Transitions/TransitionCollapseHeight'
 import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
+import entityPageMixin from '@/mixins/entityPageMixin'
+
 export default {
   props: {
     transaction: {
@@ -481,7 +500,7 @@ export default {
     }
   },
 
-  mixins: [rowModificatorMixin],
+  mixins: [rowModificatorMixin, entityPageMixin],
 
   components: {
     InputCurrency,
@@ -514,12 +533,7 @@ export default {
         transfer_account_id: null,
         transfer_incoming_amount: null,
         apply_to_all_in_future: false,
- ***REMOVED***(this.$route.name === 'Order' ? {
-          external: {
-            source: this.$store.state.entity.entity.app,
-            id: this.$store.state.entity.entity.entity_id
-          }
-        } : {})
+        is_self_destruct_when_due: false
       },
       custom_interval: 'month',
       controlsDisabled: false,
@@ -634,10 +648,7 @@ export default {
     },
 
     externalSourceInfo () {
-      if (this.$route.name === 'Order') {
-        return this.$store.state.entity.entity
-      }
-      return this.transaction?.external_source_info
+      return this.model.external ? this.$store.state.entity.entity || this.transaction?.external_source_info : null
     }
   },
 
@@ -651,6 +662,11 @@ export default {
     },
     'model.transfer_account_id' () {
       this.model.transfer_incoming_amount = null
+    },
+    'model.date' (val) {
+      if ((new Date(val)).getTime() <= new Date().getTime()) {
+        this.model.is_self_destruct_when_due = false
+      }
     }
   },
 
@@ -675,7 +691,8 @@ export default {
       }
       this.model.amount = `${Math.abs(this.model.amount)}`
       // Fill external source
-      if (this.externalSourceInfo) {
+      // TODO: move to entityPageMixin ??
+      if (this.transaction.external_source_info) {
         this.model.external = {
           source: this.transaction.external_source,
           id: this.transaction.external_source_info.id

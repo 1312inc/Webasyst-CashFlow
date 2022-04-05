@@ -97,6 +97,7 @@ return array(
         'contractor_contact_id' => array('int', 11),
         'is_onbadge' => array('tinyint', 4, 'default' => '0'),
         'external_id' => array('int', 11),
+        'is_self_destruct_when_due' => array('tinyint', 4, 'default' => '0'),
         ':keys' => array(
             'PRIMARY' => 'id',
             'cash_transaction_datetime_create_contact_id_index' => array('datetime', 'create_contact_id'),

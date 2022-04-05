@@ -105,6 +105,7 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
             'transfer_incoming_amount' => $request->getTransferIncomingAmount(),
             'is_onbadge' => $request->isOnbadge(),
             'description' => $request->getDescription(),
+            'is_self_destruct_when_due' => $request->isSelfDestructWhenDue(),
         ];
 
         if ($request->getExternal()) {
@@ -131,7 +132,8 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
                 ->setDescription($transaction->getDescription())
                 ->setAmount($transaction->getAmount())
                 ->setContractorContactId($transaction->getContractorContactId())
-                ->setIsOnbadge($transaction->getIsOnbadge());
+                ->setIsOnbadge($transaction->getIsOnbadge())
+                ->setIsSelfDestructWhenDue($transaction->getIsSelfDestructWhenDue());
             $this->saver->addToPersist($repeatingTransaction);
 
             $transactions = cash()->getEntityRepository(cashTransaction::class)->findAllByRepeatingIdAndAfterDate(
@@ -144,7 +146,8 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
                     ->setDescription($transaction->getDescription())
                     ->setAmount($transaction->getAmount())
                     ->setContractorContactId($transaction->getContractorContactId())
-                    ->setIsOnbadge($transaction->getIsOnbadge());
+                    ->setIsOnbadge($transaction->getIsOnbadge())
+                    ->setIsSelfDestructWhenDue($transaction->getIsSelfDestructWhenDue());
 
                 $this->saver->addToPersist($t);
             }
