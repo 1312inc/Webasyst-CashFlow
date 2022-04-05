@@ -26,7 +26,7 @@
                       value: transaction.amount,
                       currencyCode: account.currency
                     }),
-                    date: $moment(transaction.date).format("LL")
+                    date: $moment().format("LL")
                   })
                 }}
               </p>

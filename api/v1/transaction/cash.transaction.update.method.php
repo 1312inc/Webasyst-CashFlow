@@ -68,7 +68,8 @@ class cashTransactionUpdateMethod extends cashApiNewAbstractMethod
             $this->fromPost('transfer_account_id', false, ApiParamsCaster::CAST_INT),
             $this->fromPost('transfer_incoming_amount', false, ApiParamsCaster::CAST_FLOAT),
             $this->fromPost('is_onbadge', false, ApiParamsCaster::CAST_BOOLEAN),
-            $externalDto
+            $externalDto,
+            $this->fromPost('is_self_destruct_when_due', false, ApiParamsCaster::CAST_BOOLEAN)
         );
 
         $response = (new cashApiTransactionUpdateHandler())->handle($request);

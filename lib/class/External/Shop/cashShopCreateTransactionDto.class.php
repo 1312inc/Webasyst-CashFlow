@@ -1,6 +1,6 @@
 <?php
 
-class cashShopCreateTransactionDto
+final class cashShopCreateTransactionDto
 {
     /**
      * @var cashTransaction

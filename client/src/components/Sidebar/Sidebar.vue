@@ -12,7 +12,7 @@
         >
       </div>
     </nav>
-    <div class="sidebar-body hide-scrollbar">
+    <div ref="sidebarBody" class="sidebar-body hide-scrollbar">
       <SearchField />
       <Bricks />
 
@@ -34,38 +34,14 @@
         />
       </SortableList>
 
-      <!-- Categories list block -->
-      <SidebarHeading
-        class="custom-mt-24"
-        updatingEntityName="Category"
-        type="income"
-      >
-        {{ $t("income") }}
-      </SidebarHeading>
-      <SortableList
-        :items="categoriesIncome"
-        sortingTarget="category"
-        :group="{name: 'categoriesIncome', pull: false}">
-        <SortableItemCategory
-          v-for="category in categoriesIncome"
-          :key="category.id"
-          :category="category"
-        />
-      </SortableList>
-
-      <SidebarHeading updatingEntityName="Category" type="expense">
-        {{ $t("expense") }}
-      </SidebarHeading>
-      <SortableList
-        :items="categoriesExpense"
-        sortingTarget="category"
-        :group="{name: 'categoriesExpense', pull: false}">
-        <SortableItemCategory
-          v-for="category in categoriesExpense"
-          :key="category.id"
-          :category="category"
-        />
-      </SortableList>
+      <Toggler>
+        <template v-slot:categories>
+          <SidebarCategories />
+        </template>
+        <template v-slot:contacts>
+          <ContactsList />
+        </template>
+      </Toggler>
 
       <div v-if="$permissions.canAccessTransfers" class="custom-mt-24">
         <h6 class="heading"><span>{{ $t("other") }}</span></h6>
@@ -86,7 +62,7 @@
       </div>
     </div>
 
-    <div class="sidebar-footer shadowed" ref="sidebarFooter">
+    <div ref="sidebarFooter" class="sidebar-footer shadowed">
       <SidebarFooter />
     </div>
   </div>
@@ -95,24 +71,28 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import SortableList from './Sortable/SortableList'
-import SortableItemCategory from './Sortable/SortableItemCategory'
 import SortableItemAccount from './Sortable/SortableItemAccount'
 import SidebarHeading from './SidebarHeading'
+import SidebarCategories from './SidebarCategories'
 import SidebarFooter from './SidebarFooter'
 import SearchField from '@/components/Inputs/SearchField'
 import SidebarCurrencyWidgets from './SidebarCurrencyWidgets'
+import ContactsList from '@/components/ContactsList/ContactsList'
+import Toggler from '@/components/Toggler/Toggler'
 import Bricks from '@/components/Bricks/Bricks'
 
 export default {
   components: {
     SortableList,
-    SortableItemCategory,
     SortableItemAccount,
+    SidebarCategories,
     SidebarHeading,
     SidebarFooter,
     SearchField,
     SidebarCurrencyWidgets,
-    Bricks
+    Bricks,
+    ContactsList,
+    Toggler
   },
 
   data () {
@@ -123,17 +103,10 @@ export default {
 
   computed: {
     ...mapState('account', ['accounts']),
+
     ...mapGetters({
       categoriesByType: ['category/getByType']
     }),
-
-    categoriesIncome () {
-      return this.categoriesByType('income').filter(c => c.parent_category_id === null)
-    },
-
-    categoriesExpense () {
-      return this.categoriesByType('expense').filter(c => c.parent_category_id === null)
-    },
 
     categoriesTransfer () {
       return this.categoriesByType('transfer')
@@ -144,7 +117,9 @@ export default {
     $route () {
       this.mobileMenuOpen = false
     },
-    mobileMenuOpen: 'mobileMenuToggle'
+    mobileMenuOpen (val) {
+      val ? this.menuOpen() : this.menuClose()
+    }
   },
 
   mounted () {
@@ -156,13 +131,6 @@ export default {
   },
 
   methods: {
-    mobileMenuToggle (val) {
-      if (val) {
-        this.menuOpen()
-      } else {
-        this.menuClose()
-      }
-    },
     menuOpen () {
       ;['Body', 'Footer'].forEach(h => {
         this.$refs[`sidebar${h}`].style['max-height'] =

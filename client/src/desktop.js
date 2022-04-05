@@ -14,6 +14,7 @@ import Sticky from './plugins/sticky'
 import darkModeObserver from './plugins/darkModeObserver'
 import VuePortal from '@linusborg/vue-simple-portal'
 import WAtippy from './plugins/tippy'
+import VueMeta from 'vue-meta'
 import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
@@ -27,6 +28,7 @@ Vue.use(Sticky)
 Vue.use(darkModeObserver)
 Vue.use(VuePortal)
 Vue.use(WAtippy)
+Vue.use(VueMeta)
 
 const contentSelector = '#app-content'
 const sidebarSelector = '#app-sidebar'

@@ -11,7 +11,14 @@
           }}</a>
         </h1>
       </template>
+      <template v-slot:controls v-if="$route.meta.showChart">
+        <ChartHeaderControls />
+      </template>
     </ChartHeader>
+    <template v-if="$route.meta.showChart">
+      <AmChartContainer />
+      <DetailsDashboard />
+    </template>
     <div class="flexbox">
       <div class="wide">
         <TransactionList
@@ -28,20 +35,31 @@
 
 <script>
 import ChartHeader from '@/components/ChartHeader'
+import ChartHeaderControls from '@/components/ChartHeaderControls'
+import AmChartContainer from '@/components/Charts/AmChartContainer'
+import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import api from '@/plugins/api'
-
-// TODO: Add vue-meta
 
 export default {
   mixins: [routerTransitionMixin],
 
   components: {
     ChartHeader,
+    ChartHeaderControls,
+    AmChartContainer,
+    DetailsDashboard,
     TransactionList,
     AmChartPieStickyContainer
+  },
+
+  metaInfo () {
+    return {
+      title: this.entity?.entity_name || '',
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
   },
 
   beforeRouteLeave (to, from, next) {
@@ -70,6 +88,11 @@ export default {
       `cash.system.getExternalEntity?source=${this.$route.meta.getExternalEntitySource}&id=${this.$route.params.id}`
         )
         this.$store.commit('entity/setEntity', data)
+
+        this.$store.commit('transaction/updateQueryParams', { filter: this.$route.meta.fetchTransactionsFilter(this.entity.entity_id) })
+        if (this.$route.meta.showChart) {
+          this.$store.dispatch('transaction/getChartData')
+        }
 
         this.$store.dispatch('transaction/fetchTransactions', {
           from: '',

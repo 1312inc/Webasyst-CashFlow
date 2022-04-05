@@ -1,0 +1,38 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cash/widgets/balanceflow\n"
+"POT-Creation-Date: 2022-03-10 10:33+0100\n"
+"PO-Revision-Date: \n"
+"Last-Translator: cash/widgets/balanceflow\n"
+"Language-Team: cash/widgets/balanceflow\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Basepath: utf-8\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: .\n"
+
+msgid "Balance Flow"
+msgstr ""
+
+msgid "Going positive!"
+msgstr ""
+
+msgid "Cash gap is coming"
+msgstr ""
+
+msgid "Currency"
+msgstr ""
+
+msgid "m"
+msgstr "mo"
+
+msgid "noAccess"
+msgstr "No access"
+
+msgid "SwitchToWebasyst2"
+msgstr "Switch to Webasyst 2 UI mode to see the balance flow chart."

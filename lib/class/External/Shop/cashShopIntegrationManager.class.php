@@ -3,10 +3,7 @@
 final class cashShopIntegrationManager
 {
     /**
-     * @param cashShopIntegration  $shopIntegration
      * @param array<string, mixed> $settingsData
-     *
-     * @return bool
      */
     public function setup(cashShopIntegration $shopIntegration, array $settingsData): bool
     {

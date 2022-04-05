@@ -50,7 +50,7 @@ class cashTransactionExternalEntityShopOrder implements cashTransactionExternalE
      *
      * @throws waException
      */
-    public function __construct(string $app, $data)
+    public function __construct(string $app, $data, ?string $hash = null)
     {
         if ($app !== self::APP_ID) {
             return;

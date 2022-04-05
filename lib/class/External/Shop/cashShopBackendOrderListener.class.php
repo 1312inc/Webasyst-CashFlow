@@ -49,7 +49,8 @@ final class cashShopBackendOrderListener extends waEventHandler
 
             return ['aux_info' => $view->fetch($template)];
         } catch (Exception $ex) {
-            cash()->getLogger()->error('Some error occurs on shop backend order hook', $ex);
+            cash()->getLogger()
+                ->error('Some error occurs on shop backend order hook', $ex);
         }
 
         return [];

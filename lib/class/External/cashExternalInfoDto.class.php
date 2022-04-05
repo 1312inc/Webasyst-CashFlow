@@ -1,6 +1,6 @@
 <?php
 
-class cashExternalInfoDto
+final class cashExternalInfoDto
 {
     /**
      * @var string
