@@ -113,13 +113,7 @@ const routes = [
     path: '/report'
   },
   {
-    path: '/report/dds'
-  },
-  {
-    path: '/report/dds/*'
-  },
-  {
-    path: '/report/flow'
+    path: '/report/*'
   },
   {
     path: '/import'

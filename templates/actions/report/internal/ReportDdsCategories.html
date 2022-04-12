@@ -4,67 +4,19 @@
 {** $grouping cashReportDdsServicePeriodGroupingDto[] **}
 {** $data cashReportDdsServiceStatDto[] **}
 
-{function name="_render_cashflow_report_table" data=[] type=[]}
-<div class="c-report-dds-outer">
-    <div class="c-report-dds-inner">
-
-        {$currenciesTotals = $data[0]->valuesPerPeriods['total']}
-        
-        <table class="small">
-            <thead>
-                <tr>
-                    <th class="c-column-sticky-left"></th>
-                    {foreach $grouping as $group}
-                        <th class="align-right">{$group->name|escape}</th>
-                    {/foreach}
-                    <th class="align-right bold c-column-sticky-right-totals">Total</th>
-                </tr>
-            </thead>
-
-            <tbody>
-            {foreach $data as $datum}
-                <tr{if $datum->entity->isChild()} class="c-row-white"{/if}>
-                    {if !empty($datum->valuesPerPeriods)}
-                        <td class="nowrap c-column-sticky-left">
-                            <div title="{$datum->entity->getName()|escape}" style="overflow: hidden;"{if $datum->entity->isChild()} class="custom-pl-16{/if}">
-                                {if $datum->entity->isHeader()}<b class="large">{/if}
-                                {$datum->entity->getIcon()}
-                                {$datum->entity->getName()|escape|truncate:32}
-                                {if $datum->entity->isHeader()}</b>{/if}
-                            </div>
-                        </td>
-                        {foreach $datum->valuesPerPeriods as $values name=foreach_month_columns}
-                        <td class="{if $smarty.foreach.foreach_month_columns.iteration == 13}c-column-sticky-right-totals{/if}">
-                            {foreach $values as $currency => $value}
-                                <div class="nowrap align-right{if $smarty.foreach.foreach_month_columns.iteration == 13}black bold{/if} {if $smarty.foreach.foreach_month_columns.iteration == 14} hidden{/if} {if isset($value['month']) && $value['month'] == $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y'}bold{/if} {if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y' ) || $currentPeriod->getValue() > $smarty.now|date_format:'Y')}gray{/if}">
-                                    {if $datum->entity->getId() !== 'all_income' && $datum->entity->getId() !== 'all_expense' && isset($value.currency)}
-                                        {$size = 30 * abs($value.per_month/$currenciesTotals[$value.currency]['per_month'])}
-                                        {$size = ($size > 0 && $size < 6) ? 6 : $size}
-                                        <div class="c-report-dds-dataCircle" style="display:flex;align-items:center; justify-content: end; height: 34px;">
-                                            <div style="width: {$size}px; height: {$size}px; border-radius: 50%; background-color: {$datum->entity->getColor()};"></div>
-                                        </div>
-                                    {/if}
-                                    {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false} {$datum->currencies[$currency]->getSign()}
-                                </div>
-                            {/foreach}
-                        </td>
-                        {/foreach}
-                    {/if}
-                </tr>
-            {/foreach}
-            </tbody>
-        </table>
-    </div>
-</div>
-{/function}
-
+<script src="{$wa_app_static_url}js/amcharts/core.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/charts.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/themes/animated.js"></script>
+{if $wa->locale() !== 'en_US'}
+<script src="{$wa_app_static_url}js/amcharts/lang/{$wa->locale()}.js"></script>
+{/if}
 
 <div class="block">
 
     <h1>[`Categories`]</h1>
 
-    <div class="flexbox">
-        <ul class="chips wide custom-m-0">
+    <div class="flexbox middle">
+        <ul class="chips custom-m-0">
             <li>
                 <div class="dropdown" id="c-dds-year-dropdown">
                     <button class="dropdown-toggle custom-mr-16">{$currentPeriod->getName()}</button>
@@ -92,11 +44,7 @@
                 </div>
             </li>
         </ul>
-        <div>
-            <button class="c-report-dds-hideCircles">
-                [`Hide circles`]
-            </button>
-        </div>
+        <div class="currencies-container"></div>
     </div>
 
     <input type="hidden" value="{$type->id}" name="dds[type]"/>
@@ -109,26 +57,114 @@
         {if $d->entity->isExpense()}{$_data_exp[] = $d}{/if}
         {if $d->entity->isIncome()}{$_data_inc[] = $d}{/if}
     {/foreach}
-    {_render_cashflow_report_table data=$_data_inc type=$type}
-    {_render_cashflow_report_table data=$_data_exp type=$type}
 
+    <div class="flexbox">
+        <div class="width-50">
+            <div id="chartdiv_income" style="height: 400px;"></div>
+        </div>
+        <div class="width-50">
+            <div id="chartdiv_expense" style="height: 400px;"></div>
+        </div>
+    </div>
+    
+    <div id="cols"></div>
+    
 </div>
 
-<script>
-    {
-        const toggleElem = document.querySelector('.c-report-dds-hideCircles');
-        const dataCircleElems = document.querySelectorAll('.c-report-dds-dataCircle');
-        let showCircles = true;
 
-        if (toggleElem) {
-            toggleElem.addEventListener('click', function () {
-                dataCircleElems.forEach(e => e.style.display = showCircles ? 'none' : 'flex');
-                this.innerText = showCircles ? "[`Show circles`]" : "[`Hide circles`]";
-                showCircles = !showCircles;
+
+<script type="module">
+    import { chartCols, chartDonut } from "{$wa_app_static_url}js/amcharts.js";
+
+        // State
+        const data = {$chartData};
+        const currencies = [...new Set([
+            ...Object.keys(data.all_income),
+            ...Object.keys(data.all_expense)
+        ])];
+        let activeCurrencies = currencies[0];
+
+        // Render Buttons
+        const currenciesContainer = document.querySelector('.currencies-container');
+        for (const [i, currency] of currencies.entries()) {
+            const button = document.createElement('button');
+            button.innerText = currency;
+            button.addEventListener('click', () => {
+                activeCurrencies = currencies[i];
+                renderCharts();
             });
+            currenciesContainer.appendChild(button);
         }
+        
+        // Run Initial render
+        am4core.ready(() => {
+            am4core.addLicense('CH269543621');
+            am4core.useTheme(am4themes_animated);
+            renderCharts();
+        });
 
-    }
+
+        function renderCharts () {
+
+            am4core.disposeAllCharts();
+
+            function donutAdapter (data) {
+                return Object.entries(data[activeCurrencies].data.colors).map((e, i) => {
+                    return {
+                        name: e[0],
+                        color: e[1],
+                        value: Object.values(data[activeCurrencies].total)[i]
+                    };
+                });
+            }
+
+            if(data.all_income[activeCurrencies]) {
+                chartDonut({
+                    el: '#chartdiv_income',
+                    data: donutAdapter(data.all_income)
+                });
+            }
+
+            if(data.all_expense[activeCurrencies]) {
+                chartDonut({
+                    el: '#chartdiv_expense',
+                    data: donutAdapter(data.all_expense)
+                });
+            }
+            
+
+            const container = document.querySelector('#cols');
+            container.innerHTML = '';
+
+            const colors = {
+                ...data.all_income[activeCurrencies]?.data.colors || {},
+                ...data.all_expense[activeCurrencies]?.data.colors || {}
+            }
+
+            ;[...data.all_income[activeCurrencies]?.data.columns || [], ...data.all_expense[activeCurrencies]?.data.columns || []].forEach(category => {
+
+                const el = document.createElement('div');
+                container.appendChild(el);
+
+                const name = category[0];
+                const cols = category.slice(1, -2).map((e, i) => {
+                    return {
+                        date: new Date(new Date().getFullYear(), i, 1),
+                        value: e
+                    };
+                });
+
+                chartCols({
+                    el: el,
+                    name: name,
+                    color: colors[name][0],
+                    data: cols,
+                    currency: activeCurrencies
+                });
+            });
+
+        }
+    
 </script>
 
 
