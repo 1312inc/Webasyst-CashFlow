@@ -2,6 +2,10 @@
 
 <div class="content">
 
+    {if method_exists($wa->installer, 'reviewWidget')}
+        {$wa->installer->reviewWidget('app/cash')}
+    {/if}
+
     <ul class="tabs bordered-bottom">
         {foreach $reportsMenu as $reportsMenus}
             {foreach $reportsMenus as $reportMenu}
