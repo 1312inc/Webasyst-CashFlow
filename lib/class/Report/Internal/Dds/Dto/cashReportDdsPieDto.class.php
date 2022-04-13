@@ -40,7 +40,7 @@ class cashReportDdsPieDto implements JsonSerializable
         $data = [
             'data' => [
                 'type' => 'pie',
-                'columns' => array_values($this->columns),
+                'columns' => $this->columns,
             ],
             'total' => $this->total,
             'helpers' => [
