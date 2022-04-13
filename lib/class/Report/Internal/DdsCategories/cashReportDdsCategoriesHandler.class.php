@@ -15,11 +15,11 @@ final class cashReportDdsCategoriesHandler implements cashReportHandlerInterface
         if (empty($year)) {
             $year = date('Y');
         }
-        $currentPeriod = cashReportDdsPeriod::createForYear($year);
+        $currentPeriod = cashReportPeriod::createForYear($year);
 
         $type = new cashReportDdsTypeDto(cashReportDdsService::TYPE_CATEGORY, _w('Categories'), true);
 
-        $periods = $reportService->getPeriodsByYear();
+        $periods = (new cashReportPeriodsFactory())->getPeriodsByYear();
 
         $data = $reportService->getDataForTypeAndPeriod($type, $currentPeriod);
         $chartData = $reportService->formatDataForPie($data, $type, $currentPeriod);

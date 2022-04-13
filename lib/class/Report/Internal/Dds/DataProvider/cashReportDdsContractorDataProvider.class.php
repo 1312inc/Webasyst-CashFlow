@@ -18,12 +18,10 @@ final class cashReportDdsContractorDataProvider implements cashReportDdsDataProv
     }
 
     /**
-     * @param cashReportDdsPeriod $period
-     *
      * @return cashReportDdsStatDto[]
      * @throws waException
      */
-    public function getDataForPeriod(cashReportDdsPeriod $period): array
+    public function getDataForPeriod(cashReportPeriod $period): array
     {
         $sql = <<<SQL
 select ct.contractor_contact_id id,

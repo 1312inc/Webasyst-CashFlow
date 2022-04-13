@@ -15,7 +15,7 @@ final class cashReportDdsHandler implements cashReportHandlerInterface
         if (empty($year)) {
             $year = date('Y');
         }
-        $currentPeriod = cashReportDdsPeriod::createForYear($year);
+        $currentPeriod = cashReportPeriod::createForYear($year);
 
         $ddsTypes = $reportService->getTypes();
         /** @var cashReportDdsTypeDto|string $type */
@@ -26,7 +26,7 @@ final class cashReportDdsHandler implements cashReportHandlerInterface
             throw new waException(sprintf('Unknown report type: %s', $type));
         }
 
-        $periods = $reportService->getPeriodsByYear();
+        $periods = (new cashReportPeriodsFactory())->getPeriodsByYear();
 
         $data = $reportService->getDataForTypeAndPeriod($type, $currentPeriod);
         $chartData = $reportService->formatDataForPie($data, $type, $currentPeriod);

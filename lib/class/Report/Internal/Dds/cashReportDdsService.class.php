@@ -10,33 +10,11 @@ final class cashReportDdsService
     public const ALL_EXPENSE_KEY = 'all_expense';
 
     /**
-     * @return cashReportDdsPeriod[]
-     * @throws waException
-     */
-    public function getPeriodsByYear(): array
-    {
-        $periods = [];
-
-        /** @var cashTransactionModel $model */
-        $model = cash()->getModel(cashTransaction::class);
-        foreach ($model->getYearsWithTransactions() as $yearsWithTransaction) {
-            if ($yearsWithTransaction > 1900) {
-                $periods[] = cashReportDdsPeriod::createForYear($yearsWithTransaction);
-            }
-        }
-
-        return $periods;
-    }
-
-    /**
-     * @param cashReportDdsTypeDto $type
-     * @param cashReportDdsPeriod  $period
-     *
      * @return cashReportDdsStatDto[]
      * @throws waException
      * @throws kmwaRuntimeException
      */
-    public function getDataForTypeAndPeriod(cashReportDdsTypeDto $type, cashReportDdsPeriod $period): array
+    public function getDataForTypeAndPeriod(cashReportDdsTypeDto $type, cashReportPeriod $period): array
     {
         switch ($type->id) {
             case self::TYPE_CATEGORY:
@@ -61,14 +39,7 @@ final class cashReportDdsService
         return $data;
     }
 
-    /**
-     * @param array                $data
-     * @param cashReportDdsTypeDto $type
-     * @param cashReportDdsPeriod  $period
-     *
-     * @return array
-     */
-    public function formatDataForPie(array $data, cashReportDdsTypeDto $type, cashReportDdsPeriod $period): array
+    public function formatDataForPie(array $data, cashReportDdsTypeDto $type, cashReportPeriod $period): array
     {
         $chartData = [
             self::ALL_INCOME_KEY => [],

@@ -7,6 +7,11 @@ final class cashReportInternalHandlerListener
      */
     public function handle(cashReportHandlerParamsEvent $event): array
     {
-        return [new cashReportDdsHandler(), new cashReportFlowHandler(), new cashReportDdsCategoriesHandler()];
+        return [
+            new cashReportDdsHandler(),
+            new cashReportFlowHandler(),
+            new cashReportDdsCategoriesHandler(),
+            new cashReportSankeyHandler(),
+        ];
     }
 }
