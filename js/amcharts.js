@@ -3,10 +3,18 @@ const chartColors = {
     gray: am4core.color('#888888'),
 };
 
+/**
+ * Render Categories Column chart
+ * @param {Object} options 
+ * @param {Array} options.data
+ * @param {HTMLElement} options.el
+ * @param {String} options.currency – Currency sign
+ * @param {String} options.color
+ * @param {string} options.name
+ */
 function chartCols (options) {
 
     const element = options.el;
-    const data = options.data;
 
     const title = document.createElement('div');
     title.classList.add('align-center', 'bold');
@@ -14,13 +22,15 @@ function chartCols (options) {
     element.appendChild(title);
 
     const chartContainer = document.createElement('div');
+    chartContainer.classList.add('custom-p-16');
     element.appendChild(chartContainer);
+    element.classList.add('width-33');
 
     // Create chart instance
     const chart = am4core.create(chartContainer, am4charts.XYChart);
 
     // Add data
-    chart.data = data;
+    chart.data = options.data;
 
     // Create axes
     const xAxis = chart.xAxes.push(new am4charts.DateAxis());
@@ -58,8 +68,16 @@ function chartCols (options) {
 
 }
 
+/**
+ * Render Totals Donut chart
+ * @param {Object} options 
+ * @param {Array} options.data
+ * @param {HTMLElement} options.el
+ * @param {String} options.currency – Currency sign
+ */
 function chartDonut (options) {
-    const element = document.querySelector(options.el);
+
+    const element = options.el;
 
     const chart = am4core.create(element, am4charts.PieChart);
 
@@ -74,6 +92,7 @@ function chartDonut (options) {
     pieSeries.slices.template.strokeOpacity = 1;
     pieSeries.ticks.template.disabled = true;
     pieSeries.labels.template.disabled = true;      
+    pieSeries.slices.template.tooltipText = "{category}: {value} " + options.currency;
 
     chart.legend = new am4charts.Legend();
 
