@@ -1,0 +1,39 @@
+<div class="block">
+    <h1>Sankey</h1>
+
+
+    <div class="flexbox middle">
+        <ul class="chips custom-m-0">
+            <li>
+                <div class="dropdown" id="c-dds-year-dropdown">
+                    <button class="dropdown-toggle custom-mr-16">{$currentPeriod->getName()}</button>
+                    <div class="dropdown-body">
+                        <ul class="menu" style="min-width: 100px;">
+                            {foreach array_reverse($reportPeriods) as $reportPeriod}
+                                <li {if $currentPeriod->isEqual($reportPeriod)}class="selected"{/if}>
+                                    <a href="{$wa_app_url}report/sankey/year={$reportPeriod->getValue()}"
+                                       data-cash-period-value="{$reportPeriod->getValue()}"
+                                       data-cash-period-start="{$reportPeriod->getStartDate()}"
+                                       data-cash-period-end="{$reportPeriod->getEndDate()}"
+                                       class="{if $reportPeriod->getValue() > $smarty.now|date_format:'Y'}opacity-50{/if} {if $reportPeriod->getValue() == $smarty.now|date_format:'Y'}bold{/if}"
+                                    >
+                                        {$reportPeriod->getName()|escape}
+                                    </a>
+                                </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+             ***REMOVED***
+                        ( function($) {
+                            $("#c-dds-year-dropdown").waDropdown();
+                        })(jQuery);
+             ***REMOVED***
+                </div>
+            </li>
+        </ul>
+        <div c
+
+    <pre>
+    {$data|print_r}
+    </pre>
+</div>

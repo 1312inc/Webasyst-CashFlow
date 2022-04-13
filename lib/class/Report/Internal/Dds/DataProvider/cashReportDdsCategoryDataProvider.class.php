@@ -24,12 +24,10 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
     }
 
     /**
-     * @param cashReportDdsPeriod $period
-     *
      * @return cashReportDdsStatDto[]
      * @throws waException
      */
-    public function getDataForPeriod(cashReportDdsPeriod $period): array
+    public function getDataForPeriod(cashReportPeriod $period): array
     {
         $sql = sprintf(
             "select concat(ct.category_id, '|', if(ct.amount < 0, '%s', '%s')) id,
@@ -177,7 +175,7 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
         );
     }
 
-    private function initAmountPerPeriod(cashReportDdsPeriod $period, &$rawData, $datumId, $datumCurrency, $id): void
+    private function initAmountPerPeriod(cashReportPeriod $period, &$rawData, $datumId, $datumCurrency, $id): void
     {
         foreach ($period->getGrouping() as $groupingDto) {
             $rawData[$datumId][$groupingDto->key][$datumCurrency] = [
@@ -191,7 +189,7 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
         $rawData[$datumId]['max'][$datumCurrency]['per_month'] = .0;
     }
 
-    private function initTotalAmountPerPeriod(cashReportDdsPeriod $period, &$rawData, $datum, $type): void
+    private function initTotalAmountPerPeriod(cashReportPeriod $period, &$rawData, $datum, $type): void
     {
         foreach ($period->getGrouping() as $groupingDto) {
             $initVals = [

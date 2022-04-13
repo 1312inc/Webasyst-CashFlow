@@ -1,6 +1,6 @@
 <?php
 
-final class cashReportDdsPeriod
+final class cashReportPeriod
 {
     public const GROUPING_DAY   = 'day';
     public const GROUPING_MONTH = 'month';
@@ -12,17 +12,17 @@ final class cashReportDdsPeriod
     private $name;
 
     /**
-     * @var DateTime
+     * @var DateTimeImmutable
      */
     private $start;
 
     /**
-     * @var DateTime
+     * @var DateTimeImmutable
      */
     private $end;
 
     /**
-     * @var cashReportDdsPeriodGroupingDto[]
+     * @var cashReportPeriodGroupingDto[]
      */
     private $grouping = null;
 
@@ -36,17 +36,13 @@ final class cashReportDdsPeriod
      */
     private $value;
 
-    /**
-     * cashReportDdsServicePeriod constructor.
-     *
-     * @param string   $name
-     * @param string   $value
-     * @param DateTime $start
-     * @param DateTime $end
-     * @param          $groupBy
-     */
-    public function __construct($name, $value, DateTime $start, DateTime $end, $groupBy)
-    {
+    public function __construct(
+        string $name,
+        string $value,
+        DateTimeImmutable $start,
+        DateTimeImmutable $end,
+        string $groupBy
+    ) {
         $this->name = $name;
         $this->start = $start;
         $this->end = $end;
@@ -63,9 +59,9 @@ final class cashReportDdsPeriod
             switch ($this->groupBy) {
                 case self::GROUPING_MONTH:
                 default:
-                    $from = clone $this->start;
+                    $from = DateTime::createFromFormat('Y-m-d', $this->start->format('Y-m-d'));
                     while ($from < $this->end) {
-                        $this->grouping[$from->format('n')] = new cashReportDdsPeriodGroupingDto(
+                        $this->grouping[$from->format('n')] = new cashReportPeriodGroupingDto(
                             _w($from->format('M')),
                             $from->format('Y-m-d'),
                             $from->format('n')
@@ -83,12 +79,12 @@ final class cashReportDdsPeriod
         return $this->name;
     }
 
-    public function getStart(): DateTime
+    public function getStart(): DateTimeImmutable
     {
         return $this->start;
     }
 
-    public function getEnd(): DateTime
+    public function getEnd(): DateTimeImmutable
     {
         return $this->end;
     }
@@ -103,48 +99,28 @@ final class cashReportDdsPeriod
         return $this->end->format('Y-m-d');
     }
 
-    /**
-     * @return string
-     */
     public function getValue(): string
     {
         return $this->value;
     }
 
-    /**
-     * @param $key
-     *
-     * @return array|null
-     */
-    public function getGroupingByKey($key)
+    public function getGroupingByKey(string $key)
     {
         return $this->grouping[$key] ?? null;
     }
 
-    /**
-     * @param string $year
-     *
-     * @return cashReportDdsPeriod
-     * @throws Exception
-     */
-    public static function createForYear($year): cashReportDdsPeriod
+    public static function createForYear(int $year): self
     {
-        $start = DateTime::createFromFormat('Y-m-d|', date($year . '-01-01'));
-        $end = clone $start;
-        $end->modify('next year');
+        $start = DateTimeImmutable::createFromFormat('Y-m-d|', date($year . '-01-01'));
+        $end = $start->modify('next year');
 
         return new self($year, $start->format('Y'), $start, $end, self::GROUPING_MONTH);
     }
 
-    /**
-     * @param cashReportDdsPeriod $period
-     *
-     * @return bool
-     */
-    public function isEqual(cashReportDdsPeriod $period): bool
+    public function isEqual(cashReportPeriod $period): bool
     {
         return $this->value === $period->getValue()
-            && $this->start == $period->getStart()
-            && $this->end == $period->getEnd();
+            && $this->start === $period->getStart()
+            && $this->end === $period->getEnd();
     }
 }

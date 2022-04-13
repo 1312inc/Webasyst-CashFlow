@@ -19,12 +19,10 @@ final class cashReportDdsAccountDataProvider implements cashReportDdsDataProvide
     }
 
     /**
-     * @param cashReportDdsPeriod $period
-     *
      * @return cashReportDdsStatDto[]
      * @throws waException
      */
-    public function getDataForPeriod(cashReportDdsPeriod $period): array
+    public function getDataForPeriod(cashReportPeriod $period): array
     {
         $sql = sprintf(
             "select ct.account_id account,

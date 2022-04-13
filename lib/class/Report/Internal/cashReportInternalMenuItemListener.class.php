@@ -7,6 +7,11 @@ final class cashReportInternalMenuItemListener
      */
     public function handle(cashReportMenuItemEvent $event): array
     {
-        return [new cashReportDdsMenuItem(), new cashReportFlowMenuItem(), new cashReportDdsCategoriesMenuItem()];
+        return [
+            new cashReportDdsMenuItem(),
+            new cashReportFlowMenuItem(),
+            new cashReportDdsCategoriesMenuItem(),
+            new cashReportSankeyMenuItem(),
+        ];
     }
 }
