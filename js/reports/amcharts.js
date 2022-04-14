@@ -16,11 +16,6 @@ function chartCols (options) {
 
     const element = options.el;
 
-    const title = document.createElement('div');
-    title.classList.add('align-center', 'bold');
-    title.innerText = options.name;
-    element.appendChild(title);
-
     const chartContainer = document.createElement('div');
     chartContainer.classList.add('custom-p-16');
     element.appendChild(chartContainer);
@@ -39,8 +34,7 @@ function chartCols (options) {
     xAxis.renderer.line.strokeOpacity = 0.2;
     xAxis.renderer.line.strokeWidth = 1;
     xAxis.renderer.line.stroke = chartColors.gray;
-    xAxis.renderer.labels.template.fill = chartColors.gray;
-    xAxis.renderer.labels.template.location = 0.5;
+    xAxis.renderer.labels.template.disabled = true;
     xAxis.renderer.cellStartLocation = 0.15;
     xAxis.renderer.cellEndLocation = 0.85;
 
@@ -51,20 +45,31 @@ function chartCols (options) {
 
     // Create series
     const series = chart.series.push(new am4charts.ColumnSeries());
+    series.name = options.name;
     series.dataFields.valueY = "value";
     series.dataFields.dateX = "date";
     series.tooltipText = "{value} " + options.currency;
-    series.columns.template.fill = am4core.color(options.color);
+    series.stroke = am4core.color(options.color);
+    series.fill = am4core.color(options.color);
     series.tooltip.background.filters.clear();
     series.tooltip.background.strokeWidth = 0;
-    series.tooltip.getFillFromObject = false;
-    series.tooltip.background.fill = am4core.color(options.color);
     series.yAxis = yAxis;
     series.xAxis = xAxis;
     series.columns.template.strokeWidth = 0;
-    series.columns.template.fill = am4core.color(options.color);
+    series.columns.template.column.cornerRadiusTopLeft = 2
+    series.columns.template.column.cornerRadiusTopRight = 2
 
     chart.cursor = new am4charts.XYCursor();
+    
+    chart.legend = new am4charts.Legend();
+    chart.legend.itemContainers.template.paddingTop = 20
+    chart.legend.useDefaultMarker = true;
+    const marker = chart.legend.markers.template.children.getIndex(0);
+    marker.cornerRadius(12, 12, 12, 12);
+
+    const markerTemplate = chart.legend.markers.template;
+    markerTemplate.width = 16;
+    markerTemplate.height = 16;
 
 }
 
@@ -88,13 +93,19 @@ function chartDonut (options) {
     const pieSeries = chart.series.push(new am4charts.PieSeries());
     pieSeries.dataFields.value = "value";
     pieSeries.dataFields.category = "name";
-    pieSeries.slices.template.stroke = am4core.color("#fff");
-    pieSeries.slices.template.strokeOpacity = 1;
+    pieSeries.slices.template.propertyFields.fill = "color";
     pieSeries.ticks.template.disabled = true;
     pieSeries.labels.template.disabled = true;      
     pieSeries.slices.template.tooltipText = "{category}: {value} " + options.currency;
 
     chart.legend = new am4charts.Legend();
+    chart.legend.useDefaultMarker = true;
+    const marker = chart.legend.markers.template.children.getIndex(0);
+    marker.cornerRadius(12, 12, 12, 12);
+
+    const markerTemplate = chart.legend.markers.template;
+    markerTemplate.width = 16;
+    markerTemplate.height = 16;
 
 }
 
