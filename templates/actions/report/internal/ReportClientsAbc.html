@@ -1,0 +1,115 @@
+<div class="block" id="c-report-clients-abc">
+
+    <h1>[`Clients`]</h1>
+
+    <div class="flexbox">
+        <form action="">
+
+            <div class="fields">
+                <div class="fields-group">
+                    <div class="field">
+                        <div class="name for-input large">
+                            Currency
+                        </div>
+                        <div class="value">
+
+                            <div class="wa-select largest">
+                                <select name="currency">
+                                    {foreach $currencies as $cur}
+                                        <option value="{$cur->getCode()}"
+                                        {if $cur->getCode() == $currency->getCode()} selected{/if}>{$cur->getTitle()|escape}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name for-input">
+                            Показать
+                        </div>
+                        <div class="value">
+                            <div class="flexbox space-16">
+                                <div>
+                                    с <input type="text" name="from" value="{$from}">
+                                </div>
+                                <div>
+                                    по <input type="text" name="to" value="{$to}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="name for-input">
+                            Группа
+                        </div>
+                        <div class="value">
+                            <div class="flexbox space-16">
+                                <div>
+                                    A <input type="text" name="a" value="{$a}">
+                                </div>
+                                <div>
+                                    B <input type="text" name="b" value="{$b}">
+                                </div>
+                                <div>
+                                    C <input type="text" name="c" value="{$c}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fields-group">
+                    <div class="field">
+                        <div class="value submit">
+                            <input type="submit" class="button" value="Показать">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <br>
+
+    <table>
+        <tr>
+            <td>Контрагент</td>
+            <td>Выручка, {$currency->getSign()}</td>
+            <td>% от выручки</td>
+        </tr>
+    {foreach $tableData as $letter}
+        <tr>
+            <td>{$letter->letter}</td>
+            <td>{$letter->value->amount}</td>
+            <td>{$letter->value->percent}</td>
+        </tr>
+        {foreach $letter->clients as $client}
+            <tr>
+                <td>
+                    <i class="userpic userpic-48" style="background-image: url({$client->img})"</i>
+                    {$client->name|escape}
+                </td>
+                <td>{$client->value->amount}</td>
+                <td>{$client->value->percent}</td>
+            </tr>
+        {/foreach}
+    {/foreach}
+    </table>
+</div>
+
+<script>
+    (function(){ "use strict";
+        var $w = $('#c-report-clients-abc');
+
+        $w.on('submit', 'form', function (e) {
+            debugger
+            var pathname = window.location.pathname.split('clients-abc');
+            var params = $(this).serialize();
+
+            window.location = pathname[0] + 'clients-abc/' + params;
+
+            return false;
+        });
+    })();
+</script>
