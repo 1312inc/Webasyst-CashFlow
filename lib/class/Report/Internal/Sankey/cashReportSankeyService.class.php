@@ -26,7 +26,7 @@ WHERE ct.is_archived = 0
   AND ct.date <= s:date_to
 GROUP BY ct.category_id, ct.account_id)
 UNION ALL
-(SELECT ca.currency, ca.name 'from', cc.name 'to', '' color, SUM(ABS(ct.amount)) value
+(SELECT ca.currency, ca.name 'from', cc.name 'to', cc.color color, SUM(ABS(ct.amount)) value
 FROM cash_transaction ct
          JOIN cash_category cc on ct.category_id = cc.id
          JOIN cash_account ca on ca.id = ct.account_id
