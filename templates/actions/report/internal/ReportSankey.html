@@ -1,6 +1,17 @@
+<script src="{$wa_app_static_url}js/amcharts/core.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/charts.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/themes/animated.js"></script>
+{if $wa->locale() !== 'en_US'}
+<script src="{$wa_app_static_url}js/amcharts/lang/{$wa->locale()}.js"></script>
+{/if}
+<script type="module">
+    import reportSankey from "{$wa_app_static_url}js/reports/reportSankey.js";
+    const data = {$data};
+    reportSankey('chartdiv_sankey', data);
+</script>
+
 <div class="block">
     <h1>Sankey</h1>
-
 
     <div class="flexbox middle">
         <ul class="chips custom-m-0">
@@ -31,9 +42,9 @@
                 </div>
             </li>
         </ul>
-        <div c
+        <div class="currencies-container toggle" style="display: none;"></div>
+    </div>
 
-    <pre>
-    {$data|print_r}
-    </pre>
+    <div id="chartdiv_sankey" style="height: 500px; width: 100%;"></div>
+
 </div>
