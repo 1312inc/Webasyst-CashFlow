@@ -12,6 +12,7 @@ final class cashReportInternalMenuItemListener
             new cashReportFlowMenuItem(),
             new cashReportDdsCategoriesMenuItem(),
             new cashReportSankeyMenuItem(),
+            new cashReportClientsAbcMenuItem(),
         ];
     }
 }
