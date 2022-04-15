@@ -1,10 +1,10 @@
 
 let activeCurrency;
 
-function createCurrencyToggler (containerSelector, currencies, callback) {
+function createCurrencyToggler (containerSelector, currencies, callback, allCurrenciesItemText) {
 
     // Render Buttons
-    for (const currency of currencies) {
+    for (const currency of (allCurrenciesItemText ? [allCurrenciesItemText, ...currencies] : currencies)) {
         const button = document.createElement('span');
         button.innerText = currency;
         document.querySelector(containerSelector).appendChild(button);
@@ -16,7 +16,7 @@ function createCurrencyToggler (containerSelector, currencies, callback) {
         $(containerSelector).show().waToggle({
             change: (event, target, toggle) => {
                 activeCurrency = $(target).text();
-                callback(activeCurrency);
+                callback(activeCurrency === allCurrenciesItemText ? null : activeCurrency);
             }
         });
     }

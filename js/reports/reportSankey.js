@@ -4,15 +4,18 @@ import { createCurrencyToggler } from './currencyToggle.js';
 export default function (chartdivSelector, data, language) {
 
     const currencies = Object.keys(data);
-    let activeCurrency = currencies[0];
+    const mergedData = currencies.reduce((acc, c) => ([...acc, ...data[c]['data'].map(e => ({ ...e, currency: data[c].details.sign }))]), []);
+    let activeCurrency = null;
 
     am4core.ready(() => {
         am4core.addLicense(AMCHARTS_LICENSE);
         am4core.useTheme(am4themes_animated);
-        createCurrencyToggler('.currencies-container', currencies, (currency) => {
-            activeCurrency = currency;
-            renderSankey();
-        });
+        if (currencies.length > 1) {
+            createCurrencyToggler('.currencies-container', currencies, (currency) => {
+                activeCurrency = currency;
+                renderSankey();
+            }, 'All currencies');
+        }
         renderSankey();
     });
 
@@ -26,15 +29,16 @@ export default function (chartdivSelector, data, language) {
         if (language !== 'en_US') {
             chart.language.locale = window[`am4lang_${language}`];
         }
-        
+
         chart.paddingTop = 30;
         chart.paddingRight = 90;
-        chart.data = data[activeCurrency].data;
+        chart.data = activeCurrency ? mergedData.filter(e => e.currency === data[activeCurrency].details.sign) : mergedData;
         chart.dataFields.fromName = "from";
         chart.dataFields.toName = "to";
         chart.dataFields.value = "value";
         chart.dataFields.color = "color";
-        chart.links.template.tooltipText = `{fromName}→{toName}: {value} ${data[activeCurrency].details.sign}`;
+        chart.dataFields.currency = "currency";
+        chart.links.template.tooltipText = `{fromName}→{toName}: {value} {currency}`;
         chart.links.template.colorMode = "gradient";
         chart.links.template.fillOpacity = 1;
 

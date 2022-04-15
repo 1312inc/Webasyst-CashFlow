@@ -22,10 +22,12 @@ export default function (data, language, year) {
     am4core.ready(() => {
         am4core.addLicense(AMCHARTS_LICENSE);
         am4core.useTheme(am4themes_animated);
-        createCurrencyToggler('.currencies-container', currencies, (currency) => {
-            activeCurrency = currency;
-            renderCharts();
-        });
+        if (currencies.length > 1) {
+            createCurrencyToggler('.currencies-container', currencies, (currency) => {
+                activeCurrency = currency;
+                renderCharts();
+            });
+        }
         renderCharts();
     });
 
