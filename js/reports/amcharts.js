@@ -12,17 +12,22 @@ const chartColors = {
  * @param {String} options.color
  * @param {string} options.name
  */
-function chartCols (options) {
+function chartCols (options, language) {
 
     const element = options.el;
 
     const chartContainer = document.createElement('div');
     chartContainer.classList.add('custom-p-16');
     element.appendChild(chartContainer);
-    element.classList.add('width-33');
+    // element.classList.add('width-33');
 
     // Create chart instance
     const chart = am4core.create(chartContainer, am4charts.XYChart);
+
+    // Set Locale
+    if (language !== 'en_US') {
+        chart.language.locale = window[`am4lang_${language}`];
+    }
 
     // Add data
     chart.data = options.data;
@@ -56,13 +61,15 @@ function chartCols (options) {
     series.yAxis = yAxis;
     series.xAxis = xAxis;
     series.columns.template.strokeWidth = 0;
-    series.columns.template.column.cornerRadiusTopLeft = 2
-    series.columns.template.column.cornerRadiusTopRight = 2
+    series.columns.template.column.cornerRadiusTopLeft = 2;
+    series.columns.template.column.cornerRadiusTopRight = 2;
 
     chart.cursor = new am4charts.XYCursor();
-    
+    chart.cursor.lineY.disabled = true;
+
     chart.legend = new am4charts.Legend();
-    chart.legend.itemContainers.template.paddingTop = 20
+    chart.legend.labels.template.text = `{name}: ${new Intl.NumberFormat(language.replace('_', '-')).format(chart.data.reduce((acc, e) => acc + e.value, 0))} ${options.currency}`;
+    chart.legend.itemContainers.template.paddingTop = 20;
     chart.legend.useDefaultMarker = true;
     const marker = chart.legend.markers.template.children.getIndex(0);
     marker.cornerRadius(12, 12, 12, 12);
@@ -70,6 +77,22 @@ function chartCols (options) {
     const markerTemplate = chart.legend.markers.template;
     markerTemplate.width = 16;
     markerTemplate.height = 16;
+
+    // Future dates hover
+    const rangeFututre = xAxis.axisRanges.create()
+    rangeFututre.date = new Date()
+    rangeFututre.endDate = new Date(8640000000000000)
+    rangeFututre.grid.disabled = true
+    rangeFututre.axisFill.fillOpacity = 0.5
+    rangeFututre.axisFill.fill = '#ffffff'
+    chart.seriesContainer.zIndex = -1
+
+    // Currend day line
+    const dateBorder = xAxis.axisRanges.create()
+    dateBorder.date = new Date()
+    dateBorder.grid.stroke = chartColors.gray
+    dateBorder.grid.strokeWidth = 1
+    dateBorder.grid.strokeOpacity = 0.6
 
 }
 
@@ -80,33 +103,29 @@ function chartCols (options) {
  * @param {HTMLElement} options.el
  * @param {String} options.currency – Currency sign
  */
-function chartDonut (options) {
+function chartDonut (options, language) {
 
     const element = options.el;
 
     const chart = am4core.create(element, am4charts.PieChart);
+
+    // Set Locale
+    if (language !== 'en_US') {
+        chart.language.locale = window[`am4lang_${language}`];
+    }
 
     // Add data
     chart.data = options.data;
 
     // Add and configure Series
     const pieSeries = chart.series.push(new am4charts.PieSeries());
+    pieSeries.radius = am4core.percent(70);
     pieSeries.dataFields.value = "value";
     pieSeries.dataFields.category = "name";
     pieSeries.slices.template.propertyFields.fill = "color";
-    pieSeries.ticks.template.disabled = true;
-    pieSeries.labels.template.disabled = true;      
+    // pieSeries.ticks.template.disabled = true;
+    // pieSeries.labels.template.disabled = true;
     pieSeries.slices.template.tooltipText = "{category}: {value} " + options.currency;
-
-    chart.legend = new am4charts.Legend();
-    chart.legend.useDefaultMarker = true;
-    const marker = chart.legend.markers.template.children.getIndex(0);
-    marker.cornerRadius(12, 12, 12, 12);
-
-    const markerTemplate = chart.legend.markers.template;
-    markerTemplate.width = 16;
-    markerTemplate.height = 16;
-
 }
 
 export {
