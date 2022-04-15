@@ -2,7 +2,7 @@ import { AMCHARTS_LICENSE } from './constants.js';
 import { createCurrencyToggler } from './currencyToggle.js';
 import { chartCols, chartDonut } from "./amcharts.js";
 
-export default function (data) {
+export default function (data, language, year) {
 
     // State
     const currencySigns = Object.entries({
@@ -58,7 +58,7 @@ export default function (data) {
                     el,
                     data: donutAdapter(data[`all_${type}`]),
                     currency: currencySigns[activeCurrency]
-                });
+                }, language);
             }
         });
 
@@ -80,7 +80,7 @@ export default function (data) {
 
                     const cols = columns[id].slice(1, -2).map((e, i) => {
                         return {
-                            date: new Date(new Date().getFullYear(), i, 1),
+                            date: new Date(year, i, 1),
                             value: e
                         };
                     });
@@ -91,7 +91,7 @@ export default function (data) {
                         color: currencyData.colors[columns[id][0]][0],
                         data: cols,
                         currency: currencySigns[activeCurrency]
-                    });
+                    }, language);
 
                 }
 

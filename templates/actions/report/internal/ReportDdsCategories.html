@@ -13,7 +13,8 @@
 <script type="module">
     import reportCategories from "{$wa_app_static_url}js/reports/reportCategories.js";
     const data = {$chartData};
-    reportCategories(data);
+    const year = Number(new URL(window.location).pathname.split('/').pop().split('=')[1]) || new Date().getFullYear();
+    reportCategories(data, '{$wa->locale()}', year);
 </script>
 
 <div class="block">
@@ -63,18 +64,18 @@
         {if $d->entity->isIncome()}{$_data_inc[] = $d}{/if}
     {/foreach}
 
-    <div class="flexbox custom-mb-40">
-        <div class="c-charts width-50" style="display: none;">
+    <div class="flexbox" style="flex-wrap: wrap;">
+        <div class="c-charts width-50" style="display: none;min-width: 500px;">
             <div class="align-center bold">[`Income`]</div>
-            <div id="chartdiv_income" style="width: 100%;height: 400px;"></div>
+            <div id="chartdiv_income" class="smaller" style="width: 100%;height: 300px;"></div>
         </div>
-        <div class="c-charts width-50" style="display: none;">
+        <div class="c-charts width-50" style="display: none;min-width: 500px;">
             <div class="align-center bold">[`Expense`]</div>
-            <div id="chartdiv_expense" style="width: 100%;height: 400px;"></div>
+            <div id="chartdiv_expense" class="smaller" style="width: 100%;height: 300px;"></div>
         </div>
     </div>
     
-    <div id="cols" class="flexbox" style="flex-wrap: wrap;"></div>
+    <div id="cols" class="flexbox small" style="flex-wrap: wrap;"></div>
     
 </div>
 
