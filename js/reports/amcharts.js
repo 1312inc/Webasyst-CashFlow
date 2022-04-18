@@ -123,6 +123,7 @@ function chartDonut (options, language) {
     pieSeries.dataFields.value = "value";
     pieSeries.dataFields.category = "name";
     pieSeries.slices.template.propertyFields.fill = "color";
+    pieSeries.slices.template.propertyFields.isActive = "isProfit";
     // pieSeries.ticks.template.disabled = true;
     // pieSeries.labels.template.disabled = true;
     pieSeries.slices.template.tooltipText = "{category}: {value} " + options.currency;

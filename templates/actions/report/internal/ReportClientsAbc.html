@@ -1,3 +1,11 @@
+
+<script type="module">
+    import renderRangeToggle from '{$wa_app_static_url}js/reports/rangeToggle.js';
+    $(function() {
+        renderRangeToggle('.range-container', [30, 90, 365]);
+    });
+</script>
+
 <div class="block" id="c-report-clients-abc">
 
     <h1>[`Clients`]</h1>
@@ -6,7 +14,7 @@
         <form action="">
 
             <div class="fields">
-                <div class="fields-group">
+                <div class="fields-group custom-mb-16">
                     <div class="field">
                         <div class="name for-input large">
                             Currency
@@ -24,21 +32,7 @@
 
                         </div>
                     </div>
-                    <div class="field">
-                        <div class="name for-input">
-                            Показать
-                        </div>
-                        <div class="value">
-                            <div class="flexbox space-16">
-                                <div>
-                                    с <input type="text" name="from" value="{$from}">
-                                </div>
-                                <div>
-                                    по <input type="text" name="to" value="{$to}">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                     <div class="field">
                         <div class="name for-input">
                             Группа
@@ -57,14 +51,44 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="fields-group">
-                    <div class="field">
-                        <div class="value submit">
-                            <input type="submit" class="button" value="Показать">
+
+                    <div class="field" style="min-height: 34px;">
+                        <div class="name for-input">
+                            Период
+                        </div>
+                        <div class="value">
+                        <div class="range-container flexbox space-12">
+                            <div class="dropdown" id="range-dropdown">
+                                <button class="dropdown-toggle button" type="button">Выбрать даты</button>
+                                <div class="dropdown-body">
+                                    <ul class="menu">
+                                        <li>
+                                            <a data-range="30" href="#"><span>Последние 30 дней</span></a>
+                                        </li>
+                                        <li>
+                                            <a data-range="90" href="#"><span>Последние 90 дней</span></a>
+                                        </li>
+                                        <li>
+                                            <a data-range="365" href="#"><span>Последние 365 дней</span></a>
+                                        </li>
+                                        <li>
+                                            <a data-range="custom" href="#"><span>Выбрать даты</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="range-manual" style="display: none;">
+                                <input type="text" class="dateFrom" style="width: 120px;" />
+                                <input type="text" class="dateTo" style="width: 120px;" />
+                                <input type="hidden" name="from" value="{$from}">
+                                <input type="hidden" name="to" value="{$to}">
+                            </div>
+                        </div>
                         </div>
                     </div>
+
                 </div>
+                <input type="submit" class="button" value="Показать">
             </div>
 
         </form>
@@ -72,30 +96,32 @@
 
     <br>
 
-    <table>
-        <tr>
-            <td>Контрагент</td>
-            <td>Выручка, {$currency->getSign()}</td>
-            <td>% от выручки</td>
-        </tr>
-    {foreach $tableData as $letter}
-        <tr>
-            <td>{$letter->letter}</td>
-            <td>{$letter->value->amount}</td>
-            <td>{$letter->value->percent}</td>
-        </tr>
-        {foreach $letter->clients as $client}
+    <div class="c-report-dds-inner">
+        <table>
             <tr>
-                <td>
-                    <i class="userpic userpic-48" style="background-image: url({$client->img})"</i>
-                    {$client->name|escape}
-                </td>
-                <td>{$client->value->amount}</td>
-                <td>{$client->value->percent}</td>
+                <td>Контрагент</td>
+                <td>Выручка, {$currency->getSign()}</td>
+                <td>% от выручки</td>
             </tr>
+        {foreach $tableData as $letter}
+            <tr>
+                <td>{$letter->letter}</td>
+                <td>{$letter->value->amount}</td>
+                <td>{$letter->value->percent}</td>
+            </tr>
+            {foreach $letter->clients as $client}
+                <tr>
+                    <td>
+                        <i class="userpic userpic-48" style="background-image: url({$client->img})"</i>
+                        {$client->name|escape}
+                    </td>
+                    <td>{$client->value->amount}</td>
+                    <td>{$client->value->percent}</td>
+                </tr>
+            {/foreach}
         {/foreach}
-    {/foreach}
-    </table>
+        </table>
+    </div>
 </div>
 
 <script>
@@ -103,7 +129,7 @@
         var $w = $('#c-report-clients-abc');
 
         $w.on('submit', 'form', function (e) {
-            debugger
+
             var pathname = window.location.pathname.split('clients-abc');
             var params = $(this).serialize();
 

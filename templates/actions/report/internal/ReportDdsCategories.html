@@ -13,15 +13,14 @@
 <script type="module">
     import reportCategories from "{$wa_app_static_url}js/reports/reportCategories.js";
     const data = {$chartData};
+    const categories = {$categories|json_encode};
     const year = Number(new URL(window.location).pathname.split('/').pop().split('=')[1]) || new Date().getFullYear();
-    reportCategories(data, '{$wa->locale()}', year);
+    reportCategories(data, '{$wa->locale()}', year, Object.values(categories));
 </script>
 
 <div class="block">
 
     <h1>[`Categories`]</h1>
-
-    categories: {$categories|print_r}<br>
 
     <div class="flexbox middle">
         <ul class="chips custom-m-0">

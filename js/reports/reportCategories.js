@@ -2,7 +2,7 @@ import { AMCHARTS_LICENSE } from './constants.js';
 import { createCurrencyToggler } from './currencyToggle.js';
 import { chartCols, chartDonut } from "./amcharts.js";
 
-export default function (data, language, year) {
+export default function (data, language, year, categoriesList) {
 
     // State
     const currencySigns = Object.entries({
@@ -43,7 +43,8 @@ export default function (data, language, year) {
                 return {
                     name,
                     color,
-                    value: e[1]
+                    value: e[1],
+                    isProfit: categoriesList.some(c => (c.id === id && +c.is_profit === 1))
                 };
             });
         }
