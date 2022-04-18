@@ -12,7 +12,7 @@ final class cashReportSankeyService
         $this->model = cash()->getModel();
     }
 
-    public function getDataForYear(DateTimeImmutable $year): array
+    public function getDataForPeriod(DateTimeImmutable $dateFrom, DateTimeImmutable $dateTo): array
     {
         $sql = <<<SQL
 (SELECT ca.currency, cc.name 'from', ca.name 'to', cc.color color, SUM(ABS(ct.amount)) value
@@ -42,8 +42,8 @@ SQL;
             [
                 'category_type_income' => cashCategory::TYPE_INCOME,
                 'category_type_expense' => cashCategory::TYPE_EXPENSE,
-                'date_from' => sprintf('%d-01-01', $year->format('Y')),
-                'date_to' => sprintf('%d-12-31', $year->format('Y')),
+                'date_from' => $dateFrom->format('Y-m-d'),
+                'date_to' => $dateTo->format('Y-m-d'),
             ]
         )->fetchAll();
 

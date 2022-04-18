@@ -11,23 +11,27 @@ final class cashReportSankeyHandler implements cashReportHandlerInterface
     {
         $reportService = new cashReportSankeyService();
 
-        $year = $params['year'] ?? 0;
-        if (empty($year)) {
-            $year = date('Y');
+        $dateFrom = DateTimeImmutable::createFromFormat(
+            'Y-m-d',
+            $params['date_from'] ?? date('Y-m-d', strtotime('-365 days'))
+        );
+        $dateTo = DateTimeImmutable::createFromFormat('Y-m-d', $params['date_to'] ?? date('Y-m-d'));
+        if ($dateTo === false || $dateFrom === false) {
+            throw new cashValidateException('Wrong dates');
         }
-        $currentPeriod = cashReportPeriod::createForYear($year);
 
-        $periods = (new cashReportPeriodsFactory())->getPeriodsByYear();
+        if (abs($dateTo->diff($dateFrom)->days) > 365) {
+            throw new cashValidateException('Wrong period');
+        }
 
-        $data = $reportService->getDataForYear($currentPeriod->getStart());
+        $data = $reportService->getDataForPeriod($dateFrom, $dateTo);
 
         return wa()->getView()->renderTemplate(
             wa()->getAppPath('templates/actions/report/internal/ReportSankey.html'),
             [
-                'currentPeriod' => $currentPeriod,
-                'reportPeriods' => $periods,
+                'dateFrom' => $dateFrom->format('Y-m-d'),
+                'dateTo' => $dateTo->format('Y-m-d'),
                 'data' => json_encode($data, JSON_UNESCAPED_UNICODE),
-                'grouping' => $currentPeriod->getGrouping(),
             ],
             true
         );
