@@ -108,6 +108,10 @@ SQL;
             $currentDate->modify('+1 day');
         }
 
+        foreach ($charData['data'] as $currency => $datum) {
+            $charData['data'][$currency] = array_values($datum);
+        }
+
         return $charData;
     }
 }
