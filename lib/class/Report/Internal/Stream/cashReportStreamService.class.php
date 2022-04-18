@@ -96,6 +96,7 @@ SQL;
                     $categoryIds,
                     array_fill(0, $categoriesCount, 0.0)
                 );
+                $charData['data'][$currency][$currentDateStr]['date'] = $currentDateStr;
             }
 
             if (isset($data[$currentDateStr])) {
