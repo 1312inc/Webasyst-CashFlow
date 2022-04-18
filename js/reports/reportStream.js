@@ -6,15 +6,6 @@ export default function (chartdivSelector, data, language) {
     const currencies = Object.keys(data.currencies);
     let activeCurrency = currencies[0];
 
-    currencies.forEach(c => {
-        data.data[c] = Object.entries(data.data[c]).map(e => {
-            return {
-                date: e[0],
-                ...e[1]
-            };
-        });
-    });
-
     am4core.ready(() => {
         am4core.addLicense(AMCHARTS_LICENSE);
         am4core.useTheme(am4themes_animated);
