@@ -1,0 +1,18 @@
+<script src="{$wa_app_static_url}js/amcharts/core.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/charts.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/themes/animated.js"></script>
+{if $wa->locale() !== 'en_US'}
+<script src="{$wa_app_static_url}js/amcharts/lang/{$wa->locale()}.js"></script>
+{/if}
+<script type="module">
+    const data = {$data};
+</script>
+
+<div class="block">
+    <h1>[`Stream`]</h1>
+
+    from: {$from}<br>
+    to: {$to}<br>
+    data: {$data}
+
+</div>
