@@ -35,9 +35,13 @@ final class cashReportDdsCategoriesHandler implements cashReportHandlerInterface
             return $type;
         }, $type);
 
+        $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
+        $categories = array_combine(array_column($categories, 'id'), $categories);
+
         return wa()->getView()->renderTemplate(
             wa()->getAppPath('templates/actions/report/internal/ReportDdsCategories.html'),
             [
+                'categories' => $categories,
                 'currentPeriod' => $currentPeriod,
                 'reportPeriods' => $periods,
                 'type' => $type,

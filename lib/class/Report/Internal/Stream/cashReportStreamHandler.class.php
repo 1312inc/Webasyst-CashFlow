@@ -1,15 +1,15 @@
 <?php
 
-final class cashReportSankeyHandler implements cashReportHandlerInterface
+final class cashReportStreamHandler implements cashReportHandlerInterface
 {
     public function canHandle(string $identifier): bool
     {
-        return $identifier === 'sankey';
+        return $identifier === 'stream';
     }
 
     public function handle(array $params): string
     {
-        $reportService = new cashReportSankeyService();
+        $reportService = new cashReportStreamService();
 
         $dateFrom = DateTimeImmutable::createFromFormat(
             'Y-m-d',
@@ -27,7 +27,7 @@ final class cashReportSankeyHandler implements cashReportHandlerInterface
         $data = $reportService->getDataForPeriod($dateFrom, $dateTo);
 
         return wa()->getView()->renderTemplate(
-            wa()->getAppPath('templates/actions/report/internal/ReportSankey.html'),
+            wa()->getAppPath('templates/actions/report/internal/ReportStream.html'),
             [
                 'from' => $dateFrom->format('Y-m-d'),
                 'to' => $dateTo->format('Y-m-d'),
