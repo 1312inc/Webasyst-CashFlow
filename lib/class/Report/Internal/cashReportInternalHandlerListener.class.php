@@ -13,6 +13,7 @@ final class cashReportInternalHandlerListener
             new cashReportDdsCategoriesHandler(),
             new cashReportSankeyHandler(),
             new cashReportClientsAbcHandler(),
+            new cashReportStreamHandler(),
         ];
     }
 }
