@@ -20,10 +20,6 @@ final class cashReportStreamHandler implements cashReportHandlerInterface
             throw new cashValidateException('Wrong dates');
         }
 
-        if (abs($dateTo->diff($dateFrom)->days) > 365) {
-            throw new cashValidateException('Wrong period');
-        }
-
         $data = $reportService->getDataForPeriod($dateFrom, $dateTo);
 
         return wa()->getView()->renderTemplate(
