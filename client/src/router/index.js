@@ -110,7 +110,10 @@ const routes = [
     }
   },
   {
-    path: '/report/dds'
+    path: '/report'
+  },
+  {
+    path: '/report/*'
   },
   {
     path: '/import'

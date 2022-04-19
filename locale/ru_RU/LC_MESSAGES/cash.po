@@ -1148,3 +1148,10 @@ msgstr "Настроить по способу оплаты"
 
 msgid "Set account based on the order payment type:"
 msgstr "Счет операции зависит от способа оплаты заказа:"
+
+msgid "Hide circles"
+msgstr "Скрыть круги"
+
+msgid "Show circles"
+msgstr "Показать круги"
+
