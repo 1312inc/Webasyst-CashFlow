@@ -9,7 +9,6 @@ final class cashReportInternalHandlerListener
     {
         return [
             new cashReportDdsHandler(),
-            new cashReportFlowHandler(),
             new cashReportDdsCategoriesHandler(),
             new cashReportSankeyHandler(),
             new cashReportClientsAbcHandler(),
