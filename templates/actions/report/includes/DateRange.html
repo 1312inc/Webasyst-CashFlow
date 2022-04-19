@@ -1,0 +1,50 @@
+<script type="module">
+    import renderRangeToggle from '{$wa_app_static_url}js/reports/rangeToggle.js';
+    {if $withButton}
+        $(function () {
+            renderRangeToggle('.range-container', [30, 90, 365], updateDates);
+            $('.range-container button').on('click', updateDates);
+
+            function updateDates () {
+                const from = $('.range-container [name="from"]').val();
+                const to = $('.range-container [name="to"]').val();
+                window.location = 'from=' + from + '&to=' + to;
+            }
+        });
+    {else}
+        $(function () {
+            renderRangeToggle('.range-container', [30, 90, 365]);
+        });
+    {/if}
+</script>
+
+<div class="range-container flexbox space-12 {if $withButton}custom-mb-12{/if}">
+    <div class="dropdown" id="range-dropdown">
+        <button class="dropdown-toggle button" type="button">[`Select dates...`]</button>
+        <div class="dropdown-body">
+            <ul class="menu">
+                <li>
+                    <a data-range="30" href="#"><span>{sprintf('[`Last %d days`]', 30)}</span></a>
+                </li>
+                <li>
+                    <a data-range="90" href="#"><span>{sprintf('[`Last %d days`]', 90)}</span></a>
+                </li>
+                <li>
+                    <a data-range="365" href="#"><span>[`Last 365 days`]</span></a>
+                </li>
+                <li>
+                    <a data-range="custom" href="#"><span>[`Select dates...`]</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="range-manual" style="display: none;">
+        <input type="text" class="dateFrom" style="width: 120px;" />
+        <input type="text" class="dateTo" style="width: 120px;" />
+        <input type="hidden" name="from" value="{$from}">
+        <input type="hidden" name="to" value="{$to}">
+        {if $withButton}
+            <button>[`ShowButton`]</button>
+        {/if}
+    </div>
+</div>
