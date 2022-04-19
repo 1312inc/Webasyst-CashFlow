@@ -112,8 +112,10 @@
             {foreach $letter->clients as $client}
                 <tr>
                     <td>
-                        <i class="userpic userpic-48" style="background-image: url({$client->img})"</i>
-                        {$client->name|escape}
+                        <div class="flexbox middle space-12">
+                            <i class="userpic userpic-48" style="background-image: url({$client->img})"></i>
+                            <span>{$client->name|escape}</span>
+                        </div>
                     </td>
                     <td>{$client->value->amount}</td>
                     <td>{$client->value->percent}</td>

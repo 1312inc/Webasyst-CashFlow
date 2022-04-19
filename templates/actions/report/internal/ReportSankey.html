@@ -7,7 +7,6 @@
 <script type="module">
     import reportSankey from "{$wa_app_static_url}js/reports/reportSankey.js";
     import renderRangeToggle from '{$wa_app_static_url}js/reports/rangeToggle.js';
-    const data = {$data};
     reportSankey('chartdiv_sankey', {$data}, '{$wa->locale()}');
 
     $(function () {
@@ -25,11 +24,13 @@
 <div class="block">
     <h1>Sankey</h1>
 
-    <div class="flexbox middle space-16">
+    <div class="flexbox wrap middle space-16">
+
+        <div class="currencies-container toggle custom-mb-12" style="display: none;"></div>
     
-        <div class="range-container flexbox space-8">
+        <div class="range-container flexbox space-8 custom-mb-12">
             <div class="dropdown" id="range-dropdown">
-                <button class="dropdown-toggle button" type="button">Выбрать даты</button>
+                <button class="dropdown-toggle button nowrap" type="button">Выбрать даты</button>
                 <div class="dropdown-body">
                     <ul class="menu">
                         <li>
@@ -47,7 +48,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="range-manual" style="display: none;">
+            <div class="range-manual flexbox" style="display: none;">
                 <input type="text" class="dateFrom" style="width: 120px;" />
                 <input type="text" class="dateTo" style="width: 120px;" />
                 <button>Показать</button>
@@ -56,7 +57,6 @@
             </div>
         </div>
 
-        <div class="currencies-container toggle" style="display: none;"></div>
     </div>
 
     
