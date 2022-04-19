@@ -6,7 +6,7 @@
         {$wa->installer->reviewWidget('app/cash')}
     {/if}
 
-    <ul class="tabs bordered-bottom custom-mb-24">
+    <ul class="tabs bordered-bottom custom-mb-24 custom-pl-0">
         {foreach $reportsMenu as $reportsMenus}
             {foreach $reportsMenus as $reportMenu}
                 <li class="{if $reportMenu->getIdentifier() === $current_menu}selected{/if}">

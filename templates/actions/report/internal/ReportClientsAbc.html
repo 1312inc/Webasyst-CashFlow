@@ -14,7 +14,7 @@
                         </div>
                         <div class="value">
 
-                            <div class="wa-select largest">
+                            <div class="wa-select solid">
                                 <select name="currency">
                                     {foreach $currencies as $cur}
                                         <option value="{$cur->getCode()}"
@@ -33,13 +33,16 @@
                         <div class="value">
                             <div class="flexbox space-16">
                                 <div>
-                                    A <input type="text" name="a" value="{$a}">
+                                    <strong>A</strong>
+                                    <input type="text" name="a" value="{$a}" class="shortest number solid">%
                                 </div>
                                 <div>
-                                    B <input type="text" name="b" value="{$b}">
+                                    <strong>B</strong>
+                                    <input type="text" name="b" value="{$b}" class="shortest number solid">%
                                 </div>
                                 <div>
-                                    C <input type="text" name="c" value="{$c}">
+                                    <strong>C</strong>
+                                    <input type="text" name="c" value="{$c}" class="shortest number solid">%
                                 </div>
                             </div>
                         </div>
@@ -66,15 +69,15 @@
     <div class="c-report-dds-inner">
         <table>
             <tr>
-                <td>[`Contractor`]</td>
-                <td>[`Revenue`], {$currency->getSign()}</td>
-                <td>[`% of revenue`]</td>
+                <th>[`Contractor`]</th>
+                <th class="align-right">[`Revenue`], {$currency->getSign()}</th>
+                <th class="align-right">[`% of revenue`]</th>
             </tr>
         {foreach $tableData as $letter}
-            <tr>
-                <td>{$letter->letter}</td>
-                <td>{$letter->value->amount}</td>
-                <td>{$letter->value->percent}</td>
+            <tr class="bordered-bottom">
+                <td class="bold">{$letter->letter}</td>
+                <td class="bold align-right">{$letter->value->amount}</td>
+                <td class="bold align-right">{$letter->value->percent}%</td>
             </tr>
             {foreach $letter->clients as $client}
                 <tr>
@@ -84,8 +87,8 @@
                             <span>{$client->name|escape}</span>
                         </div>
                     </td>
-                    <td>{$client->value->amount}</td>
-                    <td>{$client->value->percent}</td>
+                    <td class="align-right" style="vertical-align: middle !important;">{$client->value->amount}</td>
+                    <td class="align-right" style="vertical-align: middle !important;">{$client->value->percent}%</td>
                 </tr>
             {/foreach}
         {/foreach}
