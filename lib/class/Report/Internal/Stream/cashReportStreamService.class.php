@@ -51,7 +51,7 @@ SQL;
         ])->fetchAll('id');
 
         $sql = <<<SQL
-SELECT ca.currency, ct.date, ct.category_id, SUM(ct.amount) amount
+SELECT ca.currency, DATE_FORMAT(ct.date, '%Y-%m') date, ct.category_id, SUM(ct.amount) amount
 FROM cash_transaction ct
          JOIN cash_account ca on ca.id = ct.account_id
 WHERE ct.is_archived = 0
@@ -59,7 +59,7 @@ WHERE ct.is_archived = 0
   AND ct.date >= s:date_from
   AND ct.date <= s:date_to
   AND ct.category_id != s:transfer_id
-GROUP BY ca.currency, ct.date, ct.category_id
+GROUP BY ca.currency, YEAR(ct.date), MONTH(ct.date), ct.category_id
 SQL;
 
         $data = $this->model->query($sql,
@@ -86,10 +86,10 @@ SQL;
 
         $categoryIds = array_keys($categories);
         $categoriesCount = count($categoryIds);
-        $currentDate = DateTime::createFromFormat('Y-m-d', $dateFrom->format('Y-m-d'));
+        $currentDate = DateTime::createFromFormat('Y-m', $dateFrom->format('Y-m'));
 
-        while ($currentDate->format('Y-m-d') <= $dateTo->format('Y-m-d')) {
-            $currentDateStr = $currentDate->format('Y-m-d');
+        while ($currentDate->format('Y-m') <= $dateTo->format('Y-m')) {
+            $currentDateStr = $currentDate->format('Y-m');
 
             foreach ($charData['currencies'] as $currency => $item) {
                 $charData['data'][$currency][$currentDateStr] = array_combine(
@@ -105,7 +105,7 @@ SQL;
                 }
             }
 
-            $currentDate->modify('+1 day');
+            cashDatetimeHelper::addMonthToDate($currentDate);
         }
 
         foreach ($charData['data'] as $currency => $datum) {
