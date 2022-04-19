@@ -1155,3 +1155,33 @@ msgstr "Скрыть круги"
 msgid "Show circles"
 msgstr "Показать круги"
 
+msgid "Clients"
+msgstr "Клиенты"
+
+msgid "Group"
+msgstr "Группа"
+
+msgid "Period"
+msgstr "Период"
+
+msgid "Revenue"
+msgstr "Выручка"
+
+msgid "% of revenue"
+msgstr "% от выручки"
+
+msgid "ShowButton"
+msgstr "Показать"
+
+msgid "Stream"
+msgstr "Stream"
+
+msgid "Sankey"
+msgstr "Sankey"
+
+msgid "No data message"
+msgstr "No data message"
+
+msgid "All currencies"
+msgstr "Все валюты"
+

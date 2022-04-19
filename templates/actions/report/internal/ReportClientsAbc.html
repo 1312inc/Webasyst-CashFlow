@@ -1,11 +1,4 @@
 
-<script type="module">
-    import renderRangeToggle from '{$wa_app_static_url}js/reports/rangeToggle.js';
-    $(function() {
-        renderRangeToggle('.range-container', [30, 90, 365]);
-    });
-</script>
-
 <div class="block" id="c-report-clients-abc">
 
     <h1>[`Clients`]</h1>
@@ -17,7 +10,7 @@
                 <div class="fields-group custom-mb-16">
                     <div class="field">
                         <div class="name for-input large">
-                            Currency
+                            [`Currency`]
                         </div>
                         <div class="value">
 
@@ -35,7 +28,7 @@
 
                     <div class="field">
                         <div class="name for-input">
-                            Группа
+                            [`Group`]
                         </div>
                         <div class="value">
                             <div class="flexbox space-16">
@@ -54,41 +47,15 @@
 
                     <div class="field" style="min-height: 34px;">
                         <div class="name for-input">
-                            Период
+                            [`Period`]
                         </div>
                         <div class="value">
-                        <div class="range-container flexbox space-12">
-                            <div class="dropdown" id="range-dropdown">
-                                <button class="dropdown-toggle button" type="button">Выбрать даты</button>
-                                <div class="dropdown-body">
-                                    <ul class="menu">
-                                        <li>
-                                            <a data-range="30" href="#"><span>Последние 30 дней</span></a>
-                                        </li>
-                                        <li>
-                                            <a data-range="90" href="#"><span>Последние 90 дней</span></a>
-                                        </li>
-                                        <li>
-                                            <a data-range="365" href="#"><span>Последние 365 дней</span></a>
-                                        </li>
-                                        <li>
-                                            <a data-range="custom" href="#"><span>Выбрать даты</span></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="range-manual" style="display: none;">
-                                <input type="text" class="dateFrom" style="width: 120px;" />
-                                <input type="text" class="dateTo" style="width: 120px;" />
-                                <input type="hidden" name="from" value="{$from}">
-                                <input type="hidden" name="to" value="{$to}">
-                            </div>
-                        </div>
+                            {include file='../includes/DateRange.html' from=$from to=$to withButton=false}
                         </div>
                     </div>
 
                 </div>
-                <input type="submit" class="button" value="Показать">
+                <input type="submit" class="button" value="[`ShowButton`]">
             </div>
 
         </form>
@@ -99,9 +66,9 @@
     <div class="c-report-dds-inner">
         <table>
             <tr>
-                <td>Контрагент</td>
-                <td>Выручка, {$currency->getSign()}</td>
-                <td>% от выручки</td>
+                <td>[`Contractor`]</td>
+                <td>[`Revenue`], {$currency->getSign()}</td>
+                <td>[`% of revenue`]</td>
             </tr>
         {foreach $tableData as $letter}
             <tr>

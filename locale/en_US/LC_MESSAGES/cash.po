@@ -1139,3 +1139,33 @@ msgstr ""
 
 msgid "Show circles"
 msgstr ""
+
+msgid "Clients"
+msgstr ""
+
+msgid "Group"
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+msgid "Revenue"
+msgstr ""
+
+msgid "% of revenue"
+msgstr ""
+
+msgid "ShowButton"
+msgstr "Show"
+
+msgid "Stream"
+msgstr ""
+
+msgid "Sankey"
+msgstr ""
+
+msgid "No data message"
+msgstr "No data message"
+
+msgid "All currencies"
+msgstr ""

@@ -1,7 +1,7 @@
 import { AMCHARTS_LICENSE } from './constants.js';
 import { createCurrencyToggler } from './currencyToggle.js';
 
-export default function (chartdivSelector, data, language) {
+export default function (chartdivSelector, data, language, allCurrenciesItemText) {
 
     const currencies = Object.keys(data);
     const mergedData = currencies.reduce((acc, c) => ([...acc, ...data[c]['data'].map(e => ({ ...e, currency: data[c].details.sign }))]), []);
@@ -14,7 +14,7 @@ export default function (chartdivSelector, data, language) {
             createCurrencyToggler('.currencies-container', currencies, (currency) => {
                 activeCurrency = currency;
                 renderSankey();
-            }, 'All currencies');
+            }, allCurrenciesItemText);
         }
         renderSankey();
     });
