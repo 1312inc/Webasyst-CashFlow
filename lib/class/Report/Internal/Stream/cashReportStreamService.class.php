@@ -14,6 +14,8 @@ final class cashReportStreamService
 
     public function getDataForPeriod(DateTimeImmutable $dateFrom, DateTimeImmutable $dateTo): array
     {
+        $grouping = new cashReportSankeyDataGrouping($dateFrom, $dateTo);
+
         $sqlCurrencies = <<<SQL
 SELECT ca.currency
 FROM cash_transaction ct
@@ -51,7 +53,7 @@ SQL;
         ])->fetchAll('id');
 
         $sql = <<<SQL
-SELECT ca.currency, DATE_FORMAT(ct.date, '%Y-%m') date, ct.category_id, SUM(ct.amount) amount
+SELECT ca.currency, {$grouping->getSqlGroupBy()} date, ct.category_id, SUM(ct.amount) amount
 FROM cash_transaction ct
          JOIN cash_account ca on ca.id = ct.account_id
 WHERE ct.is_archived = 0
@@ -59,10 +61,11 @@ WHERE ct.is_archived = 0
   AND ct.date >= s:date_from
   AND ct.date <= s:date_to
   AND ct.category_id != s:transfer_id
-GROUP BY ca.currency, YEAR(ct.date), MONTH(ct.date), ct.category_id
+GROUP BY ca.currency, {$grouping->getSqlGroupBy()}, ct.category_id
 SQL;
 
-        $data = $this->model->query($sql,
+        $data = $this->model->query(
+            $sql,
             [
                 'date_from' => $dateFrom->format('Y-m-d'),
                 'date_to' => $dateTo->format('Y-m-d'),
@@ -86,10 +89,10 @@ SQL;
 
         $categoryIds = array_keys($categories);
         $categoriesCount = count($categoryIds);
-        $currentDate = DateTime::createFromFormat('Y-m', $dateFrom->format('Y-m'));
+        $currentDate = DateTime::createFromFormat($grouping->getPhpDateFormat(),$grouping->getFormattedDate( $dateFrom));
 
-        while ($currentDate->format('Y-m') <= $dateTo->format('Y-m')) {
-            $currentDateStr = $currentDate->format('Y-m');
+        while ($grouping->getFormattedDate($currentDate) <= $grouping->getFormattedDate($dateTo)) {
+            $currentDateStr = $grouping->getFormattedDate($currentDate);
 
             foreach ($charData['currencies'] as $currency => $item) {
                 $charData['data'][$currency][$currentDateStr] = array_combine(
@@ -105,7 +108,7 @@ SQL;
                 }
             }
 
-            cashDatetimeHelper::addMonthToDate($currentDate);
+            $currentDate = $grouping->getNextDate($currentDate);
         }
 
         foreach ($charData['data'] as $currency => $datum) {
