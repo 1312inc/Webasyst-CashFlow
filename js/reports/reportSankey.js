@@ -4,7 +4,14 @@ import { createCurrencyToggler } from './currencyToggle.js';
 export default function (chartdivSelector, data, language, allCurrenciesItemText) {
 
     const currencies = Object.keys(data);
-    const mergedData = currencies.reduce((acc, c) => ([...acc, ...data[c]['data'].map(e => ({ ...e, currency: data[c].details.sign }))]), []);
+    const mergedData = currencies.reduce((acc, c) => ([...acc, ...data[c]['data'].map(e => {
+        return {
+     ***REMOVED***e,
+            currency: data[c].details.code,
+            currencySign: data[c].details.sign
+        };
+    }
+    )]), []);
     let activeCurrency = null;
 
     am4core.ready(() => {
@@ -32,12 +39,12 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
 
         chart.paddingTop = 30;
         chart.paddingRight = 90;
-        chart.data = activeCurrency ? mergedData.filter(e => e.currency === data[activeCurrency].details.sign) : mergedData;
+        chart.data = activeCurrency ? mergedData.filter(e => e.currency === data[activeCurrency].details.code) : mergedData;
         chart.dataFields.fromName = "from";
         chart.dataFields.toName = "to";
         chart.dataFields.value = "value";
         chart.dataFields.color = "color";
-        chart.dataFields.currency = "currency";
+        chart.dataFields.currency = "currencySign";
         chart.links.template.tooltipText = `{fromName}→{toName}: {value} {currency}`;
         chart.links.template.colorMode = "gradient";
         chart.links.template.fillOpacity = 1;
