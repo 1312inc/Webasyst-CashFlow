@@ -7,7 +7,7 @@ function isValidDate (string) {
     return !Number.isNaN(Date.parse(string));
 }
 
-export default function (selector, ranges, callback) {
+export default function (selector, rangesDays, callback) {
 
     const from = $(`${selector} [name="from"]`).val();
     const to = $(`${selector} [name="to"]`).val();
@@ -19,10 +19,11 @@ export default function (selector, ranges, callback) {
                 isValidDate(from) &&
                 isValidDate(to)
             ) {
-                for (const days of ranges) {
+                for (const days of rangesDays) {
                     if (
                         to === new Date().toISOString().slice(0, 10) &&
-                        from === new Date(new Date().setDate(new Date().getDate() - days)).toISOString().slice(0, 10)
+                        from === new Date(new Date().setDate(new Date().getDate() - days)).toISOString().slice(0, 10) &&
+                        $(`${selector} [data-range="${days}"]`)[0]
                     ) {
                         $(`${selector} [data-range="${days}"]`).trigger('click');
                         return;
