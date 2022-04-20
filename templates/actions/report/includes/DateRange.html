@@ -2,7 +2,7 @@
     import renderRangeToggle from '{$wa_app_static_url}js/reports/rangeToggle.js';
     {if $withButton}
         $(function () {
-            renderRangeToggle('.range-container', [30, 90, 365], updateDates);
+            renderRangeToggle('.range-container', [30, 90, 365, 1095, 1825], updateDates);
             $('.range-container button').on('click', updateDates);
 
             function updateDates () {
@@ -13,7 +13,7 @@
         });
     {else}
         $(function () {
-            renderRangeToggle('.range-container', [30, 90, 365]);
+            renderRangeToggle('.range-container', [30, 90, 365, 1095, 1825]);
         });
     {/if}
 </script>
@@ -32,6 +32,14 @@
                 <li>
                     <a data-range="365" href="#"><span>[`Last 365 days`]</span></a>
                 </li>
+                {if $withYears}
+                <li>
+                    <a data-range="1095" href="#"><span>{sprintf('[`Last %d %s`]', 3, _w('year', 'years', 3))}</span></a>
+                </li>
+                <li>
+                    <a data-range="1825" href="#"><span>{sprintf('[`Last %d %s`]', 5, _w('year', 'years', 5))}</span></a>
+                </li>
+                {/if}
                 <li>
                     <a data-range="custom" href="#"><span>[`Select dates...`]</span></a>
                 </li>
