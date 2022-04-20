@@ -17,6 +17,9 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
     am4core.ready(() => {
         am4core.addLicense(AMCHARTS_LICENSE);
         am4core.useTheme(am4themes_animated);
+        if (document.documentElement.dataset.theme === 'dark') {
+            am4core.useTheme(am4themes_dark);
+        }
         if (currencies.length > 1) {
             createCurrencyToggler('.currencies-container', currencies, (currency) => {
                 activeCurrency = currency;
