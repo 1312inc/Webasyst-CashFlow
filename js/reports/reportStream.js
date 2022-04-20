@@ -35,6 +35,7 @@ export default function (chartdivSelector, data, language) {
         const categoryAxis = chart.xAxes.push(new am4charts.DateAxis());
         categoryAxis.dataFields.category = "date";
         categoryAxis.renderer.grid.template.location = 0;
+        categoryAxis.renderer.grid.template.stroke = '#888888';
         categoryAxis.renderer.minGridDistance = 50;
         categoryAxis.startLocation = 0.5;
         categoryAxis.endLocation = 0.5;
@@ -74,12 +75,20 @@ export default function (chartdivSelector, data, language) {
         chart.legend = new am4charts.Legend();
         chart.legend.itemContainers.template.togglable = false;
         chart.legend.itemContainers.template.cursorOverStyle = am4core.MouseCursorStyle.default;
-        chart.legend.position = "right";
-        chart.legend.reverseOrder = true;
+        chart.legend.itemContainers.template.paddingTop = 20;
+        chart.legend.useDefaultMarker = true;
+        const marker = chart.legend.markers.template.children.getIndex(0);
+        marker.cornerRadius(12, 12, 12, 12);
+        // chart.legend.reverseOrder = true;
+
+        const markerTemplate = chart.legend.markers.template;
+        markerTemplate.width = 16;
+        markerTemplate.height = 16;
 
         // Cursor
         chart.cursor = new am4charts.XYCursor();
         chart.cursor.maxTooltipDistance = 0;
+        chart.cursor.lineY.disabled = true;
 
         // Prepare data for the river-stacked series
         chart.events.on("beforedatavalidated", updateData);

@@ -11,7 +11,7 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
             currencySign: data[c].details.sign
         };
     }
-    )]), []);
+    )]), []).reverse();
     let activeCurrency = null;
 
     am4core.ready(() => {

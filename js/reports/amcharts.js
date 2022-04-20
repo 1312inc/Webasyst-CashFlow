@@ -36,9 +36,6 @@ function chartCols (options, language) {
     const xAxis = chart.xAxes.push(new am4charts.DateAxis());
     xAxis.renderer.grid.template.location = 1;
     xAxis.renderer.grid.template.stroke = chartColors.gray;
-    xAxis.renderer.line.strokeOpacity = 0.2;
-    xAxis.renderer.line.strokeWidth = 1;
-    xAxis.renderer.line.stroke = chartColors.gray;
     xAxis.renderer.labels.template.disabled = true;
     xAxis.renderer.cellStartLocation = 0.15;
     xAxis.renderer.cellEndLocation = 0.85;
@@ -69,7 +66,6 @@ function chartCols (options, language) {
 
     chart.legend = new am4charts.Legend();
     chart.legend.labels.template.text = `{name}: ${new Intl.NumberFormat(language.replace('_', '-')).format(chart.data.reduce((acc, e) => acc + e.value, 0))} ${options.currency}`;
-    chart.legend.itemContainers.template.paddingTop = 20;
     chart.legend.useDefaultMarker = true;
     const marker = chart.legend.markers.template.children.getIndex(0);
     marker.cornerRadius(12, 12, 12, 12);
@@ -124,8 +120,8 @@ function chartDonut (options, language) {
     pieSeries.dataFields.category = "name";
     pieSeries.slices.template.propertyFields.fill = "color";
     pieSeries.slices.template.propertyFields.isActive = "isProfit";
-    // pieSeries.ticks.template.disabled = true;
-    // pieSeries.labels.template.disabled = true;
+    pieSeries.ticks.template.adapter.add("disabled", (radius, target) => (target.dataItem && (target.dataItem.values.value.percent < 2)));
+    pieSeries.labels.template.adapter.add("disabled", (radius, target) => (target.dataItem && (target.dataItem.values.value.percent < 2)));
     pieSeries.slices.template.tooltipText = "{category}: {value} " + options.currency;
 }
 
