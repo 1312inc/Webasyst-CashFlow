@@ -80,7 +80,7 @@ function chartCols (options, language) {
     rangeFututre.endDate = new Date(8640000000000000)
     rangeFututre.grid.disabled = true
     rangeFututre.axisFill.fillOpacity = 0.5
-    rangeFututre.axisFill.fill = '#ffffff'
+    rangeFututre.axisFill.fill = document.documentElement.dataset.theme === 'dark' ? '#19172c' : '#FFF'
     chart.seriesContainer.zIndex = -1
 
     // Currend day line
