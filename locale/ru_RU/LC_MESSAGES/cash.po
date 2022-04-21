@@ -1150,13 +1150,13 @@ msgid "Set account based on the order payment type:"
 msgstr "Счет операции зависит от способа оплаты заказа:"
 
 msgid "Hide circles"
-msgstr "Скрыть круги"
+msgstr "Скрыть кружочки"
 
 msgid "Show circles"
-msgstr "Показать круги"
+msgstr "Показать кружочки"
 
-msgid "Clients"
-msgstr "Клиенты"
+msgid "Clients ABC"
+msgstr "ABC-анализ клиентов"
 
 msgid "Group"
 msgstr "Группа"
@@ -1174,13 +1174,19 @@ msgid "ShowButton"
 msgstr "Показать"
 
 msgid "Stream"
-msgstr "Stream"
+msgstr "Поток"
 
 msgid "Sankey"
-msgstr "Поток"
+msgstr "Карта финансов"
 
 msgid "No data message"
 msgstr "Нет данных"
 
 msgid "All currencies"
 msgstr "Все валюты"
+
+msgid "A — most valuable clients whom together make 80% of your total income.<br> B — clients who make next 15% of your income.<br> C — less valuable clients making the rest 5% income."
+msgstr "A — наиболее ценные клиенты, обеспечивающие 80% вашего общего дохода.<br> B — клиенты, обеспечивающие следующие 15% дохода.<br> C — малодоходные клиенты с общим вкладом в оставшиеся 5% дохода."
+
+msgid "No clients in this segment."
+msgstr "В этом сегменте нет клиентов."

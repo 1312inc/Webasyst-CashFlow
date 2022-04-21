@@ -1,7 +1,7 @@
 
 <div class="block" id="c-report-clients-abc">
 
-    <h1>[`Clients`]</h1>
+    <h1>[`Clients ABC`]</h1>
 
     <div class="flexbox">
         <form action="">
@@ -45,6 +45,7 @@
                                     <input type="text" name="c" value="{$c}" class="shortest number solid">%
                                 </div>
                             </div>
+                            <p class="hint">[`A — most valuable clients whom together make 80% of your total income.<br> B — clients who make next 15% of your income.<br> C — less valuable clients making the rest 5% income.`]</p>
                         </div>
                     </div>
 
@@ -67,7 +68,7 @@
     <br>
 
     <div class="c-report-dds-inner">
-        <table>
+        <table class="small">
             <tr>
                 <th>[`Contractor`]</th>
                 <th class="align-right">[`Revenue`], {$currency->getSign()}</th>
@@ -90,6 +91,12 @@
                     <td class="align-right" style="vertical-align: middle !important;">{$client->value->amount}</td>
                     <td class="align-right" style="vertical-align: middle !important;">{$client->value->percent}%</td>
                 </tr>
+            {foreachelse}
+            <tr>
+                <td class="align-center" colspan="3">
+                    <p class="gray custom-m-12">[`No clients in this segment.`]</p>
+                </td>
+            </tr>
             {/foreach}
         {/foreach}
         </table>
