@@ -17,7 +17,7 @@ final class cashReportSankeyHandler implements cashReportHandlerInterface
         );
         $dateTo = DateTimeImmutable::createFromFormat('Y-m-d', $params['to'] ?? date('Y-m-d'));
         if ($dateTo === false || $dateFrom === false) {
-            throw new cashValidateException('Wrong dates');
+            throw new cashValidateException('Invalid time interval');
         }
 
         $data = $reportService->getDataForPeriod($dateFrom, $dateTo);

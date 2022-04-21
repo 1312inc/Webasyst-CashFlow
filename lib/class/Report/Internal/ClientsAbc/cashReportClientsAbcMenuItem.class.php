@@ -23,6 +23,6 @@ final class cashReportClientsAbcMenuItem implements cashReportMenuItemInterface
      */
     public function getName(): string
     {
-        return _w('Clients');
+        return _w('Clients ABC');
     }
 }
