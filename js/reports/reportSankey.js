@@ -8,7 +8,8 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
         return {
             ...e,
             currency: data[c].details.code,
-            currencySign: data[c].details.sign
+            currencySign: data[c].details.sign,
+            color: e.color || '#365fff'
         };
     }
     )]), []).reverse();
@@ -53,7 +54,7 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
         chart.links.template.fillOpacity = 1;
 
         const nodeTemplate = chart.nodes.template;
-        nodeTemplate.adapter.add("fillOpacity", (e, target) => (target.dataItem && (target.dataItem.values.value.value === 0)) ? 0 : 1);
+        nodeTemplate.adapter.add("visible", (e, target) => target.children.values[0].label.currentText !== 'stub');
 
         let hoverState = chart.links.template.states.create("hover");
         hoverState.properties.fillOpacity = 0.6;
