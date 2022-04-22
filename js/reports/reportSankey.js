@@ -52,6 +52,9 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
         chart.links.template.colorMode = "gradient";
         chart.links.template.fillOpacity = 1;
 
+        const nodeTemplate = chart.nodes.template;
+        nodeTemplate.adapter.add("fillOpacity", (e, target) => (target.dataItem && (target.dataItem.values.value.value === 0)) ? 0 : 1);
+
         let hoverState = chart.links.template.states.create("hover");
         hoverState.properties.fillOpacity = 0.6;
 
