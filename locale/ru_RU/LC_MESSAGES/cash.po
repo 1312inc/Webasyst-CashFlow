@@ -1190,3 +1190,39 @@ msgstr "A — наиболее ценные клиенты, обеспечива
 
 msgid "No clients in this segment."
 msgstr "В этом сегменте нет клиентов."
+
+msgid "Jan"
+msgstr "Янв"
+
+msgid "Feb"
+msgstr "Фев"
+
+msgid "Mar"
+msgstr "Мар"
+
+msgid "Apr"
+msgstr "Aпр"
+
+msgid "May"
+msgstr "Май"
+
+msgid "Jun"
+msgstr "Июнь"
+
+msgid "Jul"
+msgstr "Июль"
+
+msgid "Aug"
+msgstr "Авг"
+
+msgid "Sep"
+msgstr "Сен"
+
+msgid "Oct"
+msgstr "Окт"
+
+msgid "Nov"
+msgstr "Ноя"
+
+msgid "Dec"
+msgstr "Дек"

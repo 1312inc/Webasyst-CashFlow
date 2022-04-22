@@ -16,9 +16,9 @@
                 <tr>
                     <th class="c-column-sticky-left"></th>
                     {foreach $grouping as $group}
-                        <th class="align-right">{$group->name|escape}</th>
+                        <th class="align-right">[`{$group->name|escape}`]</th>
                     {/foreach}
-                    <th class="align-right bold c-column-sticky-right-totals">Total</th>
+                    <th class="align-right bold c-column-sticky-right-totals">[`Total`]</th>
                 </tr>
             </thead>
 
@@ -35,14 +35,14 @@
                             </div>
                         </td>
                         {foreach $datum->valuesPerPeriods as $values name=foreach_month_columns}
-                        <td class="{if $smarty.foreach.foreach_month_columns.iteration == 13}c-column-sticky-right-totals{/if}">
+                        <td class="{if $smarty.foreach.foreach_month_columns.iteration == 13}c-column-sticky-right-totals align-right{/if}">
                             {foreach $values as $currency => $value}
                                 <div class="nowrap align-right{if $smarty.foreach.foreach_month_columns.iteration == 13}black bold{/if} {if $smarty.foreach.foreach_month_columns.iteration == 14} hidden{/if} {if isset($value['month']) && $value['month'] == $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y'}bold{/if} {if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y' ) || $currentPeriod->getValue() > $smarty.now|date_format:'Y')}gray{/if}">
                                     {if $datum->entity->getId() !== 'all_income' && $datum->entity->getId() !== 'all_expense' && isset($value.currency)}
                                         {$size = 30 * abs($value.per_month/$currenciesTotals[$value.currency]['per_month'])}
                                         {$size = ($size > 0 && $size < 6) ? 6 : $size}
-                                        <div class="c-report-dds-dataCircle" style="display:flex;align-items:center; justify-content: end; height: 34px;">
-                                            <div style="width: {$size}px; height: {$size}px; border-radius: 50%; background-color: {$datum->entity->getColor()};"></div>
+                                        <div class="c-report-dds-dataCircle" style="display:flex;align-items:center;height:34px;">
+                                            <div style="margin-left:auto;width:{$size}px;height:{$size}px;border-radius:50%;background-color:{$datum->entity->getColor()};"></div>
                                         </div>
                                     {/if}
                                     {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false} {$datum->currencies[$currency]->getSign()}
