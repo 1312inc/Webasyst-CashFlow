@@ -74,24 +74,6 @@ export default function (chartdivSelector, data, language) {
             createSeries(id, data.categories[id].name, data.categories[id].color);
         }
 
-        // Legend
-        const legendContainer = am4core.create("legenddiv_stream", am4core.Container);
-        legendContainer.width = am4core.percent(100);
-        legendContainer.height = am4core.percent(100);
-
-        chart.legend = new am4charts.Legend();
-        chart.legend.parent = legendContainer;
-        chart.legend.itemContainers.template.togglable = false;
-        chart.legend.itemContainers.template.cursorOverStyle = am4core.MouseCursorStyle.default;
-        chart.legend.itemContainers.template.paddingTop = 20;
-        chart.legend.useDefaultMarker = true;
-        const marker = chart.legend.markers.template.children.getIndex(0);
-        marker.cornerRadius(12, 12, 12, 12);
-
-        const markerTemplate = chart.legend.markers.template;
-        markerTemplate.width = 16;
-        markerTemplate.height = 16;
-
         // Cursor
         chart.cursor = new am4charts.XYCursor();
         chart.cursor.maxTooltipDistance = 0;

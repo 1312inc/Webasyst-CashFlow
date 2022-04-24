@@ -27,7 +27,7 @@ final class cashReportStreamHandler implements cashReportHandlerInterface
             [
                 'from' => $dateFrom->format('Y-m-d'),
                 'to' => $dateTo->format('Y-m-d'),
-                'data' => json_encode($data, JSON_UNESCAPED_UNICODE),
+                'data' => $data,
             ],
             true
         );

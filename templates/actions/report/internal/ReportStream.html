@@ -7,7 +7,7 @@
 {/if}
 <script type="module">
     import reportStream from "{$wa_app_static_url}js/reports/reportStream.js";
-    reportStream('chartdiv_stream', {$data}, '{$wa->locale()}');
+    reportStream('chartdiv_stream', {$data|json_encode}, '{$wa->locale()}');
 </script>
 
 <div class="block">
@@ -22,7 +22,14 @@
         [`No data message`]
     {else}
         <div id="chartdiv_stream" class="smaller" style="height: 440px; width: 100%;"></div>
-        <div id="legenddiv_stream" class="smaller"></div>
+        <div class="flexbox wrap smaller space-16" style="justify-content: center;">
+        {foreach $data['categories'] as $category}
+            <div class="flexbox middle space-4 custom-p-8">
+                <span class="icon" style="width: 1rem;height: 1rem;"><i class="rounded" style="width: 1rem;height: 1rem;background-color: {$category['color']};"></i></span>
+                <span>{$category['name']}</span>
+            </div>
+        {/foreach}
+        </div>
     {/if}
 
 </div>
