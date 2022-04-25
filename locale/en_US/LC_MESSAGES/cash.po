@@ -1135,10 +1135,10 @@ msgid "Set account based on the order payment type:"
 msgstr ""
 
 msgid "Hide circles"
-msgstr ""
+msgstr "Just numbers"
 
 msgid "Show circles"
-msgstr ""
+msgstr "Visualize"
 
 msgid "Clients ABC"
 msgstr ""
