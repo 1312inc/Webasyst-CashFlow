@@ -67,12 +67,8 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
                 $this->initAmountPerPeriod($period, $rawData, $datum['id'], $datum['currency'], $id);
             }
 
-            $rawData[$datum['id']][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
-            $rawData[$datum['id']]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
-            $rawData[$datum['id']]['max'][$datum['currency']]['per_month'] = max(
-                abs((float) $datum['per_month']),
-                abs($rawData[$datum['id']]['max'][$datum['currency']]['per_month'])
-            );
+            // "Категория": категория + тип
+            $this->calculateAmount($rawData[$datum['id']], $datum);
 
             // просуммируем в родительскую
             if (isset($categoriesWithChild[$id])) {
@@ -80,19 +76,14 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
                 if (!isset($rawData[$parentIdType][$datum['month']][$datum['currency']])) {
                     $this->initAmountPerPeriod($period, $rawData, $parentIdType, $datum['currency'], $id);
                 }
-                $rawData[$parentIdType][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
-                $rawData[$parentIdType]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
-                $rawData[$parentIdType]['max'][$datum['currency']]['per_month'] = max(
-                    abs((float) $datum['per_month']),
-                    abs($rawData[$parentIdType]['max'][$datum['currency']]['per_month'])
-                );
+                $this->calculateAmount($rawData[$parentIdType], $datum);
             }
 
-            $rawData[$type][$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
-            $rawData[$type]['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
-            $rawData[$type]['max'][$datum['currency']]['per_month'] = max(
+            // "Все доходы": просто тип - income/expense
+            $this->calculateAmount($rawData[$type], $datum);
+            $rawData[$type][$datum['month']][$datum['currency']]['max'] = max(
                 abs((float) $datum['per_month']),
-                abs($rawData[$type]['max'][$datum['currency']]['per_month'])
+                abs($rawData[$type][$datum['month']][$datum['currency']]['max'])
             );
         }
 
@@ -156,6 +147,16 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
         return $statData ?: [];
     }
 
+    private function calculateAmount(array &$data, array $datum): void
+    {
+        $data[$datum['month']][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+        $data['total'][$datum['currency']]['per_month'] += (float) $datum['per_month'];
+        $data['max'][$datum['currency']]['per_month'] = max(
+            abs((float) $datum['per_month']),
+            abs($data['max'][$datum['currency']]['per_month'])
+        );
+    }
+
     private function createDdsStatDto(cashCategory $category, $rawData): cashReportDdsStatDto
     {
         return new cashReportDdsStatDto(
@@ -197,12 +198,15 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
                 'currency' => $datum['currency'],
                 'month' => $groupingDto->key,
                 'per_month' => .0,
+                'max' => .0,
             ];
             $rawData[cashCategory::TYPE_INCOME][$groupingDto->key][$datum['currency']] = $initVals;
             $rawData[cashCategory::TYPE_EXPENSE][$groupingDto->key][$datum['currency']] = $initVals;
         }
+
         $rawData[cashCategory::TYPE_INCOME]['total'][$datum['currency']]['per_month'] = .0;
         $rawData[cashCategory::TYPE_INCOME]['max'][$datum['currency']]['per_month'] = .0;
+
         $rawData[cashCategory::TYPE_EXPENSE]['total'][$datum['currency']]['per_month'] = .0;
         $rawData[cashCategory::TYPE_EXPENSE]['max'][$datum['currency']]['per_month'] = .0;
     }
