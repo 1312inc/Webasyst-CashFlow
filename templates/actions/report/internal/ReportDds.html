@@ -59,8 +59,15 @@
 </div>
 {/function}
 
+<style>
+#report-account .c-report-dds-hideCircles,
+#report-account .c-report-dds-dataCircle {
+    display: none !important;
+}
+</style>
 
-<div class="block">
+
+<div id="report-{$type->id}" class="block">
 
     <h1>[`Cash flow report`]</h1>
 
