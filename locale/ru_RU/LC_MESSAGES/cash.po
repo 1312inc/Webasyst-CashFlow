@@ -1150,10 +1150,10 @@ msgid "Set account based on the order payment type:"
 msgstr "Счет операции зависит от способа оплаты заказа:"
 
 msgid "Hide circles"
-msgstr "Скрыть кружочки"
+msgstr "Только цифры"
 
 msgid "Show circles"
-msgstr "Показать кружочки"
+msgstr "Наглядно"
 
 msgid "Clients ABC"
 msgstr "ABC-анализ клиентов"
