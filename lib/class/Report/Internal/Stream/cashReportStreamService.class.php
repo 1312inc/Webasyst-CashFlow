@@ -53,7 +53,7 @@ SQL;
         ])->fetchAll('id');
 
         $sql = <<<SQL
-SELECT ca.currency, {$grouping->getSqlGroupBy()} date, ct.category_id, SUM(ct.amount) amount
+SELECT ca.currency, {$grouping->getSqlGroupBy()} date, ct.category_id, SUM(ABS(ct.amount)) amount
 FROM cash_transaction ct
          JOIN cash_account ca on ca.id = ct.account_id
 WHERE ct.is_archived = 0
