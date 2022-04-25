@@ -69,7 +69,7 @@
 
 <div id="report-{$type->id}" class="block">
 
-    <h1>[`Cash flow report`]</h1>
+    <h1 class="custom-mb-24">[`Cash flow report`]</h1>
 
     <div class="flexbox">
         <ul class="chips wide custom-m-0">
@@ -99,24 +99,32 @@
              ***REMOVED***
                 </div>
             </li>
-            {foreach $ddsTypes as $ddsType}
-            <li{if $type->id == $ddsType->id} class="selected"{/if}>
-                <a href="{$wa_app_url}report/dds/type={$ddsType->id}&year={$currentPeriod->getValue()}">
-                    {$ddsType->name|escape}
-                </a>
-            </li>
-            {/foreach}
+            {if json_encode($data[0]) !== '{"entity":{},"valuesPerPeriods":[],"currencies":[]}'}
+                {foreach $ddsTypes as $ddsType}
+                <li{if $type->id == $ddsType->id} class="selected"{/if}>
+                    <a href="{$wa_app_url}report/dds/type={$ddsType->id}&year={$currentPeriod->getValue()}">
+                        {$ddsType->name|escape}
+                    </a>
+                </li>
+                {/foreach}
+            {/if}
         </ul>
+        {if json_encode($data[0]) !== '{"entity":{},"valuesPerPeriods":[],"currencies":[]}'}
         <div>
             <button class="c-report-dds-hideCircles light-gray">
                 [`Hide circles`]
             </button>
         </div>
+        {/if}
     </div>
 
     <input type="hidden" value="{$type->id}" name="dds[type]"/>
 
     <br>
+
+    {if json_encode($data[0]) == '{"entity":{},"valuesPerPeriods":[],"currencies":[]}'}
+        [`No data message`]
+    {else}
 
     {$_data_inc = []}
     {$_data_exp = []}
@@ -127,21 +135,27 @@
     {_render_cashflow_report_table data=$_data_inc type=$type}
     {_render_cashflow_report_table data=$_data_exp type=$type}
 
+    <script>
+        {
+            const toggleElem = document.querySelector('.c-report-dds-hideCircles');
+            const dataCircleElems = document.querySelectorAll('.c-report-dds-dataCircle');
+            let showCircles = true;
+    
+            if (toggleElem) {
+                toggleElem.addEventListener('click', function () {
+                    dataCircleElems.forEach(e => e.style.display = showCircles ? 'none' : 'flex');
+                    this.innerText = showCircles ? "[`Show circles`]" : "[`Hide circles`]";
+                    showCircles = !showCircles;
+                });
+            }
+    
+        }
+    </script>
+
+    {/if}
+
 </div>
 
-<script>
-    {
-        const toggleElem = document.querySelector('.c-report-dds-hideCircles');
-        const dataCircleElems = document.querySelectorAll('.c-report-dds-dataCircle');
-        let showCircles = true;
 
-        if (toggleElem) {
-            toggleElem.addEventListener('click', function () {
-                dataCircleElems.forEach(e => e.style.display = showCircles ? 'none' : 'flex');
-                this.innerText = showCircles ? "[`Show circles`]" : "[`Hide circles`]";
-                showCircles = !showCircles;
-            });
-        }
 
-    }
-</script>
+

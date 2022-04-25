@@ -1,8 +1,3 @@
-{** $currentPeriod cashReportDdsServicePeriod **}
-{** $reportPeriods cashReportDdsServicePeriod[] **}
-{** $type cashReportDdsServiceTypeDto **}
-{** $grouping cashReportDdsServicePeriodGroupingDto[] **}
-{** $data cashReportDdsServiceStatDto[] **}
 
 <script src="{$wa_app_static_url}js/amcharts/core.js"></script>
 <script src="{$wa_app_static_url}js/amcharts/charts.js"></script>
@@ -21,7 +16,7 @@
 
 <div class="block">
 
-    <h1>[`Categories`]</h1>
+    <h1 class="custom-mb-24">[`Categories`]</h1>
 
     <div class="flexbox middle">
         <ul class="chips custom-m-0">
@@ -55,16 +50,11 @@
         <div class="currencies-container toggle" style="display: none;"></div>
     </div>
 
-    <input type="hidden" value="{$type->id}" name="dds[type]"/>
-
     <br>
 
-    {$_data_inc = []}
-    {$_data_exp = []}
-    {foreach $data as $d}
-        {if $d->entity->isExpense()}{$_data_exp[] = $d}{/if}
-        {if $d->entity->isIncome()}{$_data_inc[] = $d}{/if}
-    {/foreach}
+    {if $chartData == '{"all_income":[],"all_expense":[]}'}
+        [`No data message`]
+    {else}
 
     <div class="flexbox" style="flex-wrap: wrap;">
         <div class="c-charts width-50" style="display: none;min-width: 500px;">
@@ -78,6 +68,8 @@
     </div>
     
     <div id="cols" class="flexbox smaller" style="flex-wrap: wrap;"></div>
+
+    {/if}
     
 </div>
 
