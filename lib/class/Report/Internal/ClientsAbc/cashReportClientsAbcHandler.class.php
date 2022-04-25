@@ -36,18 +36,20 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
         $c = $params['c'] ?? 5;
 
         $tableData = [
-            'a' => new cashReportClientsAbcLetterDto('A', new cashReportClientsAbcValueDto(0, 0)),
-            'b' => new cashReportClientsAbcLetterDto('B', new cashReportClientsAbcValueDto(0, 0)),
-            'c' => new cashReportClientsAbcLetterDto('C', new cashReportClientsAbcValueDto(0, 0)),
+            'a' => new cashReportClientsAbcLetterDto($a, 'A', new cashReportClientsAbcValueDto(0, 0)),
+            'b' => new cashReportClientsAbcLetterDto($b, 'B', new cashReportClientsAbcValueDto(0, 0)),
+            'c' => new cashReportClientsAbcLetterDto($c, 'C', new cashReportClientsAbcValueDto(0, 0)),
         ];
+
+        $clients = [];
 
         foreach ($data as $contractorId => $value) {
             $client = new waContact($contractorId);
             $percent = ($value * 100) / $total;
-            $letter = $this->chooseAbc($b, $c, $percent);
-            $tableData[$letter]->value->amount += $value;
-            $tableData[$letter]->clients[] = new cashReportClientsAbcClientDto(
-                $client->getId(), $client->getName(), $client->getPhoto(),
+            $clients[] = new cashReportClientsAbcClientDto(
+                $client->getId(),
+                $client->getName(),
+                $client->getPhoto(),
                 new cashReportClientsAbcValueDto(
                     round($value, 2),
                     round($percent, 2)
@@ -55,18 +57,27 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
             );
         }
 
-        foreach ($tableData as $tableDatum) {
-            if (!$total) {
-                continue;
+        usort(
+            $clients,
+            static function (cashReportClientsAbcClientDto $client1, cashReportClientsAbcClientDto $client2) {
+                return $client1->value->amount <= $client2->value->amount ? 1 : -1;
             }
+        );
 
-            $tableDatum->value->percent = round(($tableDatum->value->amount * 100) / $total, 2);
-            usort(
-                $tableDatum->clients,
-                static function (cashReportClientsAbcClientDto $client1, cashReportClientsAbcClientDto $client2) {
-                    return $client1->value->amount <= $client2->value->amount ? 1 : -1;
+        /** @var cashReportClientsAbcLetterDto $tableDatum */
+        foreach ($tableData as $tableDatum) {
+            /** @var cashReportClientsAbcClientDto $client */
+            while (count($clients)) {
+                $client = reset($clients);
+                $tableDatum->value->percent += $client->value->percent;
+                $tableDatum->value->amount += $client->value->amount;
+
+                $tableDatum->clients[] = array_shift($clients);
+
+                if ($tableDatum->value->percent >= $tableDatum->targetPercent) {
+                    break;
                 }
-            );
+            }
         }
 
         /** @var array<cashAccount> $accounts */
@@ -94,18 +105,5 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
             ],
             true
         );
-    }
-
-    private function chooseAbc($b, $c, $percent): string
-    {
-        if ($percent <= $c) {
-            return 'c';
-        }
-
-        if ($percent <= $b) {
-            return 'b';
-        }
-
-        return 'a';
     }
 }

@@ -17,9 +17,15 @@ class cashReportClientsAbcLetterDto
      */
     public $clients = [];
 
-    public function __construct(string $letter, cashReportClientsAbcValueDto $value)
+    /**
+     * @var float
+     */
+    public $targetPercent;
+
+    public function __construct(float $percent, string $letter, cashReportClientsAbcValueDto $value)
     {
         $this->letter = $letter;
         $this->value = $value;
+        $this->targetPercent = $percent;
     }
 }
