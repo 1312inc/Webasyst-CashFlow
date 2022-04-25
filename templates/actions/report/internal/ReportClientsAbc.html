@@ -84,8 +84,12 @@
                 <tr>
                     <td>
                         <div class="flexbox middle space-12">
-                            <i class="userpic userpic-48" style="background-image: url({$client->img})"></i>
-                            <span>{$client->name|escape}</span>
+                            <a href="{$wa_app_url}contact/{$client->id}">
+                                <i class="userpic userpic-48" style="background-image: url({$client->img})"></i>
+                            </a>
+                            <a href="{$wa_app_url}contact/{$client->id}">
+                                <span>{$client->name|escape}</span>
+                            </a>
                         </div>
                     </td>
                     <td class="align-right" style="vertical-align: middle !important;">{$client->value->amount}</td>
