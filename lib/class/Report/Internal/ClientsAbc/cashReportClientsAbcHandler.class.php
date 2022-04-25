@@ -50,7 +50,7 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
                 $client->getId(), $client->getName(), $client->getPhoto(),
                 new cashReportClientsAbcValueDto(
                     round($value, 2),
-                    round($percent, 3)
+                    round($percent, 2)
                 )
             );
         }
@@ -60,7 +60,7 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
                 continue;
             }
 
-            $tableDatum->value->percent = round(($tableDatum->value->amount * 100) / $total, 3);
+            $tableDatum->value->percent = round(($tableDatum->value->amount * 100) / $total, 2);
             usort(
                 $tableDatum->clients,
                 static function (cashReportClientsAbcClientDto $client1, cashReportClientsAbcClientDto $client2) {

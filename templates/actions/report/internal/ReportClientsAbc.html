@@ -77,7 +77,7 @@
         {foreach $tableData as $letter}
             <tr class="bordered-bottom">
                 <td class="bold">{$letter->letter}</td>
-                <td class="bold align-right">{$letter->value->amount}</td>
+                <td class="bold align-right">{$letter->value->amount|wa_format_number:false} {$currency->getSign()}</td>
                 <td class="bold align-right">{$letter->value->percent}%</td>
             </tr>
             {foreach $letter->clients as $client}
@@ -92,7 +92,7 @@
                             </a>
                         </div>
                     </td>
-                    <td class="align-right" style="vertical-align: middle !important;">{$client->value->amount}</td>
+                    <td class="align-right" style="vertical-align: middle !important;">{$client->value->amount|wa_format_number:false} {$currency->getSign()}</td>
                     <td class="align-right" style="vertical-align: middle !important;">{$client->value->percent}%</td>
                 </tr>
             {foreachelse}
