@@ -47,7 +47,7 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
             $letter = $this->chooseAbc($b, $c, $percent);
             $tableData[$letter]->value->amount += $value;
             $tableData[$letter]->clients[] = new cashReportClientsAbcClientDto(
-                $client->getName(), $client->getPhoto(),
+                $client->getId(), $client->getName(), $client->getPhoto(),
                 new cashReportClientsAbcValueDto(
                     round($value, 2),
                     round($percent, 3)

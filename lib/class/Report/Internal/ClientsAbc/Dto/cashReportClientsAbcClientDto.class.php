@@ -17,8 +17,9 @@ class cashReportClientsAbcClientDto
      */
     public $value;
 
-    public function __construct(string $name, string $img, cashReportClientsAbcValueDto $value)
+    public function __construct(int $id, string $name, string $img, cashReportClientsAbcValueDto $value)
     {
+        $this->id = $id;
         $this->name = $name;
         $this->img = $img;
         $this->value = $value;
