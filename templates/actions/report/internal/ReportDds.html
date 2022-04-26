@@ -71,7 +71,7 @@
 
     <h1 class="custom-mb-24">[`Cash flow report`]</h1>
 
-    <div class="flexbox">
+    <div class="flexbox wrap-mobile">
         <ul class="chips wide custom-m-0">
             <li>
                 <div class="dropdown" id="c-dds-year-dropdown">
@@ -101,7 +101,7 @@
             </li>
             {if json_encode($data[0]) !== '{"entity":{},"valuesPerPeriods":[],"currencies":[]}'}
                 {foreach $ddsTypes as $ddsType}
-                <li{if $type->id == $ddsType->id} class="selected"{/if}>
+                <li class="custom-mr-8{if $type->id == $ddsType->id} selected{/if}">
                     <a href="{$wa_app_url}report/dds/type={$ddsType->id}&year={$currentPeriod->getValue()}">
                         {$ddsType->name|escape}
                     </a>
@@ -140,7 +140,7 @@
             const toggleElem = document.querySelector('.c-report-dds-hideCircles');
             const dataCircleElems = document.querySelectorAll('.c-report-dds-dataCircle');
             let showCircles = true;
-    
+
             if (toggleElem) {
                 toggleElem.addEventListener('click', function () {
                     dataCircleElems.forEach(e => e.style.display = showCircles ? 'none' : 'flex');
@@ -148,14 +148,10 @@
                     showCircles = !showCircles;
                 });
             }
-    
+
         }
     </script>
 
     {/if}
 
 </div>
-
-
-
-
