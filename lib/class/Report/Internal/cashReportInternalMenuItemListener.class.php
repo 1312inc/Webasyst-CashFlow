@@ -9,9 +9,9 @@ final class cashReportInternalMenuItemListener
     {
         return [
             new cashReportDdsMenuItem(),
-            new cashReportStreamMenuItem(),
             new cashReportSankeyMenuItem(),
             new cashReportDdsCategoriesMenuItem(),
+            new cashReportStreamMenuItem(),
             new cashReportClientsAbcMenuItem(),
         ];
     }
