@@ -1226,3 +1226,6 @@ msgstr "Ноя"
 
 msgid "Dec"
 msgstr "Дек"
+
+msgid "Only contacts linked with income transactions are addressed in this report. Expense transactions and no-contact transactions are not counted."
+msgstr "В отчете учитываются только доходные операции, связанные с контактами. Расходные операции и операции без связи с контактами не учитываются."
