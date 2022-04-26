@@ -12,16 +12,16 @@
 
 <div class="block">
     <h1 class="custom-mb-24">[`Sankey`]</h1>
-    
+
     <div class="flexbox wrap middle space-16">
         <div class="currencies-container toggle custom-mb-12" style="display: none;"></div>
         {include file='../includes/DateRange.html' from=$from to=$to withButton=true withYears=false}
     </div>
-    
+
     {if $data === '[]'}
         [`No data message`]
     {else}
-        <div id="chartdiv_sankey" class="smaller" style="height: 500px; width: 100%;"></div>
+        <div id="chartdiv_sankey" class="smaller" style="height: calc(100vh - 350px); min-height: 400px; width: 100%;"></div>
     {/if}
 
 </div>
