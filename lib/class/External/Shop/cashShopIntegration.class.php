@@ -153,6 +153,8 @@ final class cashShopIntegration
             (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction, new DateTime());
 
             cash()->getLogger()->debug('transaction repeated', 'forecast');
+
+            cash()->getLogger()->debug('transaction repeated', 'forecast');
         }
 
         return true;

@@ -1,25 +1,23 @@
 {** @var $reportsMenu cashReportMenuItemInterface[] **}
 
-<div class="content left200px">
+<div class="content">
 
-    <div class="block">
+    {if method_exists($wa->installer, 'reviewWidget')}
+        {$wa->installer->reviewWidget('app/cash')}
+    {/if}
 
-        <div id="c-reports-menu">
-            <ul class="menu-h with-icons">
-            {foreach $reportsMenu as $reportsMenus}
-                {foreach $reportsMenus as $reportMenu}
-                <li>
-                    <a href="#/report/{$reportMenu->getIdentifier()}" class="bold">
-                        <i class="icon16 {$reportMenu->getIcon()|escape}"></i>{$reportMenu->getName()|escape}
-                    </a>
+    <ul class="tabs bordered-bottom custom-mb-24 custom-pl-0">
+        {foreach $reportsMenu as $reportsMenus}
+            {foreach $reportsMenus as $reportMenu}
+                <li class="{if $reportMenu->getIdentifier() === $current_menu}selected{/if}">
+                    <a href="{$wa_app_url}report/{$reportMenu->getIdentifier()}/">{$reportMenu->getName()|escape}</a>
                 </li>
-                {/foreach}
             {/foreach}
-            </ul>
-        </div>
+        {/foreach}
+    </ul>
 
-        <section id="c-report"></section>
-        
-    </div>
+    <section id="c-report">
+        {$report_html}
+    </section>
 
 </div>

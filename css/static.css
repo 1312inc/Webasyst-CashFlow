@@ -19,16 +19,40 @@ table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1
 
 .c-notice { background: #e0ffdd; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 5px 10px -5px rgba(0,0,0,0.1); border-radius: 4px; padding: 30px 40px; margin: 10px 0; line-height: 1.3em; }
 
-.c-report-dds-outer { position: relative; margin-bottom: 6rem; min-height: 320px; min-width: 640px; }
-.c-report-dds-inner { overflow-x: scroll; overflow-y: hidden; margin-left: 150px; margin-right: 350px; width: calc(100% - 520px); }
-.c-report-dds-inner table { table-layout: fixed; }
+.c-report-dds-outer { position: relative; margin-bottom: 6rem; min-width: 640px; }
+.c-report-dds-inner {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.c-report-dds-inner::-webkit-scrollbar {
+    display: none;
+}
+.c-report-dds-inner table { table-layout: fixed; border-collapse: inherit; }
 .c-report-dds-inner table th { width: 100px; }
+@media screen and (min-width: 2000px) {
+    .c-report-dds-inner table th { width: calc(100%/14); }
+}
+.c-report-dds-inner table tbody tr.bordered-bottom td { border-bottom: 2px solid var(--light-gray); }
+.c-report-dds-inner table tbody tr:first-child td:not(.c-report-pie-column) { border-bottom: 2px solid var(--gray); }
 .c-report-dds-inner table td { width: 100px; background: var(--background-color-table-row-hover); vertical-align: top; }
 .c-report-dds-inner table tr.c-row-white th,
 .c-report-dds-inner table tr.c-row-white td { background: var(--background-color-blank); font-size: 0.75rem; }
-.c-report-dds-inner table .c-column-sticky-left { position: absolute; left: 0; width: 130px; background: transparent; border-color: transparent; color: var(--text-color-stronger); }
+.c-report-dds-inner table .c-column-sticky-left {
+    position: sticky; left: 0; width: 130px;
+    background: var(--background-color-blank);
+    background: linear-gradient(90deg, var(--background-color-blank) 0%, var(--background-color-blank) 80%, rgba(255,255,255,0) 100%);
+    color: var(--text-color-stronger);
+}
 .c-report-dds-inner table .c-column-sticky-left .icon { margin-right: 0.25rem; }
-.c-report-dds-inner table .c-column-sticky-right-totals { position: absolute; right: 200px; width: 150px; background: var(--background-color-blank); }
+.c-report-dds-inner table .c-column-sticky-right-totals {
+    position: sticky;
+    right: 0;
+    width: 150px;
+    background: var(--background-color-blank);
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, var(--background-color-blank) 20%, var(--background-color-blank) 100%);
+}
 .c-report-dds-inner table .c-column-sticky-right-pies { position: absolute; right: 0; width: 180px; overflow-x: hidden; overflow-y: auto; height: calc(100% - 2rem); padding: 0; text-align: center; background: var(--background-color-blank); border: none; }
 
 [data-cash-import-csv-check-fullness] { display: none }

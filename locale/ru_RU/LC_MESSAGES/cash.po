@@ -5,14 +5,14 @@ msgstr ""
 "PO-Revision-Date: \n"
 "Last-Translator: cash\n"
 "Language-Team: cash\n"
+"Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: utf-8\n"
-"Language: ru_RU\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -1148,3 +1148,84 @@ msgstr "Настроить по способу оплаты"
 
 msgid "Set account based on the order payment type:"
 msgstr "Счет операции зависит от способа оплаты заказа:"
+
+msgid "Hide circles"
+msgstr "Только цифры"
+
+msgid "Show circles"
+msgstr "Наглядно"
+
+msgid "Clients ABC"
+msgstr "ABC-анализ клиентов"
+
+msgid "Group"
+msgstr "Группа"
+
+msgid "Period"
+msgstr "Период"
+
+msgid "Revenue"
+msgstr "Выручка"
+
+msgid "% of revenue"
+msgstr "% от выручки"
+
+msgid "ShowButton"
+msgstr "Показать"
+
+msgid "Stream"
+msgstr "Поток"
+
+msgid "Sankey"
+msgstr "Карта финансов"
+
+msgid "No data message"
+msgstr "Нет данных"
+
+msgid "All currencies"
+msgstr "Все валюты"
+
+msgid "A — most valuable clients whom together make 80% of your total income.<br> B — clients who make next 15% of your income.<br> C — less valuable clients making the rest 5% income."
+msgstr "A — наиболее ценные клиенты, обеспечивающие 80% вашего общего дохода.<br> B — клиенты, обеспечивающие следующие 15% дохода.<br> C — малодоходные клиенты с общим вкладом в оставшиеся 5% дохода."
+
+msgid "No clients in this segment."
+msgstr "В этом сегменте нет клиентов."
+
+msgid "Jan"
+msgstr "Янв"
+
+msgid "Feb"
+msgstr "Фев"
+
+msgid "Mar"
+msgstr "Мар"
+
+msgid "Apr"
+msgstr "Aпр"
+
+msgid "May"
+msgstr "Май"
+
+msgid "Jun"
+msgstr "Июнь"
+
+msgid "Jul"
+msgstr "Июль"
+
+msgid "Aug"
+msgstr "Авг"
+
+msgid "Sep"
+msgstr "Сен"
+
+msgid "Oct"
+msgstr "Окт"
+
+msgid "Nov"
+msgstr "Ноя"
+
+msgid "Dec"
+msgstr "Дек"
+
+msgid "Only contacts linked with income transactions are addressed in this report. Expense transactions and no-contact transactions are not counted."
+msgstr "В отчете учитываются только доходные операции, связанные с контактами. Расходные операции и операции без связи с контактами не учитываются."

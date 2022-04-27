@@ -51,14 +51,20 @@ return [
     ],
     [
         'event_app_id' => 'cash',
+        'event' => 'api_transaction_response_external_data',
+        'class' => 'cashApiTransactionBeforeResponseListener',
+        'method' => ['getExternalInfoHandlers'],
+    ],
+    [
+        'event_app_id' => 'cash',
         'event' => 'backend_reports_menu_item',
-        'class' => 'cashReportMenuItemListener',
+        'class' => 'cashReportInternalMenuItemListener',
         'method' => ['handle'],
     ],
     [
         'event_app_id' => 'cash',
-        'event' => 'api_transaction_response_external_data',
-        'class' => 'cashApiTransactionBeforeResponseListener',
-        'method' => ['getExternalInfoHandlers'],
+        'event' => 'backend_reports_handle',
+        'class' => 'cashReportInternalHandlerListener',
+        'method' => ['handle'],
     ],
 ];
