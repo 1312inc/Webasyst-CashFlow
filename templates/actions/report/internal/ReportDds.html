@@ -42,7 +42,7 @@
                                         {$size = 30 * abs($value.per_month/$currenciesTotals[$value.currency]['per_month'])}
                                         {$size = ($size > 0 && $size < 6) ? 6 : $size}
                                         <div class="c-report-dds-dataCircle" style="display:flex;align-items:center;height:34px;">
-                                            <div style="margin-left:auto;width:{$size}px;height:{$size}px;border-radius:50%;background-color:{$datum->entity->getColor()};"></div>
+                                            <div style="margin-left:auto;width:{$size}px;height:{$size}px;border-radius:50%;background-color:{$datum->entity->getColor()};{if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y' ) || $currentPeriod->getValue() > $smarty.now|date_format:'Y')}opacity: 0.5;{/if}"></div>
                                         </div>
                                     {/if}
                                     {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false} {$datum->currencies[$currency]->getSign()}
