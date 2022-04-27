@@ -1,0 +1,77 @@
+
+<script src="{$wa_app_static_url}js/amcharts/core.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/charts.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/themes/animated.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/themes/dark.js"></script>
+{if $wa->locale() !== 'en_US'}
+<script src="{$wa_app_static_url}js/amcharts/lang/{$wa->locale()}.js"></script>
+{/if}
+<script type="module">
+    import reportCategories from "{$wa_app_static_url}js/reports/reportCategories.js";
+    const data = {$chartData};
+    const categories = {$categories|json_encode};
+    const year = Number(new URL(window.location).pathname.split('/').pop().split('=')[1]) || new Date().getFullYear();
+    reportCategories(data, '{$wa->locale()}', year, Object.values(categories));
+</script>
+
+<div class="block">
+
+    <h1 class="custom-mb-24">[`Categories`]</h1>
+
+    <div class="flexbox middle">
+        <ul class="chips custom-m-0">
+            <li>
+                <div class="dropdown" id="c-dds-year-dropdown">
+                    <button class="dropdown-toggle custom-mr-16">{$currentPeriod->getName()}</button>
+                    <div class="dropdown-body">
+                        <ul class="menu" style="min-width: 100px;">
+                            {foreach array_reverse($reportPeriods) as $reportPeriod}
+                            <li {if $currentPeriod->isEqual($reportPeriod)}class="selected"{/if}>
+                                <a href="{$wa_app_url}report/categories/year={$reportPeriod->getValue()}"
+                                data-cash-period-value="{$reportPeriod->getValue()}"
+                                data-cash-period-start="{$reportPeriod->getStartDate()}"
+                                data-cash-period-end="{$reportPeriod->getEndDate()}"
+                                class="{if $reportPeriod->getValue() > $smarty.now|date_format:'Y'}opacity-50{/if} {if $reportPeriod->getValue() == $smarty.now|date_format:'Y'}bold{/if}"
+                                >
+                                    {$reportPeriod->getName()|escape}
+                                </a>
+                            </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                    <script>
+                        ( function($) {
+                            $("#c-dds-year-dropdown").waDropdown();
+                        })(jQuery);
+                    </script>
+                </div>
+            </li>
+        </ul>
+        <div class="currencies-container toggle" style="display: none;"></div>
+    </div>
+
+    <br>
+
+    {if $chartData == '{"all_income":[],"all_expense":[]}'}
+        [`No data message`]
+    {else}
+
+    <div class="flexbox" style="flex-wrap: wrap;">
+        <div class="c-charts width-50" style="display: none;min-width: 500px;">
+            <div class="align-center bold">[`Income`]</div>
+            <div id="chartdiv_income" class="smaller" style="width: 100%;height: 300px;"></div>
+        </div>
+        <div class="c-charts width-50" style="display: none;min-width: 500px;">
+            <div class="align-center bold">[`Expense`]</div>
+            <div id="chartdiv_expense" class="smaller" style="width: 100%;height: 300px;"></div>
+        </div>
+    </div>
+    
+    <div id="cols" class="flexbox smaller" style="flex-wrap: wrap;"></div>
+
+    {/if}
+    
+</div>
+
+
+

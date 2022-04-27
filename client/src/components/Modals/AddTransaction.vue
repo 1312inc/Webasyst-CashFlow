@@ -724,6 +724,7 @@ export default {
     } else {
       // switch off is_onbadge
       if (this.offOnbadge) {
+        this.model.date = this.$moment().format('YYYY-MM-DD')
         this.model.is_onbadge = false
       }
     }

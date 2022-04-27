@@ -1,0 +1,35 @@
+<script src="{$wa_app_static_url}js/amcharts/core.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/charts.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/themes/animated.js"></script>
+<script src="{$wa_app_static_url}js/amcharts/themes/dark.js"></script>
+{if $wa->locale() !== 'en_US'}
+<script src="{$wa_app_static_url}js/amcharts/lang/{$wa->locale()}.js"></script>
+{/if}
+<script type="module">
+    import reportStream from "{$wa_app_static_url}js/reports/reportStream.js";
+    reportStream('chartdiv_stream', {$data|json_encode}, '{$wa->locale()}');
+</script>
+
+<div class="block">
+    <h1 class="custom-mb-24">[`Stream`]</h1>
+
+    <div class="flexbox wrap middle space-16">
+        <div class="currencies-container toggle custom-mb-12" style="display: none;"></div>
+        {include file='../includes/DateRange.html' from=$from to=$to withButton=true withYears=true}
+    </div>
+    
+    {if count($data['data']) == 0}
+        [`No data message`]
+    {else}
+        <div id="chartdiv_stream" class="smaller" style="height: 440px; width: 100%;"></div>
+        <div class="flexbox wrap smaller space-16" style="justify-content: center;">
+        {foreach $data['categories'] as $category}
+            <div class="flexbox middle space-4 custom-p-8">
+                <span class="icon" style="width: 1rem;height: 1rem;"><i class="rounded" style="width: 1rem;height: 1rem;background-color: {$category['color']};"></i></span>
+                <span>{$category['name']}</span>
+            </div>
+        {/foreach}
+        </div>
+    {/if}
+
+</div>

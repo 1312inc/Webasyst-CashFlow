@@ -1537,10 +1537,17 @@ SQL;
      */
     public function getYearsWithTransactions(): array
     {
+        $sql = <<<SQL
+SELECT YEAR(ct.date) transaction_year
+FROM cash_transaction ct
+         JOIN cash_account ca on ca.id = ct.account_id
+WHERE ct.is_archived = 0
+  AND ca.is_archived = 0
+GROUP BY YEAR(ct.date)
+SQL;
+
         return array_column(
-            $this->query(
-                'select year(`date`) transaction_year from cash_transaction where is_archived = 0 group by year(`date`) order by year(`date`)'
-            )->fetchAll(),
+            $this->query($sql)->fetchAll(),
             'transaction_year'
         );
     }

@@ -1,0 +1,127 @@
+
+<div class="block" id="c-report-clients-abc">
+
+    <h1>[`Clients ABC`]</h1>
+
+    <div class="flexbox">
+        <form action="">
+
+            <div class="fields">
+                <div class="fields-group custom-mb-16">
+                    <div class="field">
+                        <div class="name for-input large">
+                            [`Currency`]
+                        </div>
+                        <div class="value">
+
+                            <div class="wa-select solid">
+                                <select name="currency">
+                                    {foreach $currencies as $cur}
+                                        <option value="{$cur->getCode()}"
+                                        {if $cur->getCode() == $currency->getCode()} selected{/if}>{$cur->getTitle()|escape}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name for-input">
+                            [`Group`]
+                        </div>
+                        <div class="value">
+                            <div class="flexbox space-16">
+                                <div>
+                                    <strong>A</strong>
+                                    <input type="text" name="a" value="{$a}" class="shortest number solid">%
+                                </div>
+                                <div>
+                                    <strong>B</strong>
+                                    <input type="text" name="b" value="{$b}" class="shortest number solid">%
+                                </div>
+                                <div>
+                                    <strong>C</strong>
+                                    <input type="text" name="c" value="{$c}" class="shortest number solid">%
+                                </div>
+                            </div>
+                            <p class="hint">[`A — most valuable clients whom together make 80% of your total income.<br> B — clients who make next 15% of your income.<br> C — less valuable clients making the rest 5% income.`]</p>
+                        </div>
+                    </div>
+
+                    <div class="field" style="min-height: 34px;">
+                        <div class="name for-input">
+                            [`Period`]
+                        </div>
+                        <div class="value">
+                            {include file='../includes/DateRange.html' from=$from to=$to withButton=false withYears=false}
+                        </div>
+                    </div>
+
+                </div>
+                <input type="submit" class="button" value="[`ShowButton`]">
+            </div>
+
+        </form>
+    </div>
+
+    <br>
+
+    <div class="c-report-dds-inner">
+        <table class="small">
+            <tr>
+                <th>[`Contractor`]</th>
+                <th class="align-right">[`Revenue`], {$currency->getSign()}</th>
+                <th class="align-right">[`% of revenue`]</th>
+            </tr>
+        {foreach $tableData as $letter}
+            <tr class="bordered-bottom">
+                <td class="bold">{$letter->letter}</td>
+                <td class="bold align-right">{$letter->value->amount|wa_format_number:false} {$currency->getSign()}</td>
+                <td class="bold align-right">{$letter->value->percent}%</td>
+            </tr>
+            {foreach $letter->clients as $client}
+                <tr>
+                    <td>
+                        <div class="flexbox middle space-12">
+                            <a href="{$wa_app_url}contact/{$client->id}">
+                                <i class="userpic userpic-48" style="background-image: url({$client->img})"></i>
+                            </a>
+                            <a href="{$wa_app_url}contact/{$client->id}">
+                                <span>{$client->name|escape}</span>
+                            </a>
+                        </div>
+                    </td>
+                    <td class="align-right" style="vertical-align: middle !important;">{$client->value->amount|wa_format_number:false} {$currency->getSign()}</td>
+                    <td class="align-right" style="vertical-align: middle !important;">{$client->value->percent}%</td>
+                </tr>
+            {foreachelse}
+            <tr>
+                <td class="align-center" colspan="3">
+                    <p class="gray custom-m-12">[`No clients in this segment.`]</p>
+                </td>
+            </tr>
+            {/foreach}
+        {/foreach}
+        </table>
+        <p class="hint">
+            [`Only contacts linked with income transactions are addressed in this report. Expense transactions and no-contact transactions are not counted.`]
+        </p>
+    </div>
+</div>
+
+<script>
+    (function(){ "use strict";
+        var $w = $('#c-report-clients-abc');
+
+        $w.on('submit', 'form', function (e) {
+
+            var pathname = window.location.pathname.split('clients-abc');
+            var params = $(this).serialize();
+
+            window.location = pathname[0] + 'clients-abc/' + params;
+
+            return false;
+        });
+    })();
+</script>

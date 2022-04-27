@@ -1,0 +1,157 @@
+{** $currentPeriod cashReportDdsServicePeriod **}
+{** $reportPeriods cashReportDdsServicePeriod[] **}
+{** $ddsTypes cashReportDdsServiceTypeDto[] **}
+{** $type cashReportDdsServiceTypeDto **}
+{** $grouping cashReportDdsServicePeriodGroupingDto[] **}
+{** $data cashReportDdsServiceStatDto[] **}
+
+{function name="_render_cashflow_report_table" data=[] type=[]}
+<div class="c-report-dds-outer">
+    <div class="c-report-dds-inner">
+
+        {$currenciesTotals = $data[0]->valuesPerPeriods['max']}
+
+        <table class="small">
+            <thead>
+                <tr>
+                    <th class="c-column-sticky-left"></th>
+                    {foreach $grouping as $group}
+                        <th class="align-right">[`{$group->name|escape}`]</th>
+                    {/foreach}
+                    <th class="align-right bold c-column-sticky-right-totals">[`Total`]</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {foreach $data as $datum}
+                <tr{if $datum->entity->isChild()} class="c-row-white"{/if}>
+                    {if !empty($datum->valuesPerPeriods)}
+                        <td class="nowrap c-column-sticky-left">
+                            <div title="{$datum->entity->getName()|escape}" style="overflow: hidden;"{if $datum->entity->isChild()} class="custom-pl-16{/if}">
+                                {if $datum->entity->isHeader()}<b class="large">{/if}
+                                {$datum->entity->getIcon()}
+                                {$datum->entity->getName()|escape|truncate:32}
+                                {if $datum->entity->isHeader()}</b>{/if}
+                            </div>
+                        </td>
+                        {foreach $datum->valuesPerPeriods as $values name=foreach_month_columns}
+                        <td class="{if $smarty.foreach.foreach_month_columns.iteration == 13}c-column-sticky-right-totals align-right{/if}">
+                            {foreach $values as $currency => $value}
+                                <div class="nowrap align-right{if $smarty.foreach.foreach_month_columns.iteration == 13}black bold{/if} {if $smarty.foreach.foreach_month_columns.iteration == 14} hidden{/if} {if isset($value['month']) && $value['month'] == $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y'}bold{/if} {if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y' ) || $currentPeriod->getValue() > $smarty.now|date_format:'Y')}gray{/if}">
+                                    {if $datum->entity->getId() !== 'all_income' && $datum->entity->getId() !== 'all_expense' && isset($value.currency)}
+                                        {$size = 30 * abs($value.per_month/$currenciesTotals[$value.currency]['per_month'])}
+                                        {$size = ($size > 0 && $size < 6) ? 6 : $size}
+                                        <div class="c-report-dds-dataCircle" style="display:flex;align-items:center;height:34px;">
+                                            <div style="margin-left:auto;width:{$size}px;height:{$size}px;border-radius:50%;background-color:{$datum->entity->getColor()};{if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y' ) || $currentPeriod->getValue() > $smarty.now|date_format:'Y')}opacity: 0.5;{/if}"></div>
+                                        </div>
+                                    {/if}
+                                    {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false} {$datum->currencies[$currency]->getSign()}
+                                </div>
+                            {/foreach}
+                        </td>
+                        {/foreach}
+                    {/if}
+                </tr>
+            {/foreach}
+            </tbody>
+        </table>
+    </div>
+</div>
+{/function}
+
+<style>
+#report-account .c-report-dds-hideCircles,
+#report-account .c-report-dds-dataCircle {
+    display: none !important;
+}
+</style>
+
+
+<div id="report-{$type->id}" class="block">
+
+    <h1 class="custom-mb-24">[`Cash flow report`]</h1>
+
+    <div class="flexbox wrap-mobile">
+        <ul class="chips wide custom-m-0">
+            <li>
+                <div class="dropdown" id="c-dds-year-dropdown">
+                    <button class="dropdown-toggle custom-mr-16">{$currentPeriod->getName()}</button>
+                    <div class="dropdown-body">
+                        <ul class="menu" style="min-width: 100px;">
+                            {foreach array_reverse($reportPeriods) as $reportPeriod}
+                            <li {if $currentPeriod->isEqual($reportPeriod)}class="selected"{/if}>
+                                <a href="{$wa_app_url}report/dds/type={$type->id}&year={$reportPeriod->getValue()}"
+                                data-cash-period-value="{$reportPeriod->getValue()}"
+                                data-cash-period-start="{$reportPeriod->getStartDate()}"
+                                data-cash-period-end="{$reportPeriod->getEndDate()}"
+                                class="{if $reportPeriod->getValue() > $smarty.now|date_format:'Y'}opacity-50{/if} {if $reportPeriod->getValue() == $smarty.now|date_format:'Y'}bold{/if}"
+                                >
+                                    {$reportPeriod->getName()|escape}
+                                </a>
+                            </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                    <script>
+                        ( function($) {
+                            $("#c-dds-year-dropdown").waDropdown();
+                        })(jQuery);
+                    </script>
+                </div>
+            </li>
+            {if json_encode($data[0]) !== '{"entity":{},"valuesPerPeriods":[],"currencies":[]}'}
+                {foreach $ddsTypes as $ddsType}
+                <li class="custom-mr-8{if $type->id == $ddsType->id} selected{/if}">
+                    <a href="{$wa_app_url}report/dds/type={$ddsType->id}&year={$currentPeriod->getValue()}">
+                        {$ddsType->name|escape}
+                    </a>
+                </li>
+                {/foreach}
+            {/if}
+        </ul>
+        {if json_encode($data[0]) !== '{"entity":{},"valuesPerPeriods":[],"currencies":[]}'}
+        <div>
+            <button class="c-report-dds-hideCircles light-gray">
+                [`Hide circles`]
+            </button>
+        </div>
+        {/if}
+    </div>
+
+    <input type="hidden" value="{$type->id}" name="dds[type]"/>
+
+    <br>
+
+    {if json_encode($data[0]) == '{"entity":{},"valuesPerPeriods":[],"currencies":[]}'}
+        [`No data message`]
+    {else}
+
+    {$_data_inc = []}
+    {$_data_exp = []}
+    {foreach $data as $d}
+        {if $d->entity->isExpense()}{$_data_exp[] = $d}{/if}
+        {if $d->entity->isIncome()}{$_data_inc[] = $d}{/if}
+    {/foreach}
+    {_render_cashflow_report_table data=$_data_inc type=$type}
+    {_render_cashflow_report_table data=$_data_exp type=$type}
+
+    <script>
+        {
+            const toggleElem = document.querySelector('.c-report-dds-hideCircles');
+            const dataCircleElems = document.querySelectorAll('.c-report-dds-dataCircle');
+            let showCircles = true;
+
+            if (toggleElem) {
+                toggleElem.addEventListener('click', function () {
+                    dataCircleElems.forEach(e => e.style.display = showCircles ? 'none' : 'flex');
+                    this.innerText = showCircles ? "[`Show circles`]" : "[`Hide circles`]";
+                    showCircles = !showCircles;
+                });
+            }
+
+        }
+    </script>
+
+    {/if}
+
+</div>
