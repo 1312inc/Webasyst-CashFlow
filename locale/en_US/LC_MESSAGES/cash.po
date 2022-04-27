@@ -1063,7 +1063,7 @@ msgid "Reports"
 msgstr ""
 
 msgid "Cash flow report"
-msgstr ""
+msgstr "Cash flow"
 
 msgid "Can see reports"
 msgstr ""
