@@ -15,7 +15,7 @@ final class cashReportSankeyService
     public function getDataForPeriod(DateTimeImmutable $dateFrom, DateTimeImmutable $dateTo): array
     {
         $sql = <<<SQL
-(SELECT ca.currency, cc.name 'from', ca.name 'to', cc.color color, SUM(ABS(ct.amount)) value, 'income' direction
+(SELECT ca.currency, cc.name 'from', cc.id 'from_id', ca.name 'to', ca.id 'to_id', cc.color color, SUM(ABS(ct.amount)) value, 'income' direction
 FROM cash_transaction ct
          JOIN cash_category cc on ct.category_id = cc.id
          JOIN cash_account ca on ca.id = ct.account_id
@@ -26,7 +26,7 @@ WHERE ct.is_archived = 0
   AND ct.date <= s:date_to
 GROUP BY ct.category_id, ct.account_id)
 UNION ALL
-(SELECT ca.currency, ca.name 'from', cc.name 'to', cc.color color, SUM(ABS(ct.amount)) value, 'expense' direction
+(SELECT ca.currency, ca.name 'from', ca.id 'from_id', cc.name 'to', cc.id 'to_id', cc.color color, SUM(ABS(ct.amount)) value, 'expense' direction
 FROM cash_transaction ct
          JOIN cash_category cc on ct.category_id = cc.id
          JOIN cash_account ca on ca.id = ct.account_id
@@ -48,6 +48,7 @@ SQL;
             ]
         )->fetchAll();
 
+        // разбили по валютам
         $chartData = array_reduce($data, static function ($carry, $datum) {
             $currency = $datum['currency'];
             if (!isset($carry[$currency])) {
@@ -64,25 +65,109 @@ SQL;
             return $carry;
         }, []);
 
-        foreach ($chartData as $currency => $datum) {
-            array_walk($chartData[$currency]['data'], static function (&$item) use ($datum) {
+        foreach ($chartData as $currency => &$datum) {
+            $grouping = [
+                'income' => [
+                    'total' => 0,
+                    'lines' => [],
+                    'group' => [],
+                ],
+                'expense' => [
+                    'total' => 0,
+                    'lines' => [],
+                    'group' => [],
+                ],
+            ];
+
+            $datumData = &$datum['data'];
+            usort($datumData, static function (array $item1, array $item2) {
+                return $item1['value'] > $item2['value'];
+            });
+
+            array_walk($datumData, static function (&$item) use ($datum) {
                 $item['currency'] = $datum['details']->getCode();
                 $item['currencySign'] = $datum['details']->getSign();
             });
 
-            $income = array_filter($datum['data'], static function (array $line) {
-                return $line['direction'] === 'income';
-            });
-            $expense = array_filter($datum['data'], static function (array $line) {
-                return $line['direction'] === 'expense';
-            });
+            // разделили на expense/income, посчитали тотал для типа
+            $byType = array_reduce(
+                $datumData,
+                static function (array $carry, array $line) use (&$grouping) {
+                    $grouping[$line['direction']]['total'] += $line['value'];
+                    $carry[$line['direction']][] = $line;
 
-            $incomeUnique = array_unique(array_column($income, 'to'));
-            foreach ($expense as $item) {
+                    return $carry;
+                },
+                ['income' => [], 'expense' => []]
+            );
+
+            // посчитаем вклад каждой "линии", выделим группы с суммой меньше 2%
+            foreach ($byType as $direction => $lines) {
+                $groupingKey = $direction === 'expense' ? 'from_id' : 'to_id';
+
+                foreach ($lines as $line) {
+                    $percentFromTotal = $line['value'] * 100 / $grouping[$direction]['total'];
+
+                    // пробуем группировать только "тонкие"
+                    if ($percentFromTotal < 2) {
+                        if (!isset($grouping[$direction]['group'][$line[$groupingKey]])) {
+                            $grouping[$direction]['group'][$line[$groupingKey]] = [
+                                'percent' => 0,
+                                'lines' => [],
+                            ];
+                        }
+
+                        if ($grouping[$direction]['group'][$line[$groupingKey]]['percent'] + $percentFromTotal < 2) {
+                            $grouping[$direction]['group'][$line[$groupingKey]]['percent'] += $percentFromTotal;
+                            $grouping[$direction]['group'][$line[$groupingKey]]['lines'][] = $line;
+                        }
+                    } else {
+                        $grouping[$direction]['lines'][] = $line;
+                    }
+                }
+
+                $byType[$direction] = [];
+                // что-то получилось сгруппировать
+                if (!empty($grouping[$direction]['group'])) {
+                    foreach ($grouping[$direction]['group'] as $group) {
+                        // если линяя только одна - перенесем как есть
+                        if (count($group['lines']) === 1) {
+                            $byType[$direction][] = $group['lines'][0];
+                        } else {
+                            // иначе сгруппируем
+                            $byType[$direction][] = [
+                                'from' => _w('Other'),
+                                'from_id' => 0,
+                                'to' => $group['lines'][0]['to'],
+                                'to_id' => $group['lines'][0]['to_id'],
+                                'value' => array_reduce($group['lines'], static function ($sum, array $i) {
+                                    $sum += $i['value'];
+
+                                    return $sum;
+                                }, 0),
+                                'direction' => 'income',
+                                'color' => $group['lines'][0]['color'],
+                                'currency' => $group['lines'][0]['currency'],
+                                'currencySign' => $group['lines'][0]['currencySign'],
+                            ];
+                        }
+                    }
+                }
+                // смержим сгруппированные (или нет) тонкие и толстые
+                $byType[$direction] = array_merge($byType[$direction], $grouping[$direction]['lines']);
+            }
+
+            $chartData[$currency]['data'] = array_merge($byType['income'], $byType['expense']);
+
+            // доберем income
+            $incomeUnique = array_unique(array_column($byType['income'], 'to'));
+            foreach ($byType['expense'] as $item) {
                 if (!in_array($item['from'], $incomeUnique, true)) {
                     $chartData[$currency]['data'][] = [
                         'from' => 'stub',
+                        'from_id' => 0,
                         'to' => $item['from'],
+                        'to_id' => 0,
                         'value' => 0,
                         'direction' => 'income',
                         'color' => '',
