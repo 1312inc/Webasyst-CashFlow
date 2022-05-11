@@ -135,21 +135,29 @@ SQL;
                             $byType[$direction][] = $group['lines'][0];
                         } else {
                             // иначе сгруппируем
-                            $byType[$direction][] = [
-                                'from' => _w('Other'),
-                                'from_id' => 0,
-                                'to' => $group['lines'][0]['to'],
-                                'to_id' => $group['lines'][0]['to_id'],
+                            $grouped = [
                                 'value' => array_reduce($group['lines'], static function ($sum, array $i) {
                                     $sum += $i['value'];
 
                                     return $sum;
                                 }, 0),
-                                'direction' => 'income',
+                                'direction' => $direction,
                                 'color' => $group['lines'][0]['color'],
                                 'currency' => $group['lines'][0]['currency'],
                                 'currencySign' => $group['lines'][0]['currencySign'],
                             ];
+                            if ($direction === 'income') {
+                                $grouped['from'] = sprintf_wp('Other (%s)', $direction);
+                                $grouped['from_id'] =0;
+                                $grouped['to'] = $group['lines'][0]['to'];
+                                $grouped['to_id'] = $group['lines'][0]['to_id'];
+                            } else {
+                                $grouped['to'] = sprintf_wp('Other (%s)', $direction);
+                                $grouped['to_id'] =0;
+                                $grouped['from'] = $group['lines'][0]['from'];
+                                $grouped['from_id'] = $group['lines'][0]['from_id'];
+                            }
+                            $byType[$direction][] = $grouped;
                         }
                     }
                 }
@@ -175,6 +183,31 @@ SQL;
                         'currencySign' => $datum['details']->getSign(),
                     ];
                 }
+            }
+
+            $byType = array_reduce(
+                $datumData,
+                static function (array $carry, array $line) {
+                    $carry[$line['direction']][] = $line[$line['direction'] === 'income' ? 'from' : 'to'];
+
+                    return $carry;
+                },
+                ['income' => [], 'expense' => []]
+            );
+
+            foreach ($chartData[$currency]['data'] as $i => $renameDatum) {
+                if ($renameDatum['direction'] === 'income') {
+                    if (in_array($renameDatum['from'], $byType['expense'], true)) {
+                        $chartData[$currency]['data'][$i]['from'] = sprintf('%s (%s)', $renameDatum['from'],
+                            _w($renameDatum['direction']));
+                    }
+                } else {
+                    if (in_array($renameDatum['to'], $byType['income'], true)) {
+                        $chartData[$currency]['data'][$i]['to'] = sprintf('%s (%s)', $renameDatum['to'],
+                            _w($renameDatum['direction']));
+                    }
+                }
+
             }
         }
 
