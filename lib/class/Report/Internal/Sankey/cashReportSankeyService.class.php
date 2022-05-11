@@ -147,12 +147,12 @@ SQL;
                                 'currencySign' => $group['lines'][0]['currencySign'],
                             ];
                             if ($direction === 'income') {
-                                $grouped['from'] = sprintf_wp('Other (%s)', $direction);
+                                $grouped['from'] = sprintf('%s (%s)',_w('Other'), $direction);
                                 $grouped['from_id'] =0;
                                 $grouped['to'] = $group['lines'][0]['to'];
                                 $grouped['to_id'] = $group['lines'][0]['to_id'];
                             } else {
-                                $grouped['to'] = sprintf_wp('Other (%s)', $direction);
+                                $grouped['to'] = sprintf('%s (%s)',_w('Other'), $direction);
                                 $grouped['to_id'] =0;
                                 $grouped['from'] = $group['lines'][0]['from'];
                                 $grouped['from_id'] = $group['lines'][0]['from_id'];
