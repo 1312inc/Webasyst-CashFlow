@@ -27,8 +27,8 @@ class cashTinkoffPlugin extends waPlugin
         }
     }
 
-    public function getExternalInfoHandler(): cashEventHandlerApiTransactionExternalInfo
+    public function getExternalInfoHandler(): cashEventApiTransactionExternalInfoHandlerInterface
     {
-        return new cashEventHandlerApiTransactionExternalInfo();
+        return new cashTinkoffPluginEventHandlerApiTransactionExternalInfo();
     }
 }

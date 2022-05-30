@@ -11,6 +11,8 @@ final class cashEventStorage
     public const WA_BACKEND_TRANSACTIONS_EXPORT  = 'backend_transactions_export';
     public const WA_REPORTS_MENU_ITEM = 'backend_reports_menu_item';
     public const WA_REPORTS_HANDLE = 'backend_reports_handle';
+    public const WA_IMPORTS_MENU_ITEM = 'backend_imports_menu_item';
+    public const WA_IMPORTS_HANDLE = 'backend_imports_handle';
 
     public const SETTINGS_SAVE = 'settings_save';
     public const TRANSACTION_PAGE_PREEXECUTE = 'transaction_page_preexecute';

@@ -1,6 +1,6 @@
 <?php
 
-class cashEventHandlerApiTransactionExternalInfo implements cashEventApiTransactionExternalInfoHandlerInterface
+class cashTinkoffPluginEventHandlerApiTransactionExternalInfo implements cashEventApiTransactionExternalInfoHandlerInterface
 {
     public function getResponse(
         cashApiTransactionResponseDto $cashApiTransactionResponseDto

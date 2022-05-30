@@ -67,4 +67,16 @@ return [
         'class' => 'cashReportInternalHandlerListener',
         'method' => ['handle'],
     ],
+    [
+        'event_app_id' => 'cash',
+        'event' => 'backend_imports_menu_item',
+        'class' => 'cashImportMenuItemListener',
+        'method' => ['handle'],
+    ],
+    [
+        'event_app_id' => 'cash',
+        'event' => 'backend_imports_handle',
+        'class' => 'cashImportHandlerListener',
+        'method' => ['handle'],
+    ],
 ];

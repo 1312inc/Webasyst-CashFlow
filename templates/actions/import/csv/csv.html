@@ -1,0 +1,98 @@
+<h3>
+    [`Import via CSV`]
+    <span class="hint">[`CSV (Excel)`]</span>
+</h3>
+<ol class="c-import-progress">
+    <li class="current">[`Select a file.`]</li>
+    <li>[`Preview & configure.`]</li>
+    <li>[`Import!`]</li>
+</ol>
+
+<form action="?module=import&action=upload" method="post" enctype="multipart/form-data" target="cash-upload-file" id="cash-import-upload-form">
+    <div id="c-import-step-1">
+        <div class="fields form">
+            <div class="field">
+                <div class="name for-input">
+                    [`Encoding`]
+                </div>
+                <div class="value">
+                    <div class="wa-select small">
+                        <select name="upload[encoding]">
+                            {foreach cashImportCsv::getEncodings() as $encoding}
+                                <option>{$encoding}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="name for-input">
+                    [`Delimeter`]
+                </div>
+                <div class="value">
+                    <div class="wa-select small">
+                        <select name="upload[delimiter]">
+                            {foreach cashImportCsv::getDelimiters() as $name => $value}
+                                <option value="{$value}">{$name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="name for-input">
+                    [`Select file`]
+                </div>
+                <div class="value">
+                    <input type="file" name="upload[file]"/>
+                    <p class="hint">
+                        {sprintf(
+                        '[`Supported file formats: <b>%s</b>`]',
+                        '<i class="fas fa-file-excel" style="color: #499b5e;"></i> CSV (Excel)'
+                        )}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<iframe style="display: none;" frameborder="0" name="cash-upload-file" id="cash-upload-file"></iframe>
+
+<div id="c-import-step-2"></div>
+<script>
+    'use strict';
+    (function () {
+        var $w = $('#cash-import-page'),
+            $importProgress = $w.find('.c-import-progress'),
+            $uploadForm = $('#cash-import-upload-form'),
+            $uploadIframe = $('#cash-upload-file'),
+            $step2 = $('#c-import-step-2'),
+            $loading = $('<div class="custom-mt-16"><i class="fas fa-spinner"></i></div>');
+
+        $uploadForm.on('change', '[name="upload[file]"]', function () {
+            $uploadForm.append($loading);
+            $uploadForm.trigger('submit');
+
+            $uploadIframe.one('load', function () {
+                $loading.remove();
+                var html = $(this).contents().find('body').html();
+                $step2.html(html);
+
+                $w.trigger('stepChange.cash', 2);
+            });
+        });
+
+        $w.on('stepChange.cash', function (e, stepN) {
+            stepN--;
+            $importProgress.find('li').removeClass().each(function (index) {
+                if (index < stepN) {
+                    $(this).addClass('completed');
+                }
+
+                if (index == stepN) {
+                    $(this).addClass('current');
+                }
+            });
+        });
+    }())
+</script>

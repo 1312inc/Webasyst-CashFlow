@@ -2,8 +2,8 @@
 
 class cashTinkoffPluginIntegration
 {
-//    private const BASE_URL = 'https://business.tinkoff.ru/openapi/api';
-    private const BASE_URL = 'https://proxy.kmwa.ru/openapi/api';
+    private const BASE_URL = 'https://business.tinkoff.ru/openapi/api';
+//    private const BASE_URL = 'https://proxy.kmwa.ru/openapi/api';
 
     private $waNet;
 

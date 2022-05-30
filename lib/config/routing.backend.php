@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'import/new/<handler>/<params>' => 'import/',
     'import/' => 'import/',
     'report/<handler>/<params>' => 'report/',
     'report/' => 'report/',

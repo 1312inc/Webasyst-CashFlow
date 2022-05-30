@@ -1,3 +1,5 @@
+{** @var $importMenu cashImportMenuItemInterface[] **}
+
 <div id="cash-import-page" class="article">
     <div class="article-body">
 
@@ -5,37 +7,19 @@
 
         <div class="custom-my-16">
             <ul class="tabs bordered-bottom">
-                <li class="selected">
-                    <a href="{$wa_app_url}import/">
-                        <i class="fas fa-file-excel" style="color: #499b5e;"></i>
-                        [`Excel (CSV)`]
-                    </a>
-                </li>
-                <li>
-                    <a href="{$wa_app_url}shop/settings/">
-                        <i class="icon" style="background-image: url('{$wa_url}wa-apps/shop/img/shop.png');"></i>
-                        Shop-Script
-                    </a>
-                </li>
-                {*
-                    <li>
-                        <a href="javascript:void(0);">
-                            <i class="fab fa-tinkoff"></i>
-                            Tinkoff
-                            (plugin tab hook here)
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0);">
-                            <i class="fas fa-plus-circle"></i>
-                            [`Install plugins`]
-                        </a>
-                    </li>
-                *}
+
+                {foreach $importsMenu as $importsMenus}
+                    {foreach $importsMenus as $importMenu}
+                        <li class="{if $importMenu->getIdentifier() === $current_menu}selected{/if}">
+                            <a href="{$wa_app_url}{if $importMenu->getUrl()}{$importMenu->getUrl()}{else}import/new/{$importMenu->getIdentifier()}{/if}/">{$importMenu->getAnchor()}</a>
+                        </li>
+                    {/foreach}
+                {/foreach}
+
             </ul>
         </div>
 
-        {if count($imports)}
+    {if count($imports)}
         <div>
             <p class="small">[`Review and manage previous import results:`]</p>
             <ul class="chips rounded small">
@@ -51,8 +35,8 @@
                             {$import->create_datetime|wa_datetime:humandatetime}
 
                             <span class="hint">
-                                {$import->filename|escape|truncate:24}
-                            </span>
+                            {$import->filename|escape|truncate:24}
+                        </span>
                         </a>
                     </li>
                 {/foreach}
@@ -65,128 +49,39 @@
             </ul>
         </div>
         <hr>
-        {/if}
+    {/if}
 
-        <h3>
-            [`Import via CSV`]
-            <span class="hint">[`CSV (Excel)`]</span>
-        </h3>
-        <ol class="c-import-progress">
-            <li class="current">[`Select a file.`]</li>
-            <li>[`Preview & configure.`]</li>
-            <li>[`Import!`]</li>
-        </ol>
-
-        <form action="?module=import&action=upload" method="post" enctype="multipart/form-data" target="cash-upload-file" id="cash-import-upload-form">
-            <div id="c-import-step-1">
-                <div class="fields form">
-                    <div class="field">
-                        <div class="name for-input">
-                            [`Encoding`]
-                        </div>
-                        <div class="value">
-                            <div class="wa-select small">
-                                <select name="upload[encoding]">
-                                    {foreach cashImportCsv::getEncodings() as $encoding}
-                                    <option>{$encoding}</option>
-                                    {/foreach}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="name for-input">
-                            [`Delimeter`]
-                        </div>
-                        <div class="value">
-                            <div class="wa-select small">
-                                <select name="upload[delimiter]">
-                                    {foreach cashImportCsv::getDelimiters() as $name => $value}
-                                    <option value="{$value}">{$name}</option>
-                                    {/foreach}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="name for-input">
-                            [`Select file`]
-                        </div>
-                        <div class="value">
-                            <input type="file" name="upload[file]"/>
-                            <p class="hint">
-                                {sprintf(
-                                    '[`Supported file formats: <b>%s</b>`]',
-                                    '<i class="fas fa-file-excel" style="color: #499b5e;"></i> CSV (Excel)'
-                                )}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-        <iframe style="display: none;" frameborder="0" name="cash-upload-file" id="cash-upload-file"></iframe>
-
-        <div id="c-import-step-2"></div>
+        <section id="c-import">
+            {$import_html}
+        </section>
 
     </div>
 </div>
+
 <script>
     'use strict';
     (function () {
-        var $w = $('#cash-import-page'),
-            $importProgress = $w.find('.c-import-progress'),
-            $uploadForm = $('#cash-import-upload-form'),
-            $uploadIframe = $('#cash-upload-file'),
-            $step2 = $('#c-import-step-2'),
-            $loading = $('<div class="custom-mt-16"><i class="fas fa-spinner"></i></div>');
+        var $w = $('#cash-import-page');
 
-        $uploadForm.on('change', '[name="upload[file]"]', function () {
-            $uploadForm.append($loading);
-            $uploadForm.trigger('submit');
+        $w.on('click.cash', '[data-cash-action="imports-delete"]', function (e) {
+            e.preventDefault();
 
-            $uploadIframe.one('load', function () {
-                $loading.remove();
-                var html = $(this).contents().find('body').html();
-                $step2.html(html);
+            if (!confirm($_('Clear import history (don’t worry, imported transactions will not be affected)?'))) {
+                return;
+            }
 
-                $w.trigger('stepChange.cash', 2);
-            });
+            $.post(
+                '?module=import&action=deleteAll',
+                function (r) {
+                    if (r.status === 'ok') {
+                        window.location.reload();
+                    } else {
+                        self.log(r.errors.join("\n"));
+                        alert(r.errors.join("\n"));
+                    }
+                },
+                'json'
+            );
         });
-
-        $w
-            .on('stepChange.cash', function (e, stepN) {
-                stepN--;
-                $importProgress.find('li').removeClass().each(function (index) {
-                    if (index < stepN) {
-                        $(this).addClass('completed');
-                    }
-
-                    if (index == stepN) {
-                        $(this).addClass('current');
-                    }
-                });
-            })
-            .on('click.cash', '[data-cash-action="imports-delete"]', function (e) {
-                e.preventDefault();
-
-                if (!confirm($_('Clear import history (don’t worry, imported transactions will not be affected)?'))) {
-                    return;
-                }
-
-                $.post(
-                    '?module=import&action=deleteAll',
-                    function (r) {
-                        if (r.status === 'ok') {
-                            window.location.reload();
-                        } else {
-                            self.log(r.errors.join("\n"));
-                            alert(r.errors.join("\n"));
-                        }
-                    },
-                    'json'
-                );
-            })
-        ;
     }())
 </script>
