@@ -110,19 +110,8 @@ const routes = [
     }
   },
   {
-    path: '/report'
-  },
-  {
-    path: '/report/*'
-  },
-  {
-    path: '/import'
-  },
-  {
-    path: '/shop/settings'
-  },
-  {
-    path: '/plugins'
+    path: '/report',
+    alias: ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins']
   },
   {
     path: '/404',
