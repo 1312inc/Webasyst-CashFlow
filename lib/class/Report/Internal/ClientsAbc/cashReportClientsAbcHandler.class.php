@@ -45,6 +45,10 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
 
         foreach ($data as $contractorId => $value) {
             $client = new waContact($contractorId);
+            if (!$client->exists()) {
+                continue;
+            }
+
             $percent = ($value * 100) / $total;
             $clients[] = new cashReportClientsAbcClientDto(
                 $client->getId(),
