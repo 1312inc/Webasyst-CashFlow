@@ -1,0 +1,31 @@
+{** @var $info cashShopBackendOrderDto **}
+
+<div class="s-block">
+    <h5 class="heading custom-mx-0 custom-mb-12">
+        <a href="{$info->link}" target="_blank" class="count action">
+            <i class="icon" style="background-image: url('{$wa_url}wa-apps/cash/img/cash48.png'); background-size: 16px 16px; margin-left: -2px;"></i>
+        </a>
+        <span>{if $wa->locale() == 'ru_RU'}Деньги{else}Cash Flow{/if}</span>
+    </h5>
+
+    <ul class="bold unstyled">
+        {if $info->incomeCount}
+            <li title="{if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}"><span style="color: #22d13d;">{$info->income|implode:' '} ({$info->incomeCount})</span></li>
+        {/if}
+        {if $info->expenseCount}
+            <li title="{if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}"><span style="color: #ff421a;">{$info->expense|implode:' '} ({$info->expenseCount})</span></li>
+        {/if}
+        {if $info->profitCount}
+            <li title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}"><span style="color: #1a9afe;">{$info->profit|implode:' '}  ({$info->profitCount})</span></li>
+        {/if}
+        <li title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}"><span style="color: #aaa;">Δ {$info->delta|implode:' '}</span></li>
+    </ul>
+
+    <div class="align-center bordered-top box custom-pt-12">
+        <a href="{$info->link}" target="_blank">
+            {if $wa->locale() == 'ru_RU'}Все операции{else}View transactions{/if}
+            ({$info->incomeCount + $info->expenseCount + $info->profitCount})
+            <i class="fas fa-external-link-alt fa-xs opacity-50"></i>
+        </a>
+    </div>
+</div>
