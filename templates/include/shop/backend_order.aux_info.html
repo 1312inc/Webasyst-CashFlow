@@ -10,15 +10,15 @@
 
     <ul class="bold unstyled">
         {if $info->incomeCount}
-            <li title="{if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}"><span style="color: #22d13d;">{$info->income|implode:' '} ({$info->incomeCount})</span></li>
+            <li title="{if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}"><span style="color: #22d13d;">{implode(' ', $info->income)} ({$info->incomeCount})</span></li>
         {/if}
         {if $info->expenseCount}
-            <li title="{if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}"><span style="color: #ff421a;">{$info->expense|implode:' '} ({$info->expenseCount})</span></li>
+            <li title="{if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}"><span style="color: #ff421a;">{implode(' ', $info->expense)} ({$info->expenseCount})</span></li>
         {/if}
         {if $info->profitCount}
-            <li title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}"><span style="color: #1a9afe;">{$info->profit|implode:' '}  ({$info->profitCount})</span></li>
+            <li title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}"><span style="color: #1a9afe;">{implode(' ', $info->profit)}  ({$info->profitCount})</span></li>
         {/if}
-        <li title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}"><span style="color: #aaa;">Δ {$info->delta|implode:' '}</span></li>
+        <li title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}"><span style="color: #aaa;">Δ {implode(' ', $info->delta)}</span></li>
     </ul>
 
     <div class="align-center bordered-top box custom-pt-12">
