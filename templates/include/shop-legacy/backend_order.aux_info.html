@@ -7,15 +7,15 @@
 
     <ul class="bold" style="list-style: none; padding: 0; font-size: 15px;">
         {if $info->incomeCount}
-            <li style="padding: 2px 0;" title="{if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}"><span style="color: #22d13d;">{$info->income|implode:' '} ({$info->incomeCount})</span></li>
+            <li style="padding: 2px 0;" title="{if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}"><span style="color: #22d13d;">{implode(' ', $info->income)} ({$info->incomeCount})</span></li>
         {/if}
         {if $info->expenseCount}
-            <li style="padding: 2px 0;" title="{if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}"><span style="color: #ff421a;">{$info->expense|implode:' '} ({$info->expenseCount})</span></li>
+            <li style="padding: 2px 0;" title="{if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}"><span style="color: #ff421a;">{implode(' ', $info->expense)} ({$info->expenseCount})</span></li>
         {/if}
         {if $info->profitCount}
-            <li style="padding: 2px 0;" title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}"><span style="color: #1a9afe;">{$info->profit|implode:' '}  ({$info->profitCount})</span></li>
+            <li style="padding: 2px 0;" title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}"><span style="color: #1a9afe;">{implode(' ', $info->profit)}  ({$info->profitCount})</span></li>
         {/if}
-        <li style="padding: 10px 0 0; border-top: 1px solid #ddd; margin-top: 10px;" title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}"><span style="color: #aaa;">Δ {$info->delta|implode:' '}</span></li>
+        <li style="padding: 10px 0 0; border-top: 1px solid #ddd; margin-top: 10px;" title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}"><span style="color: #aaa;">Δ {implode(' ', $info->delta)}</span></li>
     </ul>
 
     <a href="{$info->link}" target="_blank">
