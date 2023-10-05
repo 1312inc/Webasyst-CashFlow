@@ -52,7 +52,18 @@ export default defineConfig(async ({mode}) => {
     build: {
       // eslint-disable-next-line no-undef
       outDir: `dist/${process.env.VITE_BUILD_MODE}`,
+      cssCodeSplit: false,
       rollupOptions: {
+        output: {
+          entryFileNames: 'assets/app.js',
+          // Separate the main module into separate chunk for better hashing on the Webasyst side
+          manualChunks: (id) => {
+            if (id.includes('src/main.ts')) {
+              return 'main'
+            }
+          },
+          assetFileNames: assetInfo => assetInfo.name === 'style.css' ? 'assets/app.[ext]' : 'assets/[name].[hash].[ext]'
+        },
         external: (id) => /xlsx|canvg|pdfmake/.test(id)
       }
     },
