@@ -1,0 +1,47 @@
+{
+  "name": "cash-app-webasyst",
+  "private": true,
+  "scripts": {
+    "dev": "VITE_BUILD_MODE=desktop vite",
+    "build": "npm run build-desktop && npm run build-mobile",
+    "build-desktop": "VITE_BUILD_MODE=desktop vite build",
+    "build-mobile": "VITE_BUILD_MODE=mobile vite build",
+    "build-widgets": "vite build --config vite.widget.config.js",
+    "preview": "vite preview --port 4173",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "@amcharts/amcharts4": "^4.10.38",
+    "@jaames/iro": "^5.5.2",
+    "@linusborg/vue-simple-portal": "^0.1.5",
+    "@uppy/core": "^3.5.1",
+    "@uppy/drag-drop": "^3.0.3",
+    "@uppy/xhr-upload": "^3.4.1",
+    "axios": "^1.5.1",
+    "d3": "^7.8.5",
+    "flatpickr": "^4.6.13",
+    "microtip": "^0.2.2",
+    "moment": "^2.29.4",
+    "numeral": "^2.0.6",
+    "vue": "^2.7.7",
+    "vue-click-outside": "^1.1.0",
+    "vue-i18n": "^8.28.2",
+    "vue-imask": "^7.1.3",
+    "vue-meta": "^2.4.0",
+    "vue-router": "^3.5.4",
+    "vuedraggable": "^2.24.3",
+    "vuelidate": "^0.7.6",
+    "vuex": "^3.6.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-legacy": "^2.0.0",
+    "@vitejs/plugin-vue2": "^1.1.2",
+    "eslint": "^8.5.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "node-fetch": "^3.3.2",
+    "sass": "^1.68.0",
+    "terser": "^5.14.2",
+    "vite": "^3.0.2",
+    "vite-plugin-ejs": "^1.6.4"
+  }
+}
