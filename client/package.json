@@ -3,10 +3,10 @@
   "private": true,
   "scripts": {
     "dev": "VITE_BUILD_MODE=desktop vite",
-    "build": "npm run build-desktop && npm run build-mobile",
-    "build-desktop": "VITE_BUILD_MODE=desktop vite build",
+    "build": "npm run build-desktop && npm run build-mobile && npm run build-widget",
+    "build-desktop": "VITE_BUILD_MODE=desktop vite build && cp ./dist/desktop/assets/*.js ../js && cp ./dist/desktop/assets/app.css ../css",
     "build-mobile": "VITE_BUILD_MODE=mobile vite build",
-    "build-widgets": "vite build --config vite.widget.config.js",
+    "build-widget": "vite build --config vite.config.widget.js && cp ./dist/widget/*.js ../widgets/balanceflow/js",
     "preview": "vite preview --port 4173",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },

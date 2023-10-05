@@ -16,7 +16,6 @@
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-wa/wa.dialog.js"></script>
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.js"></script>
 
-    <link href="{$wa_app_static_url}js/app.js?v={$wa->version()}" rel="preload" as="script">
     <script src="{$wa_url}wa-content/js/jquery-wa/wa.js?v={$wa->version(true)}"></script>
 
     <script>
@@ -32,6 +31,8 @@
             "api_settings": {$api_settings}
         };
     </script>
+
+    <script type="module" crossorigin src="{$wa_app_static_url}js/app.js?v={$wa->version()}"></script>
 </head>
 <body>
     <div id="wa">
@@ -45,8 +46,6 @@
         </div>
     </div>
     
-    <script type="text/javascript" src="{$wa_app_static_url}js/app.js?v={$wa->version()}"></script>
-
     {* @event backend_layout.%plugin_id%.js *}
     <!-- plugin hook: 'backend_layout.%plugin_id%.js' -->
     {foreach $backend_layout_plugins as $plugin_name => $backend_layout_plugin}
