@@ -31,6 +31,12 @@ export default (store) => {
   })
 
   store.subscribeAction({
+    before: ({ type, payload }) => {
+      // delete Transaction
+      if (type === 'transaction/delete') {
+        store.commit('transactionBulk/unselect', [payload.id])
+      }
+    },
     after: ({ type, payload }, state) => {
       switch (type) {
         // delete account
