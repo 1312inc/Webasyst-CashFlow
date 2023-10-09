@@ -6,7 +6,7 @@
 <script src="{$wa_app_static_url}js/amcharts/lang/{$wa->locale()}.js"></script>
 {/if}
 <script type="module">
-    import reportStream from "{$wa_app_static_url}js/reports/reportStream.js";
+    import reportStream from "{$wa_app_static_url}js/reports/reportStream.js?v={$wa->version()}";
     reportStream('chartdiv_stream', {$data|json_encode}, '{$wa->locale()}');
 </script>
 
