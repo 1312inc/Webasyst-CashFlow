@@ -31,8 +31,8 @@ export default defineConfig(async ({mode}) => {
         mode: process.env.VITE_BUILD_MODE,
         token: env.VITE_APP_API_TOKEN,
         currencies: currencies,
-        categories: accounts,
-        accounts: categories,
+        categories: categories,
+        accounts: accounts,
         settings: settings
       })
     ],
