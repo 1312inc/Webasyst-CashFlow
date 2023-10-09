@@ -7,7 +7,7 @@
 <script src="{$wa_app_static_url}js/amcharts/lang/{$wa->locale()}.js"></script>
 {/if}
 <script type="module">
-    import reportCategories from "{$wa_app_static_url}js/reports/reportCategories.js";
+    import reportCategories from "{$wa_app_static_url}js/reports/reportCategories.js?v={$wa->version()}";
     const data = {$chartData};
     const categories = {$categories|json_encode};
     const year = Number(new URL(window.location).pathname.split('/').pop().split('=')[1]) || new Date().getFullYear();
