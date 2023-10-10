@@ -27,10 +27,12 @@
                 <tr{if $datum->entity->isChild()} class="c-row-white"{/if}>
                     {if !empty($datum->valuesPerPeriods)}
                         <td class="nowrap c-column-sticky-left">
-                            <div title="{$datum->entity->getName()|escape}" style="overflow: hidden;"{if $datum->entity->isChild()} class="custom-pl-16{/if}">
+                            <div title="{$datum->entity->getName()|escape}" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" {if $datum->entity->isChild()} class="custom-pl-16{/if}">
                                 {if $datum->entity->isHeader()}<b class="large">{/if}
+                                {if !$datum->entity->isHeader()}<a href="{$wa_app_url}{$type->id}/{$datum->entity->getId()}">{/if}
                                 {$datum->entity->getIcon()}
                                 {$datum->entity->getName()|escape|truncate:32}
+                                {if !$datum->entity->isHeader()}</a>{/if}
                                 {if $datum->entity->isHeader()}</b>{/if}
                             </div>
                         </td>
