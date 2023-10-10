@@ -1,26 +1,26 @@
-import { fileURLToPath, URL } from 'node:url';
-import { ViteEjsPlugin } from 'vite-plugin-ejs';
+import { fileURLToPath, URL } from 'node:url'
+import { ViteEjsPlugin } from 'vite-plugin-ejs'
 
-import { defineConfig, loadEnv } from 'vite';
-import vue2 from '@vitejs/plugin-vue2';
+import { defineConfig, loadEnv } from 'vite'
+import vue2 from '@vitejs/plugin-vue2'
 
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args))
 
 // https://vitejs.dev/config/
-export default defineConfig(async ({mode}) => {
+export default defineConfig(async ({ mode }) => {
   // eslint-disable-next-line no-undef
   const env = loadEnv(mode, process.cwd(), '')
 
   let currencies,
-  accounts,
-  categories,
-  settings
+    accounts,
+    categories,
+    settings
 
   if (mode === 'development') {
-    currencies = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.system.getCurrencies?access_token=${env.VITE_APP_API_TOKEN}`)).text();
-    accounts = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.account.getList?access_token=${env.VITE_APP_API_TOKEN}`)).text();
-    categories = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.category.getList?access_token=${env.VITE_APP_API_TOKEN}`)).text();
-    settings = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.system.getSettings?access_token=${env.VITE_APP_API_TOKEN}`)).text();
+    currencies = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.system.getCurrencies?access_token=${env.VITE_APP_API_TOKEN}`)).text()
+    accounts = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.account.getList?access_token=${env.VITE_APP_API_TOKEN}`)).text()
+    categories = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.category.getList?access_token=${env.VITE_APP_API_TOKEN}`)).text()
+    settings = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.system.getSettings?access_token=${env.VITE_APP_API_TOKEN}`)).text()
   }
 
   return {
@@ -30,10 +30,10 @@ export default defineConfig(async ({mode}) => {
         // eslint-disable-next-line no-undef
         mode: process.env.VITE_BUILD_MODE,
         token: env.VITE_APP_API_TOKEN,
-        currencies: currencies,
-        categories: categories,
-        accounts: accounts,
-        settings: settings
+        currencies,
+        categories,
+        accounts,
+        settings
       })
     ],
     css: {
@@ -72,5 +72,5 @@ export default defineConfig(async ({mode}) => {
         '/api.php': env.VITE_APP_DEV_PROXY
       }
     }
-  };
-});
+  }
+})

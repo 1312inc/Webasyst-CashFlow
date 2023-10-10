@@ -63,7 +63,7 @@ export default {
     async bulkDelete ({ dispatch, state, commit }) {
       const ids = state.selectedTransactionsIds
       try {
-        await api.post('cash.transaction.bulkDelete', { ids: ids })
+        await api.post('cash.transaction.bulkDelete', { ids })
         // Remove transactions from the store
         commit('transaction/deleteTransaction', ids, { root: true })
         commit('emptySelectedTransactionsIds')

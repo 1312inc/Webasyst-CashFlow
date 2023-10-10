@@ -77,21 +77,21 @@ export default {
   methods: {
     handleComplete (date) {
       const {
-        id, 
+        id,
         amount,
         account_id,
         category_id
       } = this.transaction
       this.$store
-          .dispatch('transaction/update', {
-            id,
-            apply_to_all_in_future: false,
-            amount,
-            account_id,
-            category_id,
-            date,
-            is_onbadge: false
-          })
+        .dispatch('transaction/update', {
+          id,
+          apply_to_all_in_future: false,
+          amount,
+          account_id,
+          category_id,
+          date,
+          is_onbadge: false
+        })
     }
   }
 }
