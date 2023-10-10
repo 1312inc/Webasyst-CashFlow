@@ -18,5 +18,11 @@
         <span>{{ $t("trash") }}</span>
       </router-link>
     </li>
+    <li v-if="$permissions.isAdmin">
+      <a :href="`${$helper.baseUrl}plugins/`">
+        <i class="fas fa-plug"></i>
+        <span>Plugins</span>
+      </a>
+    </li>
   </ul>
 </template>
