@@ -53,9 +53,9 @@ class Sticky {
       bottomOffset: Number(offset.bottom) || 0,
       shouldTopSticky: side === 'top' || side === 'both',
       shouldBottomSticky: side === 'bottom' || side === 'both',
-      zIndex: zIndex,
-      widthRef: widthRef,
-      onStick: onStick
+      zIndex,
+      widthRef,
+      onStick
     }
   }
 

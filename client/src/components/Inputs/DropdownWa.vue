@@ -122,14 +122,14 @@ export default {
 
       return this.useDefaultValue
         ? [
-          [
-            {
-              [this.valuePropName]: this.$options.props.value.default,
-              name: this.defaultValue
-            }
-          ],
-   ***REMOVED***groups
-        ]
+            [
+              {
+                [this.valuePropName]: this.$options.props.value.default,
+                name: this.defaultValue
+              }
+            ],
+     ***REMOVED***groups
+          ]
         : groups
     },
 

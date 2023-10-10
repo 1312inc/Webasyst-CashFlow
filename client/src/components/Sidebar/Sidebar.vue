@@ -132,13 +132,13 @@ export default {
 
   methods: {
     menuOpen () {
-      ;['Body', 'Footer'].forEach(h => {
+      ['Body', 'Footer'].forEach(h => {
         this.$refs[`sidebar${h}`].style['max-height'] =
           this.$refs[`sidebar${h}`].scrollHeight + 'px'
       })
     },
     menuClose () {
-      ;['Body', 'Footer'].forEach(h => {
+      ['Body', 'Footer'].forEach(h => {
         this.$refs[`sidebar${h}`].style['max-height'] = '0px'
       })
     }

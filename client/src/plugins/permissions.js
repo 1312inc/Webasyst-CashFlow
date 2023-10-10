@@ -1,4 +1,3 @@
-
 const permissions = window.appState?.api_settings?.rights || {}
 
 export { permissions }

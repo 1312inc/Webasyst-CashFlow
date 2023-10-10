@@ -116,7 +116,7 @@ export default {
         const t = result.find(e => e.name === name)
         if (!t) {
           result.push({
-            name: name,
+            name,
             items: [transaction]
           })
         } else {

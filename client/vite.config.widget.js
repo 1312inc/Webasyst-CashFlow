@@ -8,6 +8,6 @@ export default defineConfig({
       name: 'chartsD3Lib',
       fileName: 'chartsD3Lib',
       formats: ['umd']
-    },
-  },
+    }
+  }
 })
