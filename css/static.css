@@ -23,6 +23,7 @@ table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1
 .c-report-dds-inner {
     overflow-x: scroll;
     overflow-y: hidden;
+    padding-bottom: 1rem;
 }
 .c-report-dds-inner table { table-layout: fixed; border-collapse: inherit; }
 .c-report-dds-inner table th { width: 100px; }
@@ -39,6 +40,7 @@ table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1
     background: var(--background-color-blank);
     background: linear-gradient(90deg, var(--background-color-blank) 0%, var(--background-color-blank) 80%, rgba(255,255,255,0) 100%);
     color: var(--text-color-stronger);
+    z-index: 99;
 }
 .c-report-dds-inner table .c-column-sticky-left .icon { margin-right: 0.25rem; }
 .c-report-dds-inner table .c-column-sticky-right-totals {
