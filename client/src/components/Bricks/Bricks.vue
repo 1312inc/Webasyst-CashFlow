@@ -1,16 +1,16 @@
 <template>
   <div class="bricks custom-mt-0">
     <BrickTransactions />
-    <BrickUpnext />
+    <BrickCalendar />
   </div>
 </template>
 
 <script>
-import BrickUpnext from './BrickUpnext'
+import BrickCalendar from './BrickCalendar'
 import BrickTransactions from './BrickTransactions'
 export default {
   components: {
-    BrickUpnext,
+    BrickCalendar,
     BrickTransactions
   }
 }

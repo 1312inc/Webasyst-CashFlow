@@ -56,6 +56,14 @@ const routes = [
     }
   },
   {
+    path: '/calendar',
+    name: 'Calendar',
+    component: Upnext,
+    meta: {
+      title: `${i18n.t('calendar')} — ${accountName}`
+    }
+  },
+  {
     path: '/upnext',
     name: 'Upnext',
     component: Upnext,
