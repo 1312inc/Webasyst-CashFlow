@@ -1,22 +1,31 @@
 <template>
   <div
-    @mouseover="open = true"
-    @mouseleave="open = false"
     :class="{ 'is-opened': open }"
     class="dropdown"
+    @mouseover="open = true"
+    @mouseleave="open = false"
   >
-    <button @click.stop="" class="light-gray small nowrap rounded">
-      <i class="fas fa-check-circle text-red"></i>
+    <button
+      class="light-gray small nowrap rounded"
+      @click.stop=""
+    >
+      <i class="fas fa-check-circle text-red" />
       <span class="desktop-only">
         {{ $t("Process") }}
-         <i class="fas fa-chevron-down text-light-gray fa-xs"></i>
+        <i class="fas fa-chevron-down text-light-gray fa-xs" />
       </span>
     </button>
-    <div class="dropdown-body right" style="min-width: 250px;">
+    <div
+      class="dropdown-body right"
+      style="min-width: 250px;"
+    >
       <ul class="menu">
         <li>
-          <a @click.prevent.stop="handleComplete($moment().format('YYYY-MM-DD'))" class="custom-p-8">
-            <i class="fas fa-check text-red"></i>
+          <a
+            class="custom-p-8"
+            @click.prevent.stop="handleComplete($moment().format('YYYY-MM-DD'))"
+          >
+            <i class="fas fa-check text-red" />
             <span>
               <span class="semibold black">{{ $t("processToday") }}</span>
               <p class="hint custom-mt-4">
@@ -33,9 +42,12 @@
             </span>
           </a>
         </li>
-        <li>
-          <a @click.prevent.stop="handleComplete($moment(transaction.date).format('YYYY-MM-DD'))" class="custom-p-8">
-            <i class="fas fa-check text-red"></i>
+        <li v-if="transaction.date !== $moment().format('YYYY-MM-DD')">
+          <a
+            class="custom-p-8"
+            @click.prevent.stop="handleComplete($moment(transaction.date).format('YYYY-MM-DD'))"
+          >
+            <i class="fas fa-check text-red" />
             <span>
               <span class="semibold black">{{ $t("Process") }} {{ $moment(transaction.date).format("LL") }}</span>
               <p class="hint custom-mt-4">
@@ -54,12 +66,10 @@
         </li>
         <li>
           <a
-            @click.prevent.stop="$emit('processEdit')"
             class="custom-p-8"
+            @click.prevent.stop="$emit('processEdit')"
           >
-            <i class="fas fa-pencil-alt"></i
-            ><span class="semibold black">{{ $t("processEdits") }}</span></a
-          >
+            <i class="fas fa-pencil-alt" /><span class="semibold black">{{ $t("processEdits") }}</span></a>
         </li>
       </ul>
     </div>
@@ -67,6 +77,7 @@
 </template>
 
 <script>
+/* eslint-disable camelcase */
 export default {
   props: ['transaction', 'account'],
   data () {
