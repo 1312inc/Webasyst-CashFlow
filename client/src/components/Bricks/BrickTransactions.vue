@@ -14,7 +14,7 @@
       class="icon"
       ><i class="fas fa-list"></i
     ></span>
-    {{ $t("history") }}
+    {{ $t("transactions") }}
   </router-link>
 </template>
 
