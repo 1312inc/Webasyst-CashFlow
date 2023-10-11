@@ -173,9 +173,16 @@
   "inDays": "(in {days} days)",
   "fileUploaderLabel": "Drop here or browse",
   "contacts": "Contacts",
-  "noContact": "Search for existing contact or enter any new contact name",
-  "linkContact": "Transaction will be linked with the selected contractor",
+  "linkContact": {
+    "main": "Search for existing contact {0}",
+    "link": "or create a new one"
+  },
   "newContact": "New contact will be created",
+  "noContact": {
+    "main": "Contact not found{0}",
+    "link": "Link with a new contact"
+  },
+  "selectedContact": "Selected Contact",
   "hide": "Hide",
   "show": "Show",
   "showMore": "Show more",
@@ -209,5 +216,6 @@
   "restoreInfo": "Editing is disabled for deleted transactions. Select this transaction and restore it first.",
   "purge": "Purge",
   "selfDestructLabel": "Automatically delete this transaction when its planned date comes",
-  "selfDestructText": "Useful when real transactions are imported in bulk from banks and spreadsheets, and this particular transaction must be treated as a planned one that needs to be replaced with the imported ones."
+  "selfDestructText": "Useful when real transactions are imported in bulk from banks and spreadsheets, and this particular transaction must be treated as a planned one that needs to be replaced with the imported ones.",
+  "calendar": "Calendar"
 }
