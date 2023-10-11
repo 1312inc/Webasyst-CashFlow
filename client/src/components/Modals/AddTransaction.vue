@@ -221,17 +221,14 @@
             <div v-if="showContractorInput">
               <InputContractor
                 :defaultRequest="`category_id/${model.category_id}`"
-                :defaultContractor="model.contractor_contact"
-                :focus="model.contractor_contact === null"
+                :defaultContractor="$props.transaction ? { id: $props.transaction.contractor_contact_id, ...model.contractor_contact } : null"
                 @newContractor="
                   name => {
                     model.contractor = name;
-                    model.contractor_contact_id = null;
                   }
                 "
                 @changeContractor="
                   id => {
-                    model.contractor = null;
                     model.contractor_contact_id = id;
                   }
                 "
