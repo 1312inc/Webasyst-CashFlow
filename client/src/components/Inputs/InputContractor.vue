@@ -29,7 +29,7 @@
         @input="onInput"
         @keydown.up.prevent="up"
         @keydown.down.prevent="down"
-        @keydown.enter="select(response[activeMenuIndex])"
+        @keydown.enter="() => { if (activeMenuIndex === response.length) { reset(); isNewContractorMode = true } else { select(response[activeMenuIndex]) } }"
         @blur="reset"
       >
       <i
@@ -120,6 +120,15 @@
           <span>{{ item.name }}</span>
         </div>
       </li>
+      <li
+        :class="{ active: activeMenuIndex === response.length }"
+        class="c-autocomplete-menu__item"
+        @mousedown="() => { reset(); isNewContractorMode = true }"
+      >
+        <div class="small flexbox middle space-8 custom-py-8 custom-px-12">
+          {{ $t('createNewContact') }}
+        </div>
+      </li>
     </ul>
   </div>
 </template>
@@ -192,16 +201,18 @@ export default {
   // },
 
   methods: {
-    onInput: debounce(function ({ target }) {
+    onInput: debounce(function () {
       this.reset()
       this.selectedContractor = null
 
       // make search request
       // this.isFetching = true
+      const term = this.inputValue || this.defaultRequest
+      if (!term) return
       api
         .get('cash.contact.search', {
           params: {
-            term: target.value || this.defaultRequest,
+            term,
             limit: 10
           }
         })
@@ -226,7 +237,7 @@ export default {
     up () {
       if (this.$refs.menu) {
         if (this.activeMenuIndex === null) {
-          this.activeMenuIndex = this.response.length - 1
+          this.activeMenuIndex = this.response.length
         } else if (this.activeMenuIndex > 0) {
           this.activeMenuIndex = this.activeMenuIndex - 1
         } else {
@@ -239,7 +250,7 @@ export default {
       if (this.$refs.menu) {
         if (this.activeMenuIndex === null) {
           this.activeMenuIndex = 0
-        } else if (this.activeMenuIndex < this.response.length - 1) {
+        } else if (this.activeMenuIndex < this.response.length) {
           this.activeMenuIndex = this.activeMenuIndex + 1
         } else {
           this.activeMenuIndex = null

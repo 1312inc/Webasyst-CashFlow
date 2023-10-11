@@ -173,6 +173,7 @@
   "inDays": "(in {days} days)",
   "fileUploaderLabel": "Drop here or browse",
   "contacts": "Contacts",
+  "createNewContact": "Create new Contact",
   "linkContact": {
     "main": "Search for existing contact {0}",
     "link": "or create a new one"

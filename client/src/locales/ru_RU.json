@@ -173,6 +173,7 @@
   "inDays": "(через {days} дней)",
   "fileUploaderLabel": "Выберите файл",
   "contacts": "Контакты",
+  "createNewContact": "Создать новый контакт",
   "linkContact": {
     "main": "Найдите существующий контакт {0}",
     "link": "или создайте новый"
