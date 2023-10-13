@@ -1211,3 +1211,6 @@ msgstr ""
 
 msgid "Download sample file"
 msgstr ""
+
+msgid "Plugins"
+msgstr ""
