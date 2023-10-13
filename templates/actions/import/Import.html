@@ -117,8 +117,16 @@
                             <p class="hint">
                                 {sprintf(
                                     '[`Supported file formats: <b>%s</b>`]',
-                                    '<i class="fas fa-file-excel" style="color: #499b5e;"></i> CSV (Excel)'
+                                    '<i class="fas fa-file-excel" style="color: #499b5e;"></i> .CSV (Excel)'
                                 )}
+                            </p>
+                            <p class="hint">
+                                {if $wa->locale() == 'ru_RU'}
+                                    {$_sample = 'https://www.webasyst.ru/wa-data/public/site/downloads/cash-app-csv-sample-file-ru_utf8.csv'}
+                                {else}
+                                    {$_sample = 'https://www.webasyst.com/wa-data/public/site/downloads/cash-app-csv-sample-file-en_utf8.csv'}
+                                {/if}
+                                <a href="{$_sample}">[`Download sample file`]</a>
                             </p>
                         </div>
                     </div>

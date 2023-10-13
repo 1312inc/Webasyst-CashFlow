@@ -1208,3 +1208,6 @@ msgstr ""
 
 msgid "Only contacts linked with income transactions are addressed in this report. Expense transactions and no-contact transactions are not counted."
 msgstr ""
+
+msgid "Download sample file"
+msgstr ""
