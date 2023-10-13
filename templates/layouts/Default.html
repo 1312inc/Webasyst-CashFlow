@@ -28,7 +28,8 @@
             "currencies":{$currencies},
             "categories":{$categories},
             "accounts":{$accounts},
-            "api_settings": {$api_settings}
+            "api_settings": {$api_settings},
+            "shopscriptInstalled": {if $wa->shop}1{else}0{/if}
         };
     </script>
 
@@ -45,7 +46,7 @@
             </div>
         </div>
     </div>
-    
+
     {* @event backend_layout.%plugin_id%.js *}
     <!-- plugin hook: 'backend_layout.%plugin_id%.js' -->
     {foreach $backend_layout_plugins as $plugin_name => $backend_layout_plugin}

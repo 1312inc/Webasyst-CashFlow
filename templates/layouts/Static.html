@@ -36,7 +36,8 @@
             "currencies":{$currencies},
             "categories":{$categories},
             "accounts":{$accounts},
-            "api_settings": {$api_settings}
+            "api_settings": {$api_settings},
+            "shopscriptInstalled": {if $wa->shop}1{else}0{/if}
         };
     </script>
 
