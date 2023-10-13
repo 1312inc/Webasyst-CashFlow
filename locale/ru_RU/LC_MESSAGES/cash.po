@@ -269,7 +269,7 @@ msgid "Settings"
 msgstr "Настройки"
 
 msgid "Shop-Script &rarr; Cash"
-msgstr "Shop-Script &rarr; Cash"
+msgstr "Shop-Script &rarr; Деньги"
 
 msgid "Shop-Script 8.0 or newer is required. Please install the latest Shop-Script update via the Installer app to enable sales import and Shop-Script &times; Cash integration."
 msgstr "Требуется Shop-Script 8.0 или новее. Обновите Shop-Script в «Инсталлере» и попробуйте импортировать операции по заказам еще раз."
