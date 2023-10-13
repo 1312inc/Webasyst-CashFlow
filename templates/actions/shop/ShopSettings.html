@@ -424,7 +424,9 @@
 
                 <div class="field" data-cash-shop-errors {if empty($errors)}style="display:none;"{/if}>
                     <div class="box state-error">
-                        {$errors|implode:'<br>'}
+                        {if !empty($errors) && is_array($errors) && count($errors) > 0}
+                          {$errors|implode:'<br>'}
+                        {/if}
                     </div>
                 </div>
             </div>
