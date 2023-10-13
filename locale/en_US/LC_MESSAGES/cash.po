@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: utf-8\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.3.2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -1165,7 +1165,7 @@ msgid "Sankey"
 msgstr ""
 
 msgid "No data message"
-msgstr "No data message"
+msgstr "Not enough data to display the report."
 
 msgid "All currencies"
 msgstr ""
