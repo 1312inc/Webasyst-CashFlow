@@ -24,7 +24,9 @@
         {/if}
         {if $info->delta}
             {$_smthngshwn = 1}
-            <li class="bordered-top custom-mt-8 custom-pt-8" title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}"><span class="text-blue">{if $wa->locale() == 'ru_RU'}Итого{else}Total{/if} {implode(' ', $info->delta)}</span></li>
+            <li class="bordered-top custom-mt-8 custom-pt-8" title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}">
+              <a href="{$info->link}" target="_blank"><span class="text-blue">{if $wa->locale() == 'ru_RU'}Итого{else}Total{/if} {implode(' ', $info->delta)}</span></a>
+            </li>
         {/if}
     </ul>
     {if !$_smthngshwn}
