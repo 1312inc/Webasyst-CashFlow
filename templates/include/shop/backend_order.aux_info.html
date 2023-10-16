@@ -1,27 +1,43 @@
 {** @var $info cashShopBackendOrderDto **}
 
 <div class="s-block">
-    <h5 class="heading custom-mx-0 custom-mb-12">
+    <h5 class="heading custom-mx-0 custom-mb-8">
         <a href="{$info->link}" target="_blank" class="count action">
             <i class="icon" style="background-image: url('{$wa_url}wa-apps/cash/img/cash48.png'); background-size: 16px 16px; margin-left: -2px;"></i>
         </a>
         <span>{if $wa->locale() == 'ru_RU'}Деньги{else}Cash Flow{/if}</span>
     </h5>
 
-    <ul class="bold unstyled">
+    <ul class="bold unstyled custom-mb-8">
+        {$_smthngshwn = 0}
         {if $info->incomeCount}
-            <li title="{if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}"><span style="color: #22d13d;">{implode(' ', $info->income)} ({$info->incomeCount})</span></li>
+            {$_smthngshwn = 1}
+            <li title="{if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}"><span class="text-green">{implode(' ', $info->income)} ({$info->incomeCount})</span></li>
         {/if}
         {if $info->expenseCount}
-            <li title="{if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}"><span style="color: #ff421a;">{implode(' ', $info->expense)} ({$info->expenseCount})</span></li>
+            {$_smthngshwn = 1}
+            <li title="{if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}"><span class="text-red">{implode(' ', $info->expense)} ({$info->expenseCount})</span></li>
         {/if}
         {if $info->profitCount}
-            <li title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}"><span style="color: #1a9afe;">{implode(' ', $info->profit)}  ({$info->profitCount})</span></li>
+            {$_smthngshwn = 1}
+            <li title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}"><span class="text-blue">{implode(' ', $info->profit)}  ({$info->profitCount})</span></li>
         {/if}
-        <li title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}"><span style="color: #aaa;">Δ {implode(' ', $info->delta)}</span></li>
+        {if $info->delta}
+            {$_smthngshwn = 1}
+            <li class="bordered-top custom-mt-8 custom-pt-8" title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}"><span class="text-blue">{if $wa->locale() == 'ru_RU'}Итого{else}Total{/if} {implode(' ', $info->delta)}</span></li>
+        {/if}
     </ul>
+    {if !$_smthngshwn}
+        <p class="gray align-center custom-mt-0">
+            {if $wa->locale() == 'ru_RU'}С заказом еще не связано ни одной денежной операции.{else}No transactions are linked with the order yet.{/if}
+        </p>
+    {/if}
 
-    <div class="align-center bordered-top box custom-pt-12">
+    <div class="align-center box custom-pt-4">
+        <div class="custom-mb-8">
+            <a href="{$info->link}#addincome" target="_blank" class="badge green text-white custom-mr-4"><i class="fas fa-plus"></i> {if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}</a>
+            <a href="{$info->link}#addexpense" target="_blank" class="badge orange text-white"><i class="fas fa-minus"></i> {if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}</a>
+        </div>
         <a href="{$info->link}" target="_blank">
             {if $wa->locale() == 'ru_RU'}Все операции{else}View transactions{/if}
             ({$info->incomeCount + $info->expenseCount + $info->profitCount})

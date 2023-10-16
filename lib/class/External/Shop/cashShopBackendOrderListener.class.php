@@ -21,10 +21,6 @@ final class cashShopBackendOrderListener extends waEventHandler
         $transactions = cash()->getEntityRepository(cashTransaction::class)
             ->findAllByExternalSourceAndId('shop', (int) $params['id']);
 
-        if (!$transactions) {
-            return [];
-        }
-
         try {
             $view = new waSmarty3View(wa());
 
