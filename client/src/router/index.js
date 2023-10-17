@@ -9,6 +9,7 @@ import Import from '../views/Import.vue'
 import Trash from '../views/Trash.vue'
 import Entity from '../views/Entity.vue'
 import NotFound from '../views/NotFound.vue'
+import Calendar from '../views/Calendar.vue'
 import { i18n } from '../plugins/locale'
 import { permissions } from '../plugins/permissions'
 
@@ -58,7 +59,7 @@ const routes = [
   {
     path: '/calendar',
     name: 'Calendar',
-    component: Upnext,
+    component: Calendar,
     meta: {
       title: `${i18n.t('calendar')} — ${accountName}`
     }
