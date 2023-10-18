@@ -1,59 +1,27 @@
 <template>
   <InfiniteCalendarGrid
     :first-day-of-week="1"
+    :locale="locale.replace('_', '-')"
+    :today-label="$t('today')"
     @changed="handleMonthChange"
   >
-    <template #default="{ date, isCurrentDay }">
-      <div
-        class="absolute align-right custom-p-8"
-        style="width: 100%; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;"
-      >
-        <div class="gray">
-          {{ date.getDate() }}
-        </div>
-
-        <div
-          v-if="dayWithactions(date)"
-          style="display: flex; flex-direction: column; row-gap: 4px;"
-        >
-          <template v-if="dayWithactions(date).income">
-            <div
-              v-for="key, accountId in dayWithactions(date).income"
-              :key="accountId"
-              class="text-green align-right"
-            >
-              +{{ key.amount }} <span
-                v-if="key.count > 1"
-                class="badge green"
-              >{{ key.count }}</span>
-              {{ getCurrency(+accountId) }}
-            </div>
-          </template>
-          <template v-if="dayWithactions(date).outcome">
-            <div
-              v-for="key, accountId in dayWithactions(date).outcome"
-              :key="accountId"
-              class="text-red align-right"
-            >
-              {{ key.amount }} <span
-                v-if="key.count > 1"
-                class="badge"
-              >{{ key.count }}</span>
-              {{ getCurrency(+accountId) }}
-            </div>
-          </template>
-        </div>
-      </div>
+    <template #default="{ date }">
+      <InfiniteCalendarGridDaySlot
+        :date="date"
+        :data="dayWithactions(date)"
+      />
     </template>
   </InfiniteCalendarGrid>
 </template>
 
 <script setup>
 import InfiniteCalendarGrid from '../components/ICG/InfiniteCalendarGrid.vue'
+import InfiniteCalendarGridDaySlot from '../components/ICG/InfiniteCalendarGridDaySlot.vue'
 import api from '@/plugins/api'
 import dayjs from 'dayjs'
-import { computed, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { ref } from 'vue-demi'
+import { locale } from '@/plugins/locale'
 
 const dataDays = ref({})
 
@@ -61,7 +29,9 @@ onMounted(() => {
   handleMonthChange()
 })
 
-const dayWithactions = computed(() => (date) => dataDays.value[dayjs(date).format('YYYY-MM-DD')])
+function dayWithactions (date) {
+  return dataDays.value[dayjs(date).format('YYYY-MM-DD')]
+}
 
 async function handleMonthChange (e) {
   await api.get('cash.transaction.getList', {
@@ -101,15 +71,34 @@ async function handleMonthChange (e) {
     }, {})
   }
 }
+
 </script>
 
-<script>
-export default {
-  methods: {
-    getCurrency (entityId) {
-      return this.$store.getters['account/getById'](entityId)?.currency
+<style lang="scss">
+.icg-controls {
+    button {
+        svg {
+            fill: white;
+        }
     }
-  }
-
 }
-</script>
+
+.icg-weekdays__cell--weekend {
+    color: var(--text-color-hint);
+}
+
+.icg-month {
+    font-size: 2rem;
+    color: var(--text-color-strongest);
+    line-height: 1.2em;
+    font-weight: bold;
+}
+
+.icg-months-grid-day {
+    color: var(--text-color-hint);
+}
+
+.icg-months-grid-day--weekend {
+    background-color: var(--background-color);
+}
+</style>
