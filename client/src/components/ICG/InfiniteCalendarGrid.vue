@@ -6,27 +6,35 @@ import { useElementSize, useScroll } from '@vueuse/core'
 import InfiniteCalendarGridDay from './InfiniteCalendarGridDay.vue'
 
 const props = withDefaults(defineProps<{
-  weekDays?: string[];
   firstDayOfWeek?: 0 | 1;
+  locale?: string;
+  todayLabel?: string;
 }>(), {
-  weekDays: () => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-  firstDayOfWeek: 0
+  firstDayOfWeek: 0,
+  locale: 'en-US',
+  todayLabel: 'Today'
 })
 
 const emit = defineEmits(['changed'])
 
+const weekDays = new Array(7).fill(undefined).map((_e, i) => {
+  const curDate = new Date().getDate()
+  const curDay = new Date().getDay()
+  return new Date(new Date().setDate((curDate - curDay) + i)).toLocaleDateString(props.locale, { weekday: 'short' })
+})
+
 const containerRef = ref<HTMLElement | null>(null)
-const offsetContainerRef = ref<HTMLElement | null>(null)
+const offsetContainerRef = ref<HTMLElement[] | null>(null)
 const { height } = useElementSize(containerRef)
 const cellHeight = computed(() => height.value / 6)
 const { y, arrivedState } = useScroll(containerRef)
 const weekDaysNames = computed(() => {
   if (!!props.firstDayOfWeek) {
-    const t = [...props.weekDays]
+    const t = [...weekDays]
     t.push(t.shift() as string)
     return t
   } else {
-    return props.weekDays
+    return weekDays
   }
 })
 
@@ -46,6 +54,13 @@ const nextMonthRows = computed(() => {
 })
 const startDate = computed(() => activeMonth.value.startOf('M').add(-(prevMonthRows.value * 7 + activeMonthOffset.value), 'day'))
 const daysCount = computed(() => new Array((activeMonthRows.value + prevMonthRows.value + nextMonthRows.value) * 7).fill(undefined).map((_e, i) => startDate.value.add(i, 'day').toDate()))
+const daysCountSlices = computed(() => (
+  [
+    daysCount.value.slice(0, prevMonthRows.value * 7),
+    daysCount.value.slice(prevMonthRows.value * 7, prevMonthRows.value * 7 + activeMonthRows.value * 7),
+    daysCount.value.slice(prevMonthRows.value * 7 + activeMonthRows.value * 7, prevMonthRows.value * 7 + activeMonthRows.value * 7 + nextMonthRows.value * 7)
+  ]
+))
 
 const unw = watch(height, async (height) => {
   if (height) {
@@ -55,58 +70,62 @@ const unw = watch(height, async (height) => {
   }
 })
 
-watch(arrivedState, async ({ top, bottom }) => {
+watch(arrivedState, ({ top, bottom }) => {
   if (top || bottom) {
     activeMonth.value = activeMonth.value.add(top ? -1 : 1, 'month')
-    await nextTick()
-    gotoCurrentMonth()
-    emit('changed', activeMonth.value.month())
   }
+})
+
+watch(activeMonth, async () => {
+  await nextTick()
+  gotoCurrentMonth()
+  emit('changed', activeMonth.value.month())
 })
 
 function gotoCurrentMonth() {
   if (offsetContainerRef.value) {
-    y.value = offsetContainerRef.value.clientHeight
+    y.value = offsetContainerRef.value[0].clientHeight
   }
 }
 </script>
 
 <template>
   <div class="icg" :firstdayofweek="props.firstDayOfWeek">
-    <div class="icg-month">
-      {{ activeMonth.format('MMMM') }} {{ activeMonth.format('YYYY') }}
+    <div class="icg-header">
+      <div class="icg-month">
+        {{ activeMonth.toDate().toLocaleDateString(props.locale, { year: 'numeric', month: 'long' }) }}
+      </div>
+      <div class="icg-controls">
+        <button @click="activeMonth = activeMonth.add(-1, 'month')">
+          <svg xmlns="http://www.w3.org/2000/svg" height=".8rem" viewBox="0 0 320 512">
+            <path
+              d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z" />
+          </svg>
+        </button>
+        <button @click="activeMonth = dayjs()">{{ props.todayLabel }}</button>
+        <button @click="activeMonth = activeMonth.add(1, 'month')">
+          <svg xmlns="http://www.w3.org/2000/svg" height=".8rem" viewBox="0 0 320 512">
+            <path
+              d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" />
+          </svg>
+        </button>
+      </div>
     </div>
     <div class="icg-weekdays">
-      <div v-for="weekday in weekDaysNames" :key="weekday" class="icg-weekdays__cell">
+      <div v-for="weekday, i in weekDaysNames" :key="weekday" class="icg-weekdays__cell"
+        :class="{ 'icg-weekdays__cell--weekend': i === (props.firstDayOfWeek ? 5 : 0) || i === 6 }">
         {{ weekday }}
       </div>
     </div>
     <div ref="containerRef" class="icg-months-grid">
-      <div ref="offsetContainerRef" class="icg-months-grid-month">
-        <InfiniteCalendarGridDay v-for="date in daysCount.slice(0, prevMonthRows * 7)" :key="date.getTime()"
-          :cell-height="cellHeight" :date="date">
+      <div v-for="i in 3" :key="i" ref="offsetContainerRef"
+        :class="['icg-months-grid-month', {'icg-months-grid-month--selected': i === 2}]">
+        <InfiniteCalendarGridDay v-for="date in daysCountSlices[i - 1]" :key="date.getTime()" :cell-height="cellHeight" :activeMonth="activeMonth.month()"
+          :date="date">
           <template #default="props">
             <slot v-bind="props"></slot>
           </template>
         </InfiniteCalendarGridDay>
-      </div>
-      <div class="icg-months-grid-month">
-        <InfiniteCalendarGridDay
-          v-for="date in daysCount.slice(prevMonthRows * 7, prevMonthRows * 7 + activeMonthRows * 7)"
-          :key="date.getTime()" :cell-height="cellHeight" :date="date">
-          <template #default="props">
-            <slot v-bind="props"></slot>
-          </template>
-          </InfiniteCalendarGridDay>
-      </div>
-      <div class="icg-months-grid-month">
-        <InfiniteCalendarGridDay
-          v-for="date in daysCount.slice(prevMonthRows * 7 + activeMonthRows * 7, prevMonthRows * 7 + activeMonthRows * 7 + nextMonthRows * 7)"
-          :key="date.getTime()" :cell-height="cellHeight" :date="date">
-          <template #default="props">
-            <slot v-bind="props"></slot>
-          </template>
-          </InfiniteCalendarGridDay>
       </div>
     </div>
   </div>
@@ -123,8 +142,11 @@ function gotoCurrentMonth() {
   flex-direction: column;
 }
 
-.icg-month {
+.icg-header {
   flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 1rem;
 }
 
