@@ -15,7 +15,7 @@
         {{ label }}
       </div>
       <div
-        class="flexbox space-8 middle wrap-mobile align-left"
+        class="c-row-modificator flexbox space-8 middle wrap-mobile align-left"
         v-html="
           activeItem[valuePropName] !== $options.props.value.default
             ? rowModificator(activeItem)
@@ -152,18 +152,18 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.dropdown {
-  .menu {
+<style scoped>
+.dropdown .menu {
     margin: 0;
-  }
 }
-.dropdown-toggle {
-  div {
+.c-row-modificator:deep span {
     white-space: nowrap;
     overflow-x: hidden;
     text-overflow: ellipsis;
-    display: block;
-  }
+    flex: auto;
+}
+
+.c-row-modificator:deep span.icon {
+  flex: none;
 }
 </style>
