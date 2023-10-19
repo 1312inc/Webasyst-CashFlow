@@ -221,5 +221,6 @@
   "calendar": "Calendar",
   "compactView": "Compact View",
   "listView": "List View",
-  "plugins": "Plugins"
+  "plugins": "Plugins",
+  "contactsWillSoon": "Contacts with linked transactions will appear here soon."
 }
