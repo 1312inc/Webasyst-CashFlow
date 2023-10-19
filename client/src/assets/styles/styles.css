@@ -118,6 +118,27 @@ body.modal {
 .c-list .badge.c-time-diff-badge { padding: 0.25em 0.375em; font-weight: normal; background-color: var(--background-color-blockquote); color: var(--gray); }
 .c-list .badge.c-time-diff-badge::first-letter { text-transform: capitalize; }
 
+.c-list--compact {
+  display: flex;
+  overflow-x: auto;
+}
+.c-list--compact .c-item {
+  padding: 0;
+  width: 120px;
+  overflow: hidden;
+  flex: none;
+}
+.c-list--compact .c-item .flexbox {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0;
+}
+
+.c-list--compact .c-item .c-item-border {
+  border: 0;
+}
+
 .c-transaction-section .c-transaction-section__header {
   margin: 0;
 }

@@ -1,28 +1,53 @@
 <template>
   <div
+    class="dropdown z-100"
     @mouseover="$refs.dropdown.style.display = 'block'"
     @mouseleave="$refs.dropdown.style.display = 'none'"
-    class="dropdown z-100"
   >
-    <button class="button light-gray"
-      ><span class="icon"><i class="fas fa-ellipsis-v"></i></span
-    ></button>
-    <div class="dropdown-body" ref="dropdown">
+    <button class="circle light-gray">
+      <span class="icon"><i class="fas fa-ellipsis-v" /></span>
+    </button>
+    <div
+      ref="dropdown"
+      class="dropdown-body"
+    >
       <ul class="menu">
         <li>
-          <a href="#" @click.prevent="setFeaturePeriod(7)"
-            ><span>{{ $t("nextDays", { count: 7 }) }}</span></a
-          >
+          <a @click.prevent="setFeaturePeriod(7)"><span>{{ $t("nextDays", { count: 7 }) }}</span></a>
         </li>
         <li>
-          <a href="#" @click.prevent="setFeaturePeriod(30)"
-            ><span>{{ $t("nextDays", { count: 30 }) }}</span></a
-          >
+          <a @click.prevent="setFeaturePeriod(30)"><span>{{ $t("nextDays", { count: 30 }) }}</span></a>
+        </li>
+        <li>
+          <a @click.prevent="setFeaturePeriod(90)"><span>{{ $t("nextDays", { count: 90 }) }}</span></a>
+        </li>
+        <li class="bordered-top">
+          <a @click.prevent="listCompactMode = !listCompactMode">
+            <span
+              v-show="!listCompactMode"
+              class="icon"
+            >
+              <i class="fas fa-ellipsis-h" />
+            </span>
+            <span
+              v-show="listCompactMode"
+              class="icon"
+            >
+              <i class="fas fa-list" />
+            </span>
+            <span>{{ listCompactMode ? $t('listView') : $t('compactView') }}</span>
+          </a>
         </li>
       </ul>
     </div>
   </div>
 </template>
+
+<script setup>
+import { useStorage } from '@vueuse/core'
+
+const listCompactMode = useStorage('list_compact_mode', true)
+</script>
 
 <script>
 export default {
@@ -58,11 +83,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.button {
-  border-radius: 50%;
-  padding: 0.75em;
-  line-height: 0;
-}
-</style>
