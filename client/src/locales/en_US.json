@@ -178,12 +178,12 @@
     "main": "Search for existing contact {0}",
     "link": "or create a new one"
   },
-  "newContact": "New contact will be created",
+  "newContact": "New contact with the specified name will be created. Use the CRM app to view and edit contact profile afterwards.",
   "noContact": {
     "main": "Contact not found{0}",
     "link": "Link with a new contact"
   },
-  "selectedContact": "Selected Contact",
+  "selectedContact": "Transaction will be linked with the selected contractor",
   "hide": "Hide",
   "show": "Show",
   "showMore": "Show more",

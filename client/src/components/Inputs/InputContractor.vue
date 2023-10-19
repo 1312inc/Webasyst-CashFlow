@@ -12,35 +12,42 @@
       >
       <a
         class="icon gray"
-        @click.prevent="isNewContractorMode = false"
-      ><i class="fas fa-search" /></a>
+        style="flex: none;"
+        @click.prevent="() => { inputValue = ''; isNewContractorMode = false }"
+      ><i class="fas fa-times" /></a>
     </div>
 
     <div
       v-else
-      class="state-with-inner-icon left width-100"
+      class="flexbox middle space-8"
     >
-      <input
-        ref="inputRef"
-        v-model.trim="inputValue"
-        type="text"
-        autocomplete="off"
-        class="full-width"
-        @input="onInput"
-        @keydown.up.prevent="up"
-        @keydown.down.prevent="down"
-        @keydown.enter="() => { if (activeMenuIndex === response.length) { reset(); isNewContractorMode = true } else { select(response[activeMenuIndex]) } }"
-        @blur="reset"
-      >
-      <i
-        v-if="selectedContractor?.photo_url_absolute"
-        :style="`background-image: url(${selectedContractor.photo_url_absolute}); opacity: 1;`"
-        class="icon userpic"
-      />
-      <span
-        v-else
-        class="icon"
-      ><i class="fas fa-user-plus" /></span>
+      <div class="state-with-inner-icon left width-100">
+        <input
+          ref="inputRef"
+          v-model.trim="inputValue"
+          type="text"
+          autocomplete="off"
+          class="full-width custom-mr-0"
+          @input="onInput"
+          @keydown.up.prevent="up"
+          @keydown.down.prevent="down"
+          @keydown.enter="() => { if (activeMenuIndex === response.length) { reset(); isNewContractorMode = true } else { select(response[activeMenuIndex]) } }"
+          @blur="reset"
+        >
+        <i
+          v-if="selectedContractor?.photo_url_absolute"
+          :style="`background-image: url(${selectedContractor.photo_url_absolute}); opacity: 1;`"
+          class="icon userpic"
+        />
+        <span
+          v-else
+          class="icon"
+        ><i class="fas fa-user-plus" /></span>
+      </div>
+      <a
+        class="icon gray"
+        @click.prevent="inputValue = ''"
+      ><i class="fas fa-times" /></a>
     </div>
 
     <div class="hint custom-mt-8">
