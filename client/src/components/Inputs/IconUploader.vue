@@ -1,7 +1,7 @@
 <template>
-    <div class="box uploadbox custom-p-0">
-      <div class="UppyDragDrop"></div>
-    </div>
+  <div class="box uploadbox custom-p-0">
+    <div class="UppyDragDrop" />
+  </div>
 </template>
 
 <script>

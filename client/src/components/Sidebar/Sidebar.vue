@@ -1,18 +1,26 @@
 <template>
-  <div ref="sidebar" class="sidebar flexbox hide-scrollbar width-16rem mobile-friendly z-50">
+  <div
+    ref="sidebar"
+    class="sidebar flexbox hide-scrollbar width-16rem mobile-friendly z-50"
+  >
     <nav class="sidebar-mobile-toggle">
       <div class="box align-center">
-        <a @click.prevent="mobileMenuOpen = !mobileMenuOpen" href="#">
-          <i class="fas fa-bars"></i>
+        <a
+          href="#"
+          @click.prevent="mobileMenuOpen = !mobileMenuOpen"
+        >
+          <i class="fas fa-bars" />
           {{
             $t("navigation", {
               action: mobileMenuOpen ? $t("hide") : $t("show"),
             })
-          }}</a
-        >
+          }}</a>
       </div>
     </nav>
-    <div ref="sidebarBody" class="sidebar-body hide-scrollbar">
+    <div
+      ref="sidebarBody"
+      class="sidebar-body hide-scrollbar"
+    >
       <SearchField />
       <Bricks />
 
@@ -20,13 +28,14 @@
       <SidebarCurrencyWidgets />
 
       <!-- Accounts list block -->
-      <SidebarHeading updatingEntityName="Account">
+      <SidebarHeading updating-entity-name="Account">
         {{ $t("accounts") }}
       </SidebarHeading>
       <SortableList
         :items="accounts"
-        sortingTarget="account"
-        :group="{name: 'accounts', pull: false}">
+        sorting-target="account"
+        :group="{name: 'accounts', pull: false}"
+      >
         <SortableItemAccount
           v-for="account in accounts"
           :key="account.id"
@@ -35,25 +44,33 @@
       </SortableList>
 
       <Toggler>
-        <template v-slot:categories>
+        <template #categories>
           <SidebarCategories />
         </template>
-        <template v-slot:contacts>
+        <template #contacts>
           <ContactsList />
         </template>
       </Toggler>
 
-      <div v-if="$permissions.canAccessTransfers" class="custom-mt-24">
-        <h6 class="heading"><span>{{ $t("other") }}</span></h6>
+      <div
+        v-if="$permissions.canAccessTransfers"
+        class="custom-mt-24"
+      >
+        <h6 class="heading">
+          <span>{{ $t("other") }}</span>
+        </h6>
 
         <ul class="menu">
-          <li v-for="category in categoriesTransfer" :key="category.id">
+          <li
+            v-for="category in categoriesTransfer"
+            :key="category.id"
+          >
             <router-link
               :to="`/category/${category.id}`"
               class="flexbox middle"
             >
               <span class="icon">
-                <i class="fas fa-exchange-alt"></i>
+                <i class="fas fa-exchange-alt" />
               </span>
               <span>{{ category.name }}</span>
             </router-link>
@@ -62,7 +79,10 @@
       </div>
     </div>
 
-    <div ref="sidebarFooter" class="sidebar-footer shadowed">
+    <div
+      ref="sidebarFooter"
+      class="sidebar-footer shadowed"
+    >
       <SidebarFooter />
     </div>
   </div>

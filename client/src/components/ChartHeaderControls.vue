@@ -1,14 +1,23 @@
 <template>
   <div class="c-period-dropdowns">
-    <div class="flexbox vertical-mobile space-12" style="align-items: start">
+    <div
+      class="flexbox vertical-mobile space-12"
+      style="align-items: start"
+    >
       <CurrencyToggler class="custom-mb-12-mobile" />
       <div class="flexbox fixed space-12 width-100-mobile">
         <div>
-          <Dropdown type="from" class="custom-m-0 custom-mb-8 width-100-mobile" />
+          <Dropdown
+            type="from"
+            class="custom-m-0 custom-mb-8 width-100-mobile"
+          />
           <AmountForPeriod period="from" />
         </div>
         <div>
-          <Dropdown type="to" class="custom-m-0 custom-mb-8 width-100-mobile" />
+          <Dropdown
+            type="to"
+            class="custom-m-0 custom-mb-8 width-100-mobile"
+          />
           <AmountForPeriod period="to" />
         </div>
       </div>

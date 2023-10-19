@@ -8,12 +8,10 @@
       v-if="count > 0"
       :class="{ badge: todayCount.onbadge > 0 }"
       class="count"
-      >{{ count }}</span
-    >
+    >{{ count }}</span>
     <span
       class="icon"
-      ><i class="fas fa-list"></i
-    ></span>
+    ><i class="fas fa-list" /></span>
     {{ $t("transactions") }}
   </router-link>
 </template>

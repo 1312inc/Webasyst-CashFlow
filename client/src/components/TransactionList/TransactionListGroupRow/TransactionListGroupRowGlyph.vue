@@ -10,10 +10,13 @@
         :alt="transaction.contractor_contact.name"
         :title="transaction.contractor_contact.name"
         class="c-contractor"
-      />
+      >
       <div v-else>
         <div :key="mainGlyph">
-          <i class="c-category-glyph fas" :class="mainGlyph"></i>
+          <i
+            class="c-category-glyph fas"
+            :class="mainGlyph"
+          />
         </div>
       </div>
       <!-- if repeating imported transaction -->
@@ -49,11 +52,11 @@
       <span
         :style="`background-color:${category.color};`"
         class="c-userpic-stack-imitation__item"
-      ></span>
+      />
       <span
         :style="`background-color:${category.color};`"
         class="c-userpic-stack-imitation__item"
-      ></span>
+      />
     </span>
   </div>
 </template>

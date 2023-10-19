@@ -14,13 +14,13 @@
           </div>
           <div class="value">
             <input
-              v-model="model.name"
-              @keyup.enter="submit('account')"
-              :class="{ 'state-error': $v.model.name.$error }"
               ref="focus"
+              v-model="model.name"
+              :class="{ 'state-error': $v.model.name.$error }"
               class="bold large"
               type="text"
-            />
+              @keyup.enter="submit('account')"
+            >
           </div>
         </div>
 
@@ -36,9 +36,9 @@
                 :class="{ 'state-error': $v.model.currency.$error }"
               >
                 <option
-                  :value="c.code"
                   v-for="c in sortedCurrencies"
                   :key="c.code"
+                  :value="c.code"
                 >
                   {{ c.code }} – {{ c.title }} ({{ c.sign }})
                 </option>
@@ -47,15 +47,18 @@
           </div>
         </div>
 
-        <div v-if="!isModeUpdate" class="field">
+        <div
+          v-if="!isModeUpdate"
+          class="field"
+        >
           <div class="name for-input">
             {{ $t("startingBalance") }}
           </div>
           <div class="value">
             <input-currency
               v-model="model.starting_balance"
-              :currencyCode="model.currency"
-              :showSign="false"
+              :currency-code="model.currency"
+              :show-sign="false"
               :short="true"
               placeholder="0"
             />
@@ -75,14 +78,13 @@
                 <div
                   class="с-icon-uploader-image"
                   :style="`background-image:url('${model.icon}')`"
-                ></div>
+                />
                 <div>
                   <a
                     href="#"
-                    @click.prevent="model.icon = ''"
                     class="button nobutton smaller"
-                    >{{ $t("delete") }}</a
-                  >
+                    @click.prevent="model.icon = ''"
+                  >{{ $t("delete") }}</a>
                 </div>
               </div>
               <div v-else>
@@ -103,7 +105,7 @@
               rows="4"
               style="resize: none; height: auto"
               :placeholder="$t('optional')"
-            ></textarea>
+            />
           </div>
         </div>
       </div>
@@ -113,21 +115,24 @@
       <div class="flexbox">
         <div class="flexbox space-12 wide">
           <button
-            @click="submit('account')"
             :disabled="controlsDisabled"
             class="button purple"
+            @click="submit('account')"
           >
             {{ isModeUpdate ? $t("update") : $t("add") }}
           </button>
-          <button @click="close" class="button light-gray">
+          <button
+            class="button light-gray"
+            @click="close"
+          >
             {{ $t("cancel") }}
           </button>
         </div>
         <button
           v-if="isModeUpdate"
-          @click="remove('account')"
           :disabled="controlsDisabled"
           class="button outlined red"
+          @click="remove('account')"
         >
           <span>{{ $t("delete") }}</span>
         </button>
@@ -142,14 +147,14 @@ import updateEntityMixin from '@/mixins/updateEntityMixin'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import IconUploader from '@/components/Inputs/IconUploader'
 export default {
-  mixins: [updateEntityMixin],
-
-  props: ['editedItem'],
 
   components: {
     InputCurrency,
     IconUploader
   },
+  mixins: [updateEntityMixin],
+
+  props: ['editedItem'],
 
   data () {
     return {

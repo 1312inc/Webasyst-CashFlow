@@ -1,15 +1,18 @@
 <template>
-  <div class="flexbox space-16" style="justify-content: center;">
+  <div
+    class="flexbox space-16"
+    style="justify-content: center;"
+  >
     <ButtonRound
-      @click.native="restore"
       icon="fa-trash-restore-alt"
       :tooltip="$t('restore')"
+      @click.native="restore"
     />
     <ButtonRound
-      @click.native="purge"
       icon="fa-trash-alt"
       :tooltip="$t('purge')"
       class="red"
+      @click.native="purge"
     />
   </div>
 </template>

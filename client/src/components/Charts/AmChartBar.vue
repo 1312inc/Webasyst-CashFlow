@@ -1,9 +1,9 @@
 <template>
   <div
+    ref="chart"
     :style="{ width: `${width / widthСorrection}%` }"
     class="c-breakdown-bar-chart"
-    ref="chart"
-  ></div>
+  />
 </template>
 
 <script>

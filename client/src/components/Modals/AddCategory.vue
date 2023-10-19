@@ -1,11 +1,17 @@
 <template>
-  <div class="dialog-body" style="overflow: initial;">
+  <div
+    class="dialog-body"
+    style="overflow: initial;"
+  >
     <div class="dialog-header">
       <h2>
         {{ isModeUpdate ? $t("updateCategory") : $t("addCategory") }}
       </h2>
     </div>
-    <div class="dialog-content" style="overflow: initial;">
+    <div
+      class="dialog-content"
+      style="overflow: initial;"
+    >
       <div class="fields">
         <div class="field">
           <div class="name for-input">
@@ -13,13 +19,13 @@
           </div>
           <div class="value">
             <input
-              v-model="model.name"
-              @keyup.enter="submit('category')"
-              :class="{ 'state-error': $v.model.name.$error }"
               ref="focus"
+              v-model="model.name"
+              :class="{ 'state-error': $v.model.name.$error }"
               class="bold large"
               type="text"
-            />
+              @keyup.enter="submit('category')"
+            >
           </div>
         </div>
 
@@ -34,8 +40,12 @@
                   v-model="model.type"
                   :class="{ 'state-error': $v.model.type.$error }"
                 >
-                  <option value="income">{{ $t("income") }}</option>
-                  <option value="expense">{{ $t("expense") }}</option>
+                  <option value="income">
+                    {{ $t("income") }}
+                  </option>
+                  <option value="expense">
+                    {{ $t("expense") }}
+                  </option>
                 </select>
               </div>
               <label
@@ -43,35 +53,53 @@
                 @click.prevent="model.is_profit = !model.is_profit"
               >
                 <span class="wa-checkbox">
-                  <input type="checkbox" :checked="model.is_profit" />
+                  <input
+                    type="checkbox"
+                    :checked="model.is_profit"
+                  >
                   <span>
                     <span class="icon">
-                      <i class="fas fa-check"></i>
+                      <i class="fas fa-check" />
                     </span>
                   </span>
                 </span>
                 {{ $t("profit") }}
                 <span class="text-blue">
-                  <i class="fas fa-coins"></i>
+                  <i class="fas fa-coins" />
                 </span>
               </label>
             </div>
-            <div v-if="model.type === 'income'" class="custom-mt-8">
-              <div class="hint">{{ $t("incomeCategoryExplained") }}</div>
+            <div
+              v-if="model.type === 'income'"
+              class="custom-mt-8"
+            >
+              <div class="hint">
+                {{ $t("incomeCategoryExplained") }}
+              </div>
             </div>
             <div
               v-if="model.type === 'expense' && !model.is_profit"
               class="custom-mt-8"
             >
-              <div class="hint">{{ $t("expenseCategoryExplained") }}</div>
+              <div class="hint">
+                {{ $t("expenseCategoryExplained") }}
+              </div>
             </div>
-            <div v-if="model.is_profit" class="custom-mt-8">
-              <div class="hint">{{ $t("profitCategoryExplained") }}</div>
+            <div
+              v-if="model.is_profit"
+              class="custom-mt-8"
+            >
+              <div class="hint">
+                {{ $t("profitCategoryExplained") }}
+              </div>
             </div>
           </div>
         </div>
 
-        <div v-if="showSelectParent" class="field">
+        <div
+          v-if="showSelectParent"
+          class="field"
+        >
           <div class="name for-input">
             {{ $t("parentCategory") }}
           </div>
@@ -79,15 +107,18 @@
             <DropdownWa
               v-model="model.parent_category_id"
               :items="parentsList"
-              valuePropName="id"
-              :rowModificator="$_rowModificatorMixin_rowModificator_category"
-              :maxHeight="200"
+              value-prop-name="id"
+              :row-modificator="$_rowModificatorMixin_rowModificator_category"
+              :max-height="200"
               class="width-100"
             />
           </div>
         </div>
 
-        <div class="field" v-if="!model.parent_category_id">
+        <div
+          v-if="!model.parent_category_id"
+          class="field"
+        >
           <div class="name for-input">
             {{ $t("color") }}
           </div>
@@ -101,7 +132,10 @@
             {{ $t("icon") }}
           </div>
           <div class="value">
-            <FontAwsomeSelector v-model="model.glyph" :color="model.color" />
+            <FontAwsomeSelector
+              v-model="model.glyph"
+              :color="model.color"
+            />
           </div>
         </div>
       </div>
@@ -111,21 +145,24 @@
       <div class="flexbox">
         <div class="flexbox space-12 wide">
           <button
-            @click="submit('category')"
             :disabled="controlsDisabled"
             class="button purple"
+            @click="submit('category')"
           >
             {{ isModeUpdate ? $t("update") : $t("add") }}
           </button>
-          <button @click="close" class="button light-gray">
+          <button
+            class="button light-gray"
+            @click="close"
+          >
             {{ $t("cancel") }}
           </button>
         </div>
         <button
           v-if="isModeUpdate"
-          @click="remove('category')"
           :disabled="controlsDisabled"
           class="button outlined red"
+          @click="remove('category')"
         >
           <span>{{ $t("delete") }}</span>
         </button>
@@ -142,6 +179,12 @@ import DropdownWa from '@/components/Inputs/DropdownWa'
 import ColorPicker from '@/components/Inputs/ColorPicker'
 import FontAwsomeSelector from '../Inputs/FontAwsomeSelector.vue'
 export default {
+
+  components: {
+    ColorPicker,
+    DropdownWa,
+    FontAwsomeSelector
+  },
   mixins: [updateEntityMixin, rowModificatorMixin],
 
   props: {
@@ -154,12 +197,6 @@ export default {
         return ['income', 'expense'].indexOf(value) !== -1
       }
     }
-  },
-
-  components: {
-    ColorPicker,
-    DropdownWa,
-    FontAwsomeSelector
   },
 
   data () {

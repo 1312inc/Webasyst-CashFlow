@@ -1,17 +1,27 @@
 <template>
   <div v-if="entity">
     <ChartHeader>
-      <template v-slot:title>
+      <template #title>
         <h1
           class="flexbox space-12 items-middle custom-m-0 custom-px-16-mobile custom-pt-16-mobile"
         >
-          <img v-if="entity.entity_icon" :src="entity.entity_icon" class="userpic userpic-48" />
-          <a :href="entity.entity_url" target="_blank">{{
+          <img
+            v-if="entity.entity_icon"
+            :src="entity.entity_icon"
+            class="userpic userpic-48"
+          >
+          <a
+            :href="entity.entity_url"
+            target="_blank"
+          >{{
             entity.entity_name
           }}</a>
         </h1>
       </template>
-      <template v-slot:controls v-if="$route.meta.showChart">
+      <template
+        v-if="$route.meta.showChart"
+        #controls
+      >
         <ChartHeaderControls />
       </template>
     </ChartHeader>
@@ -22,10 +32,10 @@
     <div class="flexbox">
       <div class="wide">
         <TransactionList
-          :showFutureGroup="false"
-          :showYesterdayGroup="false"
-          :showOverdueGroup="false"
-          :showTodayGroup="false"
+          :show-future-group="false"
+          :show-yesterday-group="false"
+          :show-overdue-group="false"
+          :show-today-group="false"
         />
       </div>
       <AmChartPieStickyContainer />
@@ -44,7 +54,6 @@ import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import api from '@/plugins/api'
 
 export default {
-  mixins: [routerTransitionMixin],
 
   components: {
     ChartHeader,
@@ -54,6 +63,7 @@ export default {
     TransactionList,
     AmChartPieStickyContainer
   },
+  mixins: [routerTransitionMixin],
 
   metaInfo () {
     return {

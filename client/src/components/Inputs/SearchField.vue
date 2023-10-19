@@ -1,20 +1,20 @@
 <template>
   <div class="box custom-mt-4 custom-mb-8">
     <form
-      @submit.prevent="submit"
       class="state-with-inner-icon left width-100"
       style="position: relative;"
+      @submit.prevent="submit"
     >
       <input
-        v-model.trim="queryText"
-        @keyup.up="up"
-        @keyup.down="down"
         ref="input"
+        v-model.trim="queryText"
         :placeholder="$t('search.label')"
         class="width-100 solid"
         type="search"
         name="query"
-      />
+        @keyup.up="up"
+        @keyup.down="down"
+      >
       <ul
         v-if="results.length > 1"
         :style="
@@ -27,32 +27,50 @@
         <li
           v-for="(item, i) in results"
           :key="i"
-          @mousedown="activeMenuIndex = i;submit()"
           :class="{ active: i === activeMenuIndex }"
           class="c-autocomplete-menu__item"
+          @mousedown="activeMenuIndex = i;submit()"
         >
           <a href="javascript:void(0);">
-            <span v-if="item.entityIcon" class="icon">
-              <img :src="item.entityIcon" class="userpic" alt="" />
+            <span
+              v-if="item.entityIcon"
+              class="icon"
+            >
+              <img
+                :src="item.entityIcon"
+                class="userpic"
+                alt=""
+              >
             </span>
-            <span v-else-if="item.entityGlyph" class="icon">
+            <span
+              v-else-if="item.entityGlyph"
+              class="icon"
+            >
               <i
                 :class="item.entityGlyph"
                 :style="`color: ${item.entityColor};`"
-              ></i>
+              />
             </span>
-            <span v-else-if="item.entityColor" class="icon">
+            <span
+              v-else-if="item.entityColor"
+              class="icon"
+            >
               <i
                 class="rounded"
                 :style="`background-color: ${item.entityColor};`"
-              ></i>
+              />
             </span>
-            <i v-else class="fas fa-search"></i>
+            <i
+              v-else
+              class="fas fa-search"
+            />
             <span>{{ item.entityName }}</span>
           </a>
         </li>
       </ul>
-      <button class="icon"><i class="fas fa-search"></i></button>
+      <button class="icon">
+        <i class="fas fa-search" />
+      </button>
     </form>
   </div>
 </template>

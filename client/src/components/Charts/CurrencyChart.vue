@@ -3,7 +3,7 @@
     class="c-bwc-container custom-mt-8"
     :style="`width: ${width}px; height: ${height}px`"
   >
-    <svg ref="chart"></svg>
+    <svg ref="chart" />
   </div>
 </template>
 

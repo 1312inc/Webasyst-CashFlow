@@ -5,7 +5,7 @@
     data-microtip-position="top"
     role="tooltip"
   >
-    <i :class="`fas ${icon}`"></i>
+    <i :class="`fas ${icon}`" />
   </button>
 </template>
 
