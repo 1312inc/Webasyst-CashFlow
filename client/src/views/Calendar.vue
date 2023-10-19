@@ -75,10 +75,21 @@ async function handleMonthChange (e) {
 </script>
 
 <style lang="scss">
+
+.icg-header {
+  align-items: start;
+  gap: 1rem;
+}
+
 .icg-controls {
     button {
+
+      background-color: var(--background-color-btn-light-gray);
+      color: var(--text-color-input);
+      box-shadow: none;
+
         svg {
-            fill: white;
+            fill: var(--text-color-input);
         }
     }
 }
@@ -96,9 +107,15 @@ async function handleMonthChange (e) {
 
 .icg-months-grid-day {
     color: var(--text-color-hint);
+    background-color: rgba(0, 20, 80, 0.01);
+}
+
+.icg-months-grid-day--active-month {
+  background-color: var(--background-color-blank);
 }
 
 .icg-months-grid-day--weekend {
-    background-color: var(--background-color);
+  background-color: rgba(0, 20, 80, 0.03);
 }
+
 </style>
