@@ -2,7 +2,7 @@
   <router-link
     to="/transactions"
     :class="{ selected: $route.name === 'Transactions' }"
-    class="brick custom-mb-0"
+    class="brick"
   >
     <span
       v-if="count > 0"

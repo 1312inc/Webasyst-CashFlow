@@ -73,6 +73,10 @@ body.modal {
   text-overflow: ellipsis;
 }
 
+.brick.selected .icon {
+  color: var(--accent-color) !important;
+}
+
 .c-header { position: relative; padding: 0.75rem 2.375rem; }
 
 .alert.c-cashgap-prediction-banner { margin: -0.75rem -0.5rem 1rem; border: none; border-radius: 0; padding: 1rem; }
