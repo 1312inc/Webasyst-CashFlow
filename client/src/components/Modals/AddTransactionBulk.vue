@@ -1,17 +1,14 @@
 <template>
   <div
     class="dialog-body"
-    style="width: 700px; overflow: initial;"
+    style="width: 700px;"
   >
     <div class="dialog-header">
       <h2 class="custom-mb-0">
         {{ $t("addMany") }}
       </h2>
     </div>
-    <div
-      class="dialog-content"
-      style="overflow: initial;"
-    >
+    <div class="dialog-content">
       <div
         v-for="(row, i) in data"
         :key="i"
@@ -64,18 +61,14 @@
         </div>
 
         <div v-if="data.length > 1">
-          <a
-            href="#"
-            @click.prevent="data.splice(i, 1)"
-          >
+          <a @click.prevent="data.splice(i, 1)">
             <i class="fas fa-times-circle text-light-gray" />
           </a>
         </div>
       </div>
       <div class="align-right">
         <a
-          v-if="data.length < 13"
-          href="#"
+
           class="small"
           @click.prevent="data.push({ ...model })"
         >{{ $t("addmore") }}</a>
