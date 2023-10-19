@@ -220,5 +220,6 @@
   "selfDestructText": "Useful when real transactions are imported in bulk from banks and spreadsheets, and this particular transaction must be treated as a planned one that needs to be replaced with the imported ones.",
   "calendar": "Calendar",
   "compactView": "Compact View",
-  "listView": "List View"
+  "listView": "List View",
+  "plugins": "Plugins"
 }
