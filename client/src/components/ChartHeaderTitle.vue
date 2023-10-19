@@ -10,8 +10,11 @@
           {{ currentEntity.name || currentEntity.currency }}
         </div>
         <div
-          v-if="balance"
-          :class="balance >= 0 ? 'text-green' : 'text-red'"
+          v-if="currentEntity.currency"
+          :class="{
+            'text-green': balance > 0,
+            'text-red': balance < 0
+          }"
           class="h2 nowrap custom-mb-0"
         >
           {{
