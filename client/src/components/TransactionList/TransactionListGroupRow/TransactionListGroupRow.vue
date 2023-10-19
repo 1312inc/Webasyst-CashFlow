@@ -1,11 +1,14 @@
 <template>
   <li
-    class="item c-item"
     ref="row"
+    class="item c-item"
     :class="classes"
     :style="isRepeatingGroup && 'cursor: initial;'"
   >
-    <div v-if="showDate" class="mobile-only custom-py-8">
+    <div
+      v-if="showDate"
+      class="mobile-only custom-py-8"
+    >
       <strong>
         {{
           $moment(transaction.date).format(
@@ -17,31 +20,39 @@
     </div>
 
     <div
+      class="flexbox middle space-12"
       @mouseover="isHover = true"
       @mouseleave="isHover = false"
       @click="handleClick"
-      class="flexbox middle space-12"
     >
       <div
         v-if="$helper.showMultiSelect()"
+        class="custom-my-4"
         :class="{ 'desktop-only': $helper.isDesktopEnv }"
-        style="min-width: 1rem"
+        style="width: 1rem; height: 1rem;"
       >
         <span
           v-show="isHoverComputed && !isRepeatingGroup"
-          @click.stop="checkboxSelect"
           class="wa-checkbox"
+          @click.stop="checkboxSelect"
         >
-          <input type="checkbox" :checked="isChecked" />
+          <input
+            type="checkbox"
+            :checked="isChecked"
+          >
           <span>
             <span class="icon">
-              <i class="fas fa-check"></i>
+              <i class="fas fa-check" />
             </span>
           </span>
         </span>
       </div>
 
-      <div class="desktop-and-tablet-only" style="width: 7rem;flex-shrink: 0;">
+      <div
+        v-if="!isCompactMode"
+        class="desktop-and-tablet-only"
+        style="width: 7rem;flex-shrink: 0;"
+      >
         <template v-if="showDate">
           <div class="custom-mb-4 bold nowrap c-group-date">
             {{
@@ -69,16 +80,20 @@
         :transaction="transaction"
         :category="category"
         :account="account"
-        :isCollapseHeader="isCollapseHeader"
-        :isRepeatingGroup="isRepeatingGroup"
-        :collapseHeaderData="collapseHeaderData"
+        :is-collapse-header="isCollapseHeader"
+        :is-repeating-group="isRepeatingGroup"
+        :collapse-header-data="collapseHeaderData"
       />
       <div class="wide flexbox middle space-8 c-item-border">
-        <div class="wide" style="overflow: hidden">
+        <div
+          v-if="!isCompactMode"
+          class="wide"
+          style="overflow: hidden"
+        >
           <TransactionListGroupRowDesc
             :transaction="transaction"
-            :collapseHeaderData="collapseHeaderData"
-            :isRepeatingGroup="isRepeatingGroup"
+            :collapse-header-data="collapseHeaderData"
+            :is-repeating-group="isRepeatingGroup"
             :category="category"
           />
           <div
@@ -120,7 +135,10 @@
               })
             }}
           </div>
-          <div v-if="account.name" class="text-ellipsis small gray">
+          <div
+            v-if="account.name && !isCompactMode"
+            class="text-ellipsis small gray"
+          >
             {{ account.name }}
             <span
               v-if="transaction.balance"
@@ -136,22 +154,31 @@
             </span>
           </div>
         </div>
-        <transition name="fade" :duration="300">
+        <div v-if="isCompactMode">
+          {{ $moment(transaction.date).fromNow() }}
+        </div>
+        <transition
+          name="fade"
+          :duration="300"
+        >
           <TransactionListCompleteButton
             v-show="transaction.is_onbadge && !archive"
-            @processEdit="openModal(true)"
             :transaction="transaction"
             :account="account"
+            @processEdit="openModal(true)"
           />
         </transition>
       </div>
     </div>
 
     <portal>
-      <Modal v-if="open" @close="open = false">
+      <Modal
+        v-if="open"
+        @close="open = false"
+      >
         <AddTransaction
           :transaction="transaction"
-          :offOnbadge="offBadgeInTransactionModal"
+          :off-onbadge="offBadgeInTransactionModal"
         />
       </Modal>
     </portal>
@@ -165,6 +192,18 @@ import TransactionListCompleteButton from './TransactionListCompleteButton'
 import TransactionListGroupRowDesc from './TransactionListGroupRowDesc'
 import TransactionListGroupRowGlyph from './TransactionListGroupRowGlyph'
 export default {
+
+  components: {
+    Modal,
+    AddTransaction,
+    TransactionListCompleteButton,
+    TransactionListGroupRowDesc,
+    TransactionListGroupRowGlyph
+  },
+
+  inject: {
+    archive: { default: false }
+  },
   props: {
     transaction: {
       type: Object
@@ -193,11 +232,12 @@ export default {
     visibleSelectCheckbox: {
       type: Boolean,
       default: false
-    }
-  },
+    },
 
-  inject: {
-    archive: { default: false }
+    isCompactMode: {
+      type: Boolean,
+      default: false
+    }
   },
 
   data () {
@@ -206,14 +246,6 @@ export default {
       isHover: false,
       offBadgeInTransactionModal: false
     }
-  },
-
-  components: {
-    Modal,
-    AddTransaction,
-    TransactionListCompleteButton,
-    TransactionListGroupRowDesc,
-    TransactionListGroupRowGlyph
   },
 
   computed: {

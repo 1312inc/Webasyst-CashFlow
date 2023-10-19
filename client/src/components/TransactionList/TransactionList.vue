@@ -13,8 +13,8 @@
           :group="group.items"
           :type="group.name"
           :index="index"
-          :visibleSelectCheckbox="visibleSelectCheckbox"
-          :showFoundedCount="showFoundedCount"
+          :visible-select-checkbox="visibleSelectCheckbox"
+          :show-founded-count="showFoundedCount"
         />
       </div>
       <Observer
@@ -33,6 +33,13 @@ import SkeletonTransaction from './SkeletonTransaction'
 import Observer from './Observer'
 
 export default {
+
+  components: {
+    TransactionListCreated,
+    TransactionListGroup,
+    SkeletonTransaction,
+    Observer
+  },
   props: {
     grouping: {
       type: Boolean,
@@ -74,13 +81,6 @@ export default {
       type: Boolean,
       default: false
     }
-  },
-
-  components: {
-    TransactionListCreated,
-    TransactionListGroup,
-    SkeletonTransaction,
-    Observer
   },
 
   computed: {

@@ -1,13 +1,18 @@
 <template>
   <div>
     <ChartHeader>
-      <template v-slot:title>
-        <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">{{ $t("allTransactions") }}</h1>
+      <template #title>
+        <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
+          {{ $t("allTransactions") }}
+        </h1>
       </template>
     </ChartHeader>
     <div class="flexbox">
       <div class="wide">
-        <TransactionList :showYesterdayGroup="true" :showOverdueGroup="true" />
+        <TransactionList
+          :show-yesterday-group="true"
+          :show-overdue-group="true"
+        />
       </div>
       <AmChartPieStickyContainer />
     </div>
@@ -21,18 +26,18 @@ import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyConta
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
-  mixins: [routerTransitionMixin],
 
   components: {
     ChartHeader,
     TransactionList,
     AmChartPieStickyContainer
   },
+  mixins: [routerTransitionMixin],
 
   mounted () {
     this.$store.dispatch('transaction/fetchTransactions', {
       from: '',
-      to: this.$moment().add(1, 'M').format('YYYY-MM-DD'),
+      to: this.$moment().add(3, 'M').format('YYYY-MM-DD'),
       offset: 0,
       filter: ''
     })

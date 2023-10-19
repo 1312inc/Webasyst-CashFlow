@@ -1,5 +1,8 @@
 <template>
-  <div sticky-container class="custom-mt-16 c-transaction-section">
+  <div
+    sticky-container
+    class="custom-mt-16 c-transaction-section"
+  >
     <div
       @mouseover="
         isHover = true;
@@ -26,43 +29,58 @@
             >
               <span
                 v-show="isHoverComputed && filteredTransactions.length"
-                @click="checkAll(filteredTransactions)"
                 class="wa-checkbox"
+                @click="checkAll(filteredTransactions)"
               >
                 <input
                   type="checkbox"
                   :checked="isCheckedAllInGroup(filteredTransactions)"
-                />
+                >
                 <span>
                   <span class="icon">
-                    <i class="fas fa-check"></i>
+                    <i class="fas fa-check" />
                   </span>
                 </span>
               </span>
             </div>
 
-            <h4 v-if="!showFoundedCount" class="c-transaction-section__header nowrap">
-              <div v-if="type === 'overdue'" class="black">
+            <h4
+              v-if="!showFoundedCount"
+              class="c-transaction-section__header nowrap"
+            >
+              <div
+                v-if="type === 'overdue'"
+                class="black"
+              >
                 {{ $t("overdue") }}
               </div>
-              <div v-if="type === 'yesterday'" class="black">
+              <div
+                v-if="type === 'yesterday'"
+                class="black"
+              >
                 {{ $t("yesterday") }}
               </div>
-              <div v-if="type === 'tomorrow'" class="black">
+              <div
+                v-if="type === 'tomorrow'"
+                class="black"
+              >
                 {{ $t("tomorrow") }}
               </div>
-              <div v-if="type === 'today'" class="black">
+              <div
+                v-if="type === 'today'"
+                class="black"
+              >
                 {{ $t("today") }}
                 <span class="hint">
-                  {{ this.$moment.locale() === 'ru' ? this.$moment().format("D MMMM") : this.$moment().format("MMMM D") }}
+                  {{ $moment.locale() === 'ru' ? $moment().format("D MMMM") : $moment().format("MMMM D") }}
                 </span>
               </div>
               <div
                 v-if="type === 'future'"
-                @click="upcomingBlockOpened = !upcomingBlockOpened"
                 :class="{ 'opacity-50': !upcomingBlockOpened }"
                 class="black flexbox middle space-8"
                 style="cursor: pointer"
+                @click="upcomingBlockOpened = !upcomingBlockOpened"
               >
                 <span>{{
                   $t("nextDays", { count: featurePeriod })
@@ -77,21 +95,28 @@
               </div>
             </h4>
 
-            <div v-if="showFoundedCount" class="gray bold nowrap custom-mr-4">
+            <div
+              v-if="showFoundedCount"
+              class="gray bold nowrap custom-mr-4"
+            >
               {{ $t('found', { count: filteredTransactions.length }) }}
             </div>
 
-            <TransactionListGroupUpcomingPeriod v-if="type === 'future'" :upcomingBlockOpened=upcomingBlockOpened @updateUpcomingBlockOpened="(val) => upcomingBlockOpened = val" />
+            <TransactionListGroupUpcomingPeriod
+              v-if="type === 'future'"
+              :upcoming-block-opened="upcomingBlockOpened"
+              @updateUpcomingBlockOpened="(val) => upcomingBlockOpened = val"
+            />
           </div>
           <div class="flexbox middle space-12">
             <div
               v-if="filteredTransactions.length"
-              @click="onStick({ sticked: true })"
+              ref="pieIcon"
               class="desktop-only c-pie-icon-helper"
               style="display: none; cursor: pointer"
-              ref="pieIcon"
+              @click="onStick({ sticked: true })"
             >
-              <i class="fas fa-chart-pie"></i>
+              <i class="fas fa-chart-pie" />
             </div>
             <AmountForGroup
               :group="filteredTransactions"
@@ -101,20 +126,28 @@
       </div>
 
       <div v-if="upcomingBlockOpened">
-        <ul v-if="filteredTransactions.length" class="c-list list">
+        <ul
+          v-if="filteredTransactions.length"
+          class="c-list list"
+          :class="{'c-list--compact': compactModeForFutureList}"
+        >
           <TransactionListGroupRow
+            v-for="(transaction, i) in compactModeForFutureList ? filteredTransactions.toReversed() : filteredTransactions"
             v-show="isShown(transaction)"
-            v-for="(transaction, i) in filteredTransactions"
             :key="transaction.id"
             :transaction="transaction"
-            :showChecker="isShowChecker"
-            :collapseHeaderData="collapseHeaderData(transaction)"
-            :showDate="i === 0 ? true : filteredTransactions[i].date !== filteredTransactions[i - 1].date"
-            :visibleSelectCheckbox="visibleSelectCheckbox"
+            :show-checker="isShowChecker"
+            :is-compact-mode="compactModeForFutureList"
+            :collapse-header-data="collapseHeaderData(transaction)"
+            :show-date="i === 0 ? true : filteredTransactions[i].date !== filteredTransactions[i - 1].date"
+            :visible-select-checkbox="visibleSelectCheckbox"
             @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
         </ul>
-        <div v-else class="align-center small custom-py-24">
+        <div
+          v-else
+          class="align-center small custom-py-24"
+        >
           {{ $t("emptyList") }}
         </div>
       </div>
@@ -122,11 +155,25 @@
   </div>
 </template>
 
+<script setup>
+import { useStorage } from '@vueuse/core'
+
+</script>
+
 <script>
 import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPeriod'
 import TransactionListGroupRow from './TransactionListGroupRow/TransactionListGroupRow'
 import AmountForGroup from '@/components/PeriodAmount/AmountForGroup'
+
+const listCompactMode = useStorage('list_compact_mode', true)
+
 export default {
+
+  components: {
+    TransactionListGroupUpcomingPeriod,
+    TransactionListGroupRow,
+    AmountForGroup
+  },
   props: {
     group: {
       type: Array,
@@ -148,12 +195,6 @@ export default {
     }
   },
 
-  components: {
-    TransactionListGroupUpcomingPeriod,
-    TransactionListGroupRow,
-    AmountForGroup
-  },
-
   data () {
     return {
       isHover: false,
@@ -170,6 +211,10 @@ export default {
   },
 
   computed: {
+    compactModeForFutureList () {
+      return this.type === 'future' && listCompactMode.value
+    },
+
     isShowChecker () {
       return this.filteredTransactions.some(e =>
         this.$store.state.transactionBulk.selectedTransactionsIds.includes(e.id)
