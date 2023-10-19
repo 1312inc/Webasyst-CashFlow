@@ -3,7 +3,7 @@
     ref="chartdiv"
     :style="loadingChart && 'opacity:.2'"
     class="c-chart-main smaller"
-  ></div>
+  />
 </template>
 
 <script>
@@ -356,7 +356,7 @@ export default {
 
         // Filling daily balance
         let previosValue = null
-        filledChartData.map(e => {
+        filledChartData.forEach(e => {
           if (e.balance !== null) {
             previosValue = e.balance
           }

@@ -5,8 +5,8 @@
       <AmChartBulkControlsRegular v-else />
     </div>
     <button
-      @click="$_transactionActionsMixin_emptySelected"
       class="button nobutton small"
+      @click="$_transactionActionsMixin_emptySelected"
     >
       {{ $t("unselectAll") }}
     </button>
@@ -19,15 +19,15 @@ import AmChartBulkControlsArchive from './AmChartBulkControlsArchive'
 import AmChartBulkControlsRegular from './AmChartBulkControlsRegular'
 
 export default {
-  mixins: [transactionActionsMixin],
-
-  inject: {
-    archive: { default: false }
-  },
 
   components: {
     AmChartBulkControlsArchive,
     AmChartBulkControlsRegular
+  },
+  mixins: [transactionActionsMixin],
+
+  inject: {
+    archive: { default: false }
   }
 }
 </script>

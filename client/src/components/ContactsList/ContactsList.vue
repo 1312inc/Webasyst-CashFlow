@@ -1,6 +1,9 @@
 <template>
   <div>
-    <ul v-if="list.length" class="menu">
+    <ul
+      v-if="list.length"
+      class="menu"
+    >
       <li
         v-for="contact in list"
         :key="contact.id"
@@ -12,9 +15,11 @@
         <router-link :to="`/contact/${contact.id}`">
           <div class="wide">
             <div class="flexbox">
-              <span class="icon"
-                ><img :src="contact.photo_url_absolute" alt="" class="userpic"
-              /></span>
+              <span class="icon"><img
+                :src="contact.photo_url_absolute"
+                alt=""
+                class="userpic"
+              ></span>
               <div class="wide">
                 <span>{{ contact.name }}</span>
               </div>
@@ -28,7 +33,7 @@
               </span> -->
             </div>
             <div class="flexbox">
-              <span class="icon"></span>
+              <span class="icon" />
               <div class="smaller hint custom-mt-4">
                 {{ contact.last_transaction.amountShorten }}
                 {{ $helper.currencySignByCode(contact.last_transaction.currency) }},
@@ -47,17 +52,22 @@
           class="skeleton custom-px-16"
           style="padding: 6px 0;"
         >
-          <span class="skeleton-list" style="margin-bottom: 0;"></span>
+          <span
+            class="skeleton-list"
+            style="margin-bottom: 0;"
+          />
         </li>
       </template>
     </ul>
-    <div v-if="list.length < total" class="custom-mx-16 align-center">
+    <div
+      v-if="list.length < total"
+      class="custom-mx-16 align-center"
+    >
       <a
-        @click.prevent="offset += limit"
         href="#"
         class="button light-gray rounded smaller"
-        >{{ $t("showMore") }}</a
-      >
+        @click.prevent="offset += limit"
+      >{{ $t("showMore") }}</a>
     </div>
   </div>
 </template>

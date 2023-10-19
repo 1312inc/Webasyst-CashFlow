@@ -13,24 +13,25 @@
             })
           }}
         </div>
-        <div v-if="alertDate" class="custom-ml-4">
+        <div
+          v-if="alertDate"
+          class="custom-ml-4"
+        >
           <span
             :title="title"
             :class="
               alertDate.amount >= 0 ? 'c-bwc-badge--green' : 'c-bwc-badge--red'
             "
             class="c-bwc-badge small nowrap"
-            ><i
-              :class="
-                alertDate.amount >= 0
-                  ? 'fa-arrow-circle-up'
-                  : 'fa-exclamation-triangle'
-              "
-              class="fas custom-mr-4"
-              style="color: white"
-            ></i
-            >{{ date }}</span
-          >
+          ><i
+            :class="
+              alertDate.amount >= 0
+                ? 'fa-arrow-circle-up'
+                : 'fa-exclamation-triangle'
+            "
+            class="fas custom-mr-4"
+            style="color: white"
+          />{{ date }}</span>
         </div>
       </div>
       <CurrencyChart :currency="balanceFlow" />
@@ -41,11 +42,11 @@
 <script>
 import CurrencyChart from '@/components/Charts/CurrencyChart'
 export default {
-  props: ['balanceFlow'],
 
   components: {
     CurrencyChart
   },
+  props: ['balanceFlow'],
 
   computed: {
     alertDate () {

@@ -1,6 +1,9 @@
 <template>
   <div class="custom-mb-16">
-    <div v-if="showIncome" class="custom-mb-16">
+    <div
+      v-if="showIncome"
+      class="custom-mb-16"
+    >
       <div class="flexbox wrap middle full-width">
         <div class="large bold">
           {{ $t("income") }}
@@ -33,13 +36,16 @@
         </div>
       </div>
       <AmChartLegend
-        :legendItems="itemData.income.data"
-        :currencyCode="itemData.currency"
-        :isColumnStyle="false"
+        :legend-items="itemData.income.data"
+        :currency-code="itemData.currency"
+        :is-column-style="false"
       />
     </div>
 
-    <div v-if="showExpense" class="custom-mb-16">
+    <div
+      v-if="showExpense"
+      class="custom-mb-16"
+    >
       <div class="flexbox wrap middle full-width">
         <div class="large bold">
           {{ $t("expense") }}
@@ -74,10 +80,10 @@
         </div>
       </div>
       <AmChartLegend
-        :legendItems="itemData.expense.data"
-        :currencyCode="itemData.currency"
-        :isReverse="true"
-        :isColumnStyle="false"
+        :legend-items="itemData.expense.data"
+        :currency-code="itemData.currency"
+        :is-reverse="true"
+        :is-column-style="false"
       />
     </div>
 
@@ -112,9 +118,9 @@
         </div>
       </div>
       <AmChartLegend
-        :legendItems="itemData.profit.data"
-        :currencyCode="itemData.currency"
-        :isColumnStyle="false"
+        :legend-items="itemData.profit.data"
+        :currency-code="itemData.currency"
+        :is-column-style="false"
       />
     </div>
   </div>
@@ -124,12 +130,12 @@
 import ChartBar from '@/components/Charts/AmChartBar'
 import AmChartLegend from '@/components/Charts/AmChartLegend'
 export default {
-  props: ['itemData'],
 
   components: {
     ChartBar,
     AmChartLegend
   },
+  props: ['itemData'],
 
   computed: {
     currentEntityType () {

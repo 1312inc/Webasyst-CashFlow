@@ -1,9 +1,9 @@
 <template>
   <div>
     <ChartHeader
-      :showControls="false"
+      :show-controls="false"
     >
-      <template v-slot:title>
+      <template #title>
         <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
           {{ $route.query.text }}
         </h1>
@@ -12,15 +12,15 @@
     <div class="flexbox">
       <div class="wide">
         <TransactionList
-          :showTodayGroup="false"
-          :showFutureGroup="false"
+          :show-today-group="false"
+          :show-future-group="false"
           :grouping="false"
-          :visibleSelectCheckbox="true"
-          :showFoundedCount="true"
+          :visible-select-checkbox="true"
+          :show-founded-count="true"
         />
       </div>
       <AmChartPieStickyContainer
-        :selectedOnlyMode="true"
+        :selected-only-mode="true"
       />
     </div>
   </div>
@@ -33,13 +33,13 @@ import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyConta
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
-  mixins: [routerTransitionMixin],
 
   components: {
     ChartHeader,
     TransactionList,
     AmChartPieStickyContainer
   },
+  mixins: [routerTransitionMixin],
 
   watch: {
     $route: 'makeSearch'

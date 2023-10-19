@@ -18,7 +18,10 @@
         :title="transaction.external_source_info.name"
         class="small"
       >
-        <i :class="transaction.external_source_info.glyph" class="fas"></i>
+        <i
+          :class="transaction.external_source_info.glyph"
+          class="fas"
+        />
       </span>
     </template>
     <!-- if repeating transactions in future -->
@@ -33,7 +36,7 @@
         "
       >
         <span class="smaller custom-mr-4">
-          <i class="fas fa-redo opacity-50"></i>
+          <i class="fas fa-redo opacity-50" />
         </span>
       </div>
     </template>
@@ -45,11 +48,17 @@
         :title="transaction.external_source_info.name"
         class="small"
       >
-        <i :class="transaction.external_source_info.glyph" class="fas"></i>
+        <i
+          :class="transaction.external_source_info.glyph"
+          class="fas"
+        />
       </span>
-      <span v-if="transaction.repeating_id" :title="title">
+      <span
+        v-if="transaction.repeating_id"
+        :title="title"
+      >
         <span class="smaller custom-mr-4">
-          <i class="fas fa-redo opacity-50"></i>
+          <i class="fas fa-redo opacity-50" />
         </span>
       </span>
     </template>

@@ -1,15 +1,18 @@
 <template>
   <li :class="{ selected: isActive }">
-    <router-link :to="`/account/${account.id}`" class="flexbox middle">
+    <router-link
+      :to="`/account/${account.id}`"
+      class="flexbox middle"
+    >
       <span class="icon">
         <img
           v-if="$helper.isValidHttpUrl(account.icon)"
           :src="account.icon"
           alt=""
           class="size-20"
-        />
+        >
         <span v-else>
-          <i :class="`fas ${accountIcon}`"></i>
+          <i :class="`fas ${accountIcon}`" />
         </span>
       </span>
       <span>{{ account.name }}</span>
@@ -21,7 +24,7 @@
             account.currency
           )}`
         "
-      ></span>
+      />
     </router-link>
   </li>
 </template>

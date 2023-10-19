@@ -1,14 +1,17 @@
 <template>
   <div
-    :class="{ 'is-opened': open, 'state-error': error }"
     v-click-outside="() => (open = false)"
+    :class="{ 'is-opened': open, 'state-error': error }"
     class="dropdown"
   >
     <button
-      @click.prevent="open = !open"
       class="dropdown-toggle button light-gray width-100"
+      @click.prevent="open = !open"
     >
-      <div v-if="label" class="smaller gray custom-mb-8 align-left">
+      <div
+        v-if="label"
+        class="smaller gray custom-mb-8 align-left"
+      >
         {{ label }}
       </div>
       <div
@@ -25,7 +28,10 @@
       :style="`max-height:${maxHeight}px`"
       class="dropdown-body"
     >
-      <div v-for="(group, i) in itemsGroups" :key="i">
+      <div
+        v-for="(group, i) in itemsGroups"
+        :key="i"
+      >
         <div
           v-if="groupsLabels[useDefaultValue ? i - 1 : i]"
           class="smaller gray uppercase custom-px-16 custom-py-8"
@@ -33,16 +39,19 @@
           {{ groupsLabels[useDefaultValue ? i - 1 : i] }}
         </div>
         <ul class="menu">
-          <li v-for="(item, j) in group" :key="j">
+          <li
+            v-for="(item, j) in group"
+            :key="j"
+          >
             <a
               v-if="item.name"
+              href="#"
               @click.prevent="
                 $emit('input', item[valuePropName]);
                 open = false;
               "
               v-html="rowModificator(item)"
-              href="#"
-            ></a>
+            />
           </li>
         </ul>
       </div>
@@ -54,6 +63,10 @@
 import ClickOutside from 'vue-click-outside'
 
 export default {
+
+  directives: {
+    ClickOutside
+  },
   props: {
     value: {
       default: null,
@@ -102,10 +115,6 @@ export default {
       type: Boolean,
       default: false
     }
-  },
-
-  directives: {
-    ClickOutside
   },
 
   data () {

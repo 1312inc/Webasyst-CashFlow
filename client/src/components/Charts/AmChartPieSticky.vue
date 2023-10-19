@@ -2,15 +2,15 @@
   <div>
     <div style="position: relative">
       <AmChartPie
-        :rawData="isCounterMode ? rawData : rawDataByCurrency"
-        :isCounterMode="isCounterMode"
-        :totalTransactions="totalTransactions"
+        :raw-data="isCounterMode ? rawData : rawDataByCurrency"
+        :is-counter-mode="isCounterMode"
+        :total-transactions="totalTransactions"
         :label="
           isCounterMode
             ? selectedTransactionsIds.length
             : activeGroupTransactions.name
         "
-        :currencyCode="currencyCode"
+        :currency-code="currencyCode"
       />
 
       <AmChartBulkControls
@@ -20,8 +20,8 @@
     </div>
 
     <AmChartLegend
-      :legendItems="rawDataByCurrency"
-      :currencyCode="currencyCode"
+      :legend-items="rawDataByCurrency"
+      :currency-code="currencyCode"
       class="custom-mx-20"
     />
   </div>

@@ -1,5 +1,8 @@
 <template>
-  <div class="c-chart-pie-sticky" ref="chart"></div>
+  <div
+    ref="chart"
+    class="c-chart-pie-sticky"
+  />
 </template>
 
 <script>

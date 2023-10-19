@@ -1,5 +1,8 @@
 <template>
-  <div class="c-legend" :class="{ 'c-legend--column': isColumnStyle }">
+  <div
+    class="c-legend"
+    :class="{ 'c-legend--column': isColumnStyle }"
+  >
     <div
       v-for="item in legendItems"
       :key="item.id"
@@ -9,9 +12,11 @@
       <div
         class="c-legend__item__square"
         :style="`background-color:${item.category_color}`"
-      ></div>
+      />
       <div class="c-legend__item__label smaller">
-        <div class="c-legend__item__label__title">{{ item.category_name }}</div>
+        <div class="c-legend__item__label__title">
+          {{ item.category_name }}
+        </div>
         <div class="c-legend__item__label__value">
           {{
             $helper.toCurrency({

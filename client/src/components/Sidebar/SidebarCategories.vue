@@ -3,14 +3,14 @@
     <!-- Categories list block -->
     <SidebarHeading
       class="custom-mt-24"
-      updatingEntityName="Category"
+      updating-entity-name="Category"
       type="income"
     >
       {{ $t("income") }}
     </SidebarHeading>
     <SortableList
       :items="categoriesIncome"
-      sortingTarget="category"
+      sorting-target="category"
       :group="{ name: 'categoriesIncome', pull: false }"
     >
       <SortableItemCategory
@@ -20,12 +20,15 @@
       />
     </SortableList>
 
-    <SidebarHeading updatingEntityName="Category" type="expense">
+    <SidebarHeading
+      updating-entity-name="Category"
+      type="expense"
+    >
       {{ $t("expense") }}
     </SidebarHeading>
     <SortableList
       :items="categoriesExpense"
-      sortingTarget="category"
+      sorting-target="category"
       :group="{ name: 'categoriesExpense', pull: false }"
     >
       <SortableItemCategory

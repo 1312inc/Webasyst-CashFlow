@@ -1,7 +1,14 @@
 <template>
   <div class="wa-select solid">
-    <select v-model="value" class="c-select">
-      <option v-for="item in items" :key="item.key" :value="item.value">
+    <select
+      v-model="value"
+      class="c-select"
+    >
+      <option
+        v-for="item in items"
+        :key="item.key"
+        :value="item.value"
+      >
         {{ $t(item.key) }}
       </option>
     </select>

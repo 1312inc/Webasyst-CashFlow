@@ -2,10 +2,10 @@
   <div>
     <CashGapMessage />
     <ChartHeader>
-      <template v-slot:title>
+      <template #title>
         <ChartHeaderTitle />
       </template>
-      <template v-slot:controls>
+      <template #controls>
         <ChartHeaderControls />
       </template>
     </ChartHeader>
@@ -13,7 +13,10 @@
     <DetailsDashboard />
     <div class="flexbox">
       <div class="wide">
-        <TransactionList :showTomorrowGroup="true" :showYesterdayGroup="true" />
+        <TransactionList
+          :show-tomorrow-group="true"
+          :show-yesterday-group="true"
+        />
       </div>
       <AmChartPieStickyContainer />
     </div>
@@ -32,7 +35,6 @@ import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyConta
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
-  mixins: [routerTransitionMixin],
 
   components: {
     CashGapMessage,
@@ -44,6 +46,7 @@ export default {
     TransactionList,
     AmChartPieStickyContainer
   },
+  mixins: [routerTransitionMixin],
 
   beforeRouteEnter (to, from, next) {
     next(vm => {

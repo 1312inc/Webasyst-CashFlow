@@ -1,24 +1,30 @@
 <template>
   <div class="c-header custom-p-0-mobile">
-    <div class="flexbox wrap-mobile full-width" sticky-ref="controls">
+    <div
+      class="flexbox wrap-mobile full-width"
+      sticky-ref="controls"
+    >
       <div class="width-100">
-        <slot v-if="$helper.isDesktopEnv" name="title"></slot>
+        <slot
+          v-if="$helper.isDesktopEnv"
+          name="title"
+        />
         <div
           v-if="showStickyHeader"
           v-sticky="$helper.isDesktopEnv"
-          :sticky-offset="`{top: ${this.$helper.isHeader() ? 64 : 0}}`"
+          :sticky-offset="`{top: ${$helper.isHeader() ? 64 : 0}}`"
           sticky-z-index="12"
           sticky-width-ref="controls"
           class="c-sticky-header-controls"
           :class="!$helper.isDesktopEnv && 'c-sticky-header-controls--mobile'"
         >
           <TransactionControls
-            :multiselectView="!$helper.isDesktopEnv"
+            :multiselect-view="!$helper.isDesktopEnv"
             class="custom-px-16-mobile"
           />
         </div>
       </div>
-      <slot name="controls"></slot>
+      <slot name="controls" />
     </div>
   </div>
 </template>
@@ -26,15 +32,15 @@
 <script>
 import TransactionControls from '@/components/TransactionControls'
 export default {
+
+  components: {
+    TransactionControls
+  },
   props: {
     showControls: {
       type: Boolean,
       default: true
     }
-  },
-
-  components: {
-    TransactionControls
   },
 
   computed: {

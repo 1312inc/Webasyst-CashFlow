@@ -4,20 +4,20 @@
       <imask-input
         ref="input"
         :value="value"
-        @accept="$emit('input', $event)"
-        @keyup.enter="$emit('keyEnter', $event)"
         :mask="Number"
         :scale="2"
         :signed="signed"
         :unmask="true"
         :radix="delimiters.decimal"
-        :mapToRadix="['.', ',']"
-        :thousandsSeparator="delimiters.thousands"
+        :map-to-radix="['.', ',']"
+        :thousands-separator="delimiters.thousands"
         :placeholder="placeholder"
         :class="classes"
         class="number bold width-100"
         :style="category && `border-color: ${category.color}`"
         type="text"
+        @accept="$emit('input', $event)"
+        @keyup.enter="$emit('keyEnter', $event)"
       />
       <span
         v-if="showSign && categoryType"
@@ -28,14 +28,17 @@
         class="icon"
       >
         <span v-show="categoryType === 'expense'">
-          <i class="fas fa-minus"></i>
+          <i class="fas fa-minus" />
         </span>
         <span v-show="categoryType === 'income'">
-          <i class="fas fa-plus"></i>
+          <i class="fas fa-plus" />
         </span>
       </span>
     </div>
-    <span v-if="account || currencyCode" class="bold">{{
+    <span
+      v-if="account || currencyCode"
+      class="bold"
+    >{{
       $helper.currencySignByCode(account ? account.currency : currencyCode)
     }}</span>
   </div>
@@ -45,6 +48,10 @@
 import { numeral } from '@/plugins/numeralMoment'
 import { IMaskComponent } from 'vue-imask'
 export default {
+
+  components: {
+    'imask-input': IMaskComponent
+  },
   props: {
     value: {
       type: String
@@ -87,10 +94,6 @@ export default {
       type: Boolean,
       default: false
     }
-  },
-
-  components: {
-    'imask-input': IMaskComponent
   },
 
   computed: {

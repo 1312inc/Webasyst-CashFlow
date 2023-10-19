@@ -12,7 +12,7 @@
           : 'fa-exclamation-triangle'
       "
       class="fas custom-mr-4"
-    ></i>
+    />
     {{ message }}
   </div>
 </template>

@@ -1,10 +1,13 @@
 <template>
-  <div v-if="this.$store.state.transaction.chartData.length > 1" class="toggle">
+  <div
+    v-if="$store.state.transaction.chartData.length > 1"
+    class="toggle"
+  >
     <span
-      @click="activeCurrencyChart = i"
-      v-for="(item, i) in this.$store.state.transaction.chartData"
+      v-for="(item, i) in $store.state.transaction.chartData"
       :key="item.currency"
       :class="{ selected: i === activeCurrencyChart }"
+      @click="activeCurrencyChart = i"
     >
       {{ item.currency }}
     </span>

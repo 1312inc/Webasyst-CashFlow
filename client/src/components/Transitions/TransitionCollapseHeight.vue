@@ -6,7 +6,7 @@
     @before-leave="beforeLeave"
     @leave="leave"
   >
-    <slot></slot>
+    <slot />
   </transition>
 </template>
 

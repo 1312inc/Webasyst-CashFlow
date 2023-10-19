@@ -1,13 +1,20 @@
 <template>
-  <div v-click-outside="clickOutside" class="c-picker">
+  <div
+    v-click-outside="clickOutside"
+    class="c-picker"
+  >
     <div
-      @click="showPicker = true"
       :class="{ 'c-picker__square--active': showPicker }"
       :style="`background-color:${value};`"
       class="c-picker__square"
-    ></div>
+      @click="showPicker = true"
+    />
     <transition name="fade">
-      <div v-show="showPicker" class="c-picker__wheel" id="c-picker"></div>
+      <div
+        v-show="showPicker"
+        id="c-picker"
+        class="c-picker__wheel"
+      />
     </transition>
   </div>
 </template>
@@ -16,6 +23,10 @@
 import ClickOutside from 'vue-click-outside'
 import iro from '@jaames/iro'
 export default {
+
+  directives: {
+    ClickOutside
+  },
   props: ['value'],
 
   data () {
@@ -48,10 +59,6 @@ export default {
     clickOutside () {
       this.showPicker = false
     }
-  },
-
-  directives: {
-    ClickOutside
   }
 }
 </script>

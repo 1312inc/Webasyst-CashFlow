@@ -1,13 +1,16 @@
 <template>
-  <div v-if="balanceFlow.length > 0" class="custom-mt-24">
+  <div
+    v-if="balanceFlow.length > 0"
+    class="custom-mt-24"
+  >
     <div class="heading">
-      {{ this.$moment().format("LL") }}
+      {{ $moment().format("LL") }}
     </div>
     <div class="bricks">
       <SidebarCurrencyWidgetsItems
         v-for="item in balanceFlow"
         :key="item.currency"
-        :balanceFlow="item"
+        :balance-flow="item"
       />
     </div>
   </div>
