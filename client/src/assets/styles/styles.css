@@ -47,10 +47,6 @@ html[data-theme='dark'] {
   display: inherit;
 }
 
-.dialog .dialog-body .dialog-content {
-  min-height: auto;
-}
-
 body.modal {
   overflow: hidden;
 }

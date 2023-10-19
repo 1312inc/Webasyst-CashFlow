@@ -41,7 +41,11 @@ export default {
 .dialog {
   display: block;
 
-  .dialog-body {
+  &:deep .dialog-content {
+    min-height: auto;
+    max-height: calc(100vh - 220px);
+  }
+  &:deep .dialog-body {
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
@@ -52,5 +56,6 @@ export default {
       transform: none;
     }
   }
+
 }
 </style>
