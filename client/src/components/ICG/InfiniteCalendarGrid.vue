@@ -24,9 +24,8 @@ const weekDays = new Array(7).fill(undefined).map((_e, i) => {
 })
 
 const containerRef = ref<HTMLElement | null>(null)
-const offsetContainerRef = ref<HTMLElement[] | null>(null)
 const { height } = useElementSize(containerRef)
-const cellHeight = computed(() => height.value / 6)
+const cellHeight = computed(() => Math.ceil(height.value / 6))
 const { y, arrivedState } = useScroll(containerRef)
 const weekDaysNames = computed(() => {
   if (!!props.firstDayOfWeek) {
@@ -83,9 +82,7 @@ watch(activeMonth, async () => {
 })
 
 function gotoCurrentMonth() {
-  if (offsetContainerRef.value) {
-    y.value = offsetContainerRef.value[0].clientHeight
-  }
+  y.value = cellHeight.value * prevMonthRows.value
 }
 </script>
 
@@ -93,7 +90,7 @@ function gotoCurrentMonth() {
   <div class="icg" :firstdayofweek="props.firstDayOfWeek">
     <div class="icg-header">
       <div class="icg-month">
-        {{ activeMonth.toDate().toLocaleDateString(props.locale, { year: 'numeric', month: 'long' }) }}
+        {{ activeMonth.toDate().toLocaleDateString(props.locale, { year: 'numeric', month: 'long' }).replace('г.', "") }}
       </div>
       <div class="icg-controls">
         <button @click="activeMonth = activeMonth.add(-1, 'month')">
@@ -118,7 +115,7 @@ function gotoCurrentMonth() {
       </div>
     </div>
     <div ref="containerRef" class="icg-months-grid">
-      <div v-for="i in 3" :key="i" ref="offsetContainerRef"
+      <div v-for="i in 3" :key="i"
         :class="['icg-months-grid-month', {'icg-months-grid-month--selected': i === 2}]">
         <InfiniteCalendarGridDay v-for="date in daysCountSlices[i - 1]" :key="date.getTime()" :cell-height="cellHeight" :activeMonth="activeMonth.month()"
           :date="date">
@@ -148,6 +145,14 @@ function gotoCurrentMonth() {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
+}
+
+.icg-month {
+  text-transform: capitalize;
+}
+
+.icg-controls {
+  display: flex;
 }
 
 .icg-weekdays {
@@ -186,4 +191,8 @@ function gotoCurrentMonth() {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
+
+/* .icg-months-grid-month:nth-child(3n) {
+  scroll-snap-align: end;
+} */
 </style>

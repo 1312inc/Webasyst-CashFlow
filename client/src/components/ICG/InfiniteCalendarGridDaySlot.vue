@@ -31,7 +31,10 @@ export default {
       {{ date.getDate() }} <span v-if="date.getDate() === 1">{{ getMonthShort(date) }}</span>
     </div>
 
-    <div v-if="props.data">
+    <div
+      v-if="props.data"
+      class="data"
+    >
       <div
         v-for="operation, typeOfOperation in props.data"
         :key="typeOfOperation"
@@ -60,9 +63,6 @@ export default {
 </template>
 
 <style scoped>
-.day {
-    transition: color .3s;
-}
 .icg-months-grid-day--active-month .day {
     color: var(--black);
 }
@@ -79,4 +79,13 @@ export default {
     margin-left: auto;
     transform: translateX(.4rem) translateY(-.4rem);
 }
+
+@media screen and (max-width: 760px) {
+
+  .data {
+    font-size: 0.8rem;
+  }
+
+}
+
 </style>
