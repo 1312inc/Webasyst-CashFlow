@@ -3,12 +3,12 @@
     <ChartHeader>
       <template #title>
         <h1
-          class="flexbox space-12 items-middle custom-m-0 custom-px-16-mobile custom-pt-16-mobile"
+          class="flexbox space-12 middle custom-m-0 custom-px-16-mobile custom-pt-16-mobile"
         >
           <img
             v-if="entity.entity_icon"
             :src="entity.entity_icon"
-            class="userpic userpic-48"
+            style="height: 40px; object-fit: contain;"
           >
           <a
             :href="entity.entity_url"
