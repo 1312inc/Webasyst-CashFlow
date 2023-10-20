@@ -24,7 +24,7 @@ jobs:
           dst_path: /cashflow/src/main/assets/spa/
           filter: '**/!(*.html)'
           dst_owner: 1312inc
-          dst_repo_name: Cash-app-Android
+          dst_repo_name: Webasyst-CashFlow-Android
 
   deploy_ios:
     runs-on: ubuntu-latest
