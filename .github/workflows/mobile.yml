@@ -12,20 +12,9 @@ on:
 
 jobs:
 
-  deploy:
+  deploy_android:
     runs-on: ubuntu-latest
-    steps:       
-      - name: Copy to Cash-app-iOS
-        uses: andstor/copycat-action@v3
-        with:
-          personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
-          src_path: /client/dist/mobile/assets/.
-          src_branch: dev
-          dst_path: /Cashflow/Resources/SPA/
-          filter: '**/!(*.html)'
-          dst_owner: 1312inc
-          dst_repo_name: Cash-app-iOS 
-
+    steps:        
       - name: Copy to Cash-app-Android
         uses: andstor/copycat-action@v3
         with:
@@ -36,3 +25,17 @@ jobs:
           filter: '**/!(*.html)'
           dst_owner: 1312inc
           dst_repo_name: Cash-app-Android
+
+  deploy_ios:
+    runs-on: ubuntu-latest
+    steps:        
+      - name: Copy to Cash-app-iOS
+        uses: andstor/copycat-action@v3
+        with:
+          personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
+          src_path: /client/dist/mobile/assets/.
+          src_branch: dev
+          dst_path: /Cashflow/Resources/SPA/
+          filter: '**/!(*.html)'
+          dst_owner: 1312inc
+          dst_repo_name: Cash-app-iOS
