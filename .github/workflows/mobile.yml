@@ -15,8 +15,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       
       - name: Deploy Android 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.5
