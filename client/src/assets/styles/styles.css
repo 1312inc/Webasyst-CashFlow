@@ -110,7 +110,7 @@ body.modal {
 .c-list .c-item.c-transaction-group .userpic { position: relative; z-index: 1; }
 .c-list .c-item .c-unfold-helper-icon { opacity: 0; }
 .c-list .c-item .c-item-border { border-top: 1px solid var(--border-color-soft); padding: 0.6125rem 0; }
-.c-list .c-item .c-item-amount { text-align: right; }
+.c-list .c-item .c-item-amount { text-align: right; max-width: 100%; }
 .c-list .c-item:first-child .c-item-border { border: none; }
 .c-list .c-item:hover .c-unfold-helper-icon { opacity: 1; }
 .c-item .userpic {display: flex; justify-content: center; align-items: center;}
@@ -124,7 +124,7 @@ body.modal {
 }
 .c-list--compact .c-item {
   padding: 0;
-  width: 120px;
+  width: 90px;
   overflow: hidden;
   flex: none;
 }
@@ -227,5 +227,5 @@ body.modal {
   /* mobile */
   .alert.c-cashgap-prediction-banner { margin-top: 0; }
   .c-list .c-item { padding: 0 0 0 0.6125rem; border-radius: 0; font-size: 1rem; }
-  .c-item .c-item-amount { padding-right: 0.5rem; align-self: baseline; }
+  .c-item .c-item-amount { padding-right: 0.5rem; }
 }
