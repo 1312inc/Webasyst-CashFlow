@@ -12,30 +12,27 @@ on:
 
 jobs:
 
-  deploy_android:
+  deploy:
     runs-on: ubuntu-latest
-    steps:        
-      - name: Copy to Cash-app-Android
-        uses: andstor/copycat-action@v3
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+      
+      - name: Deploy Android 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
-          personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
-          src_path: /client/dist/mobile/assets/.
-          src_branch: dev
-          dst_path: /cashflow/src/main/assets/spa/
-          filter: '**/!(*.html)'
-          dst_owner: 1312inc
-          dst_repo_name: Cash-app-Android
+          token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
+          folder: /client/dist/mobile/assets/
+          repository-name: 1312inc/Cash-app-Android
+          branch: dev-23
+          target-folder: /cashflow/src/main/assets/spa/
 
-  deploy_ios:
-    runs-on: ubuntu-latest
-    steps:        
-      - name: Copy to Cash-app-iOS
-        uses: andstor/copycat-action@v3
+      - name: Deploy iOS 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
-          personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
-          src_path: /client/dist/mobile/assets/.
-          src_branch: dev
-          dst_path: /Cashflow/Resources/SPA/
-          filter: '**/!(*.html)'
-          dst_owner: 1312inc
-          dst_repo_name: Cash-app-iOS
+          token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
+          folder: /client/dist/mobile/assets/
+          repository-name: 1312inc/Cash-app-iOS
+          branch: dev
+          target-folder: /Cashflow/Resources/SPA/
+
