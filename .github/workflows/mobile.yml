@@ -31,8 +31,8 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
-          folder: /client/dist/mobile/assets/
+          folder: client/dist/mobile/assets
           repository-name: 1312inc/Cash-app-iOS
           branch: dev
-          target-folder: /Cashflow/Resources/SPA/
+          target-folder: Cashflow/Resources/SPA
 
