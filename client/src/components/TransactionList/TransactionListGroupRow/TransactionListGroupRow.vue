@@ -1,12 +1,14 @@
 <template>
   <li
-    ref="row"
+    ref="reference"
     class="item c-item"
     :class="classes"
     :style="isRepeatingGroup && 'cursor: initial;'"
+    @mouseover="() => { if (isCompactMode) { openFloating = true } }"
+    @mouseleave="() => { if (isCompactMode) { openFloating = false } }"
   >
     <div
-      v-if="showDate"
+      v-if="showDate && !isCompactMode"
       class="mobile-only custom-py-8"
     >
       <strong>
@@ -26,7 +28,7 @@
       @click="handleClick"
     >
       <div
-        v-if="$helper.showMultiSelect()"
+        v-if="$helper.showMultiSelect() && !isCompactMode"
         class="custom-my-4"
         :class="{ 'desktop-only': $helper.isDesktopEnv }"
         style="width: 1rem; height: 1rem;"
@@ -101,9 +103,7 @@
             class="black small text-ellipsis"
             style="flex-shrink: 1"
           >
-            <span
-              v-if="transaction.description"
-            >
+            <span v-if="transaction.description">
               {{ transaction.description }}
             </span>
             <span
@@ -123,7 +123,7 @@
         <div class="c-item-amount">
           <div
             :style="`color: ${category.color}`"
-            class="bold nowrap custom-mb-4"
+            class="bold nowrap custom-mb-4 text-ellipsis"
           >
             {{
               $helper.toCurrency({
@@ -154,8 +154,11 @@
             </span>
           </div>
         </div>
-        <div v-if="isCompactMode">
-          {{ $moment(transaction.date).fromNow() }}
+        <div
+          v-if="isCompactMode"
+          class="hint align-center"
+        >
+          {{ $moment(transaction.date).format('MMM Do') }}
         </div>
         <transition
           name="fade"
@@ -164,6 +167,7 @@
           <TransactionListCompleteButton
             v-show="transaction.is_onbadge && !archive"
             :transaction="transaction"
+            :is-fixed="isCompactMode"
             :account="account"
             @processEdit="openModal(true)"
           />
@@ -182,17 +186,53 @@
         />
       </Modal>
     </portal>
+
+    <div
+      v-if="openFloating"
+      ref="floating"
+      class="dropdown is-opened"
+      style="z-index: 99;"
+      :style="floatingStyles"
+    >
+      <div
+        class="dropdown-body"
+        style="min-width: 200px;"
+      >
+        <div
+          class="custom-p-8"
+          style="display: flex; flex-direction: column; gap: .2rem;"
+        >
+          <span>{{ transaction.contractor_contact?.name }}</span>
+          <span class="small">{{ `${$t('category')}: ${category.name}` }}</span>
+          <span class="hint">{{ transaction.description || $t('noDesc') }}</span>
+        </div>
+      </div>
+    </div>
   </li>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/Modals/AddTransaction'
 import TransactionListCompleteButton from './TransactionListCompleteButton'
 import TransactionListGroupRowDesc from './TransactionListGroupRowDesc'
 import TransactionListGroupRowGlyph from './TransactionListGroupRowGlyph'
-export default {
+import { useFloating } from '@floating-ui/vue'
 
+const reference = ref(null)
+const floating = ref(null)
+const openFloating = ref(false)
+
+const { floatingStyles } = useFloating(reference, floating, {
+  placement: 'bottom-start',
+  strategy: 'fixed'
+})
+</script>
+
+<script>
+
+export default {
   components: {
     Modal,
     AddTransaction,
@@ -252,7 +292,7 @@ export default {
     account () {
       return (
         this.$store.getters['account/getById'](this.transaction.account_id) ||
-        {}
+    { }
       )
     },
 
@@ -282,14 +322,14 @@ export default {
     isOverdue () {
       return (
         this.transaction.date < this.$helper.currentDate &&
-        this.transaction.is_onbadge
+    this.transaction.is_onbadge
       )
     },
 
     isToday () {
       return (
         this.transaction.date === this.$helper.currentDate &&
-        this.transaction.is_onbadge
+    this.transaction.is_onbadge
       )
     },
 
@@ -313,7 +353,7 @@ export default {
         'c-item-red-process': this.isOverdue || this.isToday,
         'c-item-selected': this.isChecked,
         'c-item--updated':
-          this.transaction.$_flagUpdated || this.transaction.$_flagCreated
+    this.transaction.$_flagUpdated || this.transaction.$_flagCreated
       }
     }
   },
@@ -336,7 +376,7 @@ export default {
       }
       this.offBadgeInTransactionModal = offOnbadge
       if (this.$isSpaMobileMode) {
-        // emitting for the mobile platform
+      // emitting for the mobile platform
         window.emitter.emit('editTransaction', this.transaction)
       } else {
         this.open = true
@@ -381,6 +421,7 @@ export default {
   from {
     background-color: var(--highlighted-green);
   }
+
   to {
     background-color: rgba(255, 255, 255, 0);
   }

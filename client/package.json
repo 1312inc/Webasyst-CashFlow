@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.38",
+    "@floating-ui/vue": "^1.0.2",
     "@jaames/iro": "^5.5.2",
     "@linusborg/vue-simple-portal": "^0.1.5",
     "@uppy/core": "^3.5.1",
