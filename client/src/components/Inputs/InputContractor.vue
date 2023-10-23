@@ -31,8 +31,8 @@
           @input="onInput"
           @keydown.up.prevent="up"
           @keydown.down.prevent="down"
-          @keydown.enter="() => { if (activeMenuIndex === response.length) { reset(); isNewContractorMode = true } else { select(response[activeMenuIndex]) } }"
-          @blur="reset"
+          @keydown.enter="() => { if (activeMenuIndex === response.length) { resetSearch(); isNewContractorMode = true } else { select(response[activeMenuIndex]) } }"
+          @blur="resetSearch"
         >
         <i
           v-if="selectedContractor?.photo_url_absolute"
@@ -46,7 +46,7 @@
       </div>
       <a
         class="icon gray"
-        @click.prevent="inputValue = ''"
+        @click.prevent="inputValue = ''; selectedContractor = null"
       ><i class="fas fa-times" /></a>
     </div>
 
@@ -130,7 +130,7 @@
       <li
         :class="{ active: activeMenuIndex === response.length }"
         class="c-autocomplete-menu__item"
-        @mousedown="() => { reset(); isNewContractorMode = true }"
+        @mousedown="() => { resetSearch(); isNewContractorMode = true }"
       >
         <div class="small flexbox middle space-8 custom-py-8 custom-px-12">
           {{ $t('createNewContact') }}
@@ -181,7 +181,7 @@ export default {
   watch: {
     selectedContractor: {
       handler (contractor) {
-        this.$emit('changeContractor', contractor ? contractor.id : (this.defaultContractor?.id ?? null))
+        this.$emit('changeContractor', contractor?.id || null)
       },
       deep: true
     },
@@ -193,7 +193,6 @@ export default {
     isNewContractorMode (is) {
       this.selectedContractor = null
       this.$emit('newContractor', is ? this.inputValue || null : null)
-      this.$emit('changeContractor', is ? null : this.defaultContractor?.id ?? null)
     },
     response (contractors) {
       const target = contractors.find(c => c.name === this.inputValue)
@@ -209,7 +208,7 @@ export default {
 
   methods: {
     onInput: debounce(function () {
-      this.reset()
+      this.resetSearch()
       this.selectedContractor = null
 
       // make search request
@@ -233,10 +232,10 @@ export default {
     select (contractor) {
       this.selectedContractor = contractor
       this.inputValue = contractor.name
-      this.reset()
+      this.resetSearch()
     },
 
-    reset () {
+    resetSearch () {
       this.response = []
       this.activeMenuIndex = null
     },
