@@ -123,11 +123,11 @@
                     </div>
                 </div>
 
-                <div class="custom-my-24">
+                <div class="custom-my-24 firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <hr class="custom-m-0">
                 </div>
 
-                <div class="field">
+                <div class="field firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <div class="name for-input">
                         [`Categories`]
                     </div>
@@ -282,11 +282,11 @@
                     </div>
                 </div>
 
-                <div class="custom-my-24">
+                <div class="custom-my-24 firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <hr class="custom-m-0">
                 </div>
 
-                <div class="field">
+                <div class="field firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <div class="name">
                         [`Forecasted sales`]
                     </div>
@@ -349,11 +349,11 @@
                     </div>
                 </div>
 
-                <div class="custom-my-24">
+                <div class="custom-my-24 firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <hr class="custom-m-0">
                 </div>
 
-                <div class="field">
+                <div class="field firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <div class="name">
                         [`Order log`]
                     </div>
@@ -415,6 +415,21 @@
                 {/if}
 
                 </section>
+                
+                {if $shopScriptSettings->isFirstTime()}
+                <div class="firstTimeHiddenBlock">
+                    <div class="custom-my-24">
+                        <hr class="custom-m-0">
+                    </div>
+                    
+                    <div class="field custom-mb-40">
+                        <div class="name"></div>
+                        <div class="value">
+                            <a class="firstTimeHiddenBlockToggler">[`Show all import settings`]</a>
+                        </div>
+                    </div>
+                </div>
+                {/if}
 
                 <div class="field">
 
@@ -584,6 +599,10 @@
                     } else {
                         $setW.addClass('c-shop-settings-wrapper-disabled');
                     }
+                })
+                .on('click.cash', '.firstTimeHiddenBlockToggler', function (e) {
+                    e.preventDefault();
+                    $ssform.find('.firstTimeHiddenBlock').toggle();
                 })
             ;
 

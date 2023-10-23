@@ -1005,6 +1005,9 @@ msgstr ""
 msgid "Only orders paid after"
 msgstr ""
 
+msgid "Show all import settings"
+msgstr ""
+
 msgid "Importing"
 msgstr ""
 
