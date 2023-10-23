@@ -25,23 +25,24 @@
           "currencies": <%- currencies %>,
           "categories": <%- categories %>,
           "accounts": <%- accounts %>,
-          "api_settings": <%- settings %>
+          "api_settings": <%- settings %>,
+          "shopscriptInstalled": 1
         };
       </script>
 
     <% if (mode === 'mobile'){ %>
-    
+
       <script src="https://cdn.jsdelivr.net/npm/mitt@3.0.0/dist/mitt.umd.js"></script>
       <script>
         window.emitter = mitt();
       </script>
-    
+
     <% } %>
   </head>
   <body>
 
     <% if (mode === 'desktop'){ %>
-    
+
     <div id="wa-app">
       <div class="flexbox wrap-mobile">
         <div id="app-sidebar"></div>
