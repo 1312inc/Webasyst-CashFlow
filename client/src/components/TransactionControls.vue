@@ -61,11 +61,10 @@
         </button>
       </div>
       <div
-        v-if="
-          currentType.type !== 'expense' &&
-            currentType.type !== 'income' &&
-            $permissions.canAccessTransfers &&
-            $store.state.account.accounts.length > 1
+        v-if="currentType.type !== 'expense' &&
+          currentType.type !== 'income' &&
+          $permissions.canAccessTransfers &&
+          $store.state.account.accounts.length > 1
         "
         class="custom-pb-12"
       >
@@ -178,6 +177,13 @@ export default {
           }, 1500)
         }
       }
+    }
+  },
+
+  mounted () {
+    const addTransactionQuery = this.$route.query.addtransaction
+    if (['income', 'expense'].includes(addTransactionQuery)) {
+      this.addTransaction(addTransactionQuery)
     }
   },
 
