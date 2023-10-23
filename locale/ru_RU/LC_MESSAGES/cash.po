@@ -1014,6 +1014,9 @@ msgstr "Импорт операций"
 msgid "Only orders paid after"
 msgstr "Только начиная с"
 
+msgid "Show all import settings"
+msgstr "Показать все настройки импорта"
+
 msgid "Importing"
 msgstr "Импорт"
 
