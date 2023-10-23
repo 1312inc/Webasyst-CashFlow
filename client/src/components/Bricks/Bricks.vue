@@ -5,7 +5,7 @@
     <a
       v-if="$permissions.canSeeReport"
       :href="`${$helper.baseUrl}report/dds/`"
-      class="brick"
+      class="brick custom-pt-8"
       :class="{
         'selected': $route.path.includes('/report/')
       }"
@@ -18,7 +18,7 @@
     <a
       v-if="$permissions.canImport"
       :href="`${$helper.baseUrl}import/`"
-      class="brick"
+      class="brick custom-pt-8"
       :class="{
         'selected': $route.path === '/import/'
       }"
