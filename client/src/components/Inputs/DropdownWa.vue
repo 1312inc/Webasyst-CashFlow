@@ -15,7 +15,6 @@
         {{ label }}
       </div>
       <div
-        class="c-row-modificator flexbox space-8 middle wrap-mobile align-left"
         v-html="
           activeItem[valuePropName] !== $options.props.value.default
             ? rowModificator(activeItem)
@@ -38,7 +37,7 @@
         >
           {{ groupsLabels[useDefaultValue ? i - 1 : i] }}
         </div>
-        <ul class="menu">
+        <ul class="menu custom-m-0">
           <li
             v-for="(item, j) in group"
             :key="j"
@@ -151,19 +150,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.dropdown .menu {
-    margin: 0;
-}
-.c-row-modificator:deep span {
-    white-space: nowrap;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    flex: auto;
-}
-
-.c-row-modificator:deep span.icon {
-  flex: none;
-}
-</style>
