@@ -2,13 +2,12 @@
   <div v-if="entity">
     <ChartHeader>
       <template #title>
-        <h1
-          class="flexbox space-12 middle custom-m-0 custom-px-16-mobile custom-pt-16-mobile"
-        >
+        <h1 class="flexbox space-12 middle custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
           <img
             v-if="entity.entity_icon"
             :src="entity.entity_icon"
             style="height: 40px; object-fit: contain;"
+            :class="{ 'userpic': $route.meta.getExternalEntitySource === 'contacts' }"
           >
           <a
             :href="entity.entity_url"
@@ -95,7 +94,7 @@ export default {
     async fetch () {
       try {
         const { data } = await api.get(
-      `cash.system.getExternalEntity?source=${this.$route.meta.getExternalEntitySource}&id=${this.$route.params.id}`
+          `cash.system.getExternalEntity?source=${this.$route.meta.getExternalEntitySource}&id=${this.$route.params.id}`
         )
         this.$store.commit('entity/setEntity', data)
 
