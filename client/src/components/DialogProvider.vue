@@ -1,16 +1,13 @@
 <script setup>
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router/composables'
 import { useStorage } from '@vueuse/core'
 import Modal from '@/components/Modal'
+import { appState } from '@/utils/appState'
 
 const router = useRouter()
 const showSsImportHint = ref(false)
-const showSsInstalledInfo = useStorage('cash_show_ss_installed_info', window.appState.shopscriptInstalled ?? 0)
-
-watch(showSsInstalledInfo, (c) => {
-  console.log(c)
-})
+const showSsInstalledInfo = useStorage('cash_show_ss_installed_info', appState.shopscriptInstalled ?? 0)
 
 onMounted(async () => {
   await nextTick()
@@ -24,6 +21,11 @@ function closeSsImportHint () {
   const query = { ...router.currentRoute.query }
   delete query.show_ss_import_hint
   router.replace({ query })
+}
+
+function navigateShopSettings () {
+  showSsInstalledInfo.value = 0
+  window.location.href = `${appState.baseUrl}shop/settings/`
 }
 
 </script>
@@ -41,7 +43,7 @@ function closeSsImportHint () {
               style="justify-content: center;"
             >
               <img
-                :src="`/wa-apps/shop/img/shop.png`"
+                :src="`${appState.baseStaticUrl}img/shop.svg`"
                 alt=""
                 style="height: 72px; width: 72px; object-fit: contain;"
               >
@@ -49,7 +51,7 @@ function closeSsImportHint () {
                 <i class="fas fa-arrow-right" />
               </div>
               <img
-                :src="`/wa-apps/cash/img/cash.png`"
+                :src="`${appState.baseStaticUrl}img/cash.png`"
                 alt=""
                 style="height: 72px; width: 72px; object-fit: contain;"
               >
@@ -67,15 +69,15 @@ function closeSsImportHint () {
               </div>
               <div class="custom-mb-20">
                 <a
-                  class="button"
-                  :href="`${$helper.baseUrl}plugins/`"
+                  class="button green rounded"
+                  @click.prevent="navigateShopSettings"
                 >
                   {{ $i18n.locale === 'ru_RU' ? 'Включить импорт данных из Shop-Script' : 'Import orders data from Shop-Script' }}
                 </a>
               </div>
               <div>
                 <button
-                  class="button white outlined"
+                  class="button light-gray rounded"
                   @click="showSsInstalledInfo = 0"
                 >
                   {{ $i18n.locale === 'ru_RU' ? 'Начать без импорта' : 'Skip import for now' }}

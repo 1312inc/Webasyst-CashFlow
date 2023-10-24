@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <!-- banch of WA deps for the dev mode -->
     <link href="https://cdn.jsdelivr.net/gh/webasyst/webasyst-framework/wa-content/css/wa/wa-2.0.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/gh/webasyst/webasyst-framework/wa-content/js/jquery-wa/wa.switch-mode.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
     <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
@@ -19,9 +18,9 @@
           "webView": <%- mode === 'mobile' %>,
           "accountName": "accountName",
           "lang": "ru_RU",
-          "baseUrl":"/",
+          "baseUrl": "/",
           "baseApiUrl": "/api.php",
-          "baseWAUrl": "/",
+          "baseStaticUrl": "/wa-apps/cash/",
           "token": "<%= token %>",
           "currencies": <%- currencies %>,
           "categories": <%- categories %>,
