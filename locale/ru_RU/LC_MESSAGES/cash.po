@@ -1238,3 +1238,6 @@ msgstr "Скачать пример файла"
 
 msgid "Plugins"
 msgstr "Плагины"
+
+msgid "Import plugins are coming soon. Please stay tuned."
+msgstr "Плагины для импорта данных скоро появятся. Не переключайтесь."
