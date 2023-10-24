@@ -122,6 +122,13 @@ body.modal {
   display: flex;
   overflow-x: auto;
 }
+
+@media screen and (min-width: 760px) {
+  .c-list--compact {
+    margin-left: 2.3rem;
+  }
+}
+
 .c-list--compact .c-item {
   padding: 0;
   width: 90px;
@@ -199,9 +206,9 @@ body.modal {
   background: var(--background-color-blank);
 }
 
-.c-sticky-header-group > div {
+/* .c-sticky-header-group > div {
   padding: 0 0.6125rem;
-}
+} */
 
 .c-sticky-header-group.vue-sticky-el.top-sticky {
   box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.1);
