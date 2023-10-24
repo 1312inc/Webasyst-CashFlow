@@ -37,8 +37,8 @@
 
     <div class="align-center box custom-pt-4">
         <div class="custom-mb-8">
-            <a href="{$info->link}#addincome" target="_blank" class="badge green text-white custom-mr-4"><i class="fas fa-plus"></i> {if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}</a>
-            <a href="{$info->link}#addexpense" target="_blank" class="badge orange text-white"><i class="fas fa-minus"></i> {if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}</a>
+            <a href="{$info->link}?addtransaction=income" target="_blank" class="badge green text-white custom-mr-4 nowrap"><i class="fas fa-plus"></i> {if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}</a>
+            <a href="{$info->link}?addtransaction=expense" target="_blank" class="badge orange text-white nowrap"><i class="fas fa-minus"></i> {if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}</a>
         </div>
         <a href="{$info->link}" target="_blank">
             {if $wa->locale() == 'ru_RU'}Все операции{else}View transactions{/if}

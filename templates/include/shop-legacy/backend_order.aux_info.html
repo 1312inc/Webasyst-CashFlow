@@ -46,8 +46,8 @@
 
     <div class="align-center block" style="margin-top: 0;">
         <div class="custom-mb-8">
-            <a href="{$info->link}#addincome" target="_blank" class="s-cash-app-badge green">&plus; {if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}</a>
-            <a href="{$info->link}#addexpense" target="_blank" class="s-cash-app-badge">&minus; {if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}</a>
+            <a href="{$info->link}?addtransaction=income" target="_blank" class="s-cash-app-badge green nowrap">&plus; {if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}</a>
+            <a href="{$info->link}?addtransaction=expense" target="_blank" class="s-cash-app-badge nowrap">&minus; {if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}</a>
         </div>
         <br>
         <a href="{$info->link}" target="_blank">
