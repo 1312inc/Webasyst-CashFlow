@@ -28,15 +28,15 @@
 
     <script>
         window.appState = {
-            "accountName":"{$wa->accountName()}",
-            "lang":"{$wa->locale()}",
-            "baseUrl":"{$wa_app_url}",
-            "baseApiUrl":"{$wa_url}api.php",
-            "baseWAUrl": "{$wa_url}",
-            "token":"{$token}",
-            "currencies":{$currencies},
-            "categories":{$categories},
-            "accounts":{$accounts},
+            "accountName": "{$wa->accountName()}",
+            "lang": "{$wa->locale()}",
+            "baseUrl": "{$wa_app_url}",
+            "baseApiUrl": "{$wa_url}api.php",
+            "baseStaticUrl": "{$wa_app_static_url}",
+            "token": "{$token}",
+            "currencies": {$currencies},
+            "categories": {$categories},
+            "accounts": {$accounts},
             "api_settings": {$api_settings},
             "shopscriptInstalled": {if $wa->shop}1{else}0{/if}
         };
