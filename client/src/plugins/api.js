@@ -41,11 +41,13 @@ api.interceptors.response.use((response) => {
     return Promise.reject(error)
   }
   if (error.response.data?.error) {
-    store.commit('errors/error', {
-      title: 'error.api',
-      method: error.response.config.url,
-      message: error.response.data.error_description
-    })
+    if (error.response.status !== 404) {
+      store.commit('errors/error', {
+        title: 'error.api',
+        method: error.response.config.url,
+        message: error.response.data.error_description
+      })
+    }
   } else {
     store.commit('errors/error', {
       title: 'error.http',

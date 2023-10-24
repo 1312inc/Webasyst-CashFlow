@@ -17,10 +17,8 @@
       >
       <ul
         v-if="results.length > 1"
-        :style="
-          `top:${$refs.input.offsetTop + $refs.input.offsetHeight}px;width:${
-            $refs.input.offsetWidth
-          }px;`
+        :style="`top:${$refs.input.offsetTop + $refs.input.offsetHeight}px;width:${$refs.input.offsetWidth
+        }px;`
         "
         class="c-autocomplete-menu menu"
       >
@@ -29,42 +27,44 @@
           :key="i"
           :class="{ active: i === activeMenuIndex }"
           class="c-autocomplete-menu__item"
-          @mousedown="activeMenuIndex = i;submit()"
+          @mousedown="activeMenuIndex = i; submit()"
         >
-          <a href="javascript:void(0);">
+          <a @click.prevent="">
             <span
-              v-if="item.entityIcon"
+              v-if="item.entity.photo_url_absolute"
               class="icon"
             >
               <img
-                :src="item.entityIcon"
-                class="userpic"
+                :src="item.entity.photo_url_absolute"
+                :class="{
+                  userpic: item.routeName !== 'Order'
+                }"
                 alt=""
               >
             </span>
             <span
-              v-else-if="item.entityGlyph"
+              v-else-if="item.entity.glyph"
               class="icon"
             >
               <i
-                :class="item.entityGlyph"
-                :style="`color: ${item.entityColor};`"
+                :class="item.entity.glyph"
+                :style="`color: ${item.entity.color};`"
               />
             </span>
             <span
-              v-else-if="item.entityColor"
+              v-else-if="item.entity.color"
               class="icon"
             >
               <i
                 class="rounded"
-                :style="`background-color: ${item.entityColor};`"
+                :style="`background-color: ${item.entity.color};`"
               />
             </span>
             <i
               v-else
               class="fas fa-search"
             />
-            <span>{{ item.entityName }}</span>
+            <span>{{ item.entity.name ?? queryText }}</span>
           </a>
         </li>
       </ul>
@@ -86,56 +86,53 @@ export default {
       results: []
     }
   },
-
   watch: {
     $route: 'resetAutocomplete',
     queryText: debounce(function (val) {
       this.input(val)
     }, 500)
   },
-
   methods: {
     submit () {
-      const routeParams =
-        this.activeMenuIndex > 0
-          ? { params: { id: this.results[this.activeMenuIndex].entityId } }
-          : { query: { text: this.queryText } }
-
       this.$router
         .push({
-          name:
-            this.activeMenuIndex > 0
-              ? this.results[this.activeMenuIndex].entityType
-              : 'Search',
-   ***REMOVED***routeParams
+          name: this.results[this.activeMenuIndex].routeName,
+   ***REMOVED***this.results[this.activeMenuIndex].routeParams
         })
-        .catch(() => {})
+        .catch(() => { })
     },
-
     async input (searchString) {
       if (!searchString || searchString === '0') {
         this.resetAutocomplete()
         return
       }
-
       const searchedContacts = await this.searchContacts(searchString)
       const searchedCategories = this.searchCategories(searchString)
+
+      let searchedOrder
+      if (window.appState.shopscriptInstalled) {
+        searchedOrder = {
+          routeName: 'Order',
+          routeParams: { params: { id: this.queryText } },
+          entity: {
+            name: `${this.$t('Order')} ${this.queryText}`,
+            photo_url_absolute: `${window.appState.baseWAUrl}wa-apps/cash/img/shop.svg`
+          }
+        }
+      }
+
       this.results = [
-        this.makeSearchListObjectFromEntity(searchString),
+        this.makeSearchListObjectFromEntity(searchString, 'Search'),
  ***REMOVED***searchedCategories,
- ***REMOVED***searchedContacts
+ ***REMOVED***searchedContacts,
+        searchedOrder
       ]
     },
-
     searchCategories (searchString) {
-      const cats = this.$store.state.category.categories.filter(c =>
-        c.name.toLowerCase().includes(searchString.toLowerCase())
-      )
-      return cats.map(cat =>
-        this.makeSearchListObjectFromEntity(cat, 'Category')
-      )
+      return this.$store.state.category.categories
+        .filter(c => c.name.toLowerCase().includes(searchString.toLowerCase()))
+        .map(cat => this.makeSearchListObjectFromEntity(cat, 'Category'))
     },
-
     async searchContacts (searchString) {
       const { data } = await api.get('cash.contact.search', {
         params: {
@@ -144,32 +141,22 @@ export default {
       })
       return data.map(e => this.makeSearchListObjectFromEntity(e, 'Contact'))
     },
-
     makeSearchListObjectFromEntity (entity, entityType) {
-      if (typeof entity === 'string') {
-        return {
-          entityName: entity
-        }
-      }
       return {
-        entityId: entity.id,
-        entityName: entity.name,
-        entityIcon: entity.photo_url_absolute,
-        entityGlyph: entity.glyph,
-        entityColor: entity.color,
-        entityType
+        routeName: entityType,
+        routeParams: entityType !== 'Search'
+          ? { params: { id: entity.id } }
+          : { query: { text: entity } },
+        entity
       }
     },
-
     resetAutocomplete () {
       this.results = []
       this.activeMenuIndex = null
-
       if (this.$route.name !== 'Search') {
         this.queryText = ''
       }
     },
-
     up () {
       if (this.results.length) {
         if (this.activeMenuIndex === null) {
@@ -181,7 +168,6 @@ export default {
         }
       }
     },
-
     down () {
       if (this.results.length) {
         if (this.activeMenuIndex === null) {

@@ -40,6 +40,12 @@
       <AmChartPieStickyContainer />
     </div>
   </div>
+  <div
+    v-else
+    class="custom-p-20"
+  >
+    <h3>{{ $t('404.title') }}</h3>
+  </div>
 </template>
 
 <script>
@@ -110,9 +116,9 @@ export default {
           filter: this.$route.meta.fetchTransactionsFilter(this.entity.entity_id)
         })
       } catch (error) {
-        if (error.response.status === 404) {
-          this.$router.replace({ name: 'NotFound' })
-        }
+        // if (error.response.status === 404) {
+        //   this.$router.replace({ name: 'NotFound' })
+        // }
       }
     }
   }
