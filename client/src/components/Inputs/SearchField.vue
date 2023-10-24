@@ -116,7 +116,7 @@ export default {
           routeParams: { params: { id: this.queryText } },
           entity: {
             name: `${this.$t('Order')} ${this.queryText}`,
-            photo_url_absolute: `${window.appState.baseWAUrl}wa-apps/cash/img/shop.svg`
+            photo_url_absolute: `${window.appState.baseStaticUrl}img/shop.svg`
           }
         }
       }
