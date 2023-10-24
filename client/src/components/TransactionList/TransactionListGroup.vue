@@ -20,7 +20,7 @@
         on-stick="onStick"
         class="c-sticky-header-group"
       >
-        <div class="flexbox middle wrap-mobile justify-between custom-py-8">
+        <div class="flexbox middle wrap-mobile justify-between custom-px-8 custom-py-12">
           <div class="flexbox middle space-12">
             <div
               v-if="$helper.showMultiSelect()"
