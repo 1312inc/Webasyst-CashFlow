@@ -71,3 +71,6 @@ if ($innodb) {
 } else {
     throw new waException('InnoDb engine is required');
 }
+
+// Marker used in layouts to greet user at first launch
+(new waAppSettingsModel())->set('cash', 'just_installed', 1);
