@@ -30,6 +30,7 @@
             "categories": {$categories},
             "accounts": {$accounts},
             "api_settings": {$api_settings},
+            "emptyFlow": {json_encode(!empty($emptyFlow))},
             "shopscriptInstalled": {if $wa->shop}1{else}0{/if}
         };
     </script>
