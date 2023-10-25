@@ -287,23 +287,23 @@
               :placeholder="$t('desc')"
             />
             <div
-              v-if="externalSourceInfo"
+              v-if="isModeUpdate && transaction.external_source_info"
               class="custom-mt-8 flexbox middle space-8"
             >
               <span
-                v-if="externalSourceInfo.entity_icon"
+                v-if="transaction.external_source_info.entity_icon"
                 class="icon userpic size-20"
               >
                 <img
-                  :src="externalSourceInfo.entity_icon"
+                  :src="transaction.external_source_info.entity_icon"
                   alt=""
                 >
               </span>
               <a
-                :href="externalSourceInfo.entity_url"
+                :href="transaction.external_source_info.entity_url"
                 target="_blank"
                 class="small"
-              >{{ externalSourceInfo.entity_name }}</a>
+              >{{ transaction.external_source_info.entity_name }}</a>
             </div>
           </div>
           <!-- End Desc section -->
@@ -704,10 +704,6 @@ export default {
           frequency: this.transaction.repeating_data.frequency
         }
       )
-    },
-
-    externalSourceInfo () {
-      return this.model.external ? this.$store.state.entity.entity || this.transaction?.external_source_info : null
     }
   },
 
@@ -751,14 +747,6 @@ export default {
         }
       }
       this.model.amount = `${Math.abs(this.model.amount)}`
-      // Fill external source
-      // TODO: move to entityPageMixin ??
-      if (this.transaction.external_source_info) {
-        this.model.external = {
-          source: this.transaction.external_source,
-          id: this.transaction.external_source_info.id
-        }
-      }
     }
 
     this.transactionType =
