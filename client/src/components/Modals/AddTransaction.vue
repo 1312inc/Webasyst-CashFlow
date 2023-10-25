@@ -261,7 +261,7 @@
             <div v-if="showContractorInput">
               <InputContractor
                 :default-request="`category_id/${model.category_id}`"
-                :default-contractor="$props.transaction ? { id: $props.transaction.contractor_contact_id, ...model.contractor_contact } : null"
+                :default-contractor="model.contractor_contact_id ? { id: model.contractor_contact_id, ...model.contractor_contact } : null"
                 @newContractor="
                   name => {
                     model.contractor = name;
@@ -746,7 +746,9 @@ export default {
     // Fill data if Update mode
     if (this.isModeUpdate) {
       for (const prop in this.model) {
-        this.model[prop] = this.transaction[prop] || this.model[prop]
+        if (prop in this.transaction) {
+          this.model[prop] = this.transaction[prop]
+        }
       }
       this.model.amount = `${Math.abs(this.model.amount)}`
       // Fill external source
