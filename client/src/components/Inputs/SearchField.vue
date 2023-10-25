@@ -94,12 +94,17 @@ export default {
   },
   methods: {
     submit () {
-      if (this.results.length) {
+      if (this.queryText) {
         this.$router
-          .push({
-            name: this.results[this.activeMenuIndex ?? 0].routeName,
-     ***REMOVED***this.results[this.activeMenuIndex ?? 0].routeParams
-          })
+          .push(this.activeMenuIndex !== null
+            ? {
+                name: this.results[this.activeMenuIndex ?? 0].routeName,
+         ***REMOVED***this.results[this.activeMenuIndex ?? 0].routeParams
+              }
+            : {
+                name: 'Search',
+                query: { text: this.queryText }
+              })
           .catch(() => { })
       }
     },
@@ -158,9 +163,7 @@ export default {
     resetAutocomplete () {
       this.results = []
       this.activeMenuIndex = null
-      if (this.$route.name !== 'Search') {
-        this.queryText = ''
-      }
+      this.queryText = ''
     },
     up () {
       if (this.results.length) {
