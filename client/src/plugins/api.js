@@ -23,13 +23,13 @@ api.interceptors.response.use((response) => {
       message: i18n.t('error.nonJsonText')
     })
   }
-  if (response.data?.error) {
-    store.commit('errors/error', {
-      title: 'error.api',
-      method: response.config.url,
-      message: response.data.error_description
-    })
-  }
+  // if (response.data?.error) {
+  //   store.commit('errors/error', {
+  //     title: 'error.api',
+  //     method: response.config.url,
+  //     message: response.data.error_description
+  //   })
+  // }
   return response
 }, (error) => {
   if (!error.response.headers['content-type'].includes('application/json')) {
