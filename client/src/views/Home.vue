@@ -9,6 +9,7 @@
         <ChartHeaderControls />
       </template>
     </ChartHeader>
+    <AlertImported />
     <AmChartContainer />
     <DetailsDashboard />
     <div class="flexbox">
@@ -33,6 +34,7 @@ import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
+import AlertImported from '../components/AlertImported.vue'
 
 export default {
 
@@ -44,7 +46,8 @@ export default {
     AmChartContainer,
     DetailsDashboard,
     TransactionList,
-    AmChartPieStickyContainer
+    AmChartPieStickyContainer,
+    AlertImported
   },
   mixins: [routerTransitionMixin],
 

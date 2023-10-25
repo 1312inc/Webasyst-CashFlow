@@ -711,7 +711,7 @@
                                     onReady: function (r) {
                                         $progressSuccess.show().siblings().hide();
                                         progressInstance.set({ percentage: Math.round(r.progress) });
-                                        window.location = window.appState.baseUrl + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
+                                        window.location = window.appState.baseUrl + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val() + '?show_ss_import_hint=1';
                                     },
                                     onError: function (r) {
                                         $progressError.show().siblings().hide();
