@@ -38,6 +38,7 @@
             "categories": {$categories},
             "accounts": {$accounts},
             "api_settings": {$api_settings},
+            "emptyFlow": {json_encode(!empty($emptyFlow))},
             "shopscriptInstalled": {if $wa->shop}1{else}0{/if}
         };
     </script>
@@ -52,7 +53,7 @@
         <div class="flexbox wrap-mobile">
             <div id="app-sidebar" class="sidebar width-16rem"></div>
             <div class="content blank" id="cash-content">
-                {$content}
+                {$content|default:''}
             </div>
         </div>
     </div>
