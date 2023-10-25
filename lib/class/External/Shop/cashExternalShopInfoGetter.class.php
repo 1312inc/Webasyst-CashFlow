@@ -11,11 +11,21 @@ final class cashExternalShopInfoGetter implements cashExternalSourceInfoGetterIn
         }
 
         wa(self::APP);
-        try {
-            $order = new shopOrder((int) $id);
-        } catch (waException $e) {
+
+        // Normal format?
+        if (wa_is_int($id)) {
+            $collection = new shopOrdersCollection('id/'.$id);
+            $orders = $collection->getOrders('id', 0, 1);
+        }
+        if (empty($orders)) {
+            // frontend format
+            $collection = new shopOrdersCollection('search/id='.$id);
+            $orders = $collection->getOrders('id', 0, 1);
+        }
+        if (!$orders) {
             return null;
         }
+        $id = (int) reset($orders)['id'];
 
         $info = wa()->getAppInfo(self::APP);
         $rootUrl = rtrim(wa()->getRootUrl(true), '/');
