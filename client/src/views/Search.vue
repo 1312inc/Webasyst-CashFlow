@@ -1,11 +1,9 @@
 <template>
   <div>
-    <ChartHeader
-      :show-controls="false"
-    >
+    <ChartHeader :show-controls="false">
       <template #title>
         <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
-          {{ $route.query.text }}
+          {{ $route.query.text }}<span v-if="!transactions.length && !loading">: {{ $t('notFound') }}</span>
         </h1>
       </template>
     </ChartHeader>
@@ -19,9 +17,7 @@
           :show-founded-count="true"
         />
       </div>
-      <AmChartPieStickyContainer
-        :selected-only-mode="true"
-      />
+      <AmChartPieStickyContainer :selected-only-mode="true" />
     </div>
   </div>
 </template>
@@ -40,6 +36,16 @@ export default {
     AmChartPieStickyContainer
   },
   mixins: [routerTransitionMixin],
+
+  computed: {
+    transactions () {
+      return this.$store.state.transaction.transactions.data
+    },
+
+    loading () {
+      return this.$store.state.transaction.loading
+    }
+  },
 
   watch: {
     $route: 'makeSearch'
