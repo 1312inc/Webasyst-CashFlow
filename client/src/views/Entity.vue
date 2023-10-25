@@ -1,5 +1,11 @@
 <template>
-  <div v-if="entity">
+  <div
+    v-if="error"
+    class="c-header custom-p-0-mobile"
+  >
+    <h1>{{ $route.params.id }}: {{ error }}</h1>
+  </div>
+  <div v-else-if="entity">
     <ChartHeader>
       <template #title>
         <h1 class="flexbox space-12 middle custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
@@ -40,12 +46,6 @@
       <AmChartPieStickyContainer />
     </div>
   </div>
-  <div
-    v-else
-    class="custom-p-20"
-  >
-    <h3>{{ $t('404.title') }}</h3>
-  </div>
 </template>
 
 <script>
@@ -68,18 +68,25 @@ export default {
     TransactionList,
     AmChartPieStickyContainer
   },
+
   mixins: [routerTransitionMixin],
+
+  beforeRouteLeave (to, from, next) {
+    this.$store.commit('entity/resetEntity')
+    next()
+  },
+
+  data () {
+    return {
+      error: null
+    }
+  },
 
   metaInfo () {
     return {
       title: this.entity?.entity_name || '',
       titleTemplate: `%s – ${window.appState?.accountName || ''}`
     }
-  },
-
-  beforeRouteLeave (to, from, next) {
-    this.$store.commit('entity/resetEntity')
-    next()
   },
 
   computed: {
@@ -98,10 +105,18 @@ export default {
 
   methods: {
     async fetch () {
+      this.error = null
+
       try {
         const { data } = await api.get(
           `cash.system.getExternalEntity?source=${this.$route.meta.getExternalEntitySource}&id=${this.$route.params.id}`
         )
+
+        if (data.error) {
+          this.handleResponseError(data)
+          return
+        }
+
         this.$store.commit('entity/setEntity', data)
 
         this.$store.commit('transaction/updateQueryParams', { filter: this.$route.meta.fetchTransactionsFilter(this.entity.entity_id) })
@@ -116,10 +131,15 @@ export default {
           filter: this.$route.meta.fetchTransactionsFilter(this.entity.entity_id)
         })
       } catch (error) {
+        this.handleResponseError(error.response.data)
         // if (error.response.status === 404) {
         //   this.$router.replace({ name: 'NotFound' })
         // }
       }
+    },
+
+    handleResponseError (error) {
+      this.error = error.error_description ?? 'Error'
     }
   }
 }

@@ -90,16 +90,18 @@ export default {
     $route: 'resetAutocomplete',
     queryText: debounce(function (val) {
       this.input(val)
-    }, 500)
+    }, 300)
   },
   methods: {
     submit () {
-      this.$router
-        .push({
-          name: this.results[this.activeMenuIndex].routeName,
-   ***REMOVED***this.results[this.activeMenuIndex].routeParams
-        })
-        .catch(() => { })
+      if (this.results.length) {
+        this.$router
+          .push({
+            name: this.results[this.activeMenuIndex ?? 0].routeName,
+     ***REMOVED***this.results[this.activeMenuIndex ?? 0].routeParams
+          })
+          .catch(() => { })
+      }
     },
     async input (searchString) {
       if (!searchString || searchString === '0') {
@@ -110,7 +112,7 @@ export default {
       const searchedCategories = this.searchCategories(searchString)
 
       let searchedOrder
-      if (window.appState.shopscriptInstalled) {
+      if (window.appState.shopscriptInstalled && /^\d+$/.test(this.queryText)) {
         searchedOrder = {
           routeName: 'Order',
           routeParams: { params: { id: this.queryText } },
@@ -124,9 +126,12 @@ export default {
       this.results = [
         this.makeSearchListObjectFromEntity(searchString, 'Search'),
  ***REMOVED***searchedCategories,
- ***REMOVED***searchedContacts,
-        searchedOrder
+ ***REMOVED***searchedContacts
       ]
+
+      if (searchedOrder) {
+        this.results.push(searchedOrder)
+      }
     },
     searchCategories (searchString) {
       return this.$store.state.category.categories
