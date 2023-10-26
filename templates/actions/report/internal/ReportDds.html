@@ -41,7 +41,11 @@
                             {foreach $values as $currency => $value}
                                 <div class="nowrap align-right{if $smarty.foreach.foreach_month_columns.iteration == 13}black bold{/if} {if $smarty.foreach.foreach_month_columns.iteration == 14} hidden{/if} {if isset($value['month']) && $value['month'] == $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y'}bold{/if} {if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y' ) || $currentPeriod->getValue() > $smarty.now|date_format:'Y')}gray{/if}">
                                     {if $datum->entity->getId() !== 'all_income' && $datum->entity->getId() !== 'all_expense' && isset($value.currency)}
-                                        {$size = 30 * abs($value.per_month/$currenciesTotals[$value.currency]['per_month'])}
+                                        {if $currenciesTotals[$value.currency]['per_month'] != 0}
+                                            {$size = 30 * abs($value.per_month/$currenciesTotals[$value.currency]['per_month'])}
+                                        {else}
+                                            {$size = 1}
+                                        {/if}
                                         {$size = ($size > 0 && $size < 6) ? 6 : $size}
                                         <div class="c-report-dds-dataCircle" style="display:flex;align-items:center;height:34px;">
                                             <div style="margin-left:auto;width:{$size}px;height:{$size}px;border-radius:50%;background-color:{$datum->entity->getColor()};{if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y' ) || $currentPeriod->getValue() > $smarty.now|date_format:'Y')}opacity: 0.5;{/if}"></div>
