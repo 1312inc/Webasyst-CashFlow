@@ -3,10 +3,10 @@ import { useStorage } from '@vueuse/core'
 import Modal from '@/components/Modal'
 import { appState } from '@/utils/appState'
 
-const showSsInstalledInfo = useStorage('cash_show_ss_installed_info', appState.shopscriptInstalled ?? 0)
+const showSsInstalledInfo = useStorage('cash_show_ss_installed_info', appState.shopscriptInstalled && appState.emptyFlow)
 
 function navigateShopSettings () {
-  showSsInstalledInfo.value = 0
+  showSsInstalledInfo.value = false
   window.location.href = `${appState.baseUrl}shop/settings/`
 }
 
@@ -60,7 +60,7 @@ function navigateShopSettings () {
               <div>
                 <button
                   class="button light-gray rounded"
-                  @click="showSsInstalledInfo = 0"
+                  @click="showSsInstalledInfo = false"
                 >
                   {{ $i18n.locale === 'ru_RU' ? 'Начать без импорта' : 'Skip import for now' }}
                 </button>

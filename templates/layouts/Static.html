@@ -39,7 +39,7 @@
             "accounts": {$accounts},
             "api_settings": {$api_settings},
             "emptyFlow": {json_encode(!empty($emptyFlow))},
-            "shopscriptInstalled": {if $wa->shop}1{else}0{/if}
+            "shopscriptInstalled": {json_encode(boolval($wa->shop))}
         };
     </script>
 
