@@ -1,15 +1,15 @@
 /* Cash app static monolyth components
 -------------------------------------- */
 
-.c-import-progress { padding-left: 20px; color: #aaa; }
-.c-import-progress li.completed { color: #000; }
-.c-import-progress li.current { font-weight: bold; color: #000; }
+.c-import-progress { padding-left: 20px; color: var(--light-gray); }
+.c-import-progress li.completed { color: var(--text-color-black); }
+.c-import-progress li.current { font-weight: bold; color: var(--text-color-strong); }
 .c-import-preview .c-parsed-rows { position: relative; max-width: 80%; max-height: 300px; overflow: hidden; }
 .c-import-preview .c-parsed-rows-content { overflow: scroll; max-height: 300px; }
-.c-import-preview .c-parsed-rows-shader { position: absolute; bottom: 0; left: 0; right: 0; height: 30%; background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%); }
+.c-import-preview .c-parsed-rows-shader { position: absolute; bottom: 0; left: 0; right: 0; height: 30%; background: linear-gradient(0deg, var(--background-color-blank) 0%, rgba(255,255,255,0) 100%); }
 table.c-import-conditions { margin: 1rem 0; }
 table.c-import-conditions td { border: none; }
-table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1px; color: #888; }
+table.c-import-conditions td .c-condition { background: var(--background-color); padding: 2px 3px 1px; color: var(--gray); }
 
 .c-settings-columns { display: flex; margin-top: -10px; }
 .c-settings-columns .c-column { flex: 0 1 200px; padding-right: 50px; padding-left: 16px; }
@@ -17,7 +17,7 @@ table.c-import-conditions td .c-condition { background: #eee; padding: 2px 3px 1
 
 .c-shop-settings-wrapper-disabled { opacity: 0.5; }
 
-.c-notice { background: #e0ffdd; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 5px 10px -5px rgba(0,0,0,0.1); border-radius: 4px; padding: 30px 40px; margin: 10px 0; line-height: 1.3em; }
+.c-notice { background: var(--highlighted-blue); border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 5px 10px -5px rgba(0,0,0,0.1); border-radius: 4px; padding: 30px 40px; margin: 10px 0; line-height: 1.3em; }
 
 .c-report-dds-outer { position: relative; margin-bottom: 6rem; min-width: 640px; }
 .c-report-dds-inner {
