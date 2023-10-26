@@ -51,7 +51,8 @@
             :key="i"
             :class="{ selected: transactionType === type }"
             @click="transactionType = type"
-          >{{ $t(type) }}</span>
+          >{{ $t(type)
+          }}</span>
         </div>
         <!-- End Toggle type section -->
       </div>
@@ -161,27 +162,24 @@
             <div
               v-if="transactionType !== 'transfer'"
               class="custom-px-8 gray"
-              :style="
-                transactionType === 'expense'
-                  ? 'transform: rotate(180deg);'
-                  : ''
+              :style="transactionType === 'expense'
+                ? 'transform: rotate(180deg);'
+                : ''
               "
             >
               <i class="fas fa-arrow-right" />
             </div>
 
             <div
-              :class="
-                transactionType === 'transfer' && isModeUpdate
-                  ? 'width-100'
-                  : 'width-50'
+              :class="transactionType === 'transfer' && isModeUpdate
+                ? 'width-100'
+                : 'width-50'
               "
             >
               <DropdownWa
                 v-model="model.account_id"
                 :error="$v.model.account_id.$error"
-                :label="
-                  transactionType === 'transfer' && isModeUpdate ? $t('account') :
+                :label="transactionType === 'transfer' && isModeUpdate ? $t('account') :
                   transactionType === 'transfer' ||
                   transactionType === 'expense'
                     ? $t('fromAccount')
@@ -262,15 +260,13 @@
               <InputContractor
                 :default-request="`category_id/${model.category_id}`"
                 :default-contractor="model.contractor_contact_id ? { id: model.contractor_contact_id, ...model.contractor_contact } : null"
-                @newContractor="
-                  name => {
-                    model.contractor = name;
-                  }
+                @newContractor="name => {
+                  model.contractor = name;
+                }
                 "
-                @changeContractor="
-                  id => {
-                    model.contractor_contact_id = id;
-                  }
+                @changeContractor="id => {
+                  model.contractor_contact_id = id;
+                }
                 "
               />
             </div>
@@ -292,7 +288,7 @@
             >
               <span
                 v-if="transaction.external_source_info.entity_icon"
-                class="icon userpic size-20"
+                class="icon size-20"
               >
                 <img
                   :src="transaction.external_source_info.entity_icon"
@@ -300,10 +296,17 @@
                 >
               </span>
               <a
+                v-if="transaction.external_source !== 'shop'"
                 :href="transaction.external_source_info.entity_url"
                 target="_blank"
                 class="small"
               >{{ transaction.external_source_info.entity_name }}</a>
+              <RouterLink
+                v-else
+                :to="{ name: 'Order', params: { id: transaction.external_source_info.id } }"
+              >
+                {{ transaction.external_source_info.entity_name }}
+              </RouterLink>
             </div>
           </div>
           <!-- End Desc section -->
@@ -350,11 +353,13 @@
               <span
                 :class="{ selected: !model.is_repeating }"
                 @click="model.is_repeating = false"
-              >{{ $t("oneTime") }}</span>
+              >{{ $t("oneTime")
+              }}</span>
               <span
                 :class="{ selected: model.is_repeating }"
                 @click="model.is_repeating = true"
-              >{{ $t("repeating") }}</span>
+              >{{ $t("repeating")
+              }}</span>
             </div>
           </div>
           <!-- End Repeat section -->
@@ -489,10 +494,9 @@
               'c-button-add-expense': transactionType === 'expense',
               'c-button-add-income': transactionType === 'income'
             }"
-            :style="
-              selectedCategory && {
-                'background-color': selectedCategory.color
-              }
+            :style="selectedCategory && {
+              'background-color': selectedCategory.color
+            }
             "
             class="button"
             @click="submit"
