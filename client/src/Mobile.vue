@@ -8,7 +8,7 @@
     </div>
     <div
       class="content blank"
-      style="overflow:hidden;"
+      style="overflow:hidden; min-height: 100vh;"
     >
       <div
         sticky-container
