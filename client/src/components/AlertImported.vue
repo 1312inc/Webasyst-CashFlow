@@ -1,8 +1,9 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router/composables'
+import { onMounted, ref, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router/composables'
 
 const router = useRouter()
+const route = useRoute()
 const show = ref(false)
 
 onMounted(() => {
@@ -12,6 +13,10 @@ onMounted(() => {
     const query = { ...router.currentRoute.query }
     delete query.show_ss_import_hint
     router.replace({ query })
+
+    watch(() => route.fullPath, () => {
+      show.value = false
+    })
   }
 })
 
