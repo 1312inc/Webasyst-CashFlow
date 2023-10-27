@@ -9,6 +9,9 @@
         <ChartHeaderControls />
       </template>
     </ChartHeader>
+    <div style="position: sticky; top: 0;z-index: 999;background-color: var(--background-color-blank);">
+      <TransactionControls />
+    </div>
     <AlertImported />
     <AmChartContainer />
     <DetailsDashboard />
@@ -35,6 +38,7 @@ import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import AlertImported from '../components/AlertImported.vue'
+import TransactionControls from '@/components/TransactionControls'
 
 export default {
 
@@ -47,7 +51,8 @@ export default {
     DetailsDashboard,
     TransactionList,
     AmChartPieStickyContainer,
-    AlertImported
+    AlertImported,
+    TransactionControls
   },
   mixins: [routerTransitionMixin],
 

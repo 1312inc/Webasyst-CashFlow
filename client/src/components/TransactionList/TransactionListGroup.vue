@@ -1,9 +1,7 @@
 <template>
-  <div
-    sticky-container
-    class="custom-mt-16 c-transaction-section"
-  >
+  <div class="c-transaction-section">
     <div
+      ref="el"
       @mouseover="
         isHover = true;
         if ($refs.pieIcon) $refs.pieIcon.style.display = 'block';
@@ -13,13 +11,7 @@
         if ($refs.pieIcon) $refs.pieIcon.style.display = 'none';
       "
     >
-      <div
-        v-sticky
-        :sticky-offset="stickyOffset"
-        sticky-z-index="11"
-        on-stick="onStick"
-        class="c-sticky-header-group"
-      >
+      <div class="c-sticky-header-group">
         <div class="flexbox middle wrap-mobile justify-between custom-px-8 custom-py-12">
           <div class="flexbox middle space-12">
             <div
@@ -114,7 +106,7 @@
               ref="pieIcon"
               class="desktop-only c-pie-icon-helper"
               style="display: none; cursor: pointer"
-              @click="onStick({ sticked: true })"
+              @click="onStick"
             >
               <i class="fas fa-chart-pie" />
             </div>
@@ -155,12 +147,9 @@
   </div>
 </template>
 
-<script setup>
-import { useStorage } from '@vueuse/core'
-
-</script>
-
 <script>
+import { ref, watch } from 'vue'
+import { useStorage, useElementBounding } from '@vueuse/core'
 import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPeriod'
 import TransactionListGroupRow from './TransactionListGroupRow/TransactionListGroupRow'
 import AmountForGroup from '@/components/PeriodAmount/AmountForGroup'
@@ -226,10 +215,6 @@ export default {
       return this.isShowChecker ? true : this.isHover
     },
 
-    stickyOffset () {
-      return this.$helper.isDesktopEnv ? (this.showFoundedCount ? '{"top": 56}' : `{"top": ${this.$helper.isHeader() ? 114 : 56}}`) : '{"top": 0}'
-    },
-
     featurePeriod () {
       return this.$store.state.transaction.featurePeriod
     },
@@ -272,7 +257,7 @@ export default {
           this.$store.state.transaction.activeGroupTransactions.index ===
           this.index
         ) {
-          this.onStick({ sticked: true })
+          this.onStick()
         }
 
         const hash = {}
@@ -304,9 +289,27 @@ export default {
     }
   },
 
+  mounted () {
+    const that = this
+
+    const enableWatch = ref(true)
+    const { top } = useElementBounding(this.$refs.el)
+
+    watch(top, top => {
+      if (top < 120 && enableWatch.value) {
+        that.onStick()
+        enableWatch.value = false
+      }
+      if (top > 120 && !enableWatch.value) {
+        that.onStick()
+        enableWatch.value = true
+      }
+    })
+  },
+
   created () {
     if (this.index === 0) {
-      this.onStick({ sticked: true })
+      this.onStick()
     }
   },
 
@@ -360,20 +363,25 @@ export default {
       )
     },
 
-    onStick (e) {
-      if (e.sticked) {
-        this.$store.commit('transaction/setActiveGroupTransactions', {
-          index: this.index,
-          name: this.type,
-          items: this.filteredTransactions
-        })
-      }
+    onStick () {
+      this.$store.commit('transaction/setActiveGroupTransactions', {
+        index: this.index,
+        name: this.type,
+        items: this.filteredTransactions
+      })
     }
   }
 }
 </script>
 
 <style>
+.c-sticky-header-group {
+  position: sticky;
+  top: 60px;
+  z-index: 99;
+  background-color: var(--background-color-blank);
+}
+
 .c-pie-icon-helper {
   opacity: 0.5;
   transition: 0.2s opacity;

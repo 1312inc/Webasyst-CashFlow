@@ -4,7 +4,7 @@
       :show-controls="false"
     >
       <template #title>
-        <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
+        <h1 class="">
           {{ $t("importResults") }}
         </h1>
         <div

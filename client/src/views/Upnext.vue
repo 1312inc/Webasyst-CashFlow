@@ -2,7 +2,7 @@
   <div>
     <ChartHeader>
       <template #title>
-        <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
+        <h1 class="">
           {{ $t("upnext") }}
         </h1>
       </template>

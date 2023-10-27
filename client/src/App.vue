@@ -1,11 +1,6 @@
 <template>
-  <DialogProvider class="content hide-scrollbar blank">
-    <div
-      sticky-container
-      class="box custom-px-8 custom-p-0-mobile"
-    >
-      <router-view />
-    </div>
+  <DialogProvider class="content blank custom-pb-24">
+    <router-view />
   </DialogProvider>
 </template>
 

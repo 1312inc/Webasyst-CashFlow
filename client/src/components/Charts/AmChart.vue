@@ -593,7 +593,7 @@ export default {
 <style lang="scss">
   .c-chart-main {
     height: 300px;
-    margin: 0 1.25rem 0 1rem;
+    margin-right: 1.25rem;
 
     @media (max-width: 760px) {
       height: 400px !important;

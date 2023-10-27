@@ -24,8 +24,8 @@ onMounted(() => {
 
 <template>
   <div
-    class="c-header custom-py-0"
     style="max-width: 1000px;"
+    class="custom-m-12 custom-ml-32 custom-ml-12-mobile"
   >
     <div
       v-if="show"
