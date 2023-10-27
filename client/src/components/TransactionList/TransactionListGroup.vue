@@ -377,7 +377,7 @@ export default {
 <style>
 .c-sticky-header-group {
   position: sticky;
-  top: 60px;
+  top: calc(60px + 4rem);
   z-index: 99;
   background-color: var(--background-color-blank);
 }
