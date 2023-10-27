@@ -30,7 +30,7 @@
         <ChartHeaderControls />
       </template>
     </ChartHeader>
-    <div style="position: sticky; top: 0;z-index: 999;background-color: var(--background-color-blank);">
+    <div style="position: sticky; top: 4rem;z-index: 999;background-color: var(--background-color-blank);">
       <TransactionControls />
     </div>
     <template v-if="$route.meta.showChart">
