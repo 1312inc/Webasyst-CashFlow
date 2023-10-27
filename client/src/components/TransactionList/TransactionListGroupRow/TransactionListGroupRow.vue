@@ -202,8 +202,12 @@
           class="custom-p-8"
           style="display: flex; flex-direction: column; gap: .2rem;"
         >
-          <span>{{ transaction.contractor_contact?.name }}</span>
-          <span class="small">{{ `${$t('category')}: ${category.name}` }}</span>
+          <span v-if="transaction.contractor_contact?.name">{{ transaction.contractor_contact.name }}</span>
+          <span
+            v-if="category"
+            :style="`color: ${category.color}`"
+            class="bold nowrap small text-ellipsis"
+          >{{ category.name }}</span>
           <span class="hint">{{ transaction.description || $t('noDesc') }}</span>
         </div>
       </div>
