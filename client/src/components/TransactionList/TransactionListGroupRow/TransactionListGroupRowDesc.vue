@@ -12,16 +12,11 @@
     </div>
     <!-- if collapsed transactions header -->
     <template v-if="collapseHeaderData && transaction.external_source_info">
-      <span
-        v-if="transaction.external_source_info"
-        :style="`color:${transaction.external_source_info.color}`"
-        :title="transaction.external_source_info.name"
-        class="small"
-      >
-        <i
-          :class="transaction.external_source_info.glyph"
-          class="fas"
-        />
+      <span class="icon">
+        <img
+          :src="transaction.external_source_info.entity_icon"
+          alt=""
+        >
       </span>
     </template>
     <!-- if repeating transactions in future -->
@@ -44,14 +39,12 @@
     <template v-else>
       <span
         v-if="transaction.external_source_info"
-        :style="`color:${transaction.external_source_info.color}`"
-        :title="transaction.external_source_info.name"
-        class="small"
+        class="icon"
       >
-        <i
-          :class="transaction.external_source_info.glyph"
-          class="fas"
-        />
+        <img
+          :src="transaction.external_source_info.entity_icon"
+          alt=""
+        >
       </span>
       <span
         v-if="transaction.repeating_id"
