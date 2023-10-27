@@ -191,7 +191,7 @@
       v-if="openFloating"
       ref="floating"
       class="dropdown is-opened"
-      style="z-index: 99;"
+      style="z-index: 999;"
       :style="floatingStyles"
     >
       <div

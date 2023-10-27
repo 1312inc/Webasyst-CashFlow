@@ -2,7 +2,7 @@
   <div>
     <ChartHeader :show-controls="false">
       <template #title>
-        <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
+        <h1 class="">
           {{ $route.query.text }}<span v-if="!transactions.length && !loading">: {{ $t('notFound') }}</span>
         </h1>
       </template>

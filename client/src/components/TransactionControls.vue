@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div
+  <div class="c-transaction-controls custom-pl-32 custom-pl-12-mobile">
+    <!-- <div
       v-if="checkedRows.length && multiselectView"
       class="flexbox space-12 middle custom-py-12"
       :class="direction === 'column' && 'vertical'"
@@ -29,17 +29,14 @@
       >
         {{ $t("unselectAll") }}
       </button>
-    </div>
+    </div> -->
 
     <div
       v-if="$helper.isDesktopEnv && currentType"
       ref="controlButtons"
-      class="flexbox wrap space-12 middle custom-pt-12"
+      class="flexbox wrap space-12 middle"
     >
-      <div
-        v-show="currentType.type !== 'expense'"
-        class="custom-pb-12"
-      >
+      <div v-show="currentType.type !== 'expense'">
         <button
           class="button c-button-add-income nowrap"
           @click="addTransaction('income')"
@@ -48,10 +45,7 @@
           <span class="custom-ml-8">{{ $t("addIncome") }}</span>
         </button>
       </div>
-      <div
-        v-show="currentType.type !== 'income'"
-        class="custom-pb-12"
-      >
+      <div v-show="currentType.type !== 'income'">
         <button
           class="button c-button-add-expense nowrap"
           @click="addTransaction('expense')"
@@ -66,7 +60,6 @@
           $permissions.canAccessTransfers &&
           $store.state.account.accounts.length > 1
         "
-        class="custom-pb-12"
       >
         <button
           class="button light-gray nowrap"
@@ -78,7 +71,7 @@
           </span>
         </button>
       </div>
-      <div class="custom-pb-12">
+      <div>
         <button
           class="button nobutton gray nowrap"
           @click="openAddBulk = true"
@@ -211,3 +204,11 @@ export default {
   }
 }
 </script>
+
+<style>
+.c-transaction-controls {
+  display: flex;
+  align-items: center;
+  height: 60px;
+}
+</style>

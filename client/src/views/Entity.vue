@@ -1,14 +1,14 @@
 <template>
   <div
     v-if="error"
-    class="c-header custom-p-0-mobile"
+    class="c-header custom-m-12 custom-ml-32 custom-ml-12-mobile"
   >
     <h1>{{ $route.params.id }}: {{ error }}</h1>
   </div>
   <div v-else-if="entity">
     <ChartHeader>
       <template #title>
-        <h1 class="flexbox space-12 middle custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
+        <h1 class="flexbox space-12 middle ">
           <img
             v-if="entity.entity_icon"
             :src="entity.entity_icon"
@@ -30,6 +30,9 @@
         <ChartHeaderControls />
       </template>
     </ChartHeader>
+    <div style="position: sticky; top: 0;z-index: 999;background-color: var(--background-color-blank);">
+      <TransactionControls />
+    </div>
     <template v-if="$route.meta.showChart">
       <AmChartContainer />
       <DetailsDashboard />
@@ -56,6 +59,7 @@ import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
+import TransactionControls from '@/components/TransactionControls'
 import api from '@/plugins/api'
 
 export default {
@@ -66,7 +70,8 @@ export default {
     AmChartContainer,
     DetailsDashboard,
     TransactionList,
-    AmChartPieStickyContainer
+    AmChartPieStickyContainer,
+    TransactionControls
   },
 
   mixins: [routerTransitionMixin],
