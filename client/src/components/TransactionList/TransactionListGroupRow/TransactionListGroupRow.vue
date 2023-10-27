@@ -126,6 +126,7 @@
             class="bold nowrap custom-mb-4 text-ellipsis"
           >
             {{
+              (isCompactMode && !isCollapseHeader) ? `${transaction.amountShorten} ${$helper.currencySignByCode(account.currency)}` :
               $helper.toCurrency({
                 value: isCollapseHeader
                   ? collapseHeaderData.totalAmount
