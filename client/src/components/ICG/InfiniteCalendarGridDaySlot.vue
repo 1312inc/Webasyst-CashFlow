@@ -25,7 +25,7 @@ export default {
   <div
     class="absolute align-right custom-p-8"
     style="width: 100%; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;"
-    @click="() => $router.push(`/date/${props.date.getFullYear()}-${props.date.getMonth()}-${props.date.getDate()}/`)"
+    @click="() => $router.push(`/date/${$moment(date).format('YYYY-MM-DD')}/`)"
   >
     <div class="day">
       {{ date.getDate() }} <span v-if="date.getDate() === 1">{{ getMonthShort(date) }}</span>
@@ -64,7 +64,7 @@ export default {
 
 <style scoped>
 .icg-months-grid-day--active-month .day {
-    color: var(--black);
+    color: var(--text-color-strong);
 }
 
 .icg-months-grid-day--current .day {

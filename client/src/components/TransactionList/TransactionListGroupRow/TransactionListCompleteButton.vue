@@ -6,7 +6,7 @@
     <button
       ref="reference"
       class="light-gray small nowrap rounded"
-      style="margin: 0;"
+      :style="isFixed ? 'padding: .3125em .5em; margin: .5em 0 0;' : 'margin: 0;'"
       @click.prevent.stop=""
     >
       <i class="fas fa-check-circle text-red" />

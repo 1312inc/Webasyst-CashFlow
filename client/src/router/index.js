@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import History from '../views/History.vue'
 import Transactions from '../views/Transactions.vue'
+import Date from '../views/Date.vue'
 import Upnext from '../views/Upnext.vue'
 import Search from '../views/Search.vue'
 import Import from '../views/Import.vue'
@@ -70,6 +71,14 @@ const routes = [
     component: Upnext,
     meta: {
       title: `${i18n.t('upnext')} — ${accountName}`
+    }
+  },
+  {
+    path: '/date/:date',
+    name: 'Date',
+    component: Date,
+    meta: {
+      title: `${i18n.t('transactions')} — ${accountName}`
     }
   },
   {
