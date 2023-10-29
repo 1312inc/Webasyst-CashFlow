@@ -78,7 +78,7 @@ watch(arrivedState, ({ top, bottom }) => {
 watch(activeMonth, async () => {
   await nextTick()
   gotoCurrentMonth()
-  emit('changed', activeMonth.value.month())
+  emit('changed', activeMonth.value.toDate())
 })
 
 function gotoCurrentMonth() {

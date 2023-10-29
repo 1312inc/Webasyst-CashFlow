@@ -1,5 +1,5 @@
 <template>
-  <div class="c-transaction-controls custom-pl-32 custom-pl-12-mobile">
+  <div class="c-transaction-controls custom-pl-32 custom-pl-12-mobile desktop-and-tablet-only">
     <!-- <div
       v-if="checkedRows.length && multiselectView"
       class="flexbox space-12 middle custom-py-12"

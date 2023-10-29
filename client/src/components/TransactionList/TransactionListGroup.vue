@@ -382,6 +382,12 @@ export default {
   background-color: var(--background-color-blank);
 }
 
+@media screen and (max-width: 760px) {
+  .c-sticky-header-group {
+    top: 4rem;
+  }
+}
+
 .c-pie-icon-helper {
   opacity: 0.5;
   transition: 0.2s opacity;

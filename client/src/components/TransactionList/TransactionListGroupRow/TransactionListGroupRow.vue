@@ -159,7 +159,9 @@
           v-if="isCompactMode"
           class="hint align-center"
         >
-          {{ $moment(transaction.date).format('MMM Do') }}
+          <span class="black">{{ $moment(transaction.date).format('MMM Do') }}</span>
+          <br>
+          {{ $moment(transaction.date).fromNow() }}
         </div>
         <transition
           name="fade"
@@ -352,6 +354,7 @@ export default {
         }
       }
       return {
+        'custom-pb-8': this.isCompactMode,
         'c-transaction-group': this.isCollapseHeader || this.isRepeatingGroup, // styles for the collapsed transactions
         'c-upcoming': this.$moment(this.transaction.date) > this.$moment(), // styles for the upcoming transactions
         'c-item-overdue': this.isOverdue,

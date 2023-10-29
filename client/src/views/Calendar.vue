@@ -26,18 +26,19 @@ import { locale } from '@/plugins/locale'
 const dataDays = ref({})
 
 onMounted(() => {
-  handleMonthChange()
+  handleMonthChange(new Date())
 })
 
 function dayWithactions (date) {
   return dataDays.value[dayjs(date).format('YYYY-MM-DD')]
 }
 
-async function handleMonthChange (e) {
+async function handleMonthChange (date) {
+  const curDate = dayjs(date)
   await api.get('cash.transaction.getList', {
     params: {
-      from: dayjs().add(-1, 'month').startOf('M').format('YYYY-MM-DD'),
-      to: dayjs().add(1, 'month').endOf('M').format('YYYY-MM-DD')
+      from: curDate.add(-2, 'month').startOf('M').format('YYYY-MM-DD'),
+      to: curDate.add(2, 'month').endOf('M').format('YYYY-MM-DD')
     }
   }).then(({ data }) => {
     const datesWithActions = data.data.reduce((acc, e) => {
@@ -92,6 +93,11 @@ async function handleMonthChange (e) {
             fill: var(--text-color-input);
         }
     }
+}
+
+.icg-weekdays__cell,
+.icg-months-grid-day {
+  border-color: var(--border-color-soft);
 }
 
 .icg-weekdays__cell--weekend {
