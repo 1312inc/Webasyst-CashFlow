@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router/composables'
+import store from '@/store'
 
 const router = useRouter()
 const route = useRoute()
@@ -8,7 +9,9 @@ const show = ref(false)
 
 onMounted(() => {
   if (router.currentRoute.query.show_ss_import_hint) {
-    show.value = true
+    if (route.name === 'Account' && store.getters['account/getById'](+route.params.id)?.stat.summary) {
+      show.value = true
+    }
 
     const query = { ...router.currentRoute.query }
     delete query.show_ss_import_hint
