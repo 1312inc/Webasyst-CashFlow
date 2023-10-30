@@ -10,9 +10,9 @@ final class cashShopBackendOrderListener extends waEventHandler
         $integration = new cashShopIntegration();
         $settings = $integration->getSettings();
 
-        if (!$settings->isEnabled()) {
-            return [];
-        }
+        // if (!$settings->isEnabled()) {
+        //     return [];
+        // }
 
         if (!wa()->getUser()->isAdmin(cashConfig::APP_ID)) {
             return [];
