@@ -197,11 +197,11 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
         cashTransactionSaveParamsDto $paramsDto
     ): cashTransaction {
         if (!$this->saver->populateFromArray($transaction, $data, $paramsDto)) {
-            throw new kmwaRuntimeException($this->saver->getError());
+            throw new kmwaRuntimeException($this->saver->getError(), 404);
         }
 
         if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-            throw new kmwaForbiddenException(_w('You can not edit transaction'));
+            throw new kmwaForbiddenException(_w('You can not edit transaction'), 403);
         }
 
         return $transaction;

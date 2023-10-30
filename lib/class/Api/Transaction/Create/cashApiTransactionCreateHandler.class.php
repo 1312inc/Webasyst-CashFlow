@@ -101,7 +101,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
 
         $saver = new cashTransactionSaver();
         if (!$saver->populateFromArray($transaction, $data, $paramsDto)) {
-            throw new kmwaRuntimeException($saver->getError());
+            throw new kmwaRuntimeException($saver->getError(), 404);
         }
 
         if ($paramsDto->transfer) {
