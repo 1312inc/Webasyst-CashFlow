@@ -8,7 +8,6 @@ import { ref, nextTick } from 'vue'
 const open = ref(false)
 const openMove = ref(false)
 const openAddBulk = ref(false)
-const categoryType = ref('')
 
 async function reOpen () {
   open.value = false
@@ -19,12 +18,25 @@ async function reOpen () {
 
 <template>
   <portal>
+    <div
+      v-if="$helper.isDesktopEnv"
+      class="c-fab-button mobile-only"
+    >
+      <button
+        class="circle green"
+        style="font-size: 1.6rem;"
+        @click="open = true"
+      >
+        <i class="fas fa-plus" />
+      </button>
+    </div>
+
     <Modal
       v-if="open"
       @close="open = false"
       @reOpen="reOpen"
     >
-      <AddTransaction :default-category-type="categoryType" />
+      <AddTransaction default-category-type="expense" />
     </Modal>
 
     <Modal
@@ -42,3 +54,11 @@ async function reOpen () {
     </Modal>
   </portal>
 </template>
+
+<style>
+.c-fab-button {
+  position: fixed;
+  bottom: 1.4rem;
+  right: 1.4rem;
+}
+</style>
