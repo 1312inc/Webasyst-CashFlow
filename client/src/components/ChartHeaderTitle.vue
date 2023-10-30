@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="currentEntity"
-    class="custom-p-16-mobile custom-pb-0-mobile"
+    class="custom-pb-16-mobile"
   >
     <div>{{ $moment().format("LL") }}</div>
     <div class="flexbox middle space-12 wrap">
