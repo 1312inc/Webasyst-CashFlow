@@ -40,7 +40,7 @@ class cashReportAction extends cashViewAction
             }
         }
 
-        $reportHtml = 'report html';
+        $reportHtml = 'Beautiful reports are supposed to be here. If you see this message, please reset cache in your Webasyst settings.';
         $handler = waRequest::param('handler', '', waRequest::TYPE_STRING_TRIM);
         $reportParams = waRequest::param('params', '', waRequest::TYPE_STRING_TRIM);
         if (!$handler && $eventResult) {
