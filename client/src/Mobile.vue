@@ -1,5 +1,8 @@
 <template>
-  <div id="wa-app">
+  <div
+    id="wa-app"
+    class="c-mobile-build"
+  >
     <div v-if="!$IsOnline.online">
       <span
         class="alert danger custom-mb-0"
@@ -7,15 +10,10 @@
       ><span class="icon"><i class="fas fa-skull" /></span>{{ $t('offlineMessage') }}</span>
     </div>
     <div
-      class="content blank"
-      style="overflow:hidden; min-height: 100vh;"
+      class="content blank custom-pb-24"
+      style="display: flex; flex-direction: column;"
     >
-      <div
-        sticky-container
-        class="c-mobile-build"
-      >
-        <router-view />
-      </div>
+      <router-view />
     </div>
     <Modal
       v-if="open"

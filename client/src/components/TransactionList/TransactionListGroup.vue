@@ -11,7 +11,10 @@
         if ($refs.pieIcon) $refs.pieIcon.style.display = 'none';
       "
     >
-      <div class="c-sticky-header-group">
+      <div
+        class="c-sticky-header-group"
+        :class="{'c-sticky-header-group--offset': $store.state.transactionBulk.selectedTransactionsIds.length}"
+      >
         <div class="flexbox middle space-12 wrap-mobile justify-between custom-px-8 custom-py-12">
           <div class="flexbox middle space-12">
             <div
@@ -389,6 +392,12 @@ export default {
 @media screen and (max-width: 760px) {
   .c-sticky-header-group {
     top: 4rem;
+  }
+  .c-mobile-build .c-sticky-header-group {
+    top: 0px;
+  }
+  .c-mobile-build .c-sticky-header-group--offset {
+    top: 60px;
   }
 }
 

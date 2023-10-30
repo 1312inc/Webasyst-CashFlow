@@ -28,11 +28,11 @@ export default {
 
       currentDate: moment().format('YYYY-MM-DD'),
 
-      isDesktopEnv: !this.$isSpaMobileMode,
+      isDesktopEnv: !window.appState.webView,
 
-      baseUrl: window.appState?.baseUrl || '/',
+      baseUrl: window.appState.baseUrl || '/',
 
-      accountName: window.appState?.accountName || '',
+      accountName: window.appState.accountName || '',
 
       isValidHttpUrl: string => {
         let url

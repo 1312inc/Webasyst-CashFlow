@@ -15,4 +15,8 @@
 .c-header {
   position: relative;
 }
+
+.c-header:empty {
+  display: none;
+}
 </style>
