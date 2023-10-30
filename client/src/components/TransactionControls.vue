@@ -9,7 +9,7 @@
     >
       <div
         v-if="checkedRows.length && multiselectView"
-        class="flexbox middle"
+        class="c-transaction-controls-check flexbox middle"
         :class="direction === 'column' && 'vertical'"
       >
         <button
@@ -233,5 +233,11 @@ export default {
 
 .c-transaction-controls:empty {
   display: none;
+}
+
+@media screen and (min-width: 760px) {
+  .c-transaction-controls-check {
+    display: none;
+  }
 }
 </style>
