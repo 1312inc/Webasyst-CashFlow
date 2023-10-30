@@ -12,7 +12,7 @@
       "
     >
       <div class="c-sticky-header-group">
-        <div class="flexbox middle wrap-mobile justify-between custom-px-8 custom-py-12">
+        <div class="flexbox middle space-12 wrap-mobile justify-between custom-px-8 custom-py-12">
           <div class="flexbox middle space-12">
             <div
               v-if="$helper.showMultiSelect()"
@@ -380,6 +380,10 @@ export default {
   top: calc(60px + 4rem);
   z-index: 99;
   background-color: var(--background-color-blank);
+}
+
+.c-sticky-header-group:hover {
+  z-index: 999;
 }
 
 @media screen and (max-width: 760px) {
