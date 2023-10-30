@@ -21,7 +21,7 @@ jobs:
           personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
           src_path: /client/dist/mobile/assets/.
           src_branch: dev
-          dst_path: /cashflow/src/main/assets/spa/
+          dst_path: /cashflow/src/main/assets/spa/assets/
           filter: '**/!(*.html)'
           dst_owner: 1312inc
           dst_repo_name: Webasyst-CashFlow-Android
