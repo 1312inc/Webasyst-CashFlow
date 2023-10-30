@@ -223,5 +223,8 @@
   "listView": "List View",
   "plugins": "Plugins",
   "contactsWillSoon": "Contacts with linked transactions will appear here soon.",
-  "Order": "Order"
+  "Order": "Order",
+  "orOrder": "or order",
+  "orderNumber": "Order number",
+  "orderNotFound": "Order not found"
 }
