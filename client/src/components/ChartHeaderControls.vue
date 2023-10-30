@@ -1,8 +1,11 @@
 <template>
-  <div class="c-period-dropdowns">
-    <div class="flexbox vertical-mobile space-12">
-      <CurrencyToggler class="custom-mb-12-mobile" />
-      <div class="flexbox fixed space-12 width-100-mobile">
+  <div class="c-period-dropdowns-container">
+    <div
+      class="flexbox vertical-mobile space-12"
+      style="align-items: start;"
+    >
+      <CurrencyToggler />
+      <div class="c-period-dropdowns flexbox fixed space-12 width-100-mobile">
         <div>
           <Dropdown
             type="from"
@@ -37,7 +40,7 @@ export default {
 </script>
 
 <style lang="scss">
-.c-period-dropdowns {
+.c-period-dropdowns-container {
   position: absolute;
   top: 0;
   right: 0;
@@ -49,5 +52,9 @@ export default {
     right: auto;
     width: 100%;
   }
+}
+
+.c-period-dropdowns-container button {
+  margin: 0 !important;
 }
 </style>
