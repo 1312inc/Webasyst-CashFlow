@@ -1,116 +1,124 @@
 <template>
-  <div class="c-transaction-controls custom-pl-32 custom-pl-12-mobile desktop-and-tablet-only">
-    <!-- <div
-      v-if="checkedRows.length && multiselectView"
-      class="flexbox space-12 middle custom-py-12"
-      :class="direction === 'column' && 'vertical'"
-    >
-      <button
-        class="button blue"
-        :class="direction === 'column' && 'custom-mb-12'"
-        @click="openMove = true"
-      >
-        <i class="fas fa-coins" /> {{ $t("move") }} ({{
-          checkedRows.length
-        }})
-      </button>
-      <button
-        class="button red"
-        :class="direction === 'column' && 'custom-mb-12'"
-        @click="bulkDelete"
-      >
-        <i class="fas fa-trash-alt" /> {{ $t("delete") }} ({{
-          checkedRows.length
-        }})
-      </button>
-      <button
-        class="button nobutton smaller"
-        @click="unselectAll"
-      >
-        {{ $t("unselectAll") }}
-      </button>
-    </div> -->
-
+  <div
+    class="c-transaction-controls-sticky"
+    :class="{'desktop-and-tablet-only': $helper.isDesktopEnv}"
+  >
     <div
-      v-if="$helper.isDesktopEnv && currentType"
-      ref="controlButtons"
-      class="flexbox wrap space-12 middle"
+      class="c-transaction-controls custom-pl-32 custom-pl-12-mobile"
+      style="overflow-x: auto;"
     >
-      <div v-show="currentType.type !== 'expense'">
-        <button
-          class="button c-button-add-income nowrap"
-          @click="addTransaction('income')"
-        >
-          <i class="fas fa-plus" />
-          <span class="custom-ml-8">{{ $t("addIncome") }}</span>
-        </button>
-      </div>
-      <div v-show="currentType.type !== 'income'">
-        <button
-          class="button c-button-add-expense nowrap"
-          @click="addTransaction('expense')"
-        >
-          <i class="fas fa-minus" />
-          <span class="custom-ml-8">{{ $t("addExpense") }}</span>
-        </button>
-      </div>
       <div
-        v-if="currentType.type !== 'expense' &&
-          currentType.type !== 'income' &&
-          $permissions.canAccessTransfers &&
-          $store.state.account.accounts.length > 1
-        "
+        v-if="checkedRows.length && multiselectView"
+        class="flexbox middle"
+        :class="direction === 'column' && 'vertical'"
       >
         <button
-          class="button light-gray nowrap"
-          @click="addTransaction('transfer')"
+          class="button blue nowrap"
+          :class="direction === 'column' && 'custom-mb-12'"
+          @click="openMove = true"
         >
-          <span>
-            <i class="fas fa-exchange-alt" />
-            <span class="desktop-only custom-ml-8">{{ $t("transfer") }}</span>
-          </span>
+          <i class="fas fa-coins" /> {{ $t("move") }} ({{
+            checkedRows.length
+          }})
         </button>
-      </div>
-      <div>
         <button
-          class="button nobutton gray nowrap"
-          @click="openAddBulk = true"
+          class="button red nowrap"
+          :class="direction === 'column' && 'custom-mb-12'"
+          @click="bulkDelete"
         >
-          <span>
-            <i class="fas fa-list-ul" />
-            <span class="desktop-only custom-ml-8 black">{{ $t("addMany") }}</span>
-          </span>
+          <i class="fas fa-trash-alt" /> {{ $t("delete") }} ({{
+            checkedRows.length
+          }})
+        </button>
+        <button
+          class="button nobutton smaller nowrap"
+          @click="unselectAll"
+        >
+          {{ $t("unselectAll") }}
         </button>
       </div>
+
+      <div
+        v-if="$helper.isDesktopEnv && currentType"
+        ref="controlButtons"
+        class="flexbox wrap space-12 middle"
+      >
+        <div v-show="currentType.type !== 'expense'">
+          <button
+            class="button c-button-add-income nowrap"
+            @click="addTransaction('income')"
+          >
+            <i class="fas fa-plus" />
+            <span class="custom-ml-8">{{ $t("addIncome") }}</span>
+          </button>
+        </div>
+        <div v-show="currentType.type !== 'income'">
+          <button
+            class="button c-button-add-expense nowrap"
+            @click="addTransaction('expense')"
+          >
+            <i class="fas fa-minus" />
+            <span class="custom-ml-8">{{ $t("addExpense") }}</span>
+          </button>
+        </div>
+        <div
+          v-if="currentType.type !== 'expense' &&
+            currentType.type !== 'income' &&
+            $permissions.canAccessTransfers &&
+            $store.state.account.accounts.length > 1
+          "
+        >
+          <button
+            class="button light-gray nowrap"
+            @click="addTransaction('transfer')"
+          >
+            <span>
+              <i class="fas fa-exchange-alt" />
+              <span class="desktop-only custom-ml-8">{{ $t("transfer") }}</span>
+            </span>
+          </button>
+        </div>
+        <div>
+          <button
+            class="button nobutton gray nowrap"
+            @click="openAddBulk = true"
+          >
+            <span>
+              <i class="fas fa-list-ul" />
+              <span class="desktop-only custom-ml-8 black">{{ $t("addMany") }}</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <portal>
+        <Modal
+          v-if="open"
+          @close="open = false"
+          @reOpen="reOpen"
+        >
+          <AddTransaction :default-category-type="categoryType" />
+        </Modal>
+      </portal>
+
+      <portal>
+        <Modal
+          v-if="openMove"
+          @close="openMove = false"
+        >
+          <TransactionMove />
+        </Modal>
+      </portal>
+
+      <portal>
+        <Modal
+          v-if="openAddBulk"
+          @close="openAddBulk = false"
+        >
+          <AddTransactionBulk />
+        </Modal>
+      </portal>
     </div>
-
-    <portal>
-      <Modal
-        v-if="open"
-        @close="open = false"
-        @reOpen="reOpen"
-      >
-        <AddTransaction :default-category-type="categoryType" />
-      </Modal>
-    </portal>
-
-    <portal>
-      <Modal
-        v-if="openMove"
-        @close="openMove = false"
-      >
-        <TransactionMove />
-      </Modal>
-    </portal>
-
-    <portal>
-      <Modal
-        v-if="openAddBulk"
-        @close="openAddBulk = false"
-      >
-        <AddTransactionBulk />
-      </Modal>
-    </portal>
   </div>
 </template>
 
@@ -206,9 +214,24 @@ export default {
 </script>
 
 <style>
+.c-transaction-controls-sticky {
+  position: sticky;
+  top: 4rem;
+  z-index: 999;
+  background-color: var(--background-color-blank);
+}
+
+.c-mobile-build .c-transaction-controls-sticky {
+  top: 0;
+}
+
 .c-transaction-controls {
   display: flex;
   align-items: center;
   height: 60px;
+}
+
+.c-transaction-controls:empty {
+  display: none;
 }
 </style>

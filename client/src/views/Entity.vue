@@ -30,9 +30,7 @@
         <ChartHeaderControls />
       </template>
     </ChartHeader>
-    <div style="position: sticky; top: 4rem;z-index: 999;background-color: var(--background-color-blank);">
-      <TransactionControls />
-    </div>
+    <TransactionControls />
     <template v-if="$route.meta.showChart">
       <AmChartContainer />
       <DetailsDashboard />
