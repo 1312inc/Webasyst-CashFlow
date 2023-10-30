@@ -224,8 +224,8 @@ export default {
             commit('createTransactions', data)
           }
         }
-      } catch (_) {
-        return false
+      } catch (e) {
+        return Promise.reject(e)
       }
     },
 

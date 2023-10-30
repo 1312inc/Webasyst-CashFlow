@@ -249,12 +249,9 @@
           >
             <div v-if="!showContractorInput">
               {{ $t("specify") }}
-              <a
-                href="#"
-                @click.prevent="showContractorInput = true"
-              >{{
+              <a @click.prevent="showContractorInput = true">{{
                 transactionType === "expense" ? $t("recipient") : $t("payee")
-              }}</a>
+              }}{{ appState.shopscriptInstalled ? ` ${$t("orOrder")}` : '' }}</a>
             </div>
             <div v-if="showContractorInput">
               <InputContractor
@@ -262,13 +259,40 @@
                 :default-contractor="model.contractor_contact_id ? { id: model.contractor_contact_id, ...model.contractor_contact } : null"
                 @newContractor="name => {
                   model.contractor = name;
-                }
-                "
+                }"
                 @changeContractor="id => {
                   model.contractor_contact_id = id;
-                }
-                "
+                }"
               />
+
+              <!-- Start Link with SS Order section -->
+              <div
+                v-if="model.external"
+                class="custom-my-16 flexbox middle space-8"
+              >
+                <div class="state-with-inner-icon left width-100">
+                  <input
+                    v-model="model.external.id"
+                    type="text"
+                    class="width-100"
+                    :placeholder="$t('orderNumber')"
+                  >
+                  <span
+                    class="icon"
+                    style="opacity: 1;"
+                  >
+                    <img
+                      :src="`${appState.baseStaticUrl}img/shop.svg`"
+                      alt=""
+                    >
+                  </span>
+                </div>
+                <a
+                  class="icon gray"
+                  @click.prevent="model.external.id = ''"
+                ><i class="fas fa-times" /></a>
+              </div>
+              <!-- End Link with SS Order section -->
             </div>
           </div>
           <!-- End Contractor section -->
@@ -282,31 +306,48 @@
               style="resize: none; height: auto"
               :placeholder="$t('desc')"
             />
-            <div
-              v-if="isModeUpdate && transaction.external_source_info"
-              class="custom-mt-8 flexbox middle space-8"
-            >
-              <span
-                v-if="transaction.external_source_info.entity_icon"
-                class="icon size-20"
+            <div class="custom-mt-8">
+              <div
+                v-if="isModeUpdate && transaction.external_source_info"
+                class="flexbox middle space-8"
               >
-                <img
-                  :src="transaction.external_source_info.entity_icon"
-                  alt=""
+                <span
+                  v-if="transaction.external_source_info.entity_icon"
+                  class="icon size-20"
                 >
-              </span>
-              <a
-                v-if="transaction.external_source !== 'shop'"
-                :href="transaction.external_source_info.entity_url"
-                target="_blank"
-                class="small"
-              >{{ transaction.external_source_info.entity_name }}</a>
-              <RouterLink
-                v-else
-                :to="{ name: 'Order', params: { id: transaction.external_source_info.id } }"
+                  <img
+                    :src="transaction.external_source_info.entity_icon"
+                    alt=""
+                  >
+                </span>
+                <a
+                  v-if="transaction.external_source !== 'shop'"
+                  :href="transaction.external_source_info.entity_url"
+                  target="_blank"
+                  class="small"
+                >{{ transaction.external_source_info.entity_name }}</a>
+                <RouterLink
+                  v-else
+                  :to="{ name: 'Order', params: { id: transaction.external_source_info.id } }"
+                >
+                  {{ transaction.external_source_info.entity_name }}
+                </RouterLink>
+              </div>
+              <div
+                v-if="model.contractor_contact"
+                class="flexbox middle space-8 custom-mt-8"
               >
-                {{ transaction.external_source_info.entity_name }}
-              </RouterLink>
+                <span class="icon size-20">
+                  <img
+                    :src="model.contractor_contact.userpic"
+                    class="userpic"
+                    alt=""
+                  >
+                </span>
+                <RouterLink :to="{ name: 'Contact', params: { id: model.contractor_contact_id } }">
+                  {{ model.contractor_contact.name }}
+                </RouterLink>
+              </div>
             </div>
           </div>
           <!-- End Desc section -->
@@ -531,6 +572,10 @@
   </div>
 </template>
 
+<script setup>
+import { appState } from '@/utils/appState'
+</script>
+
 <script>
 import { mapState, mapGetters } from 'vuex'
 import {
@@ -545,6 +590,7 @@ import DropdownWa from '@/components/Inputs/DropdownWa'
 import TransitionCollapseHeight from '@/components/Transitions/TransitionCollapseHeight'
 import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 import entityPageMixin from '@/mixins/entityPageMixin'
+import api from '../../plugins/api'
 
 export default {
 
@@ -586,6 +632,9 @@ export default {
         contractor_contact: null,
         contractor_contact_id: null,
         description: '',
+        external: this.transaction?.external_source
+          ? { source: this.transaction.external_source, id: this.transaction.external_source_info.id }
+          : appState.shopscriptInstalled ? { source: 'shop', id: '' } : null,
         is_onbadge: false,
         is_repeating: false,
         repeating_frequency: 1,
@@ -784,7 +833,7 @@ export default {
   },
 
   methods: {
-    submit (event) {
+    async submit (event) {
       this.$v.$touch()
       if (!this.$v.$invalid) {
         this.controlsDisabled = true
@@ -794,6 +843,27 @@ export default {
         }
         if (!this.showTransferIncomingAmount) {
           model.transfer_incoming_amount = this.model.amount
+        }
+        if (!model.external.id) {
+          model.external = null
+        }
+
+        if (model.external) {
+          try {
+            const { data } = await api.get(`cash.system.getExternalEntity?source=shop&id=${model.external.id}`)
+            if (data.entity_id) {
+              model.external.id = data.entity_id
+            }
+          } catch (e) {
+            this.$store.commit('errors/error', {
+              title: 'error.api',
+              method: '',
+              message: this.$t('orderNotFound')
+            })
+            return
+          } finally {
+            this.controlsDisabled = false
+          }
         }
 
         this.$store
@@ -811,6 +881,13 @@ export default {
                 })
               }
             }
+          })
+          .catch((e) => {
+            this.$store.commit('errors/error', {
+              title: 'error.api',
+              method: '',
+              message: this.$t('orderNotFound')
+            })
           })
           .finally(() => {
             this.controlsDisabled = false
