@@ -161,7 +161,7 @@
         >
           <span class="black">{{ $moment(transaction.date).format('MMM Do') }}</span>
           <br>
-          {{ $moment(transaction.date).fromNow() }}
+          {{ $moment(transaction.date).from($moment().startOf('day')) }}
         </div>
         <transition
           name="fade"
