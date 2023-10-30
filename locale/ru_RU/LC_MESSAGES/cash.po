@@ -418,6 +418,12 @@ msgstr "Последние %d дней"
 msgid "Last 3 years"
 msgstr "Последние 3 года"
 
+msgid "Next 365 days"
+msgstr "Будущие 365 дней"
+
+msgid "Next %d days"
+msgstr "Будущие %d дней"
+
 msgid "All time"
 msgstr "Все время"
 
