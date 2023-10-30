@@ -56,12 +56,8 @@ export default defineConfig(async ({ mode }) => {
       rollupOptions: {
         output: {
           entryFileNames: 'assets/app.js',
-          // Separate the main module into separate chunk for better hashing on the Webasyst side
-          manualChunks: (id) => {
-            if (id.includes('src/main.ts')) {
-              return 'main'
-            }
-          },
+          manualChunks: false,
+          inlineDynamicImports: true,
           assetFileNames: assetInfo => assetInfo.name === 'style.css' ? 'assets/app.[ext]' : 'assets/[name].[hash].[ext]'
         },
         external: (id) => /xlsx|canvg|pdfmake/.test(id)
