@@ -102,7 +102,7 @@ class cashFixtures
 
         foreach ($this->fixtures as $type => $categories) {
             $sort = 0;
-            foreach ($categories as $name => $data) {
+            foreach (array_reverse($categories) as $name => $data) {
                 $this->categories[$name] = (new cashCategory())
                     ->setType($type)
                     ->setColor($data[1])
@@ -120,12 +120,12 @@ class cashFixtures
         cash()->getModel(cashCategory::class)->insert($data);
 
         $incomeNoCategory = cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryIncome();
-        $transferCategory->setSort(1313);
+        $incomeNoCategory->setSort(1313);
         $data = cash()->getHydrator()->extract($incomeNoCategory);
         cash()->getModel(cashCategory::class)->insert($data);
 
         $expenseNoCategory = cash()->getEntityFactory(cashCategory::class)->createNewNoCategoryExpense();
-        $transferCategory->setSort(1314);
+        $expenseNoCategory->setSort(1314);
         $data = cash()->getHydrator()->extract($expenseNoCategory);
         cash()->getModel(cashCategory::class)->insert($data);
     }
