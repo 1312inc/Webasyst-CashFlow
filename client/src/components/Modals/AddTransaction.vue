@@ -275,6 +275,7 @@
                     v-model="model.external.id"
                     type="text"
                     class="width-100"
+                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                     :placeholder="$t('orderNumber')"
                   >
                   <span
@@ -809,7 +810,7 @@ export default {
       this.model.category_id = -1312
     }
 
-    if (this.model.contractor_contact?.name) {
+    if (this.model.contractor_contact?.name || this.model.external?.id) {
       this.showContractorInput = true
     }
 
