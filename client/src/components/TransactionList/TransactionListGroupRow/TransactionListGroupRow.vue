@@ -159,7 +159,7 @@
           v-if="isCompactMode"
           class="hint align-center"
         >
-          <span class="black">{{ $moment(transaction.date).format('MMM Do') }}</span>
+          <span class="black">{{ $moment(transaction.date).toDate().toLocaleDateString($moment.locale(), { month: 'short', day: 'numeric' }) }}</span>
           <br>
           {{ $moment(transaction.date).from($moment().startOf('day')) }}
         </div>
