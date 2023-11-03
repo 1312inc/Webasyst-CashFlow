@@ -10,8 +10,8 @@
       ><span class="icon"><i class="fas fa-skull" /></span>{{ $t('offlineMessage') }}</span>
     </div>
     <div
-      class="content blank custom-pb-24"
-      style="display: flex; flex-direction: column;"
+      class="content blank"
+      style="display: flex; flex-direction: column; min-height: 100vh;"
     >
       <router-view />
     </div>
