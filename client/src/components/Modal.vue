@@ -40,6 +40,7 @@ export default {
 <style lang="scss" scoped>
 .dialog {
   display: block;
+  z-index: 99999;
 
   &:deep .dialog-content {
     min-height: auto;
