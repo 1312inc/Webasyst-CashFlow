@@ -13,6 +13,7 @@
         <TransactionList
           :show-yesterday-group="true"
           :show-overdue-group="true"
+          :show-tomorrow-group="true"
         />
       </div>
       <AmChartPieStickyContainer />
