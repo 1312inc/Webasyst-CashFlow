@@ -43,7 +43,8 @@ final class cashTransactionGetListMethod extends cashApiNewAbstractMethod
             $to ?: null,
             $this->fromGet('offset', false, ApiParamsCaster::CAST_INT),
             $this->fromGet('limit', false, ApiParamsCaster::CAST_INT),
-            $this->fromGet('filter', false, ApiParamsCaster::CAST_STRING_TRIM)
+            $this->fromGet('filter', false, ApiParamsCaster::CAST_STRING_TRIM),
+            $this->fromGet('reverse', false, ApiParamsCaster::CAST_INT)
         );
 
         if ($request->getFilter()
