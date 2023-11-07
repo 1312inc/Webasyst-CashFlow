@@ -35,6 +35,8 @@ const isCurrentDay = computed(() => {
 
 <style>
 .icg-months-grid-day {
+    position: relative;
+    overflow: hidden;
     border-right-style: solid;
     border-bottom-style: solid;
     border-right-width: 1px;

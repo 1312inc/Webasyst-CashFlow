@@ -8,7 +8,7 @@
     <template #default="{ date }">
       <InfiniteCalendarGridDaySlot
         :date="date"
-        :data="dayWithactions(date)"
+        :data="dataDays.filter(t => t.date === dayjs(date).format('YYYY-MM-DD'))"
       />
     </template>
   </InfiniteCalendarGrid>
@@ -22,77 +22,56 @@ import dayjs from 'dayjs'
 import { onMounted } from 'vue'
 import { ref } from 'vue-demi'
 import { locale } from '@/plugins/locale'
+import store from '@/store'
 
-const dataDays = ref({})
+const dataDays = ref([])
+let curDate = new Date()
 
 onMounted(() => {
-  handleMonthChange(new Date())
+  handleMonthChange(curDate)
 })
 
-function dayWithactions (date) {
-  return dataDays.value[dayjs(date).format('YYYY-MM-DD')]
-}
-
 async function handleMonthChange (date) {
-  const curDate = dayjs(date)
+  curDate = date
+  const curDayjs = dayjs(curDate)
+
   await api.get('cash.transaction.getList', {
     params: {
-      from: curDate.add(-2, 'month').startOf('M').format('YYYY-MM-DD'),
-      to: curDate.add(2, 'month').endOf('M').format('YYYY-MM-DD')
+      from: curDayjs.add(-2, 'month').startOf('M').format('YYYY-MM-DD'),
+      to: curDayjs.add(2, 'month').endOf('M').format('YYYY-MM-DD')
     }
   }).then(({ data }) => {
-    const datesWithActions = data.data.reduce((acc, e) => {
-      if (!acc[e.date]) acc[e.date] = []
-      acc[e.date].push(e)
-      return acc
-    }, {})
-
-    for (const date in datesWithActions) {
-      const income = reduceForCurrencies(datesWithActions[date].filter(e => e.amount > 0))
-      const outcome = reduceForCurrencies(datesWithActions[date].filter(e => e.amount < 0))
-
-      datesWithActions[date] = {
-        income: Object.keys(income).length ? income : null,
-        outcome: Object.keys(outcome).length ? outcome : null
-      }
-    }
-
-    dataDays.value = datesWithActions
+    dataDays.value = data.data
   })
-
-  function reduceForCurrencies (array) {
-    return array.reduce((acc, e) => {
-      acc[e.account_id] ??= {
-        amount: 0,
-        count: 0
-      }
-      acc[e.account_id].amount += e.amount
-      acc[e.account_id].count++
-      return acc
-    }, {})
-  }
 }
+
+store.subscribeAction({
+  after: (action) => {
+    if (action.type === 'transaction/update') {
+      handleMonthChange(curDate)
+    }
+  }
+})
 
 </script>
 
 <style lang="scss">
-
 .icg-header {
   align-items: start;
   gap: 1rem;
 }
 
 .icg-controls {
-    button {
+  button {
 
-      background-color: var(--background-color-btn-light-gray);
-      color: var(--text-color-input);
-      box-shadow: none;
+    background-color: var(--background-color-btn-light-gray);
+    color: var(--text-color-input);
+    box-shadow: none;
 
-        svg {
-            fill: var(--text-color-input);
-        }
+    svg {
+      fill: var(--text-color-input);
     }
+  }
 }
 
 .icg-weekdays__cell,
@@ -101,19 +80,19 @@ async function handleMonthChange (date) {
 }
 
 .icg-weekdays__cell--weekend {
-    color: var(--text-color-hint);
+  color: var(--text-color-hint);
 }
 
 .icg-month {
-    font-size: 2rem;
-    color: var(--text-color-strongest);
-    line-height: 1.2em;
-    font-weight: bold;
+  font-size: 2rem;
+  color: var(--text-color-strongest);
+  line-height: 1.2em;
+  font-weight: bold;
 }
 
 .icg-months-grid-day {
-    color: var(--text-color-hint);
-    background-color: rgba(0, 20, 80, 0.01);
+  color: var(--text-color-hint);
+  background-color: rgba(0, 20, 80, 0.01);
 }
 
 .icg-months-grid-day--active-month {
@@ -123,5 +102,4 @@ async function handleMonthChange (date) {
 .icg-months-grid-day--weekend {
   background-color: rgba(0, 20, 80, 0.03);
 }
-
 </style>
