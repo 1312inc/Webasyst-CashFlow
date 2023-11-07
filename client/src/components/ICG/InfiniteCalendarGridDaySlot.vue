@@ -1,7 +1,15 @@
 <script setup>
+import { ref } from 'vue'
 import { locale } from '@/plugins/locale'
+import { emitter } from '@/utils/eventBus'
+import InfiniteCalendarGridDaySlotItem from './InfiniteCalendarGridDaySlotItem.vue'
+import dayjs from 'dayjs'
+import { useRouter } from 'vue-router/composables'
+import { moment } from '@/plugins/numeralMoment.js'
 
 const props = defineProps(['date', 'data'])
+const router = useRouter()
+const dayRef = ref()
 
 function getMonthShort (date) {
   try {
@@ -9,83 +17,75 @@ function getMonthShort (date) {
   } catch (_e) { }
 }
 
-</script>
-
-<script>
-export default {
-  methods: {
-    getCurrency (entityId) {
-      return this.$store.getters['account/getById'](entityId)?.currency
+function onClick () {
+  const t = dayRef.value?.querySelector('.icg-plus')
+  if (t) {
+    if (window.getComputedStyle(t, null).getPropertyValue('display') === 'none') {
+      router.push(`/date/${moment(props.date).format('YYYY-MM-DD')}/`)
+    } else {
+      emitter.emit('openAddTransactionModal', {
+        defaultDate: dayjs(props.date).format('YYYY-MM-DD')
+      })
     }
   }
 }
+
 </script>
 
 <template>
   <div
+    ref="dayRef"
     class="absolute align-right custom-p-8"
     style="width: 100%; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;"
-    @click="() => $router.push(`/date/${$moment(date).format('YYYY-MM-DD')}/`)"
+    @click="onClick"
   >
-    <div class="day">
+    <button class="circle small light-gray desktop-only icg-plus">
+      <i class="fas fa-plus" />
+    </button>
+    <div class="icg-day">
       {{ date.getDate() }} <span v-if="date.getDate() === 1">{{ getMonthShort(date) }}</span>
     </div>
-
-    <div
-      v-if="props.data"
-      class="data"
-    >
-      <div
-        v-for="operation, typeOfOperation in props.data"
-        :key="typeOfOperation"
-      >
-        <div
-          v-for="operationData, accountId in operation"
-          :key="accountId"
-          class="align-right custom-mt-4"
-          :class="{
-            'text-red': typeOfOperation === 'outcome',
-            'text-green': typeOfOperation === 'income'
-          }"
-        >
-          {{ typeOfOperation === 'income' ? '+' : '' }}{{ operationData.amount }} <span
-            v-if="operationData.count > 1"
-            class="badge"
-            :class="{
-              'green': typeOfOperation === 'income'
-            }"
-          >{{ operationData.count }}</span>
-          {{ getCurrency(+accountId) }}
-        </div>
-      </div>
+    <div class="small">
+      <InfiniteCalendarGridDaySlotItem
+        v-for="transaction in props.data"
+        :key="transaction.id"
+        :transaction="transaction"
+      />
     </div>
   </div>
 </template>
 
-<style scoped>
-.icg-months-grid-day--active-month .day {
-    color: var(--text-color-strong);
+<style scoped lang="scss">
+.icg-months-grid-day--active-month .icg-day {
+  color: var(--text-color-strong);
 }
 
-.icg-months-grid-day--current .day {
-    background-color: var(--red);
-    color: var(--white);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 100%;
-    margin-left: auto;
-    transform: translateX(.4rem) translateY(-.4rem);
-}
+.icg-months-grid-day--current .icg-day {
+  background-color: var(--red);
+  color: var(--white);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+  margin-left: auto;
+  transform: translateX(.2rem) translateY(-.2rem);
 
-@media screen and (max-width: 760px) {
-
-  .data {
-    font-size: 0.8rem;
+  span {
+    display: none;
   }
 
 }
 
+.icg-plus {
+  display: none;
+  position: absolute;
+  top: 0.4rem;
+  left: 0.4rem;
+
+  :hover>& {
+    display: block;
+  }
+}
 </style>

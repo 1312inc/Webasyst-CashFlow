@@ -2,11 +2,14 @@
 import { useFloating } from '@floating-ui/vue'
 import { ref } from 'vue'
 
+const props = defineProps(['strategy'])
+
 const open = ref(false)
 const floating = ref(null)
 const reference = ref(null)
 const { floatingStyles } = useFloating(reference, floating, {
-  placement: 'bottom-start'
+  placement: 'bottom-start',
+  strategy: props.strategy ?? 'absolute'
 })
 </script>
 
@@ -26,7 +29,7 @@ const { floatingStyles } = useFloating(reference, floating, {
     >
       <div
         class="dropdown-body"
-        style="min-width: 250px;"
+        style="min-width: 200px;"
       >
         <slot />
       </div>

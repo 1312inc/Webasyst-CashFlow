@@ -3,17 +3,34 @@ import Modal from '@/components/Modal'
 import AddTransaction from '@/components/Modals/AddTransaction'
 import AddTransactionBulk from '@/components/Modals/AddTransactionBulk'
 import TransactionMove from '@/components/Modals/TransactionMove'
+import { emitter } from '@/utils/eventBus'
 import { ref, nextTick } from 'vue'
 
 const open = ref(false)
 const openMove = ref(false)
 const openAddBulk = ref(false)
 
+const addTransactionOpts = ref({
+  transactionToEdit: undefined,
+  defaultDate: undefined
+})
+
 async function reOpen () {
   open.value = false
   await nextTick()
   open.value = true
 }
+
+emitter.on('openAddTransactionModal', (opts) => {
+  addTransactionOpts.value = {}
+  if (opts.transaction) {
+    addTransactionOpts.value.transactionToEdit = opts.transaction
+  } else if (opts.defaultDate) {
+    addTransactionOpts.value.defaultDate = opts.defaultDate
+  }
+  open.value = true
+})
+
 </script>
 
 <template>
@@ -36,7 +53,11 @@ async function reOpen () {
       @close="open = false"
       @reOpen="reOpen"
     >
-      <AddTransaction default-category-type="expense" />
+      <AddTransaction
+        :transaction="addTransactionOpts.transactionToEdit"
+        :default-date="addTransactionOpts.defaultDate"
+        default-category-type="expense"
+      />
     </Modal>
 
     <Modal

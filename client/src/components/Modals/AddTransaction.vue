@@ -307,9 +307,12 @@
               style="resize: none; height: auto"
               :placeholder="$t('desc')"
             />
-            <div class="custom-mt-8">
+            <div
+              v-if="isModeUpdate"
+              class="custom-mt-8"
+            >
               <div
-                v-if="isModeUpdate && transaction.external_source_info"
+                v-if="transaction.external_source_info"
                 class="flexbox middle space-8"
               >
                 <span
@@ -614,6 +617,10 @@ export default {
       default: 'income'
     },
 
+    defaultDate: {
+      type: String
+    },
+
     offOnbadge: {
       type: Boolean,
       default: false
@@ -634,7 +641,7 @@ export default {
         contractor_contact_id: null,
         description: '',
         external: this.transaction?.external_source
-          ? { source: this.transaction.external_source, id: this.transaction.external_source_info.id }
+          ? { source: this.transaction.external_source, id: this.transaction.external_source_info?.id }
           : appState.shopscriptInstalled ? { source: 'shop', id: '' } : null,
         is_onbadge: false,
         is_repeating: false,
@@ -806,6 +813,10 @@ export default {
     this.transactionType =
       this.selectedCategory?.type || this.defaultCategoryType
 
+    if (this.defaultDate) {
+      this.model.date = this.defaultDate
+    }
+
     if (this.transactionType === 'transfer') {
       this.model.category_id = -1312
     }
@@ -845,7 +856,7 @@ export default {
         if (!this.showTransferIncomingAmount) {
           model.transfer_incoming_amount = this.model.amount
         }
-        if (!model.external.id) {
+        if (!model.external?.id) {
           model.external = null
         }
 
