@@ -37,8 +37,9 @@ async function handleMonthChange (date) {
 
   await api.get('cash.transaction.getList', {
     params: {
-      from: curDayjs.add(-2, 'month').startOf('M').format('YYYY-MM-DD'),
-      to: curDayjs.add(2, 'month').endOf('M').format('YYYY-MM-DD')
+      from: curDayjs.startOf('M').format('YYYY-MM-DD'),
+      to: curDayjs.add(1, 'month').endOf('M').format('YYYY-MM-DD'),
+      reverse: 1
     }
   }).then(({ data }) => {
     dataDays.value = data.data
