@@ -15,6 +15,7 @@
         {{ label }}
       </div>
       <div
+        class="align-left"
         v-html="
           activeItem[valuePropName] !== $options.props.value.default
             ? rowModificator(activeItem)
