@@ -4,7 +4,10 @@ import AddTransaction from '@/components/Modals/AddTransaction'
 import AddTransactionBulk from '@/components/Modals/AddTransactionBulk'
 import TransactionMove from '@/components/Modals/TransactionMove'
 import { emitter } from '@/utils/eventBus'
+import { useRoute } from 'vue-router/composables'
 import { ref, nextTick } from 'vue'
+
+const route = useRoute()
 
 const open = ref(false)
 const openMove = ref(false)
@@ -12,7 +15,8 @@ const openAddBulk = ref(false)
 
 const addTransactionOpts = ref({
   transactionToEdit: undefined,
-  defaultDate: undefined
+  defaultDate: undefined,
+  type: undefined
 })
 
 async function reOpen () {
@@ -21,15 +25,21 @@ async function reOpen () {
   open.value = true
 }
 
-emitter.on('openAddTransactionModal', (opts) => {
+emitter.on('openAddTransactionModal', (opts = {}) => {
   addTransactionOpts.value = {}
   if (opts.transaction) {
     addTransactionOpts.value.transactionToEdit = opts.transaction
   } else if (opts.defaultDate) {
     addTransactionOpts.value.defaultDate = opts.defaultDate
+  } else if (opts.type) {
+    addTransactionOpts.value.type = opts.type
   }
   open.value = true
 })
+
+function onClick () {
+  emitter.emit('openAddTransactionModal', route.name === 'Date' ? { defaultDate: route.params.date } : undefined)
+}
 
 </script>
 
@@ -42,7 +52,7 @@ emitter.on('openAddTransactionModal', (opts) => {
       <button
         class="circle green"
         style="font-size: 1.6rem;"
-        @click="open = true"
+        @click="onClick"
       >
         <i class="fas fa-plus" />
       </button>
@@ -56,7 +66,7 @@ emitter.on('openAddTransactionModal', (opts) => {
       <AddTransaction
         :transaction="addTransactionOpts.transactionToEdit"
         :default-date="addTransactionOpts.defaultDate"
-        default-category-type="expense"
+        :default-category-type="addTransactionOpts.type ?? 'expense'"
       />
     </Modal>
 

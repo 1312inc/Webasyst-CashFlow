@@ -13,6 +13,7 @@ import NotFound from '../views/NotFound.vue'
 import Calendar from '../views/Calendar.vue'
 import { i18n } from '../plugins/locale'
 import { permissions } from '../plugins/permissions'
+import { moment } from '@/plugins/numeralMoment.js'
 
 Vue.use(VueRouter)
 
@@ -79,6 +80,13 @@ const routes = [
     component: Date,
     meta: {
       title: `${i18n.t('transactions')} — ${accountName}`
+    },
+    beforeEnter: (to, from, next) => {
+      if (moment(to.params.date, 'YYYY-MM-DD', true).isValid()) {
+        next()
+      } else {
+        next({ name: 'NotFound' })
+      }
     }
   },
   {
