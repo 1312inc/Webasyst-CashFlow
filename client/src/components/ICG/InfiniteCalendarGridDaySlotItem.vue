@@ -1,5 +1,5 @@
 <script setup>
-import { emitter } from '@/utils/eventBus'
+import { emitter } from '@/plugins/eventBus'
 import store from '@/store'
 import { computed } from 'vue'
 import DropdownWaFloating from '@/components/Inputs/DropdownWaFloating.vue'

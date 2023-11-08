@@ -3,7 +3,7 @@ import Modal from '@/components/Modal'
 import AddTransaction from '@/components/Modals/AddTransaction'
 import AddTransactionBulk from '@/components/Modals/AddTransactionBulk'
 import TransactionMove from '@/components/Modals/TransactionMove'
-import { emitter } from '@/utils/eventBus'
+import { emitter } from '@/plugins/eventBus'
 import { useRoute } from 'vue-router/composables'
 import { ref, nextTick } from 'vue'
 

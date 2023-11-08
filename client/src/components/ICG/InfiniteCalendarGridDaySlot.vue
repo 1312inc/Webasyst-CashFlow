@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { locale } from '@/plugins/locale'
-import { emitter } from '@/utils/eventBus'
+import { emitter } from '@/plugins/eventBus'
 import InfiniteCalendarGridDaySlotItem from './InfiniteCalendarGridDaySlotItem.vue'
 import dayjs from 'dayjs'
 import { useRouter } from 'vue-router/composables'
