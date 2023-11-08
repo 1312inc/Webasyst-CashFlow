@@ -53,13 +53,17 @@ const nextMonthRows = computed(() => {
 })
 const startDate = computed(() => activeMonth.value.startOf('M').add(-(prevMonthRows.value * 7 + activeMonthOffset.value), 'day'))
 const daysCount = computed(() => new Array((activeMonthRows.value + prevMonthRows.value + nextMonthRows.value) * 7).fill(undefined).map((_e, i) => startDate.value.add(i, 'day').toDate()))
-const daysCountSlices = computed(() => (
-  [
-    daysCount.value.slice(0, prevMonthRows.value * 7),
-    daysCount.value.slice(prevMonthRows.value * 7, prevMonthRows.value * 7 + activeMonthRows.value * 7),
-    daysCount.value.slice(prevMonthRows.value * 7 + activeMonthRows.value * 7, prevMonthRows.value * 7 + activeMonthRows.value * 7 + nextMonthRows.value * 7)
-  ]
-))
+const daysCountSlices = computed(() => {
+  const arr1 = daysCount.value.slice(0, prevMonthRows.value * 7)
+  const arr2 = daysCount.value.slice(prevMonthRows.value * 7, prevMonthRows.value * 7 + activeMonthRows.value * 7)
+  const arr3 = daysCount.value.slice(prevMonthRows.value * 7 + activeMonthRows.value * 7, prevMonthRows.value * 7 + activeMonthRows.value * 7 + nextMonthRows.value * 7)
+
+  return {
+    [arr1[0].getTime()]: arr1,
+    [arr2[0].getTime()]: arr2,
+    [arr3[0].getTime()]: arr3
+  }
+})
 
 const unw = watch(height, async (height) => {
   if (height) {
@@ -115,9 +119,9 @@ function gotoCurrentMonth() {
       </div>
     </div>
     <div ref="containerRef" class="icg-months-grid">
-      <div v-for="i in 3" :key="i"
-        :class="['icg-months-grid-month', {'icg-months-grid-month--selected': i === 2}]">
-        <InfiniteCalendarGridDay v-for="date in daysCountSlices[i - 1]" :key="date.getTime()" :cell-height="cellHeight" :activeMonth="activeMonth.month()"
+      <div v-for="array, key, i in daysCountSlices" :key="key"
+        :class="['icg-months-grid-month', {'icg-months-grid-month--selected': i === 1}]">
+        <InfiniteCalendarGridDay v-for="date in array" :key="date.getTime()" :cell-height="cellHeight" :activeMonth="activeMonth.month()"
           :date="date">
           <template #default="props">
             <slot v-bind="props"></slot>
@@ -175,8 +179,8 @@ function gotoCurrentMonth() {
   flex: 1 1 auto;
   width: 100%;
   height: 100%;
-  overflow-y: scroll;
   overflow-x: hidden;
+  overflow-y: scroll;
   scroll-snap-type: y mandatory;
   scrollbar-width: none;
 }
@@ -192,7 +196,7 @@ function gotoCurrentMonth() {
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
-/* .icg-months-grid-month:nth-child(3n) {
+.icg-months-grid-month:last-of-type {
   scroll-snap-align: end;
-} */
+}
 </style>

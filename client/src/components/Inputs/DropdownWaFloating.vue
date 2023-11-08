@@ -2,7 +2,7 @@
 import { useFloating } from '@floating-ui/vue'
 import { ref } from 'vue'
 
-const props = defineProps(['strategy'])
+const props = defineProps(['strategy', 'hideOnMobile'])
 
 const open = ref(false)
 const floating = ref(null)
@@ -16,8 +16,8 @@ const { floatingStyles } = useFloating(reference, floating, {
 <template>
   <div
     ref="reference"
-    @mouseover.prevent.stop="open = true"
-    @mouseleave.prevent.stop="open = false"
+    @mouseover.prevent.stop="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = true } }"
+    @mouseleave.prevent.stop="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = false } }"
   >
     <slot name="toggler" />
     <div
@@ -38,7 +38,7 @@ const { floatingStyles } = useFloating(reference, floating, {
 </template>
 
 <style scoped>
-  button {
-    margin: 0;
-  }
+button {
+  margin: 0;
+}
 </style>

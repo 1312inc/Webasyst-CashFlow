@@ -52,6 +52,10 @@ export default {
 
       isHeader () {
         return !!document.querySelector('#wa-header')
+      },
+
+      isTabletMediaQuery () {
+        return window.matchMedia('(max-width: 1024px)').matches
       }
     }
   }
