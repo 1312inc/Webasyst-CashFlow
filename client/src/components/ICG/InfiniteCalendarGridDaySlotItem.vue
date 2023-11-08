@@ -17,13 +17,15 @@ function onClick () {
 </script>
 
 <template>
-  <DropdownWaFloating strategy="fixed">
+  <DropdownWaFloating
+    strategy="fixed"
+    :hide-on-mobile="true"
+  >
     <template #toggler>
       <div
         :style="`color: ${category.color}`"
-        class="align-left nowrap"
-        :class="$style.row"
-        @click.prevent.stop="onClick"
+        class="icg-row align-left nowrap"
+        @click.prevent.stop="() => { if (!$helper.isTabletMediaQuery()) { onClick() } }"
       >
         <span
           v-if="category.glyph"
@@ -69,8 +71,14 @@ function onClick () {
   </DropdownWaFloating>
 </template>
 
-<style module lang="scss">
-.row:hover {
-    opacity: .7;
+<style>
+@media screen and (max-width: 1024px) {
+  .icg-row {
+    pointer-events: none;
+  }
+}
+
+.icg-row:hover {
+  opacity: .7;
 }
 </style>
