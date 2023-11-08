@@ -24,7 +24,7 @@ const { floatingStyles } = useFloating(reference, floating, {
       v-if="open"
       ref="floating"
       class="dropdown is-opened"
-      style="z-index: 9999;"
+      :class="{ 'no-pointer': props.strategy === 'fixed' }"
       :style="floatingStyles"
     >
       <div
@@ -40,5 +40,13 @@ const { floatingStyles } = useFloating(reference, floating, {
 <style scoped>
 button {
   margin: 0;
+}
+
+.dropdown {
+  z-index: 9999;
+}
+
+.dropdown.no-pointer {
+  pointer-events: none;
 }
 </style>

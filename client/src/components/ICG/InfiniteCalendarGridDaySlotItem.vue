@@ -59,7 +59,10 @@ function onClick () {
       class="custom-p-8 align-left"
       style="display: flex; flex-direction: column; gap: .2rem;"
     >
-      <span v-if="transaction.contractor_contact?.name">{{ transaction.contractor_contact.name }}</span>
+      <span
+        v-if="transaction.contractor_contact?.name"
+        class="small"
+      >{{ transaction.contractor_contact.name }}</span>
       <span
         v-if="category"
         :style="`color: ${category.color}`"
