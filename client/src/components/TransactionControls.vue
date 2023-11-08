@@ -117,7 +117,6 @@ import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import AddTransactionBulk from '@/components/Modals/AddTransactionBulk'
 import TransactionMove from '@/components/Modals/TransactionMove'
-import { emitter } from '@/utils/eventBus'
 
 export default {
 
@@ -182,7 +181,7 @@ export default {
 
   methods: {
     addTransaction (type) {
-      emitter.emit('openAddTransactionModal', {
+      this.$eventBus.emit('openAddTransactionModal', {
         type,
         defaultDate: this.defaultDate
       })
