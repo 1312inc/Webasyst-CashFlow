@@ -1,6 +1,6 @@
 <template>
   <InfiniteCalendarGrid
-    :first-day-of-week="1"
+    :first-day-of-week="firstDayOfWeek"
     :locale="locale.replace('_', '-')"
     :today-label="$t('today')"
     @changed="handleMonthChange"
@@ -19,26 +19,28 @@ import InfiniteCalendarGrid from '../components/ICG/InfiniteCalendarGrid.vue'
 import InfiniteCalendarGridDaySlot from '../components/ICG/InfiniteCalendarGridDaySlot.vue'
 import api from '@/plugins/api'
 import dayjs from 'dayjs'
-import { onMounted } from 'vue'
-import { ref } from 'vue-demi'
+import { ref, computed } from 'vue'
 import { locale } from '@/plugins/locale'
 import store from '@/store'
 
+const firstDayOfWeek = ref(1)
 const dataDays = ref([])
-let curDate = new Date()
+const curDate = ref(dayjs())
 
-onMounted(() => {
-  handleMonthChange(curDate)
+const activeMonthOffset = computed(() => {
+  const offset = curDate.value.startOf('M').get('d') + (firstDayOfWeek.value && -1)
+  return offset < 0 ? 7 + offset : offset
 })
 
+handleMonthChange(new Date())
+
 async function handleMonthChange (date) {
-  curDate = date
-  const curDayjs = dayjs(curDate)
+  curDate.value = dayjs(date)
 
   await api.get('cash.transaction.getList', {
     params: {
-      from: curDayjs.startOf('M').format('YYYY-MM-DD'),
-      to: curDayjs.add(1, 'month').endOf('M').format('YYYY-MM-DD'),
+      from: curDate.value.startOf('M').add(-activeMonthOffset.value, 'day').format('YYYY-MM-DD'),
+      to: curDate.value.endOf('M').add(42 - activeMonthOffset.value - curDate.value.daysInMonth(), 'day').format('YYYY-MM-DD'),
       reverse: 1
     }
   }).then(({ data }) => {
