@@ -2,12 +2,18 @@
   <div>
     <ChartHeader>
       <template #title>
-        <h1 class="">
+        <h1 class="flexbox space-8">
+          <a
+            class="mobile-only"
+            @click.prevent="$router.push({ name: 'Calendar' })"
+          >
+            <i class="fas fa-arrow-circle-left text-light-gray" />
+          </a>
           {{ $moment($route.params.date).format('LL') }}
         </h1>
       </template>
     </ChartHeader>
-    <TransactionControls />
+    <TransactionControls :default-date="$route.params.date" />
     <div class="flexbox">
       <div class="wide">
         <TransactionList
@@ -28,7 +34,6 @@ import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import TransactionControls from '@/components/TransactionControls'
 
 export default {
-
   components: {
     ChartHeader,
     TransactionList,

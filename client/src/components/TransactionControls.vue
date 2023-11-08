@@ -93,16 +93,6 @@
 
       <portal>
         <Modal
-          v-if="open"
-          @close="open = false"
-          @reOpen="reOpen"
-        >
-          <AddTransaction :default-category-type="categoryType" />
-        </Modal>
-      </portal>
-
-      <portal>
-        <Modal
           v-if="openMove"
           @close="openMove = false"
         >
@@ -125,17 +115,18 @@
 <script>
 import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
-import AddTransaction from '@/components/Modals/AddTransaction'
 import AddTransactionBulk from '@/components/Modals/AddTransactionBulk'
 import TransactionMove from '@/components/Modals/TransactionMove'
+import { emitter } from '@/utils/eventBus'
+
 export default {
 
   components: {
     Modal,
-    AddTransaction,
     AddTransactionBulk,
     TransactionMove
   },
+
   props: {
     direction: {
       type: String
@@ -143,13 +134,14 @@ export default {
     multiselectView: {
       type: Boolean,
       default: true
+    },
+    defaultDate: {
+      type: String
     }
   },
 
   data () {
     return {
-      open: false,
-      categoryType: '',
       openMove: false,
       openAddBulk: false
     }
@@ -190,8 +182,10 @@ export default {
 
   methods: {
     addTransaction (type) {
-      this.open = true
-      this.categoryType = type
+      emitter.emit('openAddTransactionModal', {
+        type,
+        defaultDate: this.defaultDate
+      })
     },
 
     bulkDelete () {
