@@ -12,9 +12,9 @@
       <li>
         <a @click.prevent="setFeaturePeriod(30)"><span>{{ $t("nextDays", { count: 30 }) }}</span></a>
       </li>
-      <li>
+      <!-- <li>
         <a @click.prevent="setFeaturePeriod(90)"><span>{{ $t("nextDays", { count: 90 }) }}</span></a>
-      </li>
+      </li> -->
       <li class="bordered-top">
         <a @click.prevent="listCompactMode = !listCompactMode">
           <span
