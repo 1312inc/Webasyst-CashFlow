@@ -1,11 +1,16 @@
 <template>
   <li
+    ref="reference"
     class="item c-item"
-    ref="row"
     :class="classes"
     :style="isRepeatingGroup && 'cursor: initial;'"
+    @mouseover="() => { if (isCompactMode) { openFloating = true } }"
+    @mouseleave="() => { if (isCompactMode) { openFloating = false } }"
   >
-    <div v-if="showDate" class="mobile-only custom-py-8">
+    <div
+      v-if="showDate && !isCompactMode"
+      class="mobile-only custom-py-8"
+    >
       <strong>
         {{
           $moment(transaction.date).format(
@@ -17,31 +22,39 @@
     </div>
 
     <div
+      class="flexbox middle space-12"
       @mouseover="isHover = true"
       @mouseleave="isHover = false"
       @click="handleClick"
-      class="flexbox middle space-12"
     >
       <div
-        v-if="$helper.showMultiSelect()"
+        v-if="$helper.showMultiSelect() && !isCompactMode"
+        class="custom-my-4"
         :class="{ 'desktop-only': $helper.isDesktopEnv }"
-        style="min-width: 1rem"
+        style="width: 1rem; height: 1rem;"
       >
         <span
           v-show="isHoverComputed && !isRepeatingGroup"
-          @click.stop="checkboxSelect"
           class="wa-checkbox"
+          @click.stop="checkboxSelect"
         >
-          <input type="checkbox" :checked="isChecked" />
+          <input
+            type="checkbox"
+            :checked="isChecked"
+          >
           <span>
             <span class="icon">
-              <i class="fas fa-check"></i>
+              <i class="fas fa-check" />
             </span>
           </span>
         </span>
       </div>
 
-      <div class="desktop-and-tablet-only" style="width: 7rem;flex-shrink: 0;">
+      <div
+        v-if="!isCompactMode"
+        class="desktop-and-tablet-only"
+        style="width: 7rem;flex-shrink: 0;"
+      >
         <template v-if="showDate">
           <div class="custom-mb-4 bold nowrap c-group-date">
             {{
@@ -69,16 +82,20 @@
         :transaction="transaction"
         :category="category"
         :account="account"
-        :isCollapseHeader="isCollapseHeader"
-        :isRepeatingGroup="isRepeatingGroup"
-        :collapseHeaderData="collapseHeaderData"
+        :is-collapse-header="isCollapseHeader"
+        :is-repeating-group="isRepeatingGroup"
+        :collapse-header-data="collapseHeaderData"
       />
       <div class="wide flexbox middle space-8 c-item-border">
-        <div class="wide" style="overflow: hidden">
+        <div
+          v-if="!isCompactMode"
+          class="wide"
+          style="overflow: hidden"
+        >
           <TransactionListGroupRowDesc
             :transaction="transaction"
-            :collapseHeaderData="collapseHeaderData"
-            :isRepeatingGroup="isRepeatingGroup"
+            :collapse-header-data="collapseHeaderData"
+            :is-repeating-group="isRepeatingGroup"
             :category="category"
           />
           <div
@@ -86,9 +103,7 @@
             class="black small text-ellipsis"
             style="flex-shrink: 1"
           >
-            <span
-              v-if="transaction.description"
-            >
+            <span v-if="transaction.description">
               {{ transaction.description }}
             </span>
             <span
@@ -108,9 +123,10 @@
         <div class="c-item-amount">
           <div
             :style="`color: ${category.color}`"
-            class="bold nowrap custom-mb-4"
+            class="bold nowrap custom-mb-4 text-ellipsis"
           >
             {{
+              (isCompactMode && !isCollapseHeader) ? `${transaction.amountShorten} ${$helper.currencySignByCode(account.currency)}` :
               $helper.toCurrency({
                 value: isCollapseHeader
                   ? collapseHeaderData.totalAmount
@@ -120,7 +136,10 @@
               })
             }}
           </div>
-          <div v-if="account.name" class="text-ellipsis small gray">
+          <div
+            v-if="account.name && !isCompactMode"
+            class="text-ellipsis small gray"
+          >
             {{ account.name }}
             <span
               v-if="transaction.balance"
@@ -136,35 +155,102 @@
             </span>
           </div>
         </div>
-        <transition name="fade" :duration="300">
+        <div
+          v-if="isCompactMode"
+          class="hint align-center"
+        >
+          <span class="black">{{ $moment(transaction.date).toDate().toLocaleDateString($moment.locale(), { month: 'short', day: 'numeric' }) }}</span>
+          <br>
+          {{ $moment(transaction.date).from($moment().startOf('day')) }}
+        </div>
+        <transition
+          name="fade"
+          :duration="300"
+        >
           <TransactionListCompleteButton
             v-show="transaction.is_onbadge && !archive"
-            @processEdit="openModal(true)"
             :transaction="transaction"
+            :is-fixed="isCompactMode"
             :account="account"
+            @processEdit="openModal(true)"
           />
         </transition>
       </div>
     </div>
 
     <portal>
-      <Modal v-if="open" @close="open = false">
+      <Modal
+        v-if="open"
+        @close="open = false"
+      >
         <AddTransaction
           :transaction="transaction"
-          :offOnbadge="offBadgeInTransactionModal"
+          :off-onbadge="offBadgeInTransactionModal"
         />
       </Modal>
     </portal>
+
+    <div
+      v-if="openFloating"
+      ref="floating"
+      class="dropdown is-opened"
+      style="z-index: 999;"
+      :style="floatingStyles"
+    >
+      <div
+        class="dropdown-body"
+        style="min-width: 200px;"
+      >
+        <div
+          class="custom-p-8"
+          style="display: flex; flex-direction: column; gap: .2rem;"
+        >
+          <span v-if="transaction.contractor_contact?.name">{{ transaction.contractor_contact.name }}</span>
+          <span
+            v-if="category"
+            :style="`color: ${category.color}`"
+            class="bold nowrap small text-ellipsis"
+          >{{ category.name }}</span>
+          <span class="hint">{{ transaction.description || $t('noDesc') }}</span>
+        </div>
+      </div>
+    </div>
   </li>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/Modals/AddTransaction'
 import TransactionListCompleteButton from './TransactionListCompleteButton'
 import TransactionListGroupRowDesc from './TransactionListGroupRowDesc'
 import TransactionListGroupRowGlyph from './TransactionListGroupRowGlyph'
+import { useFloating } from '@floating-ui/vue'
+
+const reference = ref(null)
+const floating = ref(null)
+const openFloating = ref(false)
+
+const { floatingStyles } = useFloating(reference, floating, {
+  placement: 'bottom-start',
+  strategy: 'fixed'
+})
+</script>
+
+<script>
+
 export default {
+  components: {
+    Modal,
+    AddTransaction,
+    TransactionListCompleteButton,
+    TransactionListGroupRowDesc,
+    TransactionListGroupRowGlyph
+  },
+
+  inject: {
+    archive: { default: false }
+  },
   props: {
     transaction: {
       type: Object
@@ -193,11 +279,12 @@ export default {
     visibleSelectCheckbox: {
       type: Boolean,
       default: false
-    }
-  },
+    },
 
-  inject: {
-    archive: { default: false }
+    isCompactMode: {
+      type: Boolean,
+      default: false
+    }
   },
 
   data () {
@@ -208,19 +295,11 @@ export default {
     }
   },
 
-  components: {
-    Modal,
-    AddTransaction,
-    TransactionListCompleteButton,
-    TransactionListGroupRowDesc,
-    TransactionListGroupRowGlyph
-  },
-
   computed: {
     account () {
       return (
         this.$store.getters['account/getById'](this.transaction.account_id) ||
-        {}
+    { }
       )
     },
 
@@ -241,7 +320,7 @@ export default {
     },
 
     isHoverComputed () {
-      if (process.env.VUE_APP_MODE === 'mobile' || this.visibleSelectCheckbox) {
+      if (this.$isSpaMobileMode || this.visibleSelectCheckbox) {
         return true
       }
       return this.showChecker ? true : this.isHover
@@ -250,14 +329,14 @@ export default {
     isOverdue () {
       return (
         this.transaction.date < this.$helper.currentDate &&
-        this.transaction.is_onbadge
+    this.transaction.is_onbadge
       )
     },
 
     isToday () {
       return (
         this.transaction.date === this.$helper.currentDate &&
-        this.transaction.is_onbadge
+    this.transaction.is_onbadge
       )
     },
 
@@ -275,13 +354,14 @@ export default {
         }
       }
       return {
+        'custom-pb-8': this.isCompactMode,
         'c-transaction-group': this.isCollapseHeader || this.isRepeatingGroup, // styles for the collapsed transactions
         'c-upcoming': this.$moment(this.transaction.date) > this.$moment(), // styles for the upcoming transactions
         'c-item-overdue': this.isOverdue,
         'c-item-red-process': this.isOverdue || this.isToday,
         'c-item-selected': this.isChecked,
         'c-item--updated':
-          this.transaction.$_flagUpdated || this.transaction.$_flagCreated
+    this.transaction.$_flagUpdated || this.transaction.$_flagCreated
       }
     }
   },
@@ -303,8 +383,8 @@ export default {
         return
       }
       this.offBadgeInTransactionModal = offOnbadge
-      if (process.env.VUE_APP_MODE === 'mobile') {
-        // emitting for the mobile platform
+      if (this.$isSpaMobileMode) {
+      // emitting for the mobile platform
         window.emitter.emit('editTransaction', this.transaction)
       } else {
         this.open = true
@@ -349,6 +429,7 @@ export default {
   from {
     background-color: var(--highlighted-green);
   }
+
   to {
     background-color: rgba(255, 255, 255, 0);
   }

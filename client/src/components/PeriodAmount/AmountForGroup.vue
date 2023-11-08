@@ -3,7 +3,11 @@
     v-if="currencies.length"
     class="flexbox justify-end middle wrap space-12"
   >
-    <div v-for="currency in currencies" :key="currency" class="flexbox middle space-12">
+    <div
+      v-for="currency in currencies"
+      :key="currency"
+      class="flexbox middle space-12"
+    >
       <div
         v-for="(type, i) in $_amountMixin_amountTypes"
         :key="i"
@@ -16,11 +20,14 @@
           type === 'profit'
             ? $t('profit')
             : type === 'income'
-            ? $t('income')
-            : $t('expense')
+              ? $t('income')
+              : $t('expense')
         "
       >
-        <i v-if="type === 'profit'" class="fas fa-coins text-blue small"></i>
+        <i
+          v-if="type === 'profit'"
+          class="fas fa-coins text-blue small"
+        />
         <span class="small semibold">{{
           $helper.toCurrency({
             value: getTotalByCurrency(currency, type),
@@ -52,14 +59,14 @@
 <script>
 import amountMixin from '@/mixins/amountMixin'
 export default {
+
+  mixins: [amountMixin],
   props: {
     group: {
       type: Array,
       required: true
     }
   },
-
-  mixins: [amountMixin],
 
   computed: {
     currencies () {

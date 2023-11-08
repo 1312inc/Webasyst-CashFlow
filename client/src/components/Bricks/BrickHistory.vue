@@ -4,7 +4,7 @@
     class="brick custom-mb-0"
     :class="{ selected: $route.name === 'History' }"
   >
-    <span class="icon"><i class="fas fa-history"></i></span>
+    <span class="icon"><i class="fas fa-history" /></span>
     {{ $t("history") }}
   </router-link>
 </template>

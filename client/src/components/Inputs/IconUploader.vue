@@ -1,7 +1,7 @@
 <template>
-    <div class="box uploadbox custom-p-0">
-      <div class="UppyDragDrop"></div>
-    </div>
+  <div class="box uploadbox custom-p-0">
+    <div class="UppyDragDrop" />
+  </div>
 </template>
 
 <script>
@@ -12,14 +12,12 @@ import XHRUpload from '@uppy/xhr-upload'
 export default {
   mounted () {
     this.uppy = new Uppy({
-      debug: process.env.NODE_ENV === 'development',
       autoProceed: true,
       restrictions: {
         maxNumberOfFiles: 1
       },
       meta: {
-        access_token:
-          process.env.VUE_APP_API_TOKEN || window?.appState?.token || ''
+        access_token: window?.appState?.token
       }
     })
       .use(DragDrop, {
@@ -52,7 +50,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "~@uppy/core/dist/style.css";
+@import "@uppy/core/dist/style.css";
 .UppyDragDrop {
   position: relative;
   height: 40px;
@@ -63,6 +61,7 @@ export default {
   position: absolute;
   text-align: center;
   cursor: pointer;
+  height: 40px;
 
   &:hover {
     color: inherit;

@@ -1,18 +1,24 @@
 <template>
-  <div class="flexbox space-16" style="justify-content: center;">
+  <div
+    class="flexbox space-16"
+    style="justify-content: center;"
+  >
     <ButtonRound
-      @click.native="openMove = true"
       icon="fa-arrow-right"
       :tooltip="$t('move')"
+      @click.native="openMove = true"
     />
     <ButtonRound
-      @click.native="$_transactionActionsMixin_bulkDelete"
       icon="fa-trash-alt"
       :tooltip="$t('delete')"
       class="red"
+      @click.native="$_transactionActionsMixin_bulkDelete"
     />
     <portal>
-      <Modal v-if="openMove" @close="openMove = false">
+      <Modal
+        v-if="openMove"
+        @close="openMove = false"
+      >
         <TransactionMove />
       </Modal>
     </portal>
@@ -26,13 +32,13 @@ import TransactionMove from '@/components/Modals/TransactionMove'
 import ButtonRound from '@/components/Buttons/ButtonRound'
 
 export default {
-  mixins: [transactionActionsMixin],
 
   components: {
     Modal,
     TransactionMove,
     ButtonRound
   },
+  mixins: [transactionActionsMixin],
 
   data () {
     return {

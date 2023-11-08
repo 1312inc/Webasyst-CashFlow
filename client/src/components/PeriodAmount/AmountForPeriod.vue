@@ -1,6 +1,9 @@
 <template>
   <div v-if="!loadingChart">
-    <div v-for="(type, i) in $_amountMixin_amountTypes" :key="i">
+    <div
+      v-for="(type, i) in $_amountMixin_amountTypes"
+      :key="i"
+    >
       <div
         :class="{
           'text-green': type === 'income',
@@ -11,12 +14,15 @@
           type === 'profit'
             ? $t('profit')
             : type === 'income'
-            ? $t('income')
-            : $t('expense')
+              ? $t('income')
+              : $t('expense')
         "
       >
         <div class="custom-ml-12">
-          <i v-if="type === 'profit'" class="fas fa-coins text-blue smaller"></i>
+          <i
+            v-if="type === 'profit'"
+            class="fas fa-coins text-blue smaller"
+          />
           <span class="smaller semibold">{{
             $helper.toCurrency({
               value: $_amountMixin_getTotalByType(type, period),
@@ -53,7 +59,7 @@
       :key="i"
       class="skeleton"
     >
-      <span class="skeleton-line custom-mb-4"></span>
+      <span class="skeleton-line custom-mb-4" />
     </div>
   </div>
 </template>
@@ -62,14 +68,14 @@
 import { mapState } from 'vuex'
 import amountMixin from '@/mixins/amountMixin'
 export default {
+
+  mixins: [amountMixin],
   props: {
     period: {
       type: String,
       required: true
     }
   },
-
-  mixins: [amountMixin],
 
   computed: {
     ...mapState('transaction', [

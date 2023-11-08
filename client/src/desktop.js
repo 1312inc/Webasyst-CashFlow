@@ -15,9 +15,11 @@ import darkModeObserver from './plugins/darkModeObserver'
 import VuePortal from '@linusborg/vue-simple-portal'
 import WAtippy from './plugins/tippy'
 import VueMeta from 'vue-meta'
+import eventBus from './plugins/eventBus'
 import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
+Vue.prototype.$isSpaMobileMode = false
 
 Vue.use(permissions)
 Vue.use(Numeral)
@@ -29,6 +31,7 @@ Vue.use(darkModeObserver)
 Vue.use(VuePortal)
 Vue.use(WAtippy)
 Vue.use(VueMeta)
+Vue.use(eventBus)
 
 const contentSelector = '#app-content'
 const sidebarSelector = '#app-sidebar'

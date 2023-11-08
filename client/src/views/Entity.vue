@@ -1,20 +1,36 @@
 <template>
-  <div v-if="entity">
+  <div
+    v-if="error"
+    class="c-header custom-m-12 custom-ml-32 custom-ml-12-mobile"
+  >
+    <h1>{{ $route.params.id }}: {{ error }}</h1>
+  </div>
+  <div v-else-if="entity">
     <ChartHeader>
-      <template v-slot:title>
-        <h1
-          class="flexbox space-12 items-middle custom-m-0 custom-px-16-mobile custom-pt-16-mobile"
-        >
-          <img v-if="entity.entity_icon" :src="entity.entity_icon" class="userpic userpic-48" />
-          <a :href="entity.entity_url" target="_blank">{{
+      <template #title>
+        <h1 class="flexbox space-12 middle ">
+          <img
+            v-if="entity.entity_icon"
+            :src="entity.entity_icon"
+            style="height: 40px; object-fit: contain;"
+            :class="{ 'userpic': $route.meta.getExternalEntitySource === 'contacts' }"
+          >
+          <a
+            :href="entity.entity_url"
+            target="_blank"
+          >{{
             entity.entity_name
           }}</a>
         </h1>
       </template>
-      <template v-slot:controls v-if="$route.meta.showChart">
+      <template
+        v-if="$route.meta.showChart"
+        #controls
+      >
         <ChartHeaderControls />
       </template>
     </ChartHeader>
+    <TransactionControls />
     <template v-if="$route.meta.showChart">
       <AmChartContainer />
       <DetailsDashboard />
@@ -22,10 +38,10 @@
     <div class="flexbox">
       <div class="wide">
         <TransactionList
-          :showFutureGroup="false"
-          :showYesterdayGroup="false"
-          :showOverdueGroup="false"
-          :showTodayGroup="false"
+          :show-future-group="false"
+          :show-yesterday-group="false"
+          :show-overdue-group="false"
+          :show-today-group="false"
         />
       </div>
       <AmChartPieStickyContainer />
@@ -41,10 +57,10 @@ import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
+import TransactionControls from '@/components/TransactionControls'
 import api from '@/plugins/api'
 
 export default {
-  mixins: [routerTransitionMixin],
 
   components: {
     ChartHeader,
@@ -52,7 +68,21 @@ export default {
     AmChartContainer,
     DetailsDashboard,
     TransactionList,
-    AmChartPieStickyContainer
+    AmChartPieStickyContainer,
+    TransactionControls
+  },
+
+  mixins: [routerTransitionMixin],
+
+  beforeRouteLeave (to, from, next) {
+    this.$store.commit('entity/resetEntity')
+    next()
+  },
+
+  data () {
+    return {
+      error: null
+    }
   },
 
   metaInfo () {
@@ -60,11 +90,6 @@ export default {
       title: this.entity?.entity_name || '',
       titleTemplate: `%s – ${window.appState?.accountName || ''}`
     }
-  },
-
-  beforeRouteLeave (to, from, next) {
-    this.$store.commit('entity/resetEntity')
-    next()
   },
 
   computed: {
@@ -83,10 +108,18 @@ export default {
 
   methods: {
     async fetch () {
+      this.error = null
+
       try {
         const { data } = await api.get(
-      `cash.system.getExternalEntity?source=${this.$route.meta.getExternalEntitySource}&id=${this.$route.params.id}`
+          `cash.system.getExternalEntity?source=${this.$route.meta.getExternalEntitySource}&id=${this.$route.params.id}`
         )
+
+        if (data.error) {
+          this.handleResponseError(data)
+          return
+        }
+
         this.$store.commit('entity/setEntity', data)
 
         this.$store.commit('transaction/updateQueryParams', { filter: this.$route.meta.fetchTransactionsFilter(this.entity.entity_id) })
@@ -101,10 +134,15 @@ export default {
           filter: this.$route.meta.fetchTransactionsFilter(this.entity.entity_id)
         })
       } catch (error) {
-        if (error.response.status === 404) {
-          this.$router.replace({ name: 'NotFound' })
-        }
+        this.handleResponseError(error.response.data)
+        // if (error.response.status === 404) {
+        //   this.$router.replace({ name: 'NotFound' })
+        // }
       }
+    },
+
+    handleResponseError (error) {
+      this.error = error.error_description ?? 'Error'
     }
   }
 }

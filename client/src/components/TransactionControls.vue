@@ -1,103 +1,131 @@
 <template>
-  <div>
+  <div
+    class="c-transaction-controls-sticky"
+    :class="{'desktop-and-tablet-only': $helper.isDesktopEnv}"
+  >
     <div
-      v-if="checkedRows.length && multiselectView"
-      class="flexbox space-12 middle custom-py-12"
-      :class="direction === 'column' && 'vertical'"
+      class="c-transaction-controls custom-pl-32 custom-pl-12-mobile"
+      style="overflow-x: auto;"
     >
-      <button
-        @click="openMove = true"
-        class="button blue"
-        :class="direction === 'column' && 'custom-mb-12'"
-      >
-        <i class="fas fa-coins"></i> {{ $t("move") }} ({{
-          checkedRows.length
-        }})
-      </button>
-      <button
-        @click="bulkDelete"
-        class="button red"
-        :class="direction === 'column' && 'custom-mb-12'"
-      >
-        <i class="fas fa-trash-alt"></i> {{ $t("delete") }} ({{
-          checkedRows.length
-        }})
-      </button>
-      <button @click="unselectAll" class="button nobutton smaller">
-        {{ $t("unselectAll") }}
-      </button>
-    </div>
-
-    <div
-      v-if="$helper.isDesktopEnv && currentType"
-      ref="controlButtons"
-      class="flexbox wrap space-12 middle custom-pt-12"
-    >
-      <div v-show="currentType.type !== 'expense'" class="custom-pb-12">
-        <button @click="addTransaction('income')" class="button c-button-add-income nowrap">
-          <i class="fas fa-plus"></i>
-          <span class="custom-ml-8">{{ $t("addIncome") }}</span>
-        </button>
-      </div>
-      <div v-show="currentType.type !== 'income'" class="custom-pb-12">
-        <button @click="addTransaction('expense')" class="button c-button-add-expense nowrap">
-          <i class="fas fa-minus"></i>
-          <span class="custom-ml-8">{{ $t("addExpense") }}</span>
-        </button>
-      </div>
       <div
-        v-if="
-          currentType.type !== 'expense' &&
-          currentType.type !== 'income' &&
-          $permissions.canAccessTransfers &&
-          $store.state.account.accounts.length > 1
-        "
-        class="custom-pb-12"
+        v-if="checkedRows.length && multiselectView"
+        class="c-transaction-controls-check flexbox middle"
+        :class="direction === 'column' && 'vertical'"
       >
-        <button @click="addTransaction('transfer')" class="button light-gray nowrap">
-          <span>
-            <i class="fas fa-exchange-alt"></i>
-            <span class="desktop-only custom-ml-8">{{ $t("transfer") }}</span>
-          </span>
+        <button
+          class="button blue nowrap"
+          :class="direction === 'column' && 'custom-mb-12'"
+          @click="openMove = true"
+        >
+          <i class="fas fa-coins" /> {{ $t("move") }} ({{
+            checkedRows.length
+          }})
+        </button>
+        <button
+          class="button red nowrap"
+          :class="direction === 'column' && 'custom-mb-12'"
+          @click="bulkDelete"
+        >
+          <i class="fas fa-trash-alt" /> {{ $t("delete") }} ({{
+            checkedRows.length
+          }})
+        </button>
+        <button
+          class="button nobutton smaller nowrap"
+          @click="unselectAll"
+        >
+          {{ $t("unselectAll") }}
         </button>
       </div>
-      <div class="custom-pb-12">
-        <button @click="openAddBulk = true" class="button nobutton gray nowrap">
-          <span>
-            <i class="fas fa-list-ul"></i>
-            <span class="desktop-only custom-ml-8 black">{{ $t("addMany") }}</span>
-          </span>
-        </button>
+
+      <div
+        v-if="$helper.isDesktopEnv && currentType"
+        ref="controlButtons"
+        class="flexbox wrap space-12 middle"
+      >
+        <div v-show="currentType.type !== 'expense'">
+          <button
+            class="button c-button-add-income nowrap"
+            @click="addTransaction('income')"
+          >
+            <i class="fas fa-plus" />
+            <span class="custom-ml-8">{{ $t("addIncome") }}</span>
+          </button>
+        </div>
+        <div v-show="currentType.type !== 'income'">
+          <button
+            class="button c-button-add-expense nowrap"
+            @click="addTransaction('expense')"
+          >
+            <i class="fas fa-minus" />
+            <span class="custom-ml-8">{{ $t("addExpense") }}</span>
+          </button>
+        </div>
+        <div
+          v-if="currentType.type !== 'expense' &&
+            currentType.type !== 'income' &&
+            $permissions.canAccessTransfers &&
+            $store.state.account.accounts.length > 1
+          "
+        >
+          <button
+            class="button light-gray nowrap"
+            @click="addTransaction('transfer')"
+          >
+            <span>
+              <i class="fas fa-exchange-alt" />
+              <span class="desktop-only custom-ml-8">{{ $t("transfer") }}</span>
+            </span>
+          </button>
+        </div>
+        <div>
+          <button
+            class="button nobutton gray nowrap"
+            @click="openAddBulk = true"
+          >
+            <span>
+              <i class="fas fa-list-ul" />
+              <span class="desktop-only custom-ml-8 black">{{ $t("addMany") }}</span>
+            </span>
+          </button>
+        </div>
       </div>
+
+      <portal>
+        <Modal
+          v-if="openMove"
+          @close="openMove = false"
+        >
+          <TransactionMove />
+        </Modal>
+      </portal>
+
+      <portal>
+        <Modal
+          v-if="openAddBulk"
+          @close="openAddBulk = false"
+        >
+          <AddTransactionBulk />
+        </Modal>
+      </portal>
     </div>
-
-    <portal>
-      <Modal v-if="open" @close="open = false" @reOpen="reOpen">
-        <AddTransaction :defaultCategoryType="categoryType" />
-      </Modal>
-    </portal>
-
-    <portal>
-      <Modal v-if="openMove" @close="openMove = false">
-        <TransactionMove />
-      </Modal>
-    </portal>
-
-    <portal>
-      <Modal v-if="openAddBulk" @close="openAddBulk = false">
-        <AddTransactionBulk />
-      </Modal>
-    </portal>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
-import AddTransaction from '@/components/Modals/AddTransaction'
 import AddTransactionBulk from '@/components/Modals/AddTransactionBulk'
 import TransactionMove from '@/components/Modals/TransactionMove'
+
 export default {
+
+  components: {
+    Modal,
+    AddTransactionBulk,
+    TransactionMove
+  },
+
   props: {
     direction: {
       type: String
@@ -105,20 +133,14 @@ export default {
     multiselectView: {
       type: Boolean,
       default: true
+    },
+    defaultDate: {
+      type: String
     }
-  },
-
-  components: {
-    Modal,
-    AddTransaction,
-    AddTransactionBulk,
-    TransactionMove
   },
 
   data () {
     return {
-      open: false,
-      categoryType: '',
       openMove: false,
       openAddBulk: false
     }
@@ -150,10 +172,19 @@ export default {
     }
   },
 
+  mounted () {
+    const addTransactionQuery = this.$route.query.addtransaction
+    if (['income', 'expense'].includes(addTransactionQuery)) {
+      this.addTransaction(addTransactionQuery)
+    }
+  },
+
   methods: {
     addTransaction (type) {
-      this.open = true
-      this.categoryType = type
+      this.$eventBus.emit('openAddTransactionModal', {
+        type,
+        defaultDate: this.defaultDate
+      })
     },
 
     bulkDelete () {
@@ -174,3 +205,32 @@ export default {
   }
 }
 </script>
+
+<style>
+.c-transaction-controls-sticky {
+  position: sticky;
+  top: 4rem;
+  z-index: 999;
+  background-color: var(--background-color-blank);
+}
+
+.c-mobile-build .c-transaction-controls-sticky {
+  top: 0;
+}
+
+.c-transaction-controls {
+  display: flex;
+  align-items: center;
+  height: 60px;
+}
+
+.c-transaction-controls:empty {
+  display: none;
+}
+
+@media screen and (min-width: 760px) {
+  .c-transaction-controls-check {
+    display: none;
+  }
+}
+</style>

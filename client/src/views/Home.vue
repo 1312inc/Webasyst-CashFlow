@@ -2,18 +2,23 @@
   <div>
     <CashGapMessage />
     <ChartHeader>
-      <template v-slot:title>
+      <template #title>
         <ChartHeaderTitle />
       </template>
-      <template v-slot:controls>
+      <template #controls>
         <ChartHeaderControls />
       </template>
     </ChartHeader>
+    <TransactionControls />
+    <AlertImported />
     <AmChartContainer />
     <DetailsDashboard />
     <div class="flexbox">
       <div class="wide">
-        <TransactionList :showTomorrowGroup="true" :showYesterdayGroup="true" />
+        <TransactionList
+          :show-tomorrow-group="true"
+          :show-yesterday-group="true"
+        />
       </div>
       <AmChartPieStickyContainer />
     </div>
@@ -30,9 +35,10 @@ import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
+import AlertImported from '../components/AlertImported.vue'
+import TransactionControls from '@/components/TransactionControls'
 
 export default {
-  mixins: [routerTransitionMixin],
 
   components: {
     CashGapMessage,
@@ -42,8 +48,11 @@ export default {
     AmChartContainer,
     DetailsDashboard,
     TransactionList,
-    AmChartPieStickyContainer
+    AmChartPieStickyContainer,
+    AlertImported,
+    TransactionControls
   },
+  mixins: [routerTransitionMixin],
 
   beforeRouteEnter (to, from, next) {
     next(vm => {

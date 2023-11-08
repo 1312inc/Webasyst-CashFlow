@@ -1,5 +1,8 @@
 <template>
-  <input ref="date" type="hidden" />
+  <input
+    ref="date"
+    type="hidden"
+  >
 </template>
 
 <script>
@@ -63,7 +66,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "~flatpickr/dist/flatpickr.css";
+@import "flatpickr/dist/flatpickr.css";
 [data-theme="dark"] {
   .flatpickr-calendar {
     background: var(--background-color-blank);

@@ -1,11 +1,14 @@
 <template>
-  <div class="dialog-body" style="width: 700px; overflow: initial;">
+  <div
+    class="dialog-body"
+    style="width: 700px;"
+  >
     <div class="dialog-header">
       <h2 class="custom-mb-0">
         {{ $t("addMany") }}
       </h2>
     </div>
-    <div class="dialog-content" style="overflow: initial;">
+    <div class="dialog-content">
       <div
         v-for="(row, i) in data"
         :key="i"
@@ -18,18 +21,18 @@
               'state-error': $v.data.$each[i].date.$error
             }"
           />
-          <span class="icon"><i class="fas fa-calendar"></i></span>
+          <span class="icon"><i class="fas fa-calendar" /></span>
         </div>
 
         <div class="width-25">
           <DropdownWa
             v-model="row.category_id"
             :items="[$store.getters['category/getByType']('income'), $store.getters['category/getByType']('expense')]"
-            :groupsLabels="[$t('income'), $t('expense')]"
-            valuePropName="id"
+            :groups-labels="[$t('income'), $t('expense')]"
+            value-prop-name="id"
             :error="$v.data.$each[i].category_id.$error"
-            :rowModificator="$_rowModificatorMixin_rowModificator_category"
-            :maxHeight="200"
+            :row-modificator="$_rowModificatorMixin_rowModificator_category"
+            :max-height="200"
             class="width-100"
           />
         </div>
@@ -38,10 +41,10 @@
           <DropdownWa
             v-model="row.account_id"
             :items="$store.state.account.accounts"
-            valuePropName="id"
+            value-prop-name="id"
             :error="$v.data.$each[i].account_id.$error"
-            :rowModificator="$_rowModificatorMixin_rowModificator_account"
-            :maxHeight="200"
+            :row-modificator="$_rowModificatorMixin_rowModificator_account"
+            :max-height="200"
             class="width-100"
           />
         </div>
@@ -50,36 +53,41 @@
           <input-currency
             v-model="row.amount"
             :signed="false"
-            :categoryId="row.category_id"
-            :accountId="row.account_id"
+            :category-id="row.category_id"
+            :account-id="row.account_id"
             :error="$v.data.$each[i].amount.$error"
             placeholder="0"
           />
         </div>
 
         <div v-if="data.length > 1">
-          <a @click.prevent="data.splice(i, 1)" href="#">
-            <i class="fas fa-times-circle text-light-gray"></i>
+          <a @click.prevent="data.splice(i, 1)">
+            <i class="fas fa-times-circle text-light-gray" />
           </a>
         </div>
       </div>
       <div class="align-right">
         <a
-          v-if="data.length < 13"
-          @click.prevent="data.push({ ...model })"
-          href="#"
+
           class="small"
-          >{{ $t("addmore") }}</a
-        >
+          @click.prevent="data.push({ ...model })"
+        >{{ $t("addmore") }}</a>
       </div>
     </div>
     <div class="dialog-footer">
       <div class="flexbox">
         <div class="flexbox space-12 wide">
-          <button @click="submit" :disabled="controlsDisabled" class="button">
+          <button
+            :disabled="controlsDisabled"
+            class="button"
+            @click="submit"
+          >
             {{ $t("add") }}
           </button>
-          <button @click="$parent.$emit('close')" class="button light-gray">
+          <button
+            class="button light-gray"
+            @click="$parent.$emit('close')"
+          >
             {{ $t("cancel") }}
           </button>
         </div>
@@ -89,7 +97,7 @@
 </template>
 
 <script>
-import { minLength, requiredIf } from 'vuelidate/lib/validators'
+import { minLength, requiredIf } from 'vuelidate/dist/validators.min.js'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import DateField from '@/components/Inputs/InputDate'
 import DropdownWa from '@/components/Inputs/DropdownWa'

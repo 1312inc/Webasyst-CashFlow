@@ -1,13 +1,20 @@
 <template>
   <div>
     <ChartHeader>
-      <template v-slot:title>
-        <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">{{ $t("history") }}</h1>
+      <template #title>
+        <h1 class="">
+          {{ $t("history") }}
+        </h1>
       </template>
     </ChartHeader>
+    <TransactionControls />
     <div class="flexbox">
       <div class="wide">
-        <TransactionList :showTodayGroup="false" :showFutureGroup="false" :showYesterdayGroup="true" />
+        <TransactionList
+          :show-today-group="false"
+          :show-future-group="false"
+          :show-yesterday-group="true"
+        />
       </div>
       <AmChartPieStickyContainer />
     </div>
@@ -19,15 +26,17 @@ import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
+import TransactionControls from '@/components/TransactionControls'
 
 export default {
-  mixins: [routerTransitionMixin],
 
   components: {
     ChartHeader,
     TransactionList,
-    AmChartPieStickyContainer
+    AmChartPieStickyContainer,
+    TransactionControls
   },
+  mixins: [routerTransitionMixin],
 
   mounted () {
     this.$store.dispatch('transaction/fetchTransactions', {

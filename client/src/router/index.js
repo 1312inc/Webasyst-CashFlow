@@ -3,14 +3,18 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import History from '../views/History.vue'
 import Transactions from '../views/Transactions.vue'
+import Date from '../views/Date.vue'
 import Upnext from '../views/Upnext.vue'
 import Search from '../views/Search.vue'
 import Import from '../views/Import.vue'
 import Trash from '../views/Trash.vue'
 import Entity from '../views/Entity.vue'
 import NotFound from '../views/NotFound.vue'
+import Calendar from '../views/Calendar.vue'
+import FormAdd from '../views/FormAdd.vue'
 import { i18n } from '../plugins/locale'
 import { permissions } from '../plugins/permissions'
+import { moment } from '@/plugins/numeralMoment.js'
 
 Vue.use(VueRouter)
 
@@ -56,11 +60,34 @@ const routes = [
     }
   },
   {
+    path: '/calendar',
+    name: 'Calendar',
+    component: Calendar,
+    meta: {
+      title: `${i18n.t('calendar')} — ${accountName}`
+    }
+  },
+  {
     path: '/upnext',
     name: 'Upnext',
     component: Upnext,
     meta: {
       title: `${i18n.t('upnext')} — ${accountName}`
+    }
+  },
+  {
+    path: '/date/:date',
+    name: 'Date',
+    component: Date,
+    meta: {
+      title: `${i18n.t('transactions')} — ${accountName}`
+    },
+    beforeEnter: (to, from, next) => {
+      if (moment(to.params.date, 'YYYY-MM-DD', true).isValid()) {
+        next()
+      } else {
+        next({ name: 'NotFound' })
+      }
     }
   },
   {
@@ -110,6 +137,18 @@ const routes = [
     }
   },
   {
+    path: '/form/add/:type',
+    name: 'Form',
+    component: FormAdd,
+    beforeEnter: (to, from, next) => {
+      if (['account', 'category'].includes(to.params.type)) {
+        next()
+      } else {
+        next({ name: 'NotFound' })
+      }
+    }
+  },
+  {
     path: '/report',
     alias: ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins']
   },
@@ -125,10 +164,10 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: process.env.VUE_APP_MODE === 'desktop' ? 'history' : 'hash',
+  mode: !window.appState.webView ? 'history' : 'hash',
   base: baseUrl,
   routes,
-  scrollBehavior (to, from, savedPosition) {
+  scrollBehavior () {
     return { x: 0, y: 0 }
   }
 })

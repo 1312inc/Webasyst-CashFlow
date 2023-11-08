@@ -23,6 +23,11 @@ class cashDefaultLayout extends waLayout
         $categories = (new cashApiCategoryGetListHandler())->handle(null);
         $accounts = (new cashApiAccountGetListHandler())->handle(null);
 
+        $just_installed = wa('cash')->getSetting('just_installed');
+        if ($just_installed) {
+            (new waAppSettingsModel())->del('cash', 'just_installed');
+        }
+
         /**
          * Include js after main app.js
          *
@@ -43,7 +48,8 @@ class cashDefaultLayout extends waLayout
                 'currencies' => json_encode($currencies, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'categories' => json_encode($categories, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'accounts' => json_encode($accounts, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
-                'backend_layout_plugins' => $backendPlugins
+                'backend_layout_plugins' => $backendPlugins,
+                'emptyFlow' => $just_installed,
             ]
         );
     }

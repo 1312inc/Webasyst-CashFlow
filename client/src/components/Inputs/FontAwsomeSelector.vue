@@ -1,33 +1,43 @@
 <template>
   <div>
-    <div v-if="!open" class="flexbox middle space-8">
+    <div
+      v-if="!open"
+      class="flexbox middle space-8"
+    >
       <div>
         <div
-          @click="open = true"
           class="c-icon-item"
           :style="`color: ${color};`"
+          @click="open = true"
         >
-          <i :class="value || $options.icons[0]"></i>
+          <i :class="value || $options.icons[0]" />
         </div>
       </div>
       <div>
-        <a @click.prevent="open = true" class="small" href="#">{{
+        <a
+          class="small"
+          href="#"
+          @click.prevent="open = true"
+        >{{
           $t("change")
         }}</a>
       </div>
     </div>
-    <div v-show="open" class="c-icon-list">
+    <div
+      v-show="open"
+      class="c-icon-list"
+    >
       <div
         v-for="(icon, i) in $options.icons"
         :key="i"
+        class="c-icon-item"
+        :style="`color: ${color}`"
         @click="
           $emit('input', i === 0 ? null : icon);
           open = false;
         "
-        class="c-icon-item"
-        :style="`color: ${color}`"
       >
-        <i :class="icon"></i>
+        <i :class="icon" />
       </div>
     </div>
   </div>

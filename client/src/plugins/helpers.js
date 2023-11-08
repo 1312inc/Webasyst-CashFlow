@@ -28,11 +28,11 @@ export default {
 
       currentDate: moment().format('YYYY-MM-DD'),
 
-      isDesktopEnv: process.env.VUE_APP_MODE === 'desktop',
+      isDesktopEnv: !window.appState.webView,
 
-      baseUrl: window.appState?.baseUrl || '/',
+      baseUrl: window.appState.baseUrl || '/',
 
-      accountName: window.appState?.accountName || '',
+      accountName: window.appState.accountName || '',
 
       isValidHttpUrl: string => {
         let url
@@ -52,6 +52,10 @@ export default {
 
       isHeader () {
         return !!document.querySelector('#wa-header')
+      },
+
+      isTabletMediaQuery () {
+        return window.matchMedia('(max-width: 1024px)').matches
       }
     }
   }

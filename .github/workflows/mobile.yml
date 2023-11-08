@@ -4,11 +4,11 @@ on:
   push:
     branches: [ dev ]
     paths:
-      - 'client/dist/mobile/**'
+      - 'client/dist/mobile/assets/**'
   pull_request:
     branches: [ dev ]
     paths:
-      - 'client/dist/mobile/**'
+      - 'client/dist/mobile/assets/**'
 
 jobs:
 
@@ -19,12 +19,13 @@ jobs:
         uses: andstor/copycat-action@v3
         with:
           personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
-          src_path: /client/dist/mobile/.
+          src_path: /client/dist/mobile/assets/.
           src_branch: dev
-          dst_path: /cashflow/src/main/assets/spa/
+          dst_path: /cashflow/src/main/assets/spa/assets/
           filter: '**/!(*.html)'
           dst_owner: 1312inc
-          dst_repo_name: Cash-app-Android
+          dst_repo_name: Webasyst-CashFlow-Android
+          dst_branch: dev-23
 
   deploy_ios:
     runs-on: ubuntu-latest
@@ -33,7 +34,7 @@ jobs:
         uses: andstor/copycat-action@v3
         with:
           personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
-          src_path: /client/dist/mobile/.
+          src_path: /client/dist/mobile/assets/.
           src_branch: dev
           dst_path: /Cashflow/Resources/SPA/
           filter: '**/!(*.html)'

@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: utf-8\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.3.2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -269,7 +269,7 @@ msgid "Settings"
 msgstr "Настройки"
 
 msgid "Shop-Script &rarr; Cash"
-msgstr "Shop-Script &rarr; Cash"
+msgstr "Shop-Script &rarr; Деньги"
 
 msgid "Shop-Script 8.0 or newer is required. Please install the latest Shop-Script update via the Installer app to enable sales import and Shop-Script &times; Cash integration."
 msgstr "Требуется Shop-Script 8.0 или новее. Обновите Shop-Script в «Инсталлере» и попробуйте импортировать операции по заказам еще раз."
@@ -338,7 +338,7 @@ msgid "<b>Works like magic!</b> Average daily sales will be automatically added 
 msgstr "<b>Немного магии!</b> Для более точного прогноза прибыли и убытков приложение будет добавлять и корректировать плановые будущие продажи интернет-магазина на основе исторических данных. При наступлении нового дня прогноз на этот день будет автоматически заменяться операциями по реальным оплаченным заказам."
 
 msgid "Calculate average daily sales automatically (≈{$avg}/day based on the data for the last 30 days)"
-msgstr "Считать и обновлять плановые продажи автоматически (≈{$avg} в день)"
+msgstr "Считать и обновлять прогноз автоматически (≈{$avg} в день за последние 30 дней)"
 
 msgid "Enter manually:"
 msgstr "Ввести вручную:"
@@ -417,6 +417,12 @@ msgstr "Последние %d дней"
 
 msgid "Last 3 years"
 msgstr "Последние 3 года"
+
+msgid "Next 365 days"
+msgstr "Будущие 365 дней"
+
+msgid "Next %d days"
+msgstr "Будущие %d дней"
 
 msgid "All time"
 msgstr "Все время"
@@ -1014,6 +1020,9 @@ msgstr "Импорт операций"
 msgid "Only orders paid after"
 msgstr "Только начиная с"
 
+msgid "Show all import settings"
+msgstr "Показать все настройки импорта"
+
 msgid "Importing"
 msgstr "Импорт"
 
@@ -1180,7 +1189,7 @@ msgid "Sankey"
 msgstr "Карта финансов"
 
 msgid "No data message"
-msgstr "Нет данных"
+msgstr "Недостаточно данных для построения отчета."
 
 msgid "All currencies"
 msgstr "Все валюты"
@@ -1229,3 +1238,12 @@ msgstr "Дек"
 
 msgid "Only contacts linked with income transactions are addressed in this report. Expense transactions and no-contact transactions are not counted."
 msgstr "В отчете учитываются только доходные операции, связанные с контактами. Расходные операции и операции без связи с контактами не учитываются."
+
+msgid "Download sample file"
+msgstr "Скачать пример файла"
+
+msgid "Plugins"
+msgstr "Плагины"
+
+msgid "Import plugins are coming soon. Please stay tuned."
+msgstr "Плагины для импорта данных скоро появятся. Не переключайтесь."

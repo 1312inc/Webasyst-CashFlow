@@ -25,7 +25,7 @@ export default {
     queryParams: {
       from: '',
       to: moment().add(1, 'M').format('YYYY-MM-DD'),
-      limit: 200,
+      // limit: 200,
       offset: 0,
       filter: ''
     },
@@ -224,8 +224,8 @@ export default {
             commit('createTransactions', data)
           }
         }
-      } catch (_) {
-        return false
+      } catch (e) {
+        return Promise.reject(e)
       }
     },
 
@@ -304,7 +304,7 @@ export default {
         })
         commit('setTodayCount', data.count)
         // emitting for the mobile platform
-        if (process.env.VUE_APP_MODE === 'mobile') {
+        if (this.$isSpaMobileMode) {
           window.emitter.emit('todayCount', data.count)
         }
       } catch (_) {

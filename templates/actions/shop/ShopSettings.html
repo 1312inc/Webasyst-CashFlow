@@ -1,14 +1,45 @@
 {** @var cashShopScriptSettings $shopScriptSettings **}
 {** @var cashCategoryDto[] $incomes **}
 {** @var cashCategoryDto[] $expenses **}
-<section id="cash-settings" class="article">
+<section id="cash-settings" class="article wide">
     <div class="article-body">
 
         <div class="fields">
-            {if $wa->shop}
 
             <form id="cash-shopscript-settings">
             <h1>[`Shop-Script &rarr; Cash`]</h1>
+
+            <div class="custom-my-16">
+                <ul class="tabs bordered-bottom">
+                    <li>
+                        <a href="{$wa_app_url}import/">
+                            <i class="fas fa-file-excel" style="color: #499b5e;"></i>
+                            [`Excel (CSV)`]
+                        </a>
+                    </li>
+                    <li class="selected">
+                        <a href="{$wa_app_url}shop/settings/">
+                            <i class="icon" style="background-image: url('{$wa_url}wa-apps/cash/img/shop.svg');"></i>
+                            Shop-Script
+                        </a>
+                    </li>
+                    {*
+                        <li>
+                            <a href="javascript:void(0);">
+                                <i class="fab fa-tinkoff"></i>
+                                Tinkoff
+                                (plugin tab hook here)
+                            </a>
+                        </li>
+                    *}
+                    <li>
+                        <a href="{$wa_app_url}plugins/" class="opacity-30" onClick="alert('[`Import plugins are coming soon. Please stay tuned.`]');" title="[`Import plugins are coming soon. Please stay tuned.`]">
+                            <i class="fas fa-plug"></i>
+                            [`Plugins`]
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
             {if $shopIsOld}
                 <p><em>[`Shop-Script 8.0 or newer is required. Please install the latest Shop-Script update via the Installer app to enable sales import and Shop-Script &times; Cash integration.`]</em></p>
@@ -51,7 +82,7 @@
                             <select name="shopscript_settings[accountId]" class="bold">
                                 {foreach $accounts as $account}
                                 <option value="{$account->id}"
-                                        {if $shopScriptSettings->getAccountId() == $account->id}selected {/if}
+                                        {if $shopScriptSettings->getAccountId() == $account->id || ($shopScriptSettings->isFirstTime() && $wa->accountName()|strstr:$account->name)}selected {/if}
                                 >
                                     {$account->currency->getCode()|escape} - {$account->name|escape|truncate:32} ({$account->currency->getSign()|escape})
                                 </option>
@@ -92,11 +123,11 @@
                     </div>
                 </div>
 
-                <div class="custom-my-24">
+                <div class="custom-my-24 firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <hr class="custom-m-0">
                 </div>
 
-                <div class="field">
+                <div class="field firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <div class="name for-input">
                         [`Categories`]
                     </div>
@@ -114,7 +145,7 @@
                                         <option value="0"></option>
                                         {foreach $incomes as $category}
                                         <option value="{$category->id}"
-                                                {if $shopScriptSettings->getCategoryIncomeId() == $category->id}selected {/if}
+                                                {if $shopScriptSettings->getCategoryIncomeId() == $category->id || ($shopScriptSettings->isFirstTime() && '[`Sales (paid orders)`]'|strstr:$category->name)}selected {/if}
                                                 data-cash-category-color="{$category->color}"
                                         >
                                             {$category->name|escape|truncate:32}
@@ -151,7 +182,7 @@
                                         <option value="0"></option>
                                         {foreach $expenses as $category}
                                         <option value="{$category->id}"
-                                                {if $shopScriptSettings->getCategoryExpenseId() == $category->id}selected {/if}
+                                                {if $shopScriptSettings->getCategoryExpenseId() == $category->id || ($shopScriptSettings->isFirstTime() && '[`Refunds`]'|strstr:$category->name)}selected {/if}
                                                 data-cash-category-color="{$category->color}"
                                         >
                                             {$category->name|escape|truncate:32}
@@ -189,7 +220,7 @@
                                             <option value="0">[`Don’t import`]</option>
                                             {foreach $expenses as $category}
                                                 <option value="{$category->id}"
-                                                        {if $category->id == $shopScriptSettings->getCategoryPurchaseId()}selected {/if}
+                                                        {if $category->id == $shopScriptSettings->getCategoryPurchaseId() || ($shopScriptSettings->isFirstTime() && '[`Purchasing & supply`]'|strstr:$category->name)}selected {/if}
                                                         data-cash-category-color="{$category->color}"
                                                 >{$category->name|escape|truncate:32}</option>
                                             {/foreach}
@@ -213,7 +244,7 @@
                                             <option value="0">[`Don’t import`]</option>
                                             {foreach $expenses as $category}
                                                 <option value="{$category->id}"
-                                                        {if $category->id == $shopScriptSettings->getCategoryShippingId()}selected {/if}
+                                                        {if $category->id == $shopScriptSettings->getCategoryShippingId() || ($shopScriptSettings->isFirstTime() && '[`Shipping`]'|strstr:$category->name)}selected {/if}
                                                         data-cash-category-color="{$category->color}"
                                                 >{$category->name|escape|truncate:32}</option>
                                             {/foreach}
@@ -237,7 +268,7 @@
                                             <option value="0">[`Don’t import`]</option>
                                             {foreach $expenses as $category}
                                                 <option value="{$category->id}"
-                                                        {if $category->id == $shopScriptSettings->getCategoryTaxId()}selected {/if}
+                                                        {if $category->id == $shopScriptSettings->getCategoryTaxId() || ($shopScriptSettings->isFirstTime() && '[`Taxes`]'|strstr:$category->name)}selected {/if}
                                                         data-cash-category-color="{$category->color}"
                                                 >{$category->name|escape|truncate:32}</option>
                                             {/foreach}
@@ -251,11 +282,11 @@
                     </div>
                 </div>
 
-                <div class="custom-my-24">
+                <div class="custom-my-24 firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <hr class="custom-m-0">
                 </div>
 
-                <div class="field">
+                <div class="field firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <div class="name">
                         [`Forecasted sales`]
                     </div>
@@ -318,11 +349,11 @@
                     </div>
                 </div>
 
-                <div class="custom-my-24">
+                <div class="custom-my-24 firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <hr class="custom-m-0">
                 </div>
 
-                <div class="field">
+                <div class="field firstTimeHiddenBlock" {if $shopScriptSettings->isFirstTime()}style="display: none;"{/if}>
                     <div class="name">
                         [`Order log`]
                     </div>
@@ -385,6 +416,21 @@
 
                 </section>
 
+                {if $shopScriptSettings->isFirstTime()}
+                <div class="firstTimeHiddenBlock">
+                    <div class="custom-my-24">
+                        <hr class="custom-m-0">
+                    </div>
+
+                    <div class="field custom-mb-40">
+                        <div class="name"></div>
+                        <div class="value">
+                            <a class="firstTimeHiddenBlockToggler">[`Show all import settings`]</a>
+                        </div>
+                    </div>
+                </div>
+                {/if}
+
                 <div class="field">
 
                     {if !$shopScriptSettings->isFirstTime()}
@@ -424,12 +470,13 @@
 
                 <div class="field" data-cash-shop-errors {if empty($errors)}style="display:none;"{/if}>
                     <div class="box state-error">
-                        {$errors|implode:'<br>'}
+                        {if !empty($errors) && is_array($errors) && count($errors) > 0}
+                          {$errors|implode:'<br>'}
+                        {/if}
                     </div>
                 </div>
             </div>
             </form>
-            {/if}
 
         </div>
     </div>
@@ -553,6 +600,10 @@
                         $setW.addClass('c-shop-settings-wrapper-disabled');
                     }
                 })
+                .on('click.cash', '.firstTimeHiddenBlockToggler', function (e) {
+                    e.preventDefault();
+                    $ssform.find('.firstTimeHiddenBlock').toggle();
+                })
             ;
 
             $ssform.find('select').trigger('change.cash');
@@ -660,7 +711,7 @@
                                     onReady: function (r) {
                                         $progressSuccess.show().siblings().hide();
                                         progressInstance.set({ percentage: Math.round(r.progress) });
-                                        window.location = window.appState.baseUrl + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val();
+                                        window.location = window.appState.baseUrl + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val() + '?show_ss_import_hint=1';
                                     },
                                     onError: function (r) {
                                         $progressError.show().siblings().hide();

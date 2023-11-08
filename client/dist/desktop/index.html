@@ -1,1 +1,54 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link href="https://cdn.jsdelivr.net/gh/webasyst/webasyst-framework/wa-content/css/wa/wa-2.0.css" rel="stylesheet"><script src="https://cdn.jsdelivr.net/gh/webasyst/webasyst-framework/wa-content/js/jquery-wa/wa.switch-mode.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script><script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script><script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script><link href="/css/app.css" rel="stylesheet"></head><body><div id="wa-app"><div class="flexbox wrap-mobile"><div id="app-sidebar"></div><div id="app-content"></div></div></div><script src="/js/app.js"></script></body></html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!-- banch of WA deps for the dev mode -->
+    <link href="https://cdn.jsdelivr.net/gh/webasyst/webasyst-framework/wa-content/css/wa/wa-2.0.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+
+      <!--
+        Initial State for the dev mode.
+        Envs from vue.config.js
+        -->
+      <script>
+        window.appState = {
+          "webView": false,
+          "accountName": "accountName",
+          "lang": "ru_RU",
+          "baseUrl": "/",
+          "baseApiUrl": "/api.php",
+          "baseStaticUrl": "/wa-apps/cash/",
+          "token": "",
+          "currencies": ,
+          "categories": ,
+          "accounts": ,
+          "api_settings": ,
+          "emptyFlow": true,
+          "shopscriptInstalled": true
+        };
+      </script>
+
+    
+    <script type="module" crossorigin src="/assets/app.js"></script>
+    <link rel="stylesheet" href="/assets/app.css">
+  </head>
+  <body>
+
+    
+
+    <div id="wa-app">
+      <div class="flexbox wrap-mobile">
+        <div id="app-sidebar"></div>
+        <div id="app-content"></div>
+      </div>
+    </div>
+    
+
+    
+
+    
+  </body>
+</html>

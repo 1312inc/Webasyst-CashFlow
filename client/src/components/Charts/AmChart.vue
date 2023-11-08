@@ -3,7 +3,7 @@
     ref="chartdiv"
     :style="loadingChart && 'opacity:.2'"
     class="c-chart-main smaller"
-  ></div>
+  />
 </template>
 
 <script>
@@ -115,7 +115,7 @@ export default {
       // Date axis for groups (columns)
       const dateAxis = chart.xAxes.push(new am4charts.DateAxis())
       dateAxis.groupData = true
-      dateAxis.groupCount = process.env.VUE_APP_MODE === 'mobile' ? 90 : 180
+      dateAxis.groupCount = this.$isSpaMobileMode ? 90 : 180
       dateAxis.groupIntervals.setAll([
         { timeUnit: 'day', count: 1 },
         { timeUnit: 'month', count: 1 }
@@ -356,7 +356,7 @@ export default {
 
         // Filling daily balance
         let previosValue = null
-        filledChartData.map(e => {
+        filledChartData.forEach(e => {
           if (e.balance !== null) {
             previosValue = e.balance
           }
@@ -593,10 +593,10 @@ export default {
 <style lang="scss">
   .c-chart-main {
     height: 300px;
-    margin: 0 1.25rem 0 1rem;
+    margin-right: 1.25rem;
 
     @media (max-width: 760px) {
-      height: 400px !important;
+      height: 240px !important;
       margin: 0;
     }
   }

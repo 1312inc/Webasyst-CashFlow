@@ -47,10 +47,6 @@ html[data-theme='dark'] {
   display: inherit;
 }
 
-.dialog .dialog-body .dialog-content {
-  min-height: auto;
-}
-
 body.modal {
   overflow: hidden;
 }
@@ -77,9 +73,11 @@ body.modal {
   text-overflow: ellipsis;
 }
 
-.c-header { position: relative; padding: 0.75rem 2.375rem; }
+.brick.selected .icon {
+  color: var(--accent-color) !important;
+}
 
-.alert.c-cashgap-prediction-banner { margin: -0.75rem -0.5rem 1rem; border: none; border-radius: 0; padding: 1rem; }
+.alert.c-cashgap-prediction-banner { border: none; border-radius: 0; padding: 1rem; }
 
 .c-button-add-income { background: #16d15f; }
 .c-button-add-expense { background: #f7623a; }
@@ -110,13 +108,41 @@ body.modal {
 .c-list .c-item.c-transaction-group .userpic { position: relative; z-index: 1; }
 .c-list .c-item .c-unfold-helper-icon { opacity: 0; }
 .c-list .c-item .c-item-border { border-top: 1px solid var(--border-color-soft); padding: 0.6125rem 0; }
-.c-list .c-item .c-item-amount { text-align: right; }
+.c-list .c-item .c-item-amount { text-align: right; max-width: 100%; }
 .c-list .c-item:first-child .c-item-border { border: none; }
 .c-list .c-item:hover .c-unfold-helper-icon { opacity: 1; }
 .c-item .userpic {display: flex; justify-content: center; align-items: center;}
 .c-item .userpic .c-category-glyph { color: var(--white); font-size: 1.5rem; }
 .c-list .badge.c-time-diff-badge { padding: 0.25em 0.375em; font-weight: normal; background-color: var(--background-color-blockquote); color: var(--gray); }
 .c-list .badge.c-time-diff-badge::first-letter { text-transform: capitalize; }
+
+.c-list--compact {
+  display: flex;
+  overflow-x: auto;
+}
+
+@media screen and (min-width: 760px) {
+  .c-list--compact {
+    margin-left: 2.3rem;
+  }
+}
+
+.c-list--compact .c-item {
+  padding: 0;
+  width: 90px;
+  overflow: hidden;
+  flex: none;
+}
+.c-list--compact .c-item .flexbox {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0;
+}
+
+.c-list--compact .c-item .c-item-border {
+  border: 0;
+}
 
 .c-transaction-section .c-transaction-section__header {
   margin: 0;
@@ -178,9 +204,9 @@ body.modal {
   background: var(--background-color-blank);
 }
 
-.c-sticky-header-group > div {
+/* .c-sticky-header-group > div {
   padding: 0 0.6125rem;
-}
+} */
 
 .c-sticky-header-group.vue-sticky-el.top-sticky {
   box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.1);
@@ -206,5 +232,5 @@ body.modal {
   /* mobile */
   .alert.c-cashgap-prediction-banner { margin-top: 0; }
   .c-list .c-item { padding: 0 0 0 0.6125rem; border-radius: 0; font-size: 1rem; }
-  .c-item .c-item-amount { padding-right: 0.5rem; align-self: baseline; }
+  .c-item .c-item-amount { padding-right: 0.5rem; }
 }

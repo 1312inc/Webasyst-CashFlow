@@ -1,9 +1,9 @@
 <template>
   <div
+    ref="chart"
     :style="{ width: `${width / widthСorrection}%` }"
     class="c-breakdown-bar-chart"
-    ref="chart"
-  ></div>
+  />
 </template>
 
 <script>
@@ -47,7 +47,7 @@ export default {
     chart.padding(0, 0, 0, 0)
 
     // Create axes
-    var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis())
+    const categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis())
     categoryAxis.dataFields.category = 'category'
     categoryAxis.renderer.grid.template.disabled = true
     categoryAxis.renderer.labels.template.disabled = true
@@ -58,7 +58,7 @@ export default {
       }
     ]
 
-    var valueAxis = chart.xAxes.push(new am4charts.ValueAxis())
+    const valueAxis = chart.xAxes.push(new am4charts.ValueAxis())
     valueAxis.min = 0
     valueAxis.strictMinMax = true
     valueAxis.renderer.grid.template.disabled = true

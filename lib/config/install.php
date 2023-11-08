@@ -58,9 +58,11 @@ if ($innodb) {
         $installing->createAccountsAndCategories();
         cash()->getLogger()->log('Done: add accounts and categories', 'install');
 
-        cash()->getLogger()->log('Start: create demo account', 'install');
-        $installing->createDemo();
-        cash()->getLogger()->log('Done: create demo account', 'install');
+        // 2023.10 deprecated due to SS onboarding focus (TODO: could be an API to create a demo account)
+        // cash()->getLogger()->log('Start: create demo account', 'install');
+        // $installing->createDemo();
+        // cash()->getLogger()->log('Done: create demo account', 'install');
+
     } catch (waException $ex) {
         cash()->getLogger()->error('Fail on add foreign keys or account/categories creation', $ex);
 
@@ -69,3 +71,6 @@ if ($innodb) {
 } else {
     throw new waException('InnoDb engine is required');
 }
+
+// Marker used in layouts to greet user at first launch
+(new waAppSettingsModel())->set('cash', 'just_installed', 1);

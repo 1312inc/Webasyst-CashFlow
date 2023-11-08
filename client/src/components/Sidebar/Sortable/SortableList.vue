@@ -5,21 +5,25 @@
     :component-data="{attrs: { 'data-parentid': parentId }}"
     :force-fallback="true"
     :delay="1000"
-    :delayOnTouchOnly="true"
-    @sort="sort"
-    @add="add"
+    :delay-on-touch-only="true"
     :group="group"
     ghost-class="ghost"
     tag="ul"
     class="menu"
+    @sort="sort"
+    @add="add"
   >
-    <slot></slot>
+    <slot />
   </draggable>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
 export default {
+
+  components: {
+    draggable
+  },
   props: {
     items: {
       type: Array,
@@ -36,10 +40,6 @@ export default {
       type: Number,
       default: null
     }
-  },
-
-  components: {
-    draggable
   },
 
   data () {

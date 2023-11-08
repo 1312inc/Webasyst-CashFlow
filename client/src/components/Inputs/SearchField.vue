@@ -1,58 +1,76 @@
 <template>
   <div class="box custom-mt-4 custom-mb-8">
     <form
-      @submit.prevent="submit"
       class="state-with-inner-icon left width-100"
       style="position: relative;"
+      @submit.prevent="submit"
     >
       <input
-        v-model.trim="queryText"
-        @keyup.up="up"
-        @keyup.down="down"
         ref="input"
+        v-model.trim="queryText"
         :placeholder="$t('search.label')"
         class="width-100 solid"
         type="search"
         name="query"
-      />
+        @keyup.up="up"
+        @keyup.down="down"
+      >
       <ul
         v-if="results.length > 1"
-        :style="
-          `top:${$refs.input.offsetTop + $refs.input.offsetHeight}px;width:${
-            $refs.input.offsetWidth
-          }px;`
+        :style="`top:${$refs.input.offsetTop + $refs.input.offsetHeight}px;width:${$refs.input.offsetWidth
+        }px;`
         "
         class="c-autocomplete-menu menu"
       >
         <li
           v-for="(item, i) in results"
           :key="i"
-          @mousedown="activeMenuIndex = i;submit()"
           :class="{ active: i === activeMenuIndex }"
           class="c-autocomplete-menu__item"
+          @mousedown="activeMenuIndex = i; submit()"
         >
-          <a href="javascript:void(0);">
-            <span v-if="item.entityIcon" class="icon">
-              <img :src="item.entityIcon" class="userpic" alt="" />
+          <a @click.prevent="">
+            <span
+              v-if="item.entity.photo_url_absolute"
+              class="icon"
+            >
+              <img
+                :src="item.entity.photo_url_absolute"
+                :class="{
+                  userpic: item.routeName !== 'Order'
+                }"
+                alt=""
+              >
             </span>
-            <span v-else-if="item.entityGlyph" class="icon">
+            <span
+              v-else-if="item.entity.glyph"
+              class="icon"
+            >
               <i
-                :class="item.entityGlyph"
-                :style="`color: ${item.entityColor};`"
-              ></i>
+                :class="item.entity.glyph"
+                :style="`color: ${item.entity.color};`"
+              />
             </span>
-            <span v-else-if="item.entityColor" class="icon">
+            <span
+              v-else-if="item.entity.color"
+              class="icon"
+            >
               <i
                 class="rounded"
-                :style="`background-color: ${item.entityColor};`"
-              ></i>
+                :style="`background-color: ${item.entity.color};`"
+              />
             </span>
-            <i v-else class="fas fa-search"></i>
-            <span>{{ item.entityName }}</span>
+            <i
+              v-else
+              class="fas fa-search"
+            />
+            <span>{{ item.entity.name ?? queryText }}</span>
           </a>
         </li>
       </ul>
-      <button class="icon"><i class="fas fa-search"></i></button>
+      <button class="icon">
+        <i class="fas fa-search" />
+      </button>
     </form>
   </div>
 </template>
@@ -68,56 +86,63 @@ export default {
       results: []
     }
   },
-
   watch: {
     $route: 'resetAutocomplete',
     queryText: debounce(function (val) {
       this.input(val)
-    }, 500)
+    }, 300)
   },
-
   methods: {
     submit () {
-      const routeParams =
-        this.activeMenuIndex > 0
-          ? { params: { id: this.results[this.activeMenuIndex].entityId } }
-          : { query: { text: this.queryText } }
-
-      this.$router
-        .push({
-          name:
-            this.activeMenuIndex > 0
-              ? this.results[this.activeMenuIndex].entityType
-              : 'Search',
-          ...routeParams
-        })
-        .catch(() => {})
+      if (this.queryText) {
+        this.$router
+          .push(this.activeMenuIndex !== null
+            ? {
+                name: this.results[this.activeMenuIndex ?? 0].routeName,
+                ...this.results[this.activeMenuIndex ?? 0].routeParams
+              }
+            : {
+                name: 'Search',
+                query: { text: this.queryText }
+              })
+          .catch(() => { })
+      }
     },
-
     async input (searchString) {
       if (!searchString || searchString === '0') {
         this.resetAutocomplete()
         return
       }
-
       const searchedContacts = await this.searchContacts(searchString)
       const searchedCategories = this.searchCategories(searchString)
+
+      let searchedOrder
+      if (window.appState.shopscriptInstalled && /^\d+$/.test(this.queryText)) {
+        searchedOrder = {
+          routeName: 'Order',
+          routeParams: { params: { id: this.queryText } },
+          entity: {
+            name: `${this.$t('Order')} ${this.queryText}`,
+            photo_url_absolute: `${window.appState.baseStaticUrl}img/shop.svg`
+          }
+        }
+      }
+
       this.results = [
-        this.makeSearchListObjectFromEntity(searchString),
+        this.makeSearchListObjectFromEntity(searchString, 'Search'),
         ...searchedCategories,
         ...searchedContacts
       ]
-    },
 
+      if (searchedOrder) {
+        this.results.push(searchedOrder)
+      }
+    },
     searchCategories (searchString) {
-      const cats = this.$store.state.category.categories.filter(c =>
-        c.name.toLowerCase().includes(searchString.toLowerCase())
-      )
-      return cats.map(cat =>
-        this.makeSearchListObjectFromEntity(cat, 'Category')
-      )
+      return this.$store.state.category.categories
+        .filter(c => c.name.toLowerCase().includes(searchString.toLowerCase()))
+        .map(cat => this.makeSearchListObjectFromEntity(cat, 'Category'))
     },
-
     async searchContacts (searchString) {
       const { data } = await api.get('cash.contact.search', {
         params: {
@@ -126,32 +151,20 @@ export default {
       })
       return data.map(e => this.makeSearchListObjectFromEntity(e, 'Contact'))
     },
-
     makeSearchListObjectFromEntity (entity, entityType) {
-      if (typeof entity === 'string') {
-        return {
-          entityName: entity
-        }
-      }
       return {
-        entityId: entity.id,
-        entityName: entity.name,
-        entityIcon: entity.photo_url_absolute,
-        entityGlyph: entity.glyph,
-        entityColor: entity.color,
-        entityType
+        routeName: entityType,
+        routeParams: entityType !== 'Search'
+          ? { params: { id: entity.id } }
+          : { query: { text: entity } },
+        entity
       }
     },
-
     resetAutocomplete () {
       this.results = []
       this.activeMenuIndex = null
-
-      if (this.$route.name !== 'Search') {
-        this.queryText = ''
-      }
+      this.queryText = ''
     },
-
     up () {
       if (this.results.length) {
         if (this.activeMenuIndex === null) {
@@ -163,7 +176,6 @@ export default {
         }
       }
     },
-
     down () {
       if (this.results.length) {
         if (this.activeMenuIndex === null) {

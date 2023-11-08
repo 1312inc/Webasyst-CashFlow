@@ -1,9 +1,15 @@
 <template>
-  <div class="dialog-body" style="overflow: initial;">
+  <div
+    class="dialog-body"
+    style="overflow: initial;"
+  >
     <div class="dialog-header">
       <h2>{{ $t("moveTransactions", { count: ids.length }) }}</h2>
     </div>
-    <div class="dialog-content" style="overflow: initial;">
+    <div
+      class="dialog-content"
+      style="overflow: initial;"
+    >
       <div class="fields">
         <div class="field">
           <div class="name for-input">
@@ -13,10 +19,10 @@
             <DropdownWa
               v-model="model.account_id"
               :items="[{ id: 0, name: $t('dontChange') }, ...accounts]"
-              :useDefaultValue="false"
-              valuePropName="id"
-              :rowModificator="$_rowModificatorMixin_rowModificator_account"
-              :maxHeight="200"
+              :use-default-value="false"
+              value-prop-name="id"
+              :row-modificator="$_rowModificatorMixin_rowModificator_account"
+              :max-height="200"
               class="width-100"
             />
           </div>
@@ -34,11 +40,11 @@
                 $store.getters['category/getByType']('income'),
                 $store.getters['category/getByType']('expense')
               ]"
-              :groupsLabels="['', $t('income'), $t('expense')]"
-              :useDefaultValue="false"
-              valuePropName="id"
-              :rowModificator="$_rowModificatorMixin_rowModificator_category"
-              :maxHeight="200"
+              :groups-labels="['', $t('income'), $t('expense')]"
+              :use-default-value="false"
+              value-prop-name="id"
+              :row-modificator="$_rowModificatorMixin_rowModificator_category"
+              :max-height="200"
               class="width-100"
             />
           </div>
@@ -46,28 +52,30 @@
 
         <!-- Start Contractor section -->
         <div class="field">
-          <div class="name for-input">{{ $t("contractor") }}</div>
+          <div class="name for-input">
+            {{ $t("contractor") }}
+          </div>
           <div class="value">
             <InputContractor
+              :create-new-contractor="false"
               @changeContractor="
                 id => {
                   model.contractor_contact_id = id;
                 }
               "
-              :createNewContractor="false"
             />
           </div>
         </div>
         <!-- End Contractor section -->
 
         <div class="field">
-          <div class="name"></div>
+          <div class="name" />
           <div class="value">
             <p class="hint">
               <i
                 class="fas fa-exclamation-triangle"
                 style="color: orangered"
-              ></i>
+              />
               {{ $t("bulkMoveWarning") }}
             </p>
           </div>
@@ -79,13 +87,16 @@
       <div class="flexbox">
         <div class="flexbox space-12 wide">
           <button
-            @click="submit"
             :disabled="controlsDisabled"
             class="button purple"
+            @click="submit"
           >
             {{ $t("updateTransactions", { count: ids.length }) }}
           </button>
-          <button @click="close" class="button light-gray">
+          <button
+            class="button light-gray"
+            @click="close"
+          >
             {{ $t("cancel") }}
           </button>
         </div>

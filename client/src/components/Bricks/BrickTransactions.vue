@@ -2,19 +2,17 @@
   <router-link
     to="/transactions"
     :class="{ selected: $route.name === 'Transactions' }"
-    class="brick custom-mb-0"
+    class="brick"
   >
     <span
       v-if="count > 0"
       :class="{ badge: todayCount.onbadge > 0 }"
       class="count"
-      >{{ count }}</span
-    >
+    >{{ count }}</span>
     <span
       class="icon"
-      ><i class="fas fa-list"></i
-    ></span>
-    {{ $t("history") }}
+    ><i class="fas fa-list" /></span>
+    {{ $t("transactions") }}
   </router-link>
 </template>
 

@@ -1,74 +1,139 @@
 <template>
   <div style="position: relative">
-    <div class="state-with-inner-icon left width-100">
+    <div
+      v-if="isNewContractorMode"
+      class="flexbox middle"
+    >
+      <span class="icon gray"><i class="fas fa-plus" /></span>
       <input
-        :value="inputLabel"
-        @input="input"
-        @keyup.up="up"
-        @keyup.down="down"
-        @keyup.enter="select(aciveMenuIndex)"
-        @blur="reset"
-        @focus="
-          e => {
-            if (focus) {
-              input(e);
-            }
-          }
-        "
-        ref="input"
+        v-model.trim="inputValue"
         type="text"
-        autocomplete="off"
-        class="full-width"
-      />
-      <span v-if="!computedPhoto" class="icon"
-        ><i class="fas fa-user-plus"></i
-      ></span>
-      <i
-        v-else
-        :style="`background-image: url(${computedPhoto});opacity: 1;`"
-        class="icon userpic"
-      ></i>
+        class="width-100 custom-mx-8"
+      >
+      <a
+        class="icon gray"
+        style="flex: none;"
+        @click.prevent="() => { inputValue = ''; isNewContractorMode = false }"
+      ><i class="fas fa-times" /></a>
     </div>
 
-    <div v-if="!initialState || initialState !== inputValue" class="hint custom-mt-8">
-      {{
-        inputLabel.trim() === ""
-          ? $t("noContact")
-          : isNewContractor
+    <div
+      v-else
+      class="flexbox middle space-8"
+    >
+      <div class="state-with-inner-icon left width-100">
+        <input
+          ref="inputRef"
+          v-model.trim="inputValue"
+          type="text"
+          autocomplete="off"
+          class="full-width custom-mr-0"
+          @input="onInput"
+          @keydown.up.prevent="up"
+          @keydown.down.prevent="down"
+          @keydown.enter="() => { if (activeMenuIndex === response.length) { resetSearch(); isNewContractorMode = true } else { select(response[activeMenuIndex]) } }"
+          @blur="resetSearch"
+        >
+        <i
+          v-if="selectedContractor?.photo_url_absolute"
+          :style="`background-image: url(${selectedContractor.photo_url_absolute}); opacity: 1;`"
+          class="icon userpic"
+        />
+        <span
+          v-else
+          class="icon"
+        ><i class="fas fa-user-plus" /></span>
+      </div>
+      <a
+        class="icon gray"
+        @click.prevent="inputValue = ''; selectedContractor = null"
+      ><i class="fas fa-times" /></a>
+    </div>
+
+    <div class="hint custom-mt-8">
+      <div v-if="isNewContractorMode">
+        {{ $t('newContact') }}
+      </div>
+
+      <template v-else>
+        <i18n
+          v-if="inputValue === ''"
+          path="linkContact.main"
+        >
+          <a
+            v-if="$props.createNewContractor"
+            @click.prevent="isNewContractorMode = true"
+          >{{ $t('linkContact.link')
+          }}</a>
+        </i18n>
+
+        <!-- <div v-else-if="isFetching">
+          loading
+        </div> -->
+
+        <div v-else-if="selectedContractor">
+          {{ $t('selectedContact') }}
+        </div>
+
+        <i18n
+          v-else-if="!selectedContractor && !response.length"
+          path="noContact.main"
+        >
+          <template v-if="$props.createNewContractor">
+            <span>. <a @click.prevent="isNewContractorMode = true">{{
+              $t('noContact.link') }}</a></span>
+          </template>
+        </i18n>
+
+        <div v-else>
+          &nbsp;
+        </div>
+      </template>
+
+      <!-- {{
+        inputValue.trim() === ""
+          ? $t("linkContact")
+          : isNewContractorMode
           ? $t("newContact")
           : isNotFound
           ? $t("notFound")
           : $t("linkContact")
-      }}
+      }} -->
     </div>
 
     <ul
       v-if="response.length"
       ref="menu"
-      :style="
-        `top:${$refs.input.offsetTop + $refs.input.offsetHeight + 1}px;width:${
-          $refs.input.offsetWidth
-        }px;`
+      :style="`top:${$refs.inputRef.offsetTop + $refs.inputRef.offsetHeight + 1}px;width:${$refs.inputRef.offsetWidth
+      }px;`
       "
       tabindex="0"
       class="c-autocomplete-menu custom-m-0 custom-p-0 z-20"
     >
       <li
-        @mousedown="select(i)"
         v-for="(item, i) in response"
         :key="item.id"
-        :class="{ active: i === aciveMenuIndex }"
+        :class="{ active: i === activeMenuIndex }"
         tabindex="-1"
         class="c-autocomplete-menu__item"
+        @mousedown="select(item)"
       >
         <div class="small flexbox middle space-8 custom-py-8 custom-px-12">
           <i
             class="icon userpic"
-            :style="
-              `background-image: url(${item.photo_url_absolute});opacity: 1;`
+            :style="`background-image: url(${item.photo_url_absolute}); opacity: 1;`
             "
-          ></i>
+          />
           <span>{{ item.name }}</span>
+        </div>
+      </li>
+      <li
+        :class="{ active: activeMenuIndex === response.length }"
+        class="c-autocomplete-menu__item"
+        @mousedown="() => { resetSearch(); isNewContractorMode = true }"
+      >
+        <div class="small flexbox middle space-8 custom-py-8 custom-px-12">
+          {{ $t('createNewContact') }}
         </div>
       </li>
     </ul>
@@ -77,10 +142,13 @@
 
 <script>
 import api from '@/plugins/api'
+import { debounce } from '@/utils/debounce'
+
 export default {
   props: {
     defaultContractor: {
-      type: Object
+      type: Object,
+      default: null
     },
 
     createNewContractor: {
@@ -91,132 +159,107 @@ export default {
     defaultRequest: {
       type: String,
       default: ''
-    },
-
-    focus: {
-      type: Boolean,
-      default: false
     }
+
+    // focus: {
+    //   type: Boolean,
+    //   default: false
+    // }
   },
 
   data () {
     return {
-      initialState: '',
-      inputValue: '',
-      photo: '',
-      aciveMenuIndex: null,
-      response: [],
-      isNewContractor: false,
-      isNotFound: false
+      inputValue: this.defaultContractor?.name || '',
+      activeMenuIndex: null,
+      isNewContractorMode: false,
+      selectedContractor: this.defaultContractor ? { ...this.defaultContractor, photo_url_absolute: this.defaultContractor.userpic } : null,
+      response: []
+      // isFetching: false
     }
   },
 
-  computed: {
-    inputLabel () {
-      return this.response[this.aciveMenuIndex]?.name || this.inputValue
+  watch: {
+    selectedContractor: {
+      handler (contractor) {
+        this.$emit('changeContractor', contractor?.id || null)
+      },
+      deep: true
     },
-    computedPhoto () {
-      return (
-        this.response[this.aciveMenuIndex]?.photo_url_absolute || this.photo
-      )
+    inputValue (value) {
+      if (this.isNewContractorMode) {
+        this.$emit('newContractor', value)
+      }
+    },
+    isNewContractorMode (is) {
+      this.selectedContractor = null
+      this.$emit('newContractor', is ? this.inputValue || null : null)
+    },
+    response (contractors) {
+      const target = contractors.find(c => c.name === this.inputValue)
+      if (target) this.select(target)
     }
   },
 
-  created () {
-    if (this.defaultContractor) {
-      this.inputValue = this.defaultContractor.name || ''
-      this.photo = this.defaultContractor.userpic
-    }
-  },
-
-  mounted () {
-    this.initialState = this.$refs.input.value
-    if (this.focus) {
-      this.$refs.input.focus()
-    }
-  },
+  // mounted () {
+  //   if (this.focus) {
+  //     this.$refs.inputRef.focus()
+  //   }
+  // },
 
   methods: {
-    input ({ target }) {
-      this.inputValue = target.value
-      this.photo = ''
-      this.isNotFound = false
-
-      // prevent search request if empty string
-      if (!target.value.trim()) {
-        this.inputValue = ''
-        this.reset()
-
-        if (!this.defaultRequest) {
-          this.$emit('changeContractor', null)
-          return false
-        }
-      }
+    onInput: debounce(function () {
+      this.resetSearch()
+      this.selectedContractor = null
 
       // make search request
+      // this.isFetching = true
+      const term = this.inputValue || this.defaultRequest
+      if (!term) return
       api
         .get('cash.contact.search', {
           params: {
-            term: target.value.trim() || this.defaultRequest
+            term,
+            limit: 10
           }
         })
         .then(({ data }) => {
-          this.reset()
+          // this.isFetching = false
           this.response = data
-          // check if the response has an exact search string
-          const i = data.findIndex(e => e.name === this.inputValue)
-          if (i > -1) {
-            this.select(i)
-          } else {
-            if (this.createNewContractor && this.inputValue) {
-              this.$emit('newContractor', this.inputValue)
-              this.isNewContractor = true
-            } else {
-              this.$emit('changeContractor', null)
-              this.isNotFound = true
-            }
-          }
         })
-        .catch(e => {})
+        .catch(e => { })
+    }, 400),
+
+    select (contractor) {
+      this.selectedContractor = contractor
+      this.inputValue = contractor.name
+      this.resetSearch()
     },
 
-    select (index) {
-      if (index !== null) {
-        this.$emit('changeContractor', +this.response[index].id)
-        this.isNewContractor = false
-        this.isNotFound = false
-        this.inputValue = this.response[index].name
-        this.photo = this.response[index].photo_url_absolute
-        this.response = []
-        this.aciveMenuIndex = null
-      }
-    },
-
-    reset () {
+    resetSearch () {
       this.response = []
-      this.aciveMenuIndex = null
+      this.activeMenuIndex = null
     },
 
     up () {
       if (this.$refs.menu) {
-        if (this.aciveMenuIndex === null) {
-          this.aciveMenuIndex = this.response.length - 1
-        } else if (this.aciveMenuIndex > 0) {
-          this.aciveMenuIndex = this.aciveMenuIndex - 1
+        if (this.activeMenuIndex === null) {
+          this.activeMenuIndex = this.response.length
+        } else if (this.activeMenuIndex > 0) {
+          this.activeMenuIndex = this.activeMenuIndex - 1
         } else {
-          this.aciveMenuIndex = null
+          this.activeMenuIndex = null
         }
       }
     },
 
     down () {
       if (this.$refs.menu) {
-        if (this.aciveMenuIndex === null) {
-          this.aciveMenuIndex = 0
-        } else if (this.aciveMenuIndex < this.response.length - 1) {
-          this.aciveMenuIndex = this.aciveMenuIndex + 1
+        if (this.activeMenuIndex === null) {
+          this.activeMenuIndex = 0
+        } else if (this.activeMenuIndex < this.response.length) {
+          this.activeMenuIndex = this.activeMenuIndex + 1
         } else {
-          this.aciveMenuIndex = null
+          this.activeMenuIndex = null
         }
       }
     }
@@ -224,7 +267,11 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+input {
+  transition: none;
+}
+
 .c-autocomplete-menu {
   background: var(--background-color-blank) !important;
   position: absolute;

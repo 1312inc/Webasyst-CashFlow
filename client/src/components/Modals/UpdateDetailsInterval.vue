@@ -15,10 +15,10 @@
             <div class="state-with-inner-icon left">
               <DateField
                 v-model="interval.from"
-                :minDate="chartInterval.from"
-                :maxDate="chartInterval.to"
+                :min-date="chartInterval.from"
+                :max-date="chartInterval.to"
               />
-              <span class="icon"><i class="fas fa-calendar"></i></span>
+              <span class="icon"><i class="fas fa-calendar" /></span>
             </div>
           </div>
         </div>
@@ -30,10 +30,10 @@
             <div class="state-with-inner-icon left">
               <DateField
                 v-model="interval.to"
-                :minDate="chartInterval.from"
-                :maxDate="chartInterval.to"
+                :min-date="chartInterval.from"
+                :max-date="chartInterval.to"
               />
-              <span class="icon"><i class="fas fa-calendar"></i></span>
+              <span class="icon"><i class="fas fa-calendar" /></span>
             </div>
           </div>
         </div>
@@ -43,13 +43,16 @@
       <div class="flexbox">
         <div class="flexbox space-12 wide">
           <button
-            @click="submit"
             :disabled="controlsDisabled"
             class="button purple"
+            @click="submit"
           >
             {{ $t("setDates") }}
           </button>
-          <button @click="$emit('close')" class="button light-gray">
+          <button
+            class="button light-gray"
+            @click="$emit('close')"
+          >
             {{ $t("cancel") }}
           </button>
         </div>

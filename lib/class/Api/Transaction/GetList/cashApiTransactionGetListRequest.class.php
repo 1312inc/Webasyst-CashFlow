@@ -20,6 +20,11 @@ final class cashApiTransactionGetListRequest
     /**
      * @var int
      */
+    private $reverse;
+
+    /**
+     * @var int
+     */
     private $limit;
 
     /**
@@ -33,7 +38,8 @@ final class cashApiTransactionGetListRequest
         ?DateTimeImmutable $to,
         ?int $offset,
         ?int $limit,
-        ?string $filter
+        ?string $filter,
+        ?int $reverse
     ) {
         if (!$limit || $limit > 500 || $limit < 0) {
             $limit = 500;
@@ -55,6 +61,7 @@ final class cashApiTransactionGetListRequest
         $this->from = $from;
         $this->to = $to;
         $this->limit = $limit;
+        $this->reverse = $reverse;
         $this->filter = $filter;
     }
 
@@ -81,5 +88,10 @@ final class cashApiTransactionGetListRequest
     public function getFilter(): ?string
     {
         return $this->filter;
+    }
+
+    public function getReverse(): bool
+    {
+        return !$this->reverse;
     }
 }

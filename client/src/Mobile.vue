@@ -1,15 +1,28 @@
 <template>
-  <div id="wa-app">
+  <div
+    id="wa-app"
+    class="c-mobile-build"
+  >
     <div v-if="!$IsOnline.online">
-      <span class="alert danger custom-mb-0" style="border-radius:0;"><span class="icon"><i class="fas fa-skull"></i></span>{{ $t('offlineMessage') }}</span>
+      <span
+        class="alert danger custom-mb-0"
+        style="border-radius:0;"
+      >{{ $t('offlineMessage') }}</span>
     </div>
-    <div class="content blank" style="overflow:hidden;">
-      <div sticky-container class="c-mobile-build">
-        <router-view />
-      </div>
+    <div
+      class="content blank"
+      style="display: flex; flex-direction: column; min-height: 100vh;"
+    >
+      <router-view />
     </div>
-    <Modal v-if="open" @close="close">
-      <component :is="currentComponentInModal" :editedItem="item"></component>
+    <Modal
+      v-if="open"
+      @close="close"
+    >
+      <component
+        :is="currentComponentInModal"
+        :edited-item="item"
+      />
     </Modal>
   </div>
 </template>

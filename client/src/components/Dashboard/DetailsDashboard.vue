@@ -1,27 +1,33 @@
 <template>
-  <div v-if="data" class="c-breakdown-details">
+  <div
+    v-if="data"
+    class="c-breakdown-details"
+  >
     <div class="flexbox custom-mb-24">
       <div class="wide flexbox middle wrap-mobile">
         <div
           class="larger black bold custom-mb-0 custom-mb-8-mobile"
           v-html="dates"
-        ></div>
+        />
         <button
-          @click="openModal = true"
           class="button light-gray custom-ml-12 custom-ml-0-mobile"
+          @click="openModal = true"
         >
           {{ $t("setDates") }}
         </button>
         <ExportButton class="custom-ml-12 custom-ml-8-mobile" />
       </div>
       <div>
-        <button @click="closeDashboard" class="nobutton largest custom-p-0">
-          <i class="fas fa-times gray"></i>
+        <button
+          class="nobutton largest custom-p-0"
+          @click="closeDashboard"
+        >
+          <i class="fas fa-times gray" />
         </button>
       </div>
     </div>
 
-    <DetailsDashboardItem :itemData="dashboardData" />
+    <DetailsDashboardItem :item-data="dashboardData" />
 
     <portal>
       <Modal v-if="openModal">

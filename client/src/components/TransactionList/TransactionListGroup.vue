@@ -1,6 +1,7 @@
 <template>
-  <div sticky-container class="custom-mt-16 c-transaction-section">
+  <div class="c-transaction-section">
     <div
+      ref="el"
       @mouseover="
         isHover = true;
         if ($refs.pieIcon) $refs.pieIcon.style.display = 'block';
@@ -11,13 +12,10 @@
       "
     >
       <div
-        v-sticky
-        :sticky-offset="stickyOffset"
-        sticky-z-index="11"
-        on-stick="onStick"
         class="c-sticky-header-group"
+        :class="{'c-sticky-header-group--offset': $store.state.transactionBulk.selectedTransactionsIds.length}"
       >
-        <div class="flexbox middle wrap-mobile justify-between custom-py-8">
+        <div class="flexbox middle space-12 wrap-mobile justify-between custom-px-8 custom-py-12">
           <div class="flexbox middle space-12">
             <div
               v-if="$helper.showMultiSelect()"
@@ -26,43 +24,58 @@
             >
               <span
                 v-show="isHoverComputed && filteredTransactions.length"
-                @click="checkAll(filteredTransactions)"
                 class="wa-checkbox"
+                @click="checkAll(filteredTransactions)"
               >
                 <input
                   type="checkbox"
                   :checked="isCheckedAllInGroup(filteredTransactions)"
-                />
+                >
                 <span>
                   <span class="icon">
-                    <i class="fas fa-check"></i>
+                    <i class="fas fa-check" />
                   </span>
                 </span>
               </span>
             </div>
 
-            <h4 v-if="!showFoundedCount" class="c-transaction-section__header nowrap">
-              <div v-if="type === 'overdue'" class="black">
+            <h4
+              v-if="!showFoundedCount"
+              class="c-transaction-section__header nowrap"
+            >
+              <div
+                v-if="type === 'overdue'"
+                class="black"
+              >
                 {{ $t("overdue") }}
               </div>
-              <div v-if="type === 'yesterday'" class="black">
+              <div
+                v-if="type === 'yesterday'"
+                class="black"
+              >
                 {{ $t("yesterday") }}
               </div>
-              <div v-if="type === 'tomorrow'" class="black">
+              <div
+                v-if="type === 'tomorrow'"
+                class="black"
+              >
                 {{ $t("tomorrow") }}
               </div>
-              <div v-if="type === 'today'" class="black">
+              <div
+                v-if="type === 'today'"
+                class="black"
+              >
                 {{ $t("today") }}
                 <span class="hint">
-                  {{ this.$moment.locale() === 'ru' ? this.$moment().format("D MMMM") : this.$moment().format("MMMM D") }}
+                  {{ $moment.locale() === 'ru' ? $moment().format("D MMMM") : $moment().format("MMMM D") }}
                 </span>
               </div>
               <div
                 v-if="type === 'future'"
-                @click="upcomingBlockOpened = !upcomingBlockOpened"
                 :class="{ 'opacity-50': !upcomingBlockOpened }"
                 class="black flexbox middle space-8"
                 style="cursor: pointer"
+                @click="upcomingBlockOpened = !upcomingBlockOpened"
               >
                 <span>{{
                   $t("nextDays", { count: featurePeriod })
@@ -77,21 +90,28 @@
               </div>
             </h4>
 
-            <div v-if="showFoundedCount" class="gray bold nowrap custom-mr-4">
+            <div
+              v-if="showFoundedCount"
+              class="gray bold nowrap custom-mr-4"
+            >
               {{ $t('found', { count: filteredTransactions.length }) }}
             </div>
 
-            <TransactionListGroupUpcomingPeriod v-if="type === 'future'" :upcomingBlockOpened=upcomingBlockOpened @updateUpcomingBlockOpened="(val) => upcomingBlockOpened = val" />
+            <TransactionListGroupUpcomingPeriod
+              v-if="type === 'future'"
+              :upcoming-block-opened="upcomingBlockOpened"
+              @updateUpcomingBlockOpened="(val) => upcomingBlockOpened = val"
+            />
           </div>
           <div class="flexbox middle space-12">
             <div
               v-if="filteredTransactions.length"
-              @click="onStick({ sticked: true })"
+              ref="pieIcon"
               class="desktop-only c-pie-icon-helper"
               style="display: none; cursor: pointer"
-              ref="pieIcon"
+              @click="onStick"
             >
-              <i class="fas fa-chart-pie"></i>
+              <i class="fas fa-chart-pie" />
             </div>
             <AmountForGroup
               :group="filteredTransactions"
@@ -101,20 +121,28 @@
       </div>
 
       <div v-if="upcomingBlockOpened">
-        <ul v-if="filteredTransactions.length" class="c-list list">
+        <ul
+          v-if="filteredTransactions.length"
+          class="c-list list"
+          :class="{'c-list--compact': compactModeForFutureList}"
+        >
           <TransactionListGroupRow
+            v-for="(transaction, i) in compactModeForFutureList ? filteredTransactions.toReversed() : filteredTransactions"
             v-show="isShown(transaction)"
-            v-for="(transaction, i) in filteredTransactions"
             :key="transaction.id"
             :transaction="transaction"
-            :showChecker="isShowChecker"
-            :collapseHeaderData="collapseHeaderData(transaction)"
-            :showDate="i === 0 ? true : filteredTransactions[i].date !== filteredTransactions[i - 1].date"
-            :visibleSelectCheckbox="visibleSelectCheckbox"
+            :show-checker="isShowChecker"
+            :is-compact-mode="compactModeForFutureList"
+            :collapse-header-data="collapseHeaderData(transaction)"
+            :show-date="i === 0 ? true : filteredTransactions[i].date !== filteredTransactions[i - 1].date"
+            :visible-select-checkbox="visibleSelectCheckbox"
             @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
         </ul>
-        <div v-else class="align-center small custom-py-24">
+        <div
+          v-else
+          class="align-center small custom-py-24"
+        >
           {{ $t("emptyList") }}
         </div>
       </div>
@@ -123,10 +151,21 @@
 </template>
 
 <script>
+import { ref, watch } from 'vue'
+import { useStorage, useElementBounding } from '@vueuse/core'
 import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPeriod'
 import TransactionListGroupRow from './TransactionListGroupRow/TransactionListGroupRow'
 import AmountForGroup from '@/components/PeriodAmount/AmountForGroup'
+
+const listCompactMode = useStorage('list_compact_mode', true)
+
 export default {
+
+  components: {
+    TransactionListGroupUpcomingPeriod,
+    TransactionListGroupRow,
+    AmountForGroup
+  },
   props: {
     group: {
       type: Array,
@@ -148,12 +187,6 @@ export default {
     }
   },
 
-  components: {
-    TransactionListGroupUpcomingPeriod,
-    TransactionListGroupRow,
-    AmountForGroup
-  },
-
   data () {
     return {
       isHover: false,
@@ -170,6 +203,10 @@ export default {
   },
 
   computed: {
+    compactModeForFutureList () {
+      return this.type === 'future' && listCompactMode.value
+    },
+
     isShowChecker () {
       return this.filteredTransactions.some(e =>
         this.$store.state.transactionBulk.selectedTransactionsIds.includes(e.id)
@@ -177,12 +214,8 @@ export default {
     },
 
     isHoverComputed () {
-      if (process.env.VUE_APP_MODE === 'mobile' || this.visibleSelectCheckbox) return true
+      if (this.$isSpaMobileMode || this.visibleSelectCheckbox) return true
       return this.isShowChecker ? true : this.isHover
-    },
-
-    stickyOffset () {
-      return this.$helper.isDesktopEnv ? (this.showFoundedCount ? '{"top": 56}' : `{"top": ${this.$helper.isHeader() ? 114 : 56}}`) : '{"top": 0}'
     },
 
     featurePeriod () {
@@ -227,7 +260,7 @@ export default {
           this.$store.state.transaction.activeGroupTransactions.index ===
           this.index
         ) {
-          this.onStick({ sticked: true })
+          this.onStick()
         }
 
         const hash = {}
@@ -259,9 +292,27 @@ export default {
     }
   },
 
+  mounted () {
+    const that = this
+
+    const enableWatch = ref(true)
+    const { top } = useElementBounding(this.$refs.el)
+
+    watch(top, top => {
+      if (top < 120 && enableWatch.value) {
+        that.onStick()
+        enableWatch.value = false
+      }
+      if (top > 120 && !enableWatch.value) {
+        that.onStick()
+        enableWatch.value = true
+      }
+    })
+  },
+
   created () {
     if (this.index === 0) {
-      this.onStick({ sticked: true })
+      this.onStick()
     }
   },
 
@@ -315,20 +366,41 @@ export default {
       )
     },
 
-    onStick (e) {
-      if (e.sticked) {
-        this.$store.commit('transaction/setActiveGroupTransactions', {
-          index: this.index,
-          name: this.type,
-          items: this.filteredTransactions
-        })
-      }
+    onStick () {
+      this.$store.commit('transaction/setActiveGroupTransactions', {
+        index: this.index,
+        name: this.type,
+        items: this.filteredTransactions
+      })
     }
   }
 }
 </script>
 
 <style>
+.c-sticky-header-group {
+  position: sticky;
+  top: calc(60px + 4rem);
+  z-index: 99;
+  background-color: var(--background-color-blank);
+}
+
+.c-sticky-header-group:hover {
+  z-index: 999;
+}
+
+@media screen and (max-width: 760px) {
+  .c-sticky-header-group {
+    top: 4rem;
+  }
+  .c-mobile-build .c-sticky-header-group {
+    top: 0px;
+  }
+  .c-mobile-build .c-sticky-header-group--offset {
+    top: 60px;
+  }
+}
+
 .c-pie-icon-helper {
   opacity: 0.5;
   transition: 0.2s opacity;

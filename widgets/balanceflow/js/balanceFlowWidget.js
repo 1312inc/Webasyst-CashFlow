@@ -1,4 +1,4 @@
-import "./chartsD3Lib.umd.min.js";
+import "./chartsD3Lib.umd.js";
 
 const d = new Date();
 const startDate = d.setMonth(d.getMonth() - 1);

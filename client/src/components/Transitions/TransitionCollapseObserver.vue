@@ -1,7 +1,10 @@
 <template>
-  <div class="collapse-container" ref="observer">
+  <div
+    ref="observer"
+    class="collapse-container"
+  >
     <div ref="observable">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>

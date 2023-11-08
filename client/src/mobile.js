@@ -16,6 +16,7 @@ import VueMeta from 'vue-meta'
 import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
+Vue.prototype.$isSpaMobileMode = true
 
 Vue.use(permissions)
 Vue.use(Numeral)

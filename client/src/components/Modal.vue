@@ -1,9 +1,15 @@
 <template>
-  <transition name="fade" appear>
+  <transition
+    name="fade"
+    appear
+  >
     <div class="dialog">
-      <div class="dialog-background"></div>
-      <transition name="slide-fade" appear>
-        <slot></slot>
+      <div class="dialog-background" />
+      <transition
+        name="slide-fade"
+        appear
+      >
+        <slot />
       </transition>
     </div>
   </transition>
@@ -34,8 +40,13 @@ export default {
 <style lang="scss" scoped>
 .dialog {
   display: block;
+  z-index: 99999;
 
-  .dialog-body {
+  &:deep .dialog-content {
+    min-height: auto;
+    max-height: calc(100vh - 220px);
+  }
+  &:deep .dialog-body {
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
@@ -46,5 +57,6 @@ export default {
       transform: none;
     }
   }
+
 }
 </style>

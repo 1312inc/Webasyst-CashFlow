@@ -1,27 +1,23 @@
 <template>
   <div>
-    <ChartHeader
-      :showControls="false"
-    >
-      <template v-slot:title>
-        <h1 class="custom-m-0 custom-px-16-mobile custom-pt-16-mobile">
-          {{ $route.query.text }}
+    <ChartHeader :show-controls="false">
+      <template #title>
+        <h1 class="">
+          {{ $route.query.text }}<span v-if="!transactions.length && !loading">: {{ $t('notFound') }}</span>
         </h1>
       </template>
     </ChartHeader>
     <div class="flexbox">
       <div class="wide">
         <TransactionList
-          :showTodayGroup="false"
-          :showFutureGroup="false"
+          :show-today-group="false"
+          :show-future-group="false"
           :grouping="false"
-          :visibleSelectCheckbox="true"
-          :showFoundedCount="true"
+          :visible-select-checkbox="true"
+          :show-founded-count="true"
         />
       </div>
-      <AmChartPieStickyContainer
-        :selectedOnlyMode="true"
-      />
+      <AmChartPieStickyContainer :selected-only-mode="true" />
     </div>
   </div>
 </template>
@@ -33,12 +29,22 @@ import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyConta
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 
 export default {
-  mixins: [routerTransitionMixin],
 
   components: {
     ChartHeader,
     TransactionList,
     AmChartPieStickyContainer
+  },
+  mixins: [routerTransitionMixin],
+
+  computed: {
+    transactions () {
+      return this.$store.state.transaction.transactions.data
+    },
+
+    loading () {
+      return this.$store.state.transaction.loading
+    }
   },
 
   watch: {

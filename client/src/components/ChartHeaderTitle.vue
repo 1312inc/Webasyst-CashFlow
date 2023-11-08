@@ -1,14 +1,20 @@
 <template>
-  <div v-if="currentEntity" class="custom-p-16-mobile custom-pb-0-mobile">
-    <div>{{ this.$moment().format("LL") }}</div>
+  <div
+    v-if="currentEntity"
+    class="custom-pb-16-mobile"
+  >
+    <div>{{ $moment().format("LL") }}</div>
     <div class="flexbox middle space-12 wrap">
       <div class="flexbox space-12 middle wrap-mobile">
         <div class="h2 custom-mb-0">
           {{ currentEntity.name || currentEntity.currency }}
         </div>
         <div
-          v-if="balance"
-          :class="balance >= 0 ? 'text-green' : 'text-red'"
+          v-if="currentEntity.currency"
+          :class="{
+            'text-green': balance > 0,
+            'text-red': balance < 0
+          }"
           class="h2 nowrap custom-mb-0"
         >
           {{
@@ -17,22 +23,30 @@
               currencyCode: currentEntity.currency
             })
           }}
-
         </div>
       </div>
 
       <!-- TODO: make current currency as getter -->
-      <chart-header-title-average :currencyCode="$store.getters['transaction/activeCurrencyCode']" />
+      <chart-header-title-average :currency-code="$store.getters['transaction/activeCurrencyCode']" />
 
       <div v-if="currentEntity.id > 0 && $permissions.isAdmin">
-        <button @click="update(currentEntity)" class="button nobutton circle">
-          <i class="fas fa-edit"></i>
+        <button
+          class="button nobutton circle"
+          @click="update(currentEntity)"
+        >
+          <i class="fas fa-edit" />
         </button>
       </div>
     </div>
     <portal>
-      <Modal v-if="open" @close="close">
-        <component :is="currentComponentInModal" :editedItem="item"></component>
+      <Modal
+        v-if="open"
+        @close="close"
+      >
+        <component
+          :is="currentComponentInModal"
+          :edited-item="item"
+        />
       </Modal>
     </portal>
   </div>

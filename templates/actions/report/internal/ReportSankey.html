@@ -6,7 +6,7 @@
 <script src="{$wa_app_static_url}js/amcharts/lang/{$wa->locale()}.js"></script>
 {/if}
 <script type="module">
-    import reportSankey from "{$wa_app_static_url}js/reports/reportSankey.js";
+    import reportSankey from "{$wa_app_static_url}js/reports/reportSankey.js?v={$wa->version()}";
     reportSankey('chartdiv_sankey', {$data}, '{$wa->locale()}', '[`All currencies`]');
 </script>
 
@@ -15,7 +15,7 @@
 
     <div class="flexbox wrap middle space-16">
         <div class="currencies-container toggle custom-mb-12" style="display: none;"></div>
-        {include file='../includes/DateRange.html' from=$from to=$to withButton=true withYears=false}
+        {include file='../includes/DateRange.html' from=$from to=$to withButton=true withYears=false withNextRange=true}
     </div>
 
     {if $data === '[]'}

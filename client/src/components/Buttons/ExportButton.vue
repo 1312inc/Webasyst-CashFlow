@@ -4,11 +4,11 @@
     :href="link"
     class="button light-gray outlined"
     target="_blank"
-    ><span
-      ><i class="fas fa-file-excel" style="color: #499b5e"></i>
-      {{ $t("export") }}</span
-    ></a
-  >
+  ><span><i
+           class="fas fa-file-excel"
+           style="color: #499b5e"
+         />
+    {{ $t("export") }}</span></a>
 </template>
 
 <script>

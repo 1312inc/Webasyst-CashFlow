@@ -173,9 +173,17 @@
   "inDays": "(in {days} days)",
   "fileUploaderLabel": "Drop here or browse",
   "contacts": "Contacts",
-  "noContact": "Search for existing contact or enter any new contact name",
-  "linkContact": "Transaction will be linked with the selected contractor",
-  "newContact": "New contact will be created",
+  "createNewContact": "Create new Contact",
+  "linkContact": {
+    "main": "Search for existing contact {0}",
+    "link": "or create a new one"
+  },
+  "newContact": "New contact with the specified name will be created. Use the CRM app to view and edit contact profile afterwards.",
+  "noContact": {
+    "main": "Contact not found{0}",
+    "link": "Link with a new contact"
+  },
+  "selectedContact": "Transaction will be linked with the selected contractor",
   "hide": "Hide",
   "show": "Show",
   "showMore": "Show more",
@@ -209,5 +217,14 @@
   "restoreInfo": "Editing is disabled for deleted transactions. Select this transaction and restore it first.",
   "purge": "Purge",
   "selfDestructLabel": "Automatically delete this transaction when its planned date comes",
-  "selfDestructText": "Useful when real transactions are imported in bulk from banks and spreadsheets, and this particular transaction must be treated as a planned one that needs to be replaced with the imported ones."
+  "selfDestructText": "Useful when real transactions are imported in bulk from banks and spreadsheets, and this particular transaction must be treated as a planned one that needs to be replaced with the imported ones.",
+  "calendar": "Calendar",
+  "compactView": "Compact View",
+  "listView": "List View",
+  "plugins": "Plugins",
+  "contactsWillSoon": "Contacts with linked transactions will appear here soon.",
+  "Order": "Order",
+  "orOrder": "or order",
+  "orderNumber": "Order number",
+  "orderNotFound": "Order not found"
 }

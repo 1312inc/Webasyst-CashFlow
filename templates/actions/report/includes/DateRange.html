@@ -1,8 +1,8 @@
 <script type="module">
-    import renderRangeToggle from '{$wa_app_static_url}js/reports/rangeToggle.js';
+    import renderRangeToggle from '{$wa_app_static_url}js/reports/rangeToggle.js?v={$wa->version()}';
     {if $withButton}
         $(function () {
-            renderRangeToggle('.range-container', [30, 90, 365, 1095, 1825], updateDates);
+            renderRangeToggle('.range-container', [-365, -90, -30, 30, 90, 365, 1095, 1825], updateDates);
             $('.range-container button').on('click', updateDates);
 
             function updateDates () {
@@ -13,7 +13,7 @@
         });
     {else}
         $(function () {
-            renderRangeToggle('.range-container', [30, 90, 365, 1095, 1825]);
+            renderRangeToggle('.range-container', [-365, -90, -30, 30, 90, 365, 1095, 1825]);
         });
     {/if}
 </script>
@@ -23,6 +23,17 @@
         <button class="dropdown-toggle button light-gray" type="button">[`Select dates...`]</button>
         <div class="dropdown-body">
             <ul class="menu">
+                {if $withNextRange}
+                    <li>
+                        <a data-range="-30" href="#"><span>{sprintf('[`Next %d days`]', 30)}</span></a>
+                    </li>
+                    <li>
+                        <a data-range="-90" href="#"><span>{sprintf('[`Next %d days`]', 90)}</span></a>
+                    </li>
+                    <li>
+                        <a data-range="-365" href="#"><span>[`Next 365 days`]</span></a>
+                    </li>
+                {/if}
                 <li>
                     <a data-range="30" href="#"><span>{sprintf('[`Last %d days`]', 30)}</span></a>
                 </li>

@@ -1,21 +1,42 @@
 <template>
-  <li :class="classes" :data-itemid="category.id">
-    <router-link :to="`/category/${category.id}`" class="flexbox middle">
-      <span v-if="category.glyph" :key="category.color" class="icon">
-        <i :class="category.glyph" :style="`color:${category.color};`"></i>
+  <li
+    :class="classes"
+    :data-itemid="category.id"
+  >
+    <router-link
+      :to="`/category/${category.id}`"
+      class="flexbox middle"
+    >
+      <span
+        v-if="category.glyph"
+        :key="category.color"
+        class="icon"
+      >
+        <i
+          :class="category.glyph"
+          :style="`color:${category.color};`"
+        />
       </span>
-      <span v-else class="icon">
-        <i class="rounded" :style="`background-color:${category.color};`"></i>
+      <span
+        v-else
+        class="icon"
+      >
+        <i
+          class="rounded"
+          :style="`background-color:${category.color};`"
+        />
       </span>
       <span>{{ category.name }}</span>
-      <span class="count small" v-if="category.is_profit" :title="$t('profit')"
-        ><i class="fas fa-coins"></i
-      ></span>
+      <span
+        v-if="category.is_profit"
+        class="count small"
+        :title="$t('profit')"
+      ><i class="fas fa-coins" /></span>
     </router-link>
     <SortableList
       :items="childrens"
-      :parentId="category.id"
-      sortingTarget="category"
+      :parent-id="category.id"
+      sorting-target="category"
       :group="{
         name: $parent.$attrs.group.name,
         put: () => (allowChildren ? $parent.$attrs.group.name : false)
@@ -25,7 +46,7 @@
         v-for="category in childrens"
         :key="category.id"
         :category="category"
-        :allowChildren="false"
+        :allow-children="false"
       />
     </SortableList>
   </li>
@@ -35,6 +56,10 @@
 import SortableList from './SortableList'
 export default {
   name: 'SortableItemCategory',
+
+  components: {
+    SortableList
+  },
   props: {
     category: {
       type: Object,
@@ -44,10 +69,6 @@ export default {
       type: Boolean,
       default: true
     }
-  },
-
-  components: {
-    SortableList
   },
 
   computed: {

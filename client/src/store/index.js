@@ -16,7 +16,7 @@ export default new Vuex.Store({
   state: () => ({
     currentType: '',
     currentTypeId: null,
-    multiSelectMode: process.env.VUE_APP_MODE !== 'mobile'
+    multiSelectMode: !window.appState.webView
   }),
 
   getters: {

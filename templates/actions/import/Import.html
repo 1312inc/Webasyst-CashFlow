@@ -1,4 +1,4 @@
-<div id="cash-import-page" class="article">
+<div id="cash-import-page" class="article wide">
     <div class="article-body">
 
         <h1>[`Import`]</h1>
@@ -13,7 +13,7 @@
                 </li>
                 <li>
                     <a href="{$wa_app_url}shop/settings/">
-                        <i class="icon" style="background-image: url('{$wa_url}wa-apps/shop/img/shop.png');"></i>
+                        <i class="icon" style="background-image: url('{$wa_url}wa-apps/cash/img/shop.svg');"></i>
                         Shop-Script
                     </a>
                 </li>
@@ -25,13 +25,13 @@
                             (plugin tab hook here)
                         </a>
                     </li>
-                    <li>
-                        <a href="javascript:void(0);">
-                            <i class="fas fa-plus-circle"></i>
-                            [`Install plugins`]
-                        </a>
-                    </li>
                 *}
+                <li>
+                    <a href="{$wa_app_url}plugins/" class="opacity-30" onClick="alert('[`Import plugins are coming soon. Please stay tuned.`]');" title="[`Import plugins are coming soon. Please stay tuned.`]">
+                        <i class="fas fa-plug"></i>
+                        [`Plugins`]
+                    </a>
+                </li>
             </ul>
         </div>
 
@@ -117,8 +117,16 @@
                             <p class="hint">
                                 {sprintf(
                                     '[`Supported file formats: <b>%s</b>`]',
-                                    '<i class="fas fa-file-excel" style="color: #499b5e;"></i> CSV (Excel)'
+                                    '<i class="fas fa-file-excel" style="color: #499b5e;"></i> .CSV (Excel)'
                                 )}
+                            </p>
+                            <p class="hint">
+                                {if $wa->locale() == 'ru_RU'}
+                                    {$_sample = 'https://www.webasyst.ru/wa-data/public/site/downloads/cash-app-csv-sample-file-ru_utf8.csv'}
+                                {else}
+                                    {$_sample = 'https://www.webasyst.com/wa-data/public/site/downloads/cash-app-csv-sample-file-en_utf8.csv'}
+                                {/if}
+                                <a href="{$_sample}">[`Download sample file`]</a>
                             </p>
                         </div>
                     </div>
