@@ -7,7 +7,7 @@
       <span
         class="alert danger custom-mb-0"
         style="border-radius:0;"
-      ><span class="icon"><i class="fas fa-skull" /></span>{{ $t('offlineMessage') }}</span>
+      >{{ $t('offlineMessage') }}</span>
     </div>
     <div
       class="content blank"
