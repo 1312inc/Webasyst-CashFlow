@@ -348,7 +348,7 @@ export default {
           const i = filledChartData.findIndex(e => e.period === element.period)
           if (i > -1) {
             filledChartData.splice(i, 1, {
-       ***REMOVED***element,
+              ...element,
               bulletDisabled: true
             })
           }
@@ -399,7 +399,7 @@ export default {
         options = {
           name: this.$t('income'),
           color: chartColors.green,
-   ***REMOVED***options
+          ...options
         }
       }
 
@@ -407,7 +407,7 @@ export default {
         options = {
           name: this.$t('expense'),
           color: chartColors.red,
-   ***REMOVED***options
+          ...options
         }
       }
 
@@ -415,7 +415,7 @@ export default {
         options = {
           name: this.$t('profit'),
           color: chartColors.blue,
-   ***REMOVED***options
+          ...options
         }
       }
 

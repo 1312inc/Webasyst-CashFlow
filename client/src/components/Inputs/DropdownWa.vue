@@ -137,7 +137,7 @@ export default {
                 name: this.defaultValue
               }
             ],
-     ***REMOVED***groups
+            ...groups
           ]
         : groups
     },

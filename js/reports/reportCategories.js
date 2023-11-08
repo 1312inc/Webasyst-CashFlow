@@ -6,14 +6,14 @@ export default function (data, language, year, categoriesList) {
 
     // State
     const currencySigns = Object.entries({
- ***REMOVED***data.all_income, ...data.all_expense
+        ...data.all_income, ...data.all_expense
     }).reduce((acc, c) => {
         acc[c[0]] = c[1].helpers.currencySign;
         return acc;
     }, {});
 
     const currencies = Object.keys({
- ***REMOVED***data.all_income, ...data.all_expense
+        ...data.all_income, ...data.all_expense
     });
 
     let activeCurrency = currencies[0];

@@ -99,7 +99,7 @@ export default {
           .push(this.activeMenuIndex !== null
             ? {
                 name: this.results[this.activeMenuIndex ?? 0].routeName,
-         ***REMOVED***this.results[this.activeMenuIndex ?? 0].routeParams
+                ...this.results[this.activeMenuIndex ?? 0].routeParams
               }
             : {
                 name: 'Search',
@@ -130,8 +130,8 @@ export default {
 
       this.results = [
         this.makeSearchListObjectFromEntity(searchString, 'Search'),
- ***REMOVED***searchedCategories,
- ***REMOVED***searchedContacts
+        ...searchedCategories,
+        ...searchedContacts
       ]
 
       if (searchedOrder) {

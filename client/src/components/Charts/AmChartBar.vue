@@ -103,7 +103,7 @@ export default {
       this.chart.series.clear()
       this.data.forEach(element => {
         this.createSeries({
-   ***REMOVED***element,
+          ...element,
           category: 'category'
         })
       })

@@ -6,7 +6,7 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
     const currencies = Object.keys(data);
     const mergedData = currencies.reduce((acc, c) => ([...acc, ...data[c]['data'].map(e => {
         return {
-     ***REMOVED***e,
+            ...e,
             currency: data[c].details.code,
             currencySign: data[c].details.sign,
             color: e.color || '#365fff'

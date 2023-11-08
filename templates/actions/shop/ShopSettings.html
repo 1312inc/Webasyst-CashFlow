@@ -60,13 +60,13 @@
                                     {if $shopScriptSettings->isEnabled()}checked{/if}
                             />
                         </span>
-                 ***REMOVED***
+                        <script>
                             ( function($) {
                                 $("#c-switch-ss-integration-core").waSwitch({
                                     change: function(active, wa_switch) { }
                                 });
                             })(jQuery);
-                 ***REMOVED***
+                        </script>
                     </div>
                 </div>
                 {/if}
@@ -302,13 +302,13 @@
 
                         <p class="hint">{sprintf('[`<b>Works like magic!</b> Average daily sales will be automatically added as planned transactions for better budget forecasting. When a new day comes, forecasted sales for this day will be cleared automatically and replaced with real sales (paid orders) data.`]')}</p>
 
-                 ***REMOVED***
+                        <script>
                             ( function($) {
                                 $("#c-switch-forecasted-ss-sales").waSwitch({
                                     change: function(active, wa_switch) { }
                                 });
                             })(jQuery);
-                 ***REMOVED***
+                        </script>
 
                         <section class="small" data-cash-settings="forecast-variants" style="{if !$shopScriptSettings->isEnableForecast()}display: none{/if}">
                             <div class="custom-mb-8 custom-mt-16">

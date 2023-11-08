@@ -88,11 +88,11 @@ export default {
         const i = state.transactions.data.findIndex(e => e.id === id)
         if (i > -1) {
           const newData = {
-     ***REMOVED***data,
+            ...data,
             id: state.transactions.data[i].id,
-     ***REMOVED***(updatedIDIndex > 0 && { create_datetime: state.transactions.data[i].create_datetime }),
-     ***REMOVED***(updatedIDIndex > 0 && { date: state.transactions.data[i].date }),
-     ***REMOVED***(updatedIDIndex > 0 && { datetime: state.transactions.data[i].datetime }),
+            ...(updatedIDIndex > 0 && { create_datetime: state.transactions.data[i].create_datetime }),
+            ...(updatedIDIndex > 0 && { date: state.transactions.data[i].date }),
+            ...(updatedIDIndex > 0 && { datetime: state.transactions.data[i].datetime }),
             $_flagCreated: state.transactions.data[i].$_flagCreated,
             $_flagUpdated: true
           }
@@ -109,8 +109,8 @@ export default {
         const i = state.transactions.data.findIndex(t => t.id === id)
         if (i > -1) {
           const newData = {
-     ***REMOVED***state.transactions.data[i],
-     ***REMOVED***props,
+            ...state.transactions.data[i],
+            ...props,
             $_flagUpdated: true
           }
           state.transactions.data.splice(i, 1, newData)
@@ -129,7 +129,7 @@ export default {
     createTransactions (state, data) {
       data.forEach(transition => {
         state.transactions.data.unshift({
-   ***REMOVED***transition,
+          ...transition,
           $_flagCreated: true
         })
         state.transactions.total = state.transactions.data.length
@@ -166,8 +166,8 @@ export default {
 
     updateChartInterval (state, data) {
       state.chartInterval = {
- ***REMOVED***state.chartInterval,
- ***REMOVED***data
+        ...state.chartInterval,
+        ...data
       }
     },
 
@@ -260,8 +260,8 @@ export default {
         })
 
         const result = {
-   ***REMOVED***data,
-   ***REMOVED***(data.offset > 0 && { data: [...state.transactions.data, ...data.data] })
+          ...data,
+          ...(data.offset > 0 && { data: [...state.transactions.data, ...data.data] })
         }
 
         commit('setTransactions', result)

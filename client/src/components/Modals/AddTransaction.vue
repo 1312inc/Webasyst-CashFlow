@@ -46,7 +46,7 @@
             v-for="(type, i) in [
               'income',
               'expense',
-       ***REMOVED***(accounts.length > 1 ? ['transfer'] : [])
+              ...(accounts.length > 1 ? ['transfer'] : [])
             ]"
             :key="i"
             :class="{ selected: transactionType === type }"
@@ -748,7 +748,7 @@ export default {
           createDate: this.$moment(this.transaction.create_datetime).format(
             'LLL'
           ),
-   ***REMOVED***(this.transaction.update_datetime && {
+          ...(this.transaction.update_datetime && {
             updateDate: this.$moment(this.transaction.update_datetime).format(
               'LLL'
             )
