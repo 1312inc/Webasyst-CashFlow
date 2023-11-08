@@ -25,7 +25,7 @@ export default {
     queryParams: {
       from: '',
       to: moment().add(1, 'M').format('YYYY-MM-DD'),
-      limit: 200,
+      // limit: 200,
       offset: 0,
       filter: ''
     },
