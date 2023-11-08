@@ -596,7 +596,7 @@ export default {
     margin-right: 1.25rem;
 
     @media (max-width: 760px) {
-      height: 400px !important;
+      height: 240px !important;
       margin: 0;
     }
   }
