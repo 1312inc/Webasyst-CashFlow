@@ -11,6 +11,7 @@ import Trash from '../views/Trash.vue'
 import Entity from '../views/Entity.vue'
 import NotFound from '../views/NotFound.vue'
 import Calendar from '../views/Calendar.vue'
+import FormAdd from '../views/FormAdd.vue'
 import { i18n } from '../plugins/locale'
 import { permissions } from '../plugins/permissions'
 import { moment } from '@/plugins/numeralMoment.js'
@@ -133,6 +134,18 @@ const routes = [
       showChart: true,
       getExternalEntitySource: 'contacts',
       fetchTransactionsFilter: (id) => `contractor/${id}`
+    }
+  },
+  {
+    path: '/form/add/:type',
+    name: 'Form',
+    component: FormAdd,
+    beforeEnter: (to, from, next) => {
+      if (['account', 'category'].includes(to.params.type)) {
+        next()
+      } else {
+        next({ name: 'NotFound' })
+      }
     }
   },
   {
