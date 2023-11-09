@@ -66,7 +66,7 @@ export default defineConfig(async ({ mode }) => {
     server: {
       proxy: {
         '/api.php': env.VITE_APP_DEV_PROXY,
-        '/wa-apps': 'http://localhost:8888'
+        '/wa-apps': env.VITE_APP_DEV_PROXY
       }
     }
   }
