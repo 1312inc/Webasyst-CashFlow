@@ -147,4 +147,9 @@ final class cashRightConfig extends waRightConfig
 
         return $default;
     }
+
+    public function clearRights($contact_id)
+    {
+        cash()->getContactRights()->clearRightsCache();
+    }
 }
