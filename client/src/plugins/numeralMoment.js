@@ -4,7 +4,7 @@ import moment from 'moment'
 import 'numeral/locales/ru'
 import 'moment/dist/locale/ru'
 
-const localeCode = locale.split('_')[0]
+const localeCode = locale.split('_')[0] === 'ru' ? 'ru' : 'en'
 numeral.locale(localeCode)
 moment.locale(localeCode)
 
