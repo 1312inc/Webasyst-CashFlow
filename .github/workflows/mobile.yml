@@ -15,7 +15,7 @@ jobs:
   deploy_android:
     runs-on: ubuntu-latest
     steps:        
-      - name: Copy to Cash-app-Android
+      - name: Copy to Webasyst-CashFlow-Android
         uses: andstor/copycat-action@v3
         with:
           personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
@@ -30,13 +30,14 @@ jobs:
   deploy_ios:
     runs-on: ubuntu-latest
     steps:        
-      - name: Copy to Cash-app-iOS
+      - name: Copy to Webasyst-CashFlow-iOS
         uses: andstor/copycat-action@v3
         with:
           personal_token: ${{ secrets.MOBILE_DEPLOY_TOKEN }}
           src_path: /client/dist/mobile/assets/.
           src_branch: dev
-          dst_path: /Cashflow/Resources/SPA/
+          dst_path: /CashFlow/Resources/spa/assets/
           filter: '**/!(*.html)'
           dst_owner: 1312inc
-          dst_repo_name: Cash-app-iOS
+          dst_repo_name: Webasyst-CashFlow-iOS
+          dst_branch: dev

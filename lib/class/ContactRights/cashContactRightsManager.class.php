@@ -516,6 +516,12 @@ class cashContactRightsManager
             ->getAccountIdsWithAccess($access);
     }
 
+    public function clearRightsCache()
+    {
+        $this->cache = [];
+        $this->accesses = [];
+    }
+
     /**
      * @param waContact $contact
      * @param string    $alias

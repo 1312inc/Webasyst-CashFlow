@@ -50,8 +50,8 @@ async function handleMonthChange (date) {
 
 store.subscribeAction({
   after: (action) => {
-    if (action.type === 'transaction/update') {
-      handleMonthChange(curDate)
+    if (action.type === 'transaction/update' || action.type === 'transaction/delete') {
+      handleMonthChange(curDate.value)
     }
   }
 })
