@@ -1,0 +1,48 @@
+<h1>Плагин Тинькофф для бизнеса</h1>
+
+<ul class="tabs">
+    <li class="selected">
+        <a href="javascript:void(0);">
+            Профиль 1
+        </a>
+    </li>
+    <li>
+        <i class="fas fa-plus"></i>
+    </li>
+</ul>
+
+<div class="fields form">
+    <form action="?module=plugins&id=tinkoff&action=save" method="post" id="plugins-settings-form">
+        {$wa->csrf()}
+        <div class="field">
+            <div class="name">
+                [`Access Token`]
+            </div>
+            <div class="value">
+                <input class="long" type="password" name="cash_tinkoff[access_token]" value="{if isset($settings.access_token)}{$settings.access_token}{/if}">
+                <p class="hint">
+                    Получите токен доступа для вашего домена на веб-сайте
+                    <a href="https://www.tinkoff.ru/business/" target="_blank">www.tinkoff.ru</a>
+                    по <a href="https://developer.tinkoff.ru/docs/intro/manuals/self-service-auth" target="_blank">инструкции</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="value submit">
+                <input type="hidden" name="profile" value="1">
+                <input type="submit" class="button green" value="[s`Save`]">
+                <span id="plugins-settings-form-status" style="display:none"></span>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    (function ($) {
+        $('.tabs').waTabs();
+    })(jQuery);
+</script>
+
+

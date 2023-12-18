@@ -1,0 +1,69 @@
+<div class="content box contentbox">
+
+    <div class="fields vertical">
+        <div class="field">
+            <div class="name">
+                <button class="button js-company-button">Информация о компании</button>
+            </div>
+            <div class="value js-company-value"></div>
+        </div>
+
+        <div class="field">
+            <div class="name">
+                <button class="button js-accounts-button">Получить счета</button>
+            </div>
+            <div class="value js-accounts-value"></div>
+        </div>
+
+        <div class="field">
+            <div class="name">
+                <button class="button js-statement-button">Импортировать выписку</button>
+            </div>
+        </div>
+        <div class="value js-statement-value"></div>
+    </div>
+</div>
+
+<script>
+    $('.js-company-button').on('click', function () {
+        $.get('?plugin=tinkoff&action=getCompany', function (res) {
+            if (res.status === 'ok') {
+                let html = '<b>Название:</b> '+ res.data.name + '<br><b>Адрес:</b> '+ res.data.address;
+                $('.js-company-value').html( html);
+            }
+        });
+    });
+
+    $('.js-accounts-button').on('click', function () {
+        $.get('?plugin=tinkoff&action=getAccounts', function (res) {
+            if (res.status === 'ok') {
+                let html = '<ul>';
+                for (let _account of res.data) {
+                    html += '<li>&bull; '+ _account.name + (_account.default ? ' <b>(Текущий)</b>' : '') +'</li>';
+                }
+                html += '</ul>';
+                $('.js-accounts-value').html(html);
+            }
+        });
+    });
+
+    $('.js-statement-button').on('click', function () {
+        $.get('?plugin=tinkoff&action=getStatement', function (res) {
+            console.log('++++', res);
+            if (res.status === 'ok') {
+                let html = '<table class="single-lined"><thead><tr>\
+                        <th class="min-width">Дата операции</th>\
+                        <th>Сумма транзакции</th>\
+                        <th>Описание транзакции</th>\
+                    </tr></thead><tbody>';
+
+                for (let _statement of res.data.operations) {
+                    let _class = 'class="'+ (_statement.amount < 0 ? 'bg-orange' : 'bg-green') +'"';
+                    html += '<tr '+ _class +'><td>'+ _statement.datetime+'</td><td>'+ _statement.amount +'</td><td>'+ _statement.description +'</td></tr>';
+                }
+                html += '</tbody></table>';
+                $('.js-statement-value').html(html);
+            }
+        });
+    });
+</script>
