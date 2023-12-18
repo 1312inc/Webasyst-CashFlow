@@ -17,15 +17,18 @@
                         Shop-Script
                     </a>
                 </li>
-                {*
+                {if ($plugins)}
+                    {foreach $plugins as $plugin}
                     <li>
-                        <a href="javascript:void(0);">
-                            <i class="fab fa-tinkoff"></i>
-                            Tinkoff
-                            (plugin tab hook here)
+                        <a href="{$wa_app_url}?plugin={$plugin.id}">
+                            <span class="icon space-8">
+                                <i style="background-image: url('{$wa_url}{$plugin.img}');"></i>
+                            </span>
+                            {$plugin.name}
                         </a>
                     </li>
-                *}
+                    {/foreach}
+                {/if}
                 <li>
                     <a href="{$wa_app_url}plugins/" class="opacity-30" onClick="alert('[`Import plugins are coming soon. Please stay tuned.`]');" title="[`Import plugins are coming soon. Please stay tuned.`]">
                         <i class="fas fa-plug"></i>
