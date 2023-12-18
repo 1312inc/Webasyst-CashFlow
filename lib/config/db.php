@@ -91,7 +91,7 @@ return array(
         'update_datetime' => array('datetime'),
         'import_id' => array('varchar', 100),
         'is_archived' => array('tinyint', 1, 'default' => '0'),
-        'external_hash' => array('varchar', 32),
+        'external_hash' => array('varchar', 128),
         'external_source' => array('varchar', 20),
         'external_data' => array('text'),
         'contractor_contact_id' => array('int', 11),
