@@ -1,5 +1,5 @@
 <template>
-  <div style="max-height: 30vh;overflow-x: hidden;overflow-y: auto;">
+  <div>
     <div
       v-if="!open"
       class="flexbox middle space-8"
