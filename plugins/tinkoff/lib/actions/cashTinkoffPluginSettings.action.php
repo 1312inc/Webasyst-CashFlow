@@ -24,6 +24,8 @@ class cashTinkoffPluginSettingsAction extends waViewAction
             'unspecifiedOut'     => 'Без категории',
         ];
         $profile = waRequest::get('profile', 1, waRequest::TYPE_INT);
+
+        /** @var cashTinkoffPlugin $plugin */
         $plugin = wa('cash')->getPlugin('tinkoff');
         $settings = $plugin->getSettings($profile);
         $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();

@@ -39,7 +39,7 @@
                 [`Access Token`]
             </div>
             <div class="value">
-                <input class="long" type="password" name="cash_tinkoff[access_token]" value="{if isset($settings.access_token)}{$settings.access_token}{/if}">
+                <input class="long" type="password" name="cash_tinkoff[access_token]" value="{if isset($settings.access_token)}{$settings.access_token}{/if}" autocomplete="new-password">
                 <p class="hint">
                     Получите токен доступа для вашего домена на веб-сайте
                     <a href="https://www.tinkoff.ru/business/" target="_blank">www.tinkoff.ru</a>
@@ -56,7 +56,7 @@
                 <div class="wa-select">
                     <select name="cash_tinkoff[cash_account]">
                         {foreach $cash_accounts as $_cash_account}
-                            <option value="{$_cash_account.id}"{if $settings.cash_account == $_cash_account.id} selected{/if}>{$_cash_account.name}</option>
+                            <option value="{$_cash_account.id}"{if ifset($settings, 'cash_account', 0) == $_cash_account.id} selected{/if}>{$_cash_account.name}</option>
                         {/foreach}
                     </select>
                 </div>

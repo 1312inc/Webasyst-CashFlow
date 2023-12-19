@@ -130,7 +130,7 @@ class cashTinkoffPlugin extends waPlugin
     {
         $profile = waRequest::post('profile', 1, waRequest::TYPE_INT);
 
-        parent::saveSettings([$profile => $settings]);
+        parent::saveSettings(["profile_$profile" => $settings]);
     }
 
     /**
@@ -139,7 +139,7 @@ class cashTinkoffPlugin extends waPlugin
      */
     public function getSettings($profile = null)
     {
-        return parent::getSettings($profile);
+        return parent::getSettings("profile_$profile");
     }
 
     public function addTransactions($transactions)
