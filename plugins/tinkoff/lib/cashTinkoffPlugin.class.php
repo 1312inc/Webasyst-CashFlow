@@ -4,16 +4,21 @@ class cashTinkoffPlugin extends waPlugin
 {
     const API_URL = 'https://business.tinkoff.ru/openapi/api/v1/';
 
-    private $bearer;
-    private $default_account_number;
+    private string $bearer;
+    private string $default_account_number;
+    private int $cash_account_id;
+    private array $mapping_categories;
 
     public function __construct($info)
     {
         parent::__construct($info);
         $profile = ifempty($info, 'profile', waRequest::request('profile', 1, waRequest::TYPE_INT));
         $settings = $this->getSettings($profile);
-        $this->bearer = ifset($settings, 'access_token', '');
+
         $this->default_account_number = '';
+        $this->bearer = ifset($settings, 'access_token', '');
+        $this->cash_account_id = (int) ifset($settings, 'cash_account', 0);
+        $this->mapping_categories = ifset($settings, 'mapping', []);
     }
 
     /**
@@ -135,5 +140,33 @@ class cashTinkoffPlugin extends waPlugin
     public function getSettings($profile = null)
     {
         return parent::getSettings($profile);
+    }
+
+    public function addTransactions($transactions)
+    {
+        if (!empty($transactions)) {
+            $transaction_model = cash()->getModel(cashTransaction::class);
+            $create_contact_id = wa()->getUser()->getId();
+            foreach ($transactions as &$_transaction) {
+                $now = date('Y-m-d H:i:s');
+                $is_credit = ('Credit' == ifset($_transaction, 'typeOfOperation', 'Credit'));
+                $date_operation = strtotime(ifset($_transaction, 'operationDate', $now));
+                $_transaction = [
+                    'date'              => date('Y-m-d', $date_operation),
+                    'datetime'          => date('Y-m-d H:i:s', $date_operation),
+                    'account_id'        => $this->cash_account_id,
+                    'category_id'       => (int) ifset($this->mapping_categories, $_transaction['category'], 0),
+                    'amount'            => ($is_credit ? 1 : -1) * ifset($_transaction, 'operationAmount', 0),
+                    'description'       => ifset($_transaction, 'payPurpose', ''),
+                    'create_contact_id' => $create_contact_id,
+                    'create_datetime'   => $now,
+                    'external_source'   => 'api_tinkoff',
+                    'external_hash'     => ifset($_transaction, 'operationId', null)
+                ];
+            }
+            $transaction_model->multipleInsert($transactions);
+        }
+
+        return $transactions;
     }
 }

@@ -57,7 +57,7 @@
                         <th>Описание транзакции</th>\
                     </tr></thead><tbody>';
 
-                for (let _statement of res.data.operations) {
+                for (let _statement of res.data) {
                     let _class = 'class="'+ (_statement.amount < 0 ? 'bg-orange' : 'bg-green') +'"';
                     html += '<tr '+ _class +'><td>'+ _statement.datetime+'</td><td>'+ _statement.amount +'</td><td>'+ _statement.description +'</td></tr>';
                 }

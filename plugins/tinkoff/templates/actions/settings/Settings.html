@@ -1,5 +1,25 @@
 <h1>Плагин Тинькофф для бизнеса</h1>
 
+{function name="select_categories" s_name="" settings=[]}
+    {$selected = ifset($settings, 'mapping', $s_name, '')}
+    <div class="wa-select">
+        <select name="cash_tinkoff[mapping][{$s_name}]">
+            <option value="" disabled>--[`ДОХОД`]--</option>
+            {foreach $categories as $_category}
+                {if $_category.type == 'income'}
+                <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
+                {/if}
+            {/foreach}
+            <option value="" disabled>--[`РАСХОД`]--</option>
+            {foreach $categories as $_category}
+                {if $_category.type == 'expense'}
+                <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
+                {/if}
+            {/foreach}
+        </select>
+    </div>
+{/function}
+
 <ul class="tabs">
     <li class="selected">
         <a href="javascript:void(0);">
@@ -26,6 +46,36 @@
                     по <a href="https://developer.tinkoff.ru/docs/intro/manuals/self-service-auth" target="_blank">инструкции</a>
                 </p>
             </div>
+        </div>
+
+        <div class="field">
+            <div class="name">
+                [`Счет`]
+            </div>
+            <div class="value">
+                <div class="wa-select">
+                    <select name="cash_tinkoff[cash_account]">
+                        {foreach $cash_accounts as $_cash_account}
+                            <option value="{$_cash_account.id}"{if $settings.cash_account == $_cash_account.id} selected{/if}>{$_cash_account.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <p class="hint">
+                    Счет в который производится импорт
+                </p>
+            </div>
+        </div>
+
+        <div class="fields-group">
+            <h5 class="heading">Маппинг категорий</h5>
+            {foreach $operations as $name => $desc}
+            <div class="field">
+                <div class="name">{$desc}</div>
+                <div class="value">
+                    {select_categories s_name=$name settings=$settings}
+                </div>
+            </div>
+            {/foreach}
         </div>
 
         <div class="field">
