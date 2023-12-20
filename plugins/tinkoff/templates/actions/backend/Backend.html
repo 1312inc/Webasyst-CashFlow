@@ -1,69 +1,101 @@
 <div class="content box contentbox">
-
-    <div class="fields vertical">
-        <div class="field">
-            <div class="name">
-                <button class="button js-company-button">Информация о компании</button>
+    {if empty($profiles)}
+        [`Нет доступных профилей`]
+    {else}
+    <div class="fields">
+    {foreach $profiles as $_profile_id => $_profile}
+        <div class="fields-group" data-profile-id="{$_profile_id}">
+            <div class="field">
+                <div class="name">
+                    Профиль
+                </div>
+                <div class="value">
+                    <strong>
+                        {$_profile.profile_name}
+                    </strong>
+                </div>
             </div>
-            <div class="value js-company-value"></div>
-        </div>
 
-        <div class="field">
-            <div class="name">
-                <button class="button js-accounts-button">Получить счета</button>
+            <div class="field">
+                <div class="name"></div>
+                <div class="value">
+                    <button class="button outlined js-company-button">Информация о компании</button>
+                    <div class="js-company-value"></div>
+                </div>
             </div>
-            <div class="value js-accounts-value"></div>
-        </div>
 
-        <div class="field">
-            <div class="name">
-                <button class="button js-statement-button">Импортировать выписку</button>
+            <div class="field">
+                <div class="name"></div>
+                <div class="value">
+                    <button class="button outlined js-accounts-button">Получить счета</button>
+                    <div class="js-accounts-value"></div>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name"></div>
+                <div class="value">
+                    <button class="button outlined js-statement-button">Импортировать выписку</button>
+                    <div class="js-statement-value"></div>
+                </div>
             </div>
         </div>
-        <div class="value js-statement-value"></div>
+    {/foreach}
     </div>
+    {/if}
 </div>
 
 <script>
     $('.js-company-button').on('click', function () {
-        $.get('?plugin=tinkoff&action=getCompany', function (res) {
-            if (res.status === 'ok') {
-                let html = '<b>Название:</b> '+ res.data.name + '<br><b>Адрес:</b> '+ res.data.address;
-                $('.js-company-value').html( html);
-            }
-        });
+        let $that = $(this);
+        let profile_id = $that.closest('.fields-group').data('profile-id');
+        if (profile_id) {
+            $.post('?plugin=tinkoff&action=getCompany', { profile_id: profile_id }, function (res) {
+                if (res.status === 'ok') {
+                    let html = '<b>Название:</b> '+ res.data.name + '<br><b>Адрес:</b> '+ res.data.address;
+                    $that.siblings('.js-company-value').html(html);
+                }
+            });
+        }
     });
 
     $('.js-accounts-button').on('click', function () {
-        $.get('?plugin=tinkoff&action=getAccounts', function (res) {
-            if (res.status === 'ok') {
-                let html = '<ul>';
-                for (let _account of res.data) {
-                    html += '<li>&bull; '+ _account.name + (_account.default ? ' <b>(Текущий)</b>' : '') +'</li>';
+        let $that = $(this);
+        let profile_id = $that.closest('.fields-group').data('profile-id');
+        if (profile_id) {
+            $.post('?plugin=tinkoff&action=getAccounts', { profile_id: profile_id }, function (res) {
+                if (res.status === 'ok') {
+                    let html = '<ul>';
+                    for (let _account of res.data) {
+                        html += '<li>'+ _account.name + (_account.default ? ' <b>(Текущий)</b>' : '') +'</li>';
+                    }
+                    html += '</ul>';
+                    $that.siblings('.js-accounts-value').html(html);
                 }
-                html += '</ul>';
-                $('.js-accounts-value').html(html);
-            }
-        });
+            });
+        }
     });
 
     $('.js-statement-button').on('click', function () {
-        $.get('?plugin=tinkoff&action=getStatement', function (res) {
-            console.log('++++', res);
-            if (res.status === 'ok') {
-                let html = '<table class="single-lined"><thead><tr>\
+        let $that = $(this);
+        let profile_id = $that.closest('.fields-group').data('profile-id');
+        if (profile_id) {
+            $.post('?plugin=tinkoff&action=getStatement', { profile_id: profile_id }, function (res) {
+                if (res.status === 'ok') {
+                    let html = '<table class="single-lined"><thead><tr>\
                         <th class="min-width">Дата операции</th>\
                         <th>Сумма транзакции</th>\
                         <th>Описание транзакции</th>\
                     </tr></thead><tbody>';
 
-                for (let _statement of res.data) {
-                    let _class = 'class="'+ (_statement.amount < 0 ? 'bg-orange' : 'bg-green') +'"';
-                    html += '<tr '+ _class +'><td>'+ _statement.datetime+'</td><td>'+ _statement.amount +'</td><td>'+ _statement.description +'</td></tr>';
+                    for (let _statement of res.data) {
+                        let _class = 'class="'+ (_statement.amount < 0 ? 'bg-orange' : 'bg-green') +'"';
+                        html += '<tr '+ _class +'><td>'+ _statement.datetime+'</td><td>'+ _statement.amount +'</td><td>'+ _statement.description +'</td></tr>';
+                    }
+                    html += '</tbody></table>';
+                    $that.siblings('.js-statement-value').html(html);
                 }
-                html += '</tbody></table>';
-                $('.js-statement-value').html(html);
-            }
-        });
+            });
+        }
     });
 </script>

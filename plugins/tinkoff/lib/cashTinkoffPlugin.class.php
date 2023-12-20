@@ -12,13 +12,14 @@ class cashTinkoffPlugin extends waPlugin
     public function __construct($info)
     {
         parent::__construct($info);
-        $profile = ifempty($info, 'profile', waRequest::request('profile', 1, waRequest::TYPE_INT));
-        $settings = $this->getSettings($profile);
+        $profile_id = ifempty($info, 'profile_id', 0);
+        $settings = $this->getSettings();
+        $profile = ifset($settings, 'profiles', $profile_id, []);
 
         $this->default_account_number = '';
-        $this->bearer = ifset($settings, 'access_token', '');
-        $this->cash_account_id = (int) ifset($settings, 'cash_account', 0);
-        $this->mapping_categories = ifset($settings, 'mapping', []);
+        $this->bearer = ifset($profile, 'access_token', '');
+        $this->cash_account_id = (int) ifset($profile, 'cash_account', 0);
+        $this->mapping_categories = ifset($profile, 'mapping', []);
     }
 
     /**

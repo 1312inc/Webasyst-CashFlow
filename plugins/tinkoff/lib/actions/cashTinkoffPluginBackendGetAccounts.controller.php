@@ -4,8 +4,11 @@ class cashTinkoffPluginBackendGetAccountsController extends waJsonController
 {
     public function execute()
     {
-        $plugin = new cashTinkoffPlugin(['id' => 'tinkoff', 'profile' => 1]);
-        $response = $plugin->getAccounts();
+        $profile_id = waRequest::post('profile_id', 0, waRequest::TYPE_INT);
+        if ($profile_id > 0) {
+            $plugin = new cashTinkoffPlugin(['id' => 'tinkoff', 'profile_id' => $profile_id]);
+            $response = $plugin->getAccounts();
+        }
 
         $accounts = [];
         foreach ($response as $_account) {

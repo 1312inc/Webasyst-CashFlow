@@ -4,8 +4,11 @@ class cashTinkoffPluginBackendGetCompanyController extends waJsonController
 {
     public function execute()
     {
-        $plugin = new cashTinkoffPlugin(['id' => 'tinkoff', 'profile' => 1]);
-        $response = $plugin->getCompany();
+        $profile_id = waRequest::post('profile_id', 0, waRequest::TYPE_INT);
+        if ($profile_id > 0) {
+            $plugin = new cashTinkoffPlugin(['id' => 'tinkoff', 'profile_id' => $profile_id]);
+            $response = $plugin->getCompany();
+        }
 
         $this->response = [
             'name'    => ifset($response, 'requisites', 'fullName', ''),

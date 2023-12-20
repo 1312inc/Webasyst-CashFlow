@@ -13,7 +13,7 @@
             [`Access Token`]
         </div>
         <div class="value">
-            <input class="long" type="password" name="cash_tinkoff[profiles][{$profile_id}][access_token]" value="{if isset($profile.access_token)}{$profile.access_token}{/if}" autocomplete="new-password">
+            <input class="long" type="password" name="cash_tinkoff[profiles][{$profile_id}][access_token]" value="{if isset($profile.access_token)}{$profile.access_token}{/if}" autocomplete="new-password" required>
             <p class="hint">
                 {sprintf_wp('Получите токен доступа для вашего домена на веб-сайте %s по %s инструкции %s', '<a href="https://www.tinkoff.ru/business/" target="_blank">www.tinkoff.ru</a>', '<a href="https://developer.tinkoff.ru/docs/intro/manuals/self-service-auth" target="_blank">', '</a>')}
             </p>
