@@ -121,27 +121,6 @@ class cashTinkoffPlugin extends waPlugin
         return $this->default_account_number;
     }
 
-    /**
-     * @param $settings
-     * @return void
-     * @throws waException
-     */
-    public function saveSettings($settings = [])
-    {
-        $profile = waRequest::post('profile', 1, waRequest::TYPE_INT);
-
-        parent::saveSettings(["profile_$profile" => $settings]);
-    }
-
-    /**
-     * @param $profile
-     * @return mixed|null
-     */
-    public function getSettings($profile = null)
-    {
-        return parent::getSettings("profile_$profile");
-    }
-
     public function addTransactions($transactions)
     {
         if (!empty($transactions)) {

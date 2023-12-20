@@ -1,98 +1,85 @@
-<h1>Плагин Тинькофф для бизнеса</h1>
+<h1>[`Плагин Тинькофф для бизнеса`]</h1>
 
-{function name="select_categories" s_name="" settings=[]}
-    {$selected = ifset($settings, 'mapping', $s_name, '')}
-    <div class="wa-select">
-        <select name="cash_tinkoff[mapping][{$s_name}]">
-            <option value="" disabled>--[`ДОХОД`]--</option>
-            {foreach $categories as $_category}
-                {if $_category.type == 'income'}
-                <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
-                {/if}
-            {/foreach}
-            <option value="" disabled>--[`РАСХОД`]--</option>
-            {foreach $categories as $_category}
-                {if $_category.type == 'expense'}
-                <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
-                {/if}
-            {/foreach}
-        </select>
-    </div>
-{/function}
-
-<ul class="tabs">
-    <li class="selected">
-        <a href="javascript:void(0);">
-            Профиль 1
+<ul class="tabs js-tabs">
+    {foreach $profiles as $_profile_id => $_profile}
+    <li{if $_profile_id == $profile_id} class="selected"{/if}>
+        <a href="javascript:void(0);" data-profile-id="{$_profile_id}">
+            {$_profile.profile_name}
         </a>
     </li>
+    {foreachelse}
+    <li class="selected">
+        <a href="javascript:void(0);">
+            [`Новый профиль`]
+        </a>
+    </li>
+    {/foreach}
     <li>
-        <i class="fas fa-plus"></i>
+        <button class="circle js-add-profile">
+            <i class="fas fa-plus"></i>
+        </button>
     </li>
 </ul>
 
 <div class="fields form">
     <form action="?module=plugins&id=tinkoff&action=save" method="post" id="plugins-settings-form">
-        {$wa->csrf()}
-        <div class="field">
-            <div class="name">
-                [`Access Token`]
-            </div>
-            <div class="value">
-                <input class="long" type="password" name="cash_tinkoff[access_token]" value="{if isset($settings.access_token)}{$settings.access_token}{/if}" autocomplete="new-password">
-                <p class="hint">
-                    Получите токен доступа для вашего домена на веб-сайте
-                    <a href="https://www.tinkoff.ru/business/" target="_blank">www.tinkoff.ru</a>
-                    по <a href="https://developer.tinkoff.ru/docs/intro/manuals/self-service-auth" target="_blank">инструкции</a>
-                </p>
-            </div>
+        <div class="box custom-pt-24">
+            <div class="spinner custom-p-16 js-spinner hidden"></div>
         </div>
 
-        <div class="field">
-            <div class="name">
-                [`Счет`]
-            </div>
-            <div class="value">
-                <div class="wa-select">
-                    <select name="cash_tinkoff[cash_account]">
-                        {foreach $cash_accounts as $_cash_account}
-                            <option value="{$_cash_account.id}"{if ifset($settings, 'cash_account', 0) == $_cash_account.id} selected{/if}>{$_cash_account.name}</option>
-                        {/foreach}
-                    </select>
-                </div>
-                <p class="hint">
-                    Счет в который производится импорт
-                </p>
-            </div>
-        </div>
-
-        <div class="fields-group">
-            <h5 class="heading">Маппинг категорий</h5>
-            {foreach $operations as $name => $desc}
-            <div class="field">
-                <div class="name">{$desc}</div>
-                <div class="value">
-                    {select_categories s_name=$name settings=$settings}
-                </div>
-            </div>
-            {/foreach}
-        </div>
+        {foreach $profiles as $_profile_id => $_profile}
+            {$is_hidden = $_profile_id != key($profiles)}
+            {include file="./SettingsProfile.html" profile_id=$_profile_id profile=$_profile is_hidden=$is_hidden inline}
+        {foreachelse}
+            {include file="./SettingsProfile.html" inline}
+        {/foreach}
 
         <div class="field">
             <div class="value submit">
-                <input type="hidden" name="profile" value="1">
+                {$wa->csrf()}
                 <input type="submit" class="button green" value="[s`Save`]">
+                {if !empty($profiles)}
+                <a href="javascript:void(0);" class="button red outlined js-delete-profile">[s`Delete`]</a>
+                {/if}
                 <span id="plugins-settings-form-status" style="display:none"></span>
             </div>
         </div>
     </form>
 </div>
 
-
 <script>
-    (function ($) {
-        $('.tabs').waTabs();
-    })(jQuery);
+    $('.tabs').waTabs();
+
+    $('.js-tabs').on('click', 'li', function () {
+        let profile_id = $(this).find('a').data('profile-id');
+        $(this).siblings('li').removeClass('selected');
+        $(this).addClass('selected');
+        $('[class^="js-tab-content-"]').addClass('hidden');
+        $('.js-spinner').removeClass('hidden');
+        setTimeout(function () {
+            $('.js-spinner').addClass('hidden');
+            $('.js-tab-content-'+ profile_id).removeClass('hidden');
+        }, 300);
+    });
+
+    $('.js-add-profile').on('click', function () {
+        let that = this;
+        $.get('?plugin=tinkoff&module=settings', { 'profile_id': 'new' }, function (html) {
+            $('.js-spinner').addClass('hidden');
+            if (html) {
+                $('.js-tabs').find('li').removeClass('selected');
+                $(that).closest('li').before('<li class="selected"><a href="javascript:void(0);">[`Новый профиль`]</a></li>');
+                $('[class^="js-tab-content-"]').last().after(html);
+            }
+        });
+    });
+
+    $('.js-delete-profile').on('click', function () {
+        let profile_id = $('[class^="js-tab-content-"]:visible').data('profile-id');
+        if (profile_id) {
+            $.post('?plugin=tinkoff&module=settingsDelete', { 'profile_id': profile_id }, function () {
+                location.reload();
+            });
+        }
+    });
 </script>
-
-
