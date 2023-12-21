@@ -54,6 +54,8 @@
                 if (res.status === 'ok') {
                     let html = '<b>Название:</b> '+ res.data.name + '<br><b>Адрес:</b> '+ res.data.address;
                     $that.siblings('.js-company-value').html(html);
+                } else if (res.status === 'fail') {
+                    $that.siblings('.js-company-value').html('<b>Ошибка:</b> '+ res.errors.shift().join());
                 }
             });
         }
@@ -71,6 +73,8 @@
                     }
                     html += '</ul>';
                     $that.siblings('.js-accounts-value').html(html);
+                } else if (res.status === 'fail') {
+                    $that.siblings('.js-accounts-value').html('<b>Ошибка:</b> '+ res.errors.shift().join());
                 }
             });
         }
@@ -94,6 +98,8 @@
                     }
                     html += '</tbody></table>';
                     $that.siblings('.js-statement-value').html(html);
+                } else if (res.status === 'fail') {
+                    $that.siblings('.js-statement-value').html('<b>Ошибка:</b> '+ res.errors.shift().join());
                 }
             });
         }

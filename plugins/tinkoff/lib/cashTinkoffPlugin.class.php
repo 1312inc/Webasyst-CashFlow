@@ -40,25 +40,14 @@ class cashTinkoffPlugin extends waPlugin
         ];
         try {
             $net = new waNet($options);
-            $response = $net->query(self::API_URL.$endpoint, $get_params);
-            if (empty($response)) {
-                throw new waException('Empty response');
+            try {
+                $response = $net->query(self::API_URL.$endpoint, $get_params);
+            } catch (Exception $ex) {
+                $response = $net->getResponse();
             }
-
-            $code = intval(ifset($response, 'errorCode', 0));
-
-            if ($code) {
-                $message = sprintf(
-                    _wp('Ошибка #%d: %s'),
-                    $code,
-                    ifset($response, 'errorMessage', $code)
-                );
-                throw new waException($message, $code);
-            }
-        } catch (waException $ex) {
-            throw $ex;
-        } catch (Exception $ex) {
-            throw new waException($ex->getMessage());
+            $response += ['http_code' => $net->getResponseHeader('http_code')];
+        } catch (Exception $exception) {
+            throw new waException($exception->getMessage());
         }
 
         return $response;
@@ -68,7 +57,6 @@ class cashTinkoffPlugin extends waPlugin
      * https://developer.tinkoff.ru/docs/api/get-api-v-1-company
      * @return mixed|null
      * @throws waException
-     * @throws waPaymentException
      */
     public function getCompany()
     {
@@ -107,6 +95,10 @@ class cashTinkoffPlugin extends waPlugin
         return ifempty($operations, []);
     }
 
+    /**
+     * @return mixed|string
+     * @throws waException
+     */
     public function getDefaultAccountNumber()
     {
         if (empty($this->default_account_number)) {
@@ -122,6 +114,11 @@ class cashTinkoffPlugin extends waPlugin
         return $this->default_account_number;
     }
 
+    /**
+     * @param $transactions
+     * @return mixed
+     * @throws waException
+     */
     public function addTransactions($transactions)
     {
         if (!empty($transactions)) {
