@@ -79,17 +79,29 @@ class cashTinkoffPlugin extends waPlugin
 
     /**
      * https://developer.tinkoff.ru/docs/api/get-api-v-1-statement
+     * @param $from
+     * @param $to
+     * @param $cursor
+     * @param $limit
      * @return mixed|null
      * @throws waException
      */
-    public function getStatement()
+    public function getStatement($from = '', $to = '', $cursor = '', $limit = 5000)
     {
+        if (empty($from) || !strtotime($from)) {
+            $from = strtotime('-1 month');
+        }
+        if (empty($to)) {
+            $to = strtotime('now');
+        }
         $get_params = [
             'operationStatus' => 'Transaction',
             'accountNumber'   => $this->getDefaultAccountNumber(),
-            'from'  => date('Y-m-d', strtotime('-1 month')),
-            'limit' => 5
-        ];
+            'withBalances'    => true,
+            'from'  => date('Y-m-d', $from),
+            'to'    => date('Y-m-d', $to),
+            'limit' => (int) $limit
+        ] + (empty($cursor) ? [] : ['cursor' => $cursor]);
         $operations = $this->apiQuery('statement', $get_params);
 
         return ifempty($operations, []);
