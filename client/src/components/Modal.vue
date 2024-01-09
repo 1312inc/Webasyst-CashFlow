@@ -2,12 +2,14 @@
   <transition
     name="fade"
     appear
+    :css="!disableTransition"
   >
     <div class="dialog">
       <div class="dialog-background" />
       <transition
         name="slide-fade"
         appear
+        :css="!disableTransition"
       >
         <slot />
       </transition>
@@ -17,6 +19,13 @@
 
 <script>
 export default {
+  props: {
+    disableTransition: {
+      type: Boolean,
+      default: false
+    }
+  },
+
   mounted () {
     document.body.classList.add('modal')
     document.addEventListener('keyup', this.handler)

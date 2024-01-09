@@ -137,11 +137,12 @@ const routes = [
     }
   },
   {
-    path: '/form/add/:type',
+    path: '/form/add/:entity',
     name: 'Form',
     component: FormAdd,
+    props: (route) => ({ entity: route.params.entity, type: route.query.type }),
     beforeEnter: (to, from, next) => {
-      if (['account', 'category'].includes(to.params.type)) {
+      if (['account', 'category'].includes(to.params.entity)) {
         next()
       } else {
         next({ name: 'NotFound' })
