@@ -2,6 +2,8 @@
 
 class cashTinkoffPlugin extends waPlugin
 {
+    const LIMIT_STATEMENTS = 5;
+    const FILE_LOG = 'cash/tinkoff.log';
     const API_URL = 'https://business.tinkoff.ru/openapi/api/v1/';
 
     private string $bearer;
@@ -79,14 +81,14 @@ class cashTinkoffPlugin extends waPlugin
 
     /**
      * https://developer.tinkoff.ru/docs/api/get-api-v-1-statement
+     * @param $cursor
      * @param $from
      * @param $to
-     * @param $cursor
      * @param $limit
      * @return mixed|null
      * @throws waException
      */
-    public function getStatement($from = '', $to = '', $cursor = '', $limit = 5000)
+    public function getStatement($cursor = '', $from = '', $to = '', $limit = self::LIMIT_STATEMENTS)
     {
         if (empty($from) || !strtotime($from)) {
             $from = strtotime('-1 month');

@@ -46,10 +46,20 @@ class cashTinkoffPluginSettingsAction extends waViewAction
 
         $this->view->assign([
             'profile_id'    => $profile_id,
-            'profiles'      => $profiles,
+            'profiles'      => $this->pasteCronCommand($profiles),
             'operations'    => $categories_operations,
             'categories'    => $categories,
             'cash_accounts' => $cash_accounts
         ]);
+    }
+
+    private function pasteCronCommand($profiles)
+    {
+        $root_path = $this->getConfig()->getRootPath();
+        foreach ($profiles as $id => $_profile) {
+            $profiles[$id]['cron_command'] = "php $root_path/cli.php cash tinkoffTransaction $id";
+        }
+
+        return $profiles;
     }
 }

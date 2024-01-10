@@ -2,9 +2,6 @@
 
 class cashTinkoffPluginBackendRunController extends waLongActionController
 {
-    /** размер пачки */
-    const LIMIT_STATEMENTS = 5;
-
     /**
      * @return void
      * @throws waException
@@ -45,15 +42,15 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     }
 
     /**
+     * @param $cursor
      * @param $from
      * @param $to
-     * @param $cursor
      * @return array
      */
-    private function getStatementsData($from = null, $to = null, $cursor = '')
+    private function getStatementsData($cursor = '', $from = null, $to = null)
     {
         try {
-            $response = $this->plugin()->getStatement($from, $to, $cursor, self::LIMIT_STATEMENTS);
+            $response = $this->plugin()->getStatement($cursor, $from, $to);
             if (ifset($response, 'http_code', 200) !== 200) {
                 $error = implode(' ', [
                     ifset($response, 'errorMessage', ''),
@@ -77,7 +74,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     {
         if (empty($this->data['operations'])) {
             /** запрашиваем новую порцию (страницу) */
-            $raw_data = $this->getStatementsData(null, null, $this->data['cursor']);
+            $raw_data = $this->getStatementsData($this->data['cursor']);
             $this->data['cursor'] = (string) ifset($raw_data, 'nextCursor', '');
             $this->data['operations'] = ifset($raw_data, 'operations', []);
             return false;
