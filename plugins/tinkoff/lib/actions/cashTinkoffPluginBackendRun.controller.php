@@ -53,9 +53,9 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             $response = $this->plugin()->getStatement($cursor, $from, $to);
             if (ifset($response, 'http_code', 200) !== 200) {
                 $error = implode(' ', [
-                    ifset($response, 'errorMessage', ''),
-                    ifset($response, 'errorDetails', ''),
-                    ifset($response, 'error_description', '')
+                    implode('/', (array) ifset($response, 'errorMessage', [])),
+                    implode('/', (array) ifset($response, 'errorDetails', [])),
+                    implode('/', (array) ifset($response, 'error_description', []))
                 ]);
                 $this->data['error'] = $error;
             }

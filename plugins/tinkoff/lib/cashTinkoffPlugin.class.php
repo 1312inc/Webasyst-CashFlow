@@ -4,7 +4,7 @@ class cashTinkoffPlugin extends waPlugin
 {
     const LIMIT_STATEMENTS = 5;
     const FILE_LOG = 'cash/tinkoff.log';
-    const API_URL = 'https://business.tinkoff.ru/openapi/api/v1/';
+    const API_URL = 'https://business.tinkoff.ru/openapi/api/';
 
     private string $bearer;
     private string $default_account_number;
@@ -62,7 +62,7 @@ class cashTinkoffPlugin extends waPlugin
      */
     public function getCompany()
     {
-        $company_info = $this->apiQuery('company');
+        $company_info = $this->apiQuery('v1/company');
 
         return ifempty($company_info, []);
     }
@@ -74,7 +74,7 @@ class cashTinkoffPlugin extends waPlugin
      */
     public function getAccounts()
     {
-        $accounts = $this->apiQuery('bank-accounts');
+        $accounts = $this->apiQuery('v4/bank-accounts');
 
         return ifempty($accounts, []);
     }
@@ -96,15 +96,17 @@ class cashTinkoffPlugin extends waPlugin
         if (empty($to)) {
             $to = strtotime('now');
         }
+        $from = (new DateTime(date('Y-m-d', $from)))->format('c');
+        $to = (new DateTime(date('Y-m-d', $to)))->format('c');
+
         $get_params = [
             'operationStatus' => 'Transaction',
             'accountNumber'   => $this->getDefaultAccountNumber(),
-            'withBalances'    => true,
-            'from'  => date('Y-m-d', $from),
-            'to'    => date('Y-m-d', $to),
+            'from'  => $from,
+            'to'    => $to,
             'limit' => (int) $limit
         ] + (empty($cursor) ? [] : ['cursor' => $cursor]);
-        $operations = $this->apiQuery('statement', $get_params);
+        $operations = $this->apiQuery('v1/statement', $get_params);
 
         return ifempty($operations, []);
     }

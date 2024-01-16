@@ -126,7 +126,7 @@
                 if (res.status === 'ok') {
                     let html = '<ul>';
                     for (let _account of res.data) {
-                        html += '<li>'+ _account.name + (_account.default ? ' <b>(Текущий)</b>' : '') +'</li>';
+                        html += '<li>'+ _account.name + (_account.number ? ' <i>'+ _account.number +'</i>' : '') + (_account.default ? ' <b>(Текущий)</b>' : '') +'</li>';
                     }
                     html += '</ul>';
                     $that.siblings('.js-accounts-value').html(html);

@@ -29,6 +29,7 @@ class cashTinkoffPluginBackendGetAccountsController extends waJsonController
         foreach ($response as $_account) {
             $accounts[] = [
                 'name'    => ifset($_account, 'name', ''),
+                'number'  => ifset($_account, 'accountNumber', ''),
                 'default' => (ifset($_account, 'accountType', '') == 'Current')
             ];
         }
