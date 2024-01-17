@@ -18,7 +18,7 @@
         />
       </div>
       <Observer
-        v-if="observer && transactions.data.length < transactions.total"
+        v-if="observer && pastTransactionsOffset < transactions.total"
         @callback="observerCallback"
       />
     </div>
@@ -87,6 +87,9 @@ export default {
     ...mapState('transaction', ['transactions', 'detailsInterval']),
     transactionsWithoutJustCreated () {
       return this.$store.getters['transaction/getTransactionsWithoutJustCreated']
+    },
+    pastTransactionsOffset () {
+      return this.transactions.data.length - this.$store.getters['transaction/getFutureTransactions'].length
     },
     activeCurrencyCode () {
       return this.$store.getters['transaction/activeCurrencyCode']
@@ -226,7 +229,7 @@ export default {
   methods: {
     observerCallback () {
       this.$store.dispatch('transaction/fetchTransactions', {
-        offset: this.transactions.data.length
+        offset: this.pastTransactionsOffset
       })
     }
   }

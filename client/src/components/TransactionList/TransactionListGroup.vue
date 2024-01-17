@@ -127,7 +127,7 @@
           :class="{'c-list--compact': compactModeForFutureList}"
         >
           <TransactionListGroupRow
-            v-for="(transaction, i) in compactModeForFutureList ? filteredTransactions.toReversed() : filteredTransactions"
+            v-for="(transaction, i) in filteredTransactions"
             v-show="isShown(transaction)"
             :key="transaction.id"
             :transaction="transaction"
@@ -138,6 +138,24 @@
             :visible-select-checkbox="visibleSelectCheckbox"
             @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
+          <li
+            v-if="type === 'future' && $store.state.transaction.showFutureTransactionsMoreLink"
+            class="flexbox middle"
+          >
+            <button
+              class="button light-gray"
+              style="margin: 1rem auto;"
+              @click.prevent="() => $store.dispatch('transaction/fetchTransactionsFuture')"
+            >
+              <span
+                v-show="$store.state.transaction.loadingFuture"
+                class="custom-mr-8"
+              >
+                <i class="fas fa-spinner wa-animation-spin speed-1000" />
+              </span>
+              <span>{{ $t('showMore') }}</span>
+            </button>
+          </li>
         </ul>
         <div
           v-else

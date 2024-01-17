@@ -25,11 +25,12 @@ export default {
     queryParams: {
       from: '',
       to: moment().add(1, 'M').format('YYYY-MM-DD'),
-      // limit: 200,
+      limit: 50,
       offset: 0,
       filter: ''
     },
     loading: false,
+    loadingFuture: false,
     chartInterval: {
       from: getDateFromLocalStorage('from') || moment().add(-1, 'Y').format('YYYY-MM-DD'),
       to: getDateFromLocalStorage('to') || moment().add(6, 'M').format('YYYY-MM-DD')
@@ -47,10 +48,14 @@ export default {
     chartData: [],
     chartDataCurrencyIndex: 0,
     loadingChart: true,
-    todayCount: {}
+    todayCount: {},
+    showFutureTransactionsMoreLink: false
   }),
 
   getters: {
+    getFutureTransactions: state => {
+      return state.transactions.data.filter(t => moment().isBefore(moment(t.date)))
+    },
     getTransactionById: state => id => {
       return state.transactions.data.find(t => t.id === id)
     },
@@ -71,6 +76,10 @@ export default {
   mutations: {
     setTransactions (state, data) {
       state.transactions = data
+    },
+
+    setShowFutureTransactionsMoreLink (state, data) {
+      state.showFutureTransactionsMoreLink = data
     },
 
     resetTransactions (state) {
@@ -150,6 +159,10 @@ export default {
 
     setLoading (state, data) {
       state.loading = data
+    },
+
+    setLoadingFuture (state, data) {
+      state.loadingFuture = data
     },
 
     setLoadingChart (state, data) {
@@ -239,13 +252,47 @@ export default {
       }
     },
 
-    async fetchTransactions ({ commit, state }, userParams = {}) {
+    async fetchTransactionsFuture ({ commit, state, getters }) {
+      commit('setLoadingFuture', true)
+      try {
+        const params = { ...state.queryParams }
+
+        const { data } = await api.get('cash.transaction.getList', {
+          params: {
+            ...params,
+            from: moment().add(1, 'day').format('YYYY-MM-DD'),
+            to: moment().add(1, 'month').format('YYYY-MM-DD'),
+            offset: getters.getFutureTransactions.length
+          }
+        })
+
+        commit('setShowFutureTransactionsMoreLink', data.data.length + data.offset < data.total)
+
+        const result = {
+          ...state.transactions,
+          data: [...data.data.reverse(), ...state.transactions.data]
+        }
+
+        commit('setTransactions', result)
+      } catch (_) {
+
+      } finally {
+        commit('setLoadingFuture', false)
+      }
+    },
+
+    async fetchTransactions ({ commit, state, dispatch }, userParams = {}) {
       try {
         commit('updateQueryParams', userParams)
         const params = { ...state.queryParams }
 
         if (params.offset === 0) {
+          commit('setTransactions', {
+            ...state.transactions,
+            data: []
+          })
           commit('setLoading', true)
+          dispatch('fetchTransactionsFuture')
         }
         // if view details mode
         if (state.detailsInterval.from) {
@@ -261,7 +308,7 @@ export default {
 
         const result = {
           ...data,
-          ...(data.offset > 0 && { data: [...state.transactions.data, ...data.data] })
+          data: [...state.transactions.data, ...data.data]
         }
 
         commit('setTransactions', result)
