@@ -255,11 +255,9 @@ export default {
     async fetchTransactionsFuture ({ commit, state, getters }) {
       commit('setLoadingFuture', true)
       try {
-        const params = { ...state.queryParams }
-
         const { data } = await api.get('cash.transaction.getList', {
           params: {
-            ...params,
+            ...state.queryParams,
             from: moment().add(1, 'day').format('YYYY-MM-DD'),
             to: moment().add(1, 'month').format('YYYY-MM-DD'),
             offset: getters.getFutureTransactions.length

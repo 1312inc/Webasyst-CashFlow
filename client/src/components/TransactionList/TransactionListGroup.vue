@@ -157,6 +157,10 @@
             </button>
           </li>
         </ul>
+        <SkeletonTransaction
+          v-else-if="type === 'future' && $store.state.transaction.loadingFuture && !$store.getters['transaction/getFutureTransactions'].length"
+          :lines="1"
+        />
         <div
           v-else
           class="align-center small custom-py-24"
@@ -174,6 +178,7 @@ import { useStorage, useElementBounding } from '@vueuse/core'
 import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPeriod'
 import TransactionListGroupRow from './TransactionListGroupRow/TransactionListGroupRow'
 import AmountForGroup from '@/components/PeriodAmount/AmountForGroup'
+import SkeletonTransaction from './SkeletonTransaction'
 
 const listCompactMode = useStorage('list_compact_mode', true)
 
@@ -182,7 +187,8 @@ export default {
   components: {
     TransactionListGroupUpcomingPeriod,
     TransactionListGroupRow,
-    AmountForGroup
+    AmountForGroup,
+    SkeletonTransaction
   },
   props: {
     group: {
