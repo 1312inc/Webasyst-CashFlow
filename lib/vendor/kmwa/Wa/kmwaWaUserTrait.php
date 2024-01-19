@@ -156,8 +156,8 @@ trait kmwaWaUserTrait
             if (wa()->getUser()) {
                 $this->me = ($this->contact->getId() == wa()->getUser()->getId());
             }
-            $this->name = $this->contact->getName();
-            $this->username = $this->contact->getName();
+            $this->name = (string) $this->contact->getName();
+            $this->username = (string) $this->contact->getName();
             $this->contact_id = $this->contact->getId();
             $this->photoUrl = $this->contact->getPhoto();
             $this->login = $this->contact->get('login');
