@@ -255,14 +255,14 @@ export default {
       }
     },
 
-    async fetchTransactionsFuture ({ commit, state, getters }) {
+    async fetchTransactionsFuture ({ commit, state, getters }, to) {
       commit('setLoadingFuture', true)
       try {
         const { data } = await api.get('cash.transaction.getList', {
           params: {
             ...state.queryParams,
             from: moment().add(1, 'day').format('YYYY-MM-DD'),
-            to: moment().add(1, 'month').format('YYYY-MM-DD'),
+            to,
             offset: getters.getFutureTransactions.length,
             reverse: 1
           }
@@ -298,7 +298,11 @@ export default {
             data: []
           })
           commit('setLoading', true)
-          dispatch('fetchTransactionsFuture')
+
+          if (!params.from && params.to && moment().isBefore(params.to)) {
+            dispatch('fetchTransactionsFuture', params.to)
+            params.to = moment().format('YYYY-MM-DD')
+          }
         }
         // if view details mode
         if (state.detailsInterval.from) {
