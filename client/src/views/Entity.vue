@@ -38,7 +38,7 @@
     <div class="flexbox">
       <div class="wide">
         <TransactionList
-          :show-future-group="false"
+          :show-tomorrow-group="true"
           :show-yesterday-group="false"
           :show-overdue-group="false"
           :show-today-group="false"
@@ -129,7 +129,7 @@ export default {
 
         this.$store.dispatch('transaction/fetchTransactions', {
           from: '',
-          to: this.$moment().format('YYYY-MM-DD'),
+          to: this.$moment().add(1, 'M').format('YYYY-MM-DD'),
           offset: 0,
           filter: this.$route.meta.fetchTransactionsFilter(this.entity.entity_id)
         })
