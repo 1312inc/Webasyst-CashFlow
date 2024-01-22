@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import { useRouter } from 'vue-router/composables'
 import { moment } from '@/plugins/numeralMoment.js'
 import store from '@/store'
+import { appState } from '@/utils/appState'
 
 const props = defineProps(['date', 'data'])
 const router = useRouter()
@@ -52,7 +53,7 @@ function getMonthShort (date) {
 
 function onClick () {
   const t = dayRef.value?.querySelector('.icg-plus')
-  if (t) {
+  if (t || appState.webView) {
     if (window.getComputedStyle(t, null).getPropertyValue('display') === 'none') {
       router.push(`/date/${moment(props.date).format('YYYY-MM-DD')}/`)
     } else {
