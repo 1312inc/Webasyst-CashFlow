@@ -301,7 +301,11 @@ export default {
 
           if (!params.from && params.to && moment().isBefore(params.to)) {
             dispatch('fetchTransactionsFuture', params.to)
-            params.to = moment().format('YYYY-MM-DD')
+            const today = moment().format('YYYY-MM-DD')
+            commit('updateQueryParams', {
+              to: today
+            })
+            params.to = today
           }
         }
         // if view details mode
