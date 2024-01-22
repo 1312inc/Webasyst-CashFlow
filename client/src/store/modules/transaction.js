@@ -49,7 +49,10 @@ export default {
     chartDataCurrencyIndex: 0,
     loadingChart: true,
     todayCount: {},
-    showFutureTransactionsMoreLink: false
+    showFutureTransactionsMoreLink: {
+      7: false,
+      30: false
+    }
   }),
 
   getters: {
@@ -260,11 +263,16 @@ export default {
             ...state.queryParams,
             from: moment().add(1, 'day').format('YYYY-MM-DD'),
             to: moment().add(1, 'month').format('YYYY-MM-DD'),
-            offset: getters.getFutureTransactions.length
+            offset: getters.getFutureTransactions.length,
+            reverse: 1
           }
         })
 
-        commit('setShowFutureTransactionsMoreLink', data.data.length + data.offset < data.total)
+        const isNotFullFutureOffset = data.data.length + data.offset < data.total
+        commit('setShowFutureTransactionsMoreLink', {
+          7: moment(data.data[data.data.length - 1].date).isBefore(moment().add(7, 'd')) && isNotFullFutureOffset,
+          30: isNotFullFutureOffset
+        })
 
         const result = {
           ...state.transactions,

@@ -139,7 +139,7 @@
             @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
           <li
-            v-if="type === 'future' && $store.state.transaction.showFutureTransactionsMoreLink"
+            v-if="type === 'future' && $store.state.transaction.showFutureTransactionsMoreLink[featurePeriod]"
             class="flexbox middle"
           >
             <button
@@ -158,7 +158,7 @@
           </li>
         </ul>
         <SkeletonTransaction
-          v-else-if="type === 'future' && $store.state.transaction.loadingFuture && !$store.getters['transaction/getFutureTransactions'].length"
+          v-else-if="(type === 'future' || type === 'tomorrow') && $store.state.transaction.loadingFuture && !$store.getters['transaction/getFutureTransactions'].length"
           :lines="1"
         />
         <div
@@ -263,14 +263,13 @@ export default {
 
     filteredTransactions () {
       let result = this.group
+
       if (this.type === 'future') {
-        const today = this.$moment()
-          .add(1, 'd')
-          .format('YYYY-MM-DD')
         result = this.group.filter(t => {
-          const istart = this.$moment(t.date)
-          return istart.diff(today, 'days') < this.featurePeriod
-        })
+          const start = this.$moment().add(1, 'd')
+          const end = this.$moment().add(this.featurePeriod, 'd')
+          return this.$moment(t.date).isBetween(start, end)
+        }).reverse()
       }
 
       return result
@@ -411,6 +410,10 @@ export default {
 
 .c-sticky-header-group:hover {
   z-index: 999;
+}
+
+.c-list--compact button {
+  margin-left: 1rem !important;
 }
 
 @media screen and (max-width: 760px) {
