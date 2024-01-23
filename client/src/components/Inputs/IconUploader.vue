@@ -61,7 +61,7 @@ export default {
   position: absolute;
   text-align: center;
   cursor: pointer;
-  height: 40px;
+  height: 40px !important;
 
   &:hover {
     color: inherit;

@@ -1,0 +1,81 @@
+<div class="js-tab-content-{$profile_id}{if !empty($is_hidden)} hidden{/if}" data-profile-id="{$profile_id}">
+    <div class="field">
+        <div class="name">
+            [`Название профиля`]
+        </div>
+        <div class="value">
+            <input type="text" name="cash_tinkoff[profiles][{$profile_id}][profile_name]" value="{if isset($profile.profile_name)}{$profile.profile_name}{/if}" placeholder="[`Профиль 1`]" autocomplete="off" required>
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="name">
+            [`Access Token`]
+        </div>
+        <div class="value">
+            <input class="long" type="password" name="cash_tinkoff[profiles][{$profile_id}][access_token]" value="{if isset($profile.access_token)}{$profile.access_token}{/if}" autocomplete="new-password" required>
+            <p class="hint">
+                {sprintf_wp('Получите токен доступа для вашего домена на веб-сайте %s по %s инструкции %s', '<a href="https://www.tinkoff.ru/business/" target="_blank">www.tinkoff.ru</a>', '<a href="https://developer.tinkoff.ru/docs/intro/manuals/self-service-auth" target="_blank">', '</a>')}
+            </p>
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="name">
+            [`Счет`]
+        </div>
+        <div class="value">
+            <div class="wa-select">
+                <select name="cash_tinkoff[profiles][{$profile_id}][cash_account]">
+                {foreach $cash_accounts as $_cash_account}
+                    <option value="{$_cash_account.id}"{if $profile.cash_account|default:'0' == $_cash_account.id} selected{/if}>{$_cash_account.name}</option>
+                {/foreach}
+                </select>
+            </div>
+            <p class="hint">
+                [`Счет в который производится импорт`]
+            </p>
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="name">
+            [`Команда для CRON`]
+        </div>
+        <div class="value">
+            <code>{$profile.cron_command}</code>
+            <p class="hint">
+                {sprintf_wp('%sДокументация%s по настройке планировщика CRON', '<a href="https://developers.webasyst.ru/docs/tips/cron/">', '</a>')}
+            </p>
+        </div>
+    </div>
+
+    <div class="fields-group">
+        <h5 class="heading">[`Маппинг категорий`]</h5>
+
+        {foreach $operations as $_name => $_desc}
+        {$selected = $profile['mapping'][$_name]|default: '0'}
+        <div class="field">
+            <div class="name">{$_desc}</div>
+            <div class="value">
+                <div class="wa-select">
+                    <select name="cash_tinkoff[profiles][{$profile_id}][mapping][{$_name}]">
+                        <option value="" disabled>--[`ДОХОД`]--</option>
+                        {foreach $categories as $_category}
+                            {if $_category.type == 'income'}
+                                <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
+                            {/if}
+                        {/foreach}
+                        <option value="" disabled>--[`РАСХОД`]--</option>
+                        {foreach $categories as $_category}
+                            {if $_category.type == 'expense'}
+                                <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
+                            {/if}
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+        </div>
+        {/foreach}
+    </div>
+</div>

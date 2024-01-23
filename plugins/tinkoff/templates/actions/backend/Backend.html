@@ -1,0 +1,170 @@
+<div class="content box contentbox">
+    {if empty($profiles)}
+        [`Нет доступных профилей`]
+    {else}
+    <div class="fields">
+    {foreach $profiles as $_profile_id => $_profile}
+        <div class="fields-group" data-profile-id="{$_profile_id}">
+            <div class="field">
+                <div class="name">
+                    Профиль
+                </div>
+                <div class="value">
+                    <strong>
+                        {$_profile.profile_name}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name"></div>
+                <div class="value">
+                    <button class="button outlined js-company-button">[`Информация о компании`]</button>
+                    <div class="custom-mt-8"></div>
+                    <div class="js-company-value"></div>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name"></div>
+                <div class="value">
+                    <button class="button outlined js-accounts-button">[`Получить счета`]</button>
+                    <div class="custom-mt-8"></div>
+                    <div class="js-accounts-value"></div>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name"></div>
+                <div class="value">
+                    <button class="button outlined js-statement-button">[`Импортировать выписку`]</button>
+                    <div class="custom-mt-16"></div>
+                    <div class="progressbar" id="progressbar-{$_profile_id}"></div>
+                    <div class="error-msg state-error custom-pt-8"></div>
+                    <table class="single-lined hidden js-statement-value-{$_profile_id}">
+                        <thead>
+                        <tr>
+                            <th class="min-width">[`Дата операции`]</th>
+                            <th>[`Сумма транзакции`]</th>
+                            <th>[`Описание транзакции`]</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {/foreach}
+    </div>
+    {/if}
+</div>
+
+<script>
+    function renderTable(statements, profile_id) {
+        statements = statements || [];
+        let $table = $('.js-statement-value-'+ profile_id);
+        $table.removeClass('hidden');
+        for (let _statement of statements) {
+            let _class = 'class="'+ (_statement.amount < 0 ? 'bg-orange' : 'bg-green') +'"';
+            $table.find('tbody').append('<tr '+ _class +'><td>'+ _statement.datetime +'</td><td>'+ _statement.amount +'</td><td>'+ _statement.description +'</td></tr>');
+        }
+    }
+
+    let url = '?plugin=tinkoff&action=run';
+    let process_id = undefined;
+    let step = function (profile_id, delay, $progressbar) {
+        delay = delay || 2000;
+        setTimeout(function () {
+            $.post(url, { processid: process_id, profile_id: profile_id }, function (response) {
+                if (!response) {
+                    step(profile_id, 3000, $progressbar);
+                } else if (response && response.error) {
+                    $('.error-msg').text(response.error);
+                } else if (response && response.ready) {
+                    $progressbar.set({ percentage: 100 });
+                    setTimeout(function () {
+                        $('.progressbar').hide();
+                    }, 2000);
+                    if (response.statements) {
+                        renderTable(response.statements, profile_id);
+                    }
+                } else {
+                    if (response && response.progress) {
+                        $progressbar.set({ percentage: response.progress });
+                    }
+                    if (response.statements) {
+                        renderTable(response.statements, profile_id);
+                    }
+                    step(profile_id, null, $progressbar);
+                }
+            }, 'json').error(function () {
+                step(profile_id, 3000, $progressbar);
+            });
+        }, delay);
+    };
+
+    $('.js-company-button').on('click', function () {
+        let $that = $(this);
+        let profile_id = $that.closest('.fields-group').data('profile-id');
+        if (profile_id) {
+            $.post('?plugin=tinkoff&action=getCompany', { profile_id: profile_id }, function (res) {
+                if (res.status === 'ok') {
+                    let html = '<b>Название:</b> '+ res.data.name + '<br><b>Адрес:</b> '+ res.data.address;
+                    $that.siblings('.js-company-value').html(html);
+                } else if (res.status === 'fail') {
+                    $that.siblings('.js-company-value').html('<b>Ошибка:</b> '+ res.errors.shift().join());
+                }
+            });
+        }
+    });
+
+    $('.js-accounts-button').on('click', function () {
+        let $that = $(this);
+        let profile_id = $that.closest('.fields-group').data('profile-id');
+        if (profile_id) {
+            $.post('?plugin=tinkoff&action=getAccounts', { profile_id: profile_id }, function (res) {
+                if (res.status === 'ok') {
+                    let html = '<ul>';
+                    for (let _account of res.data) {
+                        html += '<li>'+ _account.name + (_account.number ? ' <i>'+ _account.number +'</i>' : '') + (_account.default ? ' <b>(Текущий)</b>' : '') +'</li>';
+                    }
+                    html += '</ul>';
+                    $that.siblings('.js-accounts-value').html(html);
+                } else if (res.status === 'fail') {
+                    $that.siblings('.js-accounts-value').html('<b>Ошибка:</b> '+ res.errors.shift().join());
+                }
+            });
+        }
+    });
+
+    $('.js-statement-button').on('click', function () {
+        let $that = $(this);
+        let profile_id = $that.closest('.fields-group').data('profile-id');
+        if (profile_id) {
+            let $bar = $('#progressbar-'+ profile_id).waProgressbar({
+                'color': '#3ec55e',
+                'text-inside': true
+            });
+            let instance = $bar.data('progressbar');
+
+            $.post(url, { profile_id: profile_id }, function (response) {
+                if (response && response.error) {
+                    $('div[data-profile-id="'+ profile_id +'"]').find('.error-msg').text(response.error);
+                } else if (response && response.processid) {
+                    process_id = response.processid;
+                    if (response.progress) {
+                        instance.set({ percentage: response.progress });
+                    }
+                    if (response.statements) {
+                        renderTable(response.statements, profile_id);
+                    }
+                    step(profile_id, null, instance);
+                } else {
+                    $('div[data-profile-id="'+ profile_id +'"]').find('.error-msg').text('Server error');
+                }
+            }, 'json').error(function () {
+                $('div[data-profile-id="'+ profile_id +'"]').find('.error-msg').text('Server error');
+            });
+        }
+    });
+</script>

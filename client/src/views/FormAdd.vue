@@ -1,16 +1,32 @@
 <script setup>
-import { useRoute } from 'vue-router/composables'
 import AddAccount from '@/components/Modals/AddAccount'
 import AddCategory from '@/components/Modals/AddCategory'
+import Modal from '../components/Modal.vue'
 
-const route = useRoute()
+const props = defineProps({
+  entity: {
+    type: String,
+    required: true
+  },
+  type: {
+    type: String,
+    default: 'income'
+  }
+})
+
+function close () {
+  window.emitter.emit('closeDialog')
+}
 </script>
 
 <template>
-  <div
-    class="dialog"
-    style="display: block; position: absolute;"
+  <Modal
+    :disable-transition="true"
+    @close="close"
   >
-    <component :is="route.params.type === 'account' ? AddAccount : AddCategory" />
-  </div>
+    <component
+      :is="props.entity === 'category' ? AddCategory : AddAccount"
+      :type="props.entity === 'category' && props.type"
+    />
+  </Modal>
 </template>

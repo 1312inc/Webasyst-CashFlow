@@ -1,15 +1,49 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { locale } from '@/plugins/locale'
 import { emitter } from '@/plugins/eventBus'
 import InfiniteCalendarGridDaySlotItem from './InfiniteCalendarGridDaySlotItem.vue'
 import dayjs from 'dayjs'
 import { useRouter } from 'vue-router/composables'
 import { moment } from '@/plugins/numeralMoment.js'
+import store from '@/store'
+import { appState } from '@/utils/appState'
 
 const props = defineProps(['date', 'data'])
 const router = useRouter()
 const dayRef = ref()
+
+onMounted(() => {
+  handleOnTransactionDrop()
+})
+
+function handleOnTransactionDrop () {
+  if (dayRef.value) {
+    dayRef.value.addEventListener('dragenter', (e) => {
+      e.target.classList.add('dragover')
+    })
+    dayRef.value.addEventListener('dragleave', (e) => {
+      e.target.classList.remove('dragover')
+    })
+    dayRef.value.addEventListener('dragover', (e) => {
+      e.preventDefault()
+    })
+    dayRef.value.addEventListener('drop', (e) => {
+      e.preventDefault()
+      e.target.classList.remove('dragover')
+
+      const targetTransaction = JSON.parse(e.dataTransfer.getData('transaction'))
+      if (targetTransaction && (moment(props.date).format('YYYY-MM-DD') !== targetTransaction.date)) {
+        store
+          .dispatch('transaction/update', {
+            ...targetTransaction,
+            date: moment(props.date).format('YYYY-MM-DD'),
+            apply_to_all_in_future: false
+          })
+      }
+    })
+  }
+}
 
 function getMonthShort (date) {
   try {
@@ -19,7 +53,7 @@ function getMonthShort (date) {
 
 function onClick () {
   const t = dayRef.value?.querySelector('.icg-plus')
-  if (t) {
+  if (t || appState.webView) {
     if (window.getComputedStyle(t, null).getPropertyValue('display') === 'none') {
       router.push(`/date/${moment(props.date).format('YYYY-MM-DD')}/`)
     } else {
@@ -56,6 +90,12 @@ function onClick () {
 </template>
 
 <style scoped lang="scss">
+
+.dragover {
+  outline: 1px solid var(--border-color-hard);
+  outline-offset: -1px;
+}
+
 .icg-months-grid-day--active-month .icg-day {
   color: var(--text-color-strong);
 }

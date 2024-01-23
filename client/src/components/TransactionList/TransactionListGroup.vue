@@ -127,7 +127,7 @@
           :class="{'c-list--compact': compactModeForFutureList}"
         >
           <TransactionListGroupRow
-            v-for="(transaction, i) in compactModeForFutureList ? filteredTransactions.toReversed() : filteredTransactions"
+            v-for="(transaction, i) in filteredTransactions"
             v-show="isShown(transaction)"
             :key="transaction.id"
             :transaction="transaction"
@@ -138,7 +138,29 @@
             :visible-select-checkbox="visibleSelectCheckbox"
             @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
+          <li
+            v-if="type === 'future' && $store.state.transaction.showFutureTransactionsMoreLink[featurePeriod]"
+            class="flexbox middle"
+          >
+            <button
+              class="button light-gray"
+              style="margin: 1rem auto;"
+              @click.prevent="() => $store.dispatch('transaction/fetchTransactionsFuture')"
+            >
+              <span
+                v-show="$store.state.transaction.loadingFuture"
+                class="custom-mr-8"
+              >
+                <i class="fas fa-spinner wa-animation-spin speed-1000" />
+              </span>
+              <span>{{ $t('showMore') }}</span>
+            </button>
+          </li>
         </ul>
+        <SkeletonTransaction
+          v-else-if="(type === 'future' || type === 'tomorrow') && $store.state.transaction.loadingFuture && !$store.getters['transaction/getFutureTransactions'].length"
+          :lines="1"
+        />
         <div
           v-else
           class="align-center small custom-py-24"
@@ -156,6 +178,7 @@ import { useStorage, useElementBounding } from '@vueuse/core'
 import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPeriod'
 import TransactionListGroupRow from './TransactionListGroupRow/TransactionListGroupRow'
 import AmountForGroup from '@/components/PeriodAmount/AmountForGroup'
+import SkeletonTransaction from './SkeletonTransaction'
 
 const listCompactMode = useStorage('list_compact_mode', true)
 
@@ -164,7 +187,8 @@ export default {
   components: {
     TransactionListGroupUpcomingPeriod,
     TransactionListGroupRow,
-    AmountForGroup
+    AmountForGroup,
+    SkeletonTransaction
   },
   props: {
     group: {
@@ -239,14 +263,13 @@ export default {
 
     filteredTransactions () {
       let result = this.group
+
       if (this.type === 'future') {
-        const today = this.$moment()
-          .add(1, 'd')
-          .format('YYYY-MM-DD')
         result = this.group.filter(t => {
-          const istart = this.$moment(t.date)
-          return istart.diff(today, 'days') < this.featurePeriod
-        })
+          const start = this.$moment().add(1, 'd')
+          const end = this.$moment().add(this.featurePeriod, 'd')
+          return this.$moment(t.date).isBetween(start, end)
+        }).reverse()
       }
 
       return result
@@ -387,6 +410,10 @@ export default {
 
 .c-sticky-header-group:hover {
   z-index: 999;
+}
+
+.c-list--compact button {
+  margin-left: 1rem !important;
 }
 
 @media screen and (max-width: 760px) {

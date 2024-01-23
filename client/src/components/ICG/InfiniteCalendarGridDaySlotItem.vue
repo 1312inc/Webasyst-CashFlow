@@ -1,13 +1,27 @@
 <script setup>
 import { emitter } from '@/plugins/eventBus'
 import store from '@/store'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import DropdownWaFloating from '@/components/Inputs/DropdownWaFloating.vue'
 
 const props = defineProps(['transaction'])
+const draggableRef = ref()
 
 const category = computed(() => store.getters['category/getById'](props.transaction.category_id))
 const currency = computed(() => store.getters['account/getById'](props.transaction.account_id)?.currency)
+
+onMounted(() => {
+  handleOnTransactionDragStart()
+})
+
+function handleOnTransactionDragStart () {
+  if (draggableRef.value) {
+    draggableRef.value.addEventListener('dragstart', (e) => {
+      e.dataTransfer.clearData()
+      e.dataTransfer.setData('transaction', JSON.stringify(props.transaction))
+    })
+  }
+}
 
 function onClick () {
   emitter.emit('openAddTransactionModal', {
@@ -23,8 +37,10 @@ function onClick () {
   >
     <template #toggler>
       <div
+        ref="draggableRef"
         :style="`color: ${category.color}`"
         class="icg-row align-left nowrap"
+        draggable="true"
         @click.prevent.stop="() => { if (!$helper.isTabletMediaQuery()) { onClick() } }"
       >
         <span

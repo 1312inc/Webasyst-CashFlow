@@ -25,11 +25,12 @@ export default {
     queryParams: {
       from: '',
       to: moment().add(1, 'M').format('YYYY-MM-DD'),
-      // limit: 200,
+      limit: 50,
       offset: 0,
       filter: ''
     },
     loading: false,
+    loadingFuture: false,
     chartInterval: {
       from: getDateFromLocalStorage('from') || moment().add(-1, 'Y').format('YYYY-MM-DD'),
       to: getDateFromLocalStorage('to') || moment().add(6, 'M').format('YYYY-MM-DD')
@@ -47,10 +48,17 @@ export default {
     chartData: [],
     chartDataCurrencyIndex: 0,
     loadingChart: true,
-    todayCount: {}
+    todayCount: {},
+    showFutureTransactionsMoreLink: {
+      7: false,
+      30: false
+    }
   }),
 
   getters: {
+    getFutureTransactions: state => {
+      return state.transactions.data.filter(t => moment().isBefore(moment(t.date)))
+    },
     getTransactionById: state => id => {
       return state.transactions.data.find(t => t.id === id)
     },
@@ -71,6 +79,10 @@ export default {
   mutations: {
     setTransactions (state, data) {
       state.transactions = data
+    },
+
+    setShowFutureTransactionsMoreLink (state, data) {
+      state.showFutureTransactionsMoreLink = data
     },
 
     resetTransactions (state) {
@@ -150,6 +162,10 @@ export default {
 
     setLoading (state, data) {
       state.loading = data
+    },
+
+    setLoadingFuture (state, data) {
+      state.loadingFuture = data
     },
 
     setLoadingChart (state, data) {
@@ -239,13 +255,58 @@ export default {
       }
     },
 
-    async fetchTransactions ({ commit, state }, userParams = {}) {
+    async fetchTransactionsFuture ({ commit, state, getters }, to) {
+      commit('setLoadingFuture', true)
+      try {
+        const { data } = await api.get('cash.transaction.getList', {
+          params: {
+            ...state.queryParams,
+            from: moment().add(1, 'day').format('YYYY-MM-DD'),
+            to,
+            offset: getters.getFutureTransactions.length,
+            reverse: 1
+          }
+        })
+
+        const isNotFullFutureOffset = data.data.length + data.offset < data.total
+        commit('setShowFutureTransactionsMoreLink', {
+          7: moment(data.data[data.data.length - 1].date).isBefore(moment().add(7, 'd')) && isNotFullFutureOffset,
+          30: isNotFullFutureOffset
+        })
+
+        const result = {
+          ...state.transactions,
+          data: [...data.data.reverse(), ...state.transactions.data]
+        }
+
+        commit('setTransactions', result)
+      } catch (_) {
+
+      } finally {
+        commit('setLoadingFuture', false)
+      }
+    },
+
+    async fetchTransactions ({ commit, state, dispatch }, userParams = {}) {
       try {
         commit('updateQueryParams', userParams)
         const params = { ...state.queryParams }
 
         if (params.offset === 0) {
+          commit('setTransactions', {
+            ...state.transactions,
+            data: []
+          })
           commit('setLoading', true)
+
+          if (!params.from && params.to && moment().isBefore(params.to)) {
+            dispatch('fetchTransactionsFuture', params.to)
+            const today = moment().format('YYYY-MM-DD')
+            commit('updateQueryParams', {
+              to: today
+            })
+            params.to = today
+          }
         }
         // if view details mode
         if (state.detailsInterval.from) {
@@ -261,7 +322,7 @@ export default {
 
         const result = {
           ...data,
-          ...(data.offset > 0 && { data: [...state.transactions.data, ...data.data] })
+          data: [...state.transactions.data, ...data.data]
         }
 
         commit('setTransactions', result)

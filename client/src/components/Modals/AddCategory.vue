@@ -8,10 +8,7 @@
         {{ isModeUpdate ? $t("updateCategory") : $t("addCategory") }}
       </h2>
     </div>
-    <div
-      class="dialog-content"
-      style="overflow: initial;"
-    >
+    <div class="dialog-content">
       <div class="fields">
         <div class="field">
           <div class="name for-input">

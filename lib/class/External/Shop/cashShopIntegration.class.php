@@ -407,9 +407,7 @@ SQL;
                 cash()->getLogger()->debug('Transaction info added to order log: %s!', $message);
             }
 
-            $this->settings
-                ->incTodayTransactionsCount()
-                ->saveStat();
+            $this->settings->incTodayTransactionsCount();
 
             cash()->getModel()->commit();
         } catch (Exception $ex) {
@@ -419,6 +417,7 @@ SQL;
                 sprintf('Save new transactions error: %s', $ex->getMessage()), $ex->getCode(), $ex
             );
         }
+        $this->settings->saveStat();
     }
 
     /**

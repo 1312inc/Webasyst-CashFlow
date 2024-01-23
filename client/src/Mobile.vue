@@ -63,8 +63,9 @@ export default {
     },
 
     addEmitterHandlers () {
-      window.emitter.on('openDialog', (type = 'Category', editedItem = null) => {
-        this.update(type, editedItem)
+      window.emitter.on('openDialog', (args) => {
+        const [type = 'Category', editedItem = null] = Array.isArray(args) ? args : [args]
+        if (['Account', 'Category'].includes(type) && typeof editedItem === 'object') { this.update(type, editedItem) }
       })
 
       window.emitter.on('multiSelectEnabled', (enable) => {

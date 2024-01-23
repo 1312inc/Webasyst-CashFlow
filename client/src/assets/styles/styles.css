@@ -39,6 +39,10 @@ html[data-theme='dark'] {
   }
 }
 
+.alert-fixed-box {
+  z-index: 999999;
+}
+
 .content {
   min-width: 1px;
 }
