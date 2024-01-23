@@ -226,6 +226,7 @@ import TransactionListCompleteButton from './TransactionListCompleteButton'
 import TransactionListGroupRowDesc from './TransactionListGroupRowDesc'
 import TransactionListGroupRowGlyph from './TransactionListGroupRowGlyph'
 import { useFloating } from '@floating-ui/vue'
+import { appState } from '@/utils/appState'
 
 const reference = ref(null)
 const floating = ref(null)
@@ -372,6 +373,8 @@ export default {
         this.$emit('toggleCollapseHeader')
       } else if (this.isRepeatingGroup) {
         e.preventDefault()
+      } else if (appState.webView && this.$store.state.multiSelectMode) {
+        this.checkboxSelect()
       } else {
         this.openModal()
       }
@@ -405,7 +408,7 @@ export default {
       const currentIndex = transactions.indexOf(this.transaction)
 
       // with Shift key selection
-      if (event.shiftKey && lastCheckboxIndex > -1) {
+      if (event?.shiftKey && lastCheckboxIndex > -1) {
         transactions
           .slice(
             Math.min(currentIndex, lastCheckboxIndex) + 1,

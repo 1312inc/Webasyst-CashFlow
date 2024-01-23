@@ -70,6 +70,10 @@ export default {
 
       window.emitter.on('multiSelectEnabled', (enable) => {
         this.$store.commit('setMultiSelectMode', enable)
+
+        if (!enable) {
+          this.$store.commit('transactionBulk/emptySelectedTransactionsIds')
+        }
       })
     }
 
