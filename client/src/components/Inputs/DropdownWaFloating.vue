@@ -20,10 +20,12 @@ const { floatingStyles } = useFloating(reference, floating, {
 <template>
   <div
     ref="reference"
-    @mouseover.prevent.stop="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = true } }"
-    @mouseleave.prevent.stop="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = false } }"
+    @mouseover="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = true } }"
+    @mouseleave="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = false } }"
   >
-    <slot name="toggler" />
+    <div @touchend="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = !open } }">
+      <slot name="toggler" />
+    </div>
     <div
       v-if="open"
       ref="floating"
