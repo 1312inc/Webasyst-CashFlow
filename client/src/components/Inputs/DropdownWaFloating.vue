@@ -1,5 +1,8 @@
 <script setup>
-import { useFloating } from '@floating-ui/vue'
+import {
+  useFloating, flip,
+  shift
+} from '@floating-ui/vue'
 import { ref } from 'vue'
 
 const props = defineProps(['strategy', 'hideOnMobile'])
@@ -9,7 +12,8 @@ const floating = ref(null)
 const reference = ref(null)
 const { floatingStyles } = useFloating(reference, floating, {
   placement: 'bottom-start',
-  strategy: props.strategy ?? 'absolute'
+  strategy: props.strategy ?? 'absolute',
+  middleware: [flip(), shift()]
 })
 </script>
 
@@ -48,5 +52,14 @@ button {
 
 .dropdown.no-pointer {
   pointer-events: none;
+}
+</style>
+
+<style scoped>
+.dropdown-body {
+  position: relative;
+  display: block;
+  left: auto;
+  top: auto;
 }
 </style>

@@ -88,7 +88,11 @@
 </template>
 
 <script setup>
-import { useFloating } from '@floating-ui/vue'
+import {
+  useFloating,
+  flip,
+  shift
+} from '@floating-ui/vue'
 import { ref } from 'vue'
 
 const props = defineProps(['transaction', 'account', 'isFixed'])
@@ -98,7 +102,8 @@ const floating = ref(null)
 const open = ref(false)
 const { floatingStyles } = useFloating(reference, floating, {
   placement: 'bottom-start',
-  strategy: props.isFixed ? 'fixed' : 'absolute'
+  strategy: props.isFixed ? 'fixed' : 'absolute',
+  middleware: [flip(), shift()]
 })
 </script>
 
@@ -128,3 +133,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.dropdown-body {
+  position: relative;
+  display: block;
+  left: auto;
+  top: auto;
+}
+</style>

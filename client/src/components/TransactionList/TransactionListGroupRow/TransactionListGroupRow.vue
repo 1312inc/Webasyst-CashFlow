@@ -225,7 +225,10 @@ import AddTransaction from '@/components/Modals/AddTransaction'
 import TransactionListCompleteButton from './TransactionListCompleteButton'
 import TransactionListGroupRowDesc from './TransactionListGroupRowDesc'
 import TransactionListGroupRowGlyph from './TransactionListGroupRowGlyph'
-import { useFloating } from '@floating-ui/vue'
+import {
+  useFloating, flip,
+  shift
+} from '@floating-ui/vue'
 import { appState } from '@/utils/appState'
 
 const reference = ref(null)
@@ -234,7 +237,8 @@ const openFloating = ref(false)
 
 const { floatingStyles } = useFloating(reference, floating, {
   placement: 'bottom-start',
-  strategy: 'fixed'
+  strategy: 'fixed',
+  middleware: [flip(), shift()]
 })
 </script>
 
@@ -444,5 +448,14 @@ export default {
   animation-timing-function: linear;
   animation-direction: alternate;
   animation-iteration-count: 1;
+}
+</style>
+
+<style scoped>
+.dropdown-body {
+  position: relative;
+  display: block;
+  left: auto;
+  top: auto;
 }
 </style>
