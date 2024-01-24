@@ -237,7 +237,6 @@ const openFloating = ref(false)
 
 const { floatingStyles } = useFloating(reference, floating, {
   placement: 'bottom-start',
-  strategy: 'fixed',
   middleware: [flip(), shift()]
 })
 </script>

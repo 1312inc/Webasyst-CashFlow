@@ -120,7 +120,7 @@
         </div>
       </div>
 
-      <div v-if="upcomingBlockOpened">
+      <div v-if="upcomingBlockOpened" style="overflow: hidden;">
         <ul
           v-if="filteredTransactions.length"
           class="c-list list"

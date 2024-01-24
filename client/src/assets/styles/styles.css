@@ -134,7 +134,7 @@ body.modal {
 .c-list--compact .c-item {
   padding: 0;
   width: 90px;
-  overflow: hidden;
+  position: initial;
   flex: none;
 }
 .c-list--compact .c-item .flexbox {
