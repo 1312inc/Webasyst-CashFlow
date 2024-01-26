@@ -1,12 +1,13 @@
 <template>
   <div
-    @mouseover.prevent.stop="open = true"
-    @mouseleave.prevent.stop="open = false"
+    @mouseover="open = true"
+    @mouseleave="open = false"
   >
     <button
       ref="reference"
       class="light-gray small nowrap rounded"
       :style="isFixed ? 'padding: .3125em .5em; margin: .5em 0 0;' : 'margin: 0;'"
+      @touchend.prevent.stop="open = !open"
       @click.prevent.stop=""
     >
       <i class="fas fa-check-circle text-red" />
