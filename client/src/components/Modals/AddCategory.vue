@@ -4,9 +4,19 @@
     style="overflow: initial;"
   >
     <div class="dialog-header">
-      <h2>
-        {{ isModeUpdate ? $t("updateCategory") : $t("addCategory") }}
-      </h2>
+      <div class="flexbox middle full-width custom-mb-12">
+        <h2 class="custom-m-0">
+          {{ isModeUpdate ? $t("updateCategory") : $t("addCategory") }}
+        </h2>
+        <button
+          v-if="isModeUpdate"
+          :disabled="controlsDisabled"
+          class="button outlined red mobile-only"
+          @click="remove('category')"
+        >
+          <span><i class="fas fa-trash-alt" /></span>
+        </button>
+      </div>
     </div>
     <div class="dialog-content">
       <div class="fields">
@@ -158,7 +168,7 @@
         <button
           v-if="isModeUpdate"
           :disabled="controlsDisabled"
-          class="button outlined red"
+          class="button outlined red desktop-and-tablet-only"
           @click="remove('category')"
         >
           <span>{{ $t("delete") }}</span>

@@ -1,9 +1,19 @@
 <template>
   <div class="dialog-body">
     <div class="dialog-header">
-      <h2>
-        {{ isModeUpdate ? $t("updateAccount") : $t("addAccount") }}
-      </h2>
+      <div class="flexbox middle full-width custom-mb-12">
+        <h2 class="custom-m-0">
+          {{ isModeUpdate ? $t("updateAccount") : $t("addAccount") }}
+        </h2>
+        <button
+          v-if="isModeUpdate"
+          :disabled="controlsDisabled"
+          class="button outlined red mobile-only"
+          @click="remove('account')"
+        >
+          <span><i class="fas fa-trash-alt" /></span>
+        </button>
+      </div>
     </div>
 
     <div class="dialog-content">
@@ -131,7 +141,7 @@
         <button
           v-if="isModeUpdate"
           :disabled="controlsDisabled"
-          class="button outlined red"
+          class="button outlined red desktop-and-tablet-only"
           @click="remove('account')"
         >
           <span>{{ $t("delete") }}</span>
