@@ -15,7 +15,10 @@
         >
           {{ $t("setDates") }}
         </button>
-        <ExportButton v-if="!appState.webView" class="custom-ml-12 custom-ml-8-mobile" />
+        <ExportButton
+          v-if="!appState.webView"
+          class="custom-ml-12 custom-ml-8-mobile"
+        />
       </div>
       <div>
         <button
@@ -57,7 +60,8 @@ export default {
   data () {
     return {
       data: null,
-      openModal: false
+      openModal: false,
+      appState
     }
   },
 
