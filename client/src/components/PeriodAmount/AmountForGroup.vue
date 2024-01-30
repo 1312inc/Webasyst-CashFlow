@@ -86,8 +86,8 @@ export default {
       return this.$store.state.category.categories
         .filter(c =>
           type === 'profit'
-            ? c.is_profit === true
-            : c.type === type && c.is_profit === false
+            ? !!c.is_profit
+            : c.type === type && !c.is_profit
         )
         .map(c => c.id)
     },
