@@ -9,6 +9,7 @@ import system from './modules/system'
 import entity from './modules/entity'
 import errors from './modules/errors'
 import mediator from './store-mediator'
+import storeEmitter from './store-emitter'
 
 Vue.use(Vuex)
 
@@ -64,5 +65,5 @@ export default new Vuex.Store({
     errors
   },
 
-  plugins: [mediator]
+  plugins: [mediator, storeEmitter]
 })

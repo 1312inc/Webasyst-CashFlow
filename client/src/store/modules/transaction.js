@@ -139,13 +139,15 @@ export default {
     },
 
     createTransactions (state, data) {
-      data.forEach(transition => {
-        state.transactions.data.unshift({
-          ...transition,
-          $_flagCreated: true
+      if (Array.isArray(data)) {
+        data.forEach(transition => {
+          state.transactions.data.unshift({
+            ...transition,
+            $_flagCreated: true
+          })
+          state.transactions.total = state.transactions.data.length
         })
-        state.transactions.total = state.transactions.data.length
-      })
+      }
     },
 
     setFeaturePeriod (state, data) {
