@@ -235,7 +235,7 @@ export default {
     parentsList () {
       return this.$store.getters['category/sortedCategories'].filter(
         c =>
-          c.parent_category_id === null &&
+          !c.parent_category_id &&
           this.editedItem?.id !== c.id &&
           c.type === this.model.type &&
           ![-1, -2].includes(c.id)
