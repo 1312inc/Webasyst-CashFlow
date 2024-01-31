@@ -69,13 +69,14 @@ export default {
             silent: true // fetch silently
           }, { root: true })
         }
-        dispatch('getList')
-          .then(() => {
-            // redirect to the entity page if new one
-            if (method === 'create') {
-              router.push({ name: 'Account', params: { id: data.id, isFirtsTimeNavigate: true } })
-            }
+
+        await dispatch('getList')
+
+        if (method === 'create') {
+          setTimeout(() => {
+            router.push({ name: 'Account', params: { id: data.id, isFirtsTimeNavigate: true } })
           })
+        }
       } catch (_) {
         return false
       }

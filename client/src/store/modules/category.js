@@ -84,7 +84,9 @@ export default {
         const { data } = await api.post(`cash.category.${method}`, params)
         commit('updateCategory', data)
         if (method === 'create') {
-          router.push({ name: 'Category', params: { id: data.id, isFirtsTimeNavigate: true } })
+          setTimeout(() => {
+            router.push({ name: 'Category', params: { id: data.id, isFirtsTimeNavigate: true } })
+          })
         }
       } catch (_) {
         return false

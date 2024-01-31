@@ -160,7 +160,7 @@
           </button>
           <button
             class="button light-gray"
-            @click="close"
+            @click="() => { close() }"
           >
             {{ $t("cancel") }}
           </button>

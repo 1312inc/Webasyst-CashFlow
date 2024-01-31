@@ -58,8 +58,8 @@ export default {
       this.item = editedItem
     },
 
-    close () {
-      window.emitter.emit('closeDialog')
+    close (message) {
+      window.emitter.emit('closeDialog', message)
     },
 
     addEmitterHandlers () {
