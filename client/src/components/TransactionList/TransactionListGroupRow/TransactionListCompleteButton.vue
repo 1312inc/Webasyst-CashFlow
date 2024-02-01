@@ -1,14 +1,14 @@
 <template>
   <div
-    @mouseover="open = true"
-    @mouseleave="open = false"
+    v-on-click-outside="() => { if (isTouch) open = false}"
+    @mouseover="() => { if (!isTouch) open = true}"
+    @mouseleave="() => { if (!isTouch) open = false}"
   >
     <button
       ref="reference"
       class="light-gray small nowrap rounded"
       :style="isFixed ? 'padding: .3125em .5em; margin: .5em 0 0;' : 'margin: 0;'"
-      @touchend.prevent.stop="open = !open"
-      @click.prevent.stop=""
+      @click.stop="() => { if (isTouch) open = !open}"
     >
       <i class="fas fa-check-circle text-red" />
       <span
@@ -94,6 +94,7 @@ import {
   flip,
   shift
 } from '@floating-ui/vue'
+import { vOnClickOutside } from '@vueuse/components'
 import { ref } from 'vue'
 
 const props = defineProps(['transaction', 'account', 'isFixed'])
@@ -105,6 +106,9 @@ const { floatingStyles } = useFloating(reference, floating, {
   placement: 'bottom-start',
   middleware: [flip(), shift()]
 })
+
+const isTouch = 'ontouchstart' in window
+
 </script>
 
 <script>
