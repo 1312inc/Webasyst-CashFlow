@@ -40,7 +40,7 @@ export default {
         this.$store
           .dispatch(`${entity}/delete`, this.model.id)
           .then(() => {
-            this.close()
+            this.close({ action: 'afterDelete', entity })
           })
           .finally(() => {
             this.controlsDisabled = false
