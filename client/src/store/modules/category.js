@@ -23,7 +23,8 @@ export default {
 
       const assemble = (arr, parentId = null, result = []) => {
         arr.forEach(el => {
-          if (el.parent_category_id === parentId) {
+          const parentCat = el.parent_category_id ?? null
+          if (parentCat === parentId) {
             result.push(el)
             assemble(arr, el.id, result)
           }
