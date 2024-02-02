@@ -895,11 +895,7 @@ export default {
             }
           })
           .catch((e) => {
-            this.$store.commit('errors/error', {
-              title: 'error.api',
-              method: '',
-              message: this.$t('orderNotFound')
-            })
+
           })
           .finally(() => {
             this.controlsDisabled = false

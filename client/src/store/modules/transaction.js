@@ -1,6 +1,7 @@
 import api from '@/plugins/api'
 import { moment } from '@/plugins/numeralMoment'
 import getDateFromLocalStorage from '../../utils/getDateFromLocalStorage'
+import { i18n } from '@/plugins/locale'
 
 const mutationDelete = (state, ids) => {
   ids.forEach(id => {
@@ -243,6 +244,11 @@ export default {
           }
         }
       } catch (e) {
+        commit('errors/error', {
+          title: 'error.api',
+          method: '',
+          message: e.response?.data?.error_description || i18n.t('error.html')
+        }, { root: true })
         return Promise.reject(e)
       }
     },
