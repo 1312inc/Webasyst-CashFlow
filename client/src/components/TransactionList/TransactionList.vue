@@ -18,7 +18,7 @@
         />
       </div>
       <Observer
-        v-if="observer && pastTransactionsOffset < transactions.total"
+        v-if="observer && pastTransactionsOffset && pastTransactionsOffset < transactions.total"
         @callback="observerCallback"
       />
     </div>

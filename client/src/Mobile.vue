@@ -58,8 +58,8 @@ export default {
       this.item = editedItem
     },
 
-    close () {
-      window.emitter.emit('closeDialog')
+    close (message) {
+      window.emitter.emit('closeDialog', message)
     },
 
     addEmitterHandlers () {
@@ -70,6 +70,10 @@ export default {
 
       window.emitter.on('multiSelectEnabled', (enable) => {
         this.$store.commit('setMultiSelectMode', enable)
+
+        if (!enable) {
+          this.$store.commit('transactionBulk/emptySelectedTransactionsIds')
+        }
       })
     }
 

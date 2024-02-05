@@ -1,6 +1,7 @@
 import api from '@/plugins/api'
 import { moment } from '@/plugins/numeralMoment'
 import getDateFromLocalStorage from '../../utils/getDateFromLocalStorage'
+import { i18n } from '@/plugins/locale'
 
 const mutationDelete = (state, ids) => {
   ids.forEach(id => {
@@ -139,13 +140,15 @@ export default {
     },
 
     createTransactions (state, data) {
-      data.forEach(transition => {
-        state.transactions.data.unshift({
-          ...transition,
-          $_flagCreated: true
+      if (Array.isArray(data)) {
+        data.forEach(transition => {
+          state.transactions.data.unshift({
+            ...transition,
+            $_flagCreated: true
+          })
+          state.transactions.total = state.transactions.data.length
         })
-        state.transactions.total = state.transactions.data.length
-      })
+      }
     },
 
     setFeaturePeriod (state, data) {
@@ -241,6 +244,11 @@ export default {
           }
         }
       } catch (e) {
+        commit('errors/error', {
+          title: 'error.api',
+          method: '',
+          message: e.response?.data?.error_description || i18n.t('error.html')
+        }, { root: true })
         return Promise.reject(e)
       }
     },

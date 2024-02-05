@@ -1,5 +1,8 @@
 <script setup>
-import { useFloating } from '@floating-ui/vue'
+import {
+  useFloating, flip,
+  shift
+} from '@floating-ui/vue'
 import { ref } from 'vue'
 
 const props = defineProps(['strategy', 'hideOnMobile'])
@@ -9,17 +12,20 @@ const floating = ref(null)
 const reference = ref(null)
 const { floatingStyles } = useFloating(reference, floating, {
   placement: 'bottom-start',
-  strategy: props.strategy ?? 'absolute'
+  strategy: props.strategy ?? 'absolute',
+  middleware: [flip(), shift()]
 })
 </script>
 
 <template>
   <div
     ref="reference"
-    @mouseover.prevent.stop="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = true } }"
-    @mouseleave.prevent.stop="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = false } }"
+    @mouseover="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = true } }"
+    @mouseleave="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = false } }"
   >
-    <slot name="toggler" />
+    <div @touchend="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = !open } }">
+      <slot name="toggler" />
+    </div>
     <div
       v-if="open"
       ref="floating"
@@ -48,5 +54,14 @@ button {
 
 .dropdown.no-pointer {
   pointer-events: none;
+}
+</style>
+
+<style scoped>
+.dropdown-body {
+  position: relative;
+  display: block;
+  left: auto;
+  top: auto;
 }
 </style>

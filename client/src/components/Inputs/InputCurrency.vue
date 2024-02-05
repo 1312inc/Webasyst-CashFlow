@@ -10,6 +10,7 @@
         :unmask="true"
         :radix="delimiters.decimal"
         :map-to-radix="['.', ',']"
+        :max="999999999999"
         :thousands-separator="delimiters.thousands"
         :placeholder="placeholder"
         :class="classes"

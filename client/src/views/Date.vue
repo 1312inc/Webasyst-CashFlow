@@ -1,5 +1,14 @@
 <template>
   <div>
+    <h2
+      v-if="!$helper.isDesktopEnv"
+      class="custom-m-12 flexbox space-8"
+    >
+      <a @click.prevent="$router.push({ name: 'Calendar' })">
+        <i class="fas fa-arrow-circle-left text-light-gray" />
+      </a>
+      {{ $moment($route.params.date).format('LL') }}
+    </h2>
     <ChartHeader>
       <template #title>
         <h1 class="flexbox space-8">

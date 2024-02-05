@@ -14,8 +14,8 @@ const props = defineProps({
   }
 })
 
-function close () {
-  window.emitter.emit('closeDialog')
+function close (message) {
+  window.emitter.emit('closeDialog', message)
 }
 </script>
 

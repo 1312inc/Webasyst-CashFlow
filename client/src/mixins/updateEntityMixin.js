@@ -18,10 +18,6 @@ export default {
     }
   },
 
-  beforeDestroy () {
-    this.close()
-  },
-
   methods: {
     submit (entity) {
       this.$v.$touch()
@@ -30,7 +26,7 @@ export default {
         this.$store
           .dispatch(`${entity}/update`, this.model)
           .then(() => {
-            this.close()
+            this.close({ action: 'afterSubmit', entity })
           })
           .finally(() => {
             this.controlsDisabled = false
@@ -44,7 +40,7 @@ export default {
         this.$store
           .dispatch(`${entity}/delete`, this.model.id)
           .then(() => {
-            this.close()
+            this.close({ action: 'afterDelete', entity })
           })
           .finally(() => {
             this.controlsDisabled = false
@@ -52,8 +48,8 @@ export default {
       }
     },
 
-    close () {
-      this.$parent.$emit('close')
+    close (message) {
+      this.$parent.$emit('close', message)
     }
   }
 }

@@ -23,7 +23,8 @@ export default {
 
       const assemble = (arr, parentId = null, result = []) => {
         arr.forEach(el => {
-          if (el.parent_category_id === parentId) {
+          const parentCat = el.parent_category_id ?? null
+          if (parentCat === parentId) {
             result.push(el)
             assemble(arr, el.id, result)
           }
@@ -84,7 +85,9 @@ export default {
         const { data } = await api.post(`cash.category.${method}`, params)
         commit('updateCategory', data)
         if (method === 'create') {
-          router.push({ name: 'Category', params: { id: data.id, isFirtsTimeNavigate: true } })
+          setTimeout(() => {
+            router.push({ name: 'Category', params: { id: data.id, isFirtsTimeNavigate: true } })
+          })
         }
       } catch (_) {
         return false

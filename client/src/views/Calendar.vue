@@ -64,6 +64,12 @@ store.subscribeAction({
   gap: 1rem;
 }
 
+@media screen and (max-width: 760px) {
+  .icg-header {
+    align-items: center;
+  }
+}
+
 .icg-controls {
   button {
 
@@ -91,6 +97,15 @@ store.subscribeAction({
   color: var(--text-color-strongest);
   line-height: 1.2em;
   font-weight: bold;
+}
+
+@media screen and (max-width: 760px) {
+  .icg-month {
+    font-size: 1.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .icg-months-grid-day {

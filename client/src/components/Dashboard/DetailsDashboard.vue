@@ -15,7 +15,10 @@
         >
           {{ $t("setDates") }}
         </button>
-        <ExportButton class="custom-ml-12 custom-ml-8-mobile" />
+        <ExportButton
+          v-if="!appState.webView"
+          class="custom-ml-12 custom-ml-8-mobile"
+        />
       </div>
       <div>
         <button
@@ -44,6 +47,7 @@ import Modal from '@/components/Modal'
 import DetailsDashboardItem from './DetailsDashboardItem.vue'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 import ExportButton from '@/components/Buttons/ExportButton'
+import { appState } from '@/utils/appState'
 
 export default {
   components: {
@@ -56,7 +60,8 @@ export default {
   data () {
     return {
       data: null,
-      openModal: false
+      openModal: false,
+      appState
     }
   },
 

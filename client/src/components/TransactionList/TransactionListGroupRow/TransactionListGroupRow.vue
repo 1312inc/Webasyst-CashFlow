@@ -225,7 +225,11 @@ import AddTransaction from '@/components/Modals/AddTransaction'
 import TransactionListCompleteButton from './TransactionListCompleteButton'
 import TransactionListGroupRowDesc from './TransactionListGroupRowDesc'
 import TransactionListGroupRowGlyph from './TransactionListGroupRowGlyph'
-import { useFloating } from '@floating-ui/vue'
+import {
+  useFloating, flip,
+  shift
+} from '@floating-ui/vue'
+import { appState } from '@/utils/appState'
 
 const reference = ref(null)
 const floating = ref(null)
@@ -233,7 +237,7 @@ const openFloating = ref(false)
 
 const { floatingStyles } = useFloating(reference, floating, {
   placement: 'bottom-start',
-  strategy: 'fixed'
+  middleware: [flip(), shift()]
 })
 </script>
 
@@ -372,6 +376,8 @@ export default {
         this.$emit('toggleCollapseHeader')
       } else if (this.isRepeatingGroup) {
         e.preventDefault()
+      } else if (appState.webView && this.$store.state.multiSelectMode) {
+        this.checkboxSelect()
       } else {
         this.openModal()
       }
@@ -405,7 +411,7 @@ export default {
       const currentIndex = transactions.indexOf(this.transaction)
 
       // with Shift key selection
-      if (event.shiftKey && lastCheckboxIndex > -1) {
+      if (event?.shiftKey && lastCheckboxIndex > -1) {
         transactions
           .slice(
             Math.min(currentIndex, lastCheckboxIndex) + 1,
@@ -441,5 +447,14 @@ export default {
   animation-timing-function: linear;
   animation-direction: alternate;
   animation-iteration-count: 1;
+}
+</style>
+
+<style scoped>
+.dropdown-body {
+  position: relative;
+  display: block;
+  left: auto;
+  top: auto;
 }
 </style>
