@@ -11,40 +11,47 @@ import XHRUpload from '@uppy/xhr-upload'
 
 export default {
   mounted () {
-    this.uppy = new Uppy({
-      autoProceed: true,
-      restrictions: {
-        maxNumberOfFiles: 1
-      },
-      meta: {
-        access_token: window?.appState?.token
-      }
-    })
-      .use(DragDrop, {
-        target: '.UppyDragDrop',
-        locale: {
-          strings: {
-            dropHereOr: this.$t('fileUploaderLabel')
+    this.init()
+  },
+
+  methods: {
+    init () {
+      this.uppy = new Uppy({
+        autoProceed: true,
+        restrictions: {
+          maxNumberOfFiles: 1
+        },
+        meta: {
+          access_token: window?.appState?.token
+        }
+      })
+        .use(DragDrop, {
+          target: '.UppyDragDrop',
+          locale: {
+            strings: {
+              dropHereOr: this.$t('fileUploaderLabel')
+            }
           }
-        }
-      })
-      .use(XHRUpload, {
-        endpoint: `${window?.appState?.baseApiUrl ||
+        })
+        .use(XHRUpload, {
+          endpoint: `${window?.appState?.baseApiUrl ||
           '/api.php'}/cash.account.uploadLogo`,
-        limit: 1,
-        fieldName: 'logo'
-      })
-      .on('upload-success', (file, response) => {
-        if (response.body.error) {
-          this.$store.commit('errors/error', {
-            title: 'error.api',
-            method: 'cash.account.uploadLogo',
-            message: response.body.error_description
-          })
-        } else {
-          this.$emit('uploaded', response.body)
-        }
-      })
+          limit: 1,
+          fieldName: 'logo'
+        })
+        .on('upload-success', (file, response) => {
+          if (response.body.error) {
+            this.$store.commit('errors/error', {
+              title: 'error.api',
+              method: 'cash.account.uploadLogo',
+              message: response.body.error_description
+            })
+            this.init()
+          } else {
+            this.$emit('uploaded', response.body)
+          }
+        })
+    }
   }
 }
 </script>
