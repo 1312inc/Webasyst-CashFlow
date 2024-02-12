@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
-import { defineEmits } from 'vue'
+import { defineEmits, onMounted } from 'vue'
 import { computed, nextTick, ref, watch } from 'vue-demi'
 import { useElementSize, useScroll } from '@vueuse/core'
 import InfiniteCalendarGridDay from './InfiniteCalendarGridDay.vue'
@@ -73,10 +73,13 @@ const unw = watch(height, async (height) => {
   }
 })
 
-watch(arrivedState, ({ top, bottom }) => {
-  if (top || bottom) {
-    activeMonth.value = activeMonth.value.add(top ? -1 : 1, 'month')
-  }
+onMounted(async () => {
+  await nextTick()
+  watch(arrivedState, ({ top, bottom }) => {
+    if (top || bottom) {
+      activeMonth.value = activeMonth.value.add(top ? -1 : 1, 'month')
+    }
+  })
 })
 
 watch(activeMonth, async () => {
