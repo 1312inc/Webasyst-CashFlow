@@ -68,9 +68,6 @@ export default defineConfig(async ({ mode }) => {
         '/api.php': env.VITE_APP_DEV_PROXY,
         '/wa-apps': env.VITE_APP_DEV_PROXY
       }
-    },
-    define: {
-      __APP_VERSION__: JSON.stringify('v1.1.0')
     }
   }
 })
