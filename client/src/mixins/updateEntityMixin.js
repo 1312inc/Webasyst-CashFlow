@@ -26,7 +26,7 @@ export default {
         this.$store
           .dispatch(`${entity}/update`, this.model)
           .then(() => {
-            this.close({ action: 'afterSubmit', entity })
+            this.close({ action: 'afterSubmit', entity: { type: entity, name: this.model.name } })
           })
           .finally(() => {
             this.controlsDisabled = false
@@ -40,7 +40,7 @@ export default {
         this.$store
           .dispatch(`${entity}/delete`, this.model.id)
           .then(() => {
-            this.close({ action: 'afterDelete', entity })
+            this.close({ action: 'afterDelete', entity: { type: entity, name: this.model.name } })
           })
           .finally(() => {
             this.controlsDisabled = false

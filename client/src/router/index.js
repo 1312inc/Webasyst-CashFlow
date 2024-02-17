@@ -174,6 +174,9 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  console.log(`%c Navigate to ${to.name} `, 'background: #222; color: #bada55')
+  console.log('-------------------')
+
   if (to.matched.some(record => record.meta.requiresAdminRights)) {
     if (!permissions.isAdmin) {
       next({
