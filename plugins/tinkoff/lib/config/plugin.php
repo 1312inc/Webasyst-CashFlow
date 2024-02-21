@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('TINKOFF_FILE_LOG')) {
+    define('TINKOFF_FILE_LOG', 'cash/tinkoff.log');
+}
+
 return array(
     'name' => 'Tinkoff API',
     'description' => 'Импорт выписки из Тинькофф банка',

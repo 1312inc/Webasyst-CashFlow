@@ -60,24 +60,24 @@ class cashTinkoffPlugin extends waPlugin
      * @return mixed|null
      * @throws waException
      */
-    public function getCompany()
-    {
-        $company_info = $this->apiQuery('v1/company');
-
-        return ifempty($company_info, []);
-    }
+//    public function getCompany()
+//    {
+//        $company_info = $this->apiQuery('v1/company');
+//
+//        return ifempty($company_info, []);
+//    }
 
     /**
      * https://developer.tinkoff.ru/docs/api/get-api-v-4-bank-accounts
      * @return mixed|null
      * @throws waException
      */
-    public function getAccounts()
-    {
-        $accounts = $this->apiQuery('v4/bank-accounts');
-
-        return ifempty($accounts, []);
-    }
+//    public function getAccounts()
+//    {
+//        $accounts = $this->apiQuery('v4/bank-accounts');
+//
+//        return ifempty($accounts, []);
+//    }
 
     /**
      * https://developer.tinkoff.ru/docs/api/get-api-v-1-statement

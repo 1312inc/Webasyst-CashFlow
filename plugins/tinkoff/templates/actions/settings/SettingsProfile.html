@@ -1,22 +1,25 @@
 <div class="js-tab-content-{$profile_id}{if !empty($is_hidden)} hidden{/if}" data-profile-id="{$profile_id}">
-    <div class="field">
-        <div class="name">
-            [`Название профиля`]
-        </div>
-        <div class="value">
-            <input type="text" name="cash_tinkoff[profiles][{$profile_id}][profile_name]" value="{if isset($profile.profile_name)}{$profile.profile_name}{/if}" placeholder="[`Профиль 1`]" autocomplete="off" required>
-        </div>
-    </div>
+{*    На потом *}
+{*    <div class="field">*}
+{*        <div class="name">*}
+{*            [`Название профиля`]*}
+{*        </div>*}
+{*        <div class="value">*}
+{*            <input type="text" name="cash_tinkoff[profiles][{$profile_id}][profile_name]" value="{if isset($profile.profile_name)}{$profile.profile_name}{/if}" placeholder="[`Профиль 1`]" autocomplete="off" required>*}
+{*        </div>*}
+{*    </div>*}
 
     <div class="field">
         <div class="name">
-            [`Access Token`]
+            [`Тинькофф ID`]
         </div>
         <div class="value">
-            <input class="long" type="password" name="cash_tinkoff[profiles][{$profile_id}][access_token]" value="{if isset($profile.access_token)}{$profile.access_token}{/if}" autocomplete="new-password" required>
-            <p class="hint">
-                {sprintf_wp('Получите токен доступа для вашего домена на веб-сайте %s по %s инструкции %s', '<a href="https://www.tinkoff.ru/business/" target="_blank">www.tinkoff.ru</a>', '<a href="https://developer.tinkoff.ru/docs/intro/manuals/self-service-auth" target="_blank">', '</a>')}
-            </p>
+            {if empty($profile.oauth)}
+            <a href="javascript:void(0);" class="button orange js-knock-knock">[`Тук тук в CashCentral`]</a>
+            {else}
+                <strong>{$profile.oauth|escape|default:''}</strong>
+            {/if}
+            <input type="hidden" name="cash_tinkoff[profiles][{$profile_id}][oauth]" class="js-oauth" value="{if isset($profile.oauth)}{$profile.oauth|escape}{/if}">
         </div>
     </div>
 
@@ -38,17 +41,18 @@
         </div>
     </div>
 
-    <div class="field">
-        <div class="name">
-            [`Команда для CRON`]
-        </div>
-        <div class="value">
-            <code>{$profile.cron_command}</code>
-            <p class="hint">
-                {sprintf_wp('%sДокументация%s по настройке планировщика CRON', '<a href="https://developers.webasyst.ru/docs/tips/cron/">', '</a>')}
-            </p>
-        </div>
-    </div>
+{*    На потом *}
+{*    <div class="field">*}
+{*        <div class="name">*}
+{*            [`Команда для CRON`]*}
+{*        </div>*}
+{*        <div class="value">*}
+{*            <code>{$profile.cron_command}</code>*}
+{*            <p class="hint">*}
+{*                {sprintf_wp('%sДокументация%s по настройке планировщика CRON', '<a href="https://developers.webasyst.ru/docs/tips/cron/">', '</a>')}*}
+{*            </p>*}
+{*        </div>*}
+{*    </div>*}
 
     <div class="fields-group">
         <h5 class="heading">[`Маппинг категорий`]</h5>

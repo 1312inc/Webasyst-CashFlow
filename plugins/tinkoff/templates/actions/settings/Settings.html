@@ -1,25 +1,26 @@
 <h1>[`Плагин Тинькофф для бизнеса`]</h1>
 
-<ul class="tabs js-tabs">
-    {foreach $profiles as $_profile_id => $_profile}
-    <li{if $_profile_id == $profile_id} class="selected"{/if}>
-        <a href="javascript:void(0);" data-profile-id="{$_profile_id}">
-            {$_profile.profile_name}
-        </a>
-    </li>
-    {foreachelse}
-    <li class="selected">
-        <a href="javascript:void(0);">
-            [`Новый профиль`]
-        </a>
-    </li>
-    {/foreach}
-    <li>
-        <button class="circle js-add-profile">
-            <i class="fas fa-plus"></i>
-        </button>
-    </li>
-</ul>
+{*    На потом *}
+{*<ul class="tabs js-tabs">*}
+{*    {foreach $profiles as $_profile_id => $_profile}*}
+{*    <li{if $_profile_id == $profile_id} class="selected"{/if}>*}
+{*        <a href="javascript:void(0);" data-profile-id="{$_profile_id}">*}
+{*            {$_profile.profile_name}*}
+{*        </a>*}
+{*    </li>*}
+{*    {foreachelse}*}
+{*    <li class="selected">*}
+{*        <a href="javascript:void(0);">*}
+{*            [`Новый профиль`]*}
+{*        </a>*}
+{*    </li>*}
+{*    {/foreach}*}
+{*    <li>*}
+{*        <button class="circle js-add-profile">*}
+{*            <i class="fas fa-plus"></i>*}
+{*        </button>*}
+{*    </li>*}
+{*</ul>*}
 
 <div class="fields form">
     <form action="?module=plugins&id=tinkoff&action=save" method="post" id="plugins-settings-form">
@@ -81,5 +82,21 @@
                 location.reload();
             });
         }
+    });
+
+    $('.js-knock-knock').on('click', function () {
+        let profile_id = $('[class^="js-tab-content-"]:visible').data('profile-id');
+        $(this).addClass('disabled');
+        $.get('?plugin=tinkoff&module=auth', { 'profile_id': profile_id }, function (data) {
+console.log('data', data.data.redirect_url);
+            if (data.data.redirect_url) {
+                window.location.href = data.data.redirect_url;
+            } else if (data.data.error_description) {
+                alert(data.data.error_description);
+            } else if (data.data.tinkoff_id) {
+                $('.js-oauth').val(data.data.tinkoff_id);
+                alert('Авторизация ОК. Можно не кликать больше');
+            }
+        });
     });
 </script>

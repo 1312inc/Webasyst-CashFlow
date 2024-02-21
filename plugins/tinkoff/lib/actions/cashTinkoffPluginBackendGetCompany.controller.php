@@ -8,10 +8,14 @@ class cashTinkoffPluginBackendGetCompanyController extends waJsonController
         $profile_id = waRequest::post('profile_id', 0, waRequest::TYPE_INT);
 
         if ($profile_id > 0) {
-            $plugin = new cashTinkoffPlugin(['id' => 'tinkoff', 'profile_id' => $profile_id]);
             try {
-                $response = $plugin->getCompany();
-                if (ifset($response, 'http_code', 200) !== 200) {
+                $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_company']);
+                $status = ifset($response, 'status', 200);
+                $response = ifset($answer, 'response', 'company_info', []);
+                if (
+                    $status !== 200
+                    || ifset($response, 'http_code', 200) !== 200
+                ) {
                     $error = implode(' ', [
                         ifset($response, 'errorMessage', ''),
                         ifset($response, 'errorDetails', ''),
@@ -21,6 +25,7 @@ class cashTinkoffPluginBackendGetCompanyController extends waJsonController
                 }
             } catch (Exception $ex) {
                 $this->setError($ex->getMessage());
+                waLog::log($ex->getMessage(), TINKOFF_FILE_LOG);
             }
         }
 

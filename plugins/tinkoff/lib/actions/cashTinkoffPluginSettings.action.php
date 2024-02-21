@@ -8,22 +8,22 @@ class cashTinkoffPluginSettingsAction extends waViewAction
 
         /** https://developer.tinkoff.ru/products/scenarios/account-info#категории-операций */
         $categories_operations = [
-            'cardOperation'      => 'Оплата картой',
-            'cashOut'            => 'Снятие наличных',
-            'fee'                => 'Услуги банка',
-            'penalty'            => 'Штрафы',
-            'contragentPeople'   => 'Исходящие платежи',
-            'selfIncomeOuter'    => 'Перевод себе в другой банк (исходящий платеж)',
-            'selfTransferOuter'  => 'Перевод между своими счетами в Тинькофф Бизнес (исходящий платеж)',
-            'salary'             => 'Выплаты (исходящий платеж)',
-            'contragentOutcome'  => 'Перевод контрагенту (исходящий платеж)',
-            'contragentRefund'   => 'Возврат контрагенту (исходящий платеж)',
-            'budget'             => 'Платежи в бюджет',
-            'tax'                => 'Налоговые платежи',
-            'creditPaymentOuter' => 'Погашение кредита',
-            'sme-c2c'            => 'С карты на карту',
-            'otherOut'           => 'Другое',
-            'unspecifiedOut'     => 'Без категории',
+            'cardOperation'      => _wp('Оплата картой'),
+            'cashOut'            => _wp('Снятие наличных'),
+            'fee'                => _wp('Услуги банка'),
+            'penalty'            => _wp('Штрафы'),
+            'contragentPeople'   => _wp('Исходящие платежи'),
+            'selfIncomeOuter'    => _wp('Перевод себе в другой банк (исходящий платеж)'),
+            'selfTransferOuter'  => _wp('Перевод между своими счетами в Тинькофф Бизнес (исходящий платеж)'),
+            'salary'             => _wp('Выплаты (исходящий платеж)'),
+            'contragentOutcome'  => _wp('Перевод контрагенту (исходящий платеж)'),
+            'contragentRefund'   => _wp('Возврат контрагенту (исходящий платеж)'),
+            'budget'             => _wp('Платежи в бюджет'),
+            'tax'                => _wp('Налоговые платежи'),
+            'creditPaymentOuter' => _wp('Погашение кредита'),
+            'sme-c2c'            => _wp('С карты на карту'),
+            'otherOut'           => _wp('Другое'),
+            'unspecifiedOut'     => _wp('Без категории'),
         ];
 
         /** @var cashTinkoffPlugin $plugin */
@@ -55,6 +55,12 @@ class cashTinkoffPluginSettingsAction extends waViewAction
 
     private function pasteCronCommand($profiles)
     {
+        if (empty($profiles)) {
+            // default profile
+            $profiles = [
+                1 => ['profile_name' => _wp('Профиль 1')]
+            ];
+        }
         $root_path = $this->getConfig()->getRootPath();
         foreach ($profiles as $id => $_profile) {
             $profiles[$id]['cron_command'] = "php $root_path/cli.php cash tinkoffTransaction $id";

@@ -11,7 +11,7 @@
                 </div>
                 <div class="value">
                     <strong>
-                        {$_profile.profile_name}
+                        {$_profile.profile_name|default:'[`Профиль 1`]'}
                     </strong>
                 </div>
             </div>
@@ -108,6 +108,7 @@
         let profile_id = $that.closest('.fields-group').data('profile-id');
         if (profile_id) {
             $.post('?plugin=tinkoff&action=getCompany', { profile_id: profile_id }, function (res) {
+console.log('GETCOMPANY', res);
                 if (res.status === 'ok') {
                     let html = '<b>Название:</b> '+ res.data.name + '<br><b>Адрес:</b> '+ res.data.address;
                     $that.siblings('.js-company-value').html(html);
@@ -123,6 +124,7 @@
         let profile_id = $that.closest('.fields-group').data('profile-id');
         if (profile_id) {
             $.post('?plugin=tinkoff&action=getAccounts', { profile_id: profile_id }, function (res) {
+console.log('GETACCOUNTS', res);
                 if (res.status === 'ok') {
                     let html = '<ul>';
                     for (let _account of res.data) {
