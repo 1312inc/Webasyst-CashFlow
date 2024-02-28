@@ -8,12 +8,13 @@
       style="overflow-x: auto;"
     >
       <div
-        v-if="checkedRows.length && multiselectView"
+        v-if="$store.state.multiSelectMode && multiselectView"
         class="c-transaction-controls-check flexbox middle"
         :class="direction === 'column' && 'vertical'"
       >
         <button
           class="button blue nowrap"
+          :disabled="!checkedRows.length"
           :class="direction === 'column' && 'custom-mb-12'"
           @click="openMove = true"
         >
@@ -23,6 +24,7 @@
         </button>
         <button
           class="button red nowrap"
+          :disabled="!checkedRows.length"
           :class="direction === 'column' && 'custom-mb-12'"
           @click="bulkDelete"
         >
@@ -32,6 +34,7 @@
         </button>
         <button
           class="button nobutton smaller nowrap"
+          :disabled="!checkedRows.length"
           @click="unselectAll"
         >
           {{ $t("unselectAll") }}
