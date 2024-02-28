@@ -30,30 +30,30 @@ class cashTinkoffPlugin extends waPlugin
      * @return array|SimpleXMLElement|string|waNet
      * @throws waException
      */
-    public function apiQuery($endpoint = '', $get_params = [])
-    {
-        $options = [
-            'format'         => waNet::FORMAT_JSON,
-            'request_format' => waNet::FORMAT_RAW,
-            'timeout'        => 60,
-            'authorization'  => true,
-            'auth_type'      => 'Bearer',
-            'auth_key'       => $this->bearer
-        ];
-        try {
-            $net = new waNet($options);
-            try {
-                $response = $net->query(self::API_URL.$endpoint, $get_params);
-            } catch (Exception $ex) {
-                $response = $net->getResponse();
-            }
-            $response += ['http_code' => $net->getResponseHeader('http_code')];
-        } catch (Exception $exception) {
-            throw new waException($exception->getMessage());
-        }
-
-        return $response;
-    }
+//    public function apiQuery($endpoint = '', $get_params = [])
+//    {
+//        $options = [
+//            'format'         => waNet::FORMAT_JSON,
+//            'request_format' => waNet::FORMAT_RAW,
+//            'timeout'        => 60,
+//            'authorization'  => true,
+//            'auth_type'      => 'Bearer',
+//            'auth_key'       => $this->bearer
+//        ];
+//        try {
+//            $net = new waNet($options);
+//            try {
+//                $response = $net->query(self::API_URL.$endpoint, $get_params);
+//            } catch (Exception $ex) {
+//                $response = $net->getResponse();
+//            }
+//            $response += ['http_code' => $net->getResponseHeader('http_code')];
+//        } catch (Exception $exception) {
+//            throw new waException($exception->getMessage());
+//        }
+//
+//        return $response;
+//    }
 
     /**
      * https://developer.tinkoff.ru/docs/api/get-api-v-1-company
@@ -79,56 +79,56 @@ class cashTinkoffPlugin extends waPlugin
 //        return ifempty($accounts, []);
 //    }
 
+//    /**
+//     * https://developer.tinkoff.ru/docs/api/get-api-v-1-statement
+//     * @param $cursor
+//     * @param $from
+//     * @param $to
+//     * @param $limit
+//     * @return mixed|null
+//     * @throws waException
+//     */
+//    public function getStatement($cursor = '', $from = '', $to = '', $limit = self::LIMIT_STATEMENTS)
+//    {
+//        if (empty($from) || !strtotime($from)) {
+//            $from = strtotime('-1 month');
+//        }
+//        if (empty($to)) {
+//            $to = strtotime('now');
+//        }
+//        $from = (new DateTime(date('Y-m-d', $from)))->format('c');
+//        $to = (new DateTime(date('Y-m-d', $to)))->format('c');
+//
+//        $get_params = [
+//            'operationStatus' => 'Transaction',
+//            'accountNumber'   => $this->getDefaultAccountNumber(),
+//            'from'  => $from,
+//            'to'    => $to,
+//            'limit' => (int) $limit
+//        ] + (empty($cursor) ? [] : ['cursor' => $cursor]);
+//        $operations = $this->apiQuery('v1/statement', $get_params);
+//
+//        return ifempty($operations, []);
+//    }
+
     /**
-     * https://developer.tinkoff.ru/docs/api/get-api-v-1-statement
-     * @param $cursor
-     * @param $from
-     * @param $to
-     * @param $limit
-     * @return mixed|null
-     * @throws waException
-     */
-    public function getStatement($cursor = '', $from = '', $to = '', $limit = self::LIMIT_STATEMENTS)
-    {
-        if (empty($from) || !strtotime($from)) {
-            $from = strtotime('-1 month');
-        }
-        if (empty($to)) {
-            $to = strtotime('now');
-        }
-        $from = (new DateTime(date('Y-m-d', $from)))->format('c');
-        $to = (new DateTime(date('Y-m-d', $to)))->format('c');
-
-        $get_params = [
-            'operationStatus' => 'Transaction',
-            'accountNumber'   => $this->getDefaultAccountNumber(),
-            'from'  => $from,
-            'to'    => $to,
-            'limit' => (int) $limit
-        ] + (empty($cursor) ? [] : ['cursor' => $cursor]);
-        $operations = $this->apiQuery('v1/statement', $get_params);
-
-        return ifempty($operations, []);
-    }
-
-    /**
-     * @return mixed|string
-     * @throws waException
-     */
-    public function getDefaultAccountNumber()
-    {
-        if (empty($this->default_account_number)) {
-            $accounts = $this->getAccounts();
-            foreach ($accounts as $_account) {
-                if (ifset($_account, 'accountType', '') == 'Current') {
-                    $this->default_account_number = $_account['accountNumber'];
-                    break;
-                }
-            }
-        }
-
-        return $this->default_account_number;
-    }
+//     * @return mixed|string
+//     * @throws waException
+//     */
+//    public function getDefaultAccountNumber()
+//    {
+//        if (empty($this->default_account_number)) {
+//            $accounts = $this->getAccounts();
+//            foreach ($accounts as $_account) {
+//                if (ifset($_account, 'accountType', '') == 'Current') {
+//                    $this->default_account_number = $_account['accountNumber'];
+//                    break;
+//                }
+//            }
+//        }
+//
+//        return $this->default_account_number;
+//    }
 
     /**
      * @param $transactions

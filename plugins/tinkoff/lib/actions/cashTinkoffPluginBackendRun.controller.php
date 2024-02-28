@@ -29,19 +29,6 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     }
 
     /**
-     * @return cashTinkoffPlugin
-     */
-    protected function plugin()
-    {
-        static $plugin;
-        if (!$plugin) {
-            $plugin = new cashTinkoffPlugin(['id' => 'tinkoff', 'profile_id' => $this->data['profile_id']]);
-        }
-
-        return $plugin;
-    }
-
-    /**
      * @param $cursor
      * @param $from
      * @param $to
@@ -49,9 +36,24 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
      */
     private function getStatementsData($cursor = '', $from = null, $to = null)
     {
+        static $services_api;
+        if (!$services_api) {
+            $services_api = new waServicesApi();
+        }
         try {
-            $response = $this->plugin()->getStatement($cursor, $from, $to);
-            if (ifset($response, 'http_code', 200) !== 200) {
+            $answer = $services_api->serviceCall('BANK', [
+                'sub_path' => 'get_statement',
+                'cursor' => $cursor,
+                'from' => $from,
+                'to' => $to
+            ]);
+            $status = ifset($answer, 'status', 200);
+            $response = ifset($answer, 'response', []);
+            if (
+                $status !== 200
+                || ifset($response, 'http_code', 200) !== 200
+                || !empty($response['error'])
+            ) {
                 $error = implode(' ', [
                     implode('/', (array) ifset($response, 'errorMessage', [])),
                     implode('/', (array) ifset($response, 'errorDetails', [])),
@@ -80,7 +82,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             return false;
         }
 
-        $transactions = $this->plugin()->addTransactions($this->data['operations']);
+        $transactions = [];//$this->plugin()->addTransactions($this->data['operations']);
         $this->data['statements'] = $transactions;
         $this->data['counter'] += count($transactions);
         unset($this->data['operations']);
