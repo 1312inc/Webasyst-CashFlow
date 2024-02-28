@@ -44,7 +44,7 @@ final class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
             kmwaAssert::instance($account, cashAccount::class);
 
             if (!cash()->getContactRights()->hasMinimumAccessToAccount(wa()->getUser(), $account->getId())) {
-                throw new kmwaForbiddenException(_w('You have no access to this category'));
+                throw new kmwaForbiddenException(_w('You have no access to this account'));
             }
 
             $updateData['account_id'] = $account->getId();
