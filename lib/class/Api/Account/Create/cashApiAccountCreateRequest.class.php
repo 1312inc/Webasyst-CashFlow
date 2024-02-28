@@ -31,7 +31,7 @@ class cashApiAccountCreateRequest
         $name = trim($name);
 
         if (empty($currency)) {
-            throw new cashValidateException(w('No account currency'));
+            throw new cashValidateException(_w('No account currency'));
         }
 
         if (!empty($iconLink) && preg_match('~https?://.{2,225}\..{2,20}~', $iconLink)) {
