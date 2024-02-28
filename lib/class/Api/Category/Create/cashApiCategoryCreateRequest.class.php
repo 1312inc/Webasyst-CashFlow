@@ -56,7 +56,7 @@ class cashApiCategoryCreateRequest
         $this->type = $type;
         $this->color = $color;
         $this->sort = (int) $sort;
-        $this->isProfit = $isProfit;
+        $this->isProfit = (bool) $isProfit;
         $this->parentCategoryId = $parentCategoryId;
         $this->glyph = $glyph;
     }
