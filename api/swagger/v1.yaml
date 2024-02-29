@@ -65,6 +65,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 ids:
                   type: array
@@ -112,6 +113,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 ids:
                   type: array
@@ -144,6 +146,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 ids:
                   type: array
@@ -175,6 +178,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 ids:
                   type: array
