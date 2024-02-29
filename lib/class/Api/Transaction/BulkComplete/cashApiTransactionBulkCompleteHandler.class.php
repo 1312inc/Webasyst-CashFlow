@@ -19,7 +19,11 @@ final class cashApiTransactionBulkCompleteHandler implements cashApiHandlerInter
         $saver = new cashTransactionSaver();
         foreach ($transactions as $transaction) {
             if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-                throw new kmwaForbiddenException(_w('You are not allowed to edit this transaction'));
+                throw new kmwaForbiddenException(sprintf_wp(
+                    'You are not allowed to edit this transaction (ID %s, %s)',
+                    $transaction->getId(),
+                    $transaction->getDescription()
+                ));
             }
 
             $transaction->setIsOnbadge(false)
