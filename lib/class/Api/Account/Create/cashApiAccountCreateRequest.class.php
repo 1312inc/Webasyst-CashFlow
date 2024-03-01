@@ -22,25 +22,22 @@ class cashApiAccountCreateRequest
      */
     private $description;
 
-    public function __construct(string $name, string $currency, string $icon, ?string $iconLink, ?string $description)
+    public function __construct(string $name, string $currency, ?string $icon, ?string $description)
     {
+        $name = trim($name);
         if (empty($name)) {
             throw new cashValidateException(_w('No account name'));
-        }
-
-        $name = trim($name);
-
-        if (empty($currency)) {
+        } elseif (empty($currency)) {
             throw new cashValidateException(_w('No account currency'));
-        }
-
-        if (!empty($iconLink) && preg_match('~https?://.{2,225}\..{2,20}~', $iconLink)) {
-            $icon = $iconLink;
+        } elseif (!empty($icon)) {
+            if (!preg_match('#^(https?://)?(www\.)?.{2,225}\..{2,20}.+$#u', $icon)) {
+                throw new cashValidateException(_w('Incorrect URL format'));
+            }
         }
 
         $this->name = $name;
         $this->currency = $currency;
-        $this->icon = $icon;
+        $this->icon = (string) $icon;
         $this->description = (string) $description;
     }
 

@@ -370,10 +370,8 @@ paths:
                 icon:
                   type: string
                   minLength: 1
-                icon_link:
-                  type: string
-                  minLength: 1
                   nullable: true
+                  description: Link to icon
                 description:
                   type: string
                   minLength: 1
@@ -381,10 +379,9 @@ paths:
               required:
                 - name
                 - currency
-                - icon
       responses:
         200:
-          description: Cозданный счет
+          description: Созданный счет
           content:
             application/json:
               schema:
@@ -435,7 +432,7 @@ paths:
                 - description
       responses:
         200:
-          description: Cозданный счет
+          description: Созданный счет
           content:
             application/json:
               schema:
