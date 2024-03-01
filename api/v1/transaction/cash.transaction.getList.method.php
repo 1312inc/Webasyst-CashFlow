@@ -69,7 +69,7 @@ final class cashTransactionGetListMethod extends cashApiNewAbstractMethod
         }
 
         return new cashApiTransactionGetListResponse(
-            $transactions['data'],
+            (array) $transactions['data'],
             (int) $transactions['total'],
             $request->getOffset(),
             $request->getLimit()

@@ -120,12 +120,15 @@ class cashConfig extends waAppConfig
 
     /**
      * @param kmwaEventInterface $event
-     *
+     * @param $params
      * @return array
+     * @throws waException
      */
-    public function waDispatchEvent(kmwaEventInterface $event)
+    public function waDispatchEvent(kmwaEventInterface $event, $params = null)
     {
-        return wa(static::APP_ID)->event($event->getName(), $event);
+        $params = (empty($params) ? $event : $params);
+
+        return wa(static::APP_ID)->event($event->getName(), $params);
     }
 
     /**

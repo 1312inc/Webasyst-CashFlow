@@ -9,7 +9,8 @@ final class cashApiTransactionBeforeResponseListener
 
         $registry = new cashEventApiTransactionExternalInfoHandlersRegistry();
         $handlers = cash()->waDispatchEvent(
-            new cashEventApiTransactionExternalInfo(cashEventStorage::API_TRANSACTION_RESPONSE_EXTERNAL_DATA)
+            new cashEventApiTransactionExternalInfo(cashEventStorage::API_TRANSACTION_RESPONSE_EXTERNAL_DATA),
+            $response->getArrayCopy()
         );
         foreach ($handlers as $infoHandlers) {
             if (!is_array($infoHandlers)) {
