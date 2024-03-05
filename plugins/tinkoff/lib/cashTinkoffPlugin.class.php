@@ -130,36 +130,36 @@ class cashTinkoffPlugin extends waPlugin
 //        return $this->default_account_number;
 //    }
 
-    /**
-     * @param $transactions
-     * @return mixed
-     * @throws waException
-     */
-    public function addTransactions($transactions)
-    {
-        if (!empty($transactions)) {
-            $transaction_model = cash()->getModel(cashTransaction::class);
-            $create_contact_id = wa()->getUser()->getId();
-            foreach ($transactions as &$_transaction) {
-                $now = date('Y-m-d H:i:s');
-                $is_credit = ('Credit' == ifset($_transaction, 'typeOfOperation', 'Credit'));
-                $date_operation = strtotime(ifset($_transaction, 'operationDate', $now));
-                $_transaction = [
-                    'date'              => date('Y-m-d', $date_operation),
-                    'datetime'          => date('Y-m-d H:i:s', $date_operation),
-                    'account_id'        => $this->cash_account_id,
-                    'category_id'       => (int) ifset($this->mapping_categories, $_transaction['category'], 0),
-                    'amount'            => ($is_credit ? 1 : -1) * ifset($_transaction, 'operationAmount', 0),
-                    'description'       => ifset($_transaction, 'payPurpose', ''),
-                    'create_contact_id' => $create_contact_id,
-                    'create_datetime'   => $now,
-                    'external_source'   => 'api_tinkoff',
-                    'external_hash'     => ifset($_transaction, 'operationId', null)
-                ];
-            }
-            $transaction_model->multipleInsert($transactions);
-        }
-
-        return $transactions;
-    }
+//    /**
+//     * @param $transactions
+//     * @return mixed
+//     * @throws waException
+//     */
+//    public function addTransactions($transactions)
+//    {
+//        if (!empty($transactions)) {
+//            $transaction_model = cash()->getModel(cashTransaction::class);
+//            $create_contact_id = wa()->getUser()->getId();
+//            foreach ($transactions as &$_transaction) {
+//                $now = date('Y-m-d H:i:s');
+//                $is_credit = ('Credit' == ifset($_transaction, 'typeOfOperation', 'Credit'));
+//                $date_operation = strtotime(ifset($_transaction, 'operationDate', $now));
+//                $_transaction = [
+//                    'date'              => date('Y-m-d', $date_operation),
+//                    'datetime'          => date('Y-m-d H:i:s', $date_operation),
+//                    'account_id'        => $this->cash_account_id,
+//                    'category_id'       => (int) ifset($this->mapping_categories, $_transaction['category'], 0),
+//                    'amount'            => ($is_credit ? 1 : -1) * ifset($_transaction, 'operationAmount', 0),
+//                    'description'       => ifset($_transaction, 'payPurpose', ''),
+//                    'create_contact_id' => $create_contact_id,
+//                    'create_datetime'   => $now,
+//                    'external_source'   => 'api_tinkoff',
+//                    'external_hash'     => ifset($_transaction, 'operationId', null)
+//                ];
+//            }
+//            $transaction_model->multipleInsert($transactions);
+//        }
+//
+//        return $transactions;
+//    }
 }
