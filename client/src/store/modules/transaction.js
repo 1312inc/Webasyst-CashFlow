@@ -53,7 +53,8 @@ export default {
     showFutureTransactionsMoreLink: {
       7: false,
       30: false
-    }
+    },
+    isSplitFetchMode: false
   }),
 
   getters: {
@@ -308,12 +309,15 @@ export default {
           commit('setLoading', true)
 
           if (!params.from && params.to && moment().isBefore(params.to)) {
+            state.isSplitFetchMode = true
             dispatch('fetchTransactionsFuture', params.to)
             const today = moment().format('YYYY-MM-DD')
             commit('updateQueryParams', {
               to: today
             })
             params.to = today
+          } else {
+            state.isSplitFetchMode = false
           }
         }
         // if view details mode

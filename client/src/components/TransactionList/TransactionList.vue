@@ -18,7 +18,11 @@
         />
       </div>
       <Observer
-        v-if="observer && pastTransactionsOffset && pastTransactionsOffset < transactions.total"
+        v-if="observer &&
+          (isSplitFetchMode
+            ? (pastTransactionsOffset && pastTransactionsOffset < transactions.total)
+            : (transactions.data.length && transactions.data.length < transactions.total)
+          )"
         @callback="observerCallback"
       />
     </div>
@@ -84,7 +88,7 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['transactions', 'detailsInterval']),
+    ...mapState('transaction', ['transactions', 'detailsInterval', 'isSplitFetchMode']),
     transactionsWithoutJustCreated () {
       return this.$store.getters['transaction/getTransactionsWithoutJustCreated']
     },
