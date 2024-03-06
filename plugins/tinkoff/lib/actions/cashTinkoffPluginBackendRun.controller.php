@@ -59,7 +59,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
                 'limit'    => self::BATCH_LIMIT
             ]);
             $status = ifset($answer, 'status', 200);
-            $response = ifset($answer, 'response', []);
+            $response = ifset($answer, 'response', 'statement_info', []);
             if (
                 $status !== 200
                 || ifset($response, 'http_code', 200) !== 200
@@ -76,7 +76,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             $this->data['error'] = $ex->getMessage();
         }
 
-        return ifempty($response, 'statement_info', []);
+        return ifempty($response, []);
     }
 
     /**
