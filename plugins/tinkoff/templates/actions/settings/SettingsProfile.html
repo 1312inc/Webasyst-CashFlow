@@ -25,7 +25,25 @@
 
     <div class="field">
         <div class="name">
-            [`Счет`]
+            [`Из счета`]
+        </div>
+        <div class="value">
+            <div class="wa-select">
+                <select name="cash_tinkoff[profiles][{$profile_id}][account_number]">
+                    {foreach $account_numbers as $_account_number}
+                        <option value="{$_account_number}"{if $profile.account_number|default:'' == $_account_number} selected{/if}>{$_account_number}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <p class="hint">
+                [`Счет из которого производится импорт`]
+            </p>
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="name">
+            [`В счет`]
         </div>
         <div class="value">
             <div class="wa-select">

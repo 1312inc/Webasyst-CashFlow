@@ -1,6 +1,8 @@
 <div class="content box contentbox">
     {if empty($profiles)}
         [`Нет доступных профилей`]
+        <br>
+        <a href="{$settings_url}">[`Перейти в настройки`]</a>
     {else}
     <div class="fields">
     {foreach $profiles as $_profile_id => $_profile}

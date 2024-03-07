@@ -20,8 +20,9 @@ class cashTinkoffPluginBackendAction extends waViewAction
         $plugin_settings = $plugin->getSettings();
         $profiles = (array) ifset($plugin_settings, 'profiles', []);
         $this->view->assign([
-            'profile_id' => key($profiles),
-            'profiles'   => $profiles
+            'profile_id'   => key($profiles),
+            'profiles'     => $profiles,
+            'settings_url' => wa()->getRootUrl(true).wa()->getConfig()->getBackendUrl().'/cash/plugins/#/tinkoff'
         ]);
     }
 }

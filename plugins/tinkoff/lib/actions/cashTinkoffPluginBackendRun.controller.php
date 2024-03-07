@@ -25,8 +25,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             return;
         }
 
-        $plugin = wa('cash')->getPlugin('tinkoff');
-        $settings = $plugin->getSettings();
+        $settings = $this->plugin()->getSettings();
         $profile = ifset($settings, 'profiles', $this->data['profile_id'], []);
         $this->data['cash_account_id'] = (int) ifset($profile, 'cash_account', 0);
         $this->data['mapping_categories'] = ifset($profile, 'mapping', []);
@@ -38,6 +37,22 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     }
 
     /**
+     * @return cashTinkoffPlugin
+     * @throws waException
+     */
+    private function plugin()
+    {
+        static $plugin;
+        if (!$plugin) {
+            /** @var cashTinkoffPlugin $plugin */
+            $plugin = wa()->getPlugin('tinkoff');
+            $plugin->setCashProfile($this->data['profile_id']);
+        }
+
+        return $plugin;
+    }
+
+    /**
      * @param $cursor
      * @param $from
      * @param $to
@@ -45,19 +60,8 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
      */
     private function getStatementsData($cursor = '', $from = null, $to = null)
     {
-        static $services_api;
-        if (!$services_api) {
-            $services_api = new waServicesApi();
-        }
         try {
-            $answer = $services_api->serviceCall('BANK', [
-                'sub_path' => 'get_statement',
-                'cursor'   => $cursor,
-                'from'     => $from,
-                'to'       => $to,
-                'balances' => is_null($cursor),
-                'limit'    => self::BATCH_LIMIT
-            ]);
+            $answer = $this->plugin()->getStatement($cursor, $from, $to, self::BATCH_LIMIT);
             $status = ifset($answer, 'status', 200);
             $response = ifset($answer, 'response', 'statement_info', []);
             if (
@@ -93,7 +97,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             return false;
         }
 
-        $transactions = $this->addTransactions($this->data['operations']);
+        $transactions = $this->plugin()->addTransactionsByAccount($this->data['cash_account_id'], $this->data['operations']);
         $this->data['statements'] = $transactions;
         $this->data['counter'] += count($transactions);
         unset($this->data['operations']);
@@ -152,38 +156,5 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $this->getResponse()->addHeader('Content-Type', 'application/json');
         $this->getResponse()->sendHeaders();
         echo waUtils::jsonEncode($response);
-    }
-
-    /**
-     * @param $transactions
-     * @return mixed
-     * @throws waException
-     */
-    private function addTransactions($transactions)
-    {
-        if (!empty($transactions)) {
-            $transaction_model = cash()->getModel(cashTransaction::class);
-            $create_contact_id = wa()->getUser()->getId();
-            foreach ($transactions as &$_transaction) {
-                $now = date('Y-m-d H:i:s');
-                $is_credit = ('Credit' == ifset($_transaction, 'typeOfOperation', 'Credit'));
-                $date_operation = strtotime(ifset($_transaction, 'operationDate', $now));
-                $_transaction = [
-                    'date'              => date('Y-m-d', $date_operation),
-                    'datetime'          => date('Y-m-d H:i:s', $date_operation),
-                    'account_id'        => $this->data['cash_account_id'],
-                    'category_id'       => (int) ifset($this->data['mapping_categories'], $_transaction['category'], 0),
-                    'amount'            => ($is_credit ? 1 : -1) * ifset($_transaction, 'operationAmount', 0),
-                    'description'       => ifset($_transaction, 'payPurpose', ''),
-                    'create_contact_id' => $create_contact_id,
-                    'create_datetime'   => $now,
-                    'external_source'   => 'api_tinkoff',
-                    'external_hash'     => ifset($_transaction, 'operationId', null)
-                ];
-            }
-            $transaction_model->multipleInsert($transactions);
-        }
-
-        return $transactions;
     }
 }

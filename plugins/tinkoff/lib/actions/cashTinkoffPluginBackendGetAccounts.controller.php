@@ -9,7 +9,9 @@ class cashTinkoffPluginBackendGetAccountsController extends waJsonController
 
         if ($profile_id > 0) {
             try {
-                $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_accounts']);
+                /** @var cashTinkoffPlugin $plugin */
+                $plugin = wa()->getPlugin('tinkoff');
+                $answer = $plugin->getAccounts();
                 $status = ifset($answer, 'status', 200);
                 $response = ifset($answer, 'response', 'accounts_info', []);
                 if (

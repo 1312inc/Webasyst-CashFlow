@@ -9,7 +9,9 @@ class cashTinkoffPluginBackendGetCompanyController extends waJsonController
 
         if ($profile_id > 0) {
             try {
-                $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_company']);
+                /** @var cashTinkoffPlugin $plugin */
+                $plugin = wa()->getPlugin('tinkoff');
+                $answer = $plugin->getCompany();
                 $status = ifset($answer, 'status', 200);
                 $response = ifset($answer, 'response', 'company_info', []);
                 if (
