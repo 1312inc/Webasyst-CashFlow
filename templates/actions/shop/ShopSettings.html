@@ -9,37 +9,7 @@
             <form id="cash-shopscript-settings">
             <h1>[`Shop-Script &rarr; Cash`]</h1>
 
-            <div class="custom-my-16">
-                <ul class="tabs bordered-bottom">
-                    <li>
-                        <a href="{$wa_app_url}import/">
-                            <i class="fas fa-file-excel" style="color: #499b5e;"></i>
-                            [`Excel (CSV)`]
-                        </a>
-                    </li>
-                    <li class="selected">
-                        <a href="{$wa_app_url}shop/settings/">
-                            <i class="icon" style="background-image: url('{$wa_url}wa-apps/cash/img/shop.svg');"></i>
-                            Shop-Script
-                        </a>
-                    </li>
-                    {*
-                        <li>
-                            <a href="javascript:void(0);">
-                                <i class="fab fa-tinkoff"></i>
-                                Tinkoff
-                                (plugin tab hook here)
-                            </a>
-                        </li>
-                    *}
-                    <li>
-                        <a href="{$wa_app_url}plugins/" class="opacity-30" onClick="alert('[`Import plugins are coming soon. Please stay tuned.`]');" title="[`Import plugins are coming soon. Please stay tuned.`]">
-                            <i class="fas fa-plug"></i>
-                            [`Plugins`]
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            {include '../import/ImportTab.html'}
 
             {if $shopIsOld}
                 <p><em>[`Shop-Script 8.0 or newer is required. Please install the latest Shop-Script update via the Installer app to enable sales import and Shop-Script &times; Cash integration.`]</em></p>

@@ -14,6 +14,22 @@ abstract class cashBusinessPlugin extends waPlugin
     }
 
     /**
+     * @return array
+     * @throws waException
+     */
+    public static function getListPlugins()
+    {
+        $plugins = [];
+        foreach ((array) wa()->getConfig()->getPlugins() as $_plugin) {
+            if (!empty($_plugin['import_api'])) {
+                $plugins[] = $_plugin;
+            }
+        }
+
+        return $plugins;
+    }
+
+    /**
      * format $transactions[] = [
      *     'date_operation' => '2024-01-10 09:00:00',
      *     'category_id'    => 15,

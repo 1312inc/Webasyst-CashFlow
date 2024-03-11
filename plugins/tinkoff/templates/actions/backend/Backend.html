@@ -1,64 +1,72 @@
-<div class="content box contentbox">
-    {if empty($profiles)}
-        [`Нет доступных профилей`]
-        <br>
-        <a href="{$settings_url}">[`Перейти в настройки`]</a>
-    {else}
-    <div class="fields">
-    {foreach $profiles as $_profile_id => $_profile}
-        <div class="fields-group" data-profile-id="{$_profile_id}">
-            <div class="field">
-                <div class="name">
-                    Профиль
-                </div>
-                <div class="value">
-                    <strong>
-                        {$_profile.profile_name|default:'[`Профиль 1`]'}
-                    </strong>
-                </div>
-            </div>
+<div id="cash-import-page" class="article wide">
+    <div class="article-body">
+        <h1>[`Tinkoff &rarr; Cash`]</h1>
 
-            <div class="field">
-                <div class="name"></div>
-                <div class="value">
-                    <button class="button outlined js-company-button">[`Информация о компании`]</button>
-                    <div class="custom-mt-8"></div>
-                    <div class="js-company-value"></div>
-                </div>
-            </div>
+        {include 'templates/actions/import/ImportTab.html'}
 
-            <div class="field">
-                <div class="name"></div>
-                <div class="value">
-                    <button class="button outlined js-accounts-button">[`Получить счета`]</button>
-                    <div class="custom-mt-8"></div>
-                    <div class="js-accounts-value"></div>
-                </div>
-            </div>
+        <div class="content box contentbox">
+            {if empty($profiles)}
+                [`Нет доступных профилей`]
+                <br>
+                <a href="{$settings_url}">[`Перейти в настройки`]</a>
+            {else}
+            <div class="fields">
+            {foreach $profiles as $_profile_id => $_profile}
+                <div class="fields-group" data-profile-id="{$_profile_id}">
+                    <div class="field">
+                        <div class="name">
+                            Профиль
+                        </div>
+                        <div class="value">
+                            <strong>
+                                {$_profile.profile_name|default:'[`Профиль 1`]'}
+                            </strong>
+                        </div>
+                    </div>
 
-            <div class="field">
-                <div class="name"></div>
-                <div class="value">
-                    <button class="button outlined js-statement-button">[`Импортировать выписку`]</button>
-                    <div class="custom-mt-16"></div>
-                    <div class="progressbar" id="progressbar-{$_profile_id}"></div>
-                    <div class="error-msg state-error custom-pt-8"></div>
-                    <table class="single-lined hidden js-statement-value-{$_profile_id}">
-                        <thead>
-                        <tr>
-                            <th class="min-width">[`Дата операции`]</th>
-                            <th>[`Сумма транзакции`]</th>
-                            <th>[`Описание транзакции`]</th>
-                        </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                    <div class="field">
+                        <div class="name"></div>
+                        <div class="value">
+                            <button class="button outlined js-company-button">[`Информация о компании`]</button>
+                            <div class="custom-mt-8"></div>
+                            <div class="js-company-value"></div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name"></div>
+                        <div class="value">
+                            <button class="button outlined js-accounts-button">[`Получить счета`]</button>
+                            <div class="custom-mt-8"></div>
+                            <div class="js-accounts-value"></div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name"></div>
+                        <div class="value">
+                            <button class="button outlined js-statement-button">[`Импортировать выписку`]</button>
+                            <div class="custom-mt-16"></div>
+                            <div class="progressbar" id="progressbar-{$_profile_id}"></div>
+                            <div class="error-msg state-error custom-pt-8"></div>
+                            <table class="single-lined hidden js-statement-value-{$_profile_id}">
+                                <thead>
+                                <tr>
+                                    <th class="min-width">[`Дата операции`]</th>
+                                    <th>[`Сумма транзакции`]</th>
+                                    <th>[`Описание транзакции`]</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+            {/foreach}
             </div>
+            {/if}
         </div>
-    {/foreach}
     </div>
-    {/if}
 </div>
 
 <script>
