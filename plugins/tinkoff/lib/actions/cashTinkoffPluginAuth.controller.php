@@ -4,9 +4,11 @@ class cashTinkoffPluginAuthController extends waJsonController
 {
     public function execute()
     {
+        $ref = waRequest::get('ref', '', waRequest::TYPE_STRING_TRIM);
+        $return_uri = rtrim(wa()->getRootUrl(true), DIRECTORY_SEPARATOR).wa()->getAppUrl().($ref === 'import' ? '?plugin=tinkoff' : 'plugins/#/tinkoff');
         $answer = (new waServicesApi())->serviceCall('BANK', [
             'sub_path' => 'get_userinfo',
-            'return_uri' => wa()->getRootUrl(true).wa()->getConfig()->getBackendUrl().'/cash/plugins/#/tinkoff'
+            'return_uri' => $return_uri
         ]);
         $status = ifset($answer, 'status', 200);
         $response = ifset($answer, 'response', []);
