@@ -11,13 +11,8 @@ class cashTinkoffPluginBackendGetAccountsController extends waJsonController
             try {
                 /** @var cashTinkoffPlugin $plugin */
                 $plugin = wa()->getPlugin('tinkoff');
-                $answer = $plugin->getAccounts();
-                $status = ifset($answer, 'status', 200);
-                $response = ifset($answer, 'response', 'accounts_info', []);
-                if (
-                    $status !== 200
-                    || ifset($response, 'http_code', 200) !== 200
-                ) {
+                $response = $plugin->getAccounts();
+                if (ifset($response, 'http_code', 200) !== 200) {
                     $error = implode(' ', [
                         ifset($response, 'errorMessage', ''),
                         ifset($response, 'errorDetails', ''),

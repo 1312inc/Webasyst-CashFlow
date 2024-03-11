@@ -61,12 +61,9 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     private function getStatementsData($cursor = '', $from = null, $to = null)
     {
         try {
-            $answer = $this->plugin()->getStatement($cursor, $from, $to, self::BATCH_LIMIT);
-            $status = ifset($answer, 'status', 200);
-            $response = ifset($answer, 'response', 'statement_info', []);
+            $response = $this->plugin()->getStatement($cursor, $from, $to, self::BATCH_LIMIT);
             if (
-                $status !== 200
-                || ifset($response, 'http_code', 200) !== 200
+                ifset($response, 'http_code', 200) !== 200
                 || !empty($response['error'])
             ) {
                 $error = implode(' ', [

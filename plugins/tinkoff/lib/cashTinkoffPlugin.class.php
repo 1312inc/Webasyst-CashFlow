@@ -37,7 +37,9 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function getAccounts()
     {
-        return (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_accounts']);
+        $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_accounts']);
+
+        return ifset($answer, 'response', 'accounts_info', []);
     }
 
     /**
@@ -47,7 +49,9 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function getCompany()
     {
-        return (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_company']);
+        $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_company']);
+
+        return ifset($answer, 'response', 'company_info', []);
     }
 
     /**
@@ -61,7 +65,8 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function getStatement($cursor, $from, $to, $limit = self::LIMIT_STATEMENTS)
     {
-        return (new waServicesApi())->serviceCall('BANK', [
+
+        $answer = (new waServicesApi())->serviceCall('BANK', [
             'sub_path' => 'get_statement',
             'cursor'   => $cursor,
             'from'     => $from,
@@ -69,6 +74,8 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             'balances' => is_null($cursor),
             'limit'    => $limit
         ]);
+
+        return ifset($answer, 'response', 'statement_info', []);
     }
 
     /**

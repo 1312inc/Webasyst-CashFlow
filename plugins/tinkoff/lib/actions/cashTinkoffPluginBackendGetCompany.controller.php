@@ -11,13 +11,8 @@ class cashTinkoffPluginBackendGetCompanyController extends waJsonController
             try {
                 /** @var cashTinkoffPlugin $plugin */
                 $plugin = wa()->getPlugin('tinkoff');
-                $answer = $plugin->getCompany();
-                $status = ifset($answer, 'status', 200);
-                $response = ifset($answer, 'response', 'company_info', []);
-                if (
-                    $status !== 200
-                    || ifset($response, 'http_code', 200) !== 200
-                ) {
+                $response = $plugin->getCompany();
+                if (ifset($response, 'http_code', 200) !== 200) {
                     $error = implode(' ', [
                         ifset($response, 'errorMessage', ''),
                         ifset($response, 'errorDetails', ''),
