@@ -70,11 +70,12 @@
             <div class="field">
                 <div class="name"></div>
                 <div class="value">
-                    <input type="button"
-                           id="cash-tinkoff-start"
-                           class="button green"
-                           value="[`Импортировать операции из банка`]"
-                           disabled
+                    <input
+                        type="button"
+                        id="cash-tinkoff-start"
+                        class="button green"
+                        value="[`Импортировать операции из банка`]"
+                        {if empty($profile.tinkoff_id)}disabled{/if}
                     />
                 </div>
             </div>
@@ -84,6 +85,7 @@
 
 <script>
     let profile_id = {$profile_id|default:1};
+    let $start_button = $('#cash-tinkoff-start');
 
     function saveProfile(profile) {
         profile.profile_id = profile_id;
@@ -110,9 +112,14 @@
                 $that.addClass('hidden');
                 $t_id.text(data.data.tinkoff_id);
                 $('.js-connect-date').text(dformat);
+                $start_button.attr('disabled', false);
 
                 saveProfile({ 'last_connect_date': dformat, 'tinkoff_id': data.data.tinkoff_id });
             }
         });
+    });
+
+    $start_button.on('click', function () {
+        alert('Импорт. Начало...');
     });
 </script>
