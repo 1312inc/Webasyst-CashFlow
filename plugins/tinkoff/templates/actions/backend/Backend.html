@@ -1,3 +1,5 @@
+{$profile_id = $profile_id|default:1}
+
 <div id="cash-import-page" class="article wide">
     <div class="article-body">
         <h1>[`Tinkoff &rarr; Cash`]</h1>
@@ -56,14 +58,32 @@
                 </div>
             </div>
 
-            <div class="custom-my-24">
+            <div class="custom-my-12">
                 <hr class="custom-m-0">
             </div>
 
-            <div class="field custom-mb-40">
+            <div class="field custom-mb-12">
                 <div class="name"></div>
                 <div class="value">
                     <a href="{$settings_url}">[`Перейти в настройки импорта`]</a>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name"></div>
+                <div class="value">
+                    <div class="progressbar" id="progressbar-{$profile_id}"></div>
+                    <div class="error-msg state-error custom-pt-8 js-error-msg-{$profile_id}"></div>
+                    <table class="single-lined hidden js-statement-value-{$profile_id}">
+                        <thead>
+                            <tr>
+                                <th class="min-width">[`Дата операции`]</th>
+                                <th>[`Сумма транзакции`]</th>
+                                <th>[`Описание транзакции`]</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -84,15 +104,47 @@
 </div>
 
 <script>
-    let profile_id = {$profile_id|default:1};
-    let $start_button = $('#cash-tinkoff-start');
-
     function saveProfile(profile) {
         profile.profile_id = profile_id;
         $.get('?plugin=tinkoff&module=profileEdit', profile, function (data) {
             console.log('profileEdit', data);
         });
     }
+
+    let url = '?plugin=tinkoff&action=run';
+    let profile_id = {$profile_id};
+    let process_id = undefined;
+    let $start_button = $('#cash-tinkoff-start');
+    let step = function (profile_id, delay, $progressbar) {
+        delay = delay || 2000;
+        setTimeout(function () {
+            $.post(url, { processid: process_id, profile_id: profile_id }, function (response) {
+                if (!response) {
+                    step(profile_id, 3000, $progressbar);
+                } else if (response && response.error) {
+                    $('.error-msg').text(response.error);
+                } else if (response && response.ready) {
+                    $progressbar.set({ percentage: 100 });
+                    setTimeout(function () {
+                        $('.progressbar').hide();
+                    }, 2000);
+                    if (response.statements) {
+                        renderTable(response.statements, profile_id);
+                    }
+                } else {
+                    if (response && response.progress) {
+                        $progressbar.set({ percentage: response.progress });
+                    }
+                    if (response.statements) {
+                        // renderTable(response.statements, profile_id);
+                    }
+                    step(profile_id, null, $progressbar);
+                }
+            }, 'json').error(function () {
+                step(profile_id, 3000, $progressbar);
+            });
+        }, delay);
+    };
 
     $('.js-tinkoff-connect').on('click', function () {
         let $that = $(this);
@@ -120,6 +172,31 @@
     });
 
     $start_button.on('click', function () {
-        alert('Импорт. Начало...');
+        let $that = $(this);
+        let $bar = $('#progressbar-'+ profile_id).waProgressbar({
+            'color': '#3ec55e',
+            'text-inside': true
+        });
+        let instance = $bar.data('progressbar');
+
+        $that.addClass('hidden');
+        $.post(url, { profile_id: profile_id }, function (response) {
+            if (response && response.error) {
+                $('.js-error-msg-'+ profile_id).text(response.error);
+            } else if (response && response.processid) {
+                process_id = response.processid;
+                if (response.progress) {
+                    instance.set({ percentage: response.progress });
+                }
+                if (response.statements) {
+                    // renderTable(response.statements, profile_id);
+                }
+                step(profile_id, null, instance);
+            } else {
+                $('.js-error-msg-'+ profile_id).text('Server error');
+            }
+        }, 'json').error(function () {
+            $('.js-error-msg-'+ profile_id).text('Server error');
+        });
     });
 </script>
