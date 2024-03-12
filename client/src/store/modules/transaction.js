@@ -2,6 +2,7 @@ import api from '@/plugins/api'
 import { moment } from '@/plugins/numeralMoment'
 import getDateFromLocalStorage from '../../utils/getDateFromLocalStorage'
 import { i18n } from '@/plugins/locale'
+import { DEFAULT_FUTURE_PERIOD } from '@/utils/constants'
 
 const mutationDelete = (state, ids) => {
   ids.forEach(id => {
@@ -363,9 +364,17 @@ export default {
 
     updateDetailsInterval ({ commit, dispatch }, data) {
       commit('setDetailsInterval', data)
-      dispatch('fetchTransactions', {
-        offset: 0
-      })
+      if (!data.from && !data.to) {
+        dispatch('fetchTransactions', {
+          from: '',
+          to: DEFAULT_FUTURE_PERIOD,
+          offset: 0
+        })
+      } else {
+        dispatch('fetchTransactions', {
+          offset: 0
+        })
+      }
     },
 
     async getTodayCount ({ commit }) {
