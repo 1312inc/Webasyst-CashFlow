@@ -23,7 +23,7 @@
             ? (pastTransactionsOffset && pastTransactionsOffset < transactions.total)
             : (transactions.data.length && transactions.data.length < transactions.total)
           )"
-        @callback="observerCallback"
+        @callback="() => { observerCallback(isSplitFetchMode ? pastTransactionsOffset : transactions.data.length) }"
       />
     </div>
   </div>
@@ -231,9 +231,9 @@ export default {
   },
 
   methods: {
-    observerCallback () {
+    observerCallback (offset) {
       this.$store.dispatch('transaction/fetchTransactions', {
-        offset: this.pastTransactionsOffset
+        offset
       })
     }
   }
