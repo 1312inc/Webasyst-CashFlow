@@ -102,4 +102,40 @@ class cashTinkoffPlugin extends cashBusinessPlugin
 
         return [];
     }
+
+    /**
+     * @param $profile_id
+     * @return array
+     */
+    public function getProfiles($profile_id = 0)
+    {
+        $profiles = (array) $this->getSettings('profiles');
+        if ((int) $profile_id > 0) {
+            return (array) ifset($profiles, $profile_id, []);
+        }
+
+        return $profiles;
+    }
+
+    /**
+     * @param $profile_id
+     * @param $profile
+     * @return bool
+     */
+    public function saveProfiles($profile_id, $profile = [])
+    {
+        $profiles = (array) $this->getSettings('profiles');
+        if (empty($profile) || $profile_id < 1) {
+            return false;
+        }
+        $profiles[$profile_id] = $profile + ifset($profiles, $profile_id, []);
+        try {
+            self::saveSettings(['profiles' => $profiles]);
+        } catch (Exception $e) {
+            waLog::log($e->getMessage(),TINKOFF_FILE_LOG);
+            return false;
+        }
+
+        return true;
+    }
 }

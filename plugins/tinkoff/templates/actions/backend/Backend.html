@@ -12,13 +12,16 @@
                     [`Тинькофф ID`]
                 </div>
                 <div class="value">
-                    {if empty($profile.oauth)}
+                    {if empty($profile.tinkoff_id)}
                         <a href="javascript:void(0);" class="button orange js-tinkoff-connect">[`Подключить`]</a>
-                    {else}
-                        [`Все подключено!`]
-                        <strong>{$profile.oauth|escape|default:''}</strong>
                     {/if}
-                    <input type="hidden" name="cash_tinkoff[profiles][{$profile_id}][oauth]" class="js-oauth" value="{if isset($profile.oauth)}{$profile.oauth|escape}{/if}">
+                    <div{if empty($profile.tinkoff_id)} class="hidden"{/if}>
+                        <strong class="js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</strong>
+                        <br>
+                        <span class="hint">
+                            [`Все подключено! Последний коннект:`] <span class="js-connect-date">{$profile.last_connect_date|escape|default:''}</span>
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -80,8 +83,18 @@
 </div>
 
 <script>
+    let profile_id = {$profile_id|default:1};
+
+    function saveProfile(profile) {
+        profile.profile_id = profile_id;
+        $.get('?plugin=tinkoff&module=profileEdit', profile, function (data) {
+            console.log('profileEdit', data);
+        });
+    }
+
     $('.js-tinkoff-connect').on('click', function () {
-        $(this).addClass('disabled');
+        let $that = $(this);
+        $that.addClass('disabled');
         $.get('?plugin=tinkoff&module=auth', { 'ref': 'import' }, function (data) {
             console.log('data', data);
             if (data.data.redirect_url) {
@@ -89,7 +102,16 @@
             } else if (data.data.error_description) {
                 alert(data.data.error_description);
             } else if (data.data.tinkoff_id) {
-                //
+                let $t_id = $('.js-tinkoff-id');
+                let dt = new Date();
+                let dformat = dt.toLocaleDateString().replace(/(\d+)\.(\d+)\.(\d+)/, '$3-$2-$1') +' '+ dt.toTimeString().replace(/(\d+):(\d+):(\d+).*/, '$1:$2:$3');
+
+                $t_id.closest('.hidden').removeClass('hidden');
+                $that.addClass('hidden');
+                $t_id.text(data.data.tinkoff_id);
+                $('.js-connect-date').text(dformat);
+
+                saveProfile({ 'last_connect_date': dformat, 'tinkoff_id': data.data.tinkoff_id });
             }
         });
     });
