@@ -2,6 +2,8 @@
 
 abstract class cashBusinessPlugin extends waPlugin
 {
+    protected int $cash_account_id;
+
     public function getConfigParam($param = null)
     {
         static $config = null;
@@ -37,12 +39,11 @@ abstract class cashBusinessPlugin extends waPlugin
      *     'description'    => 'abracadabra'
      *     'hash'           => '64be58f9-c7fc-0027-96ba-774ec55a1111'
      * ]
-     * @param int $cash_account_id
      * @param array $transactions
      * @return array
      * @throws waException
      */
-    protected function addTransactionsByAccount($cash_account_id, $transactions)
+    protected function addTransactionsByAccount($transactions)
     {
         if (!empty($transactions) && is_array($transactions)) {
             $now = date('Y-m-d H:i:s');
@@ -56,7 +57,7 @@ abstract class cashBusinessPlugin extends waPlugin
                 $_transaction = [
                     'date'              => date('Y-m-d', $date_operation),
                     'datetime'          => date('Y-m-d H:i:s', $date_operation),
-                    'account_id'        => (int) $cash_account_id,
+                    'account_id'        => $this->cash_account_id,
                     'category_id'       => (int) ifset($_transaction, 'category', ($is_credit ? -2 : -1)),
                     'amount'            => $amount,
                     'description'       => ifset($_transaction, 'description', ''),

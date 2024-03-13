@@ -2,15 +2,22 @@
 
 class cashTinkoffPlugin extends cashBusinessPlugin
 {
-    const LIMIT_STATEMENTS = 5;
+    const LIMIT_STATEMENTS = 5000;
     const DEFAULT_START_DATE = '2006-01-01 00:00:00';
+    const API_URL = 'https://business.tinkoff.ru/openapi/api/';
+    const USER_INFO_URL = 'https://id.tinkoff.ru/userinfo/userinfo';
 
-    private int $cash_account_id;
+    private bool $self_mode;
+    private string $tinkoff_token;
     private array $mapping_categories;
 
     public function __construct($info)
     {
         parent::__construct($info);
+
+        /** для Self-сценария */
+        $this->self_mode = !!$this->getSettings('self_mode');
+        $this->tinkoff_token = (string) $this->getSettings('tinkoff_token');
 
         /** обязательно назначаем профиль, через конструктор или setCashProfile() */
         $profile_id = ifempty($info, 'profile_id', 0);
@@ -20,8 +27,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     public function setCashProfile($profile_id)
     {
         if (!empty($profile_id)) {
-            $settings = $this->getSettings();
-            $profile = ifset($settings, 'profiles', $profile_id, []);
+            $profile = $this->getProfiles($profile_id);
         }
         $this->cash_account_id = (int) ifset($profile, 'cash_account', 0);
         $this->mapping_categories = ifset($profile, 'mapping', []);
@@ -29,6 +35,30 @@ class cashTinkoffPlugin extends cashBusinessPlugin
 
     private function apiQuery($url, $headers = [], $post_fields = [])
     {
+        $options = [
+            'format'         => waNet::FORMAT_JSON,
+            'request_format' => waNet::FORMAT_RAW,
+            'timeout'        => 60
+        ];
+        $headers += [
+            'Content-Type'  => 'application/json',
+            'Authorization' => 'Bearer '.$this->tinkoff_token
+        ];
+        try {
+            $net = new waNet($options, $headers);
+            try {
+                $method = (empty($post_fields) ? waNet::METHOD_GET : waNet::METHOD_POST);
+                $response = $net->query($url, http_build_query($post_fields), $method);
+            } catch (Exception $ex) {
+                $response = $net->getResponse();
+            }
+            $response += ['http_code' => $net->getResponseHeader('http_code')];
+        } catch (Exception $exception) {
+            waLog::log($exception->getMessage(), TINKOFF_FILE_LOG);
+            throw new waException($exception->getMessage());
+        }
+
+        return $response;
     }
 
     /**
@@ -38,6 +68,9 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function getAccounts()
     {
+        if ($this->self_mode) {
+            return $this->apiQuery(self::API_URL.'v4/bank-accounts');
+        }
         $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_accounts']);
 
         return ifset($answer, 'response', 'accounts_info', []);
@@ -50,6 +83,9 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function getCompany()
     {
+        if ($this->self_mode) {
+            return $this->apiQuery(self::API_URL.'v1/company');
+        }
         $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_company']);
 
         return ifset($answer, 'response', 'company_info', []);
@@ -66,25 +102,45 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function getStatement($cursor, $from, $to, $limit = self::LIMIT_STATEMENTS)
     {
-        $answer = (new waServicesApi())->serviceCall('BANK', [
+        $get_params = [
+            'cursor' => $cursor,
+            'from'   => $from,
+            'to'     => $to,
+            'limit'  => $limit
+        ];
+        if ($this->self_mode) {
+            $default_account_number = '';
+            $accounts = $this->getAccounts();
+            if ($accounts['http_code'] === 200) {
+                foreach ($accounts as $_account) {
+                    if (ifset($_account, 'accountType', '') == 'Current') {
+                        $default_account_number = $_account['accountNumber'];
+                        break;
+                    }
+                }
+            }
+            $get_params += [
+                'operationStatus' => 'Transaction',
+                'accountNumber'   => $default_account_number,
+                'withBalances'    => is_null($cursor)
+            ];
+            return $this->apiQuery(self::API_URL.'v1/statement?'.http_build_query($get_params));
+        }
+
+        $answer = (new waServicesApi())->serviceCall('BANK', $get_params + [
             'sub_path' => 'get_statement',
-            'cursor'   => $cursor,
-            'from'     => $from,
-            'to'       => $to,
-            'balances' => is_null($cursor),
-            'limit'    => $limit
+            'balances' => is_null($cursor)
         ]);
 
         return ifset($answer, 'response', 'statement_info', []);
     }
 
     /**
-     * @param $cash_account_id
      * @param $transactions
      * @return array
      * @throws waException
      */
-    public function addTransactionsByAccount($cash_account_id, $transactions)
+    public function addTransactionsByAccount($transactions)
     {
         if (!empty($transactions)) {
             foreach ($transactions as &$_transaction) {
@@ -97,7 +153,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
                     'hash'           => ifset($_transaction, 'operationId', null)
                 ];
             }
-            return parent::addTransactionsByAccount($cash_account_id, $transactions);
+            return parent::addTransactionsByAccount($transactions);
         }
 
         return [];
