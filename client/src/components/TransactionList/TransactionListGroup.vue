@@ -408,6 +408,10 @@ export default {
   background-color: var(--background-color-blank);
 }
 
+.no-sticky-controls .c-sticky-header-group {
+  top: 4rem;
+}
+
 .c-sticky-header-group:hover {
   z-index: 999;
 }
