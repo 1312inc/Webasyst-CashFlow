@@ -9,6 +9,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
 
     private bool $self_mode;
     private string $tinkoff_token;
+    private string $account_number;
     private array $mapping_categories;
 
     public function __construct($info)
@@ -30,6 +31,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             $profile = $this->getProfiles($profile_id);
         }
         $this->cash_account_id = (int) ifset($profile, 'cash_account', 0);
+        $this->account_number = ifset($profile, 'account_number', '');
         $this->mapping_categories = ifset($profile, 'mapping', []);
     }
 
@@ -109,27 +111,18 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             'limit'  => $limit
         ];
         if ($this->self_mode) {
-            $default_account_number = '';
-            $accounts = $this->getAccounts();
-            if ($accounts['http_code'] === 200) {
-                foreach ($accounts as $_account) {
-                    if (ifset($_account, 'accountType', '') == 'Current') {
-                        $default_account_number = $_account['accountNumber'];
-                        break;
-                    }
-                }
-            }
             $get_params += [
                 'operationStatus' => 'Transaction',
-                'accountNumber'   => $default_account_number,
+                'accountNumber'   => $this->account_number,
                 'withBalances'    => is_null($cursor)
             ];
             return $this->apiQuery(self::API_URL.'v1/statement?'.http_build_query($get_params));
         }
 
         $answer = (new waServicesApi())->serviceCall('BANK', $get_params + [
-            'sub_path' => 'get_statement',
-            'balances' => is_null($cursor)
+            'sub_path'       => 'get_statement',
+            'account_number' => $this->account_number,
+            'balances'       => is_null($cursor)
         ]);
 
         return ifset($answer, 'response', 'statement_info', []);
