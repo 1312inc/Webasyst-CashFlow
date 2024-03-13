@@ -8,7 +8,7 @@
       </template>
     </ChartHeader>
     <div class="flexbox">
-      <div class="wide">
+      <div class="wide no-sticky-controls">
         <TransactionList
           :observer="false"
           :upnext="true"
