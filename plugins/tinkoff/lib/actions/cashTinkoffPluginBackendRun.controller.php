@@ -10,6 +10,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
      */
     protected function init()
     {
+        $import_period = waRequest::post('import_period', 'all', waRequest::TYPE_STRING_TRIM);
         $this->data = [
             'profile_id' => waRequest::post('profile_id', 0, waRequest::TYPE_INT),
             'error'      => null,
@@ -25,10 +26,21 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             return;
         }
 
-        $settings = $this->plugin()->getSettings();
-        $profile = ifset($settings, 'profiles', $this->data['profile_id'], []);
+        $profile = $this->plugin()->getProfiles($this->data['profile_id']);
+        if (!ifset($profile, 'cash_account', 0)) {
+            $this->data['error'] = _wp('Не настроен счет импорта');
+            return;
+        }
         $this->data['cash_account_id'] = (int) ifset($profile, 'cash_account', 0);
         $this->data['mapping_categories'] = ifset($profile, 'mapping', []);
+
+        if ($import_period === 'all') {
+            $from_date = (new DateTime(date('Y-m-d', strtotime(cashTinkoffPlugin::DEFAULT_START_DATE))))->format('c');
+        } else {
+            $from_date = (new DateTime(date('Y-m-d', strtotime($import_period))))->format('c');
+        }
+        $this->data['from_date'] = $from_date;
+        $this->data['to_date'] = (new DateTime(date('Y-m-d', strtotime('now'))))->format('c');
 
         $raw_data = $this->getStatementsData(null);
         $this->data['count_all_statements'] = (int) ifset($raw_data, 'balances', 'operationsCount', 0);

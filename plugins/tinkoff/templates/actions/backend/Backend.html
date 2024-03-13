@@ -24,6 +24,7 @@
                             [`Все подключено! Последний коннект:`] <span class="js-connect-date">{$profile.last_connect_date|escape|default:''}</span>
                         </span>
                     </div>
+                    <input type="hidden" name="profile_id" value="{$profile_id}">
                 </div>
             </div>
 
@@ -35,17 +36,17 @@
                     <div class="custom-mb-4">
                         <label>
                             <span class="wa-radio">
-                                <input type="radio" name="" value="" disabled />
+                                <input type="radio" name="import_period" value="all" checked />
                                 <span></span>
                             </span>
                             [`All time`]
                         </label>
-                        <span class="hint"></span>
+                        <span class="hint">{cashTinkoffPlugin::DEFAULT_START_DATE|wa_date:humandate} — {time()|wa_date:humandate}</span>
                     </div>
                     <div>
                         <label>
                             <span class="wa-radio">
-                                <input type="radio" name="" value="" disabled />
+                                <input type="radio" name="import_period" value="" disabled />
                                 <span></span>
                             </span>
                             [`Only orders paid after`]
@@ -74,16 +75,6 @@
                 <div class="value">
                     <div class="progressbar" id="progressbar-{$profile_id}"></div>
                     <div class="error-msg state-error custom-pt-8 js-error-msg-{$profile_id}"></div>
-                    <table class="single-lined hidden js-statement-value-{$profile_id}">
-                        <thead>
-                            <tr>
-                                <th class="min-width">[`Дата операции`]</th>
-                                <th>[`Сумма транзакции`]</th>
-                                <th>[`Описание транзакции`]</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
                 </div>
             </div>
 
@@ -135,9 +126,6 @@
                     if (response && response.progress) {
                         $progressbar.set({ percentage: response.progress });
                     }
-                    if (response.statements) {
-                        // renderTable(response.statements, profile_id);
-                    }
                     step(profile_id, null, $progressbar);
                 }
             }, 'json').error(function () {
@@ -178,18 +166,16 @@
             'text-inside': true
         });
         let instance = $bar.data('progressbar');
+        let form_data = $('#cash-import-page input, textarea, select').serialize();
 
         $that.addClass('hidden');
-        $.post(url, { profile_id: profile_id }, function (response) {
+        $.post(url, form_data, function (response) {
             if (response && response.error) {
                 $('.js-error-msg-'+ profile_id).text(response.error);
             } else if (response && response.processid) {
                 process_id = response.processid;
                 if (response.progress) {
                     instance.set({ percentage: response.progress });
-                }
-                if (response.statements) {
-                    // renderTable(response.statements, profile_id);
                 }
                 step(profile_id, null, instance);
             } else {

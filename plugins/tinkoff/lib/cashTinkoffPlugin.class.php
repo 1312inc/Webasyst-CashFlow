@@ -3,6 +3,7 @@
 class cashTinkoffPlugin extends cashBusinessPlugin
 {
     const LIMIT_STATEMENTS = 5;
+    const DEFAULT_START_DATE = '2006-01-01 00:00:00';
 
     private int $cash_account_id;
     private array $mapping_categories;
@@ -65,7 +66,6 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function getStatement($cursor, $from, $to, $limit = self::LIMIT_STATEMENTS)
     {
-
         $answer = (new waServicesApi())->serviceCall('BANK', [
             'sub_path' => 'get_statement',
             'cursor'   => $cursor,
