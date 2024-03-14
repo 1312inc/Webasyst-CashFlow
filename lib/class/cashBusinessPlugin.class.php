@@ -49,7 +49,7 @@ abstract class cashBusinessPlugin extends waPlugin
             $now = date('Y-m-d H:i:s');
             $transaction_model = cash()->getModel(cashTransaction::class);
             $create_contact_id = wa()->getUser()->getId();
-            $external_source = 'api_'.$this->getId();
+            $external_source = 'api_'.$this->getId().'_'.$this->cash_account_id;
             foreach ($transactions as &$_transaction) {
                 $amount = (float) ifset($_transaction, 'amount', 0);
                 $is_credit = $amount > 0;

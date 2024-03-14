@@ -66,14 +66,13 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
 
     /**
      * @param $cursor
-     * @param $from
-     * @param $to
+     * @param $limit
      * @return array
      */
-    private function getStatementsData($cursor = '', $from = null, $to = null)
+    private function getStatementsData($cursor = '', $limit = self::BATCH_LIMIT)
     {
         try {
-            $response = $this->plugin()->getStatement($cursor, $from, $to, self::BATCH_LIMIT);
+            $response = $this->plugin()->getStatement($cursor, $this->data['from_date'], $this->data['to_date'], $limit);
             if (
                 ifset($response, 'http_code', 200) !== 200
                 || !empty($response['error'])
@@ -89,7 +88,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             $this->data['error'] = $ex->getMessage();
         }
 
-        return ifempty($response, []);
+        return (array) ifempty($response, []);
     }
 
     /**
@@ -106,7 +105,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             return false;
         }
 
-        $transactions = $this->plugin()->addTransactionsByAccount($this->data['cash_account_id'], $this->data['operations']);
+        $transactions = $this->plugin()->addTransactionsByAccount($this->data['operations']);
         $this->data['statements'] = $transactions;
         $this->data['counter'] += count($transactions);
         unset($this->data['operations']);
@@ -129,6 +128,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     protected function finish($filename)
     {
         $this->info();
+        $this->plugin()->saveProfiles($this->data['profile_id'], ['last_connect_date' => date('Y-m-d H:i:s')]);
         if ($this->getRequest()::post('cleanup')) {
             return true;
         }
@@ -147,12 +147,12 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         }
 
         $this->response([
-            'processid'  => $this->processId,
-            'ready'      => $this->isDone(),
-            'progress'   => number_format($progress, 2),
-            'error'      => ifset($this->data, 'error', null),
-            'warning'    => ifset($this->data, 'warning', null),
-            'statements' => ifset($this->data, 'statements', []),
+            'processid'   => $this->processId,
+            'ready'       => $this->isDone(),
+            'progress'    => number_format($progress, 2),
+            'error'       => ifset($this->data, 'error', null),
+            'warning'     => ifset($this->data, 'warning', null),
+            'text_legend' => sprintf_wp('Импортировано: %s/%s', $this->data['counter'], $this->data['count_all_statements'])
         ]);
     }
 

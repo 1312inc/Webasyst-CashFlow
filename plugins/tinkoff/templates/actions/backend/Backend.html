@@ -74,6 +74,7 @@
                 <div class="name"></div>
                 <div class="value">
                     <div class="progressbar" id="progressbar-{$profile_id}"></div>
+                    <div class="js-info hint"></div>
                     <div class="error-msg state-error custom-pt-8 js-error-msg-{$profile_id}"></div>
                 </div>
             </div>
@@ -102,6 +103,10 @@
         });
     }
 
+    function renderText(text) {
+        $('.js-info').text(text);
+    }
+
     let url = '?plugin=tinkoff&action=run';
     let profile_id = {$profile_id};
     let process_id = undefined;
@@ -119,12 +124,15 @@
                     setTimeout(function () {
                         $('.progressbar').hide();
                     }, 2000);
-                    if (response.statements) {
-                        renderTable(response.statements, profile_id);
+                    if (response.text_legend) {
+                        renderText(response.text_legend);
                     }
                 } else {
                     if (response && response.progress) {
                         $progressbar.set({ percentage: response.progress });
+                    }
+                    if (response.text_legend) {
+                        renderText(response.text_legend);
                     }
                     step(profile_id, null, $progressbar);
                 }
@@ -176,6 +184,9 @@
                 process_id = response.processid;
                 if (response.progress) {
                     instance.set({ percentage: response.progress });
+                }
+                if (response.text_legend) {
+                    renderText(response.text_legend);
                 }
                 step(profile_id, null, instance);
             } else {
