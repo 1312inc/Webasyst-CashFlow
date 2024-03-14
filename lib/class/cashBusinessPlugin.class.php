@@ -2,7 +2,14 @@
 
 abstract class cashBusinessPlugin extends waPlugin
 {
+    /** @var int ID счета */
     protected int $cash_account_id;
+
+    public function __construct($info)
+    {
+        parent::__construct($info);
+        $this->cash_account_id = (int) ifset($info, 'cash_account', 0);
+    }
 
     public function getConfigParam($param = null)
     {
@@ -32,6 +39,14 @@ abstract class cashBusinessPlugin extends waPlugin
     }
 
     /**
+     * @return string
+     */
+    public function getExternalSource()
+    {
+        return 'api_'.$this->getId().'_'.$this->cash_account_id;
+    }
+
+    /**
      * format $transactions[] = [
      *     'date_operation' => '2024-01-10 09:00:00',
      *     'category_id'    => 15,
@@ -49,7 +64,7 @@ abstract class cashBusinessPlugin extends waPlugin
             $now = date('Y-m-d H:i:s');
             $transaction_model = cash()->getModel(cashTransaction::class);
             $create_contact_id = wa()->getUser()->getId();
-            $external_source = 'api_'.$this->getId().'_'.$this->cash_account_id;
+            $external_source = $this->getExternalSource();
             foreach ($transactions as &$_transaction) {
                 $amount = (float) ifset($_transaction, 'amount', 0);
                 $is_credit = $amount > 0;

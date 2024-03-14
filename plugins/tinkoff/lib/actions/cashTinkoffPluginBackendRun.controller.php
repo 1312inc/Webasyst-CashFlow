@@ -10,14 +10,14 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
      */
     protected function init()
     {
-        $import_period = waRequest::post('import_period', 'all', waRequest::TYPE_STRING_TRIM);
         $this->data = [
-            'profile_id' => waRequest::post('profile_id', 0, waRequest::TYPE_INT),
-            'error'      => null,
-            'warning'    => null,
-            'statements' => [],
-            'counter'    => 0,
-            'cursor'     => '',
+            'profile_id'    => waRequest::post('profile_id', 0, waRequest::TYPE_INT),
+            'import_period' => waRequest::post('import_period', 'all', waRequest::TYPE_STRING_TRIM),
+            'error'         => null,
+            'warning'       => null,
+            'statements'    => [],
+            'counter'       => 0,
+            'cursor'        => '',
             'count_all_statements' => 0,
         ];
 
@@ -32,12 +32,13 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             return;
         }
         $this->data['cash_account_id'] = (int) ifset($profile, 'cash_account', 0);
+        $this->data['account_number'] = ifset($profile, 'account_number', '');
         $this->data['mapping_categories'] = ifset($profile, 'mapping', []);
 
-        if ($import_period === 'all') {
+        if ($this->data['import_period'] === 'all') {
             $from_date = (new DateTime(date('Y-m-d', strtotime(cashTinkoffPlugin::DEFAULT_START_DATE))))->format('c');
         } else {
-            $from_date = (new DateTime(date('Y-m-d', strtotime($import_period))))->format('c');
+            $from_date = (new DateTime(date('Y-m-d', strtotime($this->data['import_period']))))->format('c');
         }
         $this->data['from_date'] = $from_date;
         $this->data['to_date'] = (new DateTime(date('Y-m-d', strtotime('now'))))->format('c');
@@ -124,11 +125,13 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     /**
      * @param $filename
      * @return bool
+     * @throws waException
      */
     protected function finish($filename)
     {
         $this->info();
         $this->plugin()->saveProfiles($this->data['profile_id'], ['last_connect_date' => date('Y-m-d H:i:s')]);
+        $this->correctiveOperation();
         if ($this->getRequest()::post('cleanup')) {
             return true;
         }
@@ -138,6 +141,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
 
     /**
      * @return void
+     * @throws waException
      */
     protected function info()
     {
@@ -165,5 +169,42 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $this->getResponse()->addHeader('Content-Type', 'application/json');
         $this->getResponse()->sendHeaders();
         echo waUtils::jsonEncode($response);
+    }
+
+    /**
+     * @return void
+     * @throws waException
+     */
+    private function correctiveOperation()
+    {
+        $accounts = $this->plugin()->getAccounts();
+        foreach ($accounts as $_account) {
+            if ($this->data['account_number'] == ifset($_account, 'accountNumber', '')) {
+                $balance_now = (float) ifset($_account, 'balance', 'balance', 0);
+                break;
+            }
+        }
+
+        if (isset($balance_now) && $this->data['import_period'] === 'all') {
+            $transaction_model = cash()->getModel(cashTransaction::class);
+            $data_source = $transaction_model
+                ->select('MIN(datetime) AS datetime')
+                ->where('external_source = s:source', ['source' => $this->plugin()->getExternalSource()])
+                ->where('is_archived = 0')
+                ->fetchAssoc();
+
+            $min_datetime = (new DateTime(ifset($data_source, 'datetime', date('Y-m-d H:i:s'))))->modify('- 1 second');
+            $transaction_model->insert([
+                'date'              => $min_datetime->format('Y-m-d'),
+                'datetime'          => $min_datetime->format('Y-m-d H:i:s'),
+                'account_id'        => $this->data['cash_account_id'],
+                'category_id'       => ($balance_now > 0 ? -2 : -1),
+                'amount'            => $balance_now,
+                'description'       => sprintf_wp('Начальный баланс на %s', $min_datetime->format('Y-m-d H:i:s')),
+                'create_contact_id' => wa()->getUser()->getId(),
+                'create_datetime'   => date('Y-m-d H:i:s'),
+                'external_source'   => $this->plugin()->getExternalSource()
+            ]);
+        }
     }
 }
