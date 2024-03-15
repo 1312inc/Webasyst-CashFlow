@@ -18,11 +18,14 @@
                         <a href="javascript:void(0);" class="button orange js-tinkoff-connect">[`Подключить`]</a>
                     {/if}
                     <div{if empty($profile.tinkoff_id)} class="hidden"{/if}>
-                        <strong class="js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</strong>
+                        <strong>
+                            <i class="fas fa-check-circle text-green"></i> [`Подключено!`]
+                        </strong>
+                        <strong class="hint">
+                            [`Последний коннект:`] <span class="js-connect-date">{$profile.last_connect_date|escape|default:''}</span>
+                        </strong>
                         <br>
-                        <span class="hint">
-                            [`Все подключено! Последний коннект:`] <span class="js-connect-date">{$profile.last_connect_date|escape|default:''}</span>
-                        </span>
+                        <span class="hint" class="js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</span>
                     </div>
                     <input type="hidden" name="profile_id" value="{$profile_id}">
                 </div>
@@ -41,7 +44,6 @@
                             </span>
                             [`All time`]
                         </label>
-                        <span class="hint">{cashTinkoffPlugin::DEFAULT_START_DATE|wa_date:humandate} — {time()|wa_date:humandate}</span>
                     </div>
                     <div>
                         <label>
@@ -56,17 +58,6 @@
                             <span class="icon"><i class="fas fa-calendar"></i></span>
                         </span>
                     </div>
-                </div>
-            </div>
-
-            <div class="custom-my-12">
-                <hr class="custom-m-0">
-            </div>
-
-            <div class="field custom-mb-12">
-                <div class="name"></div>
-                <div class="value">
-                    <a href="{$settings_url}">[`Перейти в настройки импорта`]</a>
                 </div>
             </div>
 
@@ -91,6 +82,16 @@
                     />
                 </div>
             </div>
+
+            <div class="field custom-mb-12">
+                <div class="name"></div>
+                <div class="value">
+                    <hr class="custom-mt-16" />
+                    <i class="fas fa-cog text-light-gray"></i>
+                    <a href="{$settings_url}">[`Настройка соответствия счетов и статей`]</a>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
