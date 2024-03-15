@@ -5,9 +5,9 @@ if (!defined('TINKOFF_FILE_LOG')) {
 }
 
 return array(
-    'name' => 'Tinkoff API',
-    'description' => 'Импорт выписки из Тинькофф банка',
-    'img' => 'img/logo.svg',
+    'name' => 'Тинькофф Бизнес',
+    'description' => 'Импорт операций из «Тинькофф Бизнес» по API',
+    'img' => 'img/tinkoff.png',
     'version' => '0.0.1',
     'vendor' => 'webasyst',
     'import_api' => true,
