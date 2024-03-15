@@ -177,6 +177,9 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
      */
     private function correctiveOperation()
     {
+        if (empty($this->data['account_number']) || $this->data['import_period'] !== 'all') {
+            return;
+        }
         $accounts = $this->plugin()->getAccounts();
         foreach ($accounts as $_account) {
             if ($this->data['account_number'] == ifset($_account, 'accountNumber', '')) {
@@ -185,7 +188,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             }
         }
 
-        if (isset($balance_now) && $this->data['import_period'] === 'all') {
+        if (isset($balance_now)) {
             $transaction_model = cash()->getModel(cashTransaction::class);
             $data_source = $transaction_model
                 ->select('MIN(datetime) AS datetime')

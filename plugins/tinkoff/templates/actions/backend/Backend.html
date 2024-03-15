@@ -61,6 +61,18 @@
                 </div>
             </div>
 
+            {if !empty($profile.enable_import)}
+            <div class="field">
+                <div class="name"></div>
+                <div class="value">
+                    <p class="small">
+                        <em>
+                            {sprintf('[`Чтобы обновить уже импортированные транзакции, необходимо вручную удалить соответствующие им операции и %sперезапустить импорт заново%s.`]', '<a href="?plugin=tinkoff&action=reset" class="js-reset-import">', '</a>')}
+                        </em>
+                    </p>
+                </div>
+            </div>
+            {else}
             <div class="field">
                 <div class="name"></div>
                 <div class="value">
@@ -82,6 +94,7 @@
                     />
                 </div>
             </div>
+            {/if}
 
             <div class="field custom-mb-12">
                 <div class="name"></div>
@@ -183,6 +196,7 @@
                 $('.js-error-msg-'+ profile_id).text(response.error);
             } else if (response && response.processid) {
                 process_id = response.processid;
+                saveProfile({ 'enable_import': true });
                 if (response.progress) {
                     instance.set({ percentage: response.progress });
                 }
@@ -196,5 +210,49 @@
         }, 'json').error(function () {
             $('.js-error-msg-'+ profile_id).text('Server error');
         });
+    });
+
+    $('.js-reset-import').on('click', function (e) {
+        let url = '?plugin=tinkoff&action=resetImport';
+        e.preventDefault();
+        $.get(url, function (data) {
+            $.waDialog({
+                html: data.data || '',
+                onOpen: function ($dialog_wrapper, d) {
+                    let $error_msg = $dialog_wrapper.find('.errormsg');
+                    let $submit_button = $dialog_wrapper.find('.js-ok');
+
+                    setTimeout(function () {
+                        $dialog_wrapper.find('[name="code"]').trigger('focus');
+                    }, 13.12);
+
+                    $error_msg.hide();
+
+                    $dialog_wrapper.find('[name="code"]').on('keypress', function (e) {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+                            $submit_button.trigger('click');
+                        }
+                    });
+
+                    $submit_button.after($.cash.$loading).on('click', function (e) {
+                        e.preventDefault();
+                        $.post(url, $dialog_wrapper.find('form').serialize() +'&profile_id='+ profile_id, function (r) {
+                            $.cash.$loading.remove();
+                            if (r.status === 'ok') {
+                                d.close();
+                                window.location.reload();
+                            } else {
+                                $error_msg.text(r.errors.join(' ')).show();
+                            }
+                        }, 'json');
+                    });
+
+                    $dialog_wrapper.find('.js-close').on('click', function (e) {
+                        d.close();
+                    });
+                }
+            });
+        })
     });
 </script>

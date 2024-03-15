@@ -1,0 +1,32 @@
+<div class="dialog" id="c-reset-import">
+    <div class="dialog-background"></div>
+    <div class="dialog-body">
+        <header class="dialog-header">
+            <h2>[`Удалить импортированные из Тинькофф данные?`]</h2>
+        </header>
+        <div class="dialog-content">
+            <p>[`Импорт из Тинькофф будет перезапущен с нуля, и вы сможете заново импортировать все транзакции. Все операции, ранее импортированные из Тинькофф, будут удалены. Перезапустить?`]</p>
+
+            <form>
+            <div class="fields">
+                <div class="field">
+                    <div class="name nowrap for-input">
+                        [`Type in the code`]
+                    </div>
+                    <div class="value">
+                        <b>{$code}</b>
+                        &rarr;
+                        <input type="text" name="code" autocomplete="chrome-off"/>
+                        <div class="errormsg state-caution-hint custom-mt-8" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+
+        <footer class="dialog-footer">
+            <button class="button orange js-ok" type="button">[`Перезапустить импорт`]</button>
+            <button class="button gray outlined js-close" type="button"><span>[`Cancel`]</span></button>
+        </footer>
+    </div>
+</div>

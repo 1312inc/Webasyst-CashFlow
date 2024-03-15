@@ -25,6 +25,10 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         $this->setCashProfile($profile_id);
     }
 
+    /**
+     * @param $profile_id
+     * @return $this
+     */
     public function setCashProfile($profile_id)
     {
         if (!empty($profile_id)) {
@@ -33,6 +37,8 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         $this->cash_account_id = (int) ifset($profile, 'cash_account', 0);
         $this->account_number = ifset($profile, 'account_number', '');
         $this->mapping_categories = ifset($profile, 'mapping', []);
+
+        return $this;
     }
 
     private function apiQuery($url, $headers = [], $post_fields = [])
