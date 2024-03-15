@@ -1,25 +1,14 @@
 <div class="js-tab-content-{$profile_id}{if !empty($is_hidden)} hidden{/if}" data-profile-id="{$profile_id}">
-{*    На потом *}
-{*    <div class="field">*}
-{*        <div class="name">*}
-{*            [`Название профиля`]*}
-{*        </div>*}
-{*        <div class="value">*}
-{*            <input type="text" name="cash_tinkoff[profiles][{$profile_id}][profile_name]" value="{if isset($profile.profile_name)}{$profile.profile_name}{/if}" placeholder="[`Профиль 1`]" autocomplete="off" required>*}
-{*        </div>*}
-{*    </div>*}
-
     <div class="field">
         <div class="name">
             [`Тинькофф ID`]
         </div>
         <div class="value">
-            {if empty($profile.oauth)}
-            <a href="javascript:void(0);" class="button orange js-knock-knock">[`Тук тук в CashCentral`]</a>
+            {if empty($profile.tinkoff_id)}
+            <a href="javascript:void(0);" class="button orange js-tinkoff-connect">[`Подключить`]</a>
             {else}
-                <strong>{$profile.oauth|escape|default:''}</strong>
+            <strong>{$profile.tinkoff_id|escape|default:''}</strong>
             {/if}
-            <input type="hidden" name="cash_tinkoff[profiles][{$profile_id}][oauth]" class="js-oauth" value="{if isset($profile.oauth)}{$profile.oauth|escape}{/if}">
         </div>
     </div>
 
@@ -29,10 +18,13 @@
         </div>
         <div class="value">
             <div class="wa-select">
-                <select name="cash_tinkoff[profiles][{$profile_id}][account_number]">
-                    {foreach $account_numbers as $_account_number}
-                        <option value="{$_account_number}"{if $profile.account_number|default:'' == $_account_number} selected{/if}>{$_account_number}</option>
-                    {/foreach}
+                <select name="profiles[{$profile_id}][account_number]">
+                {if empty($profile.account_number)}
+                    <option value="" disabled selected>[`Не выбран`]</option>
+                {/if}
+                {foreach $account_numbers as $_account_number => $_name}
+                    <option value="{$_account_number}"{if !empty($profile.account_number) && $profile.account_number == $_account_number} selected{/if}>{$_name}</option>
+                {/foreach}
                 </select>
             </div>
             <p class="hint">
@@ -47,7 +39,10 @@
         </div>
         <div class="value">
             <div class="wa-select">
-                <select name="cash_tinkoff[profiles][{$profile_id}][cash_account]">
+                <select name="profiles[{$profile_id}][cash_account]">
+                {if empty($profile.cash_account)}
+                    <option value="" disabled selected>[`Не выбран`]</option>
+                {/if}
                 {foreach $cash_accounts as $_cash_account}
                     <option value="{$_cash_account.id}"{if $profile.cash_account|default:'0' == $_cash_account.id} selected{/if}>{$_cash_account.name}</option>
                 {/foreach}
@@ -59,19 +54,6 @@
         </div>
     </div>
 
-{*    На потом *}
-{*    <div class="field">*}
-{*        <div class="name">*}
-{*            [`Команда для CRON`]*}
-{*        </div>*}
-{*        <div class="value">*}
-{*            <code>{$profile.cron_command}</code>*}
-{*            <p class="hint">*}
-{*                {sprintf_wp('%sДокументация%s по настройке планировщика CRON', '<a href="https://developers.webasyst.ru/docs/tips/cron/">', '</a>')}*}
-{*            </p>*}
-{*        </div>*}
-{*    </div>*}
-
     <div class="fields-group">
         <h5 class="heading">[`Маппинг категорий`]</h5>
 
@@ -81,7 +63,7 @@
             <div class="name">{$_desc}</div>
             <div class="value">
                 <div class="wa-select">
-                    <select name="cash_tinkoff[profiles][{$profile_id}][mapping][{$_name}]">
+                    <select name="profiles[{$profile_id}][mapping][{$_name}]">
                         <option value="" disabled>--[`ДОХОД`]--</option>
                         {foreach $categories as $_category}
                             {if $_category.type == 'income'}

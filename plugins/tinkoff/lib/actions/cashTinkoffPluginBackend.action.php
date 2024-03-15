@@ -15,9 +15,7 @@ class cashTinkoffPluginBackendAction extends waViewAction
 
     public function execute()
     {
-        /** @var cashTinkoffPlugin $plugin */
-        $plugin = wa()->getPlugin('tinkoff');
-        $profiles = $plugin->getProfiles();
+        $profiles = cashTinkoffPlugin::getProfiles();
         $this->view->assign([
             'profile_id'   => key($profiles),
             'profile'      => ifset($profiles, key($profiles), []),

@@ -26,7 +26,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             return;
         }
 
-        $profile = $this->plugin()->getProfiles($this->data['profile_id']);
+        $profile = $this->plugin()->getProfile($this->data['profile_id']);
         if (!ifset($profile, 'cash_account', 0)) {
             $this->data['error'] = _wp('Не настроен счет импорта');
             return;
@@ -130,7 +130,6 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     protected function finish($filename)
     {
         $this->info();
-        $this->plugin()->saveProfiles($this->data['profile_id'], ['last_connect_date' => date('Y-m-d H:i:s')]);
         $this->correctiveOperation();
         if ($this->getRequest()::post('cleanup')) {
             return true;

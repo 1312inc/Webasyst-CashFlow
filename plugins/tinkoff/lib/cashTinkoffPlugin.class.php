@@ -8,6 +8,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     const USER_INFO_URL = 'https://id.tinkoff.ru/userinfo/userinfo';
 
     private bool $self_mode;
+    private string $profile_id;
     private string $tinkoff_token;
     private string $account_number;
     private array $mapping_categories;
@@ -31,9 +32,8 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function setCashProfile($profile_id)
     {
-        if (!empty($profile_id)) {
-            $profile = $this->getProfiles($profile_id);
-        }
+        $profile = $this->getProfile($profile_id);
+        $this->profile_id = (int) $profile_id;
         $this->cash_account_id = (int) ifset($profile, 'cash_account', 0);
         $this->account_number = ifset($profile, 'account_number', '');
         $this->mapping_categories = ifset($profile, 'mapping', []);
@@ -91,6 +91,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function getCompany()
     {
+        $this->saveProfile($this->profile_id, ['last_connect_date' => date('Y-m-d H:i:s')]);
         if ($this->self_mode) {
             return $this->apiQuery(self::API_URL.'v1/company');
         }
@@ -116,6 +117,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             'to'     => $to,
             'limit'  => $limit
         ];
+        $this->saveProfile($this->profile_id, ['last_connect_date' => date('Y-m-d H:i:s')]);
         if ($this->self_mode) {
             $get_params += [
                 'operationStatus' => 'Transaction',
@@ -162,14 +164,14 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      * @param $profile_id
      * @return array
      */
-    public function getProfiles($profile_id = 0)
+    public function getProfile($profile_id)
     {
         $profiles = (array) $this->getSettings('profiles');
         if ((int) $profile_id > 0) {
             return (array) ifset($profiles, $profile_id, []);
         }
 
-        return $profiles;
+        return [];
     }
 
     /**
@@ -177,12 +179,12 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      * @param $profile
      * @return bool
      */
-    public function saveProfiles($profile_id, $profile = [])
+    public function saveProfile($profile_id, $profile = [])
     {
-        $profiles = (array) $this->getSettings('profiles');
         if (empty($profile) || $profile_id < 1) {
             return false;
         }
+        $profiles = (array) $this->getSettings('profiles');
         $profiles[$profile_id] = $profile + ifset($profiles, $profile_id, []);
         try {
             self::saveSettings(['profiles' => $profiles]);
@@ -192,5 +194,10 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         }
 
         return true;
+    }
+
+    public static function getProfiles()
+    {
+        return (array) wa()->getPlugin('tinkoff')->getSettings('profiles');
     }
 }

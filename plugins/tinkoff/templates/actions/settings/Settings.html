@@ -1,29 +1,7 @@
 <h1>[`Плагин Тинькофф для бизнеса`]</h1>
 
-{*    На потом *}
-{*<ul class="tabs js-tabs">*}
-{*    {foreach $profiles as $_profile_id => $_profile}*}
-{*    <li{if $_profile_id == $profile_id} class="selected"{/if}>*}
-{*        <a href="javascript:void(0);" data-profile-id="{$_profile_id}">*}
-{*            {$_profile.profile_name}*}
-{*        </a>*}
-{*    </li>*}
-{*    {foreachelse}*}
-{*    <li class="selected">*}
-{*        <a href="javascript:void(0);">*}
-{*            [`Новый профиль`]*}
-{*        </a>*}
-{*    </li>*}
-{*    {/foreach}*}
-{*    <li>*}
-{*        <button class="circle js-add-profile">*}
-{*            <i class="fas fa-plus"></i>*}
-{*        </button>*}
-{*    </li>*}
-{*</ul>*}
-
 <div class="fields form">
-    <form action="?module=plugins&id=tinkoff&action=save" method="post" id="plugins-settings-form">
+    <form action="?plugin=tinkoff&module=profileEdit&profile_id={$profile_id}" method="post" id="plugins-settings-form">
         <div class="box custom-pt-24">
             <div class="spinner custom-p-16 js-spinner hidden"></div>
         </div>
@@ -40,7 +18,6 @@
                 {$wa->csrf()}
                 <input type="submit" class="button green" value="[s`Save`]">
                 {if !empty($profiles)}
-                <a href="javascript:void(0);" class="button red outlined js-delete-profile">[s`Delete`]</a>
                 {/if}
                 <span id="plugins-settings-form-status" style="display:none"></span>
             </div>
@@ -49,42 +26,7 @@
 </div>
 
 <script>
-    $('.tabs').waTabs();
-
-    $('.js-tabs').on('click', 'li', function () {
-        let profile_id = $(this).find('a').data('profile-id');
-        $(this).siblings('li').removeClass('selected');
-        $(this).addClass('selected');
-        $('[class^="js-tab-content-"]').addClass('hidden');
-        $('.js-spinner').removeClass('hidden');
-        setTimeout(function () {
-            $('.js-spinner').addClass('hidden');
-            $('.js-tab-content-'+ profile_id).removeClass('hidden');
-        }, 300);
-    });
-
-    $('.js-add-profile').on('click', function () {
-        let that = this;
-        $.get('?plugin=tinkoff&module=settings', { 'profile_id': 'new' }, function (html) {
-            $('.js-spinner').addClass('hidden');
-            if (html) {
-                $('.js-tabs').find('li').removeClass('selected');
-                $(that).closest('li').before('<li class="selected"><a href="javascript:void(0);">[`Новый профиль`]</a></li>');
-                $('[class^="js-tab-content-"]').last().after(html);
-            }
-        });
-    });
-
-    $('.js-delete-profile').on('click', function () {
-        let profile_id = $('[class^="js-tab-content-"]:visible').data('profile-id');
-        if (profile_id) {
-            $.post('?plugin=tinkoff&module=settingsDelete', { 'profile_id': profile_id }, function () {
-                location.reload();
-            });
-        }
-    });
-
-    $('.js-knock-knock').on('click', function () {
+    $('.js-tinkoff-connect').on('click', function () {
         let profile_id = $('[class^="js-tab-content-"]:visible').data('profile-id');
         $(this).addClass('disabled');
         $.get('?plugin=tinkoff&module=auth', { 'profile_id': profile_id }, function (data) {
