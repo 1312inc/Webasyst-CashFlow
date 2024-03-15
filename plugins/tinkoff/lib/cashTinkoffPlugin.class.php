@@ -76,12 +76,20 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function getAccounts()
     {
-        if ($this->self_mode) {
-            return $this->apiQuery(self::API_URL.'v4/bank-accounts');
+        $cache = new waVarExportCache('accounts', 60, 'cash/plugins/tinkoff');
+        if ($accounts = $cache->get()) {
+            return $accounts;
         }
-        $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_accounts']);
+        $this->saveProfile($this->profile_id, ['last_connect_date' => date('Y-m-d H:i:s')]);
+        if ($this->self_mode) {
+            $result = $this->apiQuery(self::API_URL.'v4/bank-accounts');
+        } else {
+            $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_accounts']);
+            $result = ifset($answer, 'response', 'accounts_info', []);
+        }
+        $cache->set($result);
 
-        return ifset($answer, 'response', 'accounts_info', []);
+        return $result;
     }
 
     /**
