@@ -2,14 +2,21 @@
 
 class cashTinkoffPluginProfileEditController extends waJsonController
 {
-    public function execute()
+    /**
+     * @param $profile_id
+     * @param $tinkoff_id
+     * @param $last_connect_date
+     * @return void
+     * @throws waException
+     */
+    public function execute($profile_id = null, $tinkoff_id = null, $last_connect_date = null)
     {
         $profile_settings = [];
         $profiles = (array) waRequest::request('profiles', [], waRequest::TYPE_ARRAY);
-        $profile_id = waRequest::request('profile_id', null, waRequest::TYPE_INT);
-        $tinkoff_id = waRequest::request('tinkoff_id', null, waRequest::TYPE_STRING_TRIM);
+        $profile_id = (int) waRequest::request('profile_id', $profile_id, waRequest::TYPE_INT);
+        $tinkoff_id = waRequest::request('tinkoff_id', $tinkoff_id, waRequest::TYPE_STRING_TRIM);
         $enable_import = waRequest::request('enable_import', null, waRequest::TYPE_STRING_TRIM);
-        $last_connect_date = waRequest::request('last_connect_date', null, waRequest::TYPE_STRING_TRIM);
+        $last_connect_date = waRequest::request('last_connect_date', $last_connect_date, waRequest::TYPE_STRING_TRIM);
 
         if ($profile_id > 0) {
             $data = [];
