@@ -48,13 +48,13 @@
                     <div>
                         <label>
                             <span class="wa-radio">
-                                <input type="radio" name="import_period" value="" disabled />
+                                <input type="radio" name="import_period" value="" />
                                 <span></span>
                             </span>
                             [`Only orders paid after`]
                         </label>
                         <span class="input-with-inner-icon left">
-                            <input type="text" name="" class="shorter small" disabled />
+                            <input type="text" name="begin_import_period" class="shorter small" autocomplete="off"/>
                             <span class="icon"><i class="fas fa-calendar"></i></span>
                         </span>
                     </div>
@@ -125,6 +125,22 @@
     let profile_id = {$profile_id};
     let process_id = undefined;
     let $start_button = $('#cash-tinkoff-start');
+    let datepicker_options = {
+        changeMonth: true,
+        changeYear: true,
+        shortYearCutoff: 2,
+        dateShowWeek: false,
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        stepMonths: 1,
+        numberOfMonths: 1,
+        gotoCurrent: true,
+        constrainInput: false,
+        dateFormat: 'yy-mm-dd',
+        onSelect: function (date) {
+            $('[name="import_period"]').prop('checked', true).val(date);
+        }
+    };
     let step = function (profile_id, delay, $progressbar) {
         delay = delay || 2000;
         setTimeout(function () {
@@ -155,6 +171,9 @@
             });
         }, delay);
     };
+
+    $date_picker = $('[name="begin_import_period"]');
+    $date_picker.datepicker(datepicker_options);
 
     $('.js-tinkoff-connect').on('click', function () {
         let $that = $(this);
