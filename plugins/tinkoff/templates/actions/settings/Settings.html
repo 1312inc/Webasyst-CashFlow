@@ -1,3 +1,5 @@
+{$profile_id = $profile_id|default:1}
+
 <h1>[`Плагин Тинькофф для бизнеса`]</h1>
 
 <div class="fields form">
@@ -26,18 +28,32 @@
 </div>
 
 <script>
+    $('#plugins-settings-form').on('change', function () {
+        $(this).find('[type="submit"]').removeClass('green').addClass('yellow');
+    });
+
     $('.js-tinkoff-connect').on('click', function () {
-        let profile_id = $('[class^="js-tab-content-"]:visible').data('profile-id');
+        let $that = $(this);
         $(this).addClass('disabled');
-        $.get('?plugin=tinkoff&module=auth', { 'profile_id': profile_id }, function (data) {
-console.log('data', data.data.redirect_url);
+        $.get('?plugin=tinkoff&module=auth', function (data) {
             if (data.data.redirect_url) {
                 window.location.href = data.data.redirect_url;
             } else if (data.data.error_description) {
                 alert(data.data.error_description);
             } else if (data.data.tinkoff_id) {
-                $('.js-oauth').val(data.data.tinkoff_id);
-                alert('Авторизация ОК. Можно не кликать больше');
+                let $t_id = $('.js-tinkoff-id');
+                let dt = new Date();
+                let dformat = dt.toLocaleDateString().replace(/(\d+)\.(\d+)\.(\d+)/, '$3-$2-$1') +' '+ dt.toTimeString().replace(/(\d+):(\d+):(\d+).*/, '$1:$2:$3');
+
+                $t_id.closest('.hidden').removeClass('hidden');
+                $that.addClass('hidden');
+                $t_id.text(data.data.tinkoff_id);
+                $('.js-connect-date').text(dformat);
+                $.get('?plugin=tinkoff&module=profileEdit', {
+                    profile_id: {$profile_id},
+                    last_connect_date: dformat,
+                    tinkoff_id: data.data.tinkoff_id
+                });
             }
         });
     });

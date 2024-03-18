@@ -6,9 +6,18 @@
         <div class="value">
             {if empty($profile.tinkoff_id)}
             <a href="javascript:void(0);" class="button orange js-tinkoff-connect">[`Подключить`]</a>
-            {else}
-            <strong>{$profile.tinkoff_id|escape|default:''}</strong>
             {/if}
+            <div{if empty($profile.tinkoff_id)} class="hidden"{/if}>
+                <strong>
+                    <i class="fas fa-check-circle text-green"></i> [`Подключено!`]
+                </strong>
+                <strong class="hint">
+                    [`Последний коннект:`] <span class="js-connect-date">{$profile.last_connect_date|escape|default:''}</span>
+                </strong>
+                <br>
+                <span class="hint js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</span>
+            </div>
+            <input type="hidden" name="profile_id" value="{$profile_id}">
         </div>
     </div>
 
