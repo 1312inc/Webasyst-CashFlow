@@ -2,7 +2,7 @@
 
 class cashTinkoffPluginBackendRunController extends waLongActionController
 {
-    const BATCH_LIMIT = 5;
+    const BATCH_LIMIT = 50;
 
     /**
      * @return void
@@ -190,23 +190,27 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         if (isset($balance_now)) {
             $transaction_model = cash()->getModel(cashTransaction::class);
             $data_source = $transaction_model
-                ->select('MIN(datetime) AS datetime')
+                ->select('SUM(amount) AS sum_amount, MIN(datetime) AS datetime')
                 ->where('external_source = s:source', ['source' => $this->plugin()->getExternalSource()])
                 ->where('is_archived = 0')
                 ->fetchAssoc();
 
+            $sum_amount = (float) ifset($data_source, 'sum_amount', 0);
             $min_datetime = (new DateTime(ifset($data_source, 'datetime', date('Y-m-d H:i:s'))))->modify('- 1 second');
-            $transaction_model->insert([
-                'date'              => $min_datetime->format('Y-m-d'),
-                'datetime'          => $min_datetime->format('Y-m-d H:i:s'),
-                'account_id'        => $this->data['cash_account_id'],
-                'category_id'       => ($balance_now > 0 ? -2 : -1),
-                'amount'            => $balance_now,
-                'description'       => sprintf_wp('Начальный баланс на %s', $min_datetime->format('Y-m-d H:i:s')),
-                'create_contact_id' => wa()->getUser()->getId(),
-                'create_datetime'   => date('Y-m-d H:i:s'),
-                'external_source'   => $this->plugin()->getExternalSource()
-            ]);
+            $amount = $balance_now - $sum_amount;
+            if ($amount) {
+                $transaction_model->insert([
+                    'date'              => $min_datetime->format('Y-m-d'),
+                    'datetime'          => $min_datetime->format('Y-m-d H:i:s'),
+                    'account_id'        => $this->data['cash_account_id'],
+                    'category_id'       => ($amount > 0 ? -2 : -1),
+                    'amount'            => $amount,
+                    'description'       => sprintf_wp('Начальный баланс на %s', $min_datetime->format('Y-m-d H:i:s')),
+                    'create_contact_id' => wa()->getUser()->getId(),
+                    'create_datetime'   => date('Y-m-d H:i:s'),
+                    'external_source'   => $this->plugin()->getExternalSource()
+                ]);
+            }
         }
     }
 }
