@@ -67,6 +67,10 @@ class cashCategorySaver extends cashEntitySaver
         }
 
         try {
+            if ($createRequest->getType() !== $category->getType()) {
+                $category_model = cash()->getModel(cashCategory::class);
+                $category_model->updateByField('category_parent_id', $category->getId(), ['type' => $createRequest->getType()]);
+            }
             $category->setSort($createRequest->getSort())
                 ->setName($createRequest->getName())
                 ->setType($createRequest->getType())
