@@ -202,11 +202,12 @@
     $start_button.on('click', function () {
         let $that = $(this);
         let $bar = $('#progressbar-'+ profile_id).waProgressbar({
-            'color': '#3ec55e',
+            'color': '#ffdd2e',
             'text-inside': true
         });
         let instance = $bar.data('progressbar');
         let form_data = $('#cash-import-page input, textarea, select').serialize();
+        $bar.find('.progressbar-text').css({ 'color':'black', 'font-weight': 'bold' });
 
         $that.addClass('hidden');
         $.post(url, form_data, function (response) {

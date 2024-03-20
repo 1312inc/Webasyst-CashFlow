@@ -152,7 +152,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $this->response([
             'processid'   => $this->processId,
             'ready'       => $this->isDone(),
-            'progress'    => number_format($progress, 2),
+            'progress'    => number_format($progress),
             'error'       => ifset($this->data, 'error', null),
             'warning'     => ifset($this->data, 'warning', null),
             'text_legend' => sprintf_wp('Импортировано: %s/%s', $this->data['counter'], $this->data['count_all_statements'])
