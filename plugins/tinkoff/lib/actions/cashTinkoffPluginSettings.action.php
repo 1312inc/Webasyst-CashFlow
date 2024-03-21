@@ -11,10 +11,14 @@ class cashTinkoffPluginSettingsAction extends waViewAction
         $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
         $cash_accounts = cash()->getModel(cashAccount::class)->getAllActiveForContact(wa()->getUser());
         $accounts = $plugin->getAccounts();
-        foreach ($accounts as $_account) {
-            if (isset($_account['accountNumber'], $_account['name'])) {
-                $account_numbers[$_account['accountNumber']] = $_account['name'].($_account['accountNumber'] ? ' ('.$_account['accountNumber'].')' : '');
+        if (empty($accounts['error'])) {
+            foreach ($accounts as $_account) {
+                if (isset($_account['accountNumber'], $_account['name'])) {
+                    $account_numbers[$_account['accountNumber']] = $_account['name'].($_account['accountNumber'] ? ' ('.$_account['accountNumber'].')' : '');
+                }
             }
+        } else {
+            $account_numbers = $accounts;
         }
 
         $profiles = cashTinkoffPlugin::getProfiles();

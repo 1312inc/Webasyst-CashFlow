@@ -26,6 +26,7 @@
             [`Из счета`]
         </div>
         <div class="value">
+            {if empty($account_numbers.error)}
             <div class="wa-select">
                 <select name="profiles[{$profile_id}][account_number]">
                 {if empty($profile.account_number)}
@@ -36,6 +37,11 @@
                 {/foreach}
                 </select>
             </div>
+            {else}
+            <div class="error-msg state-error custom-pt-8">
+                [`Получение списка счетов`]: {$account_numbers.error|escape} {$account_numbers.error_description|escape|default:''}
+            </div>
+            {/if}
             <p class="hint">
                 [`Счет из которого производится импорт`]
             </p>

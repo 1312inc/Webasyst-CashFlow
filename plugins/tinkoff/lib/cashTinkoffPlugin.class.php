@@ -45,8 +45,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     {
         $options = [
             'format'         => waNet::FORMAT_JSON,
-            'request_format' => waNet::FORMAT_RAW,
-            'timeout'        => 60
+            'request_format' => waNet::FORMAT_RAW
         ];
         $headers += [
             'Content-Type'  => 'application/json',
@@ -59,10 +58,16 @@ class cashTinkoffPlugin extends cashBusinessPlugin
                 $response = $net->query($url, http_build_query($post_fields), $method);
             } catch (Exception $ex) {
                 $response = $net->getResponse();
+                if (empty($response)) {
+                    $response = ['error' => 'error_query', 'error_description' => $ex->getMessage()];
+                }
+                waLog::log([$url, $response], TINKOFF_FILE_LOG);
             }
-            $response += ['http_code' => $net->getResponseHeader('http_code')];
+            if ($http_code = $net->getResponseHeader('http_code')) {
+                $response += ['http_code' => $http_code];
+            }
         } catch (Exception $exception) {
-            waLog::log($exception->getMessage(), TINKOFF_FILE_LOG);
+            waLog::log([$url, $exception->getMessage()], TINKOFF_FILE_LOG);
             throw new waException($exception->getMessage());
         }
 
@@ -84,10 +89,20 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         if ($this->self_mode) {
             $result = $this->apiQuery(self::API_URL.'v4/bank-accounts');
         } else {
-            $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_accounts']);
-            $result = ifset($answer, 'response', 'accounts_info', []);
+            try {
+                $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_accounts']);
+                $result = (array) ifset($answer, 'response', 'accounts_info', []);
+            } catch (Exception $ex) {
+                waLog::log(['getAccounts', $ex->getMessage()], TINKOFF_FILE_LOG);
+                $result = ['error' => 'error_statement', 'error_description' => $ex->getMessage()];
+            }
         }
-        $cache->set($result);
+
+        if (!empty($answer['error']) || !empty($result['errorMessage']) || !empty($answer['response']['error'])) {
+            $result += $answer['response'] + ['error' => $result['errorMessage']];
+        } else {
+            $cache->set($result);
+        }
 
         return $result;
     }
@@ -103,9 +118,18 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         if ($this->self_mode) {
             return $this->apiQuery(self::API_URL.'v1/company');
         }
-        $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_company']);
+        try {
+            $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_company']);
+            $result = (array) ifset($answer, 'response', 'company_info', []);
+        } catch (Exception $ex) {
+            waLog::log(['getCompany', $ex->getMessage()], TINKOFF_FILE_LOG);
+            $result = ['error' => 'error_statement', 'error_description' => $ex->getMessage()];
+        }
+        if (!empty($answer['response']['error'])) {
+            $result += $answer['response'];
+        }
 
-        return ifset($answer, 'response', 'company_info', []);
+        return $result;
     }
 
     /**
@@ -135,13 +159,22 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             return $this->apiQuery(self::API_URL.'v1/statement?'.http_build_query($get_params));
         }
 
-        $answer = (new waServicesApi())->serviceCall('BANK', $get_params + [
-            'sub_path'       => 'get_statement',
-            'account_number' => $this->account_number,
-            'balances'       => is_null($cursor)
-        ]);
+        try {
+            $answer = (new waServicesApi())->serviceCall('BANK', $get_params + [
+                'sub_path'       => 'get_statement',
+                'account_number' => $this->account_number,
+                'balances'       => is_null($cursor)
+            ]);
+            $result = (array) ifset($answer, 'response', 'statement_info', []);
+        } catch (Exception $ex) {
+            waLog::log(['getStatement', $get_params, $ex->getMessage()], TINKOFF_FILE_LOG);
+            $result = ['error' => 'error_statement', 'error_description' => $ex->getMessage()];
+        }
+        if (!empty($answer['response']['error'])) {
+            $result += $answer['response'];
+        }
 
-        return ifset($answer, 'response', 'statement_info', []);
+        return $result;
     }
 
     public function getCircleIcon()
