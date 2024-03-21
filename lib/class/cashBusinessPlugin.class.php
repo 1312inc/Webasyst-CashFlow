@@ -47,6 +47,54 @@ abstract class cashBusinessPlugin extends waPlugin
     }
 
     /**
+     * @param $external_source
+     * @return string
+     */
+    private static function getPluginIdByExternalSource($external_source = '')
+    {
+        if (empty($external_source) || !$source = explode('_', $external_source)) {
+            return '';
+        }
+
+        return ifset($source, 1, '');
+    }
+
+    /**
+     * @return string
+     */
+    public function getCircleIcon()
+    {
+        return '/wa-apps/cash/img/bank.svg';
+    }
+
+    /**
+     * @param cashApiTransactionResponseDto $dto
+     * @return string[]|null
+     * @throws waException
+     */
+    public static function getBankData($dto)
+    {
+        static $bank_data = [];
+        if (!$dto->external_source) {
+            return null;
+        }
+        $plugin_id = self::getPluginIdByExternalSource($dto->external_source);
+        if (empty($plugin_id)) {
+            return null;
+        }
+        if (empty($bank_data[$plugin_id])) {
+            /** @var cashBusinessPlugin $plugin */
+            $plugin = wa()->getPlugin($plugin_id);
+            $bank_data[$plugin_id] = [
+                'name'    => $plugin->getName(),
+                'userpic' => $plugin->getCircleIcon()
+            ];
+        }
+
+        return $bank_data[$plugin_id];
+    }
+
+    /**
      * format $transactions[] = [
      *     'date_operation' => '2024-01-10 09:00:00',
      *     'category_id'    => 15,
