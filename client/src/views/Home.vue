@@ -55,20 +55,21 @@ export default {
   },
   mixins: [routerTransitionMixin],
 
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.updateEntity(to)
-    })
-  },
-
-  beforeRouteUpdate (to, from, next) {
-    this.updateEntity(to)
-    next()
-  },
-
   beforeRouteLeave (to, from, next) {
     this.$store.commit('setCurrentEntity', { name: '', id: null })
     next()
+  },
+
+  watch: {
+    $route: {
+      handler (to, old) {
+        if (
+          old?.name !== to.name ||
+          JSON.stringify(old?.params) !== JSON.stringify(to.params)
+        ) { this.updateEntity(to) }
+      },
+      immediate: true
+    }
   },
 
   methods: {
