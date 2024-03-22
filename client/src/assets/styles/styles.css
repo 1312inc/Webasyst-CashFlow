@@ -112,7 +112,7 @@ body.modal {
 .c-list .c-item.c-transaction-group .userpic { position: relative; z-index: 1; }
 .c-list .c-item .c-unfold-helper-icon { opacity: 0; }
 .c-list .c-item .c-item-border { border-top: 1px solid var(--border-color-soft); padding: 0.6125rem 0; }
-.c-list .c-item .c-item-amount { text-align: right; min-width: 100px; overflow: hidden; }
+.c-list .c-item .c-item-amount { text-align: right; max-width: 100%; overflow: hidden; }
 .c-list .c-item:first-child .c-item-border { border: none; }
 .c-list .c-item:hover .c-unfold-helper-icon { opacity: 1; }
 .c-item .userpic {display: flex; justify-content: center; align-items: center;}
