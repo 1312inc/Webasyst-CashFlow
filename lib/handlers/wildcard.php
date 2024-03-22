@@ -20,12 +20,6 @@ return [
         'method' => ['fileUploaded'],
     ],
     [
-        'event_app_id' => 'cash',
-        'event' => 'backend_transactions_export',
-        'class' => 'cashBackendTransactionsExport',
-        'method' => ['execute'],
-    ],
-    [
         'event_app_id' => 'contacts',
         'event' => 'delete',
         'class' => 'cashContactsDeleteListener',

@@ -6,7 +6,6 @@
 final class cashEventStorage
 {
     public const WA_BACKEND_IMPORT_FILE_UPLOADED = 'backend_import.file_uploaded';
-    public const WA_BACKEND_TRANSACTIONS_EXPORT  = 'backend_transactions_export';
     public const WA_REPORTS_MENU_ITEM = 'backend_reports_menu_item';
     public const WA_REPORTS_HANDLE = 'backend_reports_handle';
 
