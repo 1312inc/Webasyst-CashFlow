@@ -254,7 +254,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         /** @var cashApiTransactionResponseDto $_transaction */
         foreach ($transactions as $_transaction) {
             if (self::getPluginIdByExternalSource($_transaction->external_source)) {
-                $result[] = new cashEventApiTransactionExternalInfoTinkoffHandler($_transaction->id, $_transaction->external_source);
+                $result[] = new cashEventApiTransactionExternalInfoTinkoffHandler($_transaction->external_source);
             }
         }
 
