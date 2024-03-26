@@ -13,6 +13,6 @@ return array(
     'import_api' => true,
     'custom_settings' => true,
     'handlers' => [
-        cashEventStorage::API_TRANSACTION_RESPONSE_EXTERNAL_DATA => 'cashEventApiTransactionExternalInfoTinkoffHandler'
+        'api_transaction_response_external_data' => 'cashEventApiTransactionExternalInfoTinkoffHandler'
     ]
 );
