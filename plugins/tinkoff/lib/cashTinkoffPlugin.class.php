@@ -99,7 +99,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         }
 
         if (!empty($answer['error']) || !empty($result['errorMessage']) || !empty($answer['response']['error'])) {
-            $result += $answer['response'] + ['error' => $result['errorMessage']];
+            $result += ifset($answer, 'response', []) + ['error' => $result['errorMessage']];
         } else {
             $cache->set($result);
         }
@@ -240,5 +240,24 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     public static function getProfiles()
     {
         return (array) wa()->getPlugin('tinkoff')->getSettings('profiles');
+    }
+
+    /**
+     * @param $transactions
+     * @param $event_name
+     * @return array
+     */
+    public function cashEventApiTransactionExternalInfoTinkoffHandler($transactions, $event_name = null)
+    {
+        $result = [];
+
+        /** @var cashApiTransactionResponseDto $_transaction */
+        foreach ($transactions as $_transaction) {
+            if (self::getPluginIdByExternalSource($_transaction->external_source)) {
+                $result[] = new cashEventApiTransactionExternalInfoTinkoffHandler($_transaction->id, $_transaction->external_source);
+            }
+        }
+
+        return $result;
     }
 }

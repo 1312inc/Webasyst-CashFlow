@@ -50,7 +50,7 @@ abstract class cashBusinessPlugin extends waPlugin
      * @param $external_source
      * @return string
      */
-    private static function getPluginIdByExternalSource($external_source = '')
+    protected static function getPluginIdByExternalSource($external_source = '')
     {
         if (empty($external_source) || !$source = explode('_', $external_source)) {
             return '';
