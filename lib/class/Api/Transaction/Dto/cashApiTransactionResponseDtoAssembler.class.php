@@ -38,8 +38,6 @@ class cashApiTransactionResponseDtoAssembler extends cashApiTransactionResponseD
             $dto->create_contact = $this->getContactData($dto->create_contact_id);
             if ($dto->contractor_contact_id) {
                 $dto->contractor_contact = $this->getContactData($dto->contractor_contact_id);
-            } else {
-                $dto->contractor_contact = cashBusinessPlugin::getBankData($dto);
             }
 
             if (!empty($dto->external_data['id']) && $dto->external_source === 'shop') {

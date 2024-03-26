@@ -177,11 +177,6 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         return $result;
     }
 
-    public function getCircleIcon()
-    {
-        return '/wa-apps/cash/plugins/tinkoff/img/tinkoff_circle.svg';
-    }
-
     /**
      * @param $transactions
      * @return array
