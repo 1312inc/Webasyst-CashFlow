@@ -26,8 +26,14 @@ export default {
         this.$store
           .dispatch(`${entity}/update`, this.model)
           .then(() => {
+            // FIX: Reload page in case of changing type of category / #106.306
+            if (this.isModeUpdate && entity === 'category' && this.model.type !== this.editedItem.type) {
+              location.reload()
+              return
+            }
             this.close({ action: 'afterSubmit', entity: { type: entity, name: this.model.name } })
           })
+          .catch(() => {})
           .finally(() => {
             this.controlsDisabled = false
           })
@@ -42,6 +48,7 @@ export default {
           .then(() => {
             this.close({ action: 'afterDelete', entity: { type: entity, name: this.model.name } })
           })
+          .catch(() => {})
           .finally(() => {
             this.controlsDisabled = false
           })
