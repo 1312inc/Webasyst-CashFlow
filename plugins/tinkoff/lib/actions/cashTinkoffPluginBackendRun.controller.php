@@ -199,7 +199,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
                 ->fetchAssoc();
 
             $sum_amount = (float) ifset($data_source, 'sum_amount', 0);
-            $min_datetime = (new DateTime(ifset($data_source, 'datetime', date('Y-m-d H:i:s'))))->modify('- 1 second');
+            $min_datetime = (new DateTime(ifset($data_source, 'datetime', date('Y-m-d H:i:s'))))->modify('- 1 day');
             $amount = $balance_now - $sum_amount;
             if ($amount) {
                 $transaction_model->insert([
