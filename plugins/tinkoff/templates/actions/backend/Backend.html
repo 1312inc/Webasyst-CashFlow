@@ -118,7 +118,7 @@
     }
 
     function renderText(text) {
-        $('.js-info').text(text);
+        $('.js-info').html(text);
     }
 
     let url = '?plugin=tinkoff&action=run';
@@ -145,6 +145,7 @@
         delay = delay || 2000;
         setTimeout(function () {
             $.post(url, { processid: process_id, profile_id: profile_id }, function (response) {
+                renderText('');
                 if (!response) {
                     step(profile_id, 3000, $progressbar);
                 } else if (response && response.error) {
@@ -156,6 +157,7 @@
                     }
                     setTimeout(function () {
                         let cash_account = '{$profile.cash_account|default: 1}';
+                        renderText('');
                         $('.progressbar').hide();
                         window.location = window.appState.baseUrl +'account/'+ cash_account +'?show_success_import_hint=1';
                     }, 1000);
@@ -212,7 +214,9 @@
         $bar.find('.progressbar-text').css({ 'color':'black', 'font-weight': 'bold' });
 
         $that.addClass('hidden');
+        renderText('<div class="spinner custom-mr-4"> </div>[`Подключение...`]');
         $.post(url, form_data, function (response) {
+            renderText('');
             if (response && response.error) {
                 $('.js-error-msg-'+ profile_id).text(response.error);
             } else if (response && response.processid) {

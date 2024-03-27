@@ -152,13 +152,15 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             $progress = ($this->data['counter'] + $this->data['skipped']) * 100 / $this->data['count_all_statements'];
         }
 
+        $html  = sprintf_wp('Импортировано: %s/%s, пропущено: %s', $this->data['counter'], $this->data['count_all_statements'], $this->data['skipped']);
+        $html .= ' <div class="spinner custom-ml-4">';
         $this->response([
             'processid'   => $this->processId,
             'ready'       => $this->isDone(),
             'progress'    => number_format($progress),
             'error'       => ifset($this->data, 'error', null),
             'warning'     => ifset($this->data, 'warning', null),
-            'text_legend' => sprintf_wp('Импортировано: %s/%s, пропущено: %s', $this->data['counter'], $this->data['count_all_statements'], $this->data['skipped'])
+            'text_legend' => $html
         ]);
     }
 
