@@ -94,7 +94,7 @@ abstract class cashBusinessPlugin extends waPlugin
                     'date'              => date('Y-m-d', $date_operation),
                     'datetime'          => date('Y-m-d H:i:s', $date_operation),
                     'account_id'        => $this->cash_account_id,
-                    'category_id'       => (int) ifset($_transaction, 'category', ($is_credit ? -2 : -1)),
+                    'category_id'       => (int) ifset($_transaction, 'category_id', ($is_credit ? -2 : -1)),
                     'amount'            => $amount,
                     'description'       => ifset($_transaction, 'description', ''),
                     'create_contact_id' => $create_contact_id,
