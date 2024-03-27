@@ -17,6 +17,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             'warning'       => null,
             'statements'    => [],
             'counter'       => 0,
+            'skipped'       => 0,
             'cursor'        => '',
             'count_all_statements' => 0,
         ];
@@ -109,6 +110,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $transactions = $this->plugin()->addTransactionsByAccount($this->data['operations']);
         $this->data['statements'] = $transactions;
         $this->data['counter'] += count($transactions);
+        $this->data['skipped'] += count($this->data['operations']) - count($transactions);
         unset($this->data['operations']);
 
         return true;
@@ -119,7 +121,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
      */
     protected function isDone()
     {
-        return $this->data['counter'] >= $this->data['count_all_statements'];
+        return ($this->data['counter'] + $this->data['skipped']) >= $this->data['count_all_statements'];
     }
 
     /**
@@ -131,6 +133,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     {
         $this->info();
         $this->correctiveOperation();
+        $this->plugin()->saveProfile($this->data['profile_id'], ['update_date' => date('Y-m-d H:i:s')]);
         if ($this->getRequest()::post('cleanup')) {
             return true;
         }
@@ -146,7 +149,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     {
         $progress = 0;
         if ($this->data['count_all_statements']) {
-            $progress = $this->data['counter'] * 100 / $this->data['count_all_statements'];
+            $progress = ($this->data['counter'] + $this->data['skipped']) * 100 / $this->data['count_all_statements'];
         }
 
         $this->response([
@@ -155,7 +158,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             'progress'    => number_format($progress),
             'error'       => ifset($this->data, 'error', null),
             'warning'     => ifset($this->data, 'warning', null),
-            'text_legend' => sprintf_wp('Импортировано: %s/%s', $this->data['counter'], $this->data['count_all_statements'])
+            'text_legend' => sprintf_wp('Импортировано: %s/%s, пропущено: %s', $this->data['counter'], $this->data['count_all_statements'], $this->data['skipped'])
         ]);
     }
 

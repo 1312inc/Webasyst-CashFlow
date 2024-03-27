@@ -36,6 +36,7 @@
                     [`Импорт операций`]
                 </div>
                 <div class="value">
+                    {if empty($profile.update_date)}
                     <div class="custom-mb-4">
                         <label>
                             <span class="wa-radio">
@@ -58,33 +59,26 @@
                             <span class="icon"><i class="fas fa-calendar"></i></span>
                         </span>
                     </div>
+                    {else}
+                    <input
+                        type="button"
+                        id="cash-tinkoff-update"
+                        class="button green"
+                        value="[`Обновить`]"
+                    />
+                    <input type="hidden" name="import_period" value="{$profile.update_date}"/>
+                    {/if}
                 </div>
             </div>
 
-            {if !empty($profile.enable_import)}
-            <div class="field">
-                <div class="name"></div>
-                <div class="value">
-                    <p class="small">
-                        <em>
-                            {sprintf('[`Чтобы обновить уже импортированные транзакции, необходимо вручную удалить соответствующие им операции и %sперезапустить импорт заново%s.`]', '<a href="?plugin=tinkoff&action=reset" class="js-reset-import">', '</a>')}
-                        </em>
-                    </p>
-                </div>
-            </div>
-            {else}
             <div class="field">
                 <div class="name"></div>
                 <div class="value">
                     <div class="progressbar" id="progressbar-{$profile_id}"></div>
                     <div class="js-info hint"></div>
                     <div class="error-msg state-error custom-pt-8 js-error-msg-{$profile_id}"></div>
-                </div>
-            </div>
 
-            <div class="field">
-                <div class="name"></div>
-                <div class="value">
+                    {if empty($profile.enable_import)}
                     <input
                         type="button"
                         id="cash-tinkoff-start"
@@ -92,9 +86,15 @@
                         value="[`Импортировать операции из банка`]"
                         {if empty($profile.tinkoff_id)}disabled{/if}
                     />
+                    {else}
+                    <p class="small">
+                        <em>
+                            {sprintf('[`Чтобы обновить уже импортированные транзакции, необходимо вручную удалить соответствующие им операции и %sперезапустить импорт заново%s.`]', '<a href="?plugin=tinkoff&action=reset" class="js-reset-import">', '</a>')}
+                        </em>
+                    </p>
+                    {/if}
                 </div>
             </div>
-            {/if}
 
             <div class="field custom-mb-12">
                 <div class="name"></div>
@@ -124,7 +124,7 @@
     let url = '?plugin=tinkoff&action=run';
     let profile_id = {$profile_id};
     let process_id = undefined;
-    let $start_button = $('#cash-tinkoff-start');
+    let $start_button = $('#cash-tinkoff-start, #cash-tinkoff-update');
     let datepicker_options = {
         changeMonth: true,
         changeYear: true,

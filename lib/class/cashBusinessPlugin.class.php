@@ -74,15 +74,23 @@ abstract class cashBusinessPlugin extends waPlugin
     protected function addTransactionsByAccount($transactions)
     {
         if (!empty($transactions) && is_array($transactions)) {
+            $add_transactions = [];
             $now = date('Y-m-d H:i:s');
             $transaction_model = cash()->getModel(cashTransaction::class);
             $create_contact_id = wa()->getUser()->getId();
             $external_source = $this->getExternalSource();
-            foreach ($transactions as &$_transaction) {
+            $hashs = array_column($transactions, 'hash');
+            $transaction_in_db = $transaction_model->getByField('external_hash', $hashs, true);
+            $skip_hashs = array_column($transaction_in_db, 'external_hash');
+            foreach ($transactions as $_transaction) {
+                $external_hash = ifset($_transaction, 'hash', '');
+                if (in_array($external_hash, $skip_hashs)) {
+                    continue;
+                }
                 $amount = (float) ifset($_transaction, 'amount', 0);
                 $is_credit = $amount > 0;
                 $date_operation = strtotime(ifset($_transaction, 'date_operation', $now));
-                $_transaction = [
+                $add_transactions[] = [
                     'date'              => date('Y-m-d', $date_operation),
                     'datetime'          => date('Y-m-d H:i:s', $date_operation),
                     'account_id'        => $this->cash_account_id,
@@ -92,11 +100,14 @@ abstract class cashBusinessPlugin extends waPlugin
                     'create_contact_id' => $create_contact_id,
                     'create_datetime'   => $now,
                     'external_source'   => $external_source,
-                    'external_hash'     => ifset($_transaction, 'hash', '')
+                    'external_hash'     => $external_hash
                 ];
             }
-            $transaction_model->multipleInsert($transactions);
-            return $transactions;
+            if (!empty($add_transactions)) {
+                $transaction_model->multipleInsert($add_transactions);
+            }
+
+            return $add_transactions;
         }
 
         return [];
