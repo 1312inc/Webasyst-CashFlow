@@ -76,7 +76,7 @@ class cashCategorySaver extends cashEntitySaver
                 ->setName($createRequest->getName())
                 ->setType($createRequest->getType())
                 ->setGlyph($createRequest->getGlyph())
-                ->setIsProfit($createRequest->getIsProfit())
+                ->setIsProfit(($createRequest->getType() === cashShopTransactionFactory::INCOME ? 0 : $createRequest->getIsProfit()))
                 ->setColor($createRequest->getColor())
                 ->setCategoryParentId($createRequest->getParentCategoryId());
 
