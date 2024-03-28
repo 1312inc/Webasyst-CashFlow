@@ -11,7 +11,6 @@ return array(
     'version' => '0.0.1',
     'vendor' => 'webasyst',
     'import_api' => true,
-    'custom_settings' => true,
     'handlers' => [
         'api_transaction_response_external_data' => 'cashEventApiTransactionExternalInfoTinkoffHandler'
     ]

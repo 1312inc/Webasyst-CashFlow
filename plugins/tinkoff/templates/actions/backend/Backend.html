@@ -9,111 +9,24 @@
         <p>[`Импорт операций из «Тинькофф Бизнес» для юридических лиц (ООО, ИП) по <a href="https://www.tinkoff.ru/business/open-api/">API</a>.`]</p>
 
         <div class="fields">
-            <div class="field">
-                <div class="name">
-                    [`Тинькофф ID`]
-                </div>
-                <div class="value">
-                    {if empty($profile.tinkoff_id)}
-                        <a href="javascript:void(0);" class="button orange js-tinkoff-connect">[`Подключить`]</a>
-                    {/if}
-                    <div{if empty($profile.tinkoff_id)} class="hidden"{/if}>
-                        <strong>
-                            <i class="fas fa-check-circle text-green"></i> [`Подключено!`]
-                        </strong>
-                        <strong class="hint">
-                            [`Последний коннект:`] <span class="js-connect-date">{$profile.last_connect_date|escape|default:''}</span>
-                        </strong>
-                        <br>
-                        <span class="hint js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</span>
-                    </div>
-                    <input type="hidden" name="profile_id" value="{$profile_id}">
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="name">
-                    [`Импорт операций`]
-                </div>
-                <div class="value">
-                    {if empty($profile.update_date)}
-                    <div class="custom-mb-4">
-                        <label>
-                            <span class="wa-radio">
-                                <input type="radio" name="import_period" value="all" checked />
-                                <span></span>
-                            </span>
-                            [`All time`]
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            <span class="wa-radio">
-                                <input type="radio" name="import_period" value="" />
-                                <span></span>
-                            </span>
-                            [`Only orders paid after`]
-                        </label>
-                        <span class="input-with-inner-icon left">
-                            <input type="text" name="begin_import_period" class="shorter small" autocomplete="off"/>
-                            <span class="icon"><i class="fas fa-calendar"></i></span>
-                        </span>
-                    </div>
-                    {else}
-                    <input
-                        type="button"
-                        id="cash-tinkoff-update"
-                        class="button green"
-                        value="[`Обновить`]"
-                    />
-                    <input type="hidden" name="import_period" value="{$profile.update_date}"/>
-                    {/if}
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="name"></div>
-                <div class="value">
-                    <div class="progressbar" id="progressbar-{$profile_id}"></div>
-                    <div class="js-info hint"></div>
-                    <div class="error-msg state-error custom-pt-8 js-error-msg-{$profile_id}"></div>
-
-                    {if empty($profile.enable_import)}
-                    <input
-                        type="button"
-                        id="cash-tinkoff-start"
-                        class="button green"
-                        value="[`Импортировать операции из банка`]"
-                        {if empty($profile.tinkoff_id)}disabled{/if}
-                    />
-                    {else}
-                    <p class="small">
-                        <em>
-                            {sprintf('[`Чтобы обновить уже импортированные транзакции, необходимо вручную удалить соответствующие им операции и %sперезапустить импорт заново%s.`]', '<a href="?plugin=tinkoff&action=reset" class="js-reset-import">', '</a>')}
-                        </em>
-                    </p>
-                    {/if}
-                </div>
-            </div>
-
-            <div class="field custom-mb-12">
-                <div class="name"></div>
-                <div class="value">
-                    <hr class="custom-mt-16" />
-                    <i class="fas fa-cog text-light-gray"></i>
-                    <a href="{$settings_url}">[`Настройка соответствия счетов и статей`]</a>
-                </div>
-            </div>
-
+            {foreach $profiles as $_profile_id => $_profile}
+                {$is_hidden = $_profile_id != key($profiles)}
+                {include file="./BackendSettingsProfile.html" profile_id=$_profile_id profile=$_profile is_hidden=$is_hidden inline}
+            {foreachelse}
+                {include file="./BackendSettingsProfile.html" inline}
+            {/foreach}
         </div>
     </div>
 </div>
 
 <script>
-    function saveProfile(profile) {
+    function saveProfile(profile, callback) {
         profile.profile_id = profile_id;
         $.get('?plugin=tinkoff&module=profileEdit', profile, function (data) {
             console.log('profileEdit', data);
+            if (typeof callback === 'function') {
+                callback();
+            }
         });
     }
 
@@ -156,7 +69,7 @@
                         renderText(response.text_legend);
                     }
                     setTimeout(function () {
-                        let cash_account = '{$profile.cash_account|default: 1}';
+                        let cash_account = $('select[name="profiles['+ profile_id +'][cash_account]"]').val();
                         renderText('');
                         $('.progressbar').hide();
                         window.location = window.appState.baseUrl +'account/'+ cash_account +'?show_success_import_hint=1';
@@ -204,7 +117,29 @@
     });
 
     $start_button.on('click', function () {
+        let error = false;
         let $that = $(this);
+        let $account_number = $('select[name="profiles['+ profile_id +'][account_number]"]');
+        let $cash_account = $('select[name="profiles['+ profile_id +'][cash_account]"]');
+
+        if (!$account_number.val()) {
+            error = true;
+            $account_number.addClass('state-error');
+            setTimeout(function () {
+                $account_number.removeClass('state-error')
+            }, 1500);
+        }
+        if (!$cash_account.val()) {
+            error = true;
+            setTimeout(function () {
+                $cash_account.removeClass('state-error');
+            }, 1500);
+            $cash_account.addClass('state-error');
+        }
+        if (error) {
+            return;
+        }
+
         let $bar = $('#progressbar-'+ profile_id).waProgressbar({
             'color': '#ffdd2e',
             'text-inside': true
@@ -215,25 +150,26 @@
 
         $that.addClass('hidden');
         renderText('<div class="spinner custom-mr-4"> </div>[`Подключение...`]');
-        $.post(url, form_data, function (response) {
-            renderText('');
-            if (response && response.error) {
-                $('.js-error-msg-'+ profile_id).text(response.error);
-            } else if (response && response.processid) {
-                process_id = response.processid;
-                saveProfile({ 'enable_import': true });
-                if (response.progress) {
-                    instance.set({ percentage: response.progress });
+        saveProfile(form_data, function () {
+            $.post(url, form_data, function (response) {
+                renderText('');
+                if (response && response.error) {
+                    $('.js-error-msg-'+ profile_id).text(response.error);
+                } else if (response && response.processid) {
+                    process_id = response.processid;
+                    if (response.progress) {
+                        instance.set({ percentage: response.progress });
+                    }
+                    if (response.text_legend) {
+                        renderText(response.text_legend);
+                    }
+                    step(profile_id, null, instance);
+                } else {
+                    $('.js-error-msg-'+ profile_id).text('Server error');
                 }
-                if (response.text_legend) {
-                    renderText(response.text_legend);
-                }
-                step(profile_id, null, instance);
-            } else {
+            }, 'json').error(function () {
                 $('.js-error-msg-'+ profile_id).text('Server error');
-            }
-        }, 'json').error(function () {
-            $('.js-error-msg-'+ profile_id).text('Server error');
+            });
         });
     });
 
@@ -279,5 +215,11 @@
                 }
             });
         })
+    });
+
+    $('.js-settings-show').on('click', function (e) {
+        e.preventDefault();
+        $(this).hide();
+        $('.js-settings-block').toggle('fast');
     });
 </script>

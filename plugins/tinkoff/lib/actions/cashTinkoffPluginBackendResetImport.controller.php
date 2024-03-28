@@ -24,10 +24,7 @@ class cashTinkoffPluginBackendResetImportController extends waJsonController
 
                 /** @var cashTinkoffPlugin $plugin */
                 $plugin = wa()->getPlugin('tinkoff')->setCashProfile($profile_id);
-                $plugin->saveProfile($profile_id, [
-                    'update_date' => '',
-                    'enable_import' => false
-                ]);
+                $plugin->saveProfile($profile_id, ['update_date' => '']);
                 $source = $plugin->getExternalSource();
                 cash()->getModel(cashTransaction::class)->deleteBySource($source);
             } else {

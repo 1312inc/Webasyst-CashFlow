@@ -15,7 +15,6 @@ class cashTinkoffPluginProfileEditController extends waJsonController
         $profiles = (array) waRequest::request('profiles', [], waRequest::TYPE_ARRAY);
         $profile_id = (int) waRequest::request('profile_id', $profile_id, waRequest::TYPE_INT);
         $tinkoff_id = waRequest::request('tinkoff_id', $tinkoff_id, waRequest::TYPE_STRING_TRIM);
-        $enable_import = waRequest::request('enable_import', null, waRequest::TYPE_STRING_TRIM);
         $last_connect_date = waRequest::request('last_connect_date', $last_connect_date, waRequest::TYPE_STRING_TRIM);
 
         if ($profile_id > 0) {
@@ -26,9 +25,6 @@ class cashTinkoffPluginProfileEditController extends waJsonController
 
             if (!is_null($tinkoff_id)) {
                 $data['tinkoff_id'] = $tinkoff_id;
-            }
-            if (!is_null($enable_import)) {
-                $data['enable_import'] = (bool) $enable_import;
             }
             if (!is_null($last_connect_date)) {
                 $data['last_connect_date'] = $last_connect_date;

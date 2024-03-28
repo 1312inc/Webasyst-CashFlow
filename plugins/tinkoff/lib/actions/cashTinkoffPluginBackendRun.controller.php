@@ -133,7 +133,9 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     {
         $this->info();
         $this->correctiveOperation();
-        $this->plugin()->saveProfile($this->data['profile_id'], ['update_date' => date('Y-m-d H:i:s')]);
+        if (empty($this->data['error'])) {
+            $this->plugin()->saveProfile($this->data['profile_id'], ['update_date' => date('Y-m-d H:i:s')]);
+        }
         if ($this->getRequest()::post('cleanup')) {
             return true;
         }
