@@ -817,9 +817,11 @@ export default {
       this.model.date = this.defaultDate
     }
 
-    if (this.transactionType === 'transfer') {
-      this.model.category_id = -1312
-    }
+    this.$watch('transactionType', (val) => {
+      if (val === 'transfer') {
+        this.model.category_id = -1312
+      }
+    }, { immediate: true })
 
     if (this.model.contractor_contact?.name || this.model.external?.id) {
       this.showContractorInput = true
