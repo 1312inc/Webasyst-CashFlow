@@ -1,178 +1,125 @@
-<div class="js-tab-content-{$profile_id}{if !empty($is_hidden)} hidden{/if}" data-profile-id="{$profile_id}">
-    <div class="field">
-        <div class="name">
-            [`Тинькофф ID`]
-        </div>
-        <div class="value">
-            {if empty($profile.tinkoff_id)}
-            <a href="javascript:void(0);" class="button orange js-tinkoff-connect">[`Подключить`]</a>
-            {/if}
-            <div{if empty($profile.tinkoff_id)} class="hidden"{/if}>
-                <strong>
-                    <i class="fas fa-check-circle text-green"></i> [`Подключено!`]
-                </strong>
-                <strong class="hint">
-                    [`Последний коннект:`] <span class="js-connect-date">{$profile.last_connect_date|escape|default:''}</span>
-                </strong>
-                <br>
-                <span class="hint js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</span>
-            </div>
-            <input type="hidden" name="profile_id" value="{$profile_id}">
-        </div>
+<input type="hidden" name="profile_id" value="{$_profile_id}"/>
+<div class="field">
+    <div class="name">
+        [`В счет`]
     </div>
-
-    <div class="field">
-        <div class="name">
-            [`Из счета`]
-        </div>
-        <div class="value">
-            {if !empty($account_numbers.error)}
-                {$error = $account_numbers.error}
-                {$account_numbers = []}
+    <div class="value">
+        <div class="wa-select">
+            <select name="profiles[{$profile_id}][cash_account]" autocomplete="off">
+            {if empty($profile.cash_account)}
+                <option value="" disabled selected>[`Не выбран`]</option>
             {/if}
-            <div class="wa-select">
-                <select name="profiles[{$profile_id}][account_number]" autocomplete="off">
-                {if empty($profile.account_number)}
-                    <option value="" disabled selected>[`Не выбран`]</option>
-                {/if}
-                {foreach $account_numbers as $_account_number => $_name}
-                    <option value="{$_account_number}"{if !empty($profile.account_number) && $profile.account_number == $_account_number} selected{/if}>{$_name}</option>
-                {/foreach}
-                </select>
-            </div>
-            <div class="error-msg state-error custom-pt-8">
-                {if !empty($error)}[`Получение списка счетов`]: {$error|escape} {$error.error_description|escape|default:''}{/if}
-            </div>
-            <p class="hint">
-                [`Счет из которого производится импорт`]
-            </p>
+            {foreach $cash_accounts as $_cash_account}
+                <option value="{$_cash_account.id}"{if $profile.cash_account|default:'0' == $_cash_account.id} selected{/if}>{$_cash_account.name}</option>
+            {/foreach}
+            </select>
         </div>
+        <p class="hint">
+            [`Счет в который производится импорт`]
+        </p>
     </div>
+</div>
 
+<div class="fields-group js-settings-block" style="display: none">
+    <h5 class="heading">[`Маппинг категорий`]</h5>
+
+    {foreach $operations as $_name => $_desc}
+    {$selected = $profile['mapping'][$_name]|default: '0'}
     <div class="field">
-        <div class="name">
-            [`В счет`]
-        </div>
+        <div class="name">{$_desc}</div>
         <div class="value">
             <div class="wa-select">
-                <select name="profiles[{$profile_id}][cash_account]" autocomplete="off">
-                {if empty($profile.cash_account)}
-                    <option value="" disabled selected>[`Не выбран`]</option>
-                {/if}
-                {foreach $cash_accounts as $_cash_account}
-                    <option value="{$_cash_account.id}"{if $profile.cash_account|default:'0' == $_cash_account.id} selected{/if}>{$_cash_account.name}</option>
-                {/foreach}
+                <select name="profiles[{$profile_id}][mapping][{$_name}]">
+                    <option value="" disabled>--[`ДОХОД`]--</option>
+                    {foreach $categories as $_category}
+                        {if $_category.type == 'income'}
+                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
+                        {/if}
+                    {/foreach}
+                    <option value="" disabled>--[`РАСХОД`]--</option>
+                    {foreach $categories as $_category}
+                        {if $_category.type == 'expense'}
+                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
+                        {/if}
+                    {/foreach}
                 </select>
             </div>
-            <p class="hint">
-                [`Счет в который производится импорт`]
-            </p>
         </div>
     </div>
+    {/foreach}
+</div>
 
-    <div class="fields-group js-settings-block" style="display: none">
-        <h5 class="heading">[`Маппинг категорий`]</h5>
-
-        {foreach $operations as $_name => $_desc}
-        {$selected = $profile['mapping'][$_name]|default: '0'}
-        <div class="field">
-            <div class="name">{$_desc}</div>
-            <div class="value">
-                <div class="wa-select">
-                    <select name="profiles[{$profile_id}][mapping][{$_name}]">
-                        <option value="" disabled>--[`ДОХОД`]--</option>
-                        {foreach $categories as $_category}
-                            {if $_category.type == 'income'}
-                                <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
-                            {/if}
-                        {/foreach}
-                        <option value="" disabled>--[`РАСХОД`]--</option>
-                        {foreach $categories as $_category}
-                            {if $_category.type == 'expense'}
-                                <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
-                            {/if}
-                        {/foreach}
-                    </select>
-                </div>
-            </div>
-        </div>
-        {/foreach}
+<div class="field">
+    <div class="name">
+        [`Импорт операций`]
     </div>
-
-    <div class="field">
-        <div class="name">
-            [`Импорт операций`]
-        </div>
-        <div class="value">
-            {if empty($profile.update_date)}
-                <div class="custom-mb-4">
-                    <label>
-                        <span class="wa-radio">
-                            <input type="radio" name="import_period" value="all" checked />
-                            <span></span>
-                        </span>
-                        [`All time`]
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        <span class="wa-radio">
-                            <input type="radio" name="import_period" value="" />
-                            <span></span>
-                        </span>
-                        [`Only orders paid after`]
-                    </label>
-                    <span class="input-with-inner-icon left">
-                        <input type="text" name="begin_import_period" class="shorter small" autocomplete="off"/>
-                        <span class="icon"><i class="fas fa-calendar"></i></span>
+    <div class="value">
+        {if empty($profile.update_date)}
+            <div class="custom-mb-4">
+                <label>
+                    <span class="wa-radio">
+                        <input type="radio" name="profiles[{$profile_id}][import_period]" value="all" checked />
+                        <span></span>
                     </span>
-                </div>
-            {else}
-                <input
-                    type="button"
-                    id="cash-tinkoff-update"
-                    class="button green"
-                    value="[`Обновить`]"
-                />
-                <p class="small">
-                    <em>
-                        {sprintf('[`Чтобы обновить уже импортированные транзакции, необходимо вручную удалить соответствующие им операции и %sперезапустить импорт заново%s.`]', '<a href="?plugin=tinkoff&action=reset" class="js-reset-import">', '</a>')}
-                    </em>
-                </p>
-                <input type="hidden" name="import_period" value="{$profile.update_date}"/>
-            {/if}
-        </div>
-    </div>
-
-    {if empty($profile.update_date)}
-    <div class="field">
-        <div class="name"></div>
-        <div class="value">
+                    [`All time`]
+                </label>
+            </div>
+            <div>
+                <label>
+                    <span class="wa-radio">
+                        <input type="radio" name="profiles[{$profile_id}][import_period]" value="" />
+                        <span></span>
+                    </span>
+                    [`Only orders paid after`]
+                </label>
+                <span class="input-with-inner-icon left">
+                    <input type="text" name="profiles[{$profile_id}][begin_import_period]" class="shorter small" autocomplete="off"/>
+                    <span class="icon"><i class="fas fa-calendar"></i></span>
+                </span>
+            </div>
+        {else}
             <input
                 type="button"
-                id="cash-tinkoff-start"
-                class="button green"
-                value="[`Импортировать операции из банка`]"
-                {if empty($profile.tinkoff_id)}disabled{/if}
+                class="button green js-cash-tinkoff-update"
+                value="[`Обновить`]"
             />
-        </div>
+            <p class="small">
+                <em>
+                    {sprintf('[`Чтобы обновить уже импортированные транзакции, необходимо вручную удалить соответствующие им операции и %sперезапустить импорт заново%s.`]', "<a href=\"?plugin=tinkoff&action=reset&profile_id=`$profile_id`\" class=\"js-reset-import\">", '</a>')}
+                </em>
+            </p>
+            <input type="hidden" name="profiles[{$profile_id}][import_period]" value="{$profile.update_date}"/>
+        {/if}
     </div>
-    {/if}
+</div>
 
-    <hr class="custom-mt-16" />
-    <div class="field custom-mb-12">
-        <div class="name"></div>
-        <div class="value">
-            <a class="js-settings-show">[`Показать все настройки`]</a>
-        </div>
+{if empty($profile.update_date)}
+<div class="field">
+    <div class="name"></div>
+    <div class="value">
+        <input
+            type="button"
+            class="button green js-cash-tinkoff-start"
+            value="[`Импортировать операции из банка`]"
+            {if empty($profile.tinkoff_id)}disabled{/if}
+        />
     </div>
+</div>
+{/if}
 
-    <div class="field">
-        <div class="name"></div>
-        <div class="value">
-            <div class="progressbar" id="progressbar-{$profile_id}"></div>
-            <div class="js-info hint"></div>
-            <div class="error-msg state-error custom-pt-8 js-error-msg-{$profile_id}"></div>
-        </div>
+<hr class="custom-mt-16" />
+<div class="field custom-mb-12">
+    <div class="name"></div>
+    <div class="value">
+        <a class="js-settings-show">[`Показать все настройки`]</a>
+    </div>
+</div>
+
+<div class="field">
+    <div class="name"></div>
+    <div class="value">
+        <div class="progressbar js-progressbar"></div>
+        <div class="js-info hint"></div>
+        <div class="error-msg state-error custom-pt-8 js-error-msg"></div>
     </div>
 </div>

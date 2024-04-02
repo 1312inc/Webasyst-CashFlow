@@ -15,32 +15,19 @@ class cashTinkoffPluginBackendAction extends waViewAction
 
     public function execute()
     {
-        $account_numbers = [];
-
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
         $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
         $cash_accounts = cash()->getModel(cashAccount::class)->getAllActiveForContact(wa()->getUser());
-        $accounts = $plugin->getAccounts();
-        if (empty($accounts['error'])) {
-            foreach ($accounts as $_account) {
-                if (isset($_account['accountNumber'], $_account['name'])) {
-                    $account_numbers[$_account['accountNumber']] = $_account['name'].($_account['accountNumber'] ? ' ('.$_account['accountNumber'].')' : '');
-                }
-            }
-        } else {
-            $account_numbers = $accounts;
-        }
 
-        $profiles = cashTinkoffPlugin::getProfiles();
+        $plugin_settings = $plugin->getSettings();
+        $profiles = ifset($plugin_settings, 'profiles', []);
         $this->view->assign([
-            'profile_id'      => key($profiles),
-            'profile'         => ifset($profiles, key($profiles), []),
+            'current_profile_id' => ifset($plugin_settings, 'current_profile_id', key($profiles)),
             'profiles'        => $profiles,
             'operations'      => $plugin->getConfigParam('operations'),
             'categories'      => $categories,
-            'cash_accounts'   => $cash_accounts,
-            'account_numbers' => $account_numbers
+            'cash_accounts'   => $cash_accounts
         ]);
     }
 }

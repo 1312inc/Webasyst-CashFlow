@@ -1,4 +1,14 @@
-{$profile_id = $profile_id|default:1}
+{$profile_id = $current_profile_id|default:1}
+{$profile = ifset($profiles, $profile_id, [])}
+
+{function name="render_account" _account=[]}
+    <strong>{$_account.company|escape|default:''}</strong>
+    <br>
+    <span class="hint">
+        {$_account.account_description|escape|default:''}
+        {$_account.account_number|escape|default:''}
+    </span>
+{/function}
 
 <div id="cash-import-page" class="article wide">
     <div class="article-body">
@@ -8,10 +18,57 @@
 
         <p>[`Импорт операций из «Тинькофф Бизнес» для юридических лиц (ООО, ИП) по <a href="https://www.tinkoff.ru/business/open-api/">API</a>.`]</p>
 
-        <div class="fields">
+        <div class="fields" id="js-profiles">
+            <div class="field">
+                <div class="name">[`Тинькофф ID`]</div>
+                <div class="value">
+                    <div class="custom-mb-8{if empty($profile.tinkoff_id)} hidden{/if}">
+                        <strong>
+                            <i class="fas fa-check-circle text-green"></i> [`Подключено!`]
+                        </strong>
+                        <strong class="hint">
+                            [`Последний коннект:`] <span class="js-connect-date">{$profile.last_connect_date|escape|default:''}</span>
+                        </strong>
+                        <br>
+                        <span class="hint js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</span>
+                    </div>
+                    <div class="dropdown" id="js-dropdown" style="width: 250px;{if empty($profiles)} display: none{/if}">
+                        <button class="dropdown-toggle button outlined" type="button" style="text-align: left">
+                            {if isset($profiles[$profile_id])}
+                                {render_account _account=$profiles[$profile_id]}
+                            {/if}
+                        </button>
+                        <div class="dropdown-body">
+                            <ul class="menu">
+                                {foreach $profiles as $_profile_id => $_profile}
+                                <li>
+                                    <div class="custom-ml-16 custom-my-4">
+                                        <a href="javascript:void(0);" data-profile-id="{$_profile_id}">
+                                            {render_account _account=$_profile}
+                                        </a>
+                                    </div>
+                                </li>
+                                {/foreach}
+                                <li>
+                                    <a href="javascript:void(0);" class="button white js-tinkoff-connect disabled">+ [`Подключить`]</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    {if empty($profiles)}
+                        <button class="button orange js-tinkoff-connect" type="button">[`Подключить`]</button>
+                    {else}
+                        <p class="hint">[`Счет из которого производится импорт`]</p>
+                    {/if}
+                    <div class="error-msg state-error"></div>
+                </div>
+            </div>
+
             {foreach $profiles as $_profile_id => $_profile}
                 {$is_hidden = $_profile_id != key($profiles)}
+            <div class="custom-mt-16 js-tab-content-{$_profile_id}{if $is_hidden} hidden{/if}">
                 {include file="./BackendSettingsProfile.html" profile_id=$_profile_id profile=$_profile is_hidden=$is_hidden inline}
+            </div>
             {foreachelse}
                 {include file="./BackendSettingsProfile.html" inline}
             {/foreach}
@@ -31,13 +88,15 @@
     }
 
     function renderText(text) {
-        $('.js-info').html(text);
+        $('.js-tab-content-'+ profile_id).find('.js-info').html(text);
     }
 
     let url = '?plugin=tinkoff&action=run';
     let profile_id = {$profile_id};
+    let profiles = {$profiles|default:null|json_encode};
     let process_id = undefined;
-    let $start_button = $('#cash-tinkoff-start, #cash-tinkoff-update');
+    let $start_button = $('.js-cash-tinkoff-start, .js-cash-tinkoff-update');
+    let $dropdown_button = $('#js-dropdown');
     let datepicker_options = {
         changeMonth: true,
         changeYear: true,
@@ -62,7 +121,7 @@
                 if (!response) {
                     step(profile_id, 3000, $progressbar);
                 } else if (response && response.error) {
-                    $('.error-msg').text(response.error);
+                    $('.js-tab-content-'+ profile_id).find('.error-msg').text(response.error);
                 } else if (response && response.ready) {
                     $progressbar.set({ percentage: 100 });
                     if (response.text_legend) {
@@ -95,7 +154,7 @@
     $('.js-tinkoff-connect').on('click', function () {
         let $that = $(this);
         $that.addClass('disabled');
-        $.get('?plugin=tinkoff&module=auth', { 'ref': 'import' }, function (data) {
+        $.get('?plugin=tinkoff&module=auth', function (data) {
             if (data.data.redirect_url) {
                 window.location.href = data.data.redirect_url;
             } else if (data.data.error_description) {
@@ -117,35 +176,24 @@
     });
 
     $start_button.on('click', function () {
-        let error = false;
         let $that = $(this);
-        let $account_number = $('select[name="profiles['+ profile_id +'][account_number]"]');
+        let $tab_content = $('.js-tab-content-'+ profile_id);
         let $cash_account = $('select[name="profiles['+ profile_id +'][cash_account]"]');
 
-        if (!$account_number.val()) {
-            error = true;
-            $account_number.addClass('state-error');
-            setTimeout(function () {
-                $account_number.removeClass('state-error')
-            }, 1500);
-        }
         if (!$cash_account.val()) {
-            error = true;
             setTimeout(function () {
                 $cash_account.removeClass('state-error');
             }, 1500);
             $cash_account.addClass('state-error');
-        }
-        if (error) {
             return;
         }
 
-        let $bar = $('#progressbar-'+ profile_id).waProgressbar({
+        let $bar = $tab_content.find('.js-progressbar').waProgressbar({
             'color': '#ffdd2e',
             'text-inside': true
         });
         let instance = $bar.data('progressbar');
-        let form_data = $('#cash-import-page input, textarea, select').serialize();
+        let form_data = $tab_content.find('input, textarea, select').serialize();
         $bar.find('.progressbar-text').css({ 'color':'black', 'font-weight': 'bold' });
 
         $that.addClass('hidden');
@@ -154,7 +202,7 @@
             $.post(url, form_data, function (response) {
                 renderText('');
                 if (response && response.error) {
-                    $('.js-error-msg-'+ profile_id).text(response.error);
+                    $tab_content.find('.js-error-msg').text(response.error);
                 } else if (response && response.processid) {
                     process_id = response.processid;
                     if (response.progress) {
@@ -165,12 +213,30 @@
                     }
                     step(profile_id, null, instance);
                 } else {
-                    $('.js-error-msg-'+ profile_id).text('Server error');
+                    $tab_content.find('.js-error-msg').text('Server error');
                 }
             }, 'json').error(function () {
-                $('.js-error-msg-'+ profile_id).text('Server error');
+                $tab_content.find('.js-error-msg').text('Server error');
             });
         });
+    });
+
+    $dropdown_button.waDropdown({
+        items: '.menu > li a',
+        change: function (event, target) {
+            profile_id = $(target).data('profile-id');
+            $('[name="profile_id"]').val(profile_id);
+            $('[class*=js-tab-content').addClass('hidden');
+            $('.js-tab-content-'+ profile_id).removeClass('hidden');
+            if (profiles.hasOwnProperty(profile_id)) {
+                if (profiles[profile_id].hasOwnProperty('last_connect_date')) {
+                    $('.js-connect-date').text(profiles[profile_id]['last_connect_date']);
+                }
+                if (profiles[profile_id].hasOwnProperty('tinkoff_id')) {
+                    $('.js-tinkoff-id').text(profiles[profile_id]['tinkoff_id']);
+                }
+            }
+        }
     });
 
     $('.js-reset-import').on('click', function (e) {
@@ -220,6 +286,6 @@
     $('.js-settings-show').on('click', function (e) {
         e.preventDefault();
         $(this).hide();
-        $('.js-settings-block').toggle('fast');
+        $('.js-tab-content-'+ profile_id).find('.js-settings-block').toggle('fast');
     });
 </script>
