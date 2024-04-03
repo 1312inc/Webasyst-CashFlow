@@ -65,12 +65,14 @@
             </div>
 
             {foreach $profiles as $_profile_id => $_profile}
-                {$is_hidden = $_profile_id != key($profiles)}
+                {$is_hidden = $_profile_id != $profile_id}
             <div class="custom-mt-16 js-tab-content-{$_profile_id}{if $is_hidden} hidden{/if}">
                 {include file="./BackendSettingsProfile.html" profile_id=$_profile_id profile=$_profile is_hidden=$is_hidden inline}
             </div>
             {foreachelse}
-                {include file="./BackendSettingsProfile.html" inline}
+            <div class="js-tab-content-{$profile_id}">
+                {include file="./BackendSettingsProfile.html" profile_id=$profile_id inline}
+            </div>
             {/foreach}
         </div>
     </div>
@@ -110,7 +112,7 @@
         constrainInput: false,
         dateFormat: 'yy-mm-dd',
         onSelect: function (date) {
-            $('[name="import_period"]').prop('checked', true).val(date);
+            $(this).closest('div').find('[name$="[import_period]"]').prop('checked', true).val(date);
         }
     };
     let step = function (profile_id, delay, $progressbar) {
@@ -148,7 +150,7 @@
         }, delay);
     };
 
-    $date_picker = $('[name="begin_import_period"]');
+    $date_picker = $('[name$="[begin_import_period]"]');
     $date_picker.datepicker(datepicker_options);
 
     $('.js-tinkoff-connect').on('click', function () {
@@ -159,18 +161,8 @@
                 window.location.href = data.data.redirect_url;
             } else if (data.data.error_description) {
                 alert(data.data.error_description);
-            } else if (data.data.tinkoff_id) {
-                let $t_id = $('.js-tinkoff-id');
-                let dt = new Date();
-                let dformat = dt.toLocaleDateString().replace(/(\d+)\.(\d+)\.(\d+)/, '$3-$2-$1') +' '+ dt.toTimeString().replace(/(\d+):(\d+):(\d+).*/, '$1:$2:$3');
-
-                $t_id.closest('.hidden').removeClass('hidden');
-                $that.addClass('hidden');
-                $t_id.text(data.data.tinkoff_id);
-                $('.js-connect-date').text(dformat);
-                $start_button.attr('disabled', false);
-
-                saveProfile({ 'last_connect_date': dformat, 'tinkoff_id': data.data.tinkoff_id });
+            } else if (data.data.profiles) {
+                window.location.reload();
             }
         });
     });

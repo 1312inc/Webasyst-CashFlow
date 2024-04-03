@@ -45,14 +45,14 @@ class cashTinkoffPluginAuthController extends waJsonController
 
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
-        $max_id = (int) $plugin->getSettings('max_id');
+        $max_profile_id = (int) $plugin->getSettings('max_profile_id');
         $company = $plugin->getCompany();
         $accounts = $plugin->getAccounts();
         if (empty($accounts['error'])) {
             foreach ($accounts as $_account) {
                 if (isset($_account['accountNumber'], $_account['name'])) {
-                    $max_id++;
-                    $profiles[$max_id] = [
+                    $max_profile_id++;
+                    $profiles[$max_profile_id] = [
                         'company' => ifset($company, 'name', _wp('Без названия')),
                         'account_number' => ifset($_account, 'accountNumber', ''),
                         'account_description' => $_account['name'],
@@ -61,7 +61,7 @@ class cashTinkoffPluginAuthController extends waJsonController
                     ];
                 }
             }
-            $plugin->saveSettings(['max_id' => $max_id]);
+            $plugin->saveSettings(['max_profile_id' => $max_profile_id]);
         }
 
         $edit_controller = new cashTinkoffPluginProfileEditController();
