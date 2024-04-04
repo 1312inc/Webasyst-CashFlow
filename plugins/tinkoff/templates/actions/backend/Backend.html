@@ -89,6 +89,19 @@
         });
     }
 
+    function tinkoffConnect($button, param) {
+        $button.addClass('disabled');
+        $.get('?plugin=tinkoff&module=auth'+ (param ? '&add=1' : ''), function (data) {
+            if (data.data.redirect_url) {
+                window.location.href = data.data.redirect_url;
+            } else if (data.data.error_description) {
+                alert(data.data.error_description);
+            } else if (data.data.profiles) {
+                window.location.reload();
+            }
+        });
+    }
+
     function renderText(text) {
         $('.js-tab-content-'+ profile_id).find('.js-info').html(text);
     }
@@ -154,17 +167,11 @@
     $date_picker.datepicker(datepicker_options);
 
     $('.js-tinkoff-connect').on('click', function () {
-        let $that = $(this);
-        $that.addClass('disabled');
-        $.get('?plugin=tinkoff&module=auth', function (data) {
-            if (data.data.redirect_url) {
-                window.location.href = data.data.redirect_url;
-            } else if (data.data.error_description) {
-                alert(data.data.error_description);
-            } else if (data.data.profiles) {
-                window.location.reload();
-            }
-        });
+        tinkoffConnect($(this));
+    });
+
+    $('.js-tinkoff-add').on('click', function () {
+        tinkoffConnect($(this), true);
     });
 
     $start_button.on('click', function () {
@@ -217,15 +224,17 @@
         items: '.menu > li a',
         change: function (event, target) {
             profile_id = $(target).data('profile-id');
-            $('[name="profile_id"]').val(profile_id);
-            $('[class*=js-tab-content').addClass('hidden');
-            $('.js-tab-content-'+ profile_id).removeClass('hidden');
-            if (profiles.hasOwnProperty(profile_id)) {
-                if (profiles[profile_id].hasOwnProperty('last_connect_date')) {
-                    $('.js-connect-date').text(profiles[profile_id]['last_connect_date']);
-                }
-                if (profiles[profile_id].hasOwnProperty('tinkoff_id')) {
-                    $('.js-tinkoff-id').text(profiles[profile_id]['tinkoff_id']);
+            if (profile_id) {
+                $('[name="profile_id"]').val(profile_id);
+                $('[class*=js-tab-content').addClass('hidden');
+                $('.js-tab-content-'+ profile_id).removeClass('hidden');
+                if (profiles.hasOwnProperty(profile_id)) {
+                    if (profiles[profile_id].hasOwnProperty('last_connect_date')) {
+                        $('.js-connect-date').text(profiles[profile_id]['last_connect_date']);
+                    }
+                    if (profiles[profile_id].hasOwnProperty('tinkoff_id')) {
+                        $('.js-tinkoff-id').text(profiles[profile_id]['tinkoff_id']);
+                    }
                 }
             }
         }
