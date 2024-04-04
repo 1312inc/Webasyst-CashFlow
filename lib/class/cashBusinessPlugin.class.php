@@ -80,7 +80,9 @@ abstract class cashBusinessPlugin extends waPlugin
             $create_contact_id = wa()->getUser()->getId();
             $external_source = $this->getExternalSource();
             $hashs = array_column($transactions, 'hash');
-            $transaction_in_db = $transaction_model->getByField('external_hash', $hashs, true);
+            $transaction_in_db = $transaction_model
+                ->where('external_hash IN (?)', $hashs)
+                ->where('is_archived = 0')->fetchAll();
             $skip_hashs = array_column($transaction_in_db, 'external_hash');
             foreach ($transactions as $_transaction) {
                 $external_hash = ifset($_transaction, 'hash', '');
