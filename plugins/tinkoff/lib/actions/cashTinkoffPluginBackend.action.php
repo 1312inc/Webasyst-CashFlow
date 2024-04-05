@@ -24,10 +24,11 @@ class cashTinkoffPluginBackendAction extends waViewAction
         $profiles = ifset($plugin_settings, 'profiles', []);
         $this->view->assign([
             'current_profile_id' => ifset($plugin_settings, 'current_profile_id', key($profiles)),
-            'profiles'        => $profiles,
-            'operations'      => $plugin->getConfigParam('operations'),
-            'categories'      => $categories,
-            'cash_accounts'   => $cash_accounts
+            'profiles'           => $profiles,
+            'expense_operations' => $plugin->getConfigParam('expense'),
+            'income_operations'  => $plugin->getConfigParam('income'),
+            'categories'         => $categories,
+            'cash_accounts'      => $cash_accounts
         ]);
     }
 }

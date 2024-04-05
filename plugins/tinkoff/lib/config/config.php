@@ -2,8 +2,8 @@
 
 return [
     /** https://developer.tinkoff.ru/products/scenarios/account-info#категории-операций */
-    'operations' => [
-        /** Исходящие */
+    /** Исходящие */
+    'expense' => [
         'cardOperation'      => _wp('Оплата картой'),
         'cashOut'            => _wp('Снятие наличных'),
         'fee'                => _wp('Услуги банка'),
@@ -19,8 +19,10 @@ return [
         'creditPaymentOuter' => _wp('Погашение кредита'),
         'sme-c2c'            => _wp('С карты на карту'),
         'otherOut'           => _wp('Другое'),
-        'unspecifiedOut'     => _wp('Без категории'),
-        /** Входящие */
+        'unspecifiedOut'     => _wp('Без категории')
+    ],
+    /** Входящие (income) */
+    'income' => [
         'incomePeople'          => _wp('Входящие платежи'),
         'selfTransferInner'     => _wp('Перевод между своими счетами в Тинькофф Бизнес (входящий платеж)'),
         'selfOutcomeOuter'      => _wp('Перевод себе из другого банка (входящий платеж)'),

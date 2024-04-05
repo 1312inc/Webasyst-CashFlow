@@ -23,22 +23,35 @@
 <div class="fields-group js-settings-block" style="display: none">
     <h5 class="heading">[`Маппинг категорий`]</h5>
 
-    {foreach $operations as $_name => $_desc}
+    <h6 class="heading">[`Расходы`]</h6>
+    {foreach $expense_operations as $_name => $_desc}
     {$selected = $profile['mapping'][$_name]|default: '0'}
     <div class="field">
         <div class="name">{$_desc}</div>
         <div class="value">
             <div class="wa-select">
                 <select name="profiles[{$profile_id}][mapping][{$_name}]">
-                    <option value="" disabled>--[`ДОХОД`]--</option>
                     {foreach $categories as $_category}
-                        {if $_category.type == 'income'}
+                        {if $_category.type == 'expense'}
                             <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
                         {/if}
                     {/foreach}
-                    <option value="" disabled>--[`РАСХОД`]--</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    {/foreach}
+
+    <h6 class="heading">[`Доходы`]</h6>
+    {foreach $income_operations as $_name => $_desc}
+    {$selected = $profile['mapping'][$_name]|default: '0'}
+    <div class="field">
+        <div class="name">{$_desc}</div>
+        <div class="value">
+            <div class="wa-select">
+                <select name="profiles[{$profile_id}][mapping][{$_name}]">
                     {foreach $categories as $_category}
-                        {if $_category.type == 'expense'}
+                        {if $_category.type == 'income'}
                             <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
                         {/if}
                     {/foreach}
