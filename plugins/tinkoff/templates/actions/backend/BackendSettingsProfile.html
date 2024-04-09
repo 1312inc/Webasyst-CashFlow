@@ -25,12 +25,13 @@
 
     <h6 class="heading">[`Расходы`]</h6>
     {foreach $expense_operations as $_name => $_desc}
-    {$selected = $profile['mapping'][$_name]|default: '0'}
+    {$selected = $profile['mapping'][$_name]|default: cashTinkoffPlugin::AUTO_MAPPING_FLAG}
     <div class="field">
         <div class="name">{$_desc}</div>
         <div class="value">
             <div class="wa-select">
-                <select name="profiles[{$profile_id}][mapping][{$_name}]">
+                <select name="profiles[{$profile_id}][mapping][{$_name}]" autocomplete="off">
+                    <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">* [`Aвтопилот`]</option>
                     {foreach $categories as $_category}
                         {if $_category.type == 'expense'}
                             <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
@@ -44,12 +45,13 @@
 
     <h6 class="heading">[`Доходы`]</h6>
     {foreach $income_operations as $_name => $_desc}
-    {$selected = $profile['mapping'][$_name]|default: '0'}
+    {$selected = $profile['mapping'][$_name]|default: cashTinkoffPlugin::AUTO_MAPPING_FLAG}
     <div class="field">
         <div class="name">{$_desc}</div>
         <div class="value">
             <div class="wa-select">
-                <select name="profiles[{$profile_id}][mapping][{$_name}]">
+                <select name="profiles[{$profile_id}][mapping][{$_name}]" autocomplete="off">
+                    <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">* [`Aвтопилот`]</option>
                     {foreach $categories as $_category}
                         {if $_category.type == 'income'}
                             <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>

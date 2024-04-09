@@ -31,6 +31,16 @@ return array(
             'cash_category_category_parent_id_index' => 'category_parent_id',
         ),
     ),
+    'cash_data' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'sub_id' => array('varchar', 128, 'null' => 0),
+        'name' => array('varchar', 64, 'null' => 0),
+        'value' => array('mediumtext', 'null' => 0),
+        ':keys' => array(
+            'PRIMARY' => 'id',
+            'sub_id_index' => 'sub_id'
+        )
+    ),
     'cash_import' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
         'contact_id' => array('int', 11),

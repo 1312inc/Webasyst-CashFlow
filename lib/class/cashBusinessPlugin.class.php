@@ -2,6 +2,8 @@
 
 abstract class cashBusinessPlugin extends waPlugin
 {
+    const AUTO_MAPPING_FLAG = 'A';
+
     /** @var int ID счета */
     protected int $cash_account_id;
 
@@ -66,6 +68,8 @@ abstract class cashBusinessPlugin extends waPlugin
      *     'amount'         => -123.6584,
      *     'description'    => 'abracadabra'
      *     'hash'           => '64be58f9-c7fc-0027-96ba-774ec55a1111'
+     *     'external_data'  => []
+     *     'data'           => []
      * ]
      * @param array $transactions
      * @return array
@@ -73,7 +77,13 @@ abstract class cashBusinessPlugin extends waPlugin
      */
     protected function addTransactionsByAccount($transactions)
     {
+        static $data_model;
+        if (!$data_model) {
+            /** @var cashDataModel $data_model */
+            $data_model = cash()->getModel('cashData');
+        }
         if (!empty($transactions) && is_array($transactions)) {
+            $data = [];
             $add_transactions = [];
             $now = date('Y-m-d H:i:s');
             $transaction_model = cash()->getModel(cashTransaction::class);
@@ -84,6 +94,7 @@ abstract class cashBusinessPlugin extends waPlugin
                 ->where('external_hash IN (?)', $hashs)
                 ->where('is_archived = 0')->fetchAll();
             $skip_hashs = array_column($transaction_in_db, 'external_hash');
+            $this->autoMappingPilotTransactions($transactions);
             foreach ($transactions as $_transaction) {
                 $external_hash = ifset($_transaction, 'hash', '');
                 if (in_array($external_hash, $skip_hashs)) {
@@ -98,20 +109,32 @@ abstract class cashBusinessPlugin extends waPlugin
                     'account_id'        => $this->cash_account_id,
                     'category_id'       => (int) ifset($_transaction, 'category_id', ($is_credit ? -2 : -1)),
                     'amount'            => $amount,
-                    'description'       => ifset($_transaction, 'description', ''),
+                    'description'       => ifset($_transaction, 'description', null),
                     'create_contact_id' => $create_contact_id,
                     'create_datetime'   => $now,
                     'external_source'   => $external_source,
-                    'external_hash'     => $external_hash
+                    'external_hash'     => $external_hash,
+                    'external_data'     => empty($_transaction['external_data']) ? null : json_encode((array) $_transaction['external_data'])
                 ];
+                if ($_data = ifset($_transaction, 'data', null)) {
+                    $data[$external_hash] = $_data;
+                }
             }
             if (!empty($add_transactions)) {
                 $transaction_model->multipleInsert($add_transactions);
+                if ($data) {
+                    $data_model->multipleInsert($data);
+                }
             }
 
             return $add_transactions;
         }
 
         return [];
+    }
+
+    protected function autoMappingPilotTransactions(&$transactions)
+    {
+        return $transactions;
     }
 }

@@ -186,19 +186,93 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     {
         if (!empty($transactions)) {
             foreach ($transactions as &$_transaction) {
+                $data = [];
                 $is_credit = ('Credit' == ifset($_transaction, 'typeOfOperation', 'Credit'));
+                if ($category = ifset($_transaction, 'category', '')) {
+                    $data['category'] = $category;
+                }
+                if ($receiver_inn = ifset($_transaction, 'receiver', 'inn', '')) {
+                    $data['receiver_inn'] = $receiver_inn;
+                }
                 $_transaction = [
                     'date_operation' => ifset($_transaction, 'operationDate', date('Y-m-d H:i:s')),
-                    'category_id'    => (int) ifset($this->mapping_categories, $_transaction['category'], 0),
+                    'category_id'    => ifset($this->mapping_categories, $_transaction['category'], self::AUTO_MAPPING_FLAG),
                     'amount'         => ($is_credit ? 1 : -1) * ifset($_transaction, 'operationAmount', 0),
                     'description'    => ifset($_transaction, 'payPurpose', ''),
-                    'hash'           => ifset($_transaction, 'operationId', null)
+                    'hash'           => ifset($_transaction, 'operationId', null),
+                    'data'           => $data
                 ];
             }
             return parent::addTransactionsByAccount($transactions);
         }
 
         return [];
+    }
+
+    /**
+     * Этап автоматического определения категории операции
+     * на основе предыдущих добавленных операций или ключевых слов
+     *
+     * @param $transactions
+     * @return mixed
+     * @throws waDbException
+     */
+    protected function autoMappingPilotTransactions(&$transactions)
+    {
+        static $categories;
+        static $category_model;
+        if (!$category_model) {
+            $category_model = new cashCategoryModel();
+        }
+        if (!$categories) {
+            $categories = (new cashCategoryModel())->select('id, name, type')->where('id > 0')->order('type DESC')->fetchAll();
+        }
+
+        $income = [];
+        $expense = [];
+        foreach ($categories as $category) {
+            if ($category['type'] === cashCategory::TYPE_INCOME) {
+                $income[$category['name']] = $category['id'];
+            } elseif ($category['type'] === cashCategory::TYPE_EXPENSE) {
+                $expense[$category['name']] = $category['id'];
+            }
+        }
+
+        $category_counter = $category_model->query("
+            SELECT cd.value, COUNT(cd.value) AS category_counter, MAX(ct.category_id) AS c_id FROM cash_transaction ct
+            LEFT JOIN cash_data cd ON cd.sub_id = ct.external_hash
+            WHERE ct.is_archived = 0 
+            AND ct.external_hash IS NOT NULL
+            AND ct.external_source = s:external_source
+            AND cd.name = 'category'
+            GROUP BY cd.value
+            ORDER BY category_counter DESC
+        ", ['external_source' => $this->getExternalSource()])->fetchAll('value');
+        $key_words = $this->getConfigParam('key_words');
+
+        foreach ($transactions as &$_transaction) {
+            if (empty($_transaction['category_id']) || $_transaction['category_id'] === self::AUTO_MAPPING_FLAG) {
+                if (isset($_transaction['data']['category'], $category_counter[$_transaction['data']['category']])) {
+                    $_transaction['category_id'] = ifset($category_counter, $_transaction['data']['category'], 'c_id', self::AUTO_MAPPING_FLAG);
+                }
+                if ($_transaction['category_id'] === self::AUTO_MAPPING_FLAG && isset($key_words[$_transaction['data']['category']])) {
+                    $words = (array) $key_words[$_transaction['data']['category']];
+                    foreach ($words as $_word) {
+                        if ($_transaction['amount'] > 0 && array_key_exists($_word, $income)) {
+                            $_transaction['category_id'] = (int) ifset($income, $_word, -2);
+                            break;
+                        } elseif ($_transaction['amount'] < 0 && array_key_exists($_word, $expense)) {
+                            $_transaction['category_id'] = (int) ifset($expense, $_word, -1);
+                        }
+                    }
+                }
+                if ($_transaction['category_id'] === self::AUTO_MAPPING_FLAG) {
+                    $_transaction['category_id'] = ($_transaction['amount'] > 0 ? -2 : -1);
+                }
+            }
+        }
+
+        return $transactions;
     }
 
     /**

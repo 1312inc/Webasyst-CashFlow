@@ -39,5 +39,43 @@ return [
         'creditPaymentInner'    => _wp('Погашение кредита'),
         'otherIn'               => _wp('Другое'),
         'unspecifiedIn'         => _wp('Без категории')
+    ],
+    /** Automapping */
+    'key_words' => [
+        /** Исходящие */
+        'cardOperation' => [],
+        'cashOut' => [],
+        'fee' => [],
+        'penalty' => ['Штраф', 'Штрафы'],
+        'contragentPeople' => [],
+        'selfIncomeOuter' => [],
+        'selfTransferOuter' => [],
+        'salary' => [],
+        'contragentOutcome' => [],
+        'contragentRefund' => [],
+        'budget' => [],
+        'tax' => ['Налог', 'Налоги'],
+        'creditPaymentOuter' => [],
+        'sme-c2c' => ['На карту'],
+        'otherOut' => ['Другое'],
+        'unspecifiedOut' => ['Без категории'],
+
+        /** Входящие (income) */
+        'incomePeople' => [],
+        'selfTransferInner' => [],
+        'selfOutcomeOuter' => [],
+        'contragentIncome' => [],
+        'acquiring' => ['Эквайринг', 'Продажи'],
+        'incomeLoan' => [],
+        'refundIn' => [],
+        'cashIn' => [],
+        'cashInRevenue' => [],
+        'cashInOwn' => [],
+        'income' => [],
+        'depositPartWithdrawal' => [],
+        'depositFullWithdrawal' => [],
+        'creditPaymentInner' => [],
+        'otherIn' => ['Другое'],
+        'unspecifiedIn' => ['Без статьи'],
     ]
 ];
