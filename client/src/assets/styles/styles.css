@@ -12,9 +12,8 @@ html[data-theme='dark'] {
     line-height: 1.3; /* required to override a similar rule for #wa element set in the wa-2.0.css */
 }
 
-.flexbox .wide {
-  flex: 1 1 auto;
-  min-width: 1px;
+.flexbox > .wide {
+  min-width: 0;
 }
 
 .flexbox.justify-between {
@@ -51,6 +50,10 @@ html[data-theme='dark'] {
   display: inherit;
 }
 
+.flex-none {
+  flex: none;
+}
+
 body.modal {
   overflow: hidden;
 }
@@ -69,12 +72,6 @@ body.modal {
 
 .text-blue {
   color: var(--blue);
-}
-
-.text-ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .brick.selected .icon {
@@ -112,7 +109,6 @@ body.modal {
 .c-list .c-item.c-transaction-group .userpic { position: relative; z-index: 1; }
 .c-list .c-item .c-unfold-helper-icon { opacity: 0; }
 .c-list .c-item .c-item-border { border-top: 1px solid var(--border-color-soft); padding: 0.6125rem 0; }
-.c-list .c-item .c-item-amount { text-align: right; max-width: 100%; overflow: hidden; }
 .c-list .c-item:first-child .c-item-border { border: none; }
 .c-list .c-item:hover .c-unfold-helper-icon { opacity: 1; }
 .c-item .userpic {display: flex; justify-content: center; align-items: center;}
@@ -208,16 +204,10 @@ body.modal {
   background: var(--background-color-blank);
 }
 
-/* .c-sticky-header-group > div {
-  padding: 0 0.6125rem;
-} */
-
 .c-sticky-header-group.vue-sticky-el.top-sticky {
   box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.1);
 }
 
-/* .c-mobile-build .c-item > .flexbox { padding: 0 0 0 1rem; } */
-/* .c-mobile-build .c-item .c-item-amount { padding-right: 1rem; } */
 .c-mobile-build .c-sticky-header-group > div { padding: 0 1rem; }
 .c-mobile-build .c-chart-container { padding: 1rem; }
 .c-mobile-build .c-transaction-section .c-transaction-section__header { font-size: 1.25rem; }
@@ -235,6 +225,4 @@ body.modal {
 @media screen and (max-width: 760px) {
   /* mobile */
   .alert.c-cashgap-prediction-banner { margin-top: 0; }
-  .c-list .c-item { padding: 0 0 0 0.6125rem; border-radius: 0; font-size: 1rem; }
-  .c-item .c-item-amount { padding-right: 0.5rem; }
 }

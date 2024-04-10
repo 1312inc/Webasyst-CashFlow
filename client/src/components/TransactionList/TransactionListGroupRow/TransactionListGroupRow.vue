@@ -29,7 +29,7 @@
     >
       <div
         v-if="$helper.showMultiSelect() && !isCompactMode"
-        class="custom-my-4"
+        class="flex-none"
         :class="{ 'desktop-only': $helper.isDesktopEnv }"
         style="width: 1rem; height: 1rem;"
       >
@@ -52,11 +52,11 @@
 
       <div
         v-if="!isCompactMode"
-        class="desktop-and-tablet-only"
-        style="width: 7rem;flex-shrink: 0;"
+        class="desktop-and-tablet-only flex-none"
+        style="width: 6rem;"
       >
         <template v-if="showDate">
-          <div class="custom-mb-4 bold nowrap c-group-date">
+          <div class="custom-mb-4 bold nowrap c-group-date text-ellipsis">
             {{
               $moment(transaction.date).format(
                 $moment.locale() === "ru" ? "D MMMM" : "MMMM D"
@@ -86,11 +86,11 @@
         :is-repeating-group="isRepeatingGroup"
         :collapse-header-data="collapseHeaderData"
       />
+
       <div class="wide flexbox middle space-8 c-item-border">
         <div
           v-if="!isCompactMode"
           class="wide"
-          style="overflow: hidden"
         >
           <TransactionListGroupRowDesc
             :transaction="transaction"
@@ -101,7 +101,6 @@
           <div
             v-if="transaction.description || transaction.contractor_contact"
             class="black small text-ellipsis"
-            style="flex-shrink: 1"
           >
             <span v-if="transaction.description">
               {{ transaction.description }}
@@ -120,10 +119,10 @@
             {{ $t('noDesc') }}
           </span>
         </div>
-        <div class="c-item-amount">
+        <div class="flex-none">
           <div
             :style="`color: ${category.color}`"
-            class="bold nowrap custom-mb-4 text-ellipsis"
+            class="bold nowrap custom-mb-4 align-right"
           >
             {{
               (isCompactMode && !isCollapseHeader) ? `${transaction.amountShorten} ${$helper.currencySignByCode(account.currency)}` :
@@ -138,7 +137,8 @@
           </div>
           <div
             v-if="account.name && !isCompactMode"
-            class="text-ellipsis small gray"
+            class="text-ellipsis small gray align-right"
+            style="max-width: 140px; margin-left: auto;"
           >
             {{ account.name }}
             <span

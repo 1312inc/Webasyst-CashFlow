@@ -416,9 +416,9 @@ export default {
   z-index: 999;
 }
 
-.c-list--compact button {
+/* .c-list--compact button {
   margin-left: 1rem !important;
-}
+} */
 
 @media screen and (max-width: 760px) {
   .c-sticky-header-group {

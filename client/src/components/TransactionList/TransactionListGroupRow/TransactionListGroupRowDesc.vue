@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="flexbox middle space-4 semibold custom-mb-4"
-    style="overflow: hidden"
-  >
+  <div class="flexbox middle space-4 semibold custom-mb-4">
     <div
       v-if="category"
       :style="`color:${category.color}`"
@@ -38,7 +35,6 @@
     <template v-else-if="isRepeatingGroup">
       <div
         class="black text-ellipsis"
-        style="flex-shrink: 1"
         :title="
           $t('repeatingTransactionDesc', {
             repeats: transaction.affected_transactions

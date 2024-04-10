@@ -11,8 +11,7 @@
         class="width-100 custom-mx-8"
       >
       <a
-        class="icon gray"
-        style="flex: none;"
+        class="icon gray flex-none"
         @click.prevent="() => { inputValue = ''; isNewContractorMode = false }"
       ><i class="fas fa-times" /></a>
     </div>
