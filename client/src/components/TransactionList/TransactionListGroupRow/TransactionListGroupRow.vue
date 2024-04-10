@@ -139,6 +139,7 @@
             v-if="account.name && !isCompactMode"
             class="text-ellipsis small gray align-right"
             style="max-width: 140px; margin-left: auto;"
+            :title="account.name"
           >
             {{ account.name }}
             <span
