@@ -226,5 +226,6 @@
   "Order": "Заказ",
   "orOrder": "или заказ",
   "orderNumber": "Номер заказа",
-  "orderNotFound": "Заказ не найден"
+  "orderNotFound": "Заказ не найден",
+  "totalSelected": "Итого выбрано"
 }

@@ -226,5 +226,6 @@
   "Order": "Order",
   "orOrder": "or order",
   "orderNumber": "Order number",
-  "orderNotFound": "Order not found"
+  "orderNotFound": "Order not found",
+  "totalSelected": "Total Selected"
 }
