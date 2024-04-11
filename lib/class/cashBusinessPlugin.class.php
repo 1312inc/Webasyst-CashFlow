@@ -66,10 +66,11 @@ abstract class cashBusinessPlugin extends waPlugin
      *     'date_operation' => '2024-01-10 09:00:00',
      *     'category_id'    => 15,
      *     'amount'         => -123.6584,
-     *     'description'    => 'abracadabra'
-     *     'hash'           => '64be58f9-c7fc-0027-96ba-774ec55a1111'
-     *     'external_data'  => []
-     *     'data'           => []
+     *     'description'    => 'abracadabra',
+     *     'hash'           => '64be58f9-c7fc-0027-96ba-774ec55a1111',
+     *     'contractor_id'  => 45,
+     *     'external_data'  => [],
+     *     'data'           => [],
      * ]
      * @param array $transactions
      * @return array
@@ -79,8 +80,8 @@ abstract class cashBusinessPlugin extends waPlugin
     {
         static $data_model;
         if (!$data_model) {
-            /** @var cashDataModel $data_model */
-            $data_model = cash()->getModel('cashData');
+            /** @var cashTransactionDataModel $data_model */
+            $data_model = cash()->getModel('cashTransactionData');
         }
         if (!empty($transactions) && is_array($transactions)) {
             $data = [];
@@ -89,15 +90,16 @@ abstract class cashBusinessPlugin extends waPlugin
             $transaction_model = cash()->getModel(cashTransaction::class);
             $create_contact_id = wa()->getUser()->getId();
             $external_source = $this->getExternalSource();
-            $hashs = array_column($transactions, 'hash');
+            $hashes = array_column($transactions, 'hash');
             $transaction_in_db = $transaction_model
-                ->where('external_hash IN (?)', $hashs)
+                ->where('external_hash IN (?)', $hashes)
+                ->where('external_source = ?', $external_source)
                 ->where('is_archived = 0')->fetchAll();
-            $skip_hashs = array_column($transaction_in_db, 'external_hash');
-            $this->autoMappingPilotTransactions($transactions);
+            $skip_hashes = array_column($transaction_in_db, 'external_hash');
+            $transactions = $this->autoMappingPilot($transactions);
             foreach ($transactions as $_transaction) {
-                $external_hash = ifset($_transaction, 'hash', '');
-                if (in_array($external_hash, $skip_hashs)) {
+                $external_hash = ifset($_transaction, 'hash', null);
+                if (in_array($external_hash, $skip_hashes)) {
                     continue;
                 }
                 $amount = (float) ifset($_transaction, 'amount', 0);
@@ -114,16 +116,28 @@ abstract class cashBusinessPlugin extends waPlugin
                     'create_datetime'   => $now,
                     'external_source'   => $external_source,
                     'external_hash'     => $external_hash,
-                    'external_data'     => empty($_transaction['external_data']) ? null : json_encode((array) $_transaction['external_data'])
+                    'external_data'     => empty($_transaction['external_data']) ? null : json_encode((array) $_transaction['external_data']),
+                    'contractor_contact_id' => ifset($_transaction, 'contractor_id', null)
                 ];
                 if ($_data = ifset($_transaction, 'data', null)) {
                     $data[$external_hash] = $_data;
                 }
             }
             if (!empty($add_transactions)) {
-                $transaction_model->multipleInsert($add_transactions);
-                if ($data) {
-                    $data_model->multipleInsert($data);
+                $db_result = $transaction_model->multipleInsert($add_transactions);
+                if ($db_result->getResult() && $data) {
+                    $transaction_data = [];
+                    $transaction_ids = $transaction_model->select('external_hash, id')
+                        ->where('external_source = ?', $external_source)
+                        ->where('external_hash IN (:hash)', ['hash' => array_keys($data)])
+                        ->where('is_archived = 0')
+                        ->fetchAll('external_hash');
+                    foreach ($data as $_external_hash => $_data) {
+                        if ($transaction_id = ifempty($transaction_ids, $_external_hash, 'id', null)) {
+                            $transaction_data[$transaction_id] = $_data;
+                        }
+                    }
+                    $data_model->multipleInsertData($transaction_data);
                 }
             }
 
@@ -133,8 +147,14 @@ abstract class cashBusinessPlugin extends waPlugin
         return [];
     }
 
-    protected function autoMappingPilotTransactions(&$transactions)
+    protected function autoMappingPilot($transactions)
     {
+        foreach ($transactions as &$_transaction) {
+            if ($_transaction['category_id'] === self::AUTO_MAPPING_FLAG) {
+                $_transaction['category_id'] = ($_transaction['amount'] > 0 ? -2 : -1);
+            }
+        }
+
         return $transactions;
     }
 }
