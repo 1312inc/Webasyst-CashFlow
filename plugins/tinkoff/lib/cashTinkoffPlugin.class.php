@@ -209,6 +209,13 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         return [];
     }
 
+    protected function autoMappingPilot($transactions)
+    {
+        $transactions = $this->autoMappingPilotTransactions($transactions);
+
+        return $this->autoMappingPilotContractors($transactions);
+    }
+
     /**
      * Этап автоматического определения категории операции
      * на основе предыдущих добавленных операций или ключевых слов
@@ -217,7 +224,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      * @return mixed
      * @throws waDbException
      */
-    protected function autoMappingPilotTransactions(&$transactions)
+    private function autoMappingPilotTransactions($transactions)
     {
         static $categories;
         static $category_model;
@@ -239,13 +246,13 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         }
 
         $category_counter = $category_model->query("
-            SELECT cd.value, COUNT(cd.value) AS category_counter, MAX(ct.category_id) AS c_id FROM cash_transaction ct
-            LEFT JOIN cash_data cd ON cd.sub_id = ct.external_hash
-            WHERE ct.is_archived = 0 
+            SELECT ctd.value, COUNT(ctd.value) AS category_counter, MAX(ct.category_id) AS c_id FROM cash_transaction ct
+            LEFT JOIN cash_transaction_data ctd ON ctd.transaction_id = ct.id
+            WHERE ct.external_source = s:external_source
             AND ct.external_hash IS NOT NULL
-            AND ct.external_source = s:external_source
-            AND cd.name = 'category'
-            GROUP BY cd.value
+            AND ct.is_archived = 0
+            AND ctd.field_id = 'category'
+            GROUP BY ctd.value
             ORDER BY category_counter DESC
         ", ['external_source' => $this->getExternalSource()])->fetchAll('value');
         $key_words = $this->getConfigParam('key_words');
@@ -268,6 +275,67 @@ class cashTinkoffPlugin extends cashBusinessPlugin
                 }
                 if ($_transaction['category_id'] === self::AUTO_MAPPING_FLAG) {
                     $_transaction['category_id'] = ($_transaction['amount'] > 0 ? -2 : -1);
+                }
+            }
+        }
+
+        return $transactions;
+    }
+
+    /**
+     * Этап автоматического определения контрагента
+     * на основе полей контакта или предыдущих операций
+     *
+     * @param $transactions
+     * @return mixed
+     * @throws waDbException
+     * @throws waException
+     */
+    private function autoMappingPilotContractors($transactions)
+    {
+        static $cash_model;
+        $inns_1 = [];
+        $inns_2 = [];
+        $all_fields = waContactFields::getAll('all');
+        if ($transactions) {
+            if (array_key_exists('inn', $all_fields)) {
+                if (!$cash_model) {
+                    $cash_model = new cashModel();
+                }
+                // Соберем ИНН у контактов
+                if ($i = array_unique(array_column(array_column($transactions, 'data'), 'receiver_inn'))) {
+                    $inns_1 = $cash_model->query("
+                        SELECT contact_id, value as inn FROM wa_contact_data wcd
+                        WHERE value IN (s:inn)
+                        AND field = 'inn';
+                    ", ['inn' => $i])->fetchAll('inn');
+                }
+            }
+
+            // Соберем ИНН по истории ранее импортированных операций
+            $inns_2 = $cash_model->query("
+                SELECT ct.contractor_contact_id AS contact_id, COUNT(ctd.value) AS inn_counter, MAX(ctd.value) AS inn FROM cash_transaction ct
+                LEFT JOIN cash_transaction_data ctd ON ctd.transaction_id = ct.id
+                WHERE ct.external_source = s:external_source
+                AND contractor_contact_id IS NOT NULL
+                AND ct.external_hash IS NOT NULL
+                AND ct.is_archived = 0
+                AND ctd.field_id = 'receiver_inn'
+                GROUP BY ct.contractor_contact_id
+                ORDER BY inn_counter DESC
+            ", ['external_source' => $this->getExternalSource()])->fetchAll();
+
+            foreach ($transactions as &$_transaction) {
+                $inn = ifset($_transaction, 'data', 'receiver_inn', null);
+                if (array_key_exists($inn, $inns_1)) {
+                    $_transaction['contractor_id'] = ifset($inns_1, $inn, 'contact_id', null);
+                } else {
+                    foreach ($inns_2 as $_inn_2) {
+                        if ($_inn_2['inn'] == $inn) {
+                            $_transaction['contractor_id'] = ifset($_inn_2, 'contact_id', null);
+                            break;
+                        }
+                    }
                 }
             }
         }
