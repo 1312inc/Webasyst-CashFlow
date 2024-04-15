@@ -348,8 +348,17 @@
                     alt=""
                   >
                 </span>
-                <RouterLink :to="{ name: 'Contact', params: { id: model.contractor_contact_id } }">
-                  {{ model.contractor_contact.name }}
+                <RouterLink
+                  v-slot="{ href, navigate, isActive }"
+                  :to="{ name: 'Contact', params: { id: model.contractor_contact_id } }"
+                  custom
+                >
+                  <a
+                    :href="href"
+                    @click.prevent="() => {
+                      isActive ? close() : navigate({ name: 'Contact', params: { id: model.contractor_contact_id } })
+                    }"
+                  >{{ model.contractor_contact.name }}</a>
                 </RouterLink>
               </div>
             </div>
