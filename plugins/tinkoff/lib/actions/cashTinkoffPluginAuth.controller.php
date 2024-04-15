@@ -15,27 +15,25 @@ class cashTinkoffPluginAuthController extends waJsonController
                 'sub_path' => 'get_userinfo',
                 'return_uri' => $backend_url.'?plugin=tinkoff&module=auth'
             ]);
+            $status = ifset($answer, 'status', 200);
+            $response = ifset($answer, 'response', []);
+
+            if ($status !== 200 || ifset($response, 'http_code', 200) !== 200) {
+                // error
+                $this->setError('Что-то пошло не так');
+                waLog::log($answer,TINKOFF_FILE_LOG);
+                return null;
+            }
+
+            $this->response = $response;
         } else {
+            $this->createProfiles($tinkoff_id);
             $redirect_url = wa()->getStorage()->get('cash.tinkoff_back_redirect');
             if ($redirect_url) {
                 $this->redirect($redirect_url);
             }
             $this->redirect($backend_url);
         }
-        $status = ifset($answer, 'status', 200);
-        $response = ifset($answer, 'response', []);
-        if (
-            $status !== 200
-            || ifset($response, 'http_code', 200) !== 200
-        ) {
-            // error
-            $this->setError('Что-то пошло не так');
-            waLog::log($answer,TINKOFF_FILE_LOG);
-            return null;
-        }
-        $tinkoff_id = ifset($response, 'tinkoff_id', $tinkoff_id);
-
-        $this->response = $response + ['profiles' => $this->createProfiles($tinkoff_id)];
     }
 
     private function createProfiles($tinkoff_id)
