@@ -64,16 +64,14 @@
                 </div>
             </div>
 
-            {foreach $profiles as $_profile_id => $_profile}
-                {$is_hidden = $_profile_id != $profile_id}
-            <div class="custom-mt-16 js-tab-content-{$_profile_id}{if $is_hidden} hidden{/if}">
-                {include file="./BackendSettingsProfile.html" profile_id=$_profile_id profile=$_profile is_hidden=$is_hidden inline}
-            </div>
-            {foreachelse}
-            <div class="js-tab-content-{$profile_id}">
-                {include file="./BackendSettingsProfile.html" profile_id=$profile_id inline}
-            </div>
-            {/foreach}
+            {if !empty(profiles)}
+                {foreach $profiles as $_profile_id => $_profile}
+                    {$is_hidden = $_profile_id != $profile_id}
+                <div class="custom-mt-16 js-tab-content-{$_profile_id}{if $is_hidden} hidden{/if}">
+                    {include file="./BackendSettingsProfile.html" profile_id=$_profile_id profile=$_profile is_hidden=$is_hidden inline}
+                </div>
+                {/foreach}
+            {/if}
         </div>
     </div>
 </div>
