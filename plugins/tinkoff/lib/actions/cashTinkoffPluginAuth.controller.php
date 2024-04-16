@@ -67,10 +67,11 @@ class cashTinkoffPluginAuthController extends waJsonController
             if (isset($_account['accountNumber'], $_account['name'])) {
                 $max_profile_id++;
                 $profiles[$max_profile_id] = [
+                    'tinkoff_id' => $tinkoff_id,
+                    'inn' => ifset($company, 'requisites', 'inn', ''),
                     'company' => ifset($company, 'name', _wp('Без названия')),
                     'account_number' => ifset($_account, 'accountNumber', ''),
                     'account_description' => $_account['name'],
-                    'tinkoff_id' => $tinkoff_id,
                     'last_connect_date' => $now
                 ];
             }

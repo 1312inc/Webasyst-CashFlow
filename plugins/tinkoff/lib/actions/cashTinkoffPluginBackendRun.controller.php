@@ -33,6 +33,8 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             return;
         }
         $this->data['cash_account_id'] = (int) ifset($profile, 'cash_account', 0);
+        $this->data['tinkoff_id'] = (string) ifset($profile, 'tinkoff_id', '');
+        $this->data['inn'] = (int) ifset($profile, 'innt', 0);
         $this->data['account_number'] = ifset($profile, 'account_number', '');
         $this->data['mapping_categories'] = ifset($profile, 'mapping', []);
 
@@ -74,11 +76,15 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     private function getStatementsData($cursor = '', $limit = self::BATCH_LIMIT)
     {
         try {
-            $response = $this->plugin()->getStatement($cursor, $this->data['from_date'], $this->data['to_date'], $limit);
-            if (
-                ifset($response, 'http_code', 200) !== 200
-                || !empty($response['error'])
-            ) {
+            $response = $this->plugin()->getStatement(
+                $this->data['tinkoff_id'],
+                $this->data['inn'],
+                $cursor,
+                $this->data['from_date'],
+                $this->data['to_date'],
+                $limit
+            );
+            if (ifset($response, 'http_code', 200) !== 200 || !empty($response['error'])) {
                 $error = implode(' ', [
                     implode('/', (array) ifset($response, 'errorMessage', [])),
                     implode('/', (array) ifset($response, 'errorDetails', [])),
@@ -187,7 +193,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         if (empty($this->data['account_number']) || $this->data['import_period'] !== 'all') {
             return;
         }
-        $accounts = $this->plugin()->getAccounts();
+        $accounts = $this->plugin()->getAccounts($this->data['tinkoff_id'], $this->data['inn']);
         foreach ($accounts as $_account) {
             if ($this->data['account_number'] == ifset($_account, 'accountNumber', '')) {
                 $balance_now = (float) ifset($_account, 'balance', 'balance', 0);

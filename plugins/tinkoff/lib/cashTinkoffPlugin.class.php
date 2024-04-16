@@ -146,6 +146,8 @@ class cashTinkoffPlugin extends cashBusinessPlugin
 
     /**
      * https://developer.tinkoff.ru/docs/api/get-api-v-1-statement
+     * @param $tinkoff_id
+     * @param $inn
      * @param $cursor
      * @param $from
      * @param $to
@@ -153,7 +155,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      * @return array
      * @throws waException
      */
-    public function getStatement($cursor, $from, $to, $limit = self::LIMIT_STATEMENTS)
+    public function getStatement($tinkoff_id, $inn, $cursor, $from, $to, $limit = self::LIMIT_STATEMENTS)
     {
         $get_params = [
             'cursor' => $cursor,
@@ -165,7 +167,8 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         if ($this->self_mode) {
             $get_params += [
                 'operationStatus' => 'Transaction',
-                'accountNumber'   => $this->account_number
+                'accountNumber'   => $this->account_number,
+                'withBalances'    => is_null($cursor)
             ];
             return $this->apiQuery(self::API_URL.'v1/statement?'.http_build_query($get_params));
         }
@@ -173,6 +176,8 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         try {
             $answer = (new waServicesApi())->serviceCall('BANK', $get_params + [
                 'sub_path'       => 'get_statement',
+                'tinkoff_id'     => $tinkoff_id,
+                'inn'            => $inn,
                 'account_number' => $this->account_number,
                 'balances'       => is_null($cursor)
             ]);
