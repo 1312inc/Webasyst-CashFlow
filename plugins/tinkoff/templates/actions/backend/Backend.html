@@ -92,11 +92,14 @@
     function tinkoffConnect($button, param) {
         $button.addClass('disabled');
         $.get('?plugin=tinkoff&module=auth'+ (param ? '&add=1' : ''), function (data) {
-            if (data.data.redirect_url) {
-                window.location.href = data.data.redirect_url;
-            } else if (data.data.error_description) {
-                alert(data.data.error_description);
-            } else if (data.data.profiles) {
+            data = (data.hasOwnProperty('data') ? data.data : data);
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+            } else if (data.error_description) {
+                alert(data.error_description);
+            } else if (data.errors) {
+                alert(data.errors);
+            } else if (data.profiles) {
                 window.location.reload();
             }
         });

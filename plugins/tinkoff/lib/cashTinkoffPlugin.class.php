@@ -9,7 +9,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
 
     private bool $self_mode;
     private string $profile_id;
-    private string $tinkoff_token;
+    private string $tinkoff_token; // for self-mode
     private string $account_number;
     private array $mapping_categories;
 
@@ -76,12 +76,14 @@ class cashTinkoffPlugin extends cashBusinessPlugin
 
     /**
      * https://developer.tinkoff.ru/docs/api/get-api-v-4-bank-accounts
+     * @param $tinkoff_id
+     * @param $inn
      * @return array
      * @throws waException
      */
-    public function getAccounts()
+    public function getAccounts($tinkoff_id, $inn = null)
     {
-        $cache = new waVarExportCache('accounts', 60, 'cash/plugins/tinkoff');
+        $cache = new waVarExportCache('accounts_'.$inn, 60, 'cash/plugins/tinkoff');
         if ($accounts = $cache->get()) {
             return $accounts;
         }
@@ -90,7 +92,11 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             $result = $this->apiQuery(self::API_URL.'v4/bank-accounts');
         } else {
             try {
-                $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_accounts']);
+                $answer = (new waServicesApi())->serviceCall('BANK', [
+                    'sub_path' => 'get_accounts',
+                    'tinkoff_id' => $tinkoff_id,
+                    'inn' => $inn
+                ]);
                 $result = (array) ifset($answer, 'response', 'accounts_info', []);
             } catch (Exception $ex) {
                 waLog::log(['getAccounts', $ex->getMessage()], TINKOFF_FILE_LOG);
@@ -98,8 +104,8 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             }
         }
 
-        if (!empty($answer['error']) || !empty($result['errorMessage']) || !empty($answer['response']['error'])) {
-            $result += ifset($answer, 'response', []) + ['error' => $result['errorMessage']];
+        if (!empty($answer['response']['error'])) {
+            $result += $answer['response'];
         } else {
             $cache->set($result);
         }
@@ -109,17 +115,23 @@ class cashTinkoffPlugin extends cashBusinessPlugin
 
     /**
      * https://developer.tinkoff.ru/docs/api/get-api-v-1-company
+     * @param $tinkoff_id
+     * @param $inn
      * @return array
      * @throws waException
      */
-    public function getCompany()
+    public function getCompany($tinkoff_id, $inn = null)
     {
         $this->saveProfile($this->profile_id, ['last_connect_date' => date('Y-m-d H:i:s')]);
         if ($this->self_mode) {
             return $this->apiQuery(self::API_URL.'v1/company');
         }
         try {
-            $answer = (new waServicesApi())->serviceCall('BANK', ['sub_path' => 'get_company']);
+            $answer = (new waServicesApi())->serviceCall('BANK', [
+                'sub_path' => 'get_company',
+                'tinkoff_id' => $tinkoff_id,
+                'inn' => $inn
+            ]);
             $result = (array) ifset($answer, 'response', 'company_info', []);
         } catch (Exception $ex) {
             waLog::log(['getCompany', $ex->getMessage()], TINKOFF_FILE_LOG);
@@ -153,8 +165,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         if ($this->self_mode) {
             $get_params += [
                 'operationStatus' => 'Transaction',
-                'accountNumber'   => $this->account_number,
-                'withBalances'    => is_null($cursor)
+                'accountNumber'   => $this->account_number
             ];
             return $this->apiQuery(self::API_URL.'v1/statement?'.http_build_query($get_params));
         }

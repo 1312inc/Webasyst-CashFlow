@@ -20,14 +20,20 @@ class cashTinkoffPluginAuthController extends waJsonController
 
             if ($status !== 200 || ifset($response, 'http_code', 200) !== 200) {
                 // error
-                $this->setError('Что-то пошло не так');
+                $this->setError(ifset($response, 'error_description', 'Что-то пошло не так'));
                 waLog::log($answer,TINKOFF_FILE_LOG);
                 return null;
             }
 
             $this->response = $response;
         } else {
-            $this->createProfiles($tinkoff_id);
+            $result = $this->createProfiles($tinkoff_id);
+            if ($error = ifempty($result, 'error', null)) {
+                $this->setError($error);
+                waLog::log($error,TINKOFF_FILE_LOG);
+                return  null;
+            }
+
             $redirect_url = wa()->getStorage()->get('cash.tinkoff_back_redirect');
             if ($redirect_url) {
                 $this->redirect($redirect_url);
@@ -36,6 +42,11 @@ class cashTinkoffPluginAuthController extends waJsonController
         }
     }
 
+    /**
+     * @param $tinkoff_id
+     * @return array
+     * @throws waException
+     */
     private function createProfiles($tinkoff_id)
     {
         $profiles = [];
@@ -44,24 +55,27 @@ class cashTinkoffPluginAuthController extends waJsonController
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
         $max_profile_id = (int) $plugin->getSettings('max_profile_id');
-        $company = $plugin->getCompany();
-        $accounts = $plugin->getAccounts();
-        if (empty($accounts['error'])) {
-            foreach ($accounts as $_account) {
-                if (isset($_account['accountNumber'], $_account['name'])) {
-                    $max_profile_id++;
-                    $profiles[$max_profile_id] = [
-                        'company' => ifset($company, 'name', _wp('Без названия')),
-                        'account_number' => ifset($_account, 'accountNumber', ''),
-                        'account_description' => $_account['name'],
-                        'tinkoff_id' => $tinkoff_id,
-                        'last_connect_date' => $now
-                    ];
-                }
-            }
-            $plugin->saveSettings(['max_profile_id' => $max_profile_id]);
+        $company = $plugin->getCompany($tinkoff_id);
+        if (!empty($company['errorMessage'])) {
+            return ['error' => $company['errorMessage']];
         }
-
+        $accounts = $plugin->getAccounts($tinkoff_id);
+        if (!empty($accounts['errorMessage'])) {
+            return ['error' => $accounts['errorMessage']];
+        }
+        foreach ($accounts as $_account) {
+            if (isset($_account['accountNumber'], $_account['name'])) {
+                $max_profile_id++;
+                $profiles[$max_profile_id] = [
+                    'company' => ifset($company, 'name', _wp('Без названия')),
+                    'account_number' => ifset($_account, 'accountNumber', ''),
+                    'account_description' => $_account['name'],
+                    'tinkoff_id' => $tinkoff_id,
+                    'last_connect_date' => $now
+                ];
+            }
+        }
+        $plugin->saveSettings(['max_profile_id' => $max_profile_id]);
         $edit_controller = new cashTinkoffPluginProfileEditController();
         foreach ($profiles as $profile_id => $test_profile) {
             $edit_controller->execute($profile_id, $profiles);
