@@ -50,7 +50,7 @@
                                 </li>
                                 {/foreach}
                                 <li>
-                                    <a href="javascript:void(0);" class="button white js-tinkoff-connect disabled">+ [`Подключить`]</a>
+                                    <a href="javascript:void(0);" class="button white js-tinkoff-connect">+ [`Подключить`]</a>
                                 </li>
                             </ul>
                         </div>
@@ -169,10 +169,6 @@
 
     $('.js-tinkoff-connect').on('click', function () {
         tinkoffConnect($(this));
-    });
-
-    $('.js-tinkoff-add').on('click', function () {
-        tinkoffConnect($(this), true);
     });
 
     $start_button.on('click', function () {
