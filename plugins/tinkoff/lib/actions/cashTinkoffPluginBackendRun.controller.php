@@ -34,7 +34,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         }
         $this->data['cash_account_id'] = (int) ifset($profile, 'cash_account', 0);
         $this->data['tinkoff_id'] = (string) ifset($profile, 'tinkoff_id', '');
-        $this->data['inn'] = (int) ifset($profile, 'innt', 0);
+        $this->data['inn'] = (int) ifset($profile, 'inn', 0);
         $this->data['account_number'] = ifset($profile, 'account_number', '');
         $this->data['mapping_categories'] = ifset($profile, 'mapping', []);
 
