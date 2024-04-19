@@ -5,6 +5,7 @@ class cashTinkoffPluginAuthController extends waJsonController
     public function execute()
     {
         $tinkoff_id = waRequest::get('tinkoff_id', '', waRequest::TYPE_STRING_TRIM);
+        $inn = waRequest::get('inn', null, waRequest::TYPE_STRING_TRIM);
 
         $backend_url = rtrim(wa()->getRootUrl(true), DIRECTORY_SEPARATOR).wa()->getAppUrl();
         if (empty($tinkoff_id)) {
@@ -27,7 +28,7 @@ class cashTinkoffPluginAuthController extends waJsonController
 
             $this->response = $response;
         } else {
-            $result = $this->createProfiles($tinkoff_id);
+            $result = $this->createProfiles($tinkoff_id, $inn);
             $redirect_url = wa()->getStorage()->get('cash.tinkoff_back_redirect');
             if ($error = ifempty($result, 'error', null)) {
                 waLog::log($error,TINKOFF_FILE_LOG);
@@ -43,10 +44,11 @@ class cashTinkoffPluginAuthController extends waJsonController
 
     /**
      * @param $tinkoff_id
+     * @param $inn
      * @return array
      * @throws waException
      */
-    private function createProfiles($tinkoff_id)
+    private function createProfiles($tinkoff_id, $inn)
     {
         $profiles = [];
         $now = date('Y-m-d H:i:s');
@@ -54,13 +56,13 @@ class cashTinkoffPluginAuthController extends waJsonController
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
         $max_profile_id = (int) $plugin->getSettings('max_profile_id');
-        $company = $plugin->getCompany($tinkoff_id);
+        $company = $plugin->getCompany($tinkoff_id, $inn);
         if (!empty($company['errorMessage'])) {
             return ['error' => $company['errorMessage']];
         } elseif (!empty($company['error'])) {
             return ['error' => $company['error']];
         }
-        $accounts = $plugin->getAccounts($tinkoff_id);
+        $accounts = $plugin->getAccounts($tinkoff_id, $inn);
         if (!empty($accounts['errorMessage'])) {
             return ['error' => $accounts['errorMessage']];
         }
