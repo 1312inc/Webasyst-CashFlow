@@ -28,7 +28,8 @@ class cashTinkoffPluginBackendAction extends waViewAction
             'expense_operations' => $plugin->getConfigParam('expense'),
             'income_operations'  => $plugin->getConfigParam('income'),
             'categories'         => $categories,
-            'cash_accounts'      => $cash_accounts
+            'cash_accounts'      => $cash_accounts,
+            'error'              => waRequest::get('error', '', waRequest::TYPE_STRING_TRIM)
         ]);
     }
 }

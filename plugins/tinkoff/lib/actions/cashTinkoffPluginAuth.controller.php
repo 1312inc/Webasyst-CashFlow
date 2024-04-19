@@ -28,13 +28,12 @@ class cashTinkoffPluginAuthController extends waJsonController
             $this->response = $response;
         } else {
             $result = $this->createProfiles($tinkoff_id);
+            $redirect_url = wa()->getStorage()->get('cash.tinkoff_back_redirect');
             if ($error = ifempty($result, 'error', null)) {
-                $this->setError($error);
                 waLog::log($error,TINKOFF_FILE_LOG);
-                return  null;
+                $redirect_url .= "&error=$error";
             }
 
-            $redirect_url = wa()->getStorage()->get('cash.tinkoff_back_redirect');
             if ($redirect_url) {
                 $this->redirect($redirect_url);
             }
@@ -58,6 +57,8 @@ class cashTinkoffPluginAuthController extends waJsonController
         $company = $plugin->getCompany($tinkoff_id);
         if (!empty($company['errorMessage'])) {
             return ['error' => $company['errorMessage']];
+        } elseif (!empty($company['error'])) {
+            return ['error' => $company['error']];
         }
         $accounts = $plugin->getAccounts($tinkoff_id);
         if (!empty($accounts['errorMessage'])) {

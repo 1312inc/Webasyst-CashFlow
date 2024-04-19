@@ -110,6 +110,7 @@
     let url = '?plugin=tinkoff&action=run';
     let profile_id = {$profile_id};
     let profiles = {$profiles|default:null|json_encode};
+    let error = '{$error|default:''}';
     let process_id = undefined;
     let $start_button = $('.js-cash-tinkoff-start, .js-cash-tinkoff-update');
     let $dropdown_button = $('#js-dropdown');
@@ -166,6 +167,10 @@
 
     $date_picker = $('[name$="[begin_import_period]"]');
     $date_picker.datepicker(datepicker_options);
+
+    if (error) {
+        alert(error);
+    }
 
     $('.js-tinkoff-connect').on('click', function () {
         tinkoffConnect($(this));
