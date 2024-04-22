@@ -96,6 +96,7 @@ abstract class cashBusinessPlugin extends waPlugin
                 ->where('external_source = ?', $external_source)
                 ->where('is_archived = 0')->fetchAll();
             $skip_hashes = array_column($transaction_in_db, 'external_hash');
+waLog::dump(['ADDTRANSACTIONSBYACCOUNT-1', '$transactions' => $transactions]);
             $transactions = $this->autoMappingPilot($transactions);
             foreach ($transactions as $_transaction) {
                 $external_hash = ifset($_transaction, 'hash', null);
@@ -123,6 +124,7 @@ abstract class cashBusinessPlugin extends waPlugin
                     $data[$external_hash] = $_data;
                 }
             }
+waLog::dump(['ADDTRANSACTIONSBYACCOUNT-2']);
             if (!empty($add_transactions)) {
                 $db_result = $transaction_model->multipleInsert($add_transactions);
                 if ($db_result->getResult() && $data) {
@@ -139,6 +141,7 @@ abstract class cashBusinessPlugin extends waPlugin
                     }
                     $data_model->multipleInsertData($transaction_data);
                 }
+waLog::dump(['ADDTRANSACTIONSBYACCOUNT-3', '$transactions' => $transactions]);
             }
 
             return $add_transactions;

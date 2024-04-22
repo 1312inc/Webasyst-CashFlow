@@ -219,6 +219,7 @@ waLog::dump(['GET-COMPANY', '$tinkoff_id' => $tinkoff_id, $inn => $inn, '$answer
                     'data'           => $data
                 ];
             }
+waLog::dump(['ADDTRANSACTIONSBYACCOUNT', '$transactions' => $transactions], TINKOFF_FILE_LOG);
             return parent::addTransactionsByAccount($transactions);
         }
 
@@ -260,6 +261,7 @@ waLog::dump(['GET-COMPANY', '$tinkoff_id' => $tinkoff_id, $inn => $inn, '$answer
                 $expense[$category['name']] = $category['id'];
             }
         }
+waLog::dump(['AUTOMAPPINGPILOTTRANSACTIONS-1', '$transactions' => $transactions], TINKOFF_FILE_LOG);
 
         $category_counter = $category_model->query("
             SELECT ctd.value, COUNT(ctd.value) AS category_counter, MAX(ct.category_id) AS c_id FROM cash_transaction ct
@@ -294,7 +296,7 @@ waLog::dump(['GET-COMPANY', '$tinkoff_id' => $tinkoff_id, $inn => $inn, '$answer
                 }
             }
         }
-
+waLog::dump(['AUTOMAPPINGPILOTTRANSACTIONS-2', '$transactions' => $transactions], TINKOFF_FILE_LOG);
         return $transactions;
     }
 
@@ -340,7 +342,7 @@ waLog::dump(['GET-COMPANY', '$tinkoff_id' => $tinkoff_id, $inn => $inn, '$answer
                 GROUP BY ct.contractor_contact_id
                 ORDER BY inn_counter DESC
             ", ['external_source' => $this->getExternalSource()])->fetchAll();
-
+waLog::dump(['AUTOMAPPINGPILOTCONTRACTORS-1', '$transactions' => $transactions], TINKOFF_FILE_LOG);
             foreach ($transactions as &$_transaction) {
                 $inn = ifset($_transaction, 'data', 'receiver_inn', null);
                 if (array_key_exists($inn, $inns_1)) {
@@ -355,7 +357,7 @@ waLog::dump(['GET-COMPANY', '$tinkoff_id' => $tinkoff_id, $inn => $inn, '$answer
                 }
             }
         }
-
+waLog::dump(['AUTOMAPPINGPILOTCONTRACTORS-2', '$transactions' => $transactions], TINKOFF_FILE_LOG);
         return $transactions;
     }
 
