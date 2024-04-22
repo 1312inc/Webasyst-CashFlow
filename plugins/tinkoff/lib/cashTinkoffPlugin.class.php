@@ -5,7 +5,6 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     const LIMIT_STATEMENTS = 5000;
     const DEFAULT_START_DATE = '2006-01-01 00:00:00';
     const API_URL = 'https://business.tinkoff.ru/openapi/api/';
-    const USER_INFO_URL = 'https://id.tinkoff.ru/userinfo/userinfo';
 
     private bool $self_mode;
     private string $profile_id;
@@ -132,6 +131,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
                 'tinkoff_id' => $tinkoff_id,
                 'inn' => $inn
             ]);
+waLog::dump(['GET-COMPANY', '$tinkoff_id' => $tinkoff_id, $inn => $inn, '$answer' => $answer], TINKOFF_FILE_LOG);
             $result = (array) ifset($answer, 'response', 'company_info', []);
         } catch (Exception $ex) {
             waLog::log(['getCompany', $ex->getMessage()], TINKOFF_FILE_LOG);
