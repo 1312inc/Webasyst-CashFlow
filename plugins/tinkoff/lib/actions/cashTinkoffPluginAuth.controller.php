@@ -56,13 +56,16 @@ class cashTinkoffPluginAuthController extends waJsonController
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
         $max_profile_id = (int) $plugin->getSettings('max_profile_id');
+waLog::log(['CREATE-PROFILES-1', '$tinkoff_id' => $tinkoff_id, '$inn' => $inn],TINKOFF_FILE_LOG);
         $company = $plugin->getCompany($tinkoff_id, $inn);
+waLog::log(['CREATE-PROFILES-2', '$company' => $company],TINKOFF_FILE_LOG);
         if (!empty($company['errorMessage'])) {
             return ['error' => $company['errorMessage']];
         } elseif (!empty($company['error'])) {
             return ['error' => $company['error']];
         }
         $accounts = $plugin->getAccounts($tinkoff_id, $inn);
+waLog::log(['CREATE-PROFILES-3', '$accounts' => $accounts],TINKOFF_FILE_LOG);
         if (!empty($accounts['errorMessage'])) {
             return ['error' => $accounts['errorMessage']];
         }
@@ -84,6 +87,7 @@ class cashTinkoffPluginAuthController extends waJsonController
         foreach ($profiles as $profile_id => $test_profile) {
             $edit_controller->execute($profile_id, $profiles);
         }
+waLog::log(['CREATE-PROFILES-4', '$profiles' => $profiles],TINKOFF_FILE_LOG);
 
         return $profiles;
     }
