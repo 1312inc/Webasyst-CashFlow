@@ -311,6 +311,7 @@ waLog::dump(['AUTOMAPPINGPILOTTRANSACTIONS-2', '$transactions' => $transactions]
      */
     private function autoMappingPilotContractors($transactions)
     {
+        return $transactions;
 try {
 waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-1', 'count_transactions' => count($transactions)], TINKOFF_FILE_LOG);
         static $cash_model;
