@@ -50,33 +50,41 @@ class cashTinkoffPluginAuthController extends waJsonController
      */
     private function createProfiles($tinkoff_id, $inn)
     {
-        $profiles = [];
-        $now = date('Y-m-d H:i:s');
-
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
-        $max_profile_id = (int) $plugin->getSettings('max_profile_id');
-waLog::log(['CREATE-PROFILES-1', '$tinkoff_id' => $tinkoff_id, '$inn' => $inn],TINKOFF_FILE_LOG);
         $company = $plugin->getCompany($tinkoff_id, $inn);
-waLog::log(['CREATE-PROFILES-2', '$company' => $company],TINKOFF_FILE_LOG);
         if (!empty($company['errorMessage'])) {
             return ['error' => $company['errorMessage']];
         } elseif (!empty($company['error'])) {
             return ['error' => $company['error']];
         }
         $accounts = $plugin->getAccounts($tinkoff_id, $inn);
-waLog::log(['CREATE-PROFILES-3', '$accounts' => $accounts],TINKOFF_FILE_LOG);
         if (!empty($accounts['errorMessage'])) {
             return ['error' => $accounts['errorMessage']];
         }
+
+        $profiles = [];
+        $now = date('Y-m-d H:i:s');
+        $cash_profiles = cashTinkoffPlugin::getProfiles();
+        $max_profile_id = (int) $plugin->getSettings('max_profile_id');
+
         foreach ($accounts as $_account) {
             if (isset($_account['accountNumber'], $_account['name'])) {
-                $max_profile_id++;
-                $profiles[$max_profile_id] = [
+                foreach ($cash_profiles as $cash_profile_id => $cash_profile) {
+                    if ($cash_profile['account_number'] == $_account['accountNumber']) {
+                        break;
+                    }
+                    unset($cash_profile_id);
+                }
+
+                if (empty($cash_profiles) || empty($cash_profile_id)) {
+                    $cash_profile_id = ++$max_profile_id;
+                }
+                $profiles[$cash_profile_id] = [
                     'tinkoff_id' => $tinkoff_id,
                     'inn' => ifset($company, 'requisites', 'inn', ''),
                     'company' => ifset($company, 'name', _wp('Без названия')),
-                    'account_number' => ifset($_account, 'accountNumber', ''),
+                    'account_number' => $_account['accountNumber'],
                     'account_description' => $_account['name'],
                     'last_connect_date' => $now
                 ];
@@ -87,7 +95,6 @@ waLog::log(['CREATE-PROFILES-3', '$accounts' => $accounts],TINKOFF_FILE_LOG);
         foreach ($profiles as $profile_id => $test_profile) {
             $edit_controller->execute($profile_id, $profiles);
         }
-waLog::log(['CREATE-PROFILES-4', '$profiles' => $profiles],TINKOFF_FILE_LOG);
 
         return $profiles;
     }

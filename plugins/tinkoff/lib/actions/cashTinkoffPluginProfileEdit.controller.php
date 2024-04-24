@@ -16,11 +16,10 @@ class cashTinkoffPluginProfileEditController extends waJsonController
         $profile_id = (int) waRequest::request('profile_id', $profile_id, waRequest::TYPE_INT);
 
         if ($profile_id > 0) {
-            $data = [];
             /** @var cashTinkoffPlugin $plugin */
             $plugin = wa()->getPlugin('tinkoff');
             $profile_settings = ifset($profiles, $profile_id, []) + $plugin->getProfile($profile_id);
-            $plugin->saveProfile($profile_id, $data + $profile_settings);
+            $plugin->saveProfile($profile_id, $profile_settings);
         }
 
         $this->response = $profile_settings;
