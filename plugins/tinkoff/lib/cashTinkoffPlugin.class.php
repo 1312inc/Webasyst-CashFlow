@@ -317,6 +317,9 @@ waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-OK'], TINKOFF_FILE_LOG);
         if ($transactions) {
             $inns_1 = [];
             $inns = array_unique(array_column(array_column($transactions, 'data'), 'receiver_inn'));
+            if (!$cash_model) {
+                $cash_model = new cashModel();
+            }
             if (array_key_exists('inn', $all_fields)) {
                 if (!$cash_model) {
                     $cash_model = new cashModel();
