@@ -311,43 +311,44 @@ waLog::dump(['AUTOMAPPINGPILOTTRANSACTIONS-2', '$transactions' => $transactions]
      */
     private function autoMappingPilotContractors($transactions)
     {
-        return $transactions;
-try {
-waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-1', 'count_transactions' => count($transactions)], TINKOFF_FILE_LOG);
+waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-OK'], TINKOFF_FILE_LOG);
         static $cash_model;
         $all_fields = waContactFields::getAll('all');
-waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-2', '$all_fields' => $all_fields], TINKOFF_FILE_LOG);
         if ($transactions) {
             $inns_1 = [];
+            $inns = array_unique(array_column(array_column($transactions, 'data'), 'receiver_inn'));
             if (array_key_exists('inn', $all_fields)) {
                 if (!$cash_model) {
                     $cash_model = new cashModel();
                 }
                 // Соберем ИНН у контактов
-waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-3', 'INN_OK'], TINKOFF_FILE_LOG);
-                if ($i = array_unique(array_column(array_column($transactions, 'data'), 'receiver_inn'))) {
+                if ($inns) {
                     $inns_1 = $cash_model->query("
                         SELECT contact_id, value as inn FROM wa_contact_data wcd
-                        WHERE value IN (s:inn)
+                        WHERE value IN (s:inns)
                         AND field = 'inn';
-                    ", ['inn' => $i])->fetchAll('inn');
-waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-4', '$inns_1' => $inns_1], TINKOFF_FILE_LOG);
+                    ", ['inns' => $inns])->fetchAll('inn');
                 }
             }
-waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-5', '$inns_1' => $inns_1], TINKOFF_FILE_LOG);
+waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-1', 'ExternalSource' => $this->getExternalSource(), '$inns_1' => $inns_1], TINKOFF_FILE_LOG);
             // Соберем ИНН по истории ранее импортированных операций
-            $inns_2 = $cash_model->query("
-                SELECT ct.contractor_contact_id AS contact_id, COUNT(ctd.value) AS inn_counter, MAX(ctd.value) AS inn FROM cash_transaction ct
-                LEFT JOIN cash_transaction_data ctd ON ctd.transaction_id = ct.id
-                WHERE ct.external_source = s:external_source
-                AND contractor_contact_id IS NOT NULL
-                AND ct.external_hash IS NOT NULL
-                AND ct.is_archived = 0
-                AND ctd.field_id = 'receiver_inn'
-                GROUP BY ct.contractor_contact_id
-                ORDER BY inn_counter DESC
-            ", ['external_source' => $this->getExternalSource()])->fetchAll();
-waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-6', '$inns_2' => $inns_2], TINKOFF_FILE_LOG);
+            try {
+                $inns_2 = $cash_model->query("
+                    SELECT ct.contractor_contact_id AS contact_id, COUNT(ctd.value) AS inn_counter, MAX(ctd.value) AS inn FROM cash_transaction ct
+                    LEFT JOIN cash_transaction_data ctd ON ctd.transaction_id = ct.id
+                    WHERE ct.external_source = s:external_source
+                    AND ct.is_archived = 0
+                    AND ct.contractor_contact_id IS NOT NULL
+                    AND ct.external_hash IS NOT NULL
+                    AND ctd.value IN (s:inns)
+                    AND ctd.field_id = 'receiver_inn'
+                    GROUP BY ct.contractor_contact_id
+                    ORDER BY inn_counter DESC
+                ", ['external_source' => $this->getExternalSource(), 'inns' => $inns])->fetchAll();
+            } catch (waDbException $wdb) {
+                waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-EXCEPTION', $wdb->getMessage()], TINKOFF_FILE_LOG);
+            }
+waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-2', '$inns_2' => $inns_2], TINKOFF_FILE_LOG);
             foreach ($transactions as &$_transaction) {
                 $inn = ifset($_transaction, 'data', 'receiver_inn', null);
                 if (array_key_exists($inn, $inns_1)) {
@@ -362,10 +363,7 @@ waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-6', '$inns_2' => $inns_2], TINKOFF_
                 }
             }
         }
-} catch (Exception $exception) {
-waLog::dump(['AUTOMAPPINGPILOTCONTRACTORS-EX', '$exception' => $exception->getMessage()], TINKOFF_FILE_LOG);
-}
-waLog::dump(['AUTOMAPPINGPILOTCONTRACTORS-7', '$transactions' => $transactions], TINKOFF_FILE_LOG);
+waLog::dump(['AUTOMAPPINGPILOTCONTRACTORS-3', '$transactions' => $transactions], TINKOFF_FILE_LOG);
         return $transactions;
     }
 
