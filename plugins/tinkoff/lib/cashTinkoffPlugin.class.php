@@ -344,7 +344,8 @@ class cashTinkoffPlugin extends cashBusinessPlugin
                     ORDER BY inn_counter DESC
                 ", ['external_source' => $this->getExternalSource(), 'inns' => $inns])->fetchAll();
             } catch (waDbException $wdb) {
-                waLog::dump(['AUTO-MAPPING-PILOT-CONTRACTORS-EXCEPTION', $wdb->getMessage()], TINKOFF_FILE_LOG);
+                $inns_2 = [];
+                waLog::dump($wdb->getMessage(), TINKOFF_FILE_LOG);
             }
 
             foreach ($transactions as &$_transaction) {
