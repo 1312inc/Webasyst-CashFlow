@@ -112,10 +112,8 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             $this->data['operations'] = ifset($raw_data, 'operations', []);
             return false;
         }
-waLog::dump(['STEP-1', 'operations' => $this->data['operations']], TINKOFF_FILE_LOG);
 
         $transactions = $this->plugin()->addTransactionsByAccount($this->data['operations']);
-waLog::dump(['STEP-2', '$transactions' => $transactions], TINKOFF_FILE_LOG);
         $this->data['statements'] = $transactions;
         $this->data['counter'] += count($transactions);
         $this->data['skipped'] += count($this->data['operations']) - count($transactions);
