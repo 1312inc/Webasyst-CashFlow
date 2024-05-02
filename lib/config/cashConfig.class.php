@@ -298,7 +298,9 @@ class cashConfig extends waAppConfig
      */
     public function onCount()
     {
-        cash()->getEventDispatcher()->dispatch(new cashEventOnCount(waRequest::request('idle')));
+        $event = new cashEventOnCount(waRequest::request('idle'));
+        $this->getEventDispatcher()->dispatch($event);
+        $handlers = $this->waDispatchEvent($event);
 
         $url = null;
         try {
