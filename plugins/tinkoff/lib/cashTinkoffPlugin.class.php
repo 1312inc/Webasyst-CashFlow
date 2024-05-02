@@ -2,6 +2,7 @@
 
 class cashTinkoffPlugin extends cashBusinessPlugin
 {
+    const DEFAULT_UPDATE_TIMEOUT = 60; // min
     const LIMIT_STATEMENTS = 5000;
     const DEFAULT_START_DATE = '2006-01-01 00:00:00';
     const API_URL = 'https://business.tinkoff.ru/openapi/api/';
@@ -60,13 +61,13 @@ class cashTinkoffPlugin extends cashBusinessPlugin
                 if (empty($response)) {
                     $response = ['error' => 'error_query', 'error_description' => $ex->getMessage()];
                 }
-                waLog::log([$url, $response], TINKOFF_FILE_LOG);
+                waLog::dump([$url, $response], TINKOFF_FILE_LOG);
             }
             if ($http_code = $net->getResponseHeader('http_code')) {
                 $response += ['http_code' => $http_code];
             }
         } catch (Exception $exception) {
-            waLog::log([$url, $exception->getMessage()], TINKOFF_FILE_LOG);
+            waLog::dump([$url, $exception->getMessage()], TINKOFF_FILE_LOG);
             throw new waException($exception->getMessage());
         }
 
@@ -98,7 +99,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
                 ]);
                 $result = (array) ifset($answer, 'response', 'accounts_info', []);
             } catch (Exception $ex) {
-                waLog::log(['getAccounts', $ex->getMessage()], TINKOFF_FILE_LOG);
+                waLog::dump(['getAccounts', $ex->getMessage()], TINKOFF_FILE_LOG);
                 $result = ['error' => 'error_statement', 'error_description' => $ex->getMessage()];
             }
         }
@@ -133,7 +134,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             ]);
             $result = (array) ifset($answer, 'response', 'company_info', []);
         } catch (Exception $ex) {
-            waLog::log(['getCompany', $ex->getMessage()], TINKOFF_FILE_LOG);
+            waLog::dump(['getCompany', $ex->getMessage()], TINKOFF_FILE_LOG);
             $result = ['error' => 'error_statement', 'error_description' => $ex->getMessage()];
         }
         if (!empty($answer['response']['error'])) {
@@ -182,7 +183,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             ]);
             $result = (array) ifset($answer, 'response', 'statement_info', []);
         } catch (Exception $ex) {
-            waLog::log(['getStatement', $get_params, $ex->getMessage()], TINKOFF_FILE_LOG);
+            waLog::dump(['getStatement', $get_params, $ex->getMessage()], TINKOFF_FILE_LOG);
             $result = ['error' => 'error_statement', 'error_description' => $ex->getMessage()];
         }
         if (!empty($answer['response']['error'])) {
@@ -395,7 +396,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         try {
             self::saveSettings(['profiles' => $profiles]);
         } catch (Exception $e) {
-            waLog::log($e->getMessage(),TINKOFF_FILE_LOG);
+            waLog::dump($e->getMessage(),TINKOFF_FILE_LOG);
             return false;
         }
 
@@ -404,10 +405,11 @@ class cashTinkoffPlugin extends cashBusinessPlugin
 
     public static function getProfiles()
     {
-        return (array) wa()->getPlugin('tinkoff')->getSettings('profiles');
+        return (array) wa('cash')->getPlugin('tinkoff')->getSettings('profiles');
     }
 
     /**
+     * Event api_transaction_response_external_data
      * @param $transactions
      * @param $event_name
      * @return array
@@ -424,5 +426,41 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         }
 
         return $result;
+    }
+
+    /**
+     * Event on_count
+     * @return void
+     */
+    public function cashEventOnCountTinkoffHandler()
+    {
+        $profiles = self::getProfiles();
+        if (empty($profiles)) {
+            return;
+        }
+
+        /* определяем какой профиль запустить для обновления */
+        foreach ($profiles as $profile_id => $_profile) {
+            $update_timeout = abs((int) ifempty($_profile, 'update_timeout', 0));
+            $update_time = ifempty($_profile, 'update_time', null);
+            if (empty($update_timeout) || empty($update_time)) {
+                /**
+                 * не обновляем профили с не настроенным таймаутом
+                 * или профили которые не импортировались успешно вручную
+                 */
+                continue;
+            } elseif ($update_timeout < self::DEFAULT_UPDATE_TIMEOUT) {
+                /* ставим минимальный таймаут */
+                $update_timeout = self::DEFAULT_UPDATE_TIMEOUT;
+            }
+
+            if (time() > ($update_time + $update_timeout * 60)) {
+                /* можно обновить */
+                $transaction_cli = new cashTinkoffTransactionCli();
+                $transaction_cli->setInfo();
+                $transaction_cli->execute($profile_id);
+                break;
+            }
+        }
     }
 }
