@@ -58,8 +58,6 @@ class cashTinkoffTransactionCli extends waCliController
                 $this->info['counter'] += count($operations);
                 $transactions = $this->plugin()->addTransactionsByAccount($operations);
                 $this->info['count_added'] = count($transactions);
-
-                sleep(1);
             } catch (Exception $ex) {
                 $this->logFill($ex->getMessage());
                 return null;
