@@ -1,5 +1,5 @@
 <template>
-  <div class="flexbox middle space-4 semibold custom-mb-4">
+  <div class="wide flexbox middle space-4 semibold">
     <div
       v-if="category"
       :style="`color:${category.color}`"
