@@ -38,9 +38,9 @@ class cashEventApiTransactionExternalInfoResponse implements cashEventApiTransac
     private $entityName;
 
     public function __construct(
-        int $id,
-        string $color,
-        string $name,
+        string $id = '',
+        string $color = '#000000',
+        string $name = '',
         string $glyph = '',
         ?string $entityUrl = null,
         ?string $entityIcon = null,
