@@ -136,12 +136,11 @@
             {{ $t('noDesc') }}
           </span>
 
-          <div
-            v-if="account.name && !isCompactMode"
-            class="wide width-50 flexbox middle space-4"
-            :title="account.name"
-          >
-            <div class="wide text-ellipsis gray align-right">
+          <template v-if="account.name && !isCompactMode">
+            <div
+              class="wide text-ellipsis gray align-right"
+              :title="account.name"
+            >
               {{ account.name }}
             </div>
             <div
@@ -156,7 +155,7 @@
                 })
               }}
             </div>
-          </div>
+          </template>
         </div>
       </div>
 
