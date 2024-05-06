@@ -141,7 +141,7 @@
             class="wide width-50 flexbox middle space-4"
             :title="account.name"
           >
-            <div class="wide text-ellipsis gray">
+            <div class="wide text-ellipsis gray align-right">
               {{ account.name }}
             </div>
             <div
@@ -149,7 +149,12 @@
               class="nowrap black"
               :title="$t('accountBalanceTransactionListHint')"
             >
-              {{ `${transaction.amountShorten} ${$helper.currencySignByCode(account.currency)}` }}
+              {{
+                $helper.toCurrency({
+                  value: transaction.balance,
+                  currencyCode: account.currency
+                })
+              }}
             </div>
           </div>
         </div>
