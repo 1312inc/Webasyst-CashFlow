@@ -86,7 +86,8 @@ class cashTinkoffPluginAuthController extends waJsonController
                     'company' => ifset($company, 'name', _wp('Без названия')),
                     'account_number' => $_account['accountNumber'],
                     'account_description' => $_account['name'],
-                    'last_connect_date' => $now
+                    'last_connect_date' => $now,
+                    'update_timeout' => cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT
                 ];
             }
         }

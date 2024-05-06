@@ -441,13 +441,10 @@ class cashTinkoffPlugin extends cashBusinessPlugin
 
         /* определяем какой профиль запустить для обновления */
         foreach ($profiles as $profile_id => $_profile) {
-            $update_timeout = abs((int) ifempty($_profile, 'update_timeout', 0));
+            $update_timeout = abs((int) ifempty($_profile, 'update_timeout', self::DEFAULT_UPDATE_TIMEOUT));
             $update_time = ifempty($_profile, 'update_time', null);
-            if (empty($update_timeout) || empty($update_time)) {
-                /**
-                 * не обновляем профили с не настроенным таймаутом
-                 * или профили которые не импортировались успешно вручную
-                 */
+            if (empty($update_time)) {
+                /** не обновляем профили, которые не импортировались успешно вручную */
                 continue;
             } elseif ($update_timeout < self::DEFAULT_UPDATE_TIMEOUT) {
                 /* ставим минимальный таймаут */

@@ -68,8 +68,8 @@
             [`Таймаут обновления`]
         </div>
         <div class="value">
-            <input type="text" name="profiles[{$profile_id}][update_timeout]" value="{$profile.update_timeout|default:''}" autocomplete="off">
-            <p class="hint">{sprintf('[`Указывается целое число в минутах, но не менее %s. 0 или пусто - без обновления.`]', cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT)}</p>
+            <input type="text" name="profiles[{$profile_id}][update_timeout]" value="{$profile.update_timeout|default:''}" autocomplete="off" placeholder="{cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT}">
+            <p class="hint">{sprintf('[`Указывается целое число в минутах, но не менее %s.`]', cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT)}</p>
         </div>
     </div>
 </div>
