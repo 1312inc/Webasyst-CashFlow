@@ -15,12 +15,13 @@ class cashEventApiTransactionExternalInfoTinkoffHandler implements cashEventApiT
     public function getResponse(cashApiTransactionResponseDto $cashApiTransactionResponseDto): cashEventApiTransactionExternalInfoResponseInterface
     {
         return new cashEventApiTransactionExternalInfoResponse(
-            $cashApiTransactionResponseDto->id,
+            '',
             '#ffdd2e',
             _w('Тинькофф банк'),
             '',
             '',
-            wa()->getAppStaticUrl().'plugins/tinkoff/img/tinkoff_circle.svg'
+            wa()->getAppStaticUrl().'plugins/tinkoff/img/tinkoff_circle.svg',
+            _w('Тинькофф банк')
         );
     }
 
