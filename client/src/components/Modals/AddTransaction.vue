@@ -267,7 +267,7 @@
 
               <!-- Start Link with SS Order section -->
               <div
-                v-if="model.external"
+                v-if="model.external.source === 'shop'"
                 class="custom-my-16 flexbox middle space-8"
               >
                 <div class="state-with-inner-icon left width-100">
@@ -324,6 +324,12 @@
                     alt=""
                   >
                 </span>
+                <div v-else-if="transaction.external_source_info.glyph">
+                  <i
+                    :class="transaction.external_source_info.glyph"
+                    :style="`color: ${transaction.external_source_info.color}`"
+                  />
+                </div>
                 <a
                   v-if="transaction.external_source !== 'shop'"
                   :href="transaction.external_source_info.entity_url"
@@ -649,9 +655,10 @@ export default {
         contractor_contact: null,
         contractor_contact_id: null,
         description: '',
-        external: this.transaction?.external_source
-          ? { source: this.transaction.external_source, id: this.transaction.external_source_info?.id }
-          : appState.shopscriptInstalled ? { source: 'shop', id: '' } : null,
+        external: {
+          source: this.transaction?.external_source || (appState.shopscriptInstalled ? 'shop' : null),
+          id: this.transaction?.external_id || null
+        },
         is_onbadge: false,
         is_repeating: false,
         repeating_frequency: 1,
@@ -832,7 +839,7 @@ export default {
       }
     }, { immediate: true })
 
-    if (this.model.contractor_contact?.name || this.model.external?.id) {
+    if (this.model.contractor_contact?.name || this.model.external.id) {
       this.showContractorInput = true
     }
 
@@ -858,60 +865,55 @@ export default {
   methods: {
     async submit (event) {
       this.$v.$touch()
-      if (!this.$v.$invalid) {
-        this.controlsDisabled = true
-        const model = { ...this.model }
-        if (model.repeating_interval === 'custom') {
-          model.repeating_interval = this.custom_interval
-        }
-        if (!this.showTransferIncomingAmount) {
-          model.transfer_incoming_amount = this.model.amount
-        }
-        if (!model.external?.id) {
-          model.external = null
-        }
+      if (this.$v.$invalid) return
 
-        if (model.external) {
-          try {
-            const { data } = await api.get(`cash.system.getExternalEntity?source=shop&id=${model.external.id}`)
-            if (data.entity_id) {
-              model.external.id = data.entity_id
-            }
-          } catch (e) {
-            this.$store.commit('errors/error', {
-              title: 'error.api',
-              method: '',
-              message: this.$t('orderNotFound')
-            })
-            return
-          } finally {
-            this.controlsDisabled = false
-          }
-        }
+      this.controlsDisabled = true
 
-        this.$store
-          .dispatch('transaction/update', model)
-          .then(() => {
-            if (event.shiftKey) {
-              this.$parent.$emit('reOpen')
-            } else {
-              this.close()
-              // scroll top to see the new transaction
-              if (!this.model.id) {
-                window.scrollTo({
-                  top: 0,
-                  behavior: 'smooth'
-                })
-              }
-            }
-          })
-          .catch((e) => {
-
-          })
-          .finally(() => {
-            this.controlsDisabled = false
-          })
+      const model = { ...this.model }
+      if (model.repeating_interval === 'custom') {
+        model.repeating_interval = this.custom_interval
       }
+      if (!this.showTransferIncomingAmount) {
+        model.transfer_incoming_amount = this.model.amount
+      }
+
+      if (model.external.id && model.external.source === 'shop') {
+        try {
+          const { data } = await api.get(`cash.system.getExternalEntity?source=shop&id=${model.external.id}`)
+          if (data.entity_id) {
+            model.external.id = data.entity_id
+          }
+        } catch (e) {
+          this.$store.commit('errors/error', {
+            title: 'error.api',
+            method: '',
+            message: this.$t('orderNotFound')
+          })
+          this.controlsDisabled = false
+          return
+        }
+      }
+
+      this.$store
+        .dispatch('transaction/update', model)
+        .then(() => {
+          if (event.shiftKey) {
+            this.$parent.$emit('reOpen')
+          } else {
+            this.close()
+            // scroll top to see the new transaction
+            if (!this.model.id) {
+              window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+              })
+            }
+          }
+        })
+        .catch((e) => {})
+        .finally(() => {
+          this.controlsDisabled = false
+        })
     },
 
     remove () {
