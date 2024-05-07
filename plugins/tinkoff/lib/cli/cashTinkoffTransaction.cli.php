@@ -54,7 +54,10 @@ class cashTinkoffTransactionCli extends waCliController
                     $this->info['count_all_statements'] = (int) ifset($raw_data, 'balances', 'operationsCount', 0);
                 }
                 $cursor = (string) ifset($raw_data, 'nextCursor', null);
-                $operations = ifset($raw_data, 'operations', []);
+
+                if (!$operations = ifset($raw_data, 'operations', [])) {
+                    break;
+                }
                 $this->info['counter'] += count($operations);
                 $transactions = $this->plugin()->addTransactionsByAccount($operations);
                 $this->info['count_added'] = count($transactions);
@@ -108,8 +111,8 @@ class cashTinkoffTransactionCli extends waCliController
                 ifset($this->profile, 'tinkoff_id', ''),
                 ifset($this->profile, 'inn', ''),
                 $cursor,
-                ifset($this->profile, 'update_time', ''),
-                null,
+                date('Y-m-d H:i:s', ifset($this->profile, 'update_time', cashTinkoffPlugin::DEFAULT_START_DATE)),
+                date('Y-m-d H:i:s', time()),
                 cashTinkoffPluginBackendRunController::BATCH_LIMIT
             );
             if (ifset($response, 'http_code', 200) !== 200 || !empty($response['error'])) {

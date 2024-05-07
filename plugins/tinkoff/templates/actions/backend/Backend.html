@@ -27,7 +27,7 @@
                             <i class="fas fa-check-circle text-green"></i> [`Подключено!`]
                         </strong>
                         <strong class="hint">
-                            [`Последний коннект:`] <span class="js-connect-date">{$profile.last_connect_date|escape|default:''}</span>
+                            [`Последнее обновление:`] <span class="js-update-date">{$profile.update_date|escape|default:''}</span>
                         </strong>
                         <br>
                         <span class="hint js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</span>
@@ -231,8 +231,8 @@
                 $('[class*=js-tab-content').addClass('hidden');
                 $('.js-tab-content-'+ profile_id).removeClass('hidden');
                 if (profiles.hasOwnProperty(profile_id)) {
-                    if (profiles[profile_id].hasOwnProperty('last_connect_date')) {
-                        $('.js-connect-date').text(profiles[profile_id]['last_connect_date']);
+                    if (profiles[profile_id].hasOwnProperty('update_date')) {
+                        $('.js-update-date').text(profiles[profile_id]['update_date']);
                     }
                     if (profiles[profile_id].hasOwnProperty('tinkoff_id')) {
                         $('.js-tinkoff-id').text(profiles[profile_id]['tinkoff_id']);
