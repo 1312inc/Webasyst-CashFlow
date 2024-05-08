@@ -38,7 +38,9 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $this->data['account_number'] = ifset($profile, 'account_number', '');
         $this->data['mapping_categories'] = ifset($profile, 'mapping', []);
 
-        if ($this->data['import_period'] === 'all') {
+        if (!empty($profile['update_time'])) {
+            $from_date = (new DateTime(date('Y-m-d H:i:s', $profile['update_time'])))->format('c');
+        } elseif ($this->data['import_period'] === 'all') {
             $from_date = (new DateTime(date('Y-m-d', strtotime(cashTinkoffPlugin::DEFAULT_START_DATE))))->format('c');
         } else {
             $from_date = (new DateTime(date('Y-m-d', strtotime($this->data['import_period']))))->format('c');
@@ -117,6 +119,15 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $this->data['statements'] = $transactions;
         $this->data['counter'] += count($transactions);
         $this->data['skipped'] += count($this->data['operations']) - count($transactions);
+
+        $old_time = 0;
+        foreach ($transactions as $_transaction) {
+            $transaction_time = strtotime($_transaction['datetime']);
+            if ($old_time < $transaction_time) {
+                $old_time = $transaction_time;
+            }
+        }
+        $this->plugin()->saveProfile($this->data['profile_id'], ['update_time' => $old_time]);
         unset($this->data['operations']);
 
         return true;
