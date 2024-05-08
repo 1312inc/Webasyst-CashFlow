@@ -87,8 +87,17 @@ class cashTinkoffPluginAuthController extends waJsonController
                     'account_number' => $_account['accountNumber'],
                     'account_description' => $_account['name'],
                     'last_connect_date' => $now,
-                    'update_timeout' => cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT
+                    'update_timeout' => cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT,
+                    'status' => 'ok',
+                    'status_description' => ''
                 ];
+                if (empty($tinkoff_id)) {
+                    $profiles[$cash_profile_id]['status_description'] = _wp('Отсутствует Tinkoff ID');
+                    $profiles[$cash_profile_id]['status'] = 'danger';
+                } elseif (empty($profiles[$cash_profile_id]['inn'])) {
+                    $profiles[$cash_profile_id]['status_description'] = _wp('Отсутствует ИНН компании');
+                    $profiles[$cash_profile_id]['status'] = 'danger';
+                }
             }
         }
         $plugin->saveSettings(['max_profile_id' => $max_profile_id]);

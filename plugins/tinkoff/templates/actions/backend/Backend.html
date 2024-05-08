@@ -24,7 +24,14 @@
                 <div class="value">
                     <div class="custom-mb-8{if empty($profile.tinkoff_id)} hidden{/if}">
                         <strong>
+                            {if $profile.status === 'ok'}
                             <i class="fas fa-check-circle text-green"></i> [`Подключено!`]
+                            {elseif $profile.status === 'warning'}
+                            <i class="fas fa-exclamation-circle text-yellow" title="{$profile.status_description|escape}"></i> [`Ошибка`].
+                            <a href="javascript:void(0);" class="js-tinkoff-connect">[`Подключить`]</a>
+                            {elseif $profile.status === 'danger'}
+                            <i class="fas fa-exclamation-triangle text-red" title="{$profile.status_description|escape}"></i> [`Ошибка`].
+                            {/if}
                         </strong>
                         <strong class="hint">
                             [`Последнее обновление:`] <span class="js-update-date">{$profile.update_date|escape|default:''}</span>

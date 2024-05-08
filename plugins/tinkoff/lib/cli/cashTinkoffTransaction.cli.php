@@ -117,13 +117,18 @@ class cashTinkoffTransactionCli extends waCliController
             );
             if (ifset($response, 'http_code', 200) !== 200 || !empty($response['error'])) {
                 $this->info['fail']++;
-                $error = implode(' ', [
+                $error = trim(implode(' ', [
                     implode('/', (array) ifset($response, 'error', [])),
                     implode('/', (array) ifset($response, 'errorMessage', [])),
                     implode('/', (array) ifset($response, 'errorDetails', [])),
                     implode('/', (array) ifset($response, 'error_description', []))
-                ]);
+                ]));
                 $this->logFill($error);
+                $this->plugin()->saveProfile($this->info['profile_id'], [
+                    'status' => 'warning',
+                    'status_description' => $error
+                ]);
+                exit();
             }
         } catch (Exception $ex) {
             $this->info['fail']++;
