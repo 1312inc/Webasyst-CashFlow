@@ -188,6 +188,12 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         }
         if (!empty($answer['response']['error'])) {
             $result += $answer['response'];
+            if (trim($answer['response']['error']) == 'Problem with the token') {
+                $this->saveProfile($this->profile_id, [
+                    'status' => 'warning',
+                    'status_description' => $answer['response']['error']
+                ]);
+            }
         }
 
         return $result;
