@@ -106,7 +106,7 @@
             <input
                 type="button"
                 class="button green js-cash-tinkoff-update"
-                value="[`Обновить`]"
+                value="{if empty($profile.run_data)}[`Обновить`]{else}[`Возобновить`]{/if}"
             />
             <p class="small">
                 <em>
@@ -142,8 +142,20 @@
 <div class="field">
     <div class="name"></div>
     <div class="value">
-        <div class="progressbar js-progressbar"></div>
+        {if empty($profile.update_time) || !empty($profile.run_data)}
+        <div class="progressbar js-progressbar{if empty($profile.run_data)} hidden{/if}"></div>
+        {/if}
         <div class="js-info hint"></div>
         <div class="error-msg state-error custom-pt-8 js-error-msg"></div>
     </div>
 </div>
+
+<script>
+    $bar = $('.js-tab-content-'+ {$_profile_id}).find('.js-progressbar').waProgressbar({
+        'color': '#ffdd2e',
+        'percentage': {ifset($profile, 'run_data', 'progress', 0)},
+        'text-inside': true
+    });
+    $bar.find('.progressbar-text').css({ 'color':'black', 'font-weight': 'bold' });
+    profiles[{$_profile_id}]['progressbar'] = $bar.data('progressbar');
+</script>

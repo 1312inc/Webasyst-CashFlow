@@ -10,6 +10,12 @@
     </span>
 {/function}
 
+<script>
+    let $bar;
+    let profile_id = {$profile_id};
+    let profiles = {$profiles|default:null|json_encode};
+</script>
+
 <div id="cash-import-page" class="article wide">
     <div class="article-body">
         <h1>[`Тинькофф &rarr; Деньги`]</h1>
@@ -115,8 +121,6 @@
     }
 
     let url = '?plugin=tinkoff&action=run';
-    let profile_id = {$profile_id};
-    let profiles = {$profiles|default:null|json_encode};
     let error = '{$error|default:''}';
     let process_id = undefined;
     let $start_button = $('.js-cash-tinkoff-start, .js-cash-tinkoff-update');
@@ -147,7 +151,9 @@
                 } else if (response && response.error) {
                     $('.js-tab-content-'+ profile_id).find('.error-msg').text(response.error);
                 } else if (response && response.ready) {
-                    $progressbar.set({ percentage: 100 });
+                    if ($progressbar) {
+                        $progressbar.set({ percentage: 100 });
+                    }
                     if (response.text_legend) {
                         renderText(response.text_legend);
                     }
@@ -158,7 +164,7 @@
                         window.location = window.appState.baseUrl +'account/'+ cash_account +'?show_success_import_hint=1';
                     }, 1000);
                 } else {
-                    if (response && response.progress) {
+                    if ($progressbar && response && response.progress) {
                         $progressbar.set({ percentage: response.progress });
                     }
                     if (response.text_legend) {
@@ -176,7 +182,10 @@
     $date_picker.datepicker(datepicker_options);
 
     if (error) {
-        alert(error);
+        if (confirm(error)) {
+            error = '';
+            window.location.href = '?plugin=tinkoff';
+        }
     }
 
     $('.js-tinkoff-connect').on('click', function () {
@@ -196,15 +205,11 @@
             return;
         }
 
-        let $bar = $tab_content.find('.js-progressbar').waProgressbar({
-            'color': '#ffdd2e',
-            'text-inside': true
-        });
-        let instance = $bar.data('progressbar');
+        let instance = profiles[profile_id]['progressbar'];
         let form_data = $tab_content.find('input, textarea, select').serialize();
-        $bar.find('.progressbar-text').css({ 'color':'black', 'font-weight': 'bold' });
 
         $that.addClass('hidden');
+        $tab_content.find('.js-progressbar').removeClass('hidden');
         renderText('<div class="spinner custom-mr-4"> </div>[`Подключение...`]');
         saveProfile(form_data, function () {
             $.post(url, form_data, function (response) {
@@ -213,7 +218,7 @@
                     $tab_content.find('.js-error-msg').text(response.error);
                 } else if (response && response.processid) {
                     process_id = response.processid;
-                    if (response.progress) {
+                    if (instance && response.progress) {
                         instance.set({ percentage: response.progress });
                     }
                     if (response.text_legend) {

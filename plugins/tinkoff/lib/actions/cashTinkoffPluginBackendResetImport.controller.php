@@ -38,6 +38,9 @@ class cashTinkoffPluginBackendResetImportController extends waJsonController
                     cash()->getModel('cashTransactionData')->deleteByField('transaction_id', $transaction_ids);
                 }
                 cash()->getModel(cashTransaction::class)->deleteBySource($source);
+                $profile_run_data = (array) $this->getStorage()->read('profile_run_data');
+                unset($profile_run_data[$profile_id]);
+                $this->getStorage()->write('profile_run_data', $profile_run_data);
             } else {
                 $this->setError(_wp('Invalid code'));
             }

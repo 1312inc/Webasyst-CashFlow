@@ -22,8 +22,10 @@ class cashTinkoffPluginBackendAction extends waViewAction
 
         $plugin_settings = $plugin->getSettings();
         $profiles = ifset($plugin_settings, 'profiles', []);
-        foreach ($profiles as &$_profile) {
+        $profile_run_data = $this->getStorage()->read('profile_run_data');
+        foreach ($profiles as $_profile_id => &$_profile) {
             $_profile['update_date'] = (empty($_profile['update_time']) ? _w('-') : wa_date('humandatetime', $_profile['update_time']));
+            $_profile['run_data'] = ifempty($profile_run_data, $_profile_id, []);
         }
         $this->view->assign([
             'current_profile_id' => ifset($plugin_settings, 'current_profile_id', key($profiles)),
