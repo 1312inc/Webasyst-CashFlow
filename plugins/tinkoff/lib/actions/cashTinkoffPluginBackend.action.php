@@ -32,7 +32,7 @@ class cashTinkoffPluginBackendAction extends waViewAction
         }
         foreach ($profiles as $_profile_id => &$_profile) {
             $api_source = 'api_tinkoff_'.ifset($_profile, 'cash_account', '');
-            $_profile['update_date'] = (empty($_profile['update_time']) ? _w('-') : wa_date('humandatetime', $_profile['update_time']));
+            $_profile['update_date'] = (empty($_profile['update_time']) ? '' : wa_date('humandatetime', $_profile['update_time']));
             if (array_key_exists($api_source, $count_sources)) {
                 /** данные для продолжения прогресса импорта */
                 $count_all_statements = (int) ifempty($profile_run_data, $_profile_id, 'count_all_statements', 0);

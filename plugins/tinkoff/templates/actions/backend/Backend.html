@@ -39,8 +39,8 @@
                             <i class="fas fa-exclamation-triangle text-red" title="{$profile.status_description|escape}"></i> [`Ошибка`].
                             {/if}
                         </strong>
-                        <strong class="hint">
-                            [`Последнее обновление:`] <span class="js-update-date">{$profile.update_date|escape|default:''}</span>
+                        <strong class="hint{if empty($profile.update_date)} hidden{/if}">
+                            [`Последнее обновление:`] <span class="js-update-date">{$profile.update_date|escape}</span>
                         </strong>
                         <br>
                         <span class="hint js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</span>
@@ -243,8 +243,12 @@
                 $('[class*=js-tab-content').addClass('hidden');
                 $('.js-tab-content-'+ profile_id).removeClass('hidden');
                 if (profiles.hasOwnProperty(profile_id)) {
-                    if (profiles[profile_id].hasOwnProperty('update_date')) {
-                        $('.js-update-date').text(profiles[profile_id]['update_date']);
+                    let $up_dt = $('.js-update-date');
+                    if (profiles[profile_id].hasOwnProperty('update_date') && profiles[profile_id]['update_date']) {
+                        $up_dt.text(profiles[profile_id]['update_date']);
+                        $up_dt.closest('strong.hint').removeClass('hidden');
+                    } else {
+                        $up_dt.closest('strong.hint').addClass('hidden');
                     }
                     if (profiles[profile_id].hasOwnProperty('tinkoff_id')) {
                         $('.js-tinkoff-id').text(profiles[profile_id]['tinkoff_id']);
