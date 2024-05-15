@@ -48,7 +48,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             $from_date = (new DateTime(date('Y-m-d', strtotime($this->data['import_period']))))->format('c');
         }
         $this->data['from_date'] = $from_date;
-        $this->data['to_date'] = (new DateTime(date('Y-m-d', strtotime('now'))))->format('c');
+        $this->data['to_date'] = (new DateTime(date('Y-m-d H:i:s', strtotime('now'))))->format('c');
 
         $raw_data = $this->getStatementsData(null);
         $this->data['count_all_statements'] = (int) ifset($raw_data, 'balances', 'operationsCount', 0);
