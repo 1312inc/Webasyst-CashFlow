@@ -54,6 +54,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $this->data['count_all_statements'] = (int) ifset($raw_data, 'balances', 'operationsCount', 0);
         $this->data['cursor'] = (string) ifset($raw_data, 'nextCursor', '');
         $this->data['operations'] = ifset($raw_data, 'operations', []);
+        $this->plugin()->saveSettings(['current_profile_id' => $this->data['profile_id']]);
     }
 
     /**
@@ -154,7 +155,6 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $this->correctiveOperation();
         if (empty($this->data['error'])) {
             $this->plugin()->saveProfile($this->data['profile_id'], ['update_time' => time()]);
-            $this->plugin()->saveSettings(['current_profile_id' => $this->data['profile_id']]);
             $this->writeStorage([]);
         }
         if ($this->getRequest()::post('cleanup')) {
