@@ -440,6 +440,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function cashEventOnCountTinkoffHandler()
     {
+return;
         $profiles = self::getProfiles();
         if (empty($profiles)) {
             return;
