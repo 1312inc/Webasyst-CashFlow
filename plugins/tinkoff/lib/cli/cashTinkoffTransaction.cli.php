@@ -112,7 +112,7 @@ class cashTinkoffTransactionCli extends waCliController
                 ifset($this->profile, 'inn', ''),
                 $cursor,
                 date('Y-m-d H:i:s', ifset($this->profile, 'update_time', cashTinkoffPlugin::DEFAULT_START_DATE)),
-                date('Y-m-d H:i:s', time()),
+                date('Y-m-d H:i:s', strtotime('tomorrow')),
                 cashTinkoffPluginBackendRunController::BATCH_LIMIT
             );
             if (ifset($response, 'http_code', 200) !== 200 || !empty($response['error'])) {
