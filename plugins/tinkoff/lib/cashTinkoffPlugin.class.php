@@ -448,7 +448,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         /* определяем какой профиль запустить для обновления */
         foreach ($profiles as $profile_id => $_profile) {
             $status = ifempty($_profile, 'status', 'ok');
-            $first_import = ifempty($_profile, 'first_update',  true);
+            $first_import = ifset($_profile, 'first_update',  true);
             $update_timeout = abs((int) ifempty($_profile, 'update_timeout', self::DEFAULT_UPDATE_TIMEOUT));
             $update_time = ifempty($_profile, 'update_time', null);
             if (empty($update_time) || $status !== 'ok' || $first_import) {
