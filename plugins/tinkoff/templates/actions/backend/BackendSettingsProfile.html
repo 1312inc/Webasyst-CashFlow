@@ -1,3 +1,5 @@
+{$percentage = ifset($profile, 'run_data', 'progress', 0)}
+
 <input type="hidden" name="profile_id" value="{$profile_id}"/>
 <div class="field">
     <div class="name">
@@ -142,8 +144,8 @@
 <div class="field">
     <div class="name"></div>
     <div class="value">
-        {if empty($profile.update_time) || !empty($profile.run_data)}
-        <div class="progressbar js-progressbar{if empty($profile.run_data)} hidden{/if}"></div>
+        {if empty($profile.update_time) || !empty($percentage)}
+        <div class="progressbar js-progressbar{if empty($percentage)} hidden{/if}"></div>
         {/if}
         <div class="js-info hint"></div>
         <div class="error-msg state-error custom-pt-8 js-error-msg"></div>
@@ -153,7 +155,7 @@
 <script>
     $bar = $('.js-tab-content-'+ {$_profile_id}).find('.js-progressbar').waProgressbar({
         'color': '#ffdd2e',
-        'percentage': {ifset($profile, 'run_data', 'progress', 0)},
+        'percentage': {$percentage},
         'text-inside': true
     });
     $bar.find('.progressbar-text').css({ 'color':'black', 'font-weight': 'bold' });

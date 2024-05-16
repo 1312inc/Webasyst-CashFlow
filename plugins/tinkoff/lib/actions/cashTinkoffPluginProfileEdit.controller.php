@@ -5,7 +5,6 @@ class cashTinkoffPluginProfileEditController extends waJsonController
     /**
      * @param $profile_id
      * @param $tinkoff_id
-     * @param $last_connect_date
      * @return void
      * @throws waException
      */

@@ -38,6 +38,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $this->data['inn'] = (int) ifset($profile, 'inn', 0);
         $this->data['account_number'] = ifset($profile, 'account_number', '');
         $this->data['mapping_categories'] = ifset($profile, 'mapping', []);
+        $this->data['first_update'] = ifset($profile, 'first_update', true);
 
         if (!empty($profile['update_time'])) {
             $this->data['update_time'] = $profile['update_time'];
@@ -154,7 +155,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $this->info();
         $this->correctiveOperation();
         if (empty($this->data['error'])) {
-            $this->plugin()->saveProfile($this->data['profile_id'], ['update_time' => time()]);
+            $this->plugin()->saveProfile($this->data['profile_id'], ['update_time' => time(), 'first_update' => false]);
             $this->writeStorage([]);
         }
         if ($this->getRequest()::post('cleanup')) {
@@ -173,12 +174,15 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $progress = 0;
         if ($this->data['count_all_statements']) {
             $progress = number_format(($this->data['counter'] + $this->data['skipped']) * 100 / $this->data['count_all_statements']);
-        }
-        if (empty($this->data['update_time'])) {
-            $this->writeStorage(
-                array_intersect_key($this->data, array_fill_keys(['profile_id', 'counter', 'skipped', 'count_all_statements'], null))
-                + ['progress' => $progress]
-            );
+            if ($this->data['first_update']) {
+                $data = $this->readStorage();
+                $first_progress = (int) ifset($data, $this->data['profile_id'], 'progress', 0);
+                if ($first_progress <= (int) $progress) {
+                    $this->writeStorage(['progress' => $progress]);
+                } else {
+                    $progress = $first_progress;
+                }
+            }
         }
         $html  = sprintf_wp('Импортировано: %s/%s, пропущено: %s', $this->data['counter'], $this->data['count_all_statements'], $this->data['skipped']);
         $html .= ' <div class="spinner custom-ml-4">';
@@ -248,12 +252,22 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     }
 
     /**
+     * @return array
+     */
+    private function readStorage()
+    {
+        $profile_run_data = (array) $this->getStorage()->read('profile_run_data');
+
+        return (array) ifset($profile_run_data, []);
+    }
+
+    /**
      * @param array $data
      * @return void
      */
     private function writeStorage($data)
     {
-        $profile_run_data = (array) $this->getStorage()->read('profile_run_data');
+        $profile_run_data = $this->readStorage();
         $profile_run_data[$this->data['profile_id']] = (array) $data;
         $this->getStorage()->write('profile_run_data', $profile_run_data);
     }
