@@ -28,7 +28,7 @@ class cashTinkoffPluginBackendResetImportController extends waJsonController
                 $plugin->saveProfile($profile_id, [
                     'update_time' => '',
                     'first_update' => true,
-                    'last_update_date' => ''
+                    'last_update_time' => ''
                 ]);
                 $source = $plugin->getExternalSource();
                 $transaction_ids = array_column(cash()->getModel(cashTransaction::class)

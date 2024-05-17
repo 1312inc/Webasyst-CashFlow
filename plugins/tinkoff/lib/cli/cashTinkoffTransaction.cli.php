@@ -42,7 +42,7 @@ class cashTinkoffTransactionCli extends waCliController
             $this->logFill('The profile is not configured');
             return null;
         }
-        $this->plugin($profile_id);
+        $this->plugin($this->info['profile_id']);
         do {
             try {
                 $raw_data = $this->getStatementsData($cursor);
@@ -76,7 +76,14 @@ class cashTinkoffTransactionCli extends waCliController
             }
         } while ($this->info['counter'] < $this->info['count_all_statements']);
 
-        $this->plugin()->saveProfile($this->info['profile_id'], ['update_time' => time()]);
+        $profile_run_data = (array) $this->getStorage()->read('profile_run_data');
+        unset($profile_run_data[$this->info['profile_id']]);
+        $this->getStorage()->write('profile_run_data', $profile_run_data);
+        $this->plugin()->saveProfile($this->info['profile_id'], [
+            'update_time' => time(),
+            'last_update_time' => time(),
+            'first_update' => false
+        ]);
 
         $this->logFill('Import OK');
     }
