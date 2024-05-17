@@ -87,7 +87,6 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         if ($accounts = $cache->get()) {
             return $accounts;
         }
-        $this->saveProfile($this->profile_id, ['last_connect_date' => date('Y-m-d H:i:s')]);
         if ($this->self_mode) {
             $result = $this->apiQuery(self::API_URL.'v4/bank-accounts');
         } else {
@@ -122,7 +121,6 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function getCompany($tinkoff_id, $inn = null)
     {
-        $this->saveProfile($this->profile_id, ['last_connect_date' => date('Y-m-d H:i:s')]);
         if ($this->self_mode) {
             return $this->apiQuery(self::API_URL.'v1/company');
         }
@@ -163,7 +161,6 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             'to'     => $to,
             'limit'  => $limit
         ];
-        $this->saveProfile($this->profile_id, ['last_connect_date' => date('Y-m-d H:i:s')]);
         if ($this->self_mode) {
             $get_params += [
                 'operationStatus' => 'Transaction',

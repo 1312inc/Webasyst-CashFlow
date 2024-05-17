@@ -131,7 +131,10 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
                 $old_time = $transaction_time;
             }
         }
-        $this->plugin()->saveProfile($this->data['profile_id'], ['update_time' => $old_time]);
+        $this->plugin()->saveProfile($this->data['profile_id'], [
+            'update_time' => $old_time,
+            'last_update_date' => date('Y-m-d H:i:s', time())
+        ]);
         unset($this->data['operations']);
 
         return true;
@@ -155,7 +158,10 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $this->info();
         $this->correctiveOperation();
         if (empty($this->data['error'])) {
-            $this->plugin()->saveProfile($this->data['profile_id'], ['update_time' => time(), 'first_update' => false]);
+            $this->plugin()->saveProfile($this->data['profile_id'], [
+                'last_update_date' => date('Y-m-d H:i:s', time()),
+                'first_update' => false
+            ]);
             $this->writeStorage([]);
         }
         if ($this->getRequest()::post('cleanup')) {
