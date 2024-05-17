@@ -176,11 +176,17 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             $progress = number_format(($this->data['counter'] + $this->data['skipped']) * 100 / $this->data['count_all_statements']);
             if ($this->data['first_update']) {
                 $data = $this->readStorage();
-                $first_progress = (int) ifset($data, $this->data['profile_id'], 'progress', 0);
+                $run_data = ifset($data, $this->data['profile_id'], []);
+                if (empty($run_data)) {
+                    $run_data = ['count_all_statements' => $this->data['count_all_statements'], 'progress' => $progress];
+                    $this->writeStorage($run_data);
+                }
+                $first_progress = (int) ifset($run_data, 'progress', 0);
                 if ($first_progress <= (int) $progress) {
-                    $this->writeStorage(['progress' => $progress]);
+                    $this->writeStorage(['progress' => $progress] + $run_data);
                 } else {
-                    $progress = $first_progress;
+                    $count_all_statements = (int) ifset($run_data, 'count_all_statements', 0);
+                    $progress = $first_progress + intval(($this->data['counter'] + $this->data['skipped']) * 100 / $count_all_statements);
                 }
             }
         }
