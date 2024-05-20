@@ -69,6 +69,7 @@ abstract class cashBusinessPlugin extends waPlugin
      *     'description'    => 'abracadabra',
      *     'hash'           => '64be58f9-c7fc-0027-96ba-774ec55a1111',
      *     'contractor_id'  => 45,
+     *     ''import_id'     => 2,
      *     'external_data'  => [],
      *     'data'           => [],
      * ]
@@ -114,6 +115,7 @@ abstract class cashBusinessPlugin extends waPlugin
                     'description'       => ifset($_transaction, 'description', null),
                     'create_contact_id' => $create_contact_id,
                     'create_datetime'   => $now,
+                    'import_id'         => ifempty($_transaction, 'import_id', null),
                     'external_source'   => $external_source,
                     'external_hash'     => $external_hash,
                     'external_data'     => empty($_transaction['external_data']) ? null : json_encode((array) $_transaction['external_data']),

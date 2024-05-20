@@ -11,33 +11,34 @@ class cashImportRepository extends cashBaseRepository
 
     /**
      * @param int $n
-     *
-     * @return cashImport[]
+     * @param $providers
+     * @return array
      * @throws waException
      */
-    public function findLastN(int $n): array
+    public function findLastN(int $n, $providers = ['csv']): array
     {
         return $this->findByQuery(
             $this->getModel()
                 ->select('*')
                 ->where('is_archived = 0')
+                ->where('provider IN (?)', (array) $providers)
                 ->order('id desc')
-                ->limit((int)$n),
-            true
+                ->limit($n)
         );
     }
 
     /**
-     * @return cashImport[]
+     * @param $providers
+     * @return array
      * @throws waException
      */
-    public function findAllActive(): array
+    public function findAllActive($providers = ['csv']): array
     {
         return $this->findByQuery(
             $this->getModel()
                 ->select('*')
-                ->where('is_archived = 0'),
-            true
+                ->where('is_archived = 0')
+                ->where('provider IN (?)', (array) $providers)
         );
     }
 }
