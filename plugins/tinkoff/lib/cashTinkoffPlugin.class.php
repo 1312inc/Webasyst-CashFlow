@@ -198,10 +198,11 @@ class cashTinkoffPlugin extends cashBusinessPlugin
 
     /**
      * @param $transactions
+     * @param $import_id
      * @return array
      * @throws waException
      */
-    public function addTransactionsByAccount($transactions)
+    public function addTransactionsByAccount($transactions, $import_id = null)
     {
         if (!empty($transactions)) {
             foreach ($transactions as &$_transaction) {
@@ -219,6 +220,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
                     'amount'         => ($is_credit ? 1 : -1) * ifset($_transaction, 'operationAmount', 0),
                     'description'    => ifset($_transaction, 'payPurpose', ''),
                     'hash'           => ifset($_transaction, 'operationId', null),
+                    'import_id'      => $import_id,
                     'data'           => $data
                 ];
             }

@@ -20,6 +20,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             'skipped'       => 0,
             'cursor'        => '',
             'update_time'   => 0,
+            'import_id'     => 0,
             'count_all_statements' => 0,
         ];
 
@@ -56,6 +57,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $this->data['cursor'] = (string) ifset($raw_data, 'nextCursor', '');
         $this->data['operations'] = ifset($raw_data, 'operations', []);
         $this->plugin()->saveSettings(['current_profile_id' => $this->data['profile_id']]);
+        $this->history();
     }
 
     /**
@@ -120,7 +122,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             return false;
         }
 
-        $transactions = $this->plugin()->addTransactionsByAccount($this->data['operations']);
+        $transactions = $this->plugin()->addTransactionsByAccount($this->data['operations'], $this->data['import_id']);
         $this->data['statements'] = $transactions;
         $this->data['counter'] += count($transactions);
         $this->data['skipped'] += count($this->data['operations']) - count($transactions);
@@ -132,6 +134,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
                 $old_time = $transaction_time;
             }
         }
+        $this->history();
         $this->plugin()->saveProfile($this->data['profile_id'], ['last_update_time' => time()] + (empty($old_time) ? [] : ['update_time' => $old_time]));
         unset($this->data['operations']);
 
@@ -155,6 +158,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
     {
         $this->info();
         $this->correctiveOperation();
+        $this->history();
         if (empty($this->data['error'])) {
             $this->plugin()->saveProfile($this->data['profile_id'], [
                 'first_update' => false,
@@ -280,5 +284,35 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $profile_run_data = $this->readStorage();
         $profile_run_data[$this->data['profile_id']] = (array) $data;
         $this->getStorage()->write('profile_run_data', $profile_run_data);
+    }
+
+    /**
+     * @return void
+     * @throws waException
+     */
+    private function history()
+    {
+        if (empty($this->data['import_history'])) {
+            $this->data['import_history'] = cash()->getEntityFactory(cashImport::class)->createNew();
+            $this->data['import_history']->setProvider($this->plugin()->getExternalSource());
+        } else {
+            $this->data['import_history']->setUpdateDatetime(date('Y-m-d H:i:s'));
+        }
+        $this->data['import_history']->setFilename('tinkoff');
+        $this->data['import_history']->setSuccess($this->data['counter']);
+        $this->data['import_history']->setFail($this->data['skipped']);
+        $this->data['import_history']->setSettings(json_encode([
+            'CLI' => false,
+            'counter' => $this->data['counter'],
+            'skipped' => $this->data['skipped'],
+            'count_all_statements' => $this->data['count_all_statements'],
+            'inn' => $this->data['inn'],
+            'tinkoff_id' => $this->data['tinkoff_id'],
+            'profile_id' => $this->data['profile_id'],
+            'account_number' => $this->data['account_number'],
+            'cash_account_id' => $this->data['cash_account_id']
+        ], JSON_UNESCAPED_UNICODE));
+        cash()->getEntityPersister()->save($this->data['import_history']);
+        $this->data['import_id'] = $this->data['import_history']->getId();
     }
 }

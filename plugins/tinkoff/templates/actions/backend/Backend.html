@@ -24,6 +24,35 @@
 
         <p>[`Импорт операций из «Тинькофф Бизнес» для юридических лиц (ООО, ИП) по <a href="https://www.tinkoff.ru/business/open-api/">API</a>.`]</p>
 
+        {if count($profile.imports)}
+        <div>
+            <p class="small">[`Review and manage previous import results:`]</p>
+            <ul class="chips rounded small">
+                {** @var cashImportDto $import **}
+                {foreach $profile.imports as $import}
+                    <li>
+                        <a href="{$wa_app_url}import/{$import->id}?importinfo={base64_encode($import->filename|escape|cat:' / '|cat:$import->create_datetime)}">
+                            <i class="fas fa-file-excel" style="color: #499b5e;"></i>
+                            <strong>{sprintf('%d transactions', $import->success)}</strong>
+                            {$import->create_datetime|wa_datetime:humandatetime}
+
+                            <span class="hint">
+                            {$import->filename|escape|truncate:24}
+                        </span>
+                        </a>
+                    </li>
+                {/foreach}
+                <li class="transparent small">
+                    <a href="#" class="count js-imports-delete">
+                        <i class="fas fa-times-circle"></i>
+                        [`Dismiss import history`]
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <hr>
+        {/if}
+
         <div class="fields" id="js-profiles">
             <div class="field">
                 <div class="name">[`Тинькофф ID`]</div>
@@ -309,4 +338,20 @@
         $(this).hide();
         $('.js-tab-content-'+ profile_id).find('.js-settings-block').toggle('fast');
     });
+
+    $('.js-imports-delete').on('click', function (e) {
+        e.preventDefault();
+        if (!confirm($_('Clear import history (don’t worry, imported transactions will not be affected)?'))) {
+            return;
+        }
+
+        $.post('?module=import&action=deleteAll&provider=api_tinkoff_{$profile.cash_account|escape|default: ''}', function (r) {
+            if (r.status === 'ok') {
+                window.location.reload();
+            } else {
+                self.log(r.errors.join("\n"));
+                alert(r.errors.join("\n"));
+            }
+        }, 'json');
+    })
 </script>
