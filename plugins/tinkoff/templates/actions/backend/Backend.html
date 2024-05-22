@@ -24,7 +24,7 @@
 
         <p>[`Импорт операций из «Тинькофф Бизнес» для юридических лиц (ООО, ИП) по <a href="https://www.tinkoff.ru/business/open-api/">API</a>.`]</p>
 
-        {if count($profile.imports)}
+        {if $profile && count($profile.imports)}
         <div>
             <p class="small">[`Review and manage previous import results:`]</p>
             <ul class="chips rounded small">
