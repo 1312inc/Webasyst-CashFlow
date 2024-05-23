@@ -121,7 +121,11 @@ export default {
           ...this.transaction,
           apply_to_all_in_future: false,
           date,
-          is_onbadge: false
+          is_onbadge: false,
+          external: {
+            source: this.transaction.external_source || null,
+            id: this.transaction.external_id || null
+          }
         })
     }
   }
