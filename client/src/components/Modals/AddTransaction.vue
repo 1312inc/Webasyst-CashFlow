@@ -876,6 +876,9 @@ export default {
       if (!this.showTransferIncomingAmount) {
         model.transfer_incoming_amount = this.model.amount
       }
+      if (!model.external.id) {
+        model.external.source = null
+      }
 
       if (model.external.id && model.external.source === 'shop') {
         try {
