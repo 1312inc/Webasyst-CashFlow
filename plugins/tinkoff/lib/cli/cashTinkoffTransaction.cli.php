@@ -46,6 +46,7 @@ class cashTinkoffTransactionCli extends waCliController
         /** @var cashImport $import_history */
         $import_history = cash()->getEntityFactory(cashImport::class)->createNew();
         $import_history->setProvider($this->plugin()->getExternalSource());
+        $import_id = $import_history->getId();
         do {
             try {
                 $raw_data = $this->getStatementsData($cursor);
@@ -62,7 +63,7 @@ class cashTinkoffTransactionCli extends waCliController
                     break;
                 }
                 $this->info['counter'] += count($operations);
-                $transactions = $this->plugin()->addTransactionsByAccount($operations);
+                $transactions = $this->plugin()->addTransactionsByAccount($operations, $import_id);
                 $this->info['count_added'] = count($transactions);
             } catch (Exception $ex) {
                 $this->logFill($ex->getMessage());
@@ -88,20 +89,22 @@ class cashTinkoffTransactionCli extends waCliController
             'first_update' => false
         ]);
 
-        $import_history->setFilename('tinkoff');
-        $import_history->setSuccess($this->info['counter']);
-        $import_history->setSettings(json_encode([
-            'CLI' => true,
-            'counter' => $this->info['counter'],
-            'skipped' => (int) $this->info['count_all_statements'] - $this->info['counter'],
-            'count_all_statements' => $this->info['count_all_statements'],
-            'inn' => ifempty($this->profile, 'inn', ''),
-            'tinkoff_id' => ifempty($this->profile, 'tinkoff_id', ''),
-            'profile_id' => $profile_id,
-            'account_number' => ifempty($this->profile, 'account_number', ''),
-            'cash_account_id' => ifempty($this->profile, 'cash_account', '')
-        ], JSON_UNESCAPED_UNICODE));
-        cash()->getEntityPersister()->save($import_history);
+        if ($this->info['count_all_statements']) {
+            $import_history->setFilename('tinkoff');
+            $import_history->setSuccess($this->info['counter']);
+            $import_history->setSettings(json_encode([
+                'CLI' => true,
+                'counter' => $this->info['counter'],
+                'skipped' => (int) $this->info['count_all_statements'] - $this->info['counter'],
+                'count_all_statements' => $this->info['count_all_statements'],
+                'inn' => ifempty($this->profile, 'inn', ''),
+                'tinkoff_id' => ifempty($this->profile, 'tinkoff_id', ''),
+                'profile_id' => $profile_id,
+                'account_number' => ifempty($this->profile, 'account_number', ''),
+                'cash_account_id' => ifempty($this->profile, 'cash_account', '')
+            ], JSON_UNESCAPED_UNICODE));
+            cash()->getEntityPersister()->save($import_history);
+        }
 
         $this->logFill('Import OK');
     }
