@@ -1,4 +1,7 @@
-{$profile_id = $current_profile_id|default:1}
+{$message_1 = _wp('Clear import history (don’t worry, imported transactions will not be affected)?')}
+{$message_2 = _wp('Поле не должно быть пустым')}
+{$profile_id = $plugin_settings.current_profile_id|default:1}
+{$self_mode = $plugin_settings.self_mode|default:0}
 {$profile = ifset($profiles, $profile_id, [])}
 
 {function name="render_account" _account=[]}
@@ -100,11 +103,24 @@
                         </div>
                     </div>
                     {if empty($profiles)}
-                        <button class="button orange js-tinkoff-connect" type="button">[`Подключить`]</button>
+                        <button class="button orange custom-mb-4 js-tinkoff-connect" type="button">[`Подключить`]</button>
+                        <br>
+                        [`or`] <a href="javascript:void(0);" class="js-on-self-mode">[`получить токен и сертификат самостоятельно`]</a>
+                        [`руководствуясь`] <a href="https://developer.tinkoff.ru/docs/intro/manuals/" target="_blank">[`документацией`]</a>
                     {else}
                         <p class="hint">[`Счет из которого производится импорт`]</p>
                     {/if}
                     <div class="error-msg state-error"></div>
+                </div>
+            </div>
+
+            <div class="field hidden js-token-field">
+                <div class="name">[`Token`]</div>
+                <div class="value">
+                    <input type="text" class="long" name="token" value="{$plugin_settings.tinkoff_token|escape|default:''}" autocomplete="off" placeholder="t.761836e55ac1576ed59a03b18e5eab6a">
+                    <input type="hidden" name="self_mode" value="1">
+                    <button class="button purple js-tinkoff-self-connect" type="button">[`Подключиться`]</button>
+                    <div class="state-error custom-pt-8 js-connect-error"></div>
                 </div>
             </div>
 
@@ -341,7 +357,7 @@
 
     $('.js-imports-delete').on('click', function (e) {
         e.preventDefault();
-        if (!confirm($_('Clear import history (don’t worry, imported transactions will not be affected)?'))) {
+        if (!confirm('{$message_1}')) {
             return;
         }
 
@@ -353,5 +369,32 @@
                 alert(r.errors.join("\n"));
             }
         }, 'json');
-    })
+    });
+
+    $('.js-on-self-mode').on('click', function (e) {
+        e.preventDefault();
+        $('.js-token-field').removeClass('hidden');
+        $('.js-tinkoff-connect').addClass('disabled');
+    });
+
+    $('.js-tinkoff-self-connect').on('click', function (e) {
+        e.preventDefault();
+        let $error = $('.js-connect-error');
+        let $token = $('.js-token-field').find('[name="token"]');
+        $error.text('');
+        $token.removeClass('state-error');
+        if ($token.val()) {
+            $.post('?plugin=tinkoff&module=connect', { token: $token.val() }, function (data) {
+                data = (data.hasOwnProperty('data') ? data.data : data);
+                if (data.errors) {
+                    $error.text(data.errors);
+                } else {
+                    window.location.reload();
+                }
+            });
+        } else {
+            $error.text('{$message_2}');
+            $token.addClass('state-error');
+        }
+    });
 </script>

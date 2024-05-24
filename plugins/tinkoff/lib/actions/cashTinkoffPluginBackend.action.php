@@ -39,7 +39,7 @@ class cashTinkoffPluginBackendAction extends waViewAction
         }
 
         $this->view->assign([
-            'current_profile_id' => $current_profile_id,
+            'plugin_settings'    => $plugin_settings,
             'profiles'           => $profiles,
             'expense_operations' => $plugin->getConfigParam('expense'),
             'income_operations'  => $plugin->getConfigParam('income'),

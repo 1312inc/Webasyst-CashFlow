@@ -17,10 +17,6 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     {
         parent::__construct($info);
 
-        /** для Self-сценария */
-        $this->self_mode = !!$this->getSettings('self_mode');
-        $this->tinkoff_token = (string) $this->getSettings('tinkoff_token');
-
         /** обязательно назначаем профиль, через конструктор или setCashProfile() */
         $profile_id = ifempty($info, 'profile_id', 0);
         $this->setCashProfile($profile_id);
@@ -41,6 +37,28 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         return $this;
     }
 
+    private function getToken()
+    {
+        if (!isset($this->tinkoff_token)) {
+            $this->tinkoff_token = (string) $this->getSettings('tinkoff_token');
+        }
+
+        return $this->tinkoff_token;
+    }
+
+    /**
+     * https://developer.tinkoff.ru/docs/intro/manuals/
+     * @return bool
+     */
+    private function isSelfMode()
+    {
+        if (!isset($this->self_mode)) {
+            $this->self_mode = !!$this->getSettings('self_mode');
+        }
+
+        return $this->self_mode;
+    }
+
     private function apiQuery($url, $headers = [], $post_fields = [])
     {
         $options = [
@@ -49,7 +67,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         ];
         $headers += [
             'Content-Type'  => 'application/json',
-            'Authorization' => 'Bearer '.$this->tinkoff_token
+            'Authorization' => 'Bearer '.$this->getToken()
         ];
         try {
             $net = new waNet($options, $headers);
@@ -81,13 +99,13 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      * @return array
      * @throws waException
      */
-    public function getAccounts($tinkoff_id, $inn = null)
+    public function getAccounts($tinkoff_id = null, $inn = null)
     {
         $cache = new waVarExportCache('accounts_'.$inn, 60, 'cash/plugins/tinkoff');
         if ($accounts = $cache->get()) {
             return $accounts;
         }
-        if ($this->self_mode) {
+        if ($this->isSelfMode()) {
             $result = $this->apiQuery(self::API_URL.'v4/bank-accounts');
         } else {
             try {
@@ -119,9 +137,9 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      * @return array
      * @throws waException
      */
-    public function getCompany($tinkoff_id, $inn = null)
+    public function getCompany($tinkoff_id = null, $inn = null)
     {
-        if ($this->self_mode) {
+        if ($this->isSelfMode()) {
             return $this->apiQuery(self::API_URL.'v1/company');
         }
         try {
@@ -161,7 +179,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             'to'     => $to,
             'limit'  => $limit
         ];
-        if ($this->self_mode) {
+        if ($this->isSelfMode()) {
             $get_params += [
                 'operationStatus' => 'Transaction',
                 'accountNumber'   => $this->account_number,

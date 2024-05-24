@@ -64,7 +64,6 @@ class cashTinkoffPluginAuthController extends waJsonController
         }
 
         $profiles = [];
-        $now = date('Y-m-d H:i:s');
         $cash_profiles = cashTinkoffPlugin::getProfiles();
         $max_profile_id = (int) $plugin->getSettings('max_profile_id');
 
@@ -100,7 +99,7 @@ class cashTinkoffPluginAuthController extends waJsonController
                 }
             }
         }
-        $plugin->saveSettings(['max_profile_id' => $max_profile_id]);
+        $plugin->saveSettings(['max_profile_id' => $max_profile_id, 'self_mode' => 0]);
         $edit_controller = new cashTinkoffPluginProfileEditController();
         foreach ($profiles as $profile_id => $test_profile) {
             $edit_controller->execute($profile_id, $profiles);

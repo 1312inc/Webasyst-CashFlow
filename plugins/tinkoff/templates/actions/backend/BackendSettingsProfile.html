@@ -127,7 +127,7 @@
             type="button"
             class="button green js-cash-tinkoff-start"
             value="[`Импортировать операции из банка`]"
-            {if empty($profile.tinkoff_id)}disabled{/if}
+            {if empty($profile.tinkoff_id) && !$self_mode}disabled{/if}
         />
     </div>
 </div>
