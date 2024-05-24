@@ -45,7 +45,7 @@ abstract class cashBusinessPlugin extends waPlugin
      */
     public function getExternalSource()
     {
-        return 'api_'.$this->getId().'_'.$this->cash_account_id;
+        return 'api_'.$this->getId();
     }
 
     /**
@@ -93,6 +93,7 @@ abstract class cashBusinessPlugin extends waPlugin
             $external_source = $this->getExternalSource();
             $hashes = array_column($transactions, 'hash');
             $transaction_in_db = $transaction_model
+                ->where('account_id = ?', $this->cash_account_id)
                 ->where('external_hash IN (?)', $hashes)
                 ->where('external_source = ?', $external_source)
                 ->where('is_archived = 0')->fetchAll();

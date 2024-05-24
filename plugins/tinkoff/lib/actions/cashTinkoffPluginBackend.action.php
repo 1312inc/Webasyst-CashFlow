@@ -33,7 +33,7 @@ class cashTinkoffPluginBackendAction extends waViewAction
                 ];
             }
             if ($current_profile_id == $_profile_id) {
-                $imports = cash()->getEntityRepository(cashImport::class)->findLastN(10, ['api_tinkoff_'.ifempty($_profile, 'cash_account', '')]);
+                $imports = cash()->getEntityRepository(cashImport::class)->findLastN(10, 'api_tinkoff');
                 $_profile['imports'] = cashDtoFromEntityFactory::fromEntities(cashImportDto::class, $imports);
             }
         }

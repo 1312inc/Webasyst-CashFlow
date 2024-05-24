@@ -285,7 +285,6 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             }
         }
 
-
         $category_counter = $category_model->query("
             SELECT ctd.value, COUNT(ctd.value) AS category_counter, MAX(ct.category_id) AS c_id FROM cash_transaction ct
             LEFT JOIN cash_transaction_data ctd ON ctd.transaction_id = ct.id

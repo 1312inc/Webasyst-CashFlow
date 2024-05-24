@@ -361,7 +361,7 @@
             return;
         }
 
-        $.post('?module=import&action=deleteAll&provider=api_tinkoff_{$profile.cash_account|escape|default: ''}', function (r) {
+        $.post('?module=import&action=deleteAll&provider=api_tinkoff', function (r) {
             if (r.status === 'ok') {
                 window.location.reload();
             } else {

@@ -241,7 +241,8 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             $transaction_model = cash()->getModel(cashTransaction::class);
             $data_source = $transaction_model
                 ->select('SUM(amount) AS sum_amount, MIN(datetime) AS datetime')
-                ->where('external_source = s:source', ['source' => $this->plugin()->getExternalSource()])
+                ->where('account_id = ?', $this->data['cash_account_id'])
+                ->where('external_source = ?', $this->plugin()->getExternalSource())
                 ->where('is_archived = 0')
                 ->fetchAssoc();
 

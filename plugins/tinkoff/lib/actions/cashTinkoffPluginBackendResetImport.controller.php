@@ -30,18 +30,24 @@ class cashTinkoffPluginBackendResetImportController extends waJsonController
                     'first_update' => true,
                     'last_update_time' => ''
                 ]);
+                $profile = $plugin->getProfile($profile_id);
+                $cash_account = (int) ifempty($profile, 'cash_account', 0);
                 $source = $plugin->getExternalSource();
-                $transaction_ids = array_column(cash()->getModel(cashTransaction::class)
-                    ->select('id')
+                $trs = cash()->getModel(cashTransaction::class)
+                    ->select('id, import_id')
+                    ->where('account_id = ?', $cash_account)
                     ->where('external_source = ?', $source)
                     ->where('external_hash IS NOT NULL')
-                    ->fetchAll(),
-                    'id'
-                );
+                    ->fetchAll();
+                $transaction_ids = array_column($trs, 'id');
+                $import_ids = array_unique(array_column($trs, 'import_id'));
                 if ($transaction_ids) {
                     cash()->getModel('cashTransactionData')->deleteByField('transaction_id', $transaction_ids);
+                    cash()->getModel(cashTransaction::class)->deleteById($transaction_ids);
+                    if ($import_ids) {
+                        cash()->getModel(cashImport::class)->deleteById($import_ids);
+                    }
                 }
-                cash()->getModel(cashTransaction::class)->deleteBySource($source);
                 $profile_run_data = (array) $this->getStorage()->read('profile_run_data');
                 unset($profile_run_data[$profile_id]);
                 $this->getStorage()->write('profile_run_data', $profile_run_data);
