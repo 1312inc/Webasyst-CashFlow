@@ -298,6 +298,7 @@
           </div>
           <!-- End Contractor section -->
 
+          {{ model.external.id }} --
           <!-- Start Desc section -->
           <div class="custom-mb-16">
             <textarea
@@ -876,10 +877,10 @@ export default {
       if (!this.showTransferIncomingAmount) {
         model.transfer_incoming_amount = this.model.amount
       }
-      if (!model.external.id) {
+
+      if (!model.external.id && model.external.source === 'shop') {
         model.external.source = null
       }
-
       if (model.external.id && model.external.source === 'shop') {
         try {
           const { data } = await api.get(`cash.system.getExternalEntity?source=shop&id=${model.external.id}`)
