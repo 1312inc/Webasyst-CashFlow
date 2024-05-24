@@ -19,11 +19,8 @@ class cashApiTransactionResponseDtoAssembler extends cashApiTransactionResponseD
     ): Generator {
         foreach ($transactionData as $transactionDatum) {
             $dto = new cashApiTransactionResponseDto($transactionDatum);
-
-            if ($initialBalance !== null && !isset($transactionDatum['balance'])) {
-                $transactionDatum['balance'] = $initialBalance;
-            }
-
+            $dto->balance = $initialBalance;
+            $dto->balanceShorten = cashShorteningService::money($dto->balance);
             if ($initialBalance !== null) {
                 if ($reverseOrder) {
                     $initialBalance -= $transactionDatum['amount'];
@@ -31,9 +28,6 @@ class cashApiTransactionResponseDtoAssembler extends cashApiTransactionResponseD
                     $initialBalance += $transactionDatum['amount'];
                 }
             }
-
-            $dto->balance = $initialBalance;
-            $dto->balanceShorten = cashShorteningService::money($dto->balance);
 
             $dto->create_contact = $this->getContactData($dto->create_contact_id);
             if ($dto->contractor_contact_id) {
