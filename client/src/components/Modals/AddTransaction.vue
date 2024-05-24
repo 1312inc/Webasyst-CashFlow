@@ -298,7 +298,6 @@
           </div>
           <!-- End Contractor section -->
 
-          {{ model.external.id }} --
           <!-- Start Desc section -->
           <div class="custom-mb-16">
             <textarea
