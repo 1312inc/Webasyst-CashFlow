@@ -275,8 +275,8 @@
                     v-model="model.external.id"
                     type="text"
                     class="width-100"
-                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                     :placeholder="$t('orderNumber')"
+                    @input.prevent="(e) => { model.external.id = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1') || null }"
                   >
                   <span
                     class="icon"
@@ -290,7 +290,7 @@
                 </div>
                 <a
                   class="icon gray"
-                  @click.prevent="model.external.id = ''"
+                  @click.prevent="model.external.id = null"
                 ><i class="fas fa-times" /></a>
               </div>
               <!-- End Link with SS Order section -->
