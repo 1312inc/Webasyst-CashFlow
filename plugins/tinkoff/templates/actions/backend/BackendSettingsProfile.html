@@ -2,23 +2,20 @@
 
 <input type="hidden" name="profile_id" value="{$profile_id}"/>
 <div class="field">
-    <div class="name">
-        [`В счет`]
+    <div class="name for-input">
+        [`Счет`]
     </div>
     <div class="value">
         <div class="wa-select">
-            <select name="profiles[{$profile_id}][cash_account]" autocomplete="off">
+            <select name="profiles[{$profile_id}][cash_account]" autocomplete="off" class="bold">
             {if empty($profile.cash_account)}
                 <option value="" disabled selected>[`Не выбран`]</option>
             {/if}
             {foreach $cash_accounts as $_cash_account}
-                <option value="{$_cash_account.id}"{if $profile.cash_account|default:'0' == $_cash_account.id} selected{/if}>{$_cash_account.name}</option>
+                <option value="{$_cash_account.id}"{if $profile.cash_account|default:'0' == $_cash_account.id} selected{/if}>{$_cash_account.currency} — {$_cash_account.name}</option>
             {/foreach}
             </select>
         </div>
-        <p class="hint">
-            [`Счет в который производится импорт`]
-        </p>
     </div>
 </div>
 
@@ -126,7 +123,7 @@
         <input
             type="button"
             class="button green js-cash-tinkoff-start"
-            value="[`Импортировать операции из банка`]"
+            value="[`Запустить импорт`]"
             {if empty($profile.tinkoff_id) && !$self_mode}disabled{/if}
         />
     </div>

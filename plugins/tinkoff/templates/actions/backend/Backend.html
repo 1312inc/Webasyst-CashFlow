@@ -5,6 +5,10 @@
 {$profile = ifset($profiles, $profile_id, [])}
 
 {function name="render_account" _account=[]}
+    <span class="hint">
+        [`ИНН`] {$_account.inn|escape|default:''}
+    </span>
+    <br>
     <strong>{$_account.company|escape|default:''}</strong>
     <br>
     <span class="hint">
@@ -18,6 +22,15 @@
     let profile_id = {$profile_id};
     let profiles = {$profiles|default:null|json_encode};
 </script>
+
+<style>
+    .card.c-profile { width: 240px; }
+    .card.c-profile.c-selected { background: var(--accent-color); color: var(--white); }
+    .card.c-profile.c-selected a,
+    .card.c-profile.c-selected strong { color: var(--white); }
+    .card.c-profile.c-selected .hint { color: var(--semi-white); }
+    .card.c-profile.c-add { background: var(--background-color); color: var(--white); box-shadow: none; }
+</style>
 
 <div id="cash-import-page" class="article wide">
     <div class="article-body">
@@ -57,6 +70,8 @@
         {/if}
 
         <div class="fields" id="js-profiles">
+
+            {* AUTO *}
             <div class="field">
                 <div class="name for-input">[`Тинькофф ID`]</div>
                 <div class="value">
@@ -67,7 +82,7 @@
                             <i class="fas fa-check-circle text-green"></i> [`Подключено!`]
                             {elseif $profile.status === 'warning'}
                             <i class="fas fa-exclamation-circle text-yellow" title="{$profile.status_description|escape}"></i> [`Ошибка`].
-                            <a href="javascript:void(0);" class="js-tinkoff-connect">[`Подключить`]</a>
+                            <a href="javascript:void(0);" class="js-tinkoff-connect">[`Переподключить`]</a>
                             {elseif $profile.status === 'danger'}
                             <i class="fas fa-exclamation-triangle text-red" title="{$profile.status_description|escape}"></i> [`Ошибка`].
                             {/if}
@@ -79,29 +94,6 @@
                         <br>
                         <span class="hint js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</span>
                     </div>
-                    <div class="dropdown" id="js-dropdown" style="width: 250px;{if empty($profiles)} display: none{/if}">
-                        <button class="dropdown-toggle button outlined" type="button" style="text-align: left">
-                            {if isset($profiles[$profile_id])}
-                                {render_account _account=$profiles[$profile_id]}
-                            {/if}
-                        </button>
-                        <div class="dropdown-body">
-                            <ul class="menu">
-                                {foreach $profiles as $_profile_id => $_profile}
-                                <li>
-                                    <div class="custom-ml-16 custom-my-4">
-                                        <a href="javascript:void(0);" data-profile-id="{$_profile_id}">
-                                            {render_account _account=$_profile}
-                                        </a>
-                                    </div>
-                                </li>
-                                {/foreach}
-                                <li>
-                                    <a href="javascript:void(0);" class="button white js-tinkoff-connect">+ [`Подключить`]</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
                     {if empty($profiles)}
                         <button class="button green custom-mb-4 js-tinkoff-connect" type="button">[`Подключить Тинькофф API`]</button>
                         <p class="small">
@@ -111,12 +103,61 @@
                             </span>
                         </p>
                     {else}
-                        <p class="hint">[`Счет из которого производится импорт`]</p>
+                        <div class="dropdown" id="js-dropdown" style="width: 250px;{if empty($profiles)} display: none{/if}">
+                            <button class="dropdown-toggle button outlined" type="button" style="text-align: left">
+                                {if isset($profiles[$profile_id])}
+                                    {render_account _account=$profiles[$profile_id]}
+                                {/if}
+                            </button>
+                            <div class="dropdown-body">
+                                <ul class="menu">
+                                    {foreach $profiles as $_profile_id => $_profile}
+                                    <li>
+                                        <div class="custom-ml-16 custom-my-4">
+                                            <a href="javascript:void(0);" data-profile-id="{$_profile_id}">
+                                                {render_account _account=$_profile}
+                                            </a>
+                                        </div>
+                                    </li>
+                                    {/foreach}
+                                    <li>
+                                        <a href="javascript:void(0);" class="button white js-tinkoff-connect">+ [`Подключить`]</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+
+                        {*** NEW CARD LAYOUT ***}
+                        <div class="flexbox space-16 wrap" id="js-profile-c">
+
+                            {foreach $profiles as $_profile_id => $_profile}
+                            <div class="card c-profile{if isset($profiles[$profile_id]) && $profile_id == $_profile_id} c-selected{/if}">
+                                <div class="details small">
+                                    <a href="javascript:void(0);" data-profile-id="{$_profile_id}">
+                                        {render_account _account=$_profile}
+                                    </a>
+                                </div>
+                            </div>
+                            {/foreach}
+                            <div class="card c-profile c-add flexbox" style="align-items: center;">
+                                <div class="box wide align-center">
+                                    <a href="javascript:void(0);" class="small js-tinkoff-connect"><i class="fas fa-plus-circle"></i> [`Подключить еще`]</a>
+                                </div>
+                            </div>
+
+                        </div>
+                        {*** / NEW CARD LAYOUT ***}
+
+
                     {/if}
                     <div class="error-msg state-error"></div>
+
+
                 </div>
             </div>
 
+            {* SELF SERVICE *}
             <div class="field hidden js-token-field">
                 <div class="name for-input">[`Токен Тинькофф API`]</div>
                 <div class="value">
@@ -127,12 +168,13 @@
                 </div>
             </div>
 
+            {* PROFILE DETAILS *}
             {if !empty(profiles)}
                 {foreach $profiles as $_profile_id => $_profile}
                     {$is_hidden = $_profile_id != $profile_id}
-                <div class="custom-mt-16 js-tab-content-{$_profile_id}{if $is_hidden} hidden{/if}">
-                    {include file="./BackendSettingsProfile.html" profile_id=$_profile_id profile=$_profile is_hidden=$is_hidden inline}
-                </div>
+                    <div class="custom-mt-16 js-tab-content-{$_profile_id}{if $is_hidden} hidden{/if}">
+                        {include file="./BackendSettingsProfile.html" profile_id=$_profile_id profile=$_profile is_hidden=$is_hidden inline}
+                    </div>
                 {/foreach}
             {/if}
         </div>
