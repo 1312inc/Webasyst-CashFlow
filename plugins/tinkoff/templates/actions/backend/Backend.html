@@ -58,7 +58,7 @@
 
         <div class="fields" id="js-profiles">
             <div class="field">
-                <div class="name">[`Тинькофф ID`]</div>
+                <div class="name for-input">[`Тинькофф ID`]</div>
                 <div class="value">
                     <div class="custom-mb-8{if empty($profile.tinkoff_id)} hidden{/if}">
                         <strong>
@@ -103,10 +103,13 @@
                         </div>
                     </div>
                     {if empty($profiles)}
-                        <button class="button orange custom-mb-4 js-tinkoff-connect" type="button">[`Подключить`]</button>
-                        <br>
-                        [`or`] <a href="javascript:void(0);" class="js-on-self-mode">[`получить токен и сертификат самостоятельно`]</a>
-                        [`руководствуясь`] <a href="https://developer.tinkoff.ru/docs/intro/manuals/" target="_blank">[`документацией`]</a>
+                        <button class="button green custom-mb-4 js-tinkoff-connect" type="button">[`Подключить Тинькофф API`]</button>
+                        <p class="small">
+                            или <a href="javascript:void(0);" class="js-on-self-mode">[`получить и ввести токен API самостоятельно (режим H2H)`]</a>
+                            <span class="gray"> —
+                                <a href="https://developer.tinkoff.ru/docs/intro/manuals/" target="_blank">[`документация`] <i class="fas fa-external-link-alt fa-xs opacity-50"></i></a>
+                            </span>
+                        </p>
                     {else}
                         <p class="hint">[`Счет из которого производится импорт`]</p>
                     {/if}
@@ -115,11 +118,11 @@
             </div>
 
             <div class="field hidden js-token-field">
-                <div class="name">[`Token`]</div>
+                <div class="name for-input">[`Токен Тинькофф API`]</div>
                 <div class="value">
-                    <input type="text" class="long" name="token" value="{$plugin_settings.tinkoff_token|escape|default:''}" autocomplete="off" placeholder="t.761836e55ac1576ed59a03b18e5eab6a">
+                    <input type="text" class="long" name="token" value="{$plugin_settings.tinkoff_token|escape|default:''}" autocomplete="off" placeholder="≈ t.761436e55ac1576ed51a03b28e5eab6a">
                     <input type="hidden" name="self_mode" value="1">
-                    <button class="button purple js-tinkoff-self-connect" type="button">[`Подключиться`]</button>
+                    <button class="button green js-tinkoff-self-connect" type="button">[`Подключить`]</button>
                     <div class="state-error custom-pt-8 js-connect-error"></div>
                 </div>
             </div>
