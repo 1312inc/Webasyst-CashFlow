@@ -91,7 +91,7 @@ abstract class cashBusinessPlugin extends waPlugin
             $transaction_model = cash()->getModel(cashTransaction::class);
             $create_contact_id = wa()->getUser()->getId();
             $external_source = $this->getExternalSource();
-            $hashes = array_column($transactions, 'hash');
+            $hashes = [array_column($transactions, 'hash')];
             $transaction_in_db = $transaction_model
                 ->where('account_id = ?', $this->cash_account_id)
                 ->where('external_hash IN (?)', $hashes)

@@ -58,12 +58,6 @@
                         </a>
                     </li>
                 {/foreach}
-                <li class="transparent small">
-                    <a href="#" class="count js-imports-delete">
-                        <i class="fas fa-times-circle"></i>
-                        [`Dismiss import history`]
-                    </a>
-                </li>
             </ul>
         </div>
         <hr>
@@ -398,22 +392,6 @@
         e.preventDefault();
         $(this).hide();
         $('.js-tab-content-'+ profile_id).find('.js-settings-block').toggle('fast');
-    });
-
-    $('.js-imports-delete').on('click', function (e) {
-        e.preventDefault();
-        if (!confirm('{$message_1}')) {
-            return;
-        }
-
-        $.post('?module=import&action=deleteAll&provider=api_tinkoff', function (r) {
-            if (r.status === 'ok') {
-                window.location.reload();
-            } else {
-                self.log(r.errors.join("\n"));
-                alert(r.errors.join("\n"));
-            }
-        }, 'json');
     });
 
     $('.js-on-self-mode').on('click', function (e) {

@@ -36,10 +36,12 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         }
         $this->data['cash_account_id'] = (int) ifset($profile, 'cash_account', 0);
         $this->data['tinkoff_id'] = (string) ifset($profile, 'tinkoff_id', '');
+        $this->data['company'] = (string) ifset($profile, 'company', '');
         $this->data['inn'] = (int) ifset($profile, 'inn', 0);
         $this->data['account_number'] = ifset($profile, 'account_number', '');
         $this->data['mapping_categories'] = ifset($profile, 'mapping', []);
         $this->data['first_update'] = ifset($profile, 'first_update', true);
+        $this->data['import_id'] = (int) ifset($profile, 'import_id', 0);
 
         if (!empty($profile['update_time'])) {
             $this->data['update_time'] = $profile['update_time'];
@@ -288,31 +290,42 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
 
     /**
      * @return void
+     * @throws kmwaAssertException
      * @throws waException
      */
     private function history()
     {
-        if (empty($this->data['import_history'])) {
-            $this->data['import_history'] = cash()->getEntityFactory(cashImport::class)->createNew();
-            $this->data['import_history']->setProvider($this->plugin()->getExternalSource());
+        if (empty($this->data['import_id'])) {
+            $import_history = cash()->getEntityFactory(cashImport::class)->createNew();
+            $import_history->setProvider($this->plugin()->getExternalSource());
+            $import_history->setFilename($this->data['company'].' ('.$this->data['account_number'].')');
+            cash()->getEntityPersister()->save($import_history);
+            $this->data['import_id'] = $import_history->getId();
+            $this->plugin()->saveProfile($this->data['profile_id'], ['import_id' => $this->data['import_id']]);
         } else {
-            $this->data['import_history']->setUpdateDatetime(date('Y-m-d H:i:s'));
+            $import_history = cash()->getEntityRepository(cashImport::class)->findById($this->data['import_id']);
+            kmwaAssert::instance($import_history, cashImport::class);
         }
-        $this->data['import_history']->setFilename('tinkoff');
-        $this->data['import_history']->setSuccess($this->data['counter']);
-        $this->data['import_history']->setFail($this->data['skipped']);
-        $this->data['import_history']->setSettings(json_encode([
+        if (empty($import_history)) {
+            return null;
+        }
+        $count_all_added = (int) cash()->getModel(cashTransaction::class)
+            ->select('COUNT(id) AS count')
+            ->where('import_id = ?', $this->data['import_id'])
+            ->fetchField('count');
+        $import_history->setSuccess($count_all_added);
+        $import_history->setFail($this->data['skipped']);
+        $import_history->setSettings(json_encode([
             'CLI' => false,
             'counter' => $this->data['counter'],
             'skipped' => $this->data['skipped'],
-            'count_all_statements' => $this->data['count_all_statements'],
+            'count_all_statements' => $count_all_added,
             'inn' => $this->data['inn'],
             'tinkoff_id' => $this->data['tinkoff_id'],
             'profile_id' => $this->data['profile_id'],
             'account_number' => $this->data['account_number'],
             'cash_account_id' => $this->data['cash_account_id']
         ], JSON_UNESCAPED_UNICODE));
-        cash()->getEntityPersister()->save($this->data['import_history']);
-        $this->data['import_id'] = $this->data['import_history']->getId();
+        cash()->getEntityPersister()->update($import_history);
     }
 }

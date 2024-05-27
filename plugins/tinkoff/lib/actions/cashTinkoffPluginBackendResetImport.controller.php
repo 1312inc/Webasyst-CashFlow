@@ -27,6 +27,7 @@ class cashTinkoffPluginBackendResetImportController extends waJsonController
                 $plugin->saveSettings(['current_profile_id' => $profile_id]);
                 $plugin->saveProfile($profile_id, [
                     'update_time' => '',
+                    'import_id' => 0,
                     'first_update' => true,
                     'last_update_time' => ''
                 ]);
