@@ -7,15 +7,18 @@
     </div>
     <div class="value">
         <div class="wa-select">
-            <select name="profiles[{$profile_id}][cash_account]" autocomplete="off" class="bold">
+            <select name="profiles[{$profile_id}][cash_account]" autocomplete="off" class="bold js-account-select">
             {if empty($profile.cash_account)}
                 <option value="" disabled selected>[`Не выбран`]</option>
             {/if}
             {foreach $cash_accounts as $_cash_account}
-                <option value="{$_cash_account.id}"{if $profile.cash_account|default:'0' == $_cash_account.id} selected{/if}>{$_cash_account.currency} — {$_cash_account.name}</option>
+                <option value="{$_cash_account.id}"{if $profile.cash_account|default:'0' == $_cash_account.id} selected{/if} data-count-transaction="{$_cash_account.count_transaction|escape|default:'0'}">
+                    {$_cash_account.currency|escape} — {$_cash_account.name|escape}
+                </option>
             {/foreach}
             </select>
         </div>
+        <p class="state-caution hidden">[`Ооооочень рекомендуем затягивать все только в пустой счет, чтобы не было дублирования операций. Лучше создайте новый счет и туда затягивайте`]</p>
     </div>
 </div>
 

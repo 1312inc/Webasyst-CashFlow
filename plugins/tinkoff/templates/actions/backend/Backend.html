@@ -395,4 +395,13 @@
             $token.addClass('state-error');
         }
     });
+
+    $('.js-account-select').on('change', function (e) {
+        let count_transaction = $(this).find('option:selected').data('count-transaction');
+        let $state = $('.state-caution');
+        $state.addClass('hidden');
+        if (count_transaction > 0) {
+            $state.removeClass('hidden');
+        }
+    });
 </script>

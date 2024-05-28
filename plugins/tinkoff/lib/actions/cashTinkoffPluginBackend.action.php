@@ -18,7 +18,7 @@ class cashTinkoffPluginBackendAction extends waViewAction
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
         $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
-        $cash_accounts = cash()->getModel(cashAccount::class)->getAllActiveForContact(wa()->getUser());
+        $cash_accounts = cash()->getModel(cashAccount::class)->getAllActiveForContactWithCounter(wa()->getUser());
 
         $plugin_settings = $plugin->getSettings();
         $profiles = ifset($plugin_settings, 'profiles', []);

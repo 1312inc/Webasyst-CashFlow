@@ -27,6 +27,25 @@ class cashAccountModel extends cashModel
         )->fetchAll();
     }
 
+    public function getAllActiveForContactWithCounter(waContact $contact, $access = cashRightConfig::ACCOUNT_ADD_EDIT_SELF_CREATED_TRANSACTIONS_ONLY)
+    {
+        if (!cash()->getContactRights()->isAdmin($contact)) {
+            $ids = cash()->getContactRights()->getAccountIdsForContact($contact, $access);
+            if (empty($ids)) {
+                return [];
+            }
+        }
+        $accounts = $this->query("
+            SELECT ca.*, COUNT(ct.id) AS count_transaction FROM cash_account ca 
+            LEFT JOIN cash_transaction ct ON ct.account_id = ca.id AND ct.is_archived = 0
+            WHERE ca.is_archived = 0
+            GROUP BY ca.id
+            ORDER BY ca.sort ASC, ca.id DESC
+        ")->fetchAll('id');
+
+        return (empty($ids) ? $accounts : array_intersect_key($accounts, array_flip($ids)));
+    }
+
     /**
      * @param int       $id
      * @param waContact $contact
