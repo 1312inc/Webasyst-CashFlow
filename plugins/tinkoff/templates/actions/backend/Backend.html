@@ -383,7 +383,7 @@
             $.post('?plugin=tinkoff&module=connect', { token: $token.val() }, function (data) {
                 data = (data.hasOwnProperty('data') ? data.data : data);
                 if (data.errors) {
-                    $error.text(data.errors);
+                    $error.text(data.errors.join(' ').replace(/[,\s]+$/m, ''));
                 } else {
                     window.location.reload();
                 }
