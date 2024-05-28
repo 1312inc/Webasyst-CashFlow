@@ -97,29 +97,6 @@
                             </span>
                         </p>
                     {else}
-                        <div class="dropdown" id="js-dropdown" style="width: 250px;{if empty($profiles)} display: none{/if}">
-                            <button class="dropdown-toggle button outlined" type="button" style="text-align: left">
-                                {if isset($profiles[$profile_id])}
-                                    {render_account _account=$profiles[$profile_id]}
-                                {/if}
-                            </button>
-                            <div class="dropdown-body">
-                                <ul class="menu">
-                                    {foreach $profiles as $_profile_id => $_profile}
-                                    <li>
-                                        <div class="custom-ml-16 custom-my-4">
-                                            <a href="javascript:void(0);" data-profile-id="{$_profile_id}">
-                                                {render_account _account=$_profile}
-                                            </a>
-                                        </div>
-                                    </li>
-                                    {/foreach}
-                                    <li>
-                                        <a href="javascript:void(0);" class="button white js-tinkoff-connect">+ [`Подключить`]</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
 
 
                         {*** NEW CARD LAYOUT ***}
@@ -210,7 +187,6 @@
     let error = '{$error|default:''}';
     let process_id = undefined;
     let $start_button = $('.js-cash-tinkoff-start, .js-cash-tinkoff-update');
-    let $dropdown_button = $('#js-dropdown');
     let datepicker_options = {
         changeMonth: true,
         changeYear: true,
@@ -320,25 +296,22 @@
         });
     });
 
-    $dropdown_button.waDropdown({
-        items: '.menu > li a',
-        change: function (event, target) {
-            profile_id = $(target).data('profile-id');
-            if (profile_id) {
-                $('[name="profile_id"]').val(profile_id);
-                $('[class*=js-tab-content').addClass('hidden');
-                $('.js-tab-content-'+ profile_id).removeClass('hidden');
-                if (profiles.hasOwnProperty(profile_id)) {
-                    let $up_dt = $('.js-update-date');
-                    if (profiles[profile_id].hasOwnProperty('update_date') && profiles[profile_id]['update_date']) {
-                        $up_dt.text(profiles[profile_id]['update_date']);
-                        $up_dt.closest('strong.hint').removeClass('hidden');
-                    } else {
-                        $up_dt.closest('strong.hint').addClass('hidden');
-                    }
-                    if (profiles[profile_id].hasOwnProperty('tinkoff_id')) {
-                        $('.js-tinkoff-id').text(profiles[profile_id]['tinkoff_id']);
-                    }
+    $('#js-profile-c').on('click', 'div.c-profile', function (e) {
+        profile_id = $(this).find('a').data('profile-id');
+        if (profile_id) {
+            $('[name="profile_id"]').val(profile_id);
+            $('[class*=js-tab-content').addClass('hidden');
+            $('.js-tab-content-'+ profile_id).removeClass('hidden');
+            if (profiles.hasOwnProperty(profile_id)) {
+                let $up_dt = $('.js-update-date');
+                if (profiles[profile_id].hasOwnProperty('update_date') && profiles[profile_id]['update_date']) {
+                    $up_dt.text(profiles[profile_id]['update_date']);
+                    $up_dt.closest('strong.hint').removeClass('hidden');
+                } else {
+                    $up_dt.closest('strong.hint').addClass('hidden');
+                }
+                if (profiles[profile_id].hasOwnProperty('tinkoff_id')) {
+                    $('.js-tinkoff-id').text(profiles[profile_id]['tinkoff_id']);
                 }
             }
         }
