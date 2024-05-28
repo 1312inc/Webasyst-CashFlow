@@ -298,6 +298,8 @@
 
     $('#js-profile-c').on('click', 'div.c-profile', function (e) {
         profile_id = $(this).find('a').data('profile-id');
+        $('#js-profile-c > div.c-profile').removeClass('c-selected');
+        $(this).addClass('c-selected');
         if (profile_id) {
             $('[name="profile_id"]').val(profile_id);
             $('[class*=js-tab-content').addClass('hidden');
