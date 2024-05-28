@@ -312,6 +312,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         $count_all_added = (int) cash()->getModel(cashTransaction::class)
             ->select('COUNT(id) AS count')
             ->where('import_id = ?', $this->data['import_id'])
+            ->where('is_archived = 0')
             ->fetchField('count');
         $import_history->setSuccess($count_all_added);
         $import_history->setFail($this->data['skipped']);
