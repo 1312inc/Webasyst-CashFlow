@@ -13,19 +13,32 @@ class cashTinkoffPluginConnectController extends waJsonController
 
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
-        $plugin->saveSettings(['tinkoff_token' => $tinkoff_token, 'self_mode' => 1]);
+        $plugin->saveSettings(['tinkoff_token' => $tinkoff_token]);
 
         $company = $plugin->getCompany();
-        if (!empty($company['errorMessage'])) {
+        if (empty($company)) {
+            $_err = _wp('Информация о компании не получена');
+            $this->setError($_err);
+            waLog::log($_err, TINKOFF_FILE_LOG);
+            return null;
+        } elseif (!empty($company['errorMessage'])) {
             $this->setError($company['errorMessage']);
+            waLog::log($company, TINKOFF_FILE_LOG);
             return null;
         } elseif (!empty($company['error'])) {
             $this->setError($company['error']);
+            waLog::log($company, TINKOFF_FILE_LOG);
             return null;
         }
         $accounts = $plugin->getAccounts();
-        if (!empty($accounts['errorMessage'])) {
+        if (empty($accounts)) {
+            $_err = _wp('Информация о счетах не получена');
+            $this->setError($_err);
+            waLog::log($_err, TINKOFF_FILE_LOG);
+            return null;
+        } elseif (!empty($accounts['errorMessage'])) {
             $this->setError($accounts['errorMessage']);
+            waLog::log($accounts, TINKOFF_FILE_LOG);
             return null;
         }
 
@@ -58,7 +71,7 @@ class cashTinkoffPluginConnectController extends waJsonController
                 ];
             }
         }
-        $plugin->saveSettings(['max_profile_id' => $max_profile_id]);
+        $plugin->saveSettings(['max_profile_id' => $max_profile_id, 'self_mode' => 1]);
         $edit_controller = new cashTinkoffPluginProfileEditController();
         foreach ($profiles as $profile_id => $test_profile) {
             $edit_controller->execute($profile_id, $profiles);
