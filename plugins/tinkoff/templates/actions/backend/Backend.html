@@ -135,7 +135,13 @@
                     <input type="text" class="long" name="token" value="{$plugin_settings.tinkoff_token|escape|default:''}" autocomplete="off" placeholder="≈ t.761436e55ac1576ed51a03b28e5eab6a">
                     <input type="hidden" name="self_mode" value="1">
                     <button class="button green js-tinkoff-self-connect" type="button">[`Подключить`]</button>
-                    <div class="state-error custom-pt-8 js-connect-error"></div>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name"></div>
+                <div class="value">
+                    <div class="state-error js-connect-error"></div>
                 </div>
             </div>
 
@@ -172,7 +178,7 @@
             } else if (data.error_description) {
                 alert(data.error_description);
             } else if (data.errors) {
-                alert(data.errors);
+                $('.js-connect-error').text(data.errors.join(' ').replace(/[,\s]+$/m, ''));
             } else if (data.profiles) {
                 window.location.reload();
             }

@@ -9,6 +9,14 @@ class cashTinkoffPluginAuthController extends waJsonController
 
         $backend_url = rtrim(wa()->getRootUrl(true), DIRECTORY_SEPARATOR).wa()->getAppUrl();
         if (empty($tinkoff_id)) {
+            $waid_cm = new waWebasystIDClientManager();
+            if (!$waid_cm->isConnected()) {
+                $message = _wp('Для запроса к Тинькофф API необходимо подключить ваш аккаунт к Webasyst ID в приложении «Настройки» > Webasyst ID > Включить Webasyst ID.');
+                $this->setError($message);
+                waLog::log($message,TINKOFF_FILE_LOG);
+                return null;
+            }
+
             /** no auth */
             wa()->getStorage()->del('cash.tinkoff_back_redirect');
             wa()->getStorage()->set('cash.tinkoff_back_redirect', $backend_url.'?plugin=tinkoff');
