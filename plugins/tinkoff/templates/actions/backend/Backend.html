@@ -1,5 +1,4 @@
-{$message_1 = _wp('Clear import history (don’t worry, imported transactions will not be affected)?')}
-{$message_2 = _wp('Поле не должно быть пустым')}
+{$message_1 = _wp('Поле не должно быть пустым')}
 {$profile_id = $plugin_settings.current_profile_id|default:1}
 {$self_mode = $plugin_settings.self_mode|default:0}
 {$profile = ifset($profiles, $profile_id, [])}
@@ -44,19 +43,21 @@
         <div>
             <p class="small">[`Review and manage previous import results:`]</p>
             <ul class="chips rounded small">
-                {** @var cashImportDto $import **}
-                {foreach $profile.imports as $import}
-                    <li>
-                        <a href="{$wa_app_url}import/{$import->id}?importinfo={base64_encode($import->filename|escape|cat:' / '|cat:$import->create_datetime)}">
-                            <i class="fas fa-file-excel" style="color: #499b5e;"></i>
-                            <strong>{sprintf('%d transactions', $import->success)}</strong>
-                            {$import->create_datetime|wa_datetime:humandatetime}
+                {foreach $profiles as $_profile}
+                    {if !empty($_profile.imports)}
+                        {** @var cashImportDto $import **}
+                        {foreach $_profile.imports as $import}
+                            <li>
+                                <a href="{$wa_app_url}import/{$import->id}">
+                                    <i class="fas fa-file-excel" style="color: #499b5e;"></i>
+                                    <strong>{sprintf('%d transactions', $import->success)}</strong>
+                                    {$import->create_datetime|wa_datetime:humandatetime}
 
-                            <span class="hint">
-                            {$import->filename|escape|truncate:24}
-                        </span>
-                        </a>
-                    </li>
+                                    <span class="hint">{$import->filename|escape|truncate:24}</span>
+                                </a>
+                            </li>
+                        {/foreach}
+                    {/if}
                 {/foreach}
             </ul>
         </div>
@@ -134,7 +135,13 @@
                     <input type="text" class="long" name="token" value="{$plugin_settings.tinkoff_token|escape|default:''}" autocomplete="off" placeholder="≈ t.761436e55ac1576ed51a03b28e5eab6a">
                     <input type="hidden" name="self_mode" value="1">
                     <button class="button green js-tinkoff-self-connect" type="button">[`Подключить`]</button>
-                    <div class="state-error custom-pt-8 js-connect-error"></div>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name"></div>
+                <div class="value">
+                    <div class="state-error js-connect-error"></div>
                 </div>
             </div>
 
@@ -171,7 +178,7 @@
             } else if (data.error_description) {
                 alert(data.error_description);
             } else if (data.errors) {
-                alert(data.errors);
+                $('.js-connect-error').text(data.errors.join(' ').replace(/[,\s]+$/m, ''));
             } else if (data.profiles) {
                 window.location.reload();
             }
@@ -389,7 +396,7 @@
                 }
             });
         } else {
-            $error.text('{$message_2}');
+            $error.text('{$message_1}');
             $token.addClass('state-error');
         }
     });
