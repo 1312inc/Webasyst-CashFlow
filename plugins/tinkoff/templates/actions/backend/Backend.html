@@ -69,11 +69,15 @@
             <div class="field">
                 <div class="name for-input">[`Тинькофф ID`]</div>
                 <div class="value">
-                    <div class="custom-mb-8{if empty($profile.tinkoff_id)} hidden{/if}">
+
+                    <div class="custom-mb-12 custom-mt-8{if empty($profile.tinkoff_id)} hidden{/if}">
                         <strong>
                         {if !empty($profile.status)}
                             {if $profile.status === 'ok'}
-                            <i class="fas fa-check-circle text-green"></i> [`Подключено!`]
+                            <span class="icon space-8 custom-mr-4">
+                                <i style="background-image: url('{$wa_url}wa-apps/cash/plugins/tinkoff/img/tinkoff.svg');"></i>
+                            </span>
+                            [`Подключен`]
                             {elseif $profile.status === 'warning'}
                             <i class="fas fa-exclamation-circle text-yellow" title="{$profile.status_description|escape}"></i> [`Ошибка`].
                             <a href="javascript:void(0);" class="js-tinkoff-connect">[`Переподключить`]</a>
@@ -82,13 +86,11 @@
                             {/if}
                         {/if}
                         </strong>
-                        <strong class="hint{if empty($profile.update_date)} hidden{/if}">
-                            [`Последнее обновление:`] <span class="js-update-date">{$profile.update_date|escape|default:''}</span>
-                        </strong>
-                        <br>
                         <span class="hint js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</span>
                     </div>
+
                     {if empty($profiles)}
+
                         <button class="button green custom-mb-4 js-tinkoff-connect" type="button">[`Подключить Тинькофф API`]</button>
                         <p class="small">
                             или <a href="javascript:void(0);" class="js-on-self-mode">[`получить и ввести токен API самостоятельно (режим H2H)`]</a>
@@ -96,10 +98,9 @@
                                 <a href="https://developer.tinkoff.ru/docs/intro/manuals/" target="_blank">[`документация`] <i class="fas fa-external-link-alt fa-xs opacity-50"></i></a>
                             </span>
                         </p>
+
                     {else}
 
-
-                        {*** NEW CARD LAYOUT ***}
                         <div class="flexbox space-16 wrap" id="js-profile-c">
 
                             {foreach $profiles as $_profile_id => $_profile}
@@ -118,8 +119,6 @@
                             </div>
 
                         </div>
-                        {*** / NEW CARD LAYOUT ***}
-
 
                     {/if}
                     <div class="error-msg state-error"></div>

@@ -22,67 +22,13 @@
     </div>
 </div>
 
-<div class="fields-group js-settings-block" style="display: none">
-    <h5 class="heading">[`Маппинг категорий`]</h5>
-
-    <h6 class="heading">[`Расходы`]</h6>
-    {foreach $expense_operations as $_name => $_desc}
-    {$selected = $profile['mapping'][$_name]|default: cashTinkoffPlugin::AUTO_MAPPING_FLAG}
-    <div class="field">
-        <div class="name">{$_desc}</div>
-        <div class="value">
-            <div class="wa-select">
-                <select name="profiles[{$profile_id}][mapping][{$_name}]" autocomplete="off">
-                    <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">* [`Aвтопилот`]</option>
-                    {foreach $categories as $_category}
-                        {if $_category.type == 'expense'}
-                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
-                        {/if}
-                    {/foreach}
-                </select>
-            </div>
-        </div>
-    </div>
-    {/foreach}
-
-    <h6 class="heading">[`Доходы`]</h6>
-    {foreach $income_operations as $_name => $_desc}
-    {$selected = $profile['mapping'][$_name]|default: cashTinkoffPlugin::AUTO_MAPPING_FLAG}
-    <div class="field">
-        <div class="name">{$_desc}</div>
-        <div class="value">
-            <div class="wa-select">
-                <select name="profiles[{$profile_id}][mapping][{$_name}]" autocomplete="off">
-                    <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">* [`Aвтопилот`]</option>
-                    {foreach $categories as $_category}
-                        {if $_category.type == 'income'}
-                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
-                        {/if}
-                    {/foreach}
-                </select>
-            </div>
-        </div>
-    </div>
-    {/foreach}
-
-    <div class="field">
-        <div class="name">
-            [`Таймаут обновления`]
-        </div>
-        <div class="value">
-            <input type="text" name="profiles[{$profile_id}][update_timeout]" value="{$profile.update_timeout|default:''}" autocomplete="off" placeholder="{cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT}">
-            <p class="hint">{sprintf('[`Указывается целое число в минутах, но не менее %s.`]', cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT)}</p>
-        </div>
-    </div>
-</div>
-
 <div class="field">
     <div class="name">
         [`Импорт операций`]
     </div>
     <div class="value">
         {if empty($profile.update_time)}
-            <div class="custom-mb-4">
+            <div class="custom-my-4">
                 <label>
                     <span class="wa-radio">
                         <input type="radio" name="profiles[{$profile_id}][import_period]" value="all" checked />
@@ -105,16 +51,18 @@
                 </span>
             </div>
         {else}
+            <p class="custom-mt-4">
+                <i class="fas fa-check-circle text-green"></i>
+                  <strong>[`Импорт подключен и обновляется автоматически`]</strong>
+                <strong class="hint{if empty($profile.update_date)} hidden{/if}">
+                    [`Последнее обновление:`] <span class="js-update-date">{$profile.update_date|escape|default:''}</span>
+                </strong>
+            </p>
             <input
                 type="button"
                 class="button green js-cash-tinkoff-update"
-                value="{if empty($profile.run_data)}[`Обновить`]{else}[`Возобновить`]{/if}"
+                value="{if empty($profile.run_data)}[`Обновить сейчас`]{else}[`Возобновить`]{/if}"
             />
-            <p class="small">
-                <em>
-                    {sprintf('[`Чтобы обновить уже импортированные транзакции, необходимо вручную удалить соответствующие им операции и %sперезапустить импорт заново%s.`]', "<a href=\"?plugin=tinkoff&action=reset&profile_id=`$profile_id`\" class=\"js-reset-import\">", '</a>')}
-                </em>
-            </p>
         {/if}
     </div>
 </div>
@@ -133,12 +81,78 @@
 </div>
 {/if}
 
-<hr class="custom-mt-16" />
 <div class="field custom-mb-12">
     <div class="name"></div>
     <div class="value">
-        <a class="js-settings-show">[`Показать все настройки`]</a>
+        <a class="js-settings-show small">[`Показать все настройки импорта`]</a>
     </div>
+</div>
+
+<div class="fields-group js-settings-block" style="display: none">
+
+    <div class="field">
+        <div class="name">
+            [`Таймаут автообновления`]
+        </div>
+        <div class="value">
+            <input type="text" class="shorter number" name="profiles[{$profile_id}][update_timeout]" value="{$profile.update_timeout|default:''}" autocomplete="off" placeholder="{cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT}"> [`мин`]
+            <p class="hint">{sprintf('[`Автоматическое обновление (очередной запрос к API Тинькофф Бизнес) будет происходить не чаще, чем один раз в указанный промежуток времени. Указывается целое число в минутах, но не менее %s.`]', cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT)}</p>
+        </div>
+    </div>
+
+    {if !empty($profile.update_time)}
+        <div class="field">
+            <div class="name"></div>
+            <div class="value small">
+                <i class="fas fa-info-circle text-blue"></i>
+                <em>{sprintf('[`В случае проблем импорт всегда можно %sперезапустить заново%s.`]', "<a href=\"?plugin=tinkoff&action=reset&profile_id=`$profile_id`\" class=\"js-reset-import\">", '</a>')}</em>
+            </div>
+        </div>
+    {/if}
+
+    <h5 class="heading">[`Соответствие статей Тинькофф Бизнес &rarr; Деньги`]</h5>
+    <p class="hint">[`В режиме «Автопилот» импорт будет производиться согласно общему базовому <a href="https://developer.tinkoff.ru/products/scenarios/account-info#категории-операций" target=_blank>списку категорий операций Тинькофф</a> и тому, в какие статьи вы вручную относите операции с «Деньгах» уже после импорта.`]</p>
+
+    <h6 class="heading">[`Расходы`]</h6>
+    {foreach $expense_operations as $_name => $_desc}
+    {$selected = $profile['mapping'][$_name]|default: cashTinkoffPlugin::AUTO_MAPPING_FLAG}
+    <div class="field">
+        <div class="name">{$_desc} ({$_name})</div>
+        <div class="value">
+            <div class="wa-select small">
+                <select name="profiles[{$profile_id}][mapping][{$_name}]" autocomplete="off">
+                    <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">[`Aвтопилот`]</option>
+                    {foreach $categories as $_category}
+                        {if $_category.type == 'expense'}
+                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
+                        {/if}
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+    </div>
+    {/foreach}
+
+    <h6 class="heading">[`Доходы`]</h6>
+    {foreach $income_operations as $_name => $_desc}
+    {$selected = $profile['mapping'][$_name]|default: cashTinkoffPlugin::AUTO_MAPPING_FLAG}
+    <div class="field">
+        <div class="name">{$_desc} ({$_name})</div>
+        <div class="value">
+            <div class="wa-select small">
+                <select name="profiles[{$profile_id}][mapping][{$_name}]" autocomplete="off">
+                    <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">[`Aвтопилот`]</option>
+                    {foreach $categories as $_category}
+                        {if $_category.type == 'income'}
+                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
+                        {/if}
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+    </div>
+    {/foreach}
+
 </div>
 
 <div class="field">
