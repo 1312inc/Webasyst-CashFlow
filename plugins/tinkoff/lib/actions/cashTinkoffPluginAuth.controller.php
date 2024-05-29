@@ -52,6 +52,7 @@ class cashTinkoffPluginAuthController extends waJsonController
     {
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
+        $plugin->saveSettings(['self_mode' => 0]);
         $company = $plugin->getCompany($tinkoff_id, $inn);
         if (!empty($company['errorMessage'])) {
             return ['error' => $company['errorMessage']];
@@ -100,7 +101,7 @@ class cashTinkoffPluginAuthController extends waJsonController
                 }
             }
         }
-        $plugin->saveSettings(['max_profile_id' => $max_profile_id, 'self_mode' => 0]);
+        $plugin->saveSettings(['max_profile_id' => $max_profile_id]);
         $edit_controller = new cashTinkoffPluginProfileEditController();
         foreach ($profiles as $profile_id => $test_profile) {
             $edit_controller->execute($profile_id, $profiles);
