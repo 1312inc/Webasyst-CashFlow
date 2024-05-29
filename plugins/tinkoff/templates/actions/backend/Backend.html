@@ -378,7 +378,7 @@
         e.preventDefault();
         let $error = $('.js-connect-error');
         let $token = $('.js-token-field').find('[name="token"]');
-        $error.text('');
+        $error.html('<div class="spinner custom-ml-4">');
         $token.removeClass('state-error');
         if ($token.val()) {
             $.post('?plugin=tinkoff&module=connect', { token: $token.val() }, function (data) {
