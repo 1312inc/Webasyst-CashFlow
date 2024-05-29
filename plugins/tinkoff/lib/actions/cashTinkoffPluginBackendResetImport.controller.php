@@ -29,6 +29,7 @@ class cashTinkoffPluginBackendResetImportController extends waJsonController
                     'update_time' => '',
                     'import_id' => 0,
                     'first_update' => true,
+                    'cash_account' => 0,
                     'last_update_time' => ''
                 ]);
                 $profile = $plugin->getProfile($profile_id);
@@ -38,7 +39,6 @@ class cashTinkoffPluginBackendResetImportController extends waJsonController
                     ->select('id, import_id')
                     ->where('account_id = ?', $cash_account)
                     ->where('external_source = ?', $source)
-                    ->where('external_hash IS NOT NULL')
                     ->fetchAll();
                 $transaction_ids = array_column($trs, 'id');
                 $import_ids = array_unique(array_column($trs, 'import_id'));
