@@ -220,7 +220,7 @@
                         renderText(response.text_legend);
                     }
                     setTimeout(function () {
-                        let cash_account = $('select[name="profiles['+ profile_id +'][cash_account]"]').val();
+                        let cash_account = response.cash_account_id || $('select[name="profiles['+ profile_id +'][cash_account]"]').val();
                         renderText('');
                         $('.progressbar').hide();
                         window.location = window.appState.baseUrl +'account/'+ cash_account +'?show_success_import_hint=1';
@@ -372,7 +372,6 @@
     $('.js-on-self-mode').on('click', function (e) {
         e.preventDefault();
         $('.js-token-field').removeClass('hidden');
-        $('.js-tinkoff-connect').addClass('disabled');
     });
 
     $('.js-tinkoff-self-connect').on('click', function (e) {

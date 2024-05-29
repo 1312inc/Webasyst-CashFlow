@@ -30,11 +30,16 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         }
 
         $profile = $this->plugin()->getProfile($this->data['profile_id']);
-        if (!ifset($profile, 'cash_account', 0)) {
+        $cash_account_id = ifset($profile, 'cash_account', null);
+        if (empty($cash_account_id)) {
             $this->data['error'] = _wp('Не настроен счет импорта');
             return;
+        } elseif ($cash_account_id === 'new_account') {
+            $cash_account_id = $this->createAccount(ifset($profile, 'currency_code', ''));
+            $this->plugin()->saveProfile($this->data['profile_id'], ['cash_account' => $cash_account_id]);
         }
-        $this->data['cash_account_id'] = (int) ifset($profile, 'cash_account', 0);
+
+        $this->data['cash_account_id'] = (int) $cash_account_id;
         $this->data['tinkoff_id'] = (string) ifset($profile, 'tinkoff_id', '');
         $this->data['company'] = (string) ifset($profile, 'company', '');
         $this->data['inn'] = (int) ifset($profile, 'inn', 0);
@@ -207,7 +212,8 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             'progress'    => $progress,
             'error'       => ifset($this->data, 'error', null),
             'warning'     => ifset($this->data, 'warning', null),
-            'text_legend' => $html
+            'text_legend' => $html,
+            'cash_account_id' => ifset($this->data, 'cash_account_id', null)
         ]);
     }
 
@@ -295,6 +301,9 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
      */
     private function history()
     {
+        if (empty($this->data['cash_account_id']) || !is_numeric($this->data['cash_account_id'])) {
+            return;
+        }
         if (empty($this->data['import_id'])) {
             $import_history = cash()->getEntityFactory(cashImport::class)->createNew();
             $import_history->setProvider($this->plugin()->getExternalSource());
@@ -328,5 +337,36 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             'cash_account_id' => $this->data['cash_account_id']
         ], JSON_UNESCAPED_UNICODE));
         cash()->getEntityPersister()->update($import_history);
+    }
+
+    /**
+     * @param $currency_code
+     * @return int
+     * @throws waException
+     */
+    private function createAccount($currency_code)
+    {
+        $currency = 'RUB';
+        if (!empty($currency_code)) {
+            $system_currencies = (new cashApiSystemGetCurrenciesHandler())->handle(null);
+            foreach ($system_currencies as $_system_currency) {
+                if (ifset($_system_currency, 'iso4217', '') == $currency_code && isset($_system_currency['code'])) {
+                    $currency = $_system_currency['code'];
+                    break;
+                }
+            }
+        }
+
+        /** @var cashAccount $account */
+        $account = cash()->getEntityFactory(cashAccount::class)->createNew();
+        $account->setName(_wp('Тинькофф'))
+            ->setCurrency($currency)
+            ->setDescription('')
+            ->setIcon('')
+            ->setCustomerContactId(wa()->getUser()->getId());
+
+        cash()->getEntityPersister()->save($account);
+
+        return $account->getId();
     }
 }

@@ -13,7 +13,7 @@ class cashTinkoffPluginConnectController extends waJsonController
 
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
-        $plugin->saveSettings(['tinkoff_token' => $tinkoff_token]);
+        $plugin->saveSettings(['tinkoff_token' => $tinkoff_token, 'self_mode' => 1]);
 
         $company = $plugin->getCompany();
         if (empty($company)) {
@@ -64,6 +64,7 @@ class cashTinkoffPluginConnectController extends waJsonController
                     'company' => ifset($company, 'name', _wp('Без названия')),
                     'account_number' => $_account['accountNumber'],
                     'account_description' => $_account['name'],
+                    'currency_code' => $_account['currency'],
                     'first_update' => true,
                     'update_timeout' => cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT,
                     'status' => 'ok',
@@ -71,7 +72,7 @@ class cashTinkoffPluginConnectController extends waJsonController
                 ];
             }
         }
-        $plugin->saveSettings(['max_profile_id' => $max_profile_id, 'self_mode' => 1]);
+        $plugin->saveSettings(['max_profile_id' => $max_profile_id]);
         $edit_controller = new cashTinkoffPluginProfileEditController();
         foreach ($profiles as $profile_id => $test_profile) {
             $edit_controller->execute($profile_id, $profiles);
