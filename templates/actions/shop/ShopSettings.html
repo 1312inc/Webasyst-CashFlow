@@ -394,7 +394,7 @@
 
                     <div class="field custom-mb-40">
                         <div class="name"></div>
-                        <div class="value">
+                        <div class="value small">
                             <a class="firstTimeHiddenBlockToggler">[`Show all import settings`]</a>
                         </div>
                     </div>
@@ -428,9 +428,9 @@
                             {*<div data-cash-shop-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
                             <div data-cash-shop-import-progress-errors style="display: none" class="box state-error"></div>
                             <div class="custom-mt-16">
-                                <span data-cash-shop-import-progress-icon="loading" class="gray" style="display:none;"><em>[`Importing...`] <span data-cash-shop-import-progress-counts></span></em></span>
-                                <span data-cash-shop-import-progress-icon="success" class="state-success" style="display:none;"><i class="fas fa-check-circle yes"></i> <em>[`Finalizing...`]</em></span>
-                                <span data-cash-shop-import-progress-icon="error" class="state-error" style="display:none;"><i class="fas fa-times no"></i> <em>[`Error`]</em></span>
+                                <span data-cash-shop-import-progress-icon="loading" class="gray small" style="display:none;"><div class="spinner"></div> <em>[`Importing...`] <span data-cash-shop-import-progress-counts></span></em></span>
+                                <span data-cash-shop-import-progress-icon="success" class="state-success-hint" style="display:none;"><i class="fas fa-check-circle yes"></i> <em>[`Finalizing...`]</em></span>
+                                <span data-cash-shop-import-progress-icon="error" class="state-error-hint" style="display:none;"><i class="fas fa-times no"></i> <em>[`Error`]</em></span>
                             </div>
                         </div>
 
@@ -628,7 +628,7 @@
                         $progressError = $progress.find('[data-cash-shop-import-progress-icon="error"]');
 
                     $progressBar.waProgressbar({
-                            "color": "blue",
+                            "color": "var(--green)",
                             "text-inside": true
                         });
 
