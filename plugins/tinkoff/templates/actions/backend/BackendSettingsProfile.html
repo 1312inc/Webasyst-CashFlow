@@ -7,16 +7,15 @@
     </div>
     <div class="value">
         <div class="wa-select">
-            <select name="profiles[{$profile_id}][cash_account]" autocomplete="off" class="bold js-account-select">
+            <select name="profiles[{$profile_id}][cash_account]" autocomplete="off" class="bold js-account-select"{if !empty($profile.cash_account) && $profile.cash_account > 0} disabled{/if}>
             {if empty($profile.cash_account) || !is_numeric($profile.cash_account)}
-                <option value="" disabled selected>[`Не выбран`]</option>
+                <option value="new_account">[`Создать новый счет...`]</option>
             {/if}
             {foreach $cash_accounts as $_cash_account}
                 <option value="{$_cash_account.id}"{if $profile.cash_account|default:'0' == $_cash_account.id} selected{/if} data-count-transaction="{$_cash_account.count_transaction|escape|default:'0'}">
                     {$_cash_account.currency|escape} — {$_cash_account.name|escape}
                 </option>
             {/foreach}
-                <option value="new_account">[`Создать новый счет Тинькофф`]</option>
             </select>
         </div>
         <p class="state-caution small hidden"><i class="fas fa-exclamation-triangle"></i> [`<b>Лучше создать новый счет!</b> Чтобы избежать дублирования операций, и баланс счета в «Деньгах» совпадал с балансом в Тинькофф Бизнесе, рекомендуем включать импорт в отдельный счет, в котором еще нет других операций.`]</p>
