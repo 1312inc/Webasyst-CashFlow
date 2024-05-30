@@ -70,7 +70,7 @@
         {else}
             <p class="custom-mt-4">
                 <i class="fas fa-check-circle text-green"></i>
-                <strong>[`Импорт подключен и обновляется автоматически`]</strong>
+                <strong>[`Импорт обновляется автоматически`]</strong>
                 <strong class="hint{if empty($profile.update_date)} hidden{/if}">
                     [`Последнее обновление:`] <span class="js-update-date">{$profile.update_date|escape|default:''}</span>
                 </strong>
@@ -166,6 +166,8 @@
         </div>
     </div>
     {/foreach}
+
+    {$wa->installer->reviewWidget('plugin/cash/tinkoff')}
 
 </div>
 
