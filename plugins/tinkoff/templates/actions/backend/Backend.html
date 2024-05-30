@@ -11,7 +11,7 @@
     <strong>{$_account.company|escape|default:''}</strong>
     <br>
     <span class="hint">
-        {$_account.account_description|escape|default:''}
+        <b>{$_account.account_description|escape|default:''}</b>
         {$_account.account_number|escape|default:''}
     </span>
 {/function}
@@ -41,7 +41,7 @@
 
         {if $profile && count($profile.imports)}
         <div>
-            <p class="small">[`Review and manage previous import results:`]</p>
+            <p class="small">[`Все ранее импортированные операции:`]</p>
             <ul class="chips rounded small">
                 {foreach $profiles as $_profile}
                     {if !empty($_profile.imports)}
@@ -50,10 +50,10 @@
                             <li>
                                 <a href="{$wa_app_url}import/{$import->id}">
                                     <i class="fas fa-file-excel" style="color: #499b5e;"></i>
-                                    <strong>{sprintf('%d transactions', $import->success)}</strong>
-                                    {$import->create_datetime|wa_datetime:humandatetime}
+                                    <strong>{sprintf(_w('%d transactions'), $import->success)}</strong>
+                                    {$import->filename|escape|truncate:128}
 
-                                    <span class="hint">{$import->filename|escape|truncate:24}</span>
+                                    <span class="hint">{$import->create_datetime|wa_datetime:humandatetime}</span>
                                 </a>
                             </li>
                         {/foreach}
@@ -278,6 +278,8 @@
 
         $that.addClass('hidden');
         $tab_content.find('.js-progressbar').removeClass('hidden');
+        $tab_content.find('.js-settings-block').addClass('hidden');
+        $tab_content.find('.js-settings-show').addClass('hidden');
         renderText('<div class="spinner custom-mr-4"> </div>[`Подключение...`]');
         saveProfile(form_data, function () {
             $.post(url, form_data, function (response) {

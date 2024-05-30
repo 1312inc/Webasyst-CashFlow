@@ -1,9 +1,23 @@
 {$percentage = ifset($profile, 'run_data', 'progress', 0)}
 
 <input type="hidden" name="profile_id" value="{$profile_id}"/>
+
+<div class="field">
+    <div class="name">
+        [`Счет в Тинькофф`]
+    </div>
+    <div class="value">
+        {$profile.account_description}
+        <p class="hint">
+            {$profile.account_number}<br>
+            {$profile.company}
+        </p>
+    </div>
+</div>
+
 <div class="field">
     <div class="name for-input">
-        [`Счет`]
+        [`Счет в Webasyst`]
     </div>
     <div class="value">
         <div class="wa-select">
@@ -12,13 +26,16 @@
                 <option value="new_account">[`Создать новый счет...`]</option>
             {/if}
             {foreach $cash_accounts as $_cash_account}
-                <option value="{$_cash_account.id}"{if $profile.cash_account|default:'0' == $_cash_account.id} selected{/if} data-count-transaction="{$_cash_account.count_transaction|escape|default:'0'}">
+                <option value="{$_cash_account.id}"{if
+                      $profile.cash_account|default:'0' == $_cash_account.id ||
+                      $profile.cash_account|default:'0' == 0 && $_cash_account.count_transaction == 0
+                    } selected{/if} data-count-transaction="{$_cash_account.count_transaction|escape|default:'0'}">
                     {$_cash_account.currency|escape} — {$_cash_account.name|escape}
                 </option>
             {/foreach}
             </select>
         </div>
-        <p class="state-caution small hidden"><i class="fas fa-exclamation-triangle"></i> [`<b>Лучше создать новый счет!</b> Чтобы избежать дублирования операций, и баланс счета в «Деньгах» совпадал с балансом в Тинькофф Бизнесе, рекомендуем включать импорт в отдельный счет, в котором еще нет других операций.`]</p>
+        <p class="state-caution small hidden"><i class="fas fa-exclamation-triangle"></i> [`<b>Лучше создать новый счет!</b> Чтобы баланс счета в Webasyst совпадал с балансом в Тинькофф Бизнесе, и чтобы не было дублирования операций, рекомендуем включать импорт в отдельный счет, в котором нет других операций.`]</p>
     </div>
 </div>
 
@@ -53,7 +70,7 @@
         {else}
             <p class="custom-mt-4">
                 <i class="fas fa-check-circle text-green"></i>
-                  <strong>[`Импорт подключен и обновляется автоматически`]</strong>
+                <strong>[`Импорт подключен и обновляется автоматически`]</strong>
                 <strong class="hint{if empty($profile.update_date)} hidden{/if}">
                     [`Последнее обновление:`] <span class="js-update-date">{$profile.update_date|escape|default:''}</span>
                 </strong>
@@ -90,6 +107,13 @@
 
 <div class="fields-group js-settings-block" style="display: none">
 
+    {if !empty($profile.update_time)}
+        <p class="small">
+            <em>{sprintf('[`Если что-то пошло не так — %sзапустите импорт всей выписки заново%s.`]', "<a href=\"?plugin=tinkoff&action=reset&profile_id=`$profile_id`\" class=\"js-reset-import\">", '</a>')}</em>
+        </p>
+        <hr>
+    {/if}
+
     <div class="field">
         <div class="name">
             [`Таймаут автообновления`]
@@ -99,16 +123,6 @@
             <p class="hint">{sprintf('[`Автоматическое обновление (очередной запрос к API Тинькофф Бизнес) будет происходить не чаще, чем один раз в указанный промежуток времени. Указывается целое число в минутах, но не менее %s.`]', cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT)}</p>
         </div>
     </div>
-
-    {if !empty($profile.update_time)}
-        <div class="field">
-            <div class="name"></div>
-            <div class="value small">
-                <i class="fas fa-info-circle text-blue"></i>
-                <em>{sprintf('[`В случае проблем импорт всегда можно %sперезапустить заново%s.`]', "<a href=\"?plugin=tinkoff&action=reset&profile_id=`$profile_id`\" class=\"js-reset-import\">", '</a>')}</em>
-            </div>
-        </div>
-    {/if}
 
     <h5 class="heading">[`Соответствие статей Тинькофф Бизнес &rarr; Деньги`]</h5>
     <p class="hint">[`В режиме «Автопилот» импорт будет производиться согласно общему базовому <a href="https://developer.tinkoff.ru/products/scenarios/account-info#категории-операций" target=_blank>списку категорий операций Тинькофф</a> и тому, в какие статьи вы вручную относите операции с «Деньгах» уже после импорта.`]</p>
