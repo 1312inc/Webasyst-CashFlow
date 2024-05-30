@@ -31,7 +31,7 @@ class cashApiAccountCreateRequest
             throw new cashValidateException(_w('No account currency'));
         } elseif (!empty($icon)) {
             if (!preg_match('#^(https?://)?(www\.)?.{2,225}\..{2,20}.+$#u', $icon)) {
-                throw new cashValidateException(_w('Incorrect URL format'));
+                $icon = '';
             }
         }
 
