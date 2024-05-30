@@ -69,17 +69,29 @@
             </div>
         {else}
             <p class="custom-mt-4">
+            {if $profile.status === 'ok'}
                 <i class="fas fa-check-circle text-green"></i>
                 <strong>[`Импорт обновляется автоматически`]</strong>
+            {elseif $profile.status === 'warning'}
+                <i class="fas fa-exclamation-circle text-yellow" title="{$profile.status_description|escape}"></i>
+                <strong class="text-red">{$profile.status_description|escape}</strong>
+            {elseif $profile.status === 'danger'}
+                <i class="fas fa-times-circle text-red" title="{$profile.status_description|escape}"></i>
+                <strong class="text-red">{$profile.status_description|escape}</strong>
+            {/if}
                 <strong class="hint{if empty($profile.update_date)} hidden{/if}">
                     [`Последнее обновление:`] <span class="js-update-date">{$profile.update_date|escape|default:''}</span>
                 </strong>
             </p>
+            {if $profile.status === 'danger'}
+            <a href="?plugin=tinkoff&action=reset&profile_id={$profile_id}" class="button yellow js-reset-import">[`Перезапустить импорт заново`]</a>
+            {else}
             <input
                 type="button"
                 class="button green js-cash-tinkoff-update"
                 value="{if empty($profile.run_data)}[`Обновить сейчас`]{else}[`Возобновить`]{/if}"
             />
+            {/if}
         {/if}
     </div>
 </div>

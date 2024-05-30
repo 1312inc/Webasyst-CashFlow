@@ -31,7 +31,9 @@ class cashTinkoffPluginBackendResetImportController extends waJsonController
                     'import_id' => 0,
                     'first_update' => true,
                     'cash_account' => 0,
-                    'last_update_time' => ''
+                    'last_update_time' => '',
+                    'status' => 'ok',
+                    'status_description' => ''
                 ]);
                 $cash_account = (int) ifempty($profile, 'cash_account', 0);
                 $source = $plugin->getExternalSource();

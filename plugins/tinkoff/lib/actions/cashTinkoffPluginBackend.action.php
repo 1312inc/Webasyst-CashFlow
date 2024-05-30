@@ -23,8 +23,14 @@ class cashTinkoffPluginBackendAction extends waViewAction
         $plugin_settings = $plugin->getSettings();
         $profiles = ifset($plugin_settings, 'profiles', []);
         $profile_run_data = $this->getStorage()->read('profile_run_data');
-        $current_profile_id = ifset($plugin_settings, 'current_profile_id', key($profiles));
         foreach ($profiles as $_profile_id => &$_profile) {
+            /** проверяем аккаунты */
+            $cash_account_id = (int) ifset($_profile, 'cash_account', 0);
+            if ($cash_account_id && !array_key_exists($cash_account_id, $cash_accounts)) {
+                $_profile['status'] = 'danger';
+                $_profile['status_description'] = _wp('Счет, в который ранее производился импорт, более не существует. Перезапустите импорт заново');
+                $plugin->saveProfile($_profile_id, $_profile);
+            }
             $_profile['update_date'] = (empty($_profile['last_update_time']) ? '' : wa_date('humandatetime', $_profile['last_update_time']));
             /** данные для продолжения прогресса импорта */
             if (!empty($profile_run_data[$_profile_id])) {
