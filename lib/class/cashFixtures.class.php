@@ -97,7 +97,7 @@ class cashFixtures
             (new cashAccount())
                 ->setName(wa()->accountName())
                 ->setCurrency($this->currency)
-                ->setIcon('star')
+                ->setIcon('')
         );
 
         foreach ($this->fixtures as $type => $categories) {
