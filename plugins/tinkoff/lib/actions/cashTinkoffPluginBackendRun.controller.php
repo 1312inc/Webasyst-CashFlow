@@ -10,9 +10,11 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
      */
     protected function init()
     {
+        $profile_id = waRequest::post('profile_id', 0, waRequest::TYPE_INT);
+        $profiles = waRequest::post('profiles', [], waRequest::TYPE_ARRAY);
         $this->data = [
-            'profile_id'    => waRequest::post('profile_id', 0, waRequest::TYPE_INT),
-            'import_period' => waRequest::post('import_period', 'all', waRequest::TYPE_STRING_TRIM),
+            'profile_id'    => $profile_id,
+            'import_period' => ifset($profiles, $profile_id, 'import_period', 'all'),
             'error'         => null,
             'warning'       => null,
             'statements'    => [],
