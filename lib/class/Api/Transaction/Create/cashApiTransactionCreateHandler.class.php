@@ -93,7 +93,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
             'is_self_destruct_when_due' => $request->isSelfDestructWhenDue(),
         ];
 
-        if (!empty($request->getExternal()->getId())) {
+        if ($request->getExternal() && $request->getExternal()->getId()) {
             $data['external_source'] = $request->getExternal()->getSource();
             $data['external_id'] = $request->getExternal()->getId();
             $data['external_data'] = $request->getExternal()->getData();
