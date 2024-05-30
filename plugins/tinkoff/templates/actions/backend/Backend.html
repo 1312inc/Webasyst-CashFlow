@@ -411,4 +411,8 @@
             $state.removeClass('hidden');
         }
     });
+
+    $('.js-settings-block input, select').on('change', function (e) {
+        $(this).closest('.fields-group').find('.js-cash-tinkoff-update').removeClass('green').addClass('yellow');
+    });
 </script>

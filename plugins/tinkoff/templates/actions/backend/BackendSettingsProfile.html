@@ -179,6 +179,19 @@
     </div>
     {/foreach}
 
+    {if $profile.status === 'ok'}
+    <div class="field">
+        <div class="name"></div>
+        <div class="value">
+            <input
+                type="button"
+                class="button green js-cash-tinkoff-update"
+                value="{if empty($profile.update_time)}[`Сохранить и запустить импорт`]{else}[`Сохранить и обновить`]{/if}"
+            />
+        </div>
+    </div>
+    {/if}
+
     {$wa->installer->reviewWidget('plugin/cash/tinkoff')}
 
 </div>
