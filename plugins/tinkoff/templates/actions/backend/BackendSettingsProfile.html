@@ -192,7 +192,9 @@
     </div>
     {/if}
 
-    {$wa->installer->reviewWidget('plugin/cash/tinkoff')}
+    {if $wa->installer}
+        {$wa->installer->reviewWidget('plugin/cash/tinkoff')}
+    {/if}
 
 </div>
 

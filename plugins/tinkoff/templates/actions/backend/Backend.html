@@ -80,7 +80,7 @@
                             </span>
                             [`Подключен`]
                             {elseif $profile.status === 'warning'}
-                            <i class="fas fa-exclamation-circle text-yellow" title="{$profile.status_description|escape}"></i> [`Ошибка`].
+                            <i class="fas fa-exclamation-circle text-orange" title="{$profile.status_description|escape}"></i> [`Ошибка`].
                             <a href="javascript:void(0);" class="js-tinkoff-connect">[`Переподключить`]</a>
                             {elseif $profile.status === 'danger'}
                             <i class="fas fa-exclamation-triangle text-red" title="{$profile.status_description|escape}"></i> [`Ошибка`].
