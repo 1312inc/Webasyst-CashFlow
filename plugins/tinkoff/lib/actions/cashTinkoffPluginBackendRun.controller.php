@@ -236,7 +236,11 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
      */
     private function correctiveOperation()
     {
-        if (empty($this->data['account_number']) || $this->data['import_period'] !== 'all') {
+        if (
+            !$this->data['first_update']
+            || empty($this->data['account_number'])
+            || $this->data['import_period'] !== 'all'
+        ) {
             return;
         }
         $accounts = $this->plugin()->getAccounts($this->data['tinkoff_id'], $this->data['inn']);
