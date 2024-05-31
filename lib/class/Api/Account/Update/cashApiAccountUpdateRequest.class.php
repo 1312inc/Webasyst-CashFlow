@@ -21,7 +21,7 @@ final class cashApiAccountUpdateRequest extends cashApiAccountCreateRequest
 
         $this->id = $id;
 
-        parent::__construct($name, $currency, $icon, $iconLink, $description);
+        parent::__construct($name, $currency, $icon, $description);
     }
 
     public function getId(): int
