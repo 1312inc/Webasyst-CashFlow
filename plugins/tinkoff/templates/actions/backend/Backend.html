@@ -158,6 +158,10 @@
     </div>
 </div>
 
+{if $wa->installer}
+    {$wa->installer->reviewWidget('plugin/cash/tinkoff')}
+{/if}
+
 <script>
     function saveProfile(profile, callback) {
         profile.profile_id = profile_id;
