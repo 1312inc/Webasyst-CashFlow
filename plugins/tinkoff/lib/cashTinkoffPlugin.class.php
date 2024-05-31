@@ -285,22 +285,34 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             }
         }
 
-        $category_counter = $category_model->query("
-            SELECT ctd.value, COUNT(ctd.value) AS category_counter, MAX(ct.category_id) AS c_id FROM cash_transaction ct
-            LEFT JOIN cash_transaction_data ctd ON ctd.transaction_id = ct.id
-            WHERE ct.external_source = s:external_source
+        $last_categories = [];
+        // Соберем категории Тинкофф последних операций для текущего аккаунта (счёта)
+        $last_t_categories = $category_model->query("
+            SELECT ctd.value, ct.category_id FROM cash_transaction ct
+            LEFT JOIN cash_transaction_data ctd ON ctd.transaction_id = ct.id AND ctd.field_id = 'category'
+            WHERE ct.account_id = i:account_id
+            AND ct.external_source = s:external_source
             AND ct.external_hash IS NOT NULL
             AND ct.is_archived = 0
-            AND ctd.field_id = 'category'
-            GROUP BY ctd.value
-            ORDER BY category_counter DESC
-        ", ['external_source' => $this->getExternalSource()])->fetchAll('value');
+            ORDER BY ct.datetime DESC
+        ", ['account_id' => $this->cash_account_id, 'external_source' => $this->getExternalSource()])->fetchAll('value');
+        if (!empty($last_t_categories)) {
+            foreach ($last_t_categories as $_last_t_category) {
+                if (
+                    isset($_last_t_category['value'], $_last_t_category['category_id'])
+                    && !array_key_exists($_last_t_category['value'], $last_categories)
+                ) {
+                    $last_categories[$_last_t_category['value']] = $_last_t_category['category_id'];
+                }
+            }
+        }
+
         $key_words = $this->getConfigParam('key_words');
 
         foreach ($transactions as &$_transaction) {
             if (empty($_transaction['category_id']) || $_transaction['category_id'] === self::AUTO_MAPPING_FLAG) {
-                if (isset($_transaction['data']['category'], $category_counter[$_transaction['data']['category']])) {
-                    $_transaction['category_id'] = ifset($category_counter, $_transaction['data']['category'], 'c_id', self::AUTO_MAPPING_FLAG);
+                if (isset($_transaction['data']['category'], $last_categories[$_transaction['data']['category']])) {
+                    $_transaction['category_id'] = ifset($last_categories, $_transaction['data']['category'], 'c_id', self::AUTO_MAPPING_FLAG);
                 }
                 if ($_transaction['category_id'] === self::AUTO_MAPPING_FLAG && isset($key_words[$_transaction['data']['category']])) {
                     $words = (array) $key_words[$_transaction['data']['category']];
@@ -355,17 +367,16 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             // Соберем ИНН по истории ранее импортированных операций
             try {
                 $inns_2 = $cash_model->query("
-                    SELECT ct.contractor_contact_id AS contact_id, COUNT(ctd.value) AS inn_counter, MAX(ctd.value) AS inn FROM cash_transaction ct
-                    LEFT JOIN cash_transaction_data ctd ON ctd.transaction_id = ct.id
-                    WHERE ct.external_source = s:external_source
+                    SELECT ct.contractor_contact_id AS contact_id, ctd.value AS inn FROM cash_transaction ct
+                    LEFT JOIN cash_transaction_data ctd ON ctd.transaction_id = ct.id AND ctd.field_id = 'receiver_inn'
+                    WHERE ct.account_id = i:account_id
+                    AND ct.external_source = s:external_source
                     AND ct.is_archived = 0
                     AND ct.contractor_contact_id IS NOT NULL
                     AND ct.external_hash IS NOT NULL
                     AND ctd.value IN (s:inns)
-                    AND ctd.field_id = 'receiver_inn'
-                    GROUP BY ct.contractor_contact_id
-                    ORDER BY inn_counter DESC
-                ", ['external_source' => $this->getExternalSource(), 'inns' => $inns])->fetchAll();
+                    ORDER BY ct.datetime DESC
+                ", ['account_id' => $this->cash_account_id, 'external_source' => $this->getExternalSource(), 'inns' => $inns])->fetchAll();
             } catch (waDbException $wdb) {
                 $inns_2 = [];
                 waLog::dump($wdb->getMessage(), TINKOFF_FILE_LOG);
