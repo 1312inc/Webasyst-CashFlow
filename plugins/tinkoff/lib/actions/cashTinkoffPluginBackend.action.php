@@ -15,6 +15,8 @@ class cashTinkoffPluginBackendAction extends waViewAction
 
     public function execute()
     {
+        $review_widget = false;
+
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
         $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
@@ -44,9 +46,13 @@ class cashTinkoffPluginBackendAction extends waViewAction
                 $imports = [cash()->getEntityRepository(cashImport::class)->findById($_profile['import_id'])];
                 $_profile['imports'] = cashDtoFromEntityFactory::fromEntities(cashImportDto::class, $imports);
             }
+            if (!$review_widget && ifset($_profile, 'first_update', true) === false) {
+                $review_widget = true;
+            }
         }
 
         $this->view->assign([
+            'review_widget'      => $review_widget,
             'plugin_settings'    => $plugin_settings,
             'profiles'           => $profiles,
             'expense_operations' => $plugin->getConfigParam('expense'),
