@@ -43,8 +43,10 @@ class cashTinkoffPluginBackendAction extends waViewAction
             if (empty($_profile['import_id'])) {
                 $_profile['imports'] = [];
             } else {
-                $imports = [cash()->getEntityRepository(cashImport::class)->findById($_profile['import_id'])];
-                $_profile['imports'] = cashDtoFromEntityFactory::fromEntities(cashImportDto::class, $imports);
+                $import = cash()->getEntityRepository(cashImport::class)->findById($_profile['import_id']);
+                if ($import instanceof cashAbstractEntity) {
+                    $_profile['imports'] = cashDtoFromEntityFactory::fromEntities(cashImportDto::class, [$import]);
+                }
             }
             if (!$review_widget && ifset($_profile, 'first_update', true) === false) {
                 $review_widget = true;
