@@ -40,9 +40,8 @@ class cashTinkoffPluginBackendAction extends waViewAction
                     'progress' => (int) ifempty($profile_run_data, $_profile_id, 'progress', 0)
                 ];
             }
-            if (empty($_profile['import_id'])) {
-                $_profile['imports'] = [];
-            } else {
+            $_profile['imports'] = [];
+            if (!empty($_profile['import_id'])) {
                 $import = cash()->getEntityRepository(cashImport::class)->findById($_profile['import_id']);
                 if ($import instanceof cashAbstractEntity) {
                     $_profile['imports'] = cashDtoFromEntityFactory::fromEntities(cashImportDto::class, [$import]);
