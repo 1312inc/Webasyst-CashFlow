@@ -11,6 +11,7 @@ return array(
         'sort' => array('int', 11),
         'create_datetime' => array('datetime', 'null' => 0),
         'update_datetime' => array('datetime'),
+        'is_imaginary' => array('tinyint', 4, 'null' => 0),
         ':keys' => array(
             'PRIMARY' => 'id',
         ),
