@@ -88,8 +88,7 @@ class cashTinkoffTransactionCli extends waCliController
 
         if ($import_id && $this->info['count_added']) {
             $import_history = cash()->getEntityRepository(cashImport::class)->findById($import_id);
-            kmwaAssert::instance($import_history, cashImport::class);
-            if ($import_history) {
+            if ($import_history instanceof cashAbstractEntity) {
                 $count_all_added = (int) cash()->getModel(cashTransaction::class)
                     ->select('COUNT(id) AS count')
                     ->where('import_id = ?', $import_id)
