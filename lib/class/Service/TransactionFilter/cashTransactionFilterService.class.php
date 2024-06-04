@@ -175,6 +175,13 @@ final class cashTransactionFilterService
     ): void {
         $selectQueryParts->addAndWhere('ca.currency = s:currency')
             ->addParam('currency', $dto->filter->getCurrency());
+        $selectQueryParts->addAndWhere('
+            CASE
+                WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                WHEN ca.is_imaginary = -1 THEN NULL
+                ELSE ca.is_imaginary = 0
+            END
+        ');
     }
 
     /**
