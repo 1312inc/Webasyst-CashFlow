@@ -315,9 +315,8 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             $this->plugin()->saveProfile($this->data['profile_id'], ['import_id' => $this->data['import_id']]);
         } else {
             $import_history = cash()->getEntityRepository(cashImport::class)->findById($this->data['import_id']);
-            kmwaAssert::instance($import_history, cashImport::class);
         }
-        if (empty($import_history)) {
+        if (!($import_history instanceof cashAbstractEntity)) {
             return null;
         }
         $count_all_added = (int) cash()->getModel(cashTransaction::class)
