@@ -312,7 +312,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
         foreach ($transactions as &$_transaction) {
             if (empty($_transaction['category_id']) || $_transaction['category_id'] === self::AUTO_MAPPING_FLAG) {
                 if (isset($_transaction['data']['category'], $last_categories[$_transaction['data']['category']])) {
-                    $_transaction['category_id'] = ifset($last_categories, $_transaction['data']['category'], 'c_id', self::AUTO_MAPPING_FLAG);
+                    $_transaction['category_id'] = ifset($last_categories, $_transaction['data']['category'], self::AUTO_MAPPING_FLAG);
                 }
                 if ($_transaction['category_id'] === self::AUTO_MAPPING_FLAG && isset($key_words[$_transaction['data']['category']])) {
                     $words = (array) $key_words[$_transaction['data']['category']];
