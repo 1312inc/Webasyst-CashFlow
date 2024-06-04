@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="sidebar"
-    class="sidebar flexbox hide-scrollbar width-16rem mobile-friendly z-50"
-  >
+  <Fragment>
     <nav class="sidebar-mobile-toggle">
       <div class="box align-center">
         <a
@@ -85,7 +82,7 @@
     >
       <SidebarFooter />
     </div>
-  </div>
+  </Fragment>
 </template>
 
 <script>
@@ -139,14 +136,6 @@ export default {
     },
     mobileMenuOpen (val) {
       val ? this.menuOpen() : this.menuClose()
-    }
-  },
-
-  mounted () {
-    // Remove top margin if no WA header
-    if (!this.$helper.isHeader()) {
-      this.$refs.sidebar.style.top = 0
-      this.$refs.sidebar.style.height = '100vh'
     }
   },
 
