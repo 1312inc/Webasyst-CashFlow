@@ -206,7 +206,8 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
                 }
             }
         }
-        $html  = sprintf_wp('Импортировано: %s/%s, пропущено: %s', $this->data['counter'], $this->data['count_all_statements'], $this->data['skipped']);
+        //$html  = sprintf_wp('Импортировано: %s/%s, пропущено: %s', $this->data['counter'], $this->data['count_all_statements'], $this->data['skipped']);
+        $html  = sprintf_wp('Импорт: %s / %s', $this->data['counter'], $this->data['count_all_statements']); // who cares about 'skipped' anyway?
         $html .= ' <div class="spinner custom-ml-4">';
         $this->response([
             'processid'   => $this->processId,
