@@ -107,7 +107,7 @@ withUserpic.args = {
       userpic: 'http://localhost:8888/wa-content/img/userpic.svg'
     },
     external_source_info: {
-      name: 'Тинькофф',
+      name: 'Т-Бизнес',
       color: 'green',
       glyph: 'fas fa-shopping-cart',
       entity_icon: '',
@@ -129,7 +129,7 @@ externalSource.args = {
     account_id: 61,
     is_onbadge: false,
     external_source_info: {
-      name: 'Тинькофф',
+      name: 'Т-Бизнес',
       color: 'green',
       glyph: 'fas fa-shopping-cart',
       entity_icon: '',
@@ -151,7 +151,7 @@ collapsedWithSource.args = {
     account_id: 61,
     is_onbadge: false,
     external_source_info: {
-      name: 'Тинькофф',
+      name: 'Т-Бизнес',
       color: 'green',
       glyph: 'fas fa-shopping-cart',
       entity_icon: '',

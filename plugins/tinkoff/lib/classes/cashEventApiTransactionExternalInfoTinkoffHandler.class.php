@@ -17,11 +17,11 @@ class cashEventApiTransactionExternalInfoTinkoffHandler implements cashEventApiT
         return new cashEventApiTransactionExternalInfoResponse(
             '',
             '#ffdd2e',
-            _w('Тинькофф банк'),
+            _w('Т-Бизнес'),
             '',
             '',
             wa()->getAppStaticUrl().'plugins/tinkoff/img/tinkoff_circle.svg',
-            _w('Тинькофф банк')
+            _w('Т-Бизнес')
         );
     }
 

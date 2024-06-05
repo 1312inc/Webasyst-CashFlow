@@ -33,11 +33,11 @@
 
 <div id="cash-import-page" class="article wide">
     <div class="article-body">
-        <h1>[`Тинькофф &rarr; Деньги`]</h1>
+        <h1>[`Т-Бизнес &rarr; Деньги`]</h1>
 
         {include 'templates/actions/import/ImportTab.html'}
 
-        <p>[`Импорт операций из «Тинькофф Бизнес» для юридических лиц (ООО, ИП) по <a href="https://www.tinkoff.ru/business/open-api/">API</a>.`]</p>
+        <p>[`Импорт операций по счету в Т-Бизнесе для юридических лиц (ООО, ИП) по <a href="https://www.tinkoff.ru/business/open-api/">API</a>.`]</p>
 
         {if $profile && count($profile.imports)}
         <div>
@@ -68,7 +68,7 @@
 
             {* AUTO *}
             <div class="field">
-                <div class="name for-input">[`Тинькофф ID`]</div>
+                <div class="name for-input">[`T-ID`]</div>
                 <div class="value">
 
                     <div class="custom-mb-12 custom-mt-8{if empty($profile.tinkoff_id)} hidden{/if}">
@@ -92,7 +92,7 @@
 
                     {if empty($profiles)}
 
-                        <button class="button green custom-mb-4 js-tinkoff-connect" type="button">[`Подключить Тинькофф API`]</button>
+                        <button class="button green custom-mb-4 js-tinkoff-connect" type="button">[`Подключить Т-Бизнес API`]</button>
                         <p class="small">
                             или <a href="javascript:void(0);" class="js-on-self-mode">[`получить и ввести токен API самостоятельно (режим H2H)`]</a>
                             <span class="gray"> —
@@ -130,7 +130,7 @@
 
             {* SELF SERVICE *}
             <div class="field hidden js-token-field">
-                <div class="name for-input">[`Токен Тинькофф API`]</div>
+                <div class="name for-input">[`Токен Т-Бизнес API`]</div>
                 <div class="value">
                     <input type="text" class="long" name="token" value="{$plugin_settings.tinkoff_token|escape|default:''}" autocomplete="off" placeholder="≈ t.761436e55ac1576ed51a03b28e5eab6a">
                     <input type="hidden" name="self_mode" value="1">

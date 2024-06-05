@@ -360,7 +360,7 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
 
         /** @var cashAccount $account */
         $account = cash()->getEntityFactory(cashAccount::class)->createNew();
-        $account->setName(_wp('Тинькофф'))
+        $account->setName(_wp('Т-Бизнес'))
             ->setCurrency($currency)
             ->setDescription('')
             ->setIcon('')

@@ -11,7 +11,7 @@ class cashTinkoffPluginAuthController extends waJsonController
         if (empty($tinkoff_id)) {
             $waid_cm = new waWebasystIDClientManager();
             if (!$waid_cm->isConnected()) {
-                $message = _wp('Для запроса к Тинькофф API необходимо подключить ваш аккаунт к Webasyst ID в приложении «Настройки» > Webasyst ID > Включить Webasyst ID.');
+                $message = _wp('Для запроса к Т-Бизнес API необходимо подключить ваш аккаунт к Webasyst ID в приложении «Настройки» > Webasyst ID > Включить Webasyst ID.');
                 $this->setError($message);
                 waLog::log($message,TINKOFF_FILE_LOG);
                 return null;
