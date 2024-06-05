@@ -266,23 +266,9 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     private function autoMappingPilotTransactions($transactions)
     {
-        static $categories;
         static $category_model;
         if (!$category_model) {
-            $category_model = new cashCategoryModel();
-        }
-        if (!$categories) {
-            $categories = (new cashCategoryModel())->select('id, name, type')->where('id > 0')->order('type DESC')->fetchAll();
-        }
-
-        $income = [];
-        $expense = [];
-        foreach ($categories as $category) {
-            if ($category['type'] === cashCategory::TYPE_INCOME) {
-                $income[$category['name']] = $category['id'];
-            } elseif ($category['type'] === cashCategory::TYPE_EXPENSE) {
-                $expense[$category['name']] = $category['id'];
-            }
+            $category_model = cash()->getModel(cashCategory::class);
         }
 
         $last_categories = [];
@@ -307,27 +293,25 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             }
         }
 
-        $key_words = $this->getConfigParam('key_words');
-
+        /** первичный скрининг */
+        $missing_categories = [];
         foreach ($transactions as &$_transaction) {
             if (empty($_transaction['category_id']) || $_transaction['category_id'] === self::AUTO_MAPPING_FLAG) {
                 if (isset($_transaction['data']['category'], $last_categories[$_transaction['data']['category']])) {
                     $_transaction['category_id'] = ifset($last_categories, $_transaction['data']['category'], self::AUTO_MAPPING_FLAG);
+                } elseif ($missing_category = ifset($_transaction, 'data', 'category', null)) {
+                    $missing_categories[$missing_category] = 0;
                 }
-                if ($_transaction['category_id'] === self::AUTO_MAPPING_FLAG && isset($key_words[$_transaction['data']['category']])) {
-                    $words = (array) $key_words[$_transaction['data']['category']];
-                    foreach ($words as $_word) {
-                        if ($_transaction['amount'] > 0 && array_key_exists($_word, $income)) {
-                            $_transaction['category_id'] = (int) ifset($income, $_word, -2);
-                            break;
-                        } elseif ($_transaction['amount'] < 0 && array_key_exists($_word, $expense)) {
-                            $_transaction['category_id'] = (int) ifset($expense, $_word, -1);
-                        }
-                    }
-                }
-                if ($_transaction['category_id'] === self::AUTO_MAPPING_FLAG) {
-                    $_transaction['category_id'] = ($_transaction['amount'] > 0 ? -2 : -1);
-                }
+            }
+        }
+
+        if (!empty($missing_categories)) {
+            $categories = $this->getIdTinkoffCategories($missing_categories);
+
+            /** вторичный скрининг */
+            foreach ($transactions as &$_transaction) {
+                $t_category = ifset($_transaction, 'data', 'category', null);
+                $_transaction['category_id'] = (int) ifset($categories, $t_category, ($_transaction['amount'] > 0 ? -2 : -1));
             }
         }
 
@@ -499,5 +483,79 @@ class cashTinkoffPlugin extends cashBusinessPlugin
                 break;
             }
         }
+    }
+
+    /**
+     * @param $missing_categories
+     * @return mixed
+     * @throws waException
+     */
+    private function getIdTinkoffCategories($missing_categories)
+    {
+        $live_categories = [];
+        $category_model = cash()->getModel(cashCategory::class);
+        $t_map_categories = (array) $this->getSettings('t_map_categories');
+        if (!empty($t_map_categories)) {
+            // чистит от мертвых категорий
+            $live_categories = $category_model->getById(array_values($t_map_categories));
+            $t_map_categories = array_filter($t_map_categories, function ($_id) use ($live_categories) {
+                return array_key_exists($_id, $live_categories);
+            });
+        }
+
+        /** ID родительских категорий */
+        $category_income = (int) ifempty($t_map_categories, 'parent_income', 0);
+        $category_expense = (int) ifempty($t_map_categories, 'parent_expense', 0);
+        if (!array_key_exists($category_income, $live_categories)) {
+            // добавляем родительскую категорию
+            $category_income = $category_model->insert([
+                'name'  => _wp('Т - Входящие'),
+                'type'  => cashCategory::TYPE_INCOME,
+                'color' => '#ffdd2e',
+                'sort'  => 0,
+                'create_datetime' => date('Y-m-d H:i:s')
+            ]);
+            $t_map_categories['parent_income'] = $category_income;
+        }
+        if (!array_key_exists($category_expense, $live_categories)) {
+            // добавляем родительскую категорию
+            $category_expense = $category_model->insert([
+                'name'  => _wp('Т - Исходящие'),
+                'type'  => cashCategory::TYPE_EXPENSE,
+                'color' => '#000000',
+                'sort'  => 0,
+                'create_datetime' => date('Y-m-d H:i:s')
+            ]);
+            $t_map_categories['parent_expense'] = $category_expense;
+        }
+
+        $add_categories = array_diff_key($missing_categories, $t_map_categories);
+        if (!empty($add_categories)) {
+            $income_cat_conf = $this->getConfigParam('income');
+            $expense_cat_conf = $this->getConfigParam('expense');
+
+            foreach ($add_categories as $code => $_t_category) {
+                if (array_key_exists($code, $income_cat_conf)) {
+                    $name = $income_cat_conf[$code];
+                    $type = cashCategory::TYPE_INCOME;
+                } elseif (array_key_exists($code, $expense_cat_conf)) {
+                    $name = $expense_cat_conf[$code];
+                    $type = cashCategory::TYPE_EXPENSE;
+                } else {
+                    continue;
+                }
+                $t_map_categories[$code] = (int) $category_model->insert([
+                    'name' => $name,
+                    'type' => $type,
+                    'sort' => 0,
+                    'color' => ($type === cashCategory::TYPE_EXPENSE ? '#000000' : '#ffdd2e'),
+                    'create_datetime' => date('Y-m-d H:i:s'),
+                    'category_parent_id' => ($type === cashCategory::TYPE_EXPENSE ? $category_expense : $category_income)
+                ]);
+            }
+        }
+        $this->saveSettings(['t_map_categories' => $t_map_categories]);
+
+        return $t_map_categories;
     }
 }
