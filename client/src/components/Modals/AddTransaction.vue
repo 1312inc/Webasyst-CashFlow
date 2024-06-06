@@ -334,7 +334,6 @@
                   v-if="transaction.external_source !== 'shop'"
                   :href="transaction.external_source_info.entity_url"
                   target="_blank"
-                  class="small"
                 >{{ transaction.external_source_info.entity_name }}</a>
                 <RouterLink
                   v-else

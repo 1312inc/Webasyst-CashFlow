@@ -14,7 +14,11 @@ export default {
 
   created () {
     if (this.editedItem) {
-      this.model = { ...this.model, ...this.editedItem }
+      for (const prop in this.model) {
+        if (prop in this.editedItem) {
+          this.model[prop] = this.editedItem[prop]
+        }
+      }
     }
   },
 
@@ -41,7 +45,7 @@ export default {
     },
 
     remove (entity) {
-      if (confirm(this.$t('deleteWarning', { type: this.$t('categories') }))) {
+      if (confirm(this.$t(`deleteWarning.${entity}`))) {
         this.controlsDisabled = true
         this.$store
           .dispatch(`${entity}/delete`, this.model.id)

@@ -3,6 +3,7 @@
     <router-link
       :to="`/account/${account.id}`"
       class="flexbox middle"
+      :class="{ 'text-gray': account.is_imaginary !== 0 }"
     >
       <span class="icon">
         <img

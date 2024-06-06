@@ -106,7 +106,10 @@
   "Next 90 days": "Next 90 days",
   "tomorrow": "Tomorrow",
   "justCreated": "Just now",
-  "deleteWarning": "DANGER: This will permanently delete the entire {type} and ALL TRANSACTIONS without the ability to restore. Are you sure?",
+  "deleteWarning": {
+    "account": "DANGER: This will permanently delete the entire Account and ALL TRANSACTIONS without the ability to restore. Are you sure?",
+    "category": "DANGER: This will permanently delete the entire Category and ALL TRANSACTIONS without the ability to restore. Are you sure?"
+  },
   "offlineMessage": "No Internet connection",
   "bulkDeleteWarning": "This will delete all selected transactions. Are you sure?",
   "bulkPurgeWarning": "DANGER: This will permanently delete all selected transactions. There will be no way to rollback. Are you sure?",
@@ -227,5 +230,22 @@
   "orOrder": "or order",
   "orderNumber": "Order number",
   "orderNotFound": "Order not found",
-  "totalSelected": "Total Selected"
+  "totalSelected": "Total Selected",
+  "accountType": {
+    "name": "Account type",
+    "types": {
+      "checking": {
+        "name": "Checking",
+        "message": "real money that defines the overall balance in {sign} ({code})"
+      },
+      "virtual": {
+        "name": "Virtual",
+        "message": "transactions will be excluded from the overall balance in {sign} ({code}) for today, but will be counted and displayed in the the future forecast"
+      },
+      "virtualWithForecast": {
+        "name": "Virtual with muted forecast",
+        "message": "both past and future transactions are excluded from the overall balance in {sign} ({code}), making it possible to emulate any isolated financial scenario under this account"
+      }
+    }
+  }
 }

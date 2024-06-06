@@ -57,6 +57,65 @@
           </div>
         </div>
 
+        <div class="field">
+          <div class="name for-input">
+            {{ $t("accountType.name") }}
+          </div>
+          <div class="value">
+            <div class="custom-mb-8">
+              <label>
+                <span class="wa-radio">
+                  <input
+                    v-model="model.is_imaginary"
+                    type="radio"
+                    value="0"
+                  >
+                  <span />
+                </span>
+                {{ $t("accountType.types.checking.name") }}
+                <span
+                  v-if="selectedCurrency"
+                  class="hint"
+                >{{ $t("accountType.types.checking.message", { sign: selectedCurrency.sign, code: selectedCurrency.code }) }}</span>
+              </label>
+            </div>
+            <div class="custom-mb-8">
+              <label>
+                <span class="wa-radio">
+                  <input
+                    v-model="model.is_imaginary"
+                    type="radio"
+                    value="1"
+                  >
+                  <span />
+                </span>
+                {{ $t("accountType.types.virtual.name") }}
+                <span
+                  v-if="selectedCurrency"
+                  class="hint"
+                >{{ $t("accountType.types.virtual.message", { sign: selectedCurrency.sign, code: selectedCurrency.code }) }}</span>
+              </label>
+            </div>
+            <div>
+              <label>
+                <span class="wa-radio">
+                  <input
+                    v-model="model.is_imaginary"
+                    type="radio"
+                    value="-1"
+                  >
+                  <span />
+                </span>
+                {{ $t("accountType.types.virtualWithForecast.name") }}
+                <span
+                  v-if="selectedCurrency"
+                  class="hint"
+                >{{ $t("accountType.types.virtualWithForecast.message", { sign: selectedCurrency.sign, code: selectedCurrency.code }) }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
         <div
           v-if="!isModeUpdate"
           class="field"
@@ -162,6 +221,7 @@ export default {
     InputCurrency,
     IconUploader
   },
+
   mixins: [updateEntityMixin],
 
   props: ['editedItem'],
@@ -172,6 +232,7 @@ export default {
         id: null,
         name: '',
         currency: '',
+        is_imaginary: '0',
         starting_balance: '',
         icon: '',
         description: ''
@@ -197,6 +258,10 @@ export default {
         if (a.code > b.code) { return 1 }
         return 0
       })
+    },
+
+    selectedCurrency () {
+      return this.$store.state.system.currencies.find(currency => currency.code === this.model.currency)
     }
   },
 
