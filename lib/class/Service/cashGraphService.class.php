@@ -581,7 +581,13 @@ class cashGraphService
             case null !== $paramsDto->filter->getCurrency():
                 $sqlParts->addAndWhere('ca.currency = s:currency')
                     ->addParam('currency', $paramsDto->filter->getCurrency());
-
+                $sqlParts->addAndWhere('
+                    CASE
+                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                        WHEN ca.is_imaginary = -1 THEN NULL
+                        ELSE ca.is_imaginary = 0
+                    END
+                ');
                 /** @var cashAccount[] $accounts */
                 $accounts = cash()->getEntityRepository(cashAccount::class)->findAll();
                 // проверим есть ли полный доступ хоть к одному счету в данной валюте
@@ -611,17 +617,6 @@ class cashGraphService
             switch (true) {
                 case null !== $paramsDto->filter->getCurrency():
                     $balanceFlow = $this->getAggregateBalanceFlow($paramsDto);
-//                    $balanceLastData = 0;
-//                    $j = 0;
-//                    foreach ($data as $i => $datum) {
-//                        while (isset($balanceFlow[$paramsDto->filter->getCurrency()][$j])
-//                            && $datum['groupkey'] > $balanceFlow[$paramsDto->filter->getCurrency()][$j]['period']
-//                        ) {
-//                            $balanceLastData = $balanceFlow[$paramsDto->filter->getCurrency()][$j++]['amount'];
-//                        }
-//
-//                        $data[$i]['balance'] = $balanceLastData;
-//                    }
 
                     // добавим точки, которые нужны для отображения баланса
                     $dataWithBalance = [];
