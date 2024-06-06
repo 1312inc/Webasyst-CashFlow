@@ -367,6 +367,13 @@ paths:
                 currency:
                   type: string
                   minLength: 3
+                is_imaginary:
+                  type: integer
+                  default: 0
+                  enum:
+                    - 0
+                    - 1
+                    - -1
                 icon:
                   type: string
                   minLength: 1
@@ -1040,6 +1047,8 @@ components:
           nullable: true
         is_archived:
           type: boolean
+        is_imaginary:
+          type: integer
         sort:
           type: integer
           minimum: 0

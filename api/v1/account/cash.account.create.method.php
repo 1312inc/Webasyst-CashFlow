@@ -25,7 +25,8 @@ final class cashAccountCreateMethod extends cashApiNewAbstractMethod
         $request = new cashApiAccountCreateRequest(
             $this->fromPost('name', true, ApiParamsCaster::CAST_STRING_TRIM),
             $this->fromPost('currency', true, ApiParamsCaster::CAST_STRING_TRIM),
-            $this->fromPost('icon', true, ApiParamsCaster::CAST_STRING_TRIM),
+            $this->fromPost('icon', false, ApiParamsCaster::CAST_STRING_TRIM),
+            $this->fromPost('is_imaginary', true, ApiParamsCaster::CAST_INT) ?: 0,
             $this->fromPost('description', false, ApiParamsCaster::CAST_STRING_TRIM) ?: ''
         );
 

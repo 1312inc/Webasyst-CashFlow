@@ -34,10 +34,11 @@ class cashApiAccountCreateRequest
             throw new cashValidateException(_w('No account name'));
         } elseif (empty($currency)) {
             throw new cashValidateException(_w('No account currency'));
-        } elseif (!empty($icon)) {
-            if (!preg_match('#^(https?://)?(www\.)?.{2,225}\..{2,20}.+$#u', $icon)) {
-                $icon = '';
-            }
+        } elseif (!in_array($is_imaginary, [0, 1, -1])) {
+            throw new cashValidateException(_w('Unknown is_imaginary'));
+        }
+        if (!empty($icon) && !preg_match('#^(https?://)?(www\.)?.{2,225}\..{2,20}.+$#u', $icon)) {
+            $icon = '';
         }
 
         $this->name = $name;
