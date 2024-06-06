@@ -45,6 +45,11 @@ class cashAccount extends cashAbstractEntity
     /**
      * @var int
      */
+    private $is_imaginary = 0;
+
+    /**
+     * @var int
+     */
     private $sort = 0;
 
     /**
@@ -203,6 +208,26 @@ class cashAccount extends cashAbstractEntity
     public function setIsArchived($isArchived)
     {
         $this->is_archived = $isArchived;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIsImaginary()
+    {
+        return $this->is_imaginary;
+    }
+
+    /**
+     * @param $is_imaginary
+     *
+     * @return cashAccount
+     */
+    public function setIsImaginary($is_imaginary)
+    {
+        $this->is_imaginary = $is_imaginary;
 
         return $this;
     }
