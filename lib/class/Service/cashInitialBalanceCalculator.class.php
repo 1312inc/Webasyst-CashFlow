@@ -18,6 +18,11 @@ final class cashInitialBalanceCalculator
                         ->getSqlForAccountJoinWithFullAccess($paramsDto->contact),
                     'ct.is_archived = 0',
                     'ca.is_archived = 0',
+                    'CASE
+                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                        WHEN ca.is_imaginary = -1 THEN NULL
+                        ELSE ca.is_imaginary = 0
+                    END'
                 ]
             )
             ->join(
@@ -38,13 +43,7 @@ final class cashInitialBalanceCalculator
             case null !== $paramsDto->filter->getCurrency():
                 $initialBalanceSql->addAndWhere('ca.currency = s:currency')
                     ->addParam('currency', $paramsDto->filter->getCurrency());
-                $initialBalanceSql->addAndWhere('
-                    CASE
-                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
-                        WHEN ca.is_imaginary = -1 THEN NULL
-                        ELSE ca.is_imaginary = 0
-                    END
-                ');
+
                 break;
 
             case null !== $paramsDto->filter->getCategoryId():
