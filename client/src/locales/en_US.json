@@ -236,15 +236,15 @@
     "types": {
       "checking": {
         "name": "Checking",
-        "message": "real money that defines the overall balance in {sign} ({code})"
+        "message": "real money that defines the overall balance in account currency"
       },
       "virtual": {
         "name": "Virtual",
-        "message": "transactions will be excluded from the overall balance in {sign} ({code}) for today, but will be counted and displayed in the the future forecast"
+        "message": "transactions will be excluded from the overall balance in account currency for today, but will be counted and displayed in the the future forecast"
       },
       "virtualWithForecast": {
         "name": "Virtual with muted forecast",
-        "message": "both past and future transactions are excluded from the overall balance in {sign} ({code}), making it possible to emulate any isolated financial scenario under this account"
+        "message": "both past and future transactions are excluded from the overall balance in account currency, making it possible to emulate any isolated financial scenario under this account"
       }
     }
   }

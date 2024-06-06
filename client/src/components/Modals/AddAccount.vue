@@ -58,11 +58,11 @@
         </div>
 
         <div class="field">
-          <div class="name for-input">
+          <div class="name for-checkbox">
             {{ $t("accountType.name") }}
           </div>
           <div class="value">
-            <div class="custom-mb-8">
+            <div class="custom-mb-12">
               <label>
                 <span class="wa-radio">
                   <input
@@ -73,13 +73,10 @@
                   <span />
                 </span>
                 {{ $t("accountType.types.checking.name") }}
-                <span
-                  v-if="selectedCurrency"
-                  class="hint"
-                >{{ $t("accountType.types.checking.message", { sign: selectedCurrency.sign, code: selectedCurrency.code }) }}</span>
+                <span class="hint">{{ $t("accountType.types.checking.message") }}</span>
               </label>
             </div>
-            <div class="custom-mb-8">
+            <div class="custom-mb-12">
               <label>
                 <span class="wa-radio">
                   <input
@@ -90,10 +87,7 @@
                   <span />
                 </span>
                 {{ $t("accountType.types.virtual.name") }}
-                <span
-                  v-if="selectedCurrency"
-                  class="hint"
-                >{{ $t("accountType.types.virtual.message", { sign: selectedCurrency.sign, code: selectedCurrency.code }) }}</span>
+                <span class="hint">{{ $t("accountType.types.virtual.message") }}</span>
               </label>
             </div>
             <div>
@@ -107,10 +101,7 @@
                   <span />
                 </span>
                 {{ $t("accountType.types.virtualWithForecast.name") }}
-                <span
-                  v-if="selectedCurrency"
-                  class="hint"
-                >{{ $t("accountType.types.virtualWithForecast.message", { sign: selectedCurrency.sign, code: selectedCurrency.code }) }}</span>
+                <span class="hint">{{ $t("accountType.types.virtualWithForecast.message") }}</span>
               </label>
             </div>
           </div>
@@ -258,10 +249,6 @@ export default {
         if (a.code > b.code) { return 1 }
         return 0
       })
-    },
-
-    selectedCurrency () {
-      return this.$store.state.system.currencies.find(currency => currency.code === this.model.currency)
     }
   },
 
