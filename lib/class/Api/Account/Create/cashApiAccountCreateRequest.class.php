@@ -18,11 +18,16 @@ class cashApiAccountCreateRequest
     private $icon;
 
     /**
+     * @var int
+     */
+    private $is_imaginary;
+
+    /**
      * @var string
      */
     private $description;
 
-    public function __construct(string $name, string $currency, ?string $icon, ?string $description)
+    public function __construct(string $name, string $currency, ?string $icon, int $is_imaginary, ?string $description)
     {
         $name = trim($name);
         if (empty($name)) {
@@ -38,6 +43,7 @@ class cashApiAccountCreateRequest
         $this->name = $name;
         $this->currency = $currency;
         $this->icon = (string) $icon;
+        $this->is_imaginary = $is_imaginary;
         $this->description = (string) $description;
     }
 
@@ -54,6 +60,11 @@ class cashApiAccountCreateRequest
     public function getIcon(): string
     {
         return $this->icon;
+    }
+
+    public function getImaginary(): int
+    {
+        return $this->is_imaginary;
     }
 
     public function getDescription(): string

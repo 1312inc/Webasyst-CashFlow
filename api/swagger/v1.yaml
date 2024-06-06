@@ -416,10 +416,15 @@ paths:
                 icon:
                   type: string
                   minLength: 1
-                icon_link:
-                  type: string
+                is_imaginary:
+                  type: integer
                   minLength: 1
                   nullable: true
+                  default: 0
+                  enum:
+                    - 0
+                    - 1
+                    - -1
                 description:
                   type: string
                   minLength: 1
