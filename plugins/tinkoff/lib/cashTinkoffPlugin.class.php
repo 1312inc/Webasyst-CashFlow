@@ -280,7 +280,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             AND ct.external_source = s:external_source
             AND ct.external_hash IS NOT NULL
             AND ct.is_archived = 0
-            ORDER BY ct.datetime DESC
+            ORDER BY ct.datetime
         ", ['account_id' => $this->cash_account_id, 'external_source' => $this->getExternalSource()])->fetchAll('value');
         if (!empty($last_t_categories)) {
             foreach ($last_t_categories as $_last_t_category) {
