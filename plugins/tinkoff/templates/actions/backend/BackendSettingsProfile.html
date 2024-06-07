@@ -138,7 +138,10 @@
 
     <div class="field{if $profile.first_update|default:true} hidden{/if}">
         <div class="name">[`Команда CRON`]</div>
-        <div class="value"><code>{$profile.cron_command}</code></div>
+        <div class="value">
+            <code>{$profile.cron_command}</code>
+            <p class="hint"><a href="www.webasyst.com/ru/framework/docs/server/cron" target="_blank">[`Настройка Cron`]</a></p>
+        </div>
     </div>
 
     <h5 class="heading">[`Соответствие статей Т-Бизнес &rarr; Деньги`]</h5>
