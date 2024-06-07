@@ -21,7 +21,7 @@ class cashTinkoffPluginBackendAction extends waViewAction
         $plugin = wa()->getPlugin('tinkoff');
         $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
         $cash_accounts = cash()->getModel(cashAccount::class)->getAllActiveForContactWithCounter(wa()->getUser());
-
+        $root_path = $this->getConfig()->getRootPath();
         $plugin_settings = $plugin->getSettings();
         $profiles = ifset($plugin_settings, 'profiles', []);
         $profile_run_data = $this->getStorage()->read('profile_run_data');
@@ -34,6 +34,8 @@ class cashTinkoffPluginBackendAction extends waViewAction
                 $plugin->saveProfile($_profile_id, $_profile);
             }
             $_profile['update_date'] = (empty($_profile['last_update_time']) ? '' : wa_date('humandatetime', $_profile['last_update_time']));
+            $_profile['cron_command'] = "php $root_path/cli.php cash tinkoffTransaction $_profile_id";
+
             /** данные для продолжения прогресса импорта */
             if (!empty($profile_run_data[$_profile_id])) {
                 $_profile['run_data'] = [

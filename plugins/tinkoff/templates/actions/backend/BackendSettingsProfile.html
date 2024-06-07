@@ -136,6 +136,11 @@
         </div>
     </div>
 
+    <div class="field{if $profile.first_update|default:true} hidden{/if}">
+        <div class="name">[`Команда CRON`]</div>
+        <div class="value"><code>{$profile.cron_command}</code></div>
+    </div>
+
     <h5 class="heading">[`Соответствие статей Т-Бизнес &rarr; Деньги`]</h5>
     <p class="hint">[`В режиме «Автопилот» импорт будет производиться согласно общему базовому <a href="https://developer.tinkoff.ru/products/scenarios/account-info#категории-операций" target=_blank>списку категорий операций Т-Бизнес</a> и тому, в какие статьи вы вручную относите операции с «Деньгах» уже после импорта.`]</p>
 
