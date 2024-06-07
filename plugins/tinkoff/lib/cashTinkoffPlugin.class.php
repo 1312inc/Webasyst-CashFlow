@@ -446,7 +446,6 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     }
 
     /**
-     * Event on_count
      * Event api_transaction.get_list
      *
      * @param $event
@@ -454,9 +453,6 @@ class cashTinkoffPlugin extends cashBusinessPlugin
      */
     public function cashEventOnCountTinkoffHandler($event)
     {
-        if ($event->getName() !== cashEventStorage::ON_COUNT && !waRequest::isMobile()) {
-            return;
-        }
         $profiles = self::getProfiles();
         if (empty($profiles)) {
             return;
