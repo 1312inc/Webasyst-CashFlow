@@ -13,6 +13,7 @@ return array(
     'import_api' => true,
     'handlers' => [
         'on_count' => 'cashEventOnCountTinkoffHandler',
+        'api_transaction.get_list' => 'cashEventOnCountTinkoffHandler',
         'api_transaction_response_external_data' => 'cashEventApiTransactionExternalInfoTinkoffHandler'
     ]
 );
