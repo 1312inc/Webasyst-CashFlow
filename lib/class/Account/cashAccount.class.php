@@ -217,7 +217,7 @@ class cashAccount extends cashAbstractEntity
      */
     public function getIsImaginary()
     {
-        return $this->is_imaginary;
+        return (int) $this->is_imaginary;
     }
 
     /**
