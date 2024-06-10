@@ -707,11 +707,6 @@ class cashGraphService
                     'account_access' => cash()->getContactRights()->getSqlForAccountJoinWithFullAccess(
                         $paramsDto->contact
                     ),
-//                    'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
-//                        $paramsDto->contact,
-//                        'ct',
-//                        'category_id'
-//                    ),
                     'ct.is_archived = 0',
                     'ca.is_archived = 0',
                 ]
@@ -719,9 +714,18 @@ class cashGraphService
             ->join(
                 [
                     'join cash_account ca on ct.account_id = ca.id',
-//                    'join cash_category cc on ct.category_id = cc.id',
                 ]
             );
+
+        if (null !== $paramsDto->filter->getCurrency()) {
+            $sqlParts->addAndWhere('
+                CASE
+                    WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                    WHEN ca.is_imaginary = -1 THEN NULL
+                    ELSE ca.is_imaginary = 0
+                END
+            ');
+        }
 
         $initialBalanceSql = clone $sqlParts;
         $initialBalanceSql->select(['ca.currency currency, sum(ct.amount) balance'])
