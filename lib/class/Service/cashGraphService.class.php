@@ -542,7 +542,13 @@ class cashGraphService
             case null !== $paramsDto->filter->getAccountId():
                 $sqlParts->addAndWhere('ct.account_id = i:account_id')
                     ->addParam('account_id', $paramsDto->filter->getAccountId());
-
+                $sqlParts->addAndWhere('
+                    CASE
+                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                        WHEN ca.is_imaginary = -1 THEN NULL
+                        ELSE ca.is_imaginary = 0
+                    END
+                ');
                 if (cash()->getContactRights()->canSeeAccountBalance(
                     $paramsDto->contact,
                     $paramsDto->filter->getAccountId()
