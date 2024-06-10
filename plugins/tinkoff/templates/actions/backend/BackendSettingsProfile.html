@@ -126,24 +126,6 @@
         <hr>
     {/if}
 
-    <div class="field">
-        <div class="name">
-            [`Таймаут автообновления`]
-        </div>
-        <div class="value">
-            <input type="text" class="shorter number" name="profiles[{$profile_id}][update_timeout]" value="{$profile.update_timeout|default:''}" autocomplete="off" placeholder="{cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT}"> [`мин`]
-            <p class="hint">{sprintf('[`Автоматическое обновление (очередной запрос к Т-Бизнес API) будет происходить не чаще, чем один раз в указанный промежуток времени. Указывается целое число в минутах, но не менее %s.`]', cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT)}</p>
-        </div>
-    </div>
-
-    <div class="field{if $profile.first_update|default:true} hidden{/if}">
-        <div class="name">[`Команда CRON`]</div>
-        <div class="value">
-            <code>{$profile.cron_command}</code>
-            <p class="hint"><a href="www.webasyst.com/ru/framework/docs/server/cron" target="_blank">[`Настройка Cron`]</a></p>
-        </div>
-    </div>
-
     <h5 class="heading">[`Соответствие статей Т-Бизнес &rarr; Деньги`]</h5>
     <p class="hint">[`В режиме «Автопилот» импорт будет производиться согласно общему базовому <a href="https://developer.tinkoff.ru/products/scenarios/account-info#категории-операций" target=_blank>списку категорий операций Т-Бизнес</a> и тому, в какие статьи вы вручную относите операции с «Деньгах» уже после импорта.`]</p>
 
@@ -186,6 +168,29 @@
         </div>
     </div>
     {/foreach}
+
+    <hr class="custom-mt-24">
+
+    <div class="field">
+        <div class="name">
+            [`Таймаут автообновления`]
+        </div>
+        <div class="value">
+            <input type="text" class="shorter number" name="profiles[{$profile_id}][update_timeout]" value="{$profile.update_timeout|default:''}" autocomplete="off" placeholder="{cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT}"> [`мин`]
+            <p class="hint">{sprintf('[`Автоматическое обновление (очередной запрос к Т-Бизнес API) будет происходить не чаще, чем один раз в указанный промежуток времени. Указывается целое число в минутах, но не менее %s.`]', cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT)}</p>
+        </div>
+    </div>
+
+    <div class="field{if $profile.first_update|default:true} hidden{/if}">
+        <div class="name">[`Команда Cron`]</div>
+        <div class="value">
+            <code class="small">{$profile.cron_command}</code>
+            <p class="hint">
+                [`Настраивать крон для импорта из Т-Бизнеса — не обязательно! Импорт будет обновлять данные из банка автоматически, когда вы пользуетесь приложением «Деньги» в браузере или на телефоне.`]
+                <a href="https://developers.webasyst.ru/docs/tips/cron/" target="_blank">[`Что такое Cron?`]</a>
+             </p>
+        </div>
+    </div>
 
     {if $profile.status === 'ok'}
     <div class="field">
