@@ -54,6 +54,12 @@ class cashTinkoffPluginBackendAction extends waViewAction
             }
         }
 
+        foreach ($categories as $key => $_category) {
+            if (!empty($_category['category_parent_id']) && empty($categories[$_category['category_parent_id']])) {
+                unset($categories[$key]);
+            }
+        }
+
         $this->view->assign([
             'review_widget'      => $review_widget,
             'plugin_settings'    => $plugin_settings,

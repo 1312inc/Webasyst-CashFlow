@@ -129,26 +129,6 @@
     <h5 class="heading">[`Соответствие статей Т-Бизнес &rarr; Деньги`]</h5>
     <p class="hint">[`В режиме «Автопилот» импорт будет производиться согласно общему базовому <a href="https://developer.tinkoff.ru/products/scenarios/account-info#категории-операций" target=_blank>списку категорий операций Т-Бизнес</a> и тому, в какие статьи вы вручную относите операции с «Деньгах» уже после импорта.`]</p>
 
-    <h6 class="heading">[`Расходы`]</h6>
-    {foreach $expense_operations as $_name => $_desc}
-    {$selected = $profile['mapping'][$_name]|default: cashTinkoffPlugin::AUTO_MAPPING_FLAG}
-    <div class="field">
-        <div class="name">{$_desc} ({$_name})</div>
-        <div class="value">
-            <div class="wa-select small">
-                <select name="profiles[{$profile_id}][mapping][{$_name}]" autocomplete="off">
-                    <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">[`Aвтопилот`]</option>
-                    {foreach $categories as $_category}
-                        {if $_category.type == 'expense'}
-                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
-                        {/if}
-                    {/foreach}
-                </select>
-            </div>
-        </div>
-    </div>
-    {/foreach}
-
     <h6 class="heading">[`Доходы`]</h6>
     {foreach $income_operations as $_name => $_desc}
     {$selected = $profile['mapping'][$_name]|default: cashTinkoffPlugin::AUTO_MAPPING_FLAG}
@@ -160,6 +140,26 @@
                     <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">[`Aвтопилот`]</option>
                     {foreach $categories as $_category}
                         {if $_category.type == 'income'}
+                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
+                        {/if}
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+    </div>
+    {/foreach}
+
+    <h6 class="heading">[`Расходы`]</h6>
+    {foreach $expense_operations as $_name => $_desc}
+    {$selected = $profile['mapping'][$_name]|default: cashTinkoffPlugin::AUTO_MAPPING_FLAG}
+    <div class="field">
+        <div class="name">{$_desc} ({$_name})</div>
+        <div class="value">
+            <div class="wa-select small">
+                <select name="profiles[{$profile_id}][mapping][{$_name}]" autocomplete="off">
+                    <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">[`Aвтопилот`]</option>
+                    {foreach $categories as $_category}
+                        {if $_category.type == 'expense'}
                             <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
                         {/if}
                     {/foreach}
