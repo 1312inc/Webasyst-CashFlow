@@ -416,26 +416,6 @@ class cashGraphService
         }
     }
 
-//    private function generateDtos(array $data)
-//    {
-//        foreach ($data as $datum) {
-//            if (!isset($graph[$datum['date']])) {
-//                $graph[$datum['date']] = new cashGraphColumnDto($datum['date']);
-//            }
-//            if (!isset($graph[$datum['date']][$datum['currency']])) {
-//                $graph[$datum['date']][$datum['currency']] = [];
-//                new cashGraphCurrencyColumnDto($datum['currency']);
-//
-//            }
-//            $graph[$datum['date']][$datum['currency']][] = [
-//                'category' => $datum['category_id'],
-//                'summary' => $datum['summary'],
-//            ];
-//
-//            $accountColumn = new cashStatOnDateDto($datum['account_id'], $datum['income'], $datum['expense'], $datum['summary']);
-//        }
-//    }
-
     /**
      * @param DateTimeInterface      $startDate
      * @param DateTimeInterface|null $endDate
@@ -469,10 +449,6 @@ class cashGraphService
                     $graphData->groups[$dateDatum['currency']],
                     ['expense' => [], 'income' => []]
                 );
-
-//                if (!$dateDatum['category_id']) {
-//                    $dateDatum['hash'] .= ('_' . $dateDatum['cd']);
-//                }
 
                 if (!in_array($dateDatum['hash'], $graphData->groups[$dateDatum['currency']][$dateDatum['cd']])) {
                     $graphData->groups[$dateDatum['currency']][$dateDatum['cd']][] = $dateDatum['hash'];
@@ -542,13 +518,6 @@ class cashGraphService
             case null !== $paramsDto->filter->getAccountId():
                 $sqlParts->addAndWhere('ct.account_id = i:account_id')
                     ->addParam('account_id', $paramsDto->filter->getAccountId());
-                $sqlParts->addAndWhere('
-                    CASE
-                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
-                        WHEN ca.is_imaginary = -1 THEN NULL
-                        ELSE ca.is_imaginary = 0
-                    END
-                ');
                 if (cash()->getContactRights()->canSeeAccountBalance(
                     $paramsDto->contact,
                     $paramsDto->filter->getAccountId()
@@ -587,13 +556,6 @@ class cashGraphService
             case null !== $paramsDto->filter->getCurrency():
                 $sqlParts->addAndWhere('ca.currency = s:currency')
                     ->addParam('currency', $paramsDto->filter->getCurrency());
-                $sqlParts->addAndWhere('
-                    CASE
-                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
-                        WHEN ca.is_imaginary = -1 THEN NULL
-                        ELSE ca.is_imaginary = 0
-                    END
-                ');
                 /** @var cashAccount[] $accounts */
                 $accounts = cash()->getEntityRepository(cashAccount::class)->findAll();
                 // проверим есть ли полный доступ хоть к одному счету в данной валюте
@@ -715,6 +677,11 @@ class cashGraphService
                     ),
                     'ct.is_archived = 0',
                     'ca.is_archived = 0',
+                    'CASE
+                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                        WHEN ca.is_imaginary = -1 THEN NULL
+                        ELSE ca.is_imaginary = 0
+                    END'
                 ]
             )
             ->join(
@@ -722,16 +689,6 @@ class cashGraphService
                     'join cash_account ca on ct.account_id = ca.id',
                 ]
             );
-
-        if (null !== $paramsDto->filter->getCurrency()) {
-            $sqlParts->addAndWhere('
-                CASE
-                    WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
-                    WHEN ca.is_imaginary = -1 THEN NULL
-                    ELSE ca.is_imaginary = 0
-                END
-            ');
-        }
 
         $initialBalanceSql = clone $sqlParts;
         $initialBalanceSql->select(['ca.currency currency, sum(ct.amount) balance'])
