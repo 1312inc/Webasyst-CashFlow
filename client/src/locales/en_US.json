@@ -236,15 +236,15 @@
     "types": {
       "checking": {
         "name": "Checking",
-        "message": "real money that defines the overall balance in account currency"
+        "message": "real money that makes up the today’s overall balance in the account currency"
       },
       "virtual": {
-        "name": "Virtual",
-        "message": "transactions will be excluded from the overall balance in account currency for today, but will be counted and displayed in the the future forecast"
+        "name": "Planning",
+        "message": "all accounting features are available within the account, but its transactions won’t affect the overall currency balance for today, while planned future transactions will still form the forecast"
       },
       "virtualWithForecast": {
-        "name": "Virtual with muted forecast",
-        "message": "both past and future transactions are excluded from the overall balance in account currency, making it possible to emulate any isolated financial scenario under this account"
+        "name": "Virtual",
+        "message": "like planning, but with muted forecast — all account transactions are only visible within the account, making it possible to emulate any isolated financial scenario"
       }
     }
   }
