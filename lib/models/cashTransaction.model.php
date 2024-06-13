@@ -1305,10 +1305,16 @@ SQL;
      */
     public function deleteBySourceAndHashAfterDate($source, $hash, $date)
     {
-        return $this->exec(
-            "delete from {$this->table} where external_source = s:source and date > s:date",
-            ['source' => $source, 'hash' => $hash, 'date' => $date]
-        );
+        return $this->exec("
+            DELETE FROM {$this->table} 
+            WHERE external_source = s:source 
+            AND external_hash = s:hash 
+            AND date > s:date
+        ", [
+            'source' => $source,
+            'hash' => $hash,
+            'date' => $date
+        ]);
     }
 
     /**

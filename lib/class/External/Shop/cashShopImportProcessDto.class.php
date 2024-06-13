@@ -49,7 +49,7 @@ final class cashShopImportProcessDto implements JsonSerializable
             'memory' => $this->memory,
             'processId' => $this->processId,
             'ready' => $this->done,
-            'progress' => min(100, round($this->passedOrders / $this->totalOrders * 100)),
+            'progress' => min(100, (empty($this->totalOrders) ? 100 : round($this->passedOrders / $this->totalOrders * 100))),
             'error' => $this->error,
         ];
     }
