@@ -60,7 +60,6 @@ final class cashTransactionGetListMethod extends cashApiNewAbstractMethod
         $transactions = (new cashApiTransactionGetListHandler())->handle($request);
 
         if ($transactions['data']) {
-            cash()->waDispatchEvent(new cashEvent(cashEventStorage::WA_API_TRANSACTION_GET_LIST));
             cash()->getEventDispatcher()->dispatch(
                 new cashEvent(
                     cashEventStorage::API_TRANSACTION_BEFORE_RESPONSE,
