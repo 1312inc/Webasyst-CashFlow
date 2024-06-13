@@ -447,16 +447,10 @@ class cashTinkoffPlugin extends cashBusinessPlugin
 
     /**
      * Event on_count
-     * Event api_transaction.get_list
-     *
-     * @param $event
      * @return void
      */
-    public function cashEventOnCountTinkoffHandler($event)
+    public function cashEventOnCountTinkoffHandler()
     {
-        if ($event->getName() !== cashEventStorage::ON_COUNT && !waRequest::isMobile()) {
-            return;
-        }
         $profiles = self::getProfiles();
         if (empty($profiles)) {
             return;
