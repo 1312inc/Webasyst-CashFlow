@@ -140,7 +140,9 @@
                     <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">[`Aвтопилот`]</option>
                     {foreach $categories as $_category}
                         {if $_category.type == 'income'}
-                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
+                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>
+                                {if !empty($_category.category_parent_id)}- {/if}{$_category.name}
+                            </option>
                         {/if}
                     {/foreach}
                 </select>
@@ -160,7 +162,9 @@
                     <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">[`Aвтопилот`]</option>
                     {foreach $categories as $_category}
                         {if $_category.type == 'expense'}
-                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>{$_category.name}</option>
+                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>
+                                {if !empty($_category.category_parent_id)}- {/if}{$_category.name}
+                            </option>
                         {/if}
                     {/foreach}
                 </select>
