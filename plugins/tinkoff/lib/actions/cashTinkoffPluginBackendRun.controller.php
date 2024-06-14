@@ -2,7 +2,7 @@
 
 class cashTinkoffPluginBackendRunController extends waLongActionController
 {
-    const BATCH_LIMIT = 5000;
+    const BATCH_LIMIT = 500;
 
     /**
      * @return void
