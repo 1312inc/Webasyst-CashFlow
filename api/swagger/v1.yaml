@@ -843,6 +843,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /cash.system.poke:
+    get:
+      tags:
+        - Разное
+      security:
+        - ApiKeyAuth: [ ]
+      summary: Event poke
+      responses:
+        204:
+          description: Ok
+
 components:
   securitySchemes:
     ApiKeyAuth:
