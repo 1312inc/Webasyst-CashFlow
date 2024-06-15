@@ -21,8 +21,8 @@
     </div>
     <div class="value">
         <div class="wa-select">
-            <select name="profiles[{$profile_id}][cash_account]" autocomplete="off" class="bold js-account-select"{if !empty($profile.cash_account) && $profile.cash_account > 0} disabled{/if}>
-            {if empty($profile.cash_account) || !is_numeric($profile.cash_account)}
+            <select name="profiles[{$profile_id}][cash_account]" autocomplete="off" class="bold js-account-select"{if !empty($profile.cash_account) && $profile.cash_account > 0 && !empty($cash_accounts[$profile.cash_account])} disabled{/if}>
+            {if empty($profile.cash_account) || !is_numeric($profile.cash_account) || empty($cash_accounts[$profile.cash_account])}
                 <option value="new_account">[`Создать новый счет...`]</option>
             {/if}
             {foreach $cash_accounts as $_cash_account}
@@ -119,7 +119,7 @@
 
 <div class="fields-group js-settings-block" style="display: none">
 
-    {if !empty($profile.update_time)}
+    {if !empty($profile.update_time) || !empty($profile.cash_account) && empty($cash_accounts[$profile.cash_account])}
         <p class="small">
             <em>{sprintf('[`Если что-то пошло не так — %sзапустите импорт всей выписки заново%s.`]', "<a href=\"?plugin=tinkoff&action=reset&profile_id=`$profile_id`\" class=\"js-reset-import\">", '</a>')}</em>
         </p>

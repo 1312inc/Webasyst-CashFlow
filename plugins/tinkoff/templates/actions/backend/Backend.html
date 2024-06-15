@@ -8,11 +8,12 @@
         [`ИНН`] {$_account.inn|escape|default:''}
     </span>
     <br>
-    <strong>{$_account.company|escape|default:''}</strong>
+    <strong>{$_account.account_description|escape|default:''}</strong>
     <br>
     <span class="hint">
-        <b>{$_account.account_description|escape|default:''}</b>
-        {$_account.account_number|escape|default:''}
+        <b>{$_account.account_number|escape|default:''}</b>
+        <br>
+        {$_account.company|escape|default:''}
     </span>
 {/function}
 
@@ -75,19 +76,25 @@
                         <strong>
                         {if !empty($profile.status)}
                             {if $profile.status === 'ok'}
-                            <span class="icon space-8 custom-mr-4">
-                                <i style="background-image: url('{$wa_url}wa-apps/cash/plugins/tinkoff/img/tinkoff.svg');"></i>
-                            </span>
-                            [`Подключен`]
+                                <span class="icon space-8 custom-mr-4">
+                                    <i style="background-image: url('{$wa_url}wa-apps/cash/plugins/tinkoff/img/tinkoff.svg');"></i>
+                                </span>
+                                {$profile.company|escape|default:_wp('[`Подключен`]')}
                             {elseif $profile.status === 'warning'}
-                            <i class="fas fa-exclamation-circle text-orange" title="{$profile.status_description|escape}"></i> [`Ошибка`].
-                            <a href="javascript:void(0);" class="js-tinkoff-connect">[`Переподключить`]</a>
+                                <i class="fas fa-exclamation-circle text-orange" title="{$profile.status_description|escape}"></i> [`Ошибка`].
+                                <a href="javascript:void(0);" class="js-tinkoff-connect">[`Переподключить`]</a>
                             {elseif $profile.status === 'danger'}
-                            <i class="fas fa-exclamation-triangle text-red" title="{$profile.status_description|escape}"></i> [`Ошибка`].
+                                <i class="fas fa-exclamation-triangle text-red" title="{$profile.status_description|escape}"></i> [`Ошибка`].
+                                <a href="javascript:void(0);" class="js-tinkoff-connect">[`Переподключить`]</a>
                             {/if}
                         {/if}
                         </strong>
-                        <span class="hint js-tinkoff-id">{$profile.tinkoff_id|escape|default:''}</span>
+                        <span class="hint js-tinkoff-id">
+                            {$profile.tinkoff_id|escape|default:''}
+                        </span>
+                        {if !empty($profile.status) && $profile.status === 'ok'}
+                            <a href="javascript:void(0);" class="hint js-tinkoff-connect">[`Переподключить`]</a>
+                        {/if}
                     </div>
 
                     {if empty($profiles)}
