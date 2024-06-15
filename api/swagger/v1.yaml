@@ -849,7 +849,7 @@ paths:
         - Разное
       security:
         - ApiKeyAuth: [ ]
-      summary: Event poke
+      summary: Подталкивает приложение очередной раз запустить регулярные фоновые механизмы (например, импорт операций)
       responses:
         204:
           description: Ok
