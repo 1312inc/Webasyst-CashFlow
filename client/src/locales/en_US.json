@@ -235,16 +235,16 @@
     "name": "Account type",
     "types": {
       "checking": {
-        "name": "Checking",
+        "name": "Checking ",
         "message": "real money that makes up the today’s overall balance in the account currency"
       },
       "virtual": {
-        "name": "Planning",
+        "name": "Virtual",
         "message": "all accounting features are available within the account, but its transactions won’t affect the overall currency balance for today, while planned future transactions will still form the forecast"
       },
       "virtualWithForecast": {
-        "name": "Virtual",
-        "message": "like planning, but with muted forecast — all account transactions are only visible within the account, making it possible to emulate any isolated financial scenario"
+        "name": "Sandbox",
+        "message": "all transactions are only visible within the account, making it possible to emulate any isolated financial scenario under this account"
       }
     }
   }
