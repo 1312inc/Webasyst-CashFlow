@@ -63,6 +63,11 @@
                         <p class="hint">{sprintf('[`In case of different currencies for orders and the account, an order amount will be converted to the selected account currency according to the conversion rate defined <a href="%s">in Shop-Script settings</a>.`]', $wa_backend_url|cat:'shop/?action=settings#/currencies/')}</p>
                         {if !$shopCurrencyExists}<p class="state-caution-hint"><i class="fas fa-exclamation-triangle"></i> [`The currency of the selected account is not defined in Shop-Script settings. Conversion won’t work well.`]</p>{/if}
 
+                        <p class="hint text-dark-gray custom-mt-16">
+                            <i class="fas fa-info-circle text-blue"></i> [`We strongly recommend using virtual accounts for Shop-Script import setup due to the fact that the sales data is not exactly what is being credited to your company’s checking account.`]
+                            <a href="https://support.webasyst.ru/46619/what-is-a-cashflow-account-checking-virtual-sandbox/" target="_blank" class="text-blue">[`What is a virtual account?`]</a>
+                        </p>
+
                         <div class="custom-mb-24" style="{if !$shopScriptSettings->hasAccountIdForPayment()}display: none{/if}" data-cash-shop-configure-actions-account>
                             <div class="custom-my-12 small">[`Set account based on the order payment type:`]</div>
                             {foreach $paymentMethods as $paymentMethod => $paymentMethodData}
