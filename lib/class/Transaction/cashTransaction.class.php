@@ -374,7 +374,7 @@ class cashTransaction extends cashAbstractEntity
         $date_trans = new DateTime($this->getDatetime());
         $tomorrow = new DateTime('tomorrow');
 
-        return $date_trans > $tomorrow;
+        return $date_trans >= $tomorrow;
     }
 
     /**
