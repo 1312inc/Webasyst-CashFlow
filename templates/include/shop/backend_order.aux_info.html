@@ -8,44 +8,53 @@
         <span>{if $wa->locale() == 'ru_RU'}Деньги{else}Cash Flow{/if}</span>
     </h5>
 
-    <div class="full-width flexbox bold" style="align-items: end">
-        <div class="width-50">
+    <div class="full-width bold">
         {$_smthngshwn = 0}
-        {if $info->incomeCount}
+        {if $info->incomeCount || $info->upcoming_income_count}
             {$_smthngshwn = 1}
-            <div title="{if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}"><span class="text-green">{implode(' ', $info->income)} ({$info->incomeCount})</span></div>
-        {/if}
-        {if $info->expenseCount}
-            {$_smthngshwn = 1}
-            <div title="{if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}"><span class="text-red">{implode(' ', $info->expense)} ({$info->expenseCount})</span></div>
-        {/if}
-        {if $info->profitCount}
-            {$_smthngshwn = 1}
-            <div title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}"><span class="text-blue">{implode(' ', $info->profit)}  ({$info->profitCount})</span></div>
-        {/if}
-        {if $info->delta}
-            {$_smthngshwn = 1}
-            <div class="bordered-top custom-mt-8 custom-pt-8" title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}">
-                <span class="text-blue">{if $wa->locale() == 'ru_RU'}Итого{else}Total{/if} {implode(' ', $info->delta)}</span>
+            <div>
+                {if $info->incomeCount}
+                    <span title="{if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}" class="text-green">{implode(' ', $info->income)} ({$info->incomeCount})</span>
+                {/if}
+                {if $info->upcoming_income_count}
+                    <span title="{if $wa->locale() == 'ru_RU'}Запланированный доход{else}Planned income{/if}" class="text-green opacity-40">{implode(' ', $info->income_upcoming)} ({$info->upcoming_income_count})</span>
+                {/if}
             </div>
         {/if}
-        </div>
-        <div class="width-50 opacity-50">
-        {if $info->upcoming_income_count}
+        {if $info->expenseCount || $info->upcoming_expense_count}
             {$_smthngshwn = 1}
-            <div title="{if $wa->locale() == 'ru_RU'}Будущий доход{else}Future income{/if}"><span class="text-green">{implode(' ', $info->income_upcoming)} ({$info->upcoming_income_count})</span></div>
-        {/if}
-        {if $info->upcoming_expense_count}
-            {$_smthngshwn = 1}
-            <div title="{if $wa->locale() == 'ru_RU'}Будущий расход{else}Future expense{/if}"><span class="text-red">{implode(' ', $info->expense_upcoming)} ({$info->upcoming_expense_count})</span></div>
-        {/if}
-        {if $info->upcoming_delta}
-            {$_smthngshwn = 1}
-            <div class="bordered-top custom-mt-8 custom-pt-8" title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}">
-               <span class="text-blue">{implode(' ', $info->upcoming_delta)}</span>
+            <div>
+                {if $info->expenseCount}
+                    <span title="{if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}" class="text-red">{implode(' ', $info->expense)} ({$info->expenseCount})</span>
+                {/if}
+                {if $info->upcoming_expense_count}
+                    <span title="{if $wa->locale() == 'ru_RU'}Запланированный расход{else}Planned expense{/if}" class="text-red opacity-40">{implode(' ', $info->expense_upcoming)} ({$info->upcoming_expense_count})</span>
+                {/if}
             </div>
         {/if}
-        </div>
+        {if $info->profitCount || $info->upcoming_profit_count}
+            {$_smthngshwn = 1}
+            <div>
+                {if $info->profitCount}
+                    <span title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}" class="text-blue">{implode(' ', $info->profit)} ({$info->profitCount})</span>
+                {/if}
+                {if $info->upcoming_profit_count}
+                    <span title="{if $wa->locale() == 'ru_RU'}Запланированная прибыль{else}Planned profit{/if}" class="text-blue opacity-40">{implode(' ', $info->profit_upcoming)} ({$info->upcoming_profit_count})</span>
+                {/if}
+            </div>
+        {/if}
+        {if $info->delta || $info->upcoming_delta}
+            {$_smthngshwn = 1}
+            <div class="bordered-top custom-mt-8 custom-pt-8">
+                <span title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}" class="text-blue">
+                  {if $wa->locale() == 'ru_RU'}Итого{else}Total{/if} {implode(' ', $info->delta)}
+                </span>
+                <span title="{if $wa->locale() == 'ru_RU'}Дельта прогноз{else}Delta forecasted{/if}" class="text-blue opacity-40">
+                    {implode(' ', $info->upcoming_delta)}
+                </span>
+            </div>
+        {/if}
+
     </div>
 
     {if !$_smthngshwn}
@@ -62,7 +71,7 @@
         <a href="{$info->link}" target="_blank">
             {if $wa->locale() == 'ru_RU'}Все операции{else}View transactions{/if}
             ({$info->incomeCount + $info->expenseCount + $info->profitCount + $info->upcoming_income_count + $info->upcoming_expense_count})
-            <i class="fas fa-external-link-alt fa-xs opacity-50"></i>
+            <i class="fas fa-external-link-alt fa-xs opacity-40"></i>
         </a>
     </div>
 </div>
