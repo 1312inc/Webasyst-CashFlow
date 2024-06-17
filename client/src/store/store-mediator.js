@@ -40,11 +40,11 @@ export default (store) => {
     after: ({ type }) => {
       switch (type) {
         // delete account
+        case 'category/delete':
         case 'account/delete':
-          return Promise.all([
-            store.dispatch('transaction/getTodayCount'),
-            store.dispatch('balanceFlow/getBalanceFlow')
-          ])
+          store.dispatch('transaction/getTodayCount')
+          store.dispatch('balanceFlow/getBalanceFlow')
+          break
         // create account
         case 'account/update':
           store.dispatch('balanceFlow/getBalanceFlow')
