@@ -1,7 +1,7 @@
 <?php
 
 return [
-    /** https://developer.tinkoff.ru/products/scenarios/account-info#категории-операций */
+    /** https://developer.tbank.ru/products/scenarios/account-info#категории-операций */
     /** Исходящие (expense) */
     'expense' => [
         'cardOperation'      => _wp('Оплата картой'),

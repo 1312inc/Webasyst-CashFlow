@@ -5,7 +5,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     const DEFAULT_UPDATE_TIMEOUT = 60; // min
     const LIMIT_STATEMENTS = 5000;
     const DEFAULT_START_DATE = '2006-01-01 00:00:00';
-    const API_URL = 'https://business.tinkoff.ru/openapi/api/';
+    const API_URL = 'https://business.tbank.ru/openapi/api/';
 
     private bool $self_mode;
     private string $profile_id;
@@ -47,7 +47,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     }
 
     /**
-     * https://developer.tinkoff.ru/docs/intro/manuals/
+     * https://developer.tbank.ru/docs/intro/manuals/
      * @return bool
      */
     private function isSelfMode()
@@ -93,7 +93,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     }
 
     /**
-     * https://developer.tinkoff.ru/docs/api/get-api-v-4-bank-accounts
+     * https://developer.tbank.ru/docs/api/get-api-v-4-bank-accounts
      * @param $tinkoff_id
      * @param $inn
      * @return array
@@ -131,7 +131,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     }
 
     /**
-     * https://developer.tinkoff.ru/docs/api/get-api-v-1-company
+     * https://developer.tbank.ru/docs/api/get-api-v-1-company
      * @param $tinkoff_id
      * @param $inn
      * @return array
@@ -161,7 +161,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
     }
 
     /**
-     * https://developer.tinkoff.ru/docs/api/get-api-v-1-statement
+     * https://developer.tbank.ru/docs/api/get-api-v-1-statement
      * @param $tinkoff_id
      * @param $inn
      * @param $cursor
