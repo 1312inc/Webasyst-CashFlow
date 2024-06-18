@@ -39,7 +39,7 @@
                     <span title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}" class="text-blue">{implode(' ', $info->profit)} ({$info->profitCount})</span>
                 {/if}
                 {if $info->upcoming_profit_count}
-                    <span title="{if $wa->locale() == 'ru_RU'}Запланированная прибыль{else}Planned profit{/if}" class="text-blue opacity-40">{implode(' ', $info->profit_upcoming)} ({$info->upcoming_profit_count})</span>
+                    <span title="{if $wa->locale() == 'ru_RU'}Запланированная прибыль{else}Planned profit{/if}" class="text-blue opacity-40">{implode(' ', $info->upcoming_profit)} ({$info->upcoming_profit_count})</span>
                 {/if}
             </div>
         {/if}
@@ -70,7 +70,7 @@
         </div>
         <a href="{$info->link}" target="_blank">
             {if $wa->locale() == 'ru_RU'}Все операции{else}View transactions{/if}
-            ({$info->incomeCount + $info->expenseCount + $info->profitCount + $info->upcoming_income_count + $info->upcoming_expense_count})
+            ({$info->incomeCount + $info->expenseCount + $info->profitCount + $info->upcoming_income_count + $info->upcoming_expense_count + $info->upcoming_profit_count})
             <i class="fas fa-external-link-alt fa-xs opacity-40"></i>
         </a>
     </div>

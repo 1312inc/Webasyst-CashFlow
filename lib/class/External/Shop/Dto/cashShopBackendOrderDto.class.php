@@ -60,6 +60,15 @@ final class cashShopBackendOrderDto
     /**
      * @var array
      */
+    public $upcoming_profit;
+
+    /**
+     * @var int
+     */
+    public $upcoming_profit_count;
+    /**
+     * @var array
+     */
     public $upcoming_delta = [];
 
     /**
@@ -78,6 +87,8 @@ final class cashShopBackendOrderDto
         int $upcoming_income_count,
         array $expense_upcoming,
         int $upcoming_expense_count,
+        array $upcoming_profit,
+        int $upcoming_profit_count,
         string $link
     ) {
         $this->income = $income;
@@ -110,6 +121,12 @@ final class cashShopBackendOrderDto
         });
         $this->upcoming_expense_count = $upcoming_expense_count;
 
+        $this->upcoming_profit = $upcoming_profit;
+        array_walk($this->upcoming_profit, static function (&$value, $currency) {
+            $value = sprintf('&minus; %s %s', abs($value), cashCurrencyVO::fromWaCurrency($currency)->getSign());
+        });
+        $this->upcoming_profit_count = $upcoming_profit_count;
+
         $this->link = $link;
 
         $allCurrencies = array_merge(
@@ -117,7 +134,8 @@ final class cashShopBackendOrderDto
             array_keys($expense),
             array_keys($profit),
             array_keys($income_upcoming),
-            array_keys($expense_upcoming)
+            array_keys($expense_upcoming),
+            array_keys($upcoming_profit)
         );
 
         foreach ($allCurrencies as $currency) {
@@ -139,7 +157,10 @@ final class cashShopBackendOrderDto
 
             $upcoming_delta_inc = $income_upcoming[$currency] ?? 0;
             $upcoming_delta_exp = $expense_upcoming[$currency] ?? 0;
-            $upcoming_delta = $upcoming_delta_inc + ($upcoming_delta_exp > 0 ? -1 : 1) * $upcoming_delta_exp;
+            $upcoming_delta_prof = $upcoming_profit[$currency] ?? 0;
+            $upcoming_delta = $upcoming_delta_inc
+                + ($upcoming_delta_exp > 0 ? -1 : 1) * $upcoming_delta_exp
+                + ($upcoming_delta_prof > 0 ? -1 : 1) * $upcoming_delta_prof;
             if ($upcoming_delta) {
                 $this->upcoming_delta[$currency] = sprintf(
                     '%s %s %s',
@@ -168,7 +189,9 @@ final class cashShopBackendOrderDto
             'incomeUpcoming' => [],
             'incomeUpcomingCount' => 0,
             'expenseUpcoming' => [],
-            'expenseUpcomingCount' => 0
+            'expenseUpcomingCount' => 0,
+            'profitUpcoming' => [],
+            'profitUpcomingCount' => 0
         ];
 
         foreach ($transactions as $transaction) {
@@ -182,11 +205,10 @@ final class cashShopBackendOrderDto
                 $type = 'profit';
             } else {
                 $type = $transaction->getCategory()->getType();
-                if ($transaction->isForecast()) {
-                    $type .= 'Upcoming';
-                }
             }
-
+            if ($transaction->isForecast()) {
+                $type .= 'Upcoming';
+            }
 
             if (!isset($params[$type][$currency])) {
                 $params[$type][$currency] = 0.0;
@@ -207,6 +229,8 @@ final class cashShopBackendOrderDto
             $params['incomeUpcomingCount'],
             $params['expenseUpcoming'],
             $params['expenseUpcomingCount'],
+            $params['profitUpcoming'],
+            $params['profitUpcomingCount'],
             $link
         );
     }
