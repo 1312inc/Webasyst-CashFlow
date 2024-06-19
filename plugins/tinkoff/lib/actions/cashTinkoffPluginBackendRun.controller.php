@@ -128,7 +128,6 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
             $raw_data = $this->getStatementsData($this->data['cursor']);
             $this->data['cursor'] = (string) ifset($raw_data, 'nextCursor', '');
             $this->data['operations'] = ifset($raw_data, 'operations', []);
-            return false;
         }
 
         $transactions = $this->plugin()->addTransactionsByAccount($this->data['operations'], $this->data['import_id']);
