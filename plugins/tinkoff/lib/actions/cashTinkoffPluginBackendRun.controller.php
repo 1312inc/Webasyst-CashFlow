@@ -220,6 +220,25 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
         ]);
     }
 
+    public function restore()
+    {
+        $steps = ceil($this->data['count_all_statements'] / self::BATCH_LIMIT);
+        switch ($steps) {
+            case $steps < 5:
+                $this->_chunk_time = 1;
+                break;
+            case $steps < 10:
+                $this->_chunk_time = 2;
+                break;
+            case $steps < 20:
+                $this->_chunk_time = 3;
+                break;
+            case $steps < 40:
+                $this->_chunk_time = 4;
+                break;
+        }
+    }
+
     /**
      * @param $response
      * @return void

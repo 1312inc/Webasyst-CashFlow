@@ -203,6 +203,7 @@
     let url = '?plugin=tinkoff&action=run';
     let error = '{$error|default:''}';
     let process_id = undefined;
+    let timer = undefined;
     let $start_button = $('.js-cash-tinkoff-start, .js-cash-tinkoff-update');
     let datepicker_options = {
         changeMonth: true,
@@ -220,16 +221,14 @@
             $(this).closest('div').find('[name$="[import_period]"]').prop('checked', true).val(date);
         }
     };
-    let step = function (profile_id, delay, $progressbar) {
-        delay = delay || 2000;
-        setTimeout(function () {
+    let step = function (profile_id, $progressbar) {
+        timer = setInterval(function () {
             $.post(url, { processid: process_id, profile_id: profile_id }, function (response) {
                 renderText('');
-                if (!response) {
-                    step(profile_id, 3000, $progressbar);
-                } else if (response && response.error) {
+                if (response && response.error) {
                     $('.js-tab-content-'+ profile_id).find('.error-msg').text(response.error);
                 } else if (response && response.ready) {
+                    clearInterval(timer);
                     if ($progressbar) {
                         $progressbar.set({ percentage: 100 });
                     }
@@ -249,12 +248,9 @@
                     if (response.text_legend) {
                         renderText(response.text_legend);
                     }
-                    step(profile_id, null, $progressbar);
                 }
-            }, 'json').error(function () {
-                step(profile_id, 3000, $progressbar);
-            });
-        }, delay);
+            }, 'json');
+        }, 2000);
     };
 
     $date_picker = $('[name$="[begin_import_period]"]');
@@ -305,7 +301,7 @@
                     if (response.text_legend) {
                         renderText(response.text_legend);
                     }
-                    step(profile_id, null, instance);
+                    step(profile_id, instance);
                 } else {
                     $tab_content.find('.js-error-msg').text('Server error');
                 }
