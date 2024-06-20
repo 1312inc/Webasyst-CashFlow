@@ -1,9 +1,5 @@
 <?php
 
-if (!defined('TINKOFF_FILE_LOG')) {
-    define('TINKOFF_FILE_LOG', 'cash/tinkoff.log');
-}
-
 return array(
     'name' => 'Т-Бизнес',
     'description' => 'Импорт операций из Т-Бизнеса',

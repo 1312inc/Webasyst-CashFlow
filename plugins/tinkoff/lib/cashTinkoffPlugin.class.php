@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('TINKOFF_FILE_LOG')) {
+    define('TINKOFF_FILE_LOG', 'cash/tinkoff.log');
+}
+
 class cashTinkoffPlugin extends cashBusinessPlugin
 {
     const DEFAULT_UPDATE_TIMEOUT = 60; // min
