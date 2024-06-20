@@ -88,28 +88,82 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
         }
 
         $statData = [];
-
         $transferCategory = $this->categoryRep->findTransferCategory();
 
         // incomes
         // total
         $statData[] = new cashReportDdsStatDto(
-            new cashReportDdsEntity(_w('All income'), cashReportDdsService::ALL_INCOME_KEY, false, true, '', true),
+            new cashReportDdsEntity(
+                _w('All income'),
+                cashReportDdsService::ALL_INCOME_KEY,
+                false,
+                true,
+                false,
+                '',
+                true
+            ),
             $rawData[cashCategory::TYPE_INCOME] ?? []
         );
 
+        // expenses
+        // total
+        $statData[] = new cashReportDdsStatDto(
+            new cashReportDdsEntity(
+                _w('All expenses'),
+                cashReportDdsService::ALL_EXPENSE_KEY,
+                true,
+                false,
+                false,
+                '',
+                true
+            ),
+            $rawData[cashCategory::TYPE_EXPENSE] ?? []
+        );
+
+        $saldos = [];
+        $keys = array_keys($rawData[cashCategory::TYPE_INCOME] ?? [] + $rawData[cashCategory::TYPE_EXPENSE] ?? []);
+        foreach ($keys as $_key) {
+            $currency_keys = array_keys($rawData[cashCategory::TYPE_INCOME][$_key] + $rawData[cashCategory::TYPE_EXPENSE][$_key]);
+            foreach ($currency_keys as $_currency) {
+                $saldos[$_key][$_currency] = [
+                    'id' => cashReportDdsService::SALDO_KEY,
+                    'max' => 0,
+                    'per_month' => ifempty($rawData, cashCategory::TYPE_INCOME, $_key, $_currency, 'per_month', 0) + ifempty($rawData, cashCategory::TYPE_EXPENSE, $_key, $_currency, 'per_month', 0)
+                ] + ifempty($rawData, cashCategory::TYPE_INCOME, $_key, $_currency, []) + ifempty($rawData, cashCategory::TYPE_EXPENSE, $_key, $_currency, []);
+            }
+        }
+
+        // saldo
+        $statData[] = new cashReportDdsStatDto(
+            new cashReportDdsEntity(
+                _w('Saldo'),
+                cashReportDdsService::SALDO_KEY,
+                false,
+                false,
+                true,
+                '',
+                true
+            ),
+            $saldos
+        );
+
         // usual categories
-        foreach ($this->categoryRep->findAllIncomeForContact() as $category) {
+        $category_contact = array_merge(
+            $this->categoryRep->findAllIncomeForContact(),
+            $this->categoryRep->findAllExpenseForContact()
+        );
+        foreach ($category_contact as $category) {
             $statData[] = $this->createDdsStatDto($category, $rawData);
         }
 
-        // transfers
+        // transfers income
         $statData[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(
                 $transferCategory->getName(),
                 $transferCategory->getId(),
                 false,
                 true,
+                false,
                 sprintf('<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
                 false,
                 $transferCategory->getColor()
@@ -117,25 +171,13 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
             $rawData[sprintf('%s|%s', $transferCategory->getId(), cashCategory::TYPE_INCOME)] ?? []
         );
 
-        // expenses
-
-        // total
-        $statData[] = new cashReportDdsStatDto(
-            new cashReportDdsEntity(_w('All expenses'), cashReportDdsService::ALL_EXPENSE_KEY, true, false, '', true),
-            $rawData[cashCategory::TYPE_EXPENSE] ?? []
-        );
-
-        // usual categories
-        foreach ($this->categoryRep->findAllExpenseForContact() as $category) {
-            $statData[] = $this->createDdsStatDto($category, $rawData);
-        }
-
-        // transfers
+        // transfers expense
         $statData[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(
                 $transferCategory->getName(),
                 $transferCategory->getId(),
                 true,
+                false,
                 false,
                 sprintf('<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
                 false,
@@ -165,6 +207,7 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
                 $category->getId(),
                 $category->isExpense(),
                 $category->isIncome(),
+                false,
                 $category->getGlyph()
                     ? sprintf('<i class="fas %s" style="color: %s"></i>', $category->getGlyph(), $category->getColor())
                     : sprintf('<i class="icon rounded" style="background-color: %s"></i>', $category->getColor()),

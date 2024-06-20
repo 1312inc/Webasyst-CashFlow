@@ -8,6 +8,7 @@ final class cashReportDdsService
 
     public const ALL_INCOME_KEY  = 'all_income';
     public const ALL_EXPENSE_KEY = 'all_expense';
+    public const SALDO_KEY = 'saldo';
 
     /**
      * @return cashReportDdsStatDto[]

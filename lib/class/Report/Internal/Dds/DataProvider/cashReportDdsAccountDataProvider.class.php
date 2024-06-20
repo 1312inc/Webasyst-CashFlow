@@ -99,26 +99,30 @@ final class cashReportDdsAccountDataProvider implements cashReportDdsDataProvide
             $rawData[$catType][$categoryTypeKey]['total'][$currency]['per_month'] += (float) $perMonth;
         }
 
-        $statDataIncome = $statDataExpense = [];
-
-
-//        $accounts = array_reduce(
-//            $this->accountRep->findAllActive(),
-//            function ($accounts, cashAccount $account) {
-//                $accounts[$account->getId()] = $account;
-//
-//                return $accounts;
-//            },
-//            []
-//        );
+        $statDataIncome = [];
+        $statDataExpense = [];
 
         $statDataIncome[] = new cashReportDdsStatDto(
-            new cashReportDdsEntity(_w('All income'), cashReportDdsService::ALL_INCOME_KEY, false, true, '', true),
+            new cashReportDdsEntity(
+                _w('All income'),
+                cashReportDdsService::ALL_INCOME_KEY,
+                false,
+                true,
+                false,
+                '',
+                true
+            ),
             $rawData[cashCategory::TYPE_INCOME][cashReportDdsService::ALL_INCOME_KEY] ?? []
         );
         $statDataExpense[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(
-                _w('All expenses'), cashReportDdsService::ALL_EXPENSE_KEY, true, false, '', true
+                _w('All expenses'),
+                cashReportDdsService::ALL_EXPENSE_KEY,
+                true,
+                false,
+                false,
+                '',
+                true
             ),
             $rawData[cashCategory::TYPE_EXPENSE][cashReportDdsService::ALL_EXPENSE_KEY] ?? []
         );
@@ -132,6 +136,7 @@ final class cashReportDdsAccountDataProvider implements cashReportDdsDataProvide
                         $account->getId(),
                         false,
                         true,
+                        false,
                         $account->getIconHtml()
                     ),
                     $data
@@ -144,6 +149,7 @@ final class cashReportDdsAccountDataProvider implements cashReportDdsDataProvide
                         $account->getName(),
                         $account->getId(),
                         true,
+                        false,
                         false,
                         $account->getIconHtml()
                     ),
