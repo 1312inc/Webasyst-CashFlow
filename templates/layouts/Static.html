@@ -51,7 +51,14 @@
 
     <div id="wa-app">
         <div class="flexbox wrap-mobile">
-            <div id="app-sidebar" class="sidebar width-16rem"></div>
+            <div class="sidebar flexbox hide-scrollbar width-16rem mobile-friendly z-50">
+                {if $wa->isSingleAppMode()}
+                    <div class="custom-pl-12">
+                        {$wa->headerSingleAppUser()}
+                    </div>
+                {/if}
+                <div id="app-sidebar"></div>
+            </div>
             <div class="content blank" id="cash-content">
                 {$content|default:''}
             </div>

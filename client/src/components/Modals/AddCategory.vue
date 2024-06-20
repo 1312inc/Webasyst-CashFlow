@@ -213,6 +213,7 @@ export default {
         name: '',
         type: '',
         color: '',
+        sort: 0,
         is_profit: false,
         parent_category_id: null,
         glyph: null

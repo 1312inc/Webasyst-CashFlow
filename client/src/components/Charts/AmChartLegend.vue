@@ -29,6 +29,28 @@
         </div>
       </div>
     </div>
+
+    <div
+      v-if="totalAmountSelected"
+      class="c-legend__item c-legend__item--column bordered-top custom-pt-12"
+    >
+      <div class="c-legend__item__square" />
+      <div class="c-legend__item__label smaller">
+        <div class="c-legend__item__label__title">
+          {{ $t('totalSelected') }}
+        </div>
+        <div class="c-legend__item__label__value">
+          {{
+            $helper.toCurrency({
+              value: totalAmountSelected,
+              isDynamics: true,
+              isReverse: isReverse,
+              currencyCode,
+            })
+          }}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -48,6 +70,12 @@ export default {
     isColumnStyle: {
       type: Boolean,
       default: true
+    }
+  },
+
+  computed: {
+    totalAmountSelected () {
+      return this.legendItems.reduce((acc, item) => acc + item.amount, 0)
     }
   }
 }

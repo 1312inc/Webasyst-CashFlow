@@ -26,6 +26,10 @@ final class cashLogoUploader
 
             $pathToSave = sprintf('%s/%s', $dataFullPath, $file->name);
 
+            if (method_exists($logo, 'fixImageOrientation')) {
+                $logo->fixImageOrientation();
+            }
+
             $logo->resize(self::ACCOUNT_LOGO_SIZE, self::ACCOUNT_LOGO_SIZE, waImage::AUTO);
             if ($logo->save($pathToSave)) {
                 $path = sprintf('%s/%s', $dataPath, $file->name);
@@ -53,10 +57,11 @@ final class cashLogoUploader
 
             $dataPath = $this->getUserAccountPath($contact);
             $dataFullPath = $this->getDataFolder($dataPath);
-
             waFiles::create($dataFullPath, true);
-
             $pathToSave = sprintf('%s/%s', $dataFullPath, $file->name);
+            if (method_exists($logo, 'fixImageOrientation')) {
+                $logo->fixImageOrientation();
+            }
 
             $logo->resize(self::ACCOUNT_LOGO_SIZE, self::ACCOUNT_LOGO_SIZE, waImage::AUTO);
             if ($logo->save($pathToSave)) {

@@ -1247,3 +1247,9 @@ msgstr "Плагины"
 
 msgid "Import plugins are coming soon. Please stay tuned."
 msgstr "Плагины для импорта данных скоро появятся. Не переключайтесь."
+
+msgid "We strongly recommend using virtual accounts for Shop-Script import setup due to the fact that the sales data is not exactly what is being credited to your company’s checking account."
+msgstr "Рекомендуем использовать виртуальные счета для импорта из Shop-Script, потому что данные о продажах и связанных с ними расходов отличаются от данных о реальных операциях по расчетному счету компании."
+
+msgid "What is a virtual account?"
+msgstr "Что такое виртуальный счет?"

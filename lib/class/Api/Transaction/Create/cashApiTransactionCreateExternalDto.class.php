@@ -8,7 +8,7 @@ class cashApiTransactionCreateExternalDto
     private $source;
 
     /**
-     * @var string
+     * @var int|null
      */
     private $id;
 
@@ -17,7 +17,7 @@ class cashApiTransactionCreateExternalDto
      */
     private $data;
 
-    public function __construct(string $externalSource, string $externalId, array $externalData)
+    public function __construct(string $externalSource, ?int $externalId, array $externalData)
     {
         $this->source = $externalSource;
         $this->id = $externalId;
@@ -29,7 +29,7 @@ class cashApiTransactionCreateExternalDto
         return $this->source;
     }
 
-    public function getId(): string
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -41,14 +41,12 @@ class cashApiTransactionCreateExternalDto
 
     public static function fromArray(array $data): self
     {
-        if (empty($data['id'])) {
-            throw new cashValidateException('Missing external id');
-        }
+        $data += [
+            'id' => null,
+            'source' => '',
+            'data' => []
+        ];
 
-        if (empty($data['source'])) {
-            throw new cashValidateException('Missing external source');
-        }
-
-        return new self($data['source'], $data['id'], $data['data'] ?? []);
+        return new self((string) $data['source'], $data['id'], (array) $data['data']);
     }
 }

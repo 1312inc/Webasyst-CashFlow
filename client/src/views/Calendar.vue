@@ -1,123 +1,64 @@
 <template>
   <InfiniteCalendarGrid
-    :first-day-of-week="firstDayOfWeek"
+    :first-day-of-week="1"
     :locale="locale.replace('_', '-')"
     :today-label="$t('today')"
-    @changed="handleMonthChange"
+    :items="dataDays"
+    field-with-date="date"
+    @changeInterval="handleMonthChange"
   >
-    <template #default="{ date }">
+    <template #default="{ date, items }">
       <InfiniteCalendarGridDaySlot
-        :date="date"
-        :data="dataDays.filter(t => t.date === dayjs(date).format('YYYY-MM-DD'))"
+        :date="new Date(date.timestamp)"
+        :data="items"
       />
     </template>
   </InfiniteCalendarGrid>
 </template>
 
 <script setup>
-import InfiniteCalendarGrid from '../components/ICG/InfiniteCalendarGrid.vue'
+import InfiniteCalendarGrid from '../components/ICG/Grid/InfiniteCalendarGrid.vue'
 import InfiniteCalendarGridDaySlot from '../components/ICG/InfiniteCalendarGridDaySlot.vue'
 import api from '@/plugins/api'
 import dayjs from 'dayjs'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { locale } from '@/plugins/locale'
 import store from '@/store'
 
-const firstDayOfWeek = ref(1)
 const dataDays = ref([])
-const curDate = ref(dayjs())
+let startDate
+let endDate
+let controller
 
-const activeMonthOffset = computed(() => {
-  const offset = curDate.value.startOf('M').get('d') + (firstDayOfWeek.value && -1)
-  return offset < 0 ? 7 + offset : offset
-})
+const handleMonthChange = ({ start, end }) => {
+  startDate = start
+  endDate = end
 
-handleMonthChange(new Date())
+  if (controller) {
+    controller.abort()
+  }
+  controller = new AbortController()
 
-async function handleMonthChange (date) {
-  curDate.value = dayjs(date)
-
-  await api.get('cash.transaction.getList', {
+  api.get('cash.transaction.getList', {
+    signal: controller.signal,
     params: {
-      from: curDate.value.startOf('M').add(-activeMonthOffset.value, 'day').format('YYYY-MM-DD'),
-      to: curDate.value.endOf('M').add(42 - activeMonthOffset.value - curDate.value.daysInMonth(), 'day').format('YYYY-MM-DD'),
+      from: dayjs(start).format('YYYY-MM-DD'),
+      to: dayjs(end).format('YYYY-MM-DD'),
       reverse: 1
     }
-  }).then(({ data }) => {
-    dataDays.value = data.data
   })
+    .then(({ data }) => {
+      dataDays.value = data.data
+    })
+    .catch((e) => e)
 }
 
 store.subscribeAction({
   after: (action) => {
     if (action.type === 'transaction/update' || action.type === 'transaction/delete') {
-      handleMonthChange(curDate.value)
+      handleMonthChange({ start: startDate, end: endDate })
     }
   }
 })
 
 </script>
-
-<style lang="scss">
-.icg-header {
-  align-items: start;
-  gap: 1rem;
-}
-
-@media screen and (max-width: 760px) {
-  .icg-header {
-    align-items: center;
-  }
-}
-
-.icg-controls {
-  button {
-
-    background-color: var(--background-color-btn-light-gray);
-    color: var(--text-color-input);
-    box-shadow: none;
-
-    svg {
-      fill: var(--text-color-input);
-    }
-  }
-}
-
-.icg-weekdays__cell,
-.icg-months-grid-day {
-  border-color: var(--border-color-soft);
-}
-
-.icg-weekdays__cell--weekend {
-  color: var(--text-color-hint);
-}
-
-.icg-month {
-  font-size: 2rem;
-  color: var(--text-color-strongest);
-  line-height: 1.2em;
-  font-weight: bold;
-}
-
-@media screen and (max-width: 760px) {
-  .icg-month {
-    font-size: 1.3rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-.icg-months-grid-day {
-  color: var(--text-color-hint);
-  background-color: rgba(0, 20, 80, 0.01);
-}
-
-.icg-months-grid-day--active-month {
-  background-color: var(--background-color-blank);
-}
-
-.icg-months-grid-day--weekend {
-  background-color: rgba(0, 20, 80, 0.03);
-}
-</style>

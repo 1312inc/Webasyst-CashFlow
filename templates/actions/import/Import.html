@@ -3,40 +3,7 @@
 
         <h1>[`Import`]</h1>
 
-        <div class="custom-my-16">
-            <ul class="tabs bordered-bottom">
-                <li class="selected">
-                    <a href="{$wa_app_url}import/">
-                        <i class="fas fa-file-excel" style="color: #499b5e;"></i>
-                        [`Excel (CSV)`]
-                    </a>
-                </li>
-                <li>
-                    <a href="{$wa_app_url}shop/settings/">
-                        <i class="icon" style="background-image: url('{$wa_url}wa-apps/cash/img/shop.svg');"></i>
-                        Shop-Script
-                    </a>
-                </li>
-                {if ($plugins)}
-                    {foreach $plugins as $plugin}
-                    <li>
-                        <a href="{$wa_app_url}?plugin={$plugin.id}">
-                            <span class="icon space-8">
-                                <i style="background-image: url('{$wa_url}{$plugin.img}');"></i>
-                            </span>
-                            {$plugin.name}
-                        </a>
-                    </li>
-                    {/foreach}
-                {/if}
-                <li>
-                    <a href="{$wa_app_url}plugins/" class="opacity-30" onClick="alert('[`Import plugins are coming soon. Please stay tuned.`]');" title="[`Import plugins are coming soon. Please stay tuned.`]">
-                        <i class="fas fa-plug"></i>
-                        [`Plugins`]
-                    </a>
-                </li>
-            </ul>
-        </div>
+        {include './ImportTab.html'}
 
         {if count($imports)}
         <div>

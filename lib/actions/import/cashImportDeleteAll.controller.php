@@ -21,7 +21,8 @@ class cashImportDeleteAllController extends cashJsonController
      */
     public function execute()
     {
-        $imports = cash()->getEntityRepository(cashImport::class)->findAllActive();
+        $provider = waRequest::request('provider', 'csv', waRequest::TYPE_STRING_TRIM);
+        $imports = cash()->getEntityRepository(cashImport::class)->findAllActive($provider);
 
         foreach ($imports as $import) {
             $import->setIsArchived(1);

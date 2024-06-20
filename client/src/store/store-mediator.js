@@ -37,19 +37,17 @@ export default (store) => {
         store.commit('transactionBulk/unselect', [payload.id])
       }
     },
-    after: ({ type, payload }, state) => {
+    after: ({ type }) => {
       switch (type) {
         // delete account
+        case 'category/delete':
         case 'account/delete':
-          return Promise.all([
-            store.dispatch('transaction/getTodayCount'),
-            store.dispatch('balanceFlow/getBalanceFlow')
-          ])
+          store.dispatch('transaction/getTodayCount')
+          store.dispatch('balanceFlow/getBalanceFlow')
+          break
         // create account
         case 'account/update':
-          if (!payload.id) {
-            store.dispatch('balanceFlow/getBalanceFlow')
-          }
+          store.dispatch('balanceFlow/getBalanceFlow')
           break
         case 'transactionBulk/bulkMove':
         case 'transactionBulk/restore':

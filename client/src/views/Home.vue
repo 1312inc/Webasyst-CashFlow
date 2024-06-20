@@ -37,6 +37,7 @@ import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyConta
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import AlertImported from '../components/AlertImported.vue'
 import TransactionControls from '@/components/TransactionControls'
+import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
 
 export default {
 
@@ -54,20 +55,21 @@ export default {
   },
   mixins: [routerTransitionMixin],
 
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.updateEntity(to)
-    })
-  },
-
-  beforeRouteUpdate (to, from, next) {
-    this.updateEntity(to)
-    next()
-  },
-
   beforeRouteLeave (to, from, next) {
     this.$store.commit('setCurrentEntity', { name: '', id: null })
     next()
+  },
+
+  watch: {
+    $route: {
+      handler (to, old) {
+        if (
+          old?.name !== to.name ||
+          JSON.stringify(old?.params) !== JSON.stringify(to.params)
+        ) { this.updateEntity(to) }
+      },
+      immediate: true
+    }
   },
 
   methods: {
@@ -114,7 +116,7 @@ export default {
 
       this.$store.dispatch('transaction/fetchTransactions', {
         from: '',
-        to: this.$moment().add(1, 'M').format('YYYY-MM-DD'),
+        to: DEFAULT_FUTURE_PERIOD,
         offset: 0
       })
     }

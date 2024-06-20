@@ -8,7 +8,7 @@
  */
 class cashShopImportProcessController extends waLongActionController
 {
-    const ORDERS_TO_PROCEED = 30;
+    const ORDERS_TO_PROCEED = 300;
 
     public function execute()
     {

@@ -1,170 +1,425 @@
-<div class="content box contentbox">
-    {if empty($profiles)}
-        [`Нет доступных профилей`]
-    {else}
-    <div class="fields">
-    {foreach $profiles as $_profile_id => $_profile}
-        <div class="fields-group" data-profile-id="{$_profile_id}">
-            <div class="field">
-                <div class="name">
-                    Профиль
-                </div>
-                <div class="value">
-                    <strong>
-                        {$_profile.profile_name}
-                    </strong>
-                </div>
-            </div>
+{$message_1 = _wp('Поле не должно быть пустым')}
+{$profile_id = $plugin_settings.current_profile_id|default:1}
+{$self_mode = $plugin_settings.self_mode|default:0}
+{$profile = ifset($profiles, $profile_id, [])}
 
-            <div class="field">
-                <div class="name"></div>
-                <div class="value">
-                    <button class="button outlined js-company-button">[`Информация о компании`]</button>
-                    <div class="custom-mt-8"></div>
-                    <div class="js-company-value"></div>
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="name"></div>
-                <div class="value">
-                    <button class="button outlined js-accounts-button">[`Получить счета`]</button>
-                    <div class="custom-mt-8"></div>
-                    <div class="js-accounts-value"></div>
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="name"></div>
-                <div class="value">
-                    <button class="button outlined js-statement-button">[`Импортировать выписку`]</button>
-                    <div class="custom-mt-16"></div>
-                    <div class="progressbar" id="progressbar-{$_profile_id}"></div>
-                    <div class="error-msg state-error custom-pt-8"></div>
-                    <table class="single-lined hidden js-statement-value-{$_profile_id}">
-                        <thead>
-                        <tr>
-                            <th class="min-width">[`Дата операции`]</th>
-                            <th>[`Сумма транзакции`]</th>
-                            <th>[`Описание транзакции`]</th>
-                        </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    {/foreach}
-    </div>
-    {/if}
-</div>
+{function name="render_account" _account=[]}
+    <span class="hint">
+        [`ИНН`] {$_account.inn|escape|default:''}
+    </span>
+    <br>
+    <strong>{$_account.account_description|escape|default:''}</strong>
+    <br>
+    <span class="hint">
+        <b>{$_account.account_number|escape|default:''}</b>
+        <br>
+        {$_account.company|escape|default:''}
+    </span>
+{/function}
 
 <script>
-    function renderTable(statements, profile_id) {
-        statements = statements || [];
-        let $table = $('.js-statement-value-'+ profile_id);
-        $table.removeClass('hidden');
-        for (let _statement of statements) {
-            let _class = 'class="'+ (_statement.amount < 0 ? 'bg-orange' : 'bg-green') +'"';
-            $table.find('tbody').append('<tr '+ _class +'><td>'+ _statement.datetime +'</td><td>'+ _statement.amount +'</td><td>'+ _statement.description +'</td></tr>');
-        }
+    let $bar;
+    let profile_id = {$profile_id};
+    let profiles = {$profiles|default:null|json_encode};
+</script>
+
+<style>
+    .card.c-profile { width: 240px; }
+    .card.c-profile.c-selected { background: var(--accent-color); color: var(--white); }
+    .card.c-profile.c-selected a,
+    .card.c-profile.c-selected strong { color: var(--white); }
+    .card.c-profile.c-selected .hint { color: var(--semi-white); }
+    .card.c-profile.c-add { background: var(--background-color); color: var(--white); box-shadow: none; }
+</style>
+
+<div id="cash-import-page" class="article wide">
+    <div class="article-body">
+        <h1>[`Т-Бизнес &rarr; Деньги`]</h1>
+
+        {include 'templates/actions/import/ImportTab.html'}
+
+        <p>[`Импорт операций по счету в Т-Бизнесе для юридических лиц (ООО, ИП) по <a href="https://www.tbank.ru/business/open-api/">API</a>.`]</p>
+
+        {if $profile && count($profile.imports)}
+        <div>
+            <p class="small">[`Все ранее импортированные операции:`]</p>
+            <ul class="chips rounded small">
+                {foreach $profiles as $_profile}
+                    {if !empty($_profile.imports)}
+                        {** @var cashImportDto $import **}
+                        {foreach $_profile.imports as $import}
+                            <li>
+                                <a href="{$wa_app_url}import/{$import->id}">
+                                    <i class="fas fa-file-excel" style="color: #499b5e;"></i>
+                                    <strong>{sprintf(_w('%d transactions'), $import->success)}</strong>
+                                    {$import->filename|escape|truncate:128}
+
+                                    <span class="hint">{$import->create_datetime|wa_datetime:humandatetime}</span>
+                                </a>
+                            </li>
+                        {/foreach}
+                    {/if}
+                {/foreach}
+            </ul>
+        </div>
+        <hr>
+        {/if}
+
+        <div class="fields" id="js-profiles">
+
+            {* AUTO *}
+            <div class="field">
+                <div class="name for-input">[`T-ID`]</div>
+                <div class="value">
+
+                    <div class="custom-mb-12 custom-mt-8{if empty($profile.tinkoff_id)} hidden{/if}">
+                        <strong>
+                        {if !empty($profile.status)}
+                            {if $profile.status === 'ok'}
+                                <span class="icon space-8 custom-mr-4">
+                                    <i style="background-image: url('{$wa_url}wa-apps/cash/plugins/tinkoff/img/tinkoff.svg');"></i>
+                                </span>
+                                {$profile.company|escape|default:_wp('[`Подключен`]')}
+                            {elseif $profile.status === 'warning'}
+                                <i class="fas fa-exclamation-circle text-orange" title="{$profile.status_description|escape}"></i> [`Ошибка`].
+                                <a href="javascript:void(0);" class="js-tinkoff-connect">[`Переподключить`]</a>
+                            {elseif $profile.status === 'danger'}
+                                <i class="fas fa-exclamation-triangle text-red" title="{$profile.status_description|escape}"></i> [`Ошибка`].
+                                <a href="javascript:void(0);" class="js-tinkoff-connect">[`Переподключить`]</a>
+                            {/if}
+                        {/if}
+                        </strong>
+                        <span class="hint js-tinkoff-id">
+                            {$profile.tinkoff_id|escape|default:''}
+                        </span>
+                        {if !empty($profile.status) && $profile.status === 'ok'}
+                            <a href="javascript:void(0);" class="hint js-tinkoff-connect">[`Переподключить`]</a>
+                        {/if}
+                    </div>
+
+                    {if empty($profiles)}
+
+                        <button class="button green custom-mb-4 js-tinkoff-connect" type="button">[`Подключить Т-Бизнес API`]</button>
+                        <p class="small">
+                            или <a href="javascript:void(0);" class="js-on-self-mode">[`получить и ввести токен API самостоятельно (режим H2H)`]</a>
+                            <span class="gray"> —
+                                <a href="https://developer.tbank.ru/docs/intro/manuals/" target="_blank">[`документация`] <i class="fas fa-external-link-alt fa-xs opacity-50"></i></a>
+                            </span>
+                        </p>
+
+                    {else}
+
+                        <div class="flexbox space-16 wrap" id="js-profile-c">
+
+                            {foreach $profiles as $_profile_id => $_profile}
+                            <div class="card c-profile{if isset($profiles[$profile_id]) && $profile_id == $_profile_id} c-selected{/if}">
+                                <div class="details small">
+                                    <a href="javascript:void(0);" data-profile-id="{$_profile_id}">
+                                        {render_account _account=$_profile}
+                                    </a>
+                                </div>
+                            </div>
+                            {/foreach}
+                            <div class="card c-profile c-add flexbox" style="align-items: center;">
+                                <div class="box wide align-center">
+                                    <a href="javascript:void(0);" class="small js-tinkoff-connect"><i class="fas fa-plus-circle"></i> [`Подключить еще`]</a>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    {/if}
+                    <div class="error-msg state-error"></div>
+
+
+                </div>
+            </div>
+
+            {* SELF SERVICE *}
+            <div class="field hidden js-token-field">
+                <div class="name for-input">[`Токен Т-Бизнес API`]</div>
+                <div class="value">
+                    <input type="text" class="long" name="token" value="{$plugin_settings.tinkoff_token|escape|default:''}" autocomplete="off" placeholder="≈ t.761436e55ac1576ed51a03b28e5eab6a">
+                    <input type="hidden" name="self_mode" value="1">
+                    <button class="button green js-tinkoff-self-connect" type="button">[`Подключить`]</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="name"></div>
+                <div class="value">
+                    <div class="state-error js-connect-error"></div>
+                </div>
+            </div>
+
+            {* PROFILE DETAILS *}
+            {if !empty(profiles)}
+                {foreach $profiles as $_profile_id => $_profile}
+                    {$is_hidden = $_profile_id != $profile_id}
+                    <div class="custom-mt-16 js-tab-content-{$_profile_id}{if $is_hidden} hidden{/if}">
+                        {include file="./BackendSettingsProfile.html" profile_id=$_profile_id profile=$_profile is_hidden=$is_hidden inline}
+                    </div>
+                {/foreach}
+            {/if}
+        </div>
+    </div>
+</div>
+
+{if $wa->installer && $review_widget}
+    {$wa->installer->reviewWidget('plugin/cash/tinkoff')}
+{/if}
+
+<script>
+    function saveProfile(profile, callback) {
+        profile.profile_id = profile_id;
+        $.get('?plugin=tinkoff&module=profileEdit', profile, function (data) {
+            console.log('profileEdit', data);
+            if (typeof callback === 'function') {
+                callback();
+            }
+        });
+    }
+
+    function tinkoffConnect($button, param) {
+        $button.addClass('disabled');
+        $.get('?plugin=tinkoff&module=auth'+ (param ? '&add=1' : ''), function (data) {
+            data = (data.hasOwnProperty('data') ? data.data : data);
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+            } else if (data.error_description) {
+                alert(data.error_description);
+            } else if (data.errors) {
+                $('.js-connect-error').text(data.errors.join(' ').replace(/[,\s]+$/m, ''));
+            } else if (data.profiles) {
+                window.location.reload();
+            }
+        });
+    }
+
+    function renderText(text) {
+        $('.js-tab-content-'+ profile_id).find('.js-info').html(text);
     }
 
     let url = '?plugin=tinkoff&action=run';
+    let error = '{$error|default:''}';
     let process_id = undefined;
-    let step = function (profile_id, delay, $progressbar) {
-        delay = delay || 2000;
-        setTimeout(function () {
+    let timer = undefined;
+    let $start_button = $('.js-cash-tinkoff-start, .js-cash-tinkoff-update');
+    let datepicker_options = {
+        changeMonth: true,
+        changeYear: true,
+        shortYearCutoff: 2,
+        dateShowWeek: false,
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        stepMonths: 1,
+        numberOfMonths: 1,
+        gotoCurrent: true,
+        constrainInput: false,
+        dateFormat: 'yy-mm-dd',
+        onSelect: function (date) {
+            $(this).closest('div').find('[name$="[import_period]"]').prop('checked', true).val(date);
+        }
+    };
+    let step = function (profile_id, $progressbar) {
+        timer = setInterval(function () {
             $.post(url, { processid: process_id, profile_id: profile_id }, function (response) {
-                if (!response) {
-                    step(profile_id, 3000, $progressbar);
-                } else if (response && response.error) {
-                    $('.error-msg').text(response.error);
+                renderText('');
+                if (response && response.error) {
+                    $('.js-tab-content-'+ profile_id).find('.error-msg').text(response.error);
                 } else if (response && response.ready) {
-                    $progressbar.set({ percentage: 100 });
-                    setTimeout(function () {
-                        $('.progressbar').hide();
-                    }, 2000);
-                    if (response.statements) {
-                        renderTable(response.statements, profile_id);
+                    clearInterval(timer);
+                    if ($progressbar) {
+                        $progressbar.set({ percentage: 100 });
                     }
+                    if (response.text_legend) {
+                        renderText(response.text_legend);
+                    }
+                    setTimeout(function () {
+                        let cash_account = response.cash_account_id || $('select[name="profiles['+ profile_id +'][cash_account]"]').val();
+                        renderText('');
+                        $('.progressbar').hide();
+                        window.location = window.appState.baseUrl +'account/'+ cash_account +'?show_success_import_hint=1';
+                    }, 1000);
                 } else {
-                    if (response && response.progress) {
+                    if ($progressbar && response && response.progress) {
                         $progressbar.set({ percentage: response.progress });
                     }
-                    if (response.statements) {
-                        renderTable(response.statements, profile_id);
+                    if (response.text_legend) {
+                        renderText(response.text_legend);
                     }
-                    step(profile_id, null, $progressbar);
                 }
-            }, 'json').error(function () {
-                step(profile_id, 3000, $progressbar);
-            });
-        }, delay);
+            }, 'json');
+        }, 2000);
     };
 
-    $('.js-company-button').on('click', function () {
-        let $that = $(this);
-        let profile_id = $that.closest('.fields-group').data('profile-id');
-        if (profile_id) {
-            $.post('?plugin=tinkoff&action=getCompany', { profile_id: profile_id }, function (res) {
-                if (res.status === 'ok') {
-                    let html = '<b>Название:</b> '+ res.data.name + '<br><b>Адрес:</b> '+ res.data.address;
-                    $that.siblings('.js-company-value').html(html);
-                } else if (res.status === 'fail') {
-                    $that.siblings('.js-company-value').html('<b>Ошибка:</b> '+ res.errors.shift().join());
-                }
-            });
+    $date_picker = $('[name$="[begin_import_period]"]');
+    $date_picker.datepicker(datepicker_options);
+
+    if (error) {
+        if (confirm(error)) {
+            error = '';
+            window.location.href = '?plugin=tinkoff';
         }
+    }
+
+    $('.js-tinkoff-connect').on('click', function () {
+        tinkoffConnect($(this));
     });
 
-    $('.js-accounts-button').on('click', function () {
+    $start_button.on('click', function () {
         let $that = $(this);
-        let profile_id = $that.closest('.fields-group').data('profile-id');
-        if (profile_id) {
-            $.post('?plugin=tinkoff&action=getAccounts', { profile_id: profile_id }, function (res) {
-                if (res.status === 'ok') {
-                    let html = '<ul>';
-                    for (let _account of res.data) {
-                        html += '<li>'+ _account.name + (_account.number ? ' <i>'+ _account.number +'</i>' : '') + (_account.default ? ' <b>(Текущий)</b>' : '') +'</li>';
-                    }
-                    html += '</ul>';
-                    $that.siblings('.js-accounts-value').html(html);
-                } else if (res.status === 'fail') {
-                    $that.siblings('.js-accounts-value').html('<b>Ошибка:</b> '+ res.errors.shift().join());
-                }
-            });
+        let $tab_content = $('.js-tab-content-'+ profile_id);
+        let $cash_account = $('select[name="profiles['+ profile_id +'][cash_account]"]');
+
+        if (!$cash_account.val()) {
+            setTimeout(function () {
+                $cash_account.removeClass('state-error');
+            }, 1500);
+            $cash_account.addClass('state-error');
+            return;
         }
-    });
 
-    $('.js-statement-button').on('click', function () {
-        let $that = $(this);
-        let profile_id = $that.closest('.fields-group').data('profile-id');
-        if (profile_id) {
-            let $bar = $('#progressbar-'+ profile_id).waProgressbar({
-                'color': '#3ec55e',
-                'text-inside': true
-            });
-            let instance = $bar.data('progressbar');
+        let instance = profiles[profile_id]['progressbar'];
+        let form_data = $tab_content.find('input, textarea, select').serialize();
 
-            $.post(url, { profile_id: profile_id }, function (response) {
+        $that.addClass('hidden');
+        $tab_content.find('.js-progressbar').removeClass('hidden');
+        $tab_content.find('.js-settings-block').addClass('hidden');
+        $tab_content.find('.js-settings-show').addClass('hidden');
+        renderText('<div class="spinner custom-mr-4"> </div>[`Подключение...`]');
+        saveProfile(form_data, function () {
+            $.post(url, form_data, function (response) {
+                renderText('');
                 if (response && response.error) {
-                    $('div[data-profile-id="'+ profile_id +'"]').find('.error-msg').text(response.error);
+                    $tab_content.find('.js-error-msg').text(response.error);
                 } else if (response && response.processid) {
                     process_id = response.processid;
-                    if (response.progress) {
+                    if (instance && response.progress) {
                         instance.set({ percentage: response.progress });
                     }
-                    if (response.statements) {
-                        renderTable(response.statements, profile_id);
+                    if (response.text_legend) {
+                        renderText(response.text_legend);
                     }
-                    step(profile_id, null, instance);
+                    step(profile_id, instance);
                 } else {
-                    $('div[data-profile-id="'+ profile_id +'"]').find('.error-msg').text('Server error');
+                    $tab_content.find('.js-error-msg').text('Server error');
                 }
             }, 'json').error(function () {
-                $('div[data-profile-id="'+ profile_id +'"]').find('.error-msg').text('Server error');
+                $tab_content.find('.js-error-msg').text('Server error');
             });
+        });
+    });
+
+    $('#js-profile-c').on('click', 'div.c-profile', function (e) {
+        profile_id = $(this).find('a').data('profile-id');
+        $('#js-profile-c > div.c-profile').removeClass('c-selected');
+        $(this).addClass('c-selected');
+        if (profile_id) {
+            $('[name="profile_id"]').val(profile_id);
+            $('[class*=js-tab-content').addClass('hidden');
+            $('.js-tab-content-'+ profile_id).removeClass('hidden');
+            if (profiles.hasOwnProperty(profile_id)) {
+                let $up_dt = $('.js-update-date');
+                if (profiles[profile_id].hasOwnProperty('update_date') && profiles[profile_id]['update_date']) {
+                    $up_dt.text(profiles[profile_id]['update_date']);
+                    $up_dt.closest('strong.hint').removeClass('hidden');
+                } else {
+                    $up_dt.closest('strong.hint').addClass('hidden');
+                }
+                if (profiles[profile_id].hasOwnProperty('tinkoff_id')) {
+                    $('.js-tinkoff-id').text(profiles[profile_id]['tinkoff_id']);
+                }
+            }
         }
+    });
+
+    $('.js-reset-import').on('click', function (e) {
+        let url = '?plugin=tinkoff&action=resetImport';
+        e.preventDefault();
+        $.get(url, function (data) {
+            $.waDialog({
+                html: data.data || '',
+                onOpen: function ($dialog_wrapper, d) {
+                    let $error_msg = $dialog_wrapper.find('.errormsg');
+                    let $submit_button = $dialog_wrapper.find('.js-ok');
+
+                    setTimeout(function () {
+                        $dialog_wrapper.find('[name="code"]').trigger('focus');
+                    }, 13.12);
+
+                    $error_msg.hide();
+
+                    $dialog_wrapper.find('[name="code"]').on('keypress', function (e) {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+                            $submit_button.trigger('click');
+                        }
+                    });
+
+                    $submit_button.after($.cash.$loading).on('click', function (e) {
+                        e.preventDefault();
+                        $.post(url, $dialog_wrapper.find('form').serialize() +'&profile_id='+ profile_id, function (r) {
+                            $.cash.$loading.remove();
+                            if (r.status === 'ok') {
+                                d.close();
+                                window.location.reload();
+                            } else {
+                                $error_msg.text(r.errors.join(' ')).show();
+                            }
+                        }, 'json');
+                    });
+
+                    $dialog_wrapper.find('.js-close').on('click', function (e) {
+                        d.close();
+                    });
+                }
+            });
+        })
+    });
+
+    $('.js-settings-show').on('click', function (e) {
+        e.preventDefault();
+        $(this).hide();
+        $('.js-tab-content-'+ profile_id).find('.js-settings-block').toggle('fast');
+    });
+
+    $('.js-on-self-mode').on('click', function (e) {
+        e.preventDefault();
+        $('.js-token-field').removeClass('hidden');
+    });
+
+    $('.js-tinkoff-self-connect').on('click', function (e) {
+        e.preventDefault();
+        let $error = $('.js-connect-error');
+        let $token = $('.js-token-field').find('[name="token"]');
+        $error.html('<div class="spinner custom-ml-4">');
+        $token.removeClass('state-error');
+        if ($token.val()) {
+            $.post('?plugin=tinkoff&module=connect', { token: $token.val() }, function (data) {
+                data = (data.hasOwnProperty('data') ? data.data : data);
+                if (data.errors) {
+                    $error.text(data.errors.join(' ').replace(/[,\s]+$/m, ''));
+                } else {
+                    window.location.reload();
+                }
+            });
+        } else {
+            $error.text('{$message_1}');
+            $token.addClass('state-error');
+        }
+    });
+
+    $('.js-account-select').on('change', function (e) {
+        let count_transaction = $(this).find('option:selected').data('count-transaction');
+        let $state = $('.state-caution');
+        $state.addClass('hidden');
+        if (count_transaction > 0) {
+            $state.removeClass('hidden');
+        }
+    });
+
+    $('.js-settings-block input, select').on('change', function (e) {
+        $(this).closest('.fields-group').find('.js-cash-tinkoff-update').removeClass('green').addClass('yellow');
     });
 </script>

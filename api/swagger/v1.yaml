@@ -65,6 +65,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 ids:
                   type: array
@@ -112,6 +113,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 ids:
                   type: array
@@ -144,6 +146,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 ids:
                   type: array
@@ -175,6 +178,7 @@ paths:
         content:
           application/json:
             schema:
+              type: object
               properties:
                 ids:
                   type: array
@@ -363,13 +367,18 @@ paths:
                 currency:
                   type: string
                   minLength: 3
+                is_imaginary:
+                  type: integer
+                  default: 0
+                  enum:
+                    - 0
+                    - 1
+                    - -1
                 icon:
                   type: string
                   minLength: 1
-                icon_link:
-                  type: string
-                  minLength: 1
                   nullable: true
+                  description: Link to icon
                 description:
                   type: string
                   minLength: 1
@@ -377,10 +386,9 @@ paths:
               required:
                 - name
                 - currency
-                - icon
       responses:
         200:
-          description: Cозданный счет
+          description: Созданный счет
           content:
             application/json:
               schema:
@@ -415,10 +423,15 @@ paths:
                 icon:
                   type: string
                   minLength: 1
-                icon_link:
-                  type: string
+                is_imaginary:
+                  type: integer
                   minLength: 1
                   nullable: true
+                  default: 0
+                  enum:
+                    - 0
+                    - 1
+                    - -1
                 description:
                   type: string
                   minLength: 1
@@ -431,7 +444,7 @@ paths:
                 - description
       responses:
         200:
-          description: Cозданный счет
+          description: Созданный счет
           content:
             application/json:
               schema:
@@ -830,6 +843,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /cash.system.poke:
+    get:
+      tags:
+        - Разное
+      security:
+        - ApiKeyAuth: [ ]
+      summary: Подталкивает приложение очередной раз запустить регулярные фоновые механизмы (например, импорт операций)
+      responses:
+        204:
+          description: Ok
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -1034,6 +1058,8 @@ components:
           nullable: true
         is_archived:
           type: boolean
+        is_imaginary:
+          type: integer
         sort:
           type: integer
           minimum: 0

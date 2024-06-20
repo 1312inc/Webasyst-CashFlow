@@ -12,7 +12,7 @@ final class cashApiCategorySortHandler implements cashApiHandlerInterface
     public function handle($request)
     {
         if (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
-            throw new kmwaForbiddenException(_w('You can sort categories'));
+            throw new kmwaForbiddenException(_w('You cannot sort categories'));
         }
 
         $saver = new cashCategorySaver();

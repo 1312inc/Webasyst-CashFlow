@@ -27,6 +27,7 @@ import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import TransactionControls from '@/components/TransactionControls'
+import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
 
 export default {
 
@@ -41,7 +42,7 @@ export default {
   mounted () {
     this.$store.dispatch('transaction/fetchTransactions', {
       from: '',
-      to: this.$moment().add(1, 'M').format('YYYY-MM-DD'),
+      to: DEFAULT_FUTURE_PERIOD,
       offset: 0,
       filter: ''
     })

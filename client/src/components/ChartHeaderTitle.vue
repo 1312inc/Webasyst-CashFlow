@@ -5,8 +5,11 @@
   >
     <div>{{ $moment().format("LL") }}</div>
     <div class="flexbox middle space-12 wrap">
-      <div class="flexbox space-12 middle wrap-mobile">
-        <div class="h2 custom-mb-0">
+      <div
+        class="flexbox space-12 middle wrap-mobile"
+        style="min-width: 0;"
+      >
+        <div class="h2 custom-mb-0 text-ellipsis">
           {{ currentEntity.name || currentEntity.currency }}
         </div>
         <div

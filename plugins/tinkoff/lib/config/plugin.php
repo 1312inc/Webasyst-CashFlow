@@ -1,11 +1,14 @@
 <?php
 
 return array(
-    'name' => 'Tinkoff API',
-    'description' => 'Импорт выписки из Тинькофф банка',
-    'img' => 'img/logo.svg',
-    'version' => '0.0.1',
-    'vendor' => 'webasyst',
+    'name' => 'Т-Бизнес',
+    'description' => 'Импорт операций из Т-Бизнеса',
+    'img' => 'img/tinkoff.svg',
+    'version' => '1.0.0',
+    'vendor'  => '1021997',
     'import_api' => true,
-    'custom_settings' => true
+    'handlers' => [
+        'on_count' => 'cashEventOnCountTinkoffHandler',
+        'api_transaction_response_external_data' => 'cashEventApiTransactionExternalInfoTinkoffHandler'
+    ]
 );

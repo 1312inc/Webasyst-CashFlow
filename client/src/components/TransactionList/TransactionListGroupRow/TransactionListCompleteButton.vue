@@ -6,8 +6,7 @@
   >
     <button
       ref="reference"
-      class="light-gray small nowrap rounded"
-      :style="isFixed ? 'padding: .3125em .5em; margin: .5em 0 0;' : 'margin: 0;'"
+      class="light-gray small nowrap rounded custom-m-0"
       @click.stop="() => { if (isTouch) open = !open}"
     >
       <i class="fas fa-check-circle text-red" />
@@ -117,21 +116,16 @@ export default {
 
   methods: {
     handleComplete (date) {
-      const {
-        id,
-        amount,
-        account_id,
-        category_id
-      } = this.transaction
       this.$store
         .dispatch('transaction/update', {
-          id,
+          ...this.transaction,
           apply_to_all_in_future: false,
-          amount,
-          account_id,
-          category_id,
           date,
-          is_onbadge: false
+          is_onbadge: false,
+          external: {
+            source: this.transaction.external_source || null,
+            id: this.transaction.external_id || null
+          }
         })
     }
   }

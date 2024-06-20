@@ -108,6 +108,11 @@ class cashApiTransactionResponseDto extends cashAbstractDto
     /**
      * @var int|null
      */
+    public $external_id;
+
+    /**
+     * @var int|null
+     */
     public $contractor_contact_id;
 
     /**

@@ -16,6 +16,7 @@ import VuePortal from '@linusborg/vue-simple-portal'
 import WAtippy from './plugins/tippy'
 import VueMeta from 'vue-meta'
 import eventBus from './plugins/eventBus'
+import { Plugin } from 'vue-fragment'
 import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
@@ -32,6 +33,7 @@ Vue.use(VuePortal)
 Vue.use(WAtippy)
 Vue.use(VueMeta)
 Vue.use(eventBus)
+Vue.use(Plugin)
 
 const contentSelector = '#app-content'
 const sidebarSelector = '#app-sidebar'

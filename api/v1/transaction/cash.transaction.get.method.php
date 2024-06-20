@@ -7,16 +7,9 @@ class cashTransactionGetMethod extends cashApiAbstractMethod
 {
     protected $method = self::METHOD_GET;
 
-    /**
-     * @var cashUserRepository
-     */
-    private $userRepository;
-
     public function __construct()
     {
         parent::__construct();
-
-        $this->userRepository = new cashUserRepository();
     }
 
     /**
@@ -30,19 +23,8 @@ class cashTransactionGetMethod extends cashApiAbstractMethod
     {
         /** @var cashApiTransactionGetRequest $request */
         $request = $this->fillRequestWithParams(new cashApiTransactionGetRequest());
+        $transaction = (new cashApiTransactionGetHandler())->handle($request);
 
-        $transactions = (new cashApiTransactionGetHandler())->handle($request);
-
-        /** @var cashApiTransactionResponseDto $transaction */
-        foreach ($transactions as $transaction) {
-            $transaction->addCreateContactData($this->userRepository->getUser($transaction->create_contact_id));
-            if (!$transaction->contractor_contact_id) {
-                continue;
-            }
-
-            $transaction->addContractorContactData($this->userRepository->getUser($transaction->contractor_contact_id));
-        }
-
-        return new cashApiTransactionGetResponse($transactions);
+        return new cashApiTransactionGetResponse($transaction);
     }
 }

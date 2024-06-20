@@ -57,6 +57,56 @@
           </div>
         </div>
 
+        <div class="field">
+          <div class="name for-checkbox">
+            {{ $t("accountType.name") }}
+          </div>
+          <div class="value">
+            <div class="custom-mb-12">
+              <label>
+                <span class="wa-radio">
+                  <input
+                    v-model="model.is_imaginary"
+                    type="radio"
+                    value="0"
+                  >
+                  <span />
+                </span>
+                {{ $t("accountType.types.checking.name") }}
+                <span class="hint">{{ $t("accountType.types.checking.message") }}</span>
+              </label>
+            </div>
+            <div class="custom-mb-12">
+              <label>
+                <span class="wa-radio">
+                  <input
+                    v-model="model.is_imaginary"
+                    type="radio"
+                    value="1"
+                  >
+                  <span />
+                </span>
+                {{ $t("accountType.types.virtual.name") }}
+                <span class="hint">{{ $t("accountType.types.virtual.message") }}</span>
+              </label>
+            </div>
+            <div>
+              <label>
+                <span class="wa-radio">
+                  <input
+                    v-model="model.is_imaginary"
+                    type="radio"
+                    value="-1"
+                  >
+                  <span />
+                </span>
+                {{ $t("accountType.types.virtualWithForecast.name") }}
+                <span class="hint">{{ $t("accountType.types.virtualWithForecast.message") }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
         <div
           v-if="!isModeUpdate"
           class="field"
@@ -162,6 +212,7 @@ export default {
     InputCurrency,
     IconUploader
   },
+
   mixins: [updateEntityMixin],
 
   props: ['editedItem'],
@@ -172,6 +223,7 @@ export default {
         id: null,
         name: '',
         currency: '',
+        is_imaginary: '0',
         starting_balance: '',
         icon: '',
         description: ''

@@ -16,19 +16,18 @@ final class cashInitialBalanceCalculator
                     'ct.date <= s:from',
                     'account_access' => cash()->getContactRights()
                         ->getSqlForAccountJoinWithFullAccess($paramsDto->contact),
-//                    'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
-//                        $paramsDto->contact,
-//                        'ct',
-//                        'category_id'
-//                    ),
                     'ct.is_archived = 0',
                     'ca.is_archived = 0',
+                    'CASE
+                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                        WHEN ca.is_imaginary = -1 THEN NULL
+                        ELSE ca.is_imaginary = 0
+                    END'
                 ]
             )
             ->join(
                 [
                     'join cash_account ca on ct.account_id = ca.id',
-//                    'join cash_category cc on ct.category_id = cc.id',
                 ]
             )
             ->addParam('from', $date->format('Y-m-d H:i:s'))
@@ -67,16 +66,19 @@ final class cashInitialBalanceCalculator
         $initialBalanceSql = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
             ->select(['sum(ct.amount) balance'])
             ->from('cash_transaction', 'ct')
-            ->andWhere(
-                [
-                    'ct.date <= s:from',
-                    'account_access' => cash()->getContactRights()->getSqlForAccountJoinWithFullAccess($contact),
-                    'ct.is_archived = 0',
-                    'ca.is_archived = 0',
-                    'ca.currency = s:currency',
-                ]
-            )
             ->join(['join cash_account ca on ct.account_id = ca.id'])
+            ->andWhere([
+                'ct.date <= s:from',
+                'account_access' => cash()->getContactRights()->getSqlForAccountJoinWithFullAccess($contact),
+                'ct.is_archived = 0',
+                'ca.is_archived = 0',
+                'ca.currency = s:currency',
+                'CASE
+                    WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                    WHEN ca.is_imaginary = -1 THEN NULL
+                    ELSE ca.is_imaginary = 0
+                END'
+            ])
             ->addParam('from', $date->format('Y-m-d H:i:s'))
             ->addParam('currency', $currencyVO->getCode());
 

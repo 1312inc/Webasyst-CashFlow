@@ -17,6 +17,7 @@
         class="number bold width-100"
         :style="category && `border-color: ${category.color}`"
         type="text"
+        inputmode="decimal"
         @accept="$emit('input', $event)"
         @keyup.enter="$emit('keyEnter', $event)"
       />

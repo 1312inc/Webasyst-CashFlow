@@ -15,9 +15,6 @@ class cashDefaultLayout extends waLayout
         }
 
         $token = (new cashApiToken())->retrieveToken(cash()->getUser()->getContact());
-        $this->executeAction('sidebar', new cashBackendSidebarAction());
-        //$showReviewWidget = cash()->getModel(cashTransaction::class)->select('count(id)')->limit(30)->fetchField() == 30;
-
         $apiSettings = (new cashApiSystemGetSettingsHandler())->handle(null);
         $currencies = (new cashApiSystemGetCurrenciesHandler())->handle(null);
         $categories = (new cashApiCategoryGetListHandler())->handle(null);

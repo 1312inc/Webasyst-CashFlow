@@ -106,7 +106,10 @@
   "Next 90 days": "Next 90 days",
   "tomorrow": "Tomorrow",
   "justCreated": "Just now",
-  "deleteWarning": "DANGER: This will permanently delete the entire {type} and ALL TRANSACTIONS without the ability to restore. Are you sure?",
+  "deleteWarning": {
+    "account": "DANGER: This will permanently delete the entire Account and ALL TRANSACTIONS without the ability to restore. Are you sure?",
+    "category": "DANGER: This will permanently delete the entire Category and ALL TRANSACTIONS without the ability to restore. Are you sure?"
+  },
   "offlineMessage": "No Internet connection",
   "bulkDeleteWarning": "This will delete all selected transactions. Are you sure?",
   "bulkPurgeWarning": "DANGER: This will permanently delete all selected transactions. There will be no way to rollback. Are you sure?",
@@ -226,5 +229,23 @@
   "Order": "Order",
   "orOrder": "or order",
   "orderNumber": "Order number",
-  "orderNotFound": "Order not found"
+  "orderNotFound": "Order not found",
+  "totalSelected": "Total Selected",
+  "accountType": {
+    "name": "Account type",
+    "types": {
+      "checking": {
+        "name": "Checking ",
+        "message": "real money that makes up the today’s overall balance in the account currency"
+      },
+      "virtual": {
+        "name": "Virtual",
+        "message": "all accounting features are available within the account, but its transactions won’t affect the overall currency balance for today, while planned future transactions will still form the forecast"
+      },
+      "virtualWithForecast": {
+        "name": "Sandbox",
+        "message": "all transactions are only visible within the account, making it possible to emulate any isolated financial scenario under this account"
+      }
+    }
+  }
 }

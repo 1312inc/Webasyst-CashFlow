@@ -124,41 +124,42 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
 
             /** @var cashRepeatingTransaction $repeatingTransaction */
             $repeatingTransaction = $transaction->getRepeatingTransaction();
-            kmwaAssert::instance($repeatingTransaction, cashRepeatingTransaction::class);
+            if ($repeatingTransaction) {
+                kmwaAssert::instance($repeatingTransaction, cashRepeatingTransaction::class);
 
-            $repeatingTransaction
-                ->setAccountId($transaction->getAccountId())
-                ->setCategoryId($transaction->getCategoryId())
-                ->setDescription($transaction->getDescription())
-                ->setAmount($transaction->getAmount())
-                ->setContractorContactId($transaction->getContractorContactId())
-                ->setIsOnbadge($transaction->getIsOnbadge())
-                ->setIsSelfDestructWhenDue($transaction->getIsSelfDestructWhenDue());
-            $this->saver->addToPersist($repeatingTransaction);
-
-            $transactions = cash()->getEntityRepository(cashTransaction::class)->findAllByRepeatingIdAndAfterDate(
-                $repeatingTransaction->getId(),
-                $transaction->getDate()
-            );
-            foreach ($transactions as $t) {
-                $t->setAccountId($transaction->getAccountId())
+                $repeatingTransaction
+                    ->setAccountId($transaction->getAccountId())
                     ->setCategoryId($transaction->getCategoryId())
                     ->setDescription($transaction->getDescription())
                     ->setAmount($transaction->getAmount())
                     ->setContractorContactId($transaction->getContractorContactId())
                     ->setIsOnbadge($transaction->getIsOnbadge())
                     ->setIsSelfDestructWhenDue($transaction->getIsSelfDestructWhenDue());
+                $this->saver->addToPersist($repeatingTransaction);
 
-                $this->saver->addToPersist($t);
-            }
+                $transactions = cash()->getEntityRepository(cashTransaction::class)->findAllByRepeatingIdAndAfterDate(
+                    $repeatingTransaction->getId(),
+                    $transaction->getDate()
+                );
+                foreach ($transactions as $t) {
+                    $t->setAccountId($transaction->getAccountId())
+                        ->setCategoryId($transaction->getCategoryId())
+                        ->setDescription($transaction->getDescription())
+                        ->setAmount($transaction->getAmount())
+                        ->setContractorContactId($transaction->getContractorContactId())
+                        ->setIsOnbadge($transaction->getIsOnbadge())
+                        ->setIsSelfDestructWhenDue($transaction->getIsSelfDestructWhenDue());
 
-            $saved = $this->saver->persistTransactions();
-            foreach ($saved as $item) {
-                if ($item instanceof cashRepeatingTransaction) {
-                    continue;
+                    $this->saver->addToPersist($t);
                 }
 
-                $newTransactionIds[] = (int) $item->getId();
+                $saved = $this->saver->persistTransactions();
+                foreach ($saved as $item) {
+                    if ($item instanceof cashRepeatingTransaction) {
+                        continue;
+                    }
+                    $newTransactionIds[] = (int) $item->getId();
+                }
             }
         } else {
             $transaction = $this->populateTransaction($transaction, $data, $paramsDto);

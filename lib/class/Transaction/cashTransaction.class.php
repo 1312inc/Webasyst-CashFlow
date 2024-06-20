@@ -366,6 +366,18 @@ class cashTransaction extends cashAbstractEntity
     }
 
     /**
+     * @return bool
+     * @throws Exception
+     */
+    public function isForecast()
+    {
+        $date_trans = new DateTime($this->getDatetime());
+        $tomorrow = new DateTime('tomorrow');
+
+        return $date_trans >= $tomorrow;
+    }
+
+    /**
      * @param cashCategory|null $category
      *
      * @return cashTransaction

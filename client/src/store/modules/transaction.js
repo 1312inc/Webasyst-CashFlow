@@ -2,6 +2,7 @@ import api from '@/plugins/api'
 import { moment } from '@/plugins/numeralMoment'
 import getDateFromLocalStorage from '../../utils/getDateFromLocalStorage'
 import { i18n } from '@/plugins/locale'
+import { DEFAULT_FUTURE_PERIOD } from '@/utils/constants'
 
 const mutationDelete = (state, ids) => {
   ids.forEach(id => {
@@ -53,7 +54,8 @@ export default {
     showFutureTransactionsMoreLink: {
       7: false,
       30: false
-    }
+    },
+    isSplitFetchMode: false
   }),
 
   getters: {
@@ -308,12 +310,15 @@ export default {
           commit('setLoading', true)
 
           if (!params.from && params.to && moment().isBefore(params.to)) {
+            state.isSplitFetchMode = true
             dispatch('fetchTransactionsFuture', params.to)
             const today = moment().format('YYYY-MM-DD')
             commit('updateQueryParams', {
               to: today
             })
             params.to = today
+          } else {
+            state.isSplitFetchMode = false
           }
         }
         // if view details mode
@@ -359,9 +364,17 @@ export default {
 
     updateDetailsInterval ({ commit, dispatch }, data) {
       commit('setDetailsInterval', data)
-      dispatch('fetchTransactions', {
-        offset: 0
-      })
+      if (!data.from && !data.to) {
+        dispatch('fetchTransactions', {
+          from: '',
+          to: DEFAULT_FUTURE_PERIOD,
+          offset: 0
+        })
+      } else {
+        dispatch('fetchTransactions', {
+          offset: 0
+        })
+      }
     },
 
     async getTodayCount ({ commit }) {

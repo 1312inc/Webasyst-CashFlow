@@ -29,7 +29,7 @@
     >
       <div
         v-if="$helper.showMultiSelect() && !isCompactMode"
-        class="custom-my-4"
+        class="flex-none"
         :class="{ 'desktop-only': $helper.isDesktopEnv }"
         style="width: 1rem; height: 1rem;"
       >
@@ -52,19 +52,19 @@
 
       <div
         v-if="!isCompactMode"
-        class="desktop-and-tablet-only"
-        style="width: 7rem;flex-shrink: 0;"
+        class="desktop-and-tablet-only flex-none"
+        style="width: 4rem;"
       >
         <template v-if="showDate">
-          <div class="custom-mb-4 bold nowrap c-group-date">
+          <div class="custom-mb-4 bold nowrap c-group-date text-ellipsis">
             {{
               $moment(transaction.date).format(
-                $moment.locale() === "ru" ? "D MMMM" : "MMMM D"
+                $moment.locale() === "ru" ? "D MMM" : "MMM D"
               )
             }}
           </div>
 
-          <div class="hint">
+          <div class="hint text-ellipsis">
             {{
               $moment().year() == $moment(transaction.date).year()
                 ? daysBefore > 0
@@ -86,22 +86,38 @@
         :is-repeating-group="isRepeatingGroup"
         :collapse-header-data="collapseHeaderData"
       />
-      <div class="wide flexbox middle space-8 c-item-border">
-        <div
-          v-if="!isCompactMode"
-          class="wide"
-          style="overflow: hidden"
-        >
+
+      <div
+        v-if="!isCompactMode"
+        class="wide c-item-border"
+      >
+        <div class="wide flexbox full-width middle space-8 custom-mb-8">
           <TransactionListGroupRowDesc
             :transaction="transaction"
             :collapse-header-data="collapseHeaderData"
             :is-repeating-group="isRepeatingGroup"
             :category="category"
           />
+
+          <div
+            :style="`color: ${category.color}`"
+            class="bold nowrap"
+          >
+            {{
+              $helper.toCurrency({
+                value: isCollapseHeader
+                  ? collapseHeaderData.totalAmount
+                  : transaction.amount,
+                currencyCode: account.currency,
+                isDynamics: true
+              })
+            }}
+          </div>
+        </div>
+        <div class="flexbox full-width middle space-8 small">
           <div
             v-if="transaction.description || transaction.contractor_contact"
-            class="black small text-ellipsis"
-            style="flex-shrink: 1"
+            class="wide width-50 black text-ellipsis"
           >
             <span v-if="transaction.description">
               {{ transaction.description }}
@@ -115,33 +131,19 @@
           </div>
           <span
             v-if="!transaction.contractor_contact && !transaction.description"
-            class="gray small"
+            class="wide gray text-ellipsis"
           >
             {{ $t('noDesc') }}
           </span>
-        </div>
-        <div class="c-item-amount">
-          <div
-            :style="`color: ${category.color}`"
-            class="bold nowrap custom-mb-4 text-ellipsis"
-          >
-            {{
-              (isCompactMode && !isCollapseHeader) ? `${transaction.amountShorten} ${$helper.currencySignByCode(account.currency)}` :
-              $helper.toCurrency({
-                value: isCollapseHeader
-                  ? collapseHeaderData.totalAmount
-                  : transaction.amount,
-                currencyCode: account.currency,
-                isDynamics: true
-              })
-            }}
-          </div>
-          <div
-            v-if="account.name && !isCompactMode"
-            class="text-ellipsis small gray"
-          >
-            {{ account.name }}
-            <span
+
+          <template v-if="account.name && !isCompactMode">
+            <div
+              class="wide text-ellipsis gray align-right"
+              :title="account.name"
+            >
+              {{ account.name }}
+            </div>
+            <div
               v-if="transaction.balance"
               class="nowrap black"
               :title="$t('accountBalanceTransactionListHint')"
@@ -152,30 +154,40 @@
                   currencyCode: account.currency
                 })
               }}
-            </span>
-          </div>
+            </div>
+          </template>
         </div>
+      </div>
+
+      <div
+        v-else
+        class="small align-center custom-my-8"
+      >
         <div
-          v-if="isCompactMode"
-          class="hint align-center"
+          :style="`color: ${category.color}`"
+          class="bold nowrap"
         >
-          <span class="black">{{ $moment(transaction.date).toDate().toLocaleDateString($moment.locale(), { month: 'short', day: 'numeric' }) }}</span>
-          <br>
+          {{ `${transaction.amountShorten} ${$helper.currencySignByCode(account.currency)}` }}
+        </div>
+        <div class="black">
+          {{ $moment(transaction.date).toDate().toLocaleDateString($moment.locale(), { month: 'short', day: 'numeric' }) }}
+        </div>
+        <div class="hint">
           {{ $moment(transaction.date).from($moment().startOf('day')) }}
         </div>
-        <transition
-          name="fade"
-          :duration="300"
-        >
-          <TransactionListCompleteButton
-            v-show="transaction.is_onbadge && !archive"
-            :transaction="transaction"
-            :is-fixed="isCompactMode"
-            :account="account"
-            @processEdit="openModal(true)"
-          />
-        </transition>
       </div>
+      <transition
+        name="fade"
+        :duration="300"
+      >
+        <TransactionListCompleteButton
+          v-show="transaction.is_onbadge && !archive"
+          :transaction="transaction"
+          :is-fixed="isCompactMode"
+          :account="account"
+          @processEdit="openModal(true)"
+        />
+      </transition>
     </div>
 
     <portal>
@@ -205,13 +217,16 @@
           class="custom-p-8"
           style="display: flex; flex-direction: column; gap: .2rem;"
         >
-          <span v-if="transaction.contractor_contact?.name">{{ transaction.contractor_contact.name }}</span>
+          <span
+            v-if="transaction.contractor_contact?.name"
+            class="small"
+          >{{ transaction.contractor_contact.name }}</span>
           <span
             v-if="category"
             :style="`color: ${category.color}`"
             class="bold nowrap small text-ellipsis"
           >{{ category.name }}</span>
-          <span class="hint">{{ transaction.description || $t('noDesc') }}</span>
+          <span class="hint text-ellipsis">{{ transaction.description || $t('noDesc') }}</span>
         </div>
       </div>
     </div>

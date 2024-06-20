@@ -1,0 +1,233 @@
+{$percentage = ifset($profile, 'run_data', 'progress', 0)}
+
+<input type="hidden" name="profile_id" value="{$profile_id}"/>
+
+<div class="field">
+    <div class="name">
+        [`Счет в Т-Бизнес`]
+    </div>
+    <div class="value">
+        {$profile.account_description}
+        <p class="hint">
+            {$profile.account_number}<br>
+            {$profile.company}
+        </p>
+    </div>
+</div>
+
+<div class="field">
+    <div class="name for-input">
+        [`Счет в Webasyst`]
+    </div>
+    <div class="value">
+        <div class="wa-select">
+            <select name="profiles[{$profile_id}][cash_account]" autocomplete="off" class="bold js-account-select"{if !empty($profile.cash_account) && $profile.cash_account > 0 && !empty($cash_accounts[$profile.cash_account])} disabled{/if}>
+            {if empty($profile.cash_account) || !is_numeric($profile.cash_account) || empty($cash_accounts[$profile.cash_account])}
+                <option value="new_account">[`Создать новый счет...`]</option>
+            {/if}
+            {foreach $cash_accounts as $_cash_account}
+                <option value="{$_cash_account.id}"{if
+                      $profile.cash_account|default:'0' == $_cash_account.id ||
+                      $profile.cash_account|default:'0' == 0 && $_cash_account.count_transaction == 0
+                    } selected{/if} data-count-transaction="{$_cash_account.count_transaction|escape|default:'0'}">
+                    {$_cash_account.currency|escape} — {$_cash_account.name|escape}
+                </option>
+            {/foreach}
+            </select>
+        </div>
+        <p class="state-caution small hidden"><i class="fas fa-exclamation-triangle"></i> [`<b>Лучше создать новый счет!</b> Чтобы баланс счета в Webasyst совпадал с балансом в Т-Бизнесе, и чтобы не было дублирования операций, рекомендуем включать импорт в отдельный счет, в котором нет других операций.`]</p>
+    </div>
+</div>
+
+<div class="field">
+    <div class="name">
+        [`Импорт операций`]
+    </div>
+    <div class="value">
+        {if empty($profile.update_time)}
+            <div class="custom-my-4">
+                <label>
+                    <span class="wa-radio">
+                        <input type="radio" name="profiles[{$profile_id}][import_period]" value="all" checked />
+                        <span></span>
+                    </span>
+                    [`All time`]
+                </label>
+            </div>
+            <div>
+                <label>
+                    <span class="wa-radio">
+                        <input type="radio" name="profiles[{$profile_id}][import_period]" value="" />
+                        <span></span>
+                    </span>
+                    [`Only orders paid after`]
+                </label>
+                <span class="input-with-inner-icon left">
+                    <input type="text" name="profiles[{$profile_id}][begin_import_period]" class="shorter small" autocomplete="off"/>
+                    <span class="icon"><i class="fas fa-calendar"></i></span>
+                </span>
+            </div>
+        {else}
+            <p class="custom-mt-4">
+            {if $profile.status === 'ok'}
+                <i class="fas fa-check-circle text-green"></i>
+                <strong>[`Импорт обновляется автоматически`]</strong>
+            {elseif $profile.status === 'warning'}
+                <i class="fas fa-exclamation-circle text-orange" title="{$profile.status_description|escape}"></i>
+                <strong class="text-orange">{$profile.status_description|escape}</strong>
+            {elseif $profile.status === 'danger'}
+                <i class="fas fa-times-circle text-red" title="{$profile.status_description|escape}"></i>
+                <strong class="text-red">{$profile.status_description|escape}</strong>
+            {/if}
+                <strong class="hint{if empty($profile.update_date)} hidden{/if}">
+                    [`Последнее обновление:`] <span class="js-update-date">{$profile.update_date|escape|default:''}</span>
+                </strong>
+            </p>
+            {if $profile.status === 'danger'}
+            <a href="?plugin=tinkoff&action=reset&profile_id={$profile_id}" class="button orange js-reset-import">[`Перезапустить импорт заново`]</a>
+            {else}
+            <input
+                type="button"
+                class="button green js-cash-tinkoff-update"
+                value="{if empty($profile.run_data)}[`Обновить сейчас`]{else}[`Возобновить`]{/if}"
+            />
+            {/if}
+        {/if}
+    </div>
+</div>
+
+{if empty($profile.update_time)}
+<div class="field">
+    <div class="name"></div>
+    <div class="value">
+        <input
+            type="button"
+            class="button green js-cash-tinkoff-start"
+            value="[`Запустить импорт`]"
+            {if empty($profile.tinkoff_id) && !$self_mode}disabled{/if}
+        />
+    </div>
+</div>
+{/if}
+
+<div class="field custom-mb-12">
+    <div class="name"></div>
+    <div class="value">
+        <a class="js-settings-show small">[`Показать все настройки импорта`]</a>
+    </div>
+</div>
+
+<div class="fields-group js-settings-block" style="display: none">
+
+    {if !empty($profile.update_time) || !empty($profile.cash_account) && empty($cash_accounts[$profile.cash_account])}
+        <p class="small">
+            <em>{sprintf('[`Если что-то пошло не так — %sзапустите импорт всей выписки заново%s.`]', "<a href=\"?plugin=tinkoff&action=reset&profile_id=`$profile_id`\" class=\"js-reset-import\">", '</a>')}</em>
+        </p>
+        <hr>
+    {/if}
+
+    <h5 class="heading">[`Соответствие статей Т-Бизнес &rarr; Деньги`]</h5>
+    <p class="hint">[`В режиме «Автопилот» импорт будет производиться согласно общему базовому <a href="https://developer.tbank.ru/products/scenarios/account-info#категории-операций" target=_blank>списку категорий операций Т-Бизнес</a> и тому, в какие статьи вы вручную относите операции с «Деньгах» уже после импорта.`]</p>
+
+    <h6 class="heading">[`Доходы`]</h6>
+    {foreach $income_operations as $_name => $_desc}
+    {$selected = $profile['mapping'][$_name]|default: cashTinkoffPlugin::AUTO_MAPPING_FLAG}
+    <div class="field">
+        <div class="name">{$_desc} ({$_name})</div>
+        <div class="value">
+            <div class="wa-select small">
+                <select name="profiles[{$profile_id}][mapping][{$_name}]" autocomplete="off">
+                    <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">[`Aвтопилот`]</option>
+                    {foreach $categories as $_category}
+                        {if $_category.type == 'income'}
+                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>
+                                {if !empty($_category.category_parent_id)}- {/if}{$_category.name}
+                            </option>
+                        {/if}
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+    </div>
+    {/foreach}
+
+    <h6 class="heading">[`Расходы`]</h6>
+    {foreach $expense_operations as $_name => $_desc}
+    {$selected = $profile['mapping'][$_name]|default: cashTinkoffPlugin::AUTO_MAPPING_FLAG}
+    <div class="field">
+        <div class="name">{$_desc} ({$_name})</div>
+        <div class="value">
+            <div class="wa-select small">
+                <select name="profiles[{$profile_id}][mapping][{$_name}]" autocomplete="off">
+                    <option value="{cashTinkoffPlugin::AUTO_MAPPING_FLAG}">[`Aвтопилот`]</option>
+                    {foreach $categories as $_category}
+                        {if $_category.type == 'expense'}
+                            <option value="{$_category.id}"{if $selected == $_category.id} selected{/if}>
+                                {if !empty($_category.category_parent_id)}- {/if}{$_category.name}
+                            </option>
+                        {/if}
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+    </div>
+    {/foreach}
+
+    <hr class="custom-mt-24">
+
+    <div class="field">
+        <div class="name">
+            [`Таймаут автообновления`]
+        </div>
+        <div class="value">
+            <input type="text" class="shorter number" name="profiles[{$profile_id}][update_timeout]" value="{$profile.update_timeout|default:''}" autocomplete="off" placeholder="{cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT}"> [`мин`]
+            <p class="hint">{sprintf('[`Автоматическое обновление (очередной запрос к Т-Бизнес API) будет происходить не чаще, чем один раз в указанный промежуток времени. Указывается целое число в минутах, но не менее %s.`]', cashTinkoffPlugin::DEFAULT_UPDATE_TIMEOUT)}</p>
+        </div>
+    </div>
+
+    <div class="field{if $profile.first_update|default:true} hidden{/if}">
+        <div class="name">[`Команда Cron`]</div>
+        <div class="value">
+            <code class="small">{$profile.cron_command}</code>
+            <p class="hint">
+                [`Настраивать крон для импорта из Т-Бизнеса — не обязательно! Импорт будет обновлять данные из банка автоматически, когда вы пользуетесь приложением «Деньги» в браузере или на телефоне.`]
+                <a href="https://developers.webasyst.ru/docs/tips/cron/" target="_blank">[`Что такое Cron?`]</a>
+             </p>
+        </div>
+    </div>
+
+    {if $profile.status === 'ok'}
+    <div class="field">
+        <div class="name"></div>
+        <div class="value">
+            <input
+                type="button"
+                class="button green js-cash-tinkoff-update"
+                value="{if empty($profile.update_time)}[`Сохранить и запустить импорт`]{else}[`Сохранить и обновить`]{/if}"
+            />
+        </div>
+    </div>
+    {/if}
+
+</div>
+
+<div class="field">
+    <div class="name"></div>
+    <div class="value">
+        {if empty($profile.update_time) || !empty($percentage)}
+        <div class="progressbar js-progressbar{if empty($percentage)} hidden{/if}"></div>
+        {/if}
+        <div class="js-info gray italic small custom-mt-12"></div>
+        <div class="error-msg state-error custom-pt-8 js-error-msg"></div>
+    </div>
+</div>
+
+<script>
+    $bar = $('.js-tab-content-'+ {$_profile_id}).find('.js-progressbar').waProgressbar({
+        'color': '#ffdd2e',
+        'percentage': {$percentage},
+        'text-inside': true
+    });
+    $bar.find('.progressbar-text').css({ 'color':'black', 'font-weight': 'bold' });
+    profiles[{$_profile_id}]['progressbar'] = $bar.data('progressbar');
+</script>

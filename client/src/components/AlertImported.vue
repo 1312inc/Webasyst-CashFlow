@@ -1,23 +1,23 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router/composables'
-import store from '@/store'
 
 const router = useRouter()
 const route = useRoute()
+const message = ref(router.currentRoute.query)
 const show = ref(false)
 
 onMounted(() => {
-  if (router.currentRoute.query.show_ss_import_hint) {
-    if (route.name === 'Account' && store.getters['account/getById'](+route.params.id)?.stat.summary) {
-      show.value = true
-    }
+  if (message.value.show_ss_import_hint || message.value.show_success_import_hint) {
+    show.value = true
 
     const query = { ...router.currentRoute.query }
     delete query.show_ss_import_hint
+    delete query.show_success_import_hint
     router.replace({ query })
 
     watch(() => route.fullPath, () => {
+      message.value = null
       show.value = false
     })
   }
@@ -35,7 +35,19 @@ onMounted(() => {
       class="alert success small"
     >
       <div class="flexbox space-16 full-width">
-        <div>
+        <div v-if="message['show_success_import_hint']">
+          <template v-if="$i18n.locale === 'ru_RU'">
+            <p>
+              Поздравляем, импорт завершился успешно!
+            </p>
+          </template>
+          <template v-else>
+            <p>
+              Congratulations, import has completed successfully!
+            </p>
+          </template>
+        </div>
+        <div v-if="message['show_ss_import_hint']">
           <template v-if="$i18n.locale === 'ru_RU'">
             <p>
               Столько наличных <i>было бы</i> в кассе прямо сейчас, если бы у бизнеса были только доходы

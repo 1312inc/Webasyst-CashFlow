@@ -9,37 +9,7 @@
             <form id="cash-shopscript-settings">
             <h1>[`Shop-Script &rarr; Cash`]</h1>
 
-            <div class="custom-my-16">
-                <ul class="tabs bordered-bottom">
-                    <li>
-                        <a href="{$wa_app_url}import/">
-                            <i class="fas fa-file-excel" style="color: #499b5e;"></i>
-                            [`Excel (CSV)`]
-                        </a>
-                    </li>
-                    <li class="selected">
-                        <a href="{$wa_app_url}shop/settings/">
-                            <i class="icon" style="background-image: url('{$wa_url}wa-apps/cash/img/shop.svg');"></i>
-                            Shop-Script
-                        </a>
-                    </li>
-                    {*
-                        <li>
-                            <a href="javascript:void(0);">
-                                <i class="fab fa-tinkoff"></i>
-                                Tinkoff
-                                (plugin tab hook here)
-                            </a>
-                        </li>
-                    *}
-                    <li>
-                        <a href="{$wa_app_url}plugins/" class="opacity-30" onClick="alert('[`Import plugins are coming soon. Please stay tuned.`]');" title="[`Import plugins are coming soon. Please stay tuned.`]">
-                            <i class="fas fa-plug"></i>
-                            [`Plugins`]
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            {include '../import/ImportTab.html'}
 
             {if $shopIsOld}
                 <p><em>[`Shop-Script 8.0 or newer is required. Please install the latest Shop-Script update via the Installer app to enable sales import and Shop-Script &times; Cash integration.`]</em></p>
@@ -92,6 +62,11 @@
                         <a href="#" class="smaller" data-cash-shop-configure-actions="account">[`Set up by payment type`]</a>
                         <p class="hint">{sprintf('[`In case of different currencies for orders and the account, an order amount will be converted to the selected account currency according to the conversion rate defined <a href="%s">in Shop-Script settings</a>.`]', $wa_backend_url|cat:'shop/?action=settings#/currencies/')}</p>
                         {if !$shopCurrencyExists}<p class="state-caution-hint"><i class="fas fa-exclamation-triangle"></i> [`The currency of the selected account is not defined in Shop-Script settings. Conversion won’t work well.`]</p>{/if}
+
+                        <p class="hint text-dark-gray custom-mt-16">
+                            <i class="fas fa-info-circle text-blue"></i> [`We strongly recommend using virtual accounts for Shop-Script import setup due to the fact that the sales data is not exactly what is being credited to your company’s checking account.`]
+                            <a href="https://support.webasyst.ru/46619/what-is-a-cashflow-account-checking-virtual-sandbox/" target="_blank" class="text-blue">[`What is a virtual account?`]</a>
+                        </p>
 
                         <div class="custom-mb-24" style="{if !$shopScriptSettings->hasAccountIdForPayment()}display: none{/if}" data-cash-shop-configure-actions-account>
                             <div class="custom-my-12 small">[`Set account based on the order payment type:`]</div>
@@ -424,7 +399,7 @@
 
                     <div class="field custom-mb-40">
                         <div class="name"></div>
-                        <div class="value">
+                        <div class="value small">
                             <a class="firstTimeHiddenBlockToggler">[`Show all import settings`]</a>
                         </div>
                     </div>
@@ -458,9 +433,9 @@
                             {*<div data-cash-shop-import-progress-transactions style="display:none;">transactions ok: <span>0</span>; transactions fail: <a href="#" class="inline-link">0</a></div>*}
                             <div data-cash-shop-import-progress-errors style="display: none" class="box state-error"></div>
                             <div class="custom-mt-16">
-                                <span data-cash-shop-import-progress-icon="loading" class="gray" style="display:none;"><em>[`Importing...`] <span data-cash-shop-import-progress-counts></span></em></span>
-                                <span data-cash-shop-import-progress-icon="success" class="state-success" style="display:none;"><i class="fas fa-check-circle yes"></i> <em>[`Finalizing...`]</em></span>
-                                <span data-cash-shop-import-progress-icon="error" class="state-error" style="display:none;"><i class="fas fa-times no"></i> <em>[`Error`]</em></span>
+                                <span data-cash-shop-import-progress-icon="loading" class="gray small" style="display:none;"><div class="spinner"></div> <em>[`Importing...`] <span data-cash-shop-import-progress-counts></span></em></span>
+                                <span data-cash-shop-import-progress-icon="success" class="state-success-hint" style="display:none;"><i class="fas fa-check-circle yes"></i> <em>[`Finalizing...`]</em></span>
+                                <span data-cash-shop-import-progress-icon="error" class="state-error-hint" style="display:none;"><i class="fas fa-times no"></i> <em>[`Error`]</em></span>
                             </div>
                         </div>
 
@@ -658,7 +633,7 @@
                         $progressError = $progress.find('[data-cash-shop-import-progress-icon="error"]');
 
                     $progressBar.waProgressbar({
-                            "color": "blue",
+                            "color": "var(--green)",
                             "text-inside": true
                         });
 

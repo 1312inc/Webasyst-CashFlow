@@ -67,11 +67,19 @@ class cashCategorySaver extends cashEntitySaver
         }
 
         try {
+            if ($category->getType() && $createRequest->getType() !== $category->getType()) {
+                /** для перемещения существующих категорий */
+                $category_model = cash()->getModel(cashCategory::class);
+                $category_model->updateByField('category_parent_id', $category->getId(), [
+                    'type' => $createRequest->getType(),
+                    'is_profit' => ($createRequest->getType() === cashShopTransactionFactory::INCOME ? 0 : $createRequest->getIsProfit())
+                ]);
+            }
             $category->setSort($createRequest->getSort())
                 ->setName($createRequest->getName())
                 ->setType($createRequest->getType())
                 ->setGlyph($createRequest->getGlyph())
-                ->setIsProfit($createRequest->getIsProfit())
+                ->setIsProfit(($createRequest->getType() === cashShopTransactionFactory::INCOME ? 0 : $createRequest->getIsProfit()))
                 ->setColor($createRequest->getColor())
                 ->setCategoryParentId($createRequest->getParentCategoryId());
 

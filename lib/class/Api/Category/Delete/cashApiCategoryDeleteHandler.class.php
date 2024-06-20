@@ -34,6 +34,11 @@ final class cashApiCategoryDeleteHandler implements cashApiHandlerInterface
         if (!$remover->removeCategory($category)) {
             throw new kmwaRuntimeException($remover->getError());
         }
+        cash()->getModel(cashCategory::class)->updateByField(
+            'category_parent_id',
+            $request->getId(),
+            ['category_parent_id' => null]
+        );
 
         return true;
     }

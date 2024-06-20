@@ -1,7 +1,7 @@
 export default {
   methods: {
     $_rowModificatorMixin_rowModificator_category (obj) {
-      let string = '<div class="flexbox space-8 middle">'
+      let string = '<div class="wide flexbox space-8 middle">'
       if (obj.color) {
         string += `<div class="icon custom-m-0 ${
           obj.parent_category_id ? 'custom-ml-12' : ''

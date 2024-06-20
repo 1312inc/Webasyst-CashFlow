@@ -12,16 +12,18 @@ final class cashApiAccountUpdateRequest extends cashApiAccountCreateRequest
         string $name,
         string $currency,
         string $icon,
-        ?string $iconLink,
+        int $is_imaginary,
         ?string $description
     ) {
         if ($id < 1) {
             throw new cashValidateException(_w('Id should be over 0'));
+        } elseif (!in_array($is_imaginary, [0, 1, -1])) {
+            throw new cashValidateException(_w('Unknown is_imaginary'));
         }
 
         $this->id = $id;
 
-        parent::__construct($name, $currency, $icon, $iconLink, $description);
+        parent::__construct($name, $currency, $icon, $is_imaginary, $description);
     }
 
     public function getId(): int
