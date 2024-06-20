@@ -71,18 +71,21 @@ final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterfa
 
                     // в случае наличия баланса до запрашиваемого промежутка ?from
                     if ($paramsDto->from->format($dateFormat) > $accountCreateDate->format($dateFormat)) {
-                        $firstDayPrepend = [
-                            'groupkey' => $paramsDto->from->format($dateFormat),
-                            'currency' => $currency->getCode(),
-                            'balance' => $initialBalanceCalculator->getOnDateForCurrency(
-                                $currency,
-                                $paramsDto->from,
-                                wa()->getUser()
-                            ),
-                            'incomeAmount' => 0.0,
-                            'expenseAmount' => 0.0,
-                            'profitAmount' => 0.0,
-                        ];
+                        $balance = $initialBalanceCalculator->getOnDateForCurrency(
+                            $currency,
+                            $paramsDto->from,
+                            wa()->getUser()
+                        );
+                        if ($balance) {
+                            $firstDayPrepend = [
+                                'groupkey' => $paramsDto->from->format($dateFormat),
+                                'currency' => $currency->getCode(),
+                                'balance' => $balance,
+                                'incomeAmount' => 0.0,
+                                'expenseAmount' => 0.0,
+                                'profitAmount' => 0.0,
+                            ];
+                        }
                     }
                 }
                 break;
