@@ -9,12 +9,14 @@
                 [`Excel (CSV)`]
             </a>
         </li>
+        {if $wa->shop}
         <li{if $url == "{$wa_backend_url}{$wa_app}/shop/settings/"} class="selected"{/if}>
             <a href="{$wa_app_url}shop/settings/">
                 <i class="icon" style="background-image: url('{$wa_url}wa-apps/cash/img/shop.svg');"></i>
                 Shop-Script
             </a>
         </li>
+        {/if}
         {if ($plugins)}
             {foreach $plugins as $plugin}
                 <li{if $url == "{$wa_backend_url}{$wa_app}/?plugin={$wa->get('plugin')}"} class="selected"{/if}>
@@ -28,7 +30,7 @@
             {/foreach}
         {/if}
         <li>
-            <a href="{$wa_app_url}plugins/" class="opacity-30">
+            <a href="{$wa_app_url}plugins/" class="text-gray">
                 <i class="fas fa-plug"></i>
                 [`Plugins`]
             </a>
