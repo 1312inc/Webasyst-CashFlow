@@ -50,10 +50,13 @@ final class cashReportDdsService
         /** @var cashReportDdsStatDto $datum */
         foreach ($data as $datum) {
             $id = $datum->entity->getId();
-            if (in_array(
-                $id,
-                [self::ALL_INCOME_KEY, self::ALL_EXPENSE_KEY, cashCategoryFactory::TRANSFER_CATEGORY_ID]
-            )) {
+            $skip = [
+                self::ALL_INCOME_KEY,
+                self::ALL_EXPENSE_KEY,
+                self::SALDO_KEY,
+                cashCategoryFactory::TRANSFER_CATEGORY_ID
+            ];
+            if (in_array($id, $skip)) {
                 continue;
             }
 
