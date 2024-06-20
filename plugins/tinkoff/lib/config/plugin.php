@@ -5,7 +5,7 @@ return array(
     'description' => 'Импорт операций из Т-Бизнеса',
     'img' => 'img/tinkoff.svg',
     'version' => '1.0.0',
-    'vendor' => 'webasyst',
+    'vendor'  => '1021997',
     'import_api' => true,
     'handlers' => [
         'on_count' => 'cashEventOnCountTinkoffHandler',
