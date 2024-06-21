@@ -15,10 +15,7 @@ class cashCategoryModel extends cashModel
         }
 
         return cash()->getContactRights()->filterQueryCategoriesForContact(
-            $this
-                ->select('*')
-                ->where('`type` = s:type', ['type' => $type])
-                ->order('sort ASC, id DESC'),
+            $this->getAllSortedQuery($type),
             $contact
         )->fetchAll();
     }
@@ -80,9 +77,7 @@ class cashCategoryModel extends cashModel
 
     private function getAllSortedQuery($type = null): waDbQuery
     {
-        $q = $this
-            ->select('*')
-            ->order('sort ASC, id DESC');
+        $q = $this->select('*')->order('sort, category_parent_id ASC, id DESC');
 
         if ($type === cashCategory::TYPE_EXPENSE) {
             $q->where("`type` = 'expense'");
