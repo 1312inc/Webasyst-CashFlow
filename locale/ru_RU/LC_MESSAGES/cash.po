@@ -1253,3 +1253,9 @@ msgstr "Рекомендуем использовать виртуальные �
 
 msgid "What is a virtual account?"
 msgstr "Что такое виртуальный счет?"
+
+msgid "Sandbox accounts are not displayed in the cash flow report."
+msgstr "Счета-песочницы в общем отчете о ДДС не фигурируют."
+
+msgid "only checking"
+msgstr "только р/с"

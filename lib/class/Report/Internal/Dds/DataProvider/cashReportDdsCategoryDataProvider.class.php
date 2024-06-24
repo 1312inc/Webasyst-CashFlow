@@ -29,31 +29,24 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
      */
     public function getDataForPeriod(cashReportPeriod $period): array
     {
-        $sql = sprintf(
-            "select concat(ct.category_id, '|', if(ct.amount < 0, '%s', '%s')) id,
-           ca.currency currency,
-           MONTH(ct.date) month,
-           sum(ct.amount) per_month
-    from cash_transaction ct
-             join cash_account ca on ct.account_id = ca.id
-             join cash_category cc on ct.category_id = cc.id
-    where ct.date >= s:start and ct.date < s:end
-      and ca.is_archived = 0
-      and ct.is_archived = 0
-    group by id, ca.currency, MONTH(ct.date)",
-            cashCategory::TYPE_EXPENSE,
-            cashCategory::TYPE_INCOME
-        );
-
-        $data = $this->transactionModel->query(
-            $sql,
-            [
-                'start' => $period->getStart()->format('Y-m-d'),
-                'end' => $period->getEnd()->format('Y-m-d'),
-            ]
-        )->fetchAll();
+        $data = $this->transactionModel->query("
+            SELECT CONCAT(ct.category_id, '|', if(ct.amount < 0, s:cat_ex, s:cat_in)) id, ca.currency currency, MONTH(ct.date) month, SUM(ct.amount) per_month, ca.is_imaginary
+            FROM cash_transaction ct
+            JOIN cash_account ca ON ct.account_id = ca.id
+            JOIN cash_category cc ON ct.category_id = cc.id
+            WHERE ct.date >= s:start AND ct.date < s:end
+                AND ca.is_archived = 0
+                AND ct.is_archived = 0
+            GROUP BY id, ca.currency, MONTH(ct.date), ca.is_imaginary
+        ", [
+            'cat_ex' => cashCategory::TYPE_EXPENSE,
+            'cat_in' => cashCategory::TYPE_INCOME,
+            'start'  => $period->getStart()->format('Y-m-d'),
+            'end'    => $period->getEnd()->format('Y-m-d'),
+        ])->fetchAll();
 
         $rawData = [];
+        $current_month = (int) date('n');
         $categoriesWithChild = cash()->getModel(cashCategory::class)->getChildIdsWithParentIds();
 
         foreach ($data as $datum) {
@@ -80,7 +73,14 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
             }
 
             // "Все доходы": просто тип - income/expense
-            $this->calculateAmount($rawData[$type], $datum);
+            if (
+                0 === (int) $datum['is_imaginary']
+                || 1 === (int) $datum['is_imaginary'] && $datum['month'] > $current_month
+            ) {
+                $this->calculateAmount($rawData[$type], $datum);
+            } else {
+                $rawData[$type][$datum['month']][$datum['currency']]['imaginary'] = (int) $datum['is_imaginary'];
+            }
             $rawData[$type][$datum['month']][$datum['currency']]['max'] = max(
                 abs((float) $datum['per_month']),
                 abs($rawData[$type][$datum['month']][$datum['currency']]['max'])
