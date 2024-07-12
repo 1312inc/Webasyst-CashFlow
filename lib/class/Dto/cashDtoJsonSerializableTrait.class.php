@@ -8,6 +8,7 @@ trait cashDtoJsonSerializableTrait
     /**
      * @return array
      */
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $propToJson = property_exists($this, 'jsonSerializableProperties')

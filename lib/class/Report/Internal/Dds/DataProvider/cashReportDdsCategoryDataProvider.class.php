@@ -121,7 +121,7 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
         );
 
         $saldos = [];
-        $keys = array_keys($rawData[cashCategory::TYPE_INCOME] ?? [] + $rawData[cashCategory::TYPE_EXPENSE] ?? []);
+        $keys = array_keys(ifempty($rawData, cashCategory::TYPE_INCOME, []) + ifempty($rawData, cashCategory::TYPE_EXPENSE, []));
         foreach ($keys as $_key) {
             $currency_keys = array_keys($rawData[cashCategory::TYPE_INCOME][$_key] + $rawData[cashCategory::TYPE_EXPENSE][$_key]);
             foreach ($currency_keys as $_currency) {

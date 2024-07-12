@@ -40,6 +40,7 @@ final class cashShopImportProcessDto implements JsonSerializable
     /**
      * @inheritDoc
      */
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [
