@@ -139,11 +139,15 @@ class cashTinkoffTransactionCli extends waCliController
     private function getStatementsData($cursor = null)
     {
         try {
+            $from_date = new DateTime(date('Y-m-d H:i:s', ifset($this->profile, 'update_time', cashTinkoffPlugin::DEFAULT_START_DATE)));
+            $interval = DateInterval::createFromDateString(cashTinkoffPlugin::DELTA_LAG_HOURS.' hours');
+            $from_date->sub($interval);
+
             $response = $this->plugin()->getStatement(
                 ifset($this->profile, 'tinkoff_id', ''),
                 ifset($this->profile, 'inn', ''),
                 $cursor,
-                date('Y-m-d H:i:s', ifset($this->profile, 'update_time', cashTinkoffPlugin::DEFAULT_START_DATE)),
+                $from_date->format('c'),
                 date('Y-m-d H:i:s', strtotime('tomorrow')),
                 cashTinkoffPluginBackendRunController::BATCH_LIMIT
             );
