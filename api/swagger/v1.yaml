@@ -4,13 +4,17 @@ info:
   version: 1.0.0
 servers:
   - url: /api.php
-    description: Current host server
+    description: Адрес API
 
 paths:
   /cash.transaction.create:
     post:
+      externalDocs:
+        description: cash.transaction.create
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.create/
+      summary: Добавляет новую операцию.
       tags:
-        - Транзакции
+        - Операции
       security:
         - ApiKeyAuth: [ ]
       requestBody:
@@ -20,21 +24,28 @@ paths:
               $ref: '#/components/schemas/TransactionCreateRequest'
       responses:
         200:
-          description: Список созданных транзакций
+          description: Информация о созданных операциях.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getTransactionsListResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionInfo'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.transaction.update:
     post:
+      externalDocs:
+        description: cash.transaction.update
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.update/
+      summary: Обновляет свойства операции.
       tags:
-        - Транзакции
+        - Операции
       security:
         - ApiKeyAuth: [ ]
       requestBody:
@@ -44,21 +55,26 @@ paths:
               $ref: '#/components/schemas/TransactionUpdateRequest'
       responses:
         200:
-          description: Список созданных транзакций
+          description: Свойства обновленной операции.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getTransactionsListResponse'
+                $ref: '#/components/schemas/TransactionInfo'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.transaction.bulkMove:
     post:
+      externalDocs:
+        description: cash.transaction.bulkMove
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.bulkMove/
+      summary: Изменяет свойства нескольких операций.
       tags:
-        - Транзакции
+        - Операции
       security:
         - ApiKeyAuth: [ ]
       requestBody:
@@ -69,6 +85,7 @@ paths:
               properties:
                 ids:
                   type: array
+                  description: Массив ID операций
                   items:
                     type: integer
                     minimum: 1
@@ -76,37 +93,48 @@ paths:
                   type: integer
                   minimum: 1
                   default: null
+                  description: ID статьи доходов или расходов, в которую нужно перенести указанные операции
                 account_id:
                   type: integer
                   minimum: 1
                   default: null
+                  description: ID счета, на который нужно перенести указанные операции
                 contractor_contact_id:
                   type: integer
                   minimum: 1
                   default: null
+                  description: ID контакта, с которым нужно связать указанные операции
                 contractor_contact:
                   type: string
                   minLength: 1
                   default: null
+                  description: Имя нового контакта, с которым нужно связать указанные операции
               required:
                 - ids
       responses:
         200:
-          description: Список транзакций
+          description: Список обновленных операций.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getTransactionsListResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionInfo'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.transaction.bulkComplete:
     post:
+      externalDocs:
+        description: cash.transaction.bulkComplete
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.bulkComplete/
+      summary: Проводит несколько запланированных операций.
       tags:
-        - Транзакции
+        - Операции
       security:
         - ApiKeyAuth: [ ]
       requestBody:
@@ -117,6 +145,7 @@ paths:
               properties:
                 ids:
                   type: array
+                  description: Массив ID запланированных операций
                   items:
                     type: integer
                     minimum: 1
@@ -124,22 +153,27 @@ paths:
                 - ids
       responses:
         200:
-          description: Список id обновленных транзакций
+          description: Успешное выполнение запроса.
           content:
             application/json:
               schema:
                 type: string
                 default: "ok"
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.transaction.purge:
     post:
+      externalDocs:
+        description: cash.transaction.purge
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.purge/
+      summary: Удаляет несколько операций из корзины.
       tags:
-        - Транзакции
+        - Операции
       security:
         - ApiKeyAuth: [ ]
       requestBody:
@@ -150,6 +184,7 @@ paths:
               properties:
                 ids:
                   type: array
+                  description: Массив ID операций
                   items:
                     type: integer
                     minimum: 1
@@ -157,21 +192,26 @@ paths:
                 - ids
       responses:
         200:
-          description: Список успешно и неуспешно удаленных
+          description: Список успешно удаленных и неудаленных операций.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/OkAndFailIds'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.transaction.restore:
     post:
+      externalDocs:
+        description: cash.transaction.restore
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.restore/
+      summary: Восстанавливает несколько операций из корзины.
       tags:
-        - Транзакции
+        - Операции
       security:
         - ApiKeyAuth: [ ]
       requestBody:
@@ -182,6 +222,7 @@ paths:
               properties:
                 ids:
                   type: array
+                  description: Массив ID операций
                   items:
                     type: integer
                     minimum: 1
@@ -189,21 +230,26 @@ paths:
                 - ids
       responses:
         200:
-          description: Список успешно и неуспешно восстановленных
+          description: Список успешно восстановленных и невосстановленных операций.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/OkAndFailIds'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.transaction.bulkCreate:
     post:
+      externalDocs:
+        description: cash.transaction.bulkCreate
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.bulkCreate/
+      summary: Добавляет несколько операций.
       tags:
-        - Транзакции
+        - Операции
       security:
         - ApiKeyAuth: [ ]
       requestBody:
@@ -211,50 +257,70 @@ paths:
           application/json:
             schema:
               type: array
+              description: Свойства операций
               items:
                 $ref: '#/components/schemas/TransactionCreateRequest'
       responses:
         200:
-          description: Список созданных транзакций
+          description: Список созданных операций.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getTransactionsListResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionInfo'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.transaction.getList:
     get:
+      externalDocs:
+        description: cash.transaction.getList
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.getList/
+      summary: Возвращает список доступных операций.
       tags:
-        - Транзакции
+        - Операции
       security:
         - ApiKeyAuth: [ ]
       parameters:
         - in: query
           name: from
           required: false
+          description: Дата начала периода, за который нужно получить список операций, в формате «гггг-мм-дд»
           schema:
             type: string
             format: date
         - in: query
           name: to
           required: false
+          description: Дата окончания периода, за который нужно получить список операций, в формате «гггг-мм-дд».
           schema:
             type: string
             format: date
         - in: query
           name: filter
           required: false
-          description: category/1, account/1, currency/USD, null, search/DESCRIPTION, import/1, contractor/1, import/1, external/shop.1, trash/0
+          description: |
+            Хеш-строка с параметрами фильтрации операций.
+            Примеры:
+            + **account/1**: операции со счета, ID которого — 1
+            + **category/2**: операции статьи доходов или расходов, ID которой — 2
+            + **contractor/3**: операции, связанных с контактом, ID которого — 3
+            + **import/4**: операции, добавленных в рамках сессии импорта, ID которой — 4
+            + **external/shop.5**: операции, связанные с заказом Shop-Script, ID которого — 5
+            + **currency/RUB**: операции, идентификатор валюты которых — RUB
+            + **search/qwerty**: операции, в комментариях к которым содержится строка «qwerty»
+            + **trash**: только удаленные операции
           schema:
             type: string
         - in: query
           name: offset
           required: false
-          description: номер записи, с которой начать (не номер страницы, а именно номер записи; как в SQL)
+          description: Смещение относительно начала отфильтрованного списка операций
           schema:
             type: integer
             minimum: 0
@@ -262,7 +328,7 @@ paths:
         - in: query
           name: limit
           required: false
-          description: максимальное количество записей, которое вернет метод (позволяет ограничить количество записей на странице)
+          description: Максимальное количество операций, которые нужно получить
           schema:
             type: integer
             minimum: 0
@@ -271,60 +337,277 @@ paths:
         - in: query
           name: reverse
           required: false
-          description: "сортировка: если 1, то старые транзакции сверху"
+          description: Флаг сортировки операций в обратном порядке (по умолчанию список отсортирован по убыванию дат операций)
           schema:
-            type: integer
-            minimum: 0
-            maximum: 1
-            default: 0
+            type: boolean
+            default: false
       responses:
         200:
-          description: Список транзакций
+          description: Информация о списке операций.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/getTransactionsListResponse'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.transaction.getShrinkList:
     get:
+      externalDocs:
+        description: cash.transaction.getShrinkList
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.getShrinkList/
+      summary: Возвращает сокращенный список последних доступных операций за указанный период.
       tags:
-        - Транзакции
-      description: Return max 13 transactions from date to date. If there are more then 1 with same repeating_id - they will be grouped to first one.
+        - Операции
       security:
         - ApiKeyAuth: [ ]
       parameters:
         - in: query
           name: from
           required: true
+          description: Дата начала периода, за который нужно получить список операций, в формате «гггг-мм-дд»
           schema:
             type: string
             format: date
         - in: query
           name: to
           required: true
+          description: Дата окончания периода, за который нужно получить список операций, в формате «гггг-мм-дд»
           schema:
             type: string
             format: date
         - in: query
           name: filter
           required: true
-          description: category/5, account/3, currency/USD, null, search/DESCRIPTION, import/1
+          description: |
+            Хеш-строка с параметрами фильтрации операций.
+            Примеры:
+            + **account/1**: операции со счета, ID которого — 1
+            + **category/2**: операции статьи доходов или расходов, ID которой — 2
+            + **contractor/3**: операции, связанных с контактом, ID которого — 3
+            + **import/4**: операции, добавленных в рамках сессии импорта, ID которой — 4
+            + **external/shop.5**: операции, связанные с заказом Shop-Script, ID которого — 5
+            + **currency/RUB**: операции, идентификатор валюты которых — RUB
+            + **search/qwerty**: операции, в комментариях к которым содержится строка «qwerty»
+            + **trash**: только удаленные операции
           schema:
             type: string
       responses:
         200:
-          description: Список транзакций
+          description: Список операций.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/getTransactionsListResponse'
         400:
-          description: Ошибка
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.transaction.getTodayCount:
+    get:
+      externalDocs:
+        description: cash.transaction.getTodayCount
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.getTodayCount/
+      summary: Возвращает счетчики доступных операций, связанных с указанной датой.
+      tags:
+        - Операции
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: today
+          required: true
+          description: Дата в формате «гггг-мм-дд»
+          schema:
+            type: string
+            format: date
+      responses:
+        200:
+          description: Счетчики доступных пользователю операций.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: object
+                    description: Счетчики операций
+                    properties:
+                      onbadge:
+                        type: integer
+                        description: Количество операций, которые должны быть проведены вручную в указанную дату
+                      today:
+                        type: integer
+                        description: Количество операций, выполненных в течение указанной даты
+                  date:
+                    type: string
+                    format: date
+                    description: Указанная дата в формате «гггг-мм-дд»
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.transaction.getUpNextList:
+    get:
+      externalDocs:
+        description: cash.transaction.getUpNextList
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.getUpNextList/
+      summary: Возвращает список доступных пользователю операций за период 30 дней начиная с указанной даты.
+      tags:
+        - Операции
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: today
+          required: true
+          description: Дата в формате «гггг-мм-дд»
+          schema:
+            type: string
+            format: date
+      responses:
+        200:
+          description: Информация об операциях.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: Список операций
+                    items:
+                      $ref: '#/components/schemas/TransactionInfo'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.transaction.bulkDelete:
+    post:
+      externalDocs:
+        description: cash.transaction.bulkDelete
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.bulkDelete/
+      summary: Удаляет несколько операций.
+      tags:
+        - Операции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  description: Массив ID операций
+                  items:
+                    type: integer
+              required:
+                - ids
+      responses:
+        200:
+          description: Успешное выполнение запроса.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getTransactionsListResponse'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.transaction.delete:
+    post:
+      externalDocs:
+        description: cash.transaction.delete
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.delete/
+      summary: Удаляет операцию.
+      tags:
+        - Операции
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: ID операции
+              required:
+                - id
+      responses:
+        200:
+          description: Информация об удаленной операции.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  description: ID удаленной операции.
+                  type: integer
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Не найдено.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.transaction.get:
+    get:
+      externalDocs:
+        description: cash.transaction.get
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.transaction.get/
+      summary: Возвращает информацию об указанной операции.
+      tags:
+        - Операции
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: id
+          description: ID операции
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Свойства операции.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionInfo'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Не найдено.
           content:
             application/json:
               schema:
@@ -332,25 +615,67 @@ paths:
 
   /cash.account.getList:
     get:
+      externalDocs:
+        description: cash.account.getList
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.account.getList/
+      summary: Возвращает список всех доступных активных счетов.
       tags:
         - Счета
       security:
         - ApiKeyAuth: [ ]
       responses:
         200:
-          description: Список счетов пользователя
+          description: Список счетов.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/getAccountsListResponse'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /cash.account.sort:
+    post:
+      externalDocs:
+        description: cash.account.sort
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.account.sort/
+      summary: Изменяет порядок сортировки счетов.
+      tags:
+        - Счета
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order:
+                  type: array
+                  description: Массив ID счетов, порядок сортировки которых нужно изменить, — в требуемом порядке
+                  items:
+                    type: integer
+              required:
+                - order
+      responses:
+        200:
+          description: Успешное выполнение запроса.
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.account.create:
     post:
+      externalDocs:
+        description: cash.account.create
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.account.create/
+      summary: Создает новый счет.
       tags:
         - Счета
       security:
@@ -364,12 +689,19 @@ paths:
                 name:
                   type: string
                   minLength: 1
+                  description: Название
                 currency:
                   type: string
                   minLength: 3
+                  description: ISO-код валюты
                 is_imaginary:
                   type: integer
                   default: 0
+                  description: |
+                    Признак виртуального счета
+                    + **0**: реальный, не виртуальный счет (значение по умолчанию)
+                    + **1**: виртуальный счет с прогнозом, без учета операций в прошлом
+                    + **-1**: виртуальный счет без прогноза
                   enum:
                     - 0
                     - 1
@@ -378,29 +710,36 @@ paths:
                   type: string
                   minLength: 1
                   nullable: true
-                  description: Link to icon
+                  description: URL иконки, например, полученный при загрузке файла иконки с помощью метода *cash.account.uploadLogo*
+                  format: uri
                 description:
                   type: string
                   minLength: 1
                   nullable: true
+                  description: Описание
               required:
                 - name
                 - currency
       responses:
-        200:
-          description: Созданный счет
+        201:
+          description: Свойства созданного счета.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountInfo'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /cash.account.update:
+
+  /cash.account.delete:
     post:
+      externalDocs:
+        description: cash.account.delete
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.account.delete/
+      summary: Удаляет счет.
       tags:
         - Счета
       security:
@@ -414,20 +753,66 @@ paths:
                 id:
                   type: integer
                   minimum: 1
+                  description: ID счета
+              required:
+                - id
+      responses:
+        200:
+          description: Успешное выполнение запроса.
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Не найдено.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.account.update:
+    post:
+      externalDocs:
+        description: cash.account.update
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.account.update/
+      summary: Обновляет информацию о счете.
+      tags:
+        - Счета
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  minimum: 1
+                  description: ID счета
                 name:
                   type: string
                   minLength: 1
+                  description: Название
                 currency:
                   type: string
                   minLength: 3
+                  description: ISO-код валюты
                 icon:
                   type: string
                   minLength: 1
+                  description: URL иконки, например, полученный при загрузке файла иконки с помощью метода *cash.account.uploadLogo*
+                  format: uri
                 is_imaginary:
                   type: integer
-                  minLength: 1
-                  nullable: true
                   default: 0
+                  description: |
+                    Признак виртуального счета
+                    + **0**: реальный, не виртуальный счет
+                    + **1**: виртуальный счет с прогнозом, без учета операций в прошлом
+                    + **-1**: виртуальный счет без прогноза
                   enum:
                     - 0
                     - 1
@@ -436,48 +821,240 @@ paths:
                   type: string
                   minLength: 1
                   nullable: true
+                  description: Описание
               required:
                 - id
                 - name
                 - currency
-                - icon
-                - description
       responses:
-        200:
-          description: Созданный счет
+        201:
+          description: Свойства счета.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccountInfo'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        404:
+          description: Не найдено.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.account.uploadLogo:
+    post:
+      externalDocs:
+        description: cash.account.uploadLogo
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.account.uploadLogo/
+      summary: Загружает изображение, которое можно использовать в качестве иконки счета.
+      tags:
+        - Счета
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                logo:
+                  type: string
+                  format: binary
+                  description: Файл изображения
+              required:
+                - logo
+      responses:
+        200:
+          description: URL загруженного изображения.
+          content:
+            application/json:
+              schema:
+                type: string
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.aggregate.getBalanceFlow:
+    get:
+      externalDocs:
+        description: cash.aggregate.getBalanceFlow
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.aggregate.getBalanceFlow/
+      summary: Возвращает информацию об изменении баланса за указанный период.
+      tags:
+        - Баланс
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: from
+          description: Дата начала периода в формате «гггг-мм-дд»
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          description: Дата конца периода в формате «гггг-мм-дд»
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: group_by
+          description: |
+            Группировка данных
+            + **day**: по дням (только для периодов не более 10 000 дней)
+            + **month**: по месяцам
+            + **year**: по годам
+          required: true
+          schema:
+            type: string
+            enum:
+              - day
+              - month
+              - year
+      responses:
+        200:
+          description: Информация об изменении баланса.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    currency:
+                      type: string
+                      description: ISO-код валюты
+                    balances:
+                      type: object
+                      description: Информация об изменении баланса для данной валюты
+                      properties:
+                        from:
+                          description: Данные на начало периода
+                          allOf:
+                            - $ref: '#/components/schemas/BalanceEntryDate'
+                        to:
+                          description: Данные на конец периода
+                          allOf:
+                            - $ref: '#/components/schemas/BalanceEntryDate'
+                        now:
+                          description: Данные на текущую дату
+                          allOf:
+                            - $ref: '#/components/schemas/BalanceEntryDate'
+                        diff:
+                          description: Данные разности между окончанием и началом периода
+                          allOf:
+                            - $ref: '#/components/schemas/BalanceEntryDate'
+                    data:
+                      type: array
+                      description: Данные за каждый из отрезков времени в пределах указанного периода с учетом типа группировки
+                      items:
+                        type: object
+                        description: Запись баланса для даты
+                        properties:
+                          date:
+                            type: string
+                            description: Дата начала периода
+                          amount:
+                            type: number
+                            description: Баланс на начало периода
+                          amountShorten:
+                            type: string
+                            description: Сокращенное обозначение суммы
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.aggregate.getBalanceOnDate:
+    get:
+      externalDocs:
+        description: cash.aggregate.getBalanceOnDate
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.aggregate.getBalanceOnDate/
+      summary: Возвращает баланс на указанную дату.
+      tags:
+        - Баланс
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: date
+          required: true
+          description: Дата в формате «гггг-мм-дд»
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: filter
+          required: true
+          description: |
+            Хеш-строка для фильтрации списка финансовых операций
+            Примеры:
+            + **account/1**: операции для счета, ID которого — 1
+            + **currency/RUB**: операции с ISO-кодом валюты '*RUB*'
+          schema:
+            type: string
+      responses:
+        200:
+          description: Информация о балансе.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  description: Набор данных для каждой из валют счетов
+                  allOf:
+                    - $ref: '#/components/schemas/BalanceEntryDate'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.category.getList:
     get:
+      externalDocs:
+        description: cash.category.getList
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.category.getList/
+      summary: Возвращает список всех доступных статей доходов и расходов.
       tags:
-        - Категории
+        - Статьи
       security:
         - ApiKeyAuth: [ ]
       responses:
         200:
-          description: Список категорий
+          description: Список статей.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/getCategoriesListResponse'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.category.create:
     post:
+      externalDocs:
+        description: cash.category.create
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.category.create/
+      summary: Создает статью доходов или расходов.
       tags:
-        - Категории
+        - Статьи
       security:
         - ApiKeyAuth: [ ]
       requestBody:
@@ -489,51 +1066,68 @@ paths:
                 name:
                   type: string
                   minLength: 1
+                  description: Название
                 type:
                   type: string
+                  description: |
+                    Тип статьи
+                    + **income**: доход
+                    + **expense**: расход
+                    + **transfer**: перевод
                   enum:
-                    - 'expense'
-                    - 'income'
+                    - expense
+                    - income
+                    - transfer
                 color:
                   type: string
                   minLength: 1
+                  description: HTML-обозначение цвета
                 sort:
                   type: integer
                   minimum: 0
                   nullable: true
+                  description: Значение сортировки
                 is_profit:
                   type: boolean
                   default: false
                   nullable: true
+                  description: Признак того, что статья расходов является статьей прибыли (вывода денег)
                 parent_category_id:
                   type: integer
                   minimum: 1
                   nullable: true
+                  description: ID родительской категории статей
                 glyph:
                   type: string
                   minLength: 1
                   nullable: true
+                  description: Имена CSS-классов для отображения иконки Font Awesome
               required:
                 - name
                 - type
                 - color
       responses:
-        200:
-          description: Cозданная категория
+        201:
+          description: Свойства созданной статьи.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CategoryInfo'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.category.update:
     post:
+      externalDocs:
+        description: cash.category.update
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.category.update/
+      summary: Обновляет свойства статьи доходов или расходов.
       tags:
-        - Категории
+        - Статьи
       security:
         - ApiKeyAuth: [ ]
       requestBody:
@@ -545,59 +1139,82 @@ paths:
                 id:
                   type: integer
                   minimum: 1
+                  description: ID статьи
                 name:
                   type: string
                   minLength: 1
+                  description: Название
                 type:
                   type: string
+                  description: |
+                    Тип статьи
+                    + **income**: доход
+                    + **expense**: расход
+                    + **transfer**: перевод
                   enum:
-                    - 'expense'
-                    - 'income'
+                    - expense
+                    - income
+                    - transfer
                 color:
                   type: string
                   minLength: 0
+                  description: HTML-обозначение цвета
                 sort:
                   type: integer
                   minimum: 0
                   nullable: true
+                  description: Значение сортировки
                 is_profit:
                   type: boolean
                   default: false
                   nullable: true
+                  description: Признак того, что статья расходов является статьей прибыли (вывода денег)
                 parent_category_id:
                   type: integer
                   minimum: 0
                   nullable: true
+                  description: ID родительской категории статей
                 glyph:
                   type: string
                   minLength: 1
                   nullable: true
+                  description: Имена CSS-классов для отображения иконки Font Awesome
               required:
                 - id
                 - name
                 - type
                 - color
                 - sort
-                - is_profit
                 - parent_category_id
                 - glyph
       responses:
-        200:
-          description: Обновленная категория
+        201:
+          description: Свойства обновленной статьи.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CategoryInfo'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        404:
+          description: Не найдено.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.category.delete:
     post:
+      externalDocs:
+        description: cash.category.delete
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.category.delete/
+      summary: Удаляет статью доходов или расходов.
       tags:
-        - Категории
+        - Статьи
       security:
         - ApiKeyAuth: [ ]
       requestBody:
@@ -609,21 +1226,33 @@ paths:
                 id:
                   type: integer
                   minimum: 1
+                  description: ID статьи
               required:
                 - id
       responses:
         200:
-          description: Пустой ответ в случае успеха
+          description: Успешное выполнение запроса.
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        404:
+          description: Не найдено.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.category.sort:
     post:
+      externalDocs:
+        description: cash.category.sort
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.category.sort/
+      summary: Изменяет порядок сортировки статей доходов и расходов.
       tags:
-        - Категории
+        - Статьи
       security:
         - ApiKeyAuth: [ ]
       requestBody:
@@ -635,15 +1264,17 @@ paths:
                 order:
                   type: array
                   minItems: 1
+                  description: |
+                    Массив ID всех статей одного вида: либо доходов, либо расхода — в требуемом порядке
                   items:
                     type: integer
               required:
                 - order
       responses:
         200:
-          description: Пустой ответ в случае успеха
+          description: Успешное выполнение запроса.
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
@@ -651,6 +1282,10 @@ paths:
 
   /cash.aggregate.getChartData:
     get:
+      externalDocs:
+        description: cash.aggregate.getChartData
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.aggregate.getChartData/
+      summary: Возвращает информацию о расходах, доходах и прибыли за указанный период с группировкой по дням, месяцам или годам.
       tags:
         - Агрегация данных
       security:
@@ -658,18 +1293,25 @@ paths:
       parameters:
         - in: query
           name: from
+          description: Дата начала периода в формате «гггг-мм-дд»
           required: true
           schema:
             type: string
             format: date
         - in: query
           name: to
+          description: Дата окончания периода в формате «гггг-мм-дд»
           required: true
           schema:
             type: string
             format: date
         - in: query
           name: group_by
+          description: |
+            Группировка данных
+            + **day**: по дням (только для периодов не более 10 000 дней)
+            + **month**: по месяцам
+            + **year**: по годам
           required: true
           schema:
             type: string
@@ -680,21 +1322,65 @@ paths:
         - in: query
           name: filter
           required: true
-          description: category/1, account/1, currency/USD, null, search/DESCRIPTION, import/1, contractor/1, import/1, external/shop.1, trash/0
+          description: |
+            Хеш-строка для фильтрации списка финансовых операций
+            Примеры:
+            + **account/1**: операции для счета, ID которого — 1
+            + **currency/RUB**: операции с ISO-кодом валюты '*RUB*'
           schema:
             type: string
             minLength: 1
       responses:
         200:
-          description: Пустой ответ в случае успеха
+          description: Набор данных для каждой из валют счетов.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    currency:
+                      type: string
+                      description: ISO-код валюты
+                    data:
+                      type: array
+                      description: Массив данных для каждого интервала времени, соответствующего способу группировки
+                      items:
+                        type: object
+                        properties:
+                          period:
+                            type: string
+                            description: |
+                              Обозначение отрезка времени в одном из форматов:
+                              + **гггг-дд-мм**: для начала периода, для конца периода, а также для каждого отрезка времени, если указан тип группировки '*day*'
+                              + **гггг-мм**: для каждого отрезка времени, кроме начала и конца, если указан тип группировки '*month*'
+                              + **гггг**: для каждого отрезка времени, кроме начала и конца, если указан тип группировки '*year*'
+                          amountExpense:
+                            type: number
+                            description: Сумма расходов
+                          amountIncome:
+                            type: number
+                            description: Сумма доходов
+                          amountProfit:
+                            type: number
+                            description: Сумма прибыли
+                          balance:
+                            type: number
+                            description: Баланс на окончание периода
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.aggregate.getBreakDown:
     get:
+      externalDocs:
+        description: cash.aggregate.getBreakDown
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.aggregate.getBreakDown/
+      summary: Возвращает сводную информацию о расходах, доходах и прибыли за указанный период.
       tags:
         - Агрегация данных
       security:
@@ -702,31 +1388,42 @@ paths:
       parameters:
         - in: query
           name: from
+          description: Дата начала периода в формате «гггг-мм-дд»
           required: true
           schema:
             type: string
             format: date
         - in: query
           name: to
+          description: Дата окончания периода в формате «гггг-мм-дд»
           required: true
           schema:
             type: string
             format: date
         - in: query
           name: filter
+          description: |
+            Хеш-строка для фильтрации списка финансовых операций
+            Примеры:
+            + **account/1**: операции для счета с ID = 1
+            + **currency/RUB**: операции с ISO-кодом валюты '*RUB*'
           required: true
           schema:
             type: string
             minLength: 1
       responses:
         200:
-          description: Агрегрованные данные по заданным параметрам
+          description: Набор данных для каждой из валют счетов.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/aggregateGetBreakDownResponse'
+                type: array
+                items:
+                  description: Набор данных для каждой из валют счетов
+                  allOf:
+                    - $ref: '#/components/schemas/aggregateGetBreakDownResponse'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
@@ -734,6 +1431,10 @@ paths:
 
   /cash.contact.search:
     get:
+      externalDocs:
+        description: cash.contact.search
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.contact.search/
+      summary: Поиск контактов.
       tags:
         - Контакты
       security:
@@ -741,37 +1442,45 @@ paths:
       parameters:
         - in: query
           name: term
+          description: Поисковый запрос для поиска контактов по части имени, email-адреса или номера телефона; используется, если не заполнен параметр *category_id*
           required: false
           schema:
             type: string
             minLength: 0
         - in: query
           name: category_id
+          description: ID статьи доходов или расходов, если нужно получить контакты, связанные только с операциями этой статьи; используется, если не заполнен параметр *term*
           required: false
           schema:
             type: integer
             minimum: 1
         - in: query
           name: limit
+          description: Максимальное количество контактов, которое нужно получить (не больше 30, по умолчанию 5)
           required: false
           schema:
             type: integer
             maximum: 30
       responses:
         200:
-          description: Список найденных
+          description: Список найденных контактов.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/contactSearchResponse'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /cash.contact.getList:
     get:
+      externalDocs:
+        description: cash.contact.getList
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.contact.getList/
+      summary: Возвращает список контактов, связанных с операциями по доступным пользователю счетам.
       tags:
         - Контакты
       security:
@@ -779,12 +1488,14 @@ paths:
       parameters:
         - in: query
           name: offset
+          description: Смещение относительно общего списка найденных контактов (по умолчанию 0)
           required: false
           schema:
             type: integer
             minimum: 0
         - in: query
           name: limit
+          description: Максимальное количество контактов, которое нужно получить (по умолчанию 30)
           required: false
           schema:
             type: integer
@@ -792,13 +1503,91 @@ paths:
             maximum: 30
       responses:
         200:
-          description: Список контактов с стат инфой, отсортированные по последней операцие
+          description: Информация о найденных контактах.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/contactListResponse'
         400:
-          description: Ошибка
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.system.getCurrencies:
+    get:
+      externalDocs:
+        description: cash.system.getCurrencies
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.system.getCurrencies/
+      summary: Возвращает системный список валют.
+      tags:
+        - Разное
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        200:
+          description: Список валют.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      description: ISO-код
+                    iso4217:
+                      type: integer
+                      description: Номер валюты в формате ISO 4217
+                    title:
+                      type: string
+                      description: Локализованное название
+                    name:
+                      type: array
+                      description: |
+                        Массив названий валюты: полных и сокращенных; если элемент списка является массивом, то в нем перечислены единственное и множественное число полного названия валюты
+                      items:
+                        oneOf:
+                          - type: string
+                          - type: array
+                            items:
+                              type: string
+                    frac_name:
+                      type: array
+                      description: |
+                        Массив названий разменной единицы валюты: полных и сокращенных; если элемент списка является массивом, то в нем перечислены единственное и множественное число полного названия разменной единицы
+                      items:
+                        oneOf:
+                          - type: string
+                          - type: array
+                            items:
+                              type: string
+                    sign:
+                      type: string
+                      description: Символ
+                    sign_html:
+                      type: string
+                      description: HTML-код символа, если доступен для данной валюты
+                    sign_delim:
+                      type: string
+                      description: Текст для разделения числа и символа валюты
+                    sign_position:
+                      type: integer
+                      description: |
+                        Обозначение положения символа валюты относительно числа
+                        + **0**: до числа
+                        + **1**: после числа
+                      enum:
+                        - 0
+                        - 1
+                    precision:
+                      type: integer
+                      description: Максимальное количество знаков после десятичного разделителя, допустимое в дробной записи сумм, выраженный данной валютой
+
+        400:
+          description: Ошибка.
           content:
             application/json:
               schema:
@@ -806,6 +1595,10 @@ paths:
 
   /cash.system.getExternalEntity:
     get:
+      externalDocs:
+        description: cash.system.getExternalEntity
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.system.getExternalEntity/
+      summary: Возвращает информацию об объекте другого приложения, связанного с операциями, например, о заказе Shop-Script.
       tags:
         - Разное
       security:
@@ -813,46 +1606,123 @@ paths:
       parameters:
         - in: query
           name: source
+          description: Идентификатор приложения
           required: true
           schema:
             type: string
             minLength: 1
         - in: query
           name: id
+          description: Идентификатор объекта, например, числовой ID заказа Shop-Script
           required: true
           schema:
             type: string
             minimum: 1
       responses:
         200:
-          description: Данные о внешней сущности
+          description: Информация об объекте другого приложения.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getExternalEntityResponse'
+                $ref: '#/components/schemas/ExternalEntity'
         400:
-          description: Ошибка
+          description: Ошибка.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
         404:
-          description: Ошибка
+          description: Не найдено.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /cash.system.poke:
+  /cash.system.getSettings:
     get:
+      externalDocs:
+        description: cash.system.getSettings
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.system.getSettings/
+      summary: Возвращает информацию об аккаунте Webasyst и текущем пользователе.
       tags:
         - Разное
       security:
         - ApiKeyAuth: [ ]
-      summary: Подталкивает приложение очередной раз запустить регулярные фоновые механизмы (например, импорт операций)
+      responses:
+        200:
+          description: Информация об аккаунте и текущем пользователе.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ts:
+                    type: integer
+                    description: Timestamp времени формирования ответа сервера
+                  userId:
+                    type: integer
+                    description: ID пользователя
+                  isShop:
+                    type: boolean
+                    description: Флаг наличия установленного приложения Shop-Script
+                  rights:
+                    type: object
+                    description: Информация о правах доступа пользователя к «Деньгам»
+                    properties:
+                      isAdmin:
+                        type: boolean
+                        description: Флаг наличия у пользователя полного доступа к приложению
+                      accounts:
+                        type: object
+                        description: Группы счетов, доступных пользователю с ограниченными правами
+                        properties:
+                          1:
+                            type: array
+                            description: Массив ID счетов, для которых настроен доступ уровня «помощник»
+                            items:
+                              type: integer
+                          2:
+                            type: array
+                            description: Массив ID счетов, для которых настроен доступ уровня «бухгалтер»
+                            items:
+                              type: integer
+                          99:
+                            type: array
+                            description: Массив ID счетов, для которых настроен полный доступ
+                            items:
+                              type: integer
+                      canAccessTransfers:
+                        type: boolean
+                        description: Флаг наличия доступа к переводам
+                      canImport:
+                        type: boolean
+                        description: Флаг наличия доступа к импорту операций
+                      canSeeReport:
+                        type: boolean
+                        description: Флаг наличия доступа к просмотру отчетов
+                      categories:
+                        type: object
+                        description: Информация о доступе к статьям дохода и расходов
+                        properties:
+                          1:
+                            type: array
+                            description: Массив ID доступных статей
+                            items:
+                              type: integer
+
+  /cash.system.poke:
+    get:
+      externalDocs:
+        description: cash.system.poke
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.system.poke/
+      summary: Выполняет внеочередной запуск регулярных фоновых действий (например, импорт операций).
+      tags:
+        - Разное
+      security:
+        - ApiKeyAuth: [ ]
       responses:
         204:
-          description: Ok
+          description: Успешное выполнение запроса.
 
 components:
   securitySchemes:
@@ -865,14 +1735,7 @@ components:
     getAccountsListResponse:
       type: array
       items:
-        allOf:
-          - $ref: '#/components/schemas/AccountInfo'
-          - type: object
-            required:
-              - stat
-            properties:
-              stat:
-                $ref: '#/components/schemas/StatInfo'
+        $ref: '#/components/schemas/AccountInfo'
 
     getCategoriesListResponse:
       type: array
@@ -885,14 +1748,18 @@ components:
         offset:
           type: integer
           minimum: 0
+          description: Смещение относительно общего списка операций
         limit:
           type: integer
           maximum: 500
+          description: Максимальный размер списка операций
         total:
           type: integer
           minimum: 0
+          description: Общее количество операций
         data:
           type: array
+          description: Свойства операций
           items:
             $ref: '#/components/schemas/TransactionInfo'
 
@@ -907,71 +1774,91 @@ components:
         offset:
           type: integer
           minimum: 0
+          description: Смещение относительно общего списка найденных контактов
         limit:
           type: integer
           maximum: 30
+          description: Максимальное количество контактов, которое нужно получить
         total:
           type: integer
           minimum: 0
+          description: Общее количество найденных контактов
         data:
           type: array
+          description: Список контактов
           items:
             type: object
             properties:
               id:
                 type: number
+                description: ID контакта
               name:
                 type: string
+                description: Полное имя
               last_transaction:
                 type: object
+                description: Свойства последней операции, связанной с контактом
                 properties:
                   date:
                     type: string
                     format: date
                     example: "2022-03-22"
+                    description: Дата
                   amount:
                     type: number
                     format: double
+                    description: Сумма операции
                   amountShorten:
                     type: string
                     example: "41.2K"
+                    description: Сокращенное обозначение суммы операции
                   currency:
                     type: string
                     example: RUB
+                    description: ISO-код валюты
               firstname:
                 type: string
+                description: Краткое имя
               lastname:
                 type: string
+                description: Фамилия
               photo_url:
                 type: string
+                description: Относительный URL изображения
               photo_url_absolute:
                 type: string
+                description: Абсолютный URL изображения
               stat:
                 type: object
+                description: Список операций, связанных с контактом
                 properties:
                   currency:
                     type: string
                     example: RUB
+                    description: ISO-код валюты
                   data:
-                    $ref: '#/components/schemas/StatInfo'
-
-    getExternalEntityResponse:
-      type: array
-      items:
-        $ref: '#/components/schemas/ExternalEntity'
+                    description: Статистика операций
+                    allOf:
+                      - $ref: '#/components/schemas/StatInfo'
 
     aggregateGetBreakDownResponse:
       type: object
       properties:
         currency:
           type: string
-          example: "USD"
+          description: ISO-код валюты
         income:
-          $ref: '#/components/schemas/GetBreakDownInfo'
+          description: Доходы
+          allOf:
+            - $ref: '#/components/schemas/GetBreakDownInfo'
         expense:
-          $ref: '#/components/schemas/GetBreakDownInfo'
+          description: Затраты
+          allOf:
+            - $ref: '#/components/schemas/GetBreakDownInfo'
         profit:
-          $ref: '#/components/schemas/GetBreakDownInfo'
+          description: Прибыль
+          allOf:
+            - $ref: '#/components/schemas/GetBreakDownInfo'
 
     GetBreakDownInfo:
       type: object
@@ -979,8 +1866,10 @@ components:
         totalAmount:
           type: integer
           minimum: 0
+          description: Общая сумма
         data:
           type: array
+          description: Массив данных о статьях
           items:
             $ref: '#/components/schemas/GetBreakDownInfoData'
 
@@ -990,89 +1879,126 @@ components:
         amount:
           type: number
           example: 1000.1
+          description: Сумма
         category_name:
           type: string
+          description: Название статьи
         category_color:
           type: string
-          description: Hex
+          description: HTML-обозначение цвета
         category_id:
           type: integer
+          description: ID статьи
 
     SearchContactInfo:
       type: object
+      description: Свойства контакта
       properties:
         id:
           type: integer
+          description: ID контакта
         value:
           type: string
+          description: ID контакта
         name:
           type: string
+          description: Полное имя
         firstname:
           type: string
+          description: Краткое имя
         lastname:
           type: string
+          description: Фамилия
         photo_url:
           type: string
+          description: Относительный URL изображения
         photo_url_absolute:
           type: string
+          description: Абсолютный URL изображения
         label:
           type: string
+          description: HTML-код изображения контакта
 
     ExternalEntity:
       type: object
       properties:
         app:
           type: string
+          description: Идентификатор приложения
         app_name:
           type: string
+          description: Название приложения
         app_icon_url:
           type: string
+          format: uri
+          description: URL логотипа приложения
         entity_id:
           type: integer
+          description: Идентификатор объекта
         entity_name:
           type: string
+          description: Локализованное название объекта
         entity_url:
           type: string
+          format: uri
+          description: URL ссылки, указывающей на объект
         entity_icon:
           type: string
+          format: uri
+          description: URL иконки объекта
         entity_data:
           type: array
           nullable: true
+          description: Параметры объекта
 
     AccountInfo:
       type: object
+      description: Свойства счета
       properties:
         id:
           type: integer
-          description: Идентификатор таски
+          description: ID счета
         name:
           type: string
+          description: Название
         description:
           type: string
+          description: Описание
         icon:
           type: string
+          format: uri
+          description: URL иконки
         currency:
           type: string
+          description: ISO-код валюты
         customer_contact_id:
           type: integer
+          description: ID клиента
           nullable: true
         is_archived:
           type: boolean
+          description: Признак удаленного счета
         is_imaginary:
           type: integer
+          description: Признак виртуального счета
         sort:
           type: integer
+          description: Значение сортировки
           minimum: 0
         create_datetime:
           type: string
           format: date-time
+          description: Дата и время создания
         update_datetime:
           nullable: true
           type: string
           format: date-time
+          description: Дата и время последнего обновления
         stat:
-          type: object
           nullable: true
+          description: Статистика операций
+          allOf:
+            - $ref: '#/components/schemas/StatInfo'
 
     StatInfo:
       type: object
@@ -1081,63 +2007,84 @@ components:
         income:
           type: number
           format: double
+          description: Доходы
         expense:
           type: number
           format: double
+          description: Затраты
         summary:
           type: number
           format: double
+          description: Дельта — доходы за вычетом расходов и размера выведенных средств
         incomeShorten:
           type: string
           example: "41.2K"
+          description: Сокращенное обозначение доходов
         expenseShorten:
           type: string
           example: "41.2K"
+          description: Сокращенное обозначение затрат
         summaryShorten:
           type: string
           example: "41.2K"
+          description: Сокращенное обозначение дельты
 
     CategoryInfo:
       type: object
+      description: Свойства статьи дохода и расходов
       properties:
         id:
           type: integer
+          description: ID статьи
           minimum: 0
         name:
           type: string
           minLength: 1
+          description: Название
         type:
           type: string
+          description: |
+            Тип
+            + **income**: доход
+            + **expense**: расход
+            + **transfer**: перевод
           enum:
-            - 'income'
-            - 'expense'
-            - 'transfer'
+            - income
+            - expense
+            - transfer
           nullable: true
         color:
           type: string
+          description: HTML-обозначение цвета
         sort:
           type: integer
           minimum: 0
+          description: Значение сортировки
         create_datetime:
           type: string
           format: datetime
+          description: Дата и время создания
         update_datetime:
           type: string
           format: datetime
           nullable: true
+          description: Дата и время последнего обновления
         is_profit:
           type: boolean
           default: false
+          description: Признак того, что статья расходов является статьей прибыли (вывода денег)
         parent_category_id:
           type: integer
           minimum: 0
           nullable: true
           default: null
+          description: ID родительской категории статей
         glyph:
           type: string
           minLength: 1
           nullable: true
           default: null
+          description: Имена CSS-классов для отображения иконки Font Awesome
 
     TransactionInfo:
       type: object
@@ -1145,53 +2092,63 @@ components:
         id:
           type: integer
           minimum: 0
+          description: ID операции
         date:
           type: string
           format: date
-          description: Дата транзакции
-          example: "2024-07-20 20:05:00"
+          description: Дата операции
+          example: "2000-01-01"
         datetime:
           type: string
           format: datetime
-          description: Дата создания транзакции
+          description: Дата создания операции
         amount:
           type: number
+          description: Сумма операции
           example: 193241.3
         amountShorten:
           type: string
-          description: Человекочитаемый формат суммы
+          description: Сокращенное обозначение суммы
           example: "193К"
         balance:
           type: number
           nullable: true
-          description: Баланс на счете (только для выборок по счетам)
+          description: Баланс на счете
+          example: 193241.3
         balanceShorten:
           type: string
           nullable: true
-          description: Человекочитаемый формат баланса
+          description: Сокращенное обозначение суммы баланса
           example: "193К"
         description:
           type: string
           nullable: true
+          description: Описание
         repeating_id:
           type: integer
           nullable: true
-          description: Идентификатор повторяющейся транзакции, от которой создалась эта
+          description: Идентификатор исходной повторяющейся операции
         repeating_data:
           type: object
           nullable: true
-          description: Настройки повторяющейся транзакции
+          description: Настройки повторяющейся операции
           properties:
             interval:
-              description: Интервал повторения
+              description: |
+                Интервал повторения
+                + **year**: год
+                + **month**: месяц
+                + **week**: неделя
+                + **day**: сутки
+                + **none**: нет
               type: string
               nullable: true
               enum:
-                - "year"
-                - "month"
-                - "week"
-                - "day"
-                - "none"
+                - year
+                - month
+                - week
+                - day
+                - none
             frequency:
               type: integer
               nullable: true
@@ -1202,73 +2159,115 @@ components:
               description: Количество повторений
         create_contact_id:
           type: integer
+          description: ID создавшего контакта
         create_contact:
-          $ref: '#/components/schemas/TransactionContactInfo'
+          description: Создавший контакт
+          allOf:
+            - $ref: '#/components/schemas/TransactionContactInfo'
         create_datetime:
           type: string
           format: datetime
-          description: Дата сохранения
+          description: Дата и время создания
         update_datetime:
           type: string
           format: datetime
           nullable: true
-          description: Дата обновления
+          description: Дата и время обновления
         category_id:
           type: integer
+          description: ID статьи доходов или расхода
         account_id:
           type: integer
+          description: ID счета
         planned:
           type: boolean
-          description: Запланирована на будущее
+          description: Признак запланированной операции
         is_archived:
           type: boolean
+          description: Признак удаленной операции
         external_source_info:
-          type: object
           nullable: true
-          description: Информация о связанных сущностях из внешнего проложений (например ShopScript)
+          $ref: '#/components/schemas/TransactionExternalData'
         external_source:
           type: string
           nullable: true
-          description: Идентификатор внешнего приложения
+          description: Идентификатор другого приложения
           example: "shop"
         contractor_contact_id:
           type: integer
           nullable: true
-          description: Id контрагента
+          description: ID контакта, с которым связана операция
         is_onbadge:
           type: boolean
+          description: Признак незавершенной операции, которую нужно провести вручную
         is_self_destruct_when_due:
           type: boolean
+          description: Признак автоматически удалениющейся повторяющейся операции при наступлении ее даты
         contractor_contact:
           nullable: true
+          description: Контакт, с которым связана операция
           allOf:
             - $ref: '#/components/schemas/TransactionContactInfo'
         affected_transactions:
           type: integer
           nullable: true
-          description: Сколько транзакций создалось при создании этой (актуально для повторящихся). Заполняется только в ответе после создания/редактирования транзакции
+          description: Количество дополнительных операций, созданных повторяющейся операцией
         affected_transaction_ids:
           type: array
           nullable: true
-          description: Массив id транзакций, которые создались при создании этой (актуально для повторящихся). Заполняется только в ответе после создания/редактирования транзакции
+          description: Массив ID дополнительных операций, созданных повторяющейся операцией
           items:
             type: integer
+        occurrences_in_future:
+          type: integer
+          description: Ожидаемое количество повторений операции в будущем
+        repeating_end_type:
+          type: string
+          nullable: true
+          description: |
+            Длительность повторения повторяющейся операции
+            + **never**: повторять всегда (значение по умолчанию)
+            + **after**: повторять заданное количество раз
+            + **ondate**: повторять до указанной даты
+            Если указано значение '*never*', то, кроме данной операции, будет также создано несколько дополнительных операций в качестве ее повторения — их количество зависит от значения параметра *repeating_interval*:
+            + **day**: операции будут созданы на следующие 3 года
+            + **week**: операции будут созданы на следующие 16 недель
+            + **month**: операции будут созданы на следующие 36 месяцев
+            + **year**: операции будут созданы на следующие 10 лет
+        repeating_interval:
+          type: string
+          nullable: true
+          description: |
+            Отрезок времени для вычисления периодичности повторения повторяющейся операции
+            + **day**: день
+            + **week**: неделя
+            + **month**: месяц (значение по умолчанию)
+            + **year**: год
+        repeating_end_conditions:
+          type: string
+          nullable: true
+          description: JSON-строка с описанием условий завершения повторяющейся операции
+        repeating_frequency:
+          type: integer
+          nullable: true
+          description: Периодичность повторения операции в виде количества отрезков времени, указанных в параметре *repeating_interval*, по истечении которых операция должна повториться (по умолчанию 1)
 
     TransactionContactInfo:
       type: object
       properties:
         name:
           type: string
-          example: "admin"
+          description: Полное имя
         firstname:
           type: string
-          example: "ad"
+          description: Краткое имя
         lastname:
           type: string
-          example: "min"
+          description: Фамилия
         userpic:
           type: string
-          example: "http://pl2wa.local/wa-data/public/contacts/photos/01/00/1/1606603675.96x96.jpg"
+          format: uri
+          description: URL изображения
 
     TransactionCreateRequest:
       type: object
@@ -1278,83 +2277,114 @@ components:
           minimum: -1000000000000.0
           maximum: 1000000000000.0
           default: 1312.11
+          description: Сумма операции
         date:
           type: string
           format: date
+          description: Дата операции в формате «гггг-мм-дд»
         account_id:
           type: integer
           minimum: 1
+          description: ID счета
         category_id:
           type: integer
+          description: ID статьи доходов или расходов
         contractor_contact_id:
           type: integer
           minimum: 0
           nullable: true
           default: null
+          description: ID контакта, с которым должна быть связана операция
         contractor:
           type: string
           minLength: 2
           nullable: true
           default: null
+          description: Имя нового контакта, который нужно создать, чтобы связать с ним операцию, если не заполнено значение параметра *contractor_contact_id*
         description:
           type: string
           minLength: 2
           nullable: true
           default: null
+          description: Комментарий к операции
         is_repeating:
           type: boolean
           default: false
           nullable: true
+          description: Признак повторяющейся операции
         repeating_frequency:
           type: integer
           minimum: 1
           nullable: true
           default: null
+          description: Периодичность повторения операции в виде количества отрезков времени, указанных в параметре *repeating_interval*, по истечении которых операция должна повториться (по умолчанию 1)
         repeating_interval:
           type: string
           nullable: true
           default: null
+          description: |
+            Отрезок времени для вычисления периодичности повторения повторяющейся операции
+            + **day**: день
+            + **week**: неделя
+            + **month**: месяц (значение по умолчанию)
+            + **year**: год
           enum:
-            - 'day'
-            - 'week'
-            - 'month'
-            - 'year'
+            - day
+            - week
+            - month
+            - year
         repeating_end_type:
           type: string
           nullable: true
           default: null
+          description: |
+            Длительность повторения повторяющейся операции
+            + **never**: повторять всегда (значение по умолчанию)
+            + **after**: повторять заданное количество раз
+            + **ondate**: повторять до указанной даты
+            Если указано значение '*never*', то, кроме данной операции, будет также создано несколько дополнительных операций в качестве ее повторения — их количество зависит от значения параметра *repeating_interval*:
+            + **day**: операции будут созданы на следующие 3 года
+            + **week**: операции будут созданы на следующие 16 недель
+            + **month**: операции будут созданы на следующие 36 месяцев
+            + **year**: операции будут созданы на следующие 10 лет
           enum:
-            - 'after'
-            - 'ondate'
+            - never
+            - after
+            - ondate
         repeating_end_after:
           type: integer
           nullable: true
           default: null
+          description: Количество повторений для повторяющейся операции, если в параметре *repeating_end_type* указано значение '*after*'
         repeating_end_ondate:
           type: string
           format: date
           nullable: true
           default: null
+          description: Дата окончания повторяющейся операции в формате «гггг-мм-дд»
         transfer_account_id:
           type: integer
           nullable: true
           default: null
+          description: ID счета, с которого нужно выполнить операцию-перевод
         transfer_incoming_amount:
-          type: number
+          type: integer
           nullable: true
           default: null
+          description: ID счета, на который нужно зачислить средства в рамках операции-перевода
         is_onbadge:
           type: boolean
           nullable: true
           default: null
+          description: Флаг, обозначающий незавершенную операцию, которую нужно провести вручную
         is_self_destruct_when_due:
           type: boolean
           nullable: true
           default: null
+          description: Флаг автоматического удаления повторяющейся операции при наступлении ее даты
         external:
           nullable: true
-          allOf:
-            - $ref: '#/components/schemas/TransactionExternalData'
+          $ref: '#/components/schemas/TransactionExternalData'
       required:
         - amount
         - date
@@ -1366,92 +2396,126 @@ components:
         id:
           type: integer
           minimum: 1
+          description: ID операции
         apply_to_all_in_future:
-          type: boolean
-          default: false
-          description: Применяет изменения для всех повторяющихся транзакций в будущем
+          type: integer
+          enum:
+            - 0
+            - 1
+          description: Флаг, требующий применить изменения для всех будущих повторений операции
         amount:
           type: number
           minimum: -1000000000000.0
           maximum: 1000000000000.0
           default: 1312.11
+          description: Сумма операции
         date:
           type: string
           format: date
+          description: Дата операции в формате «гггг-мм-дд»
         account_id:
           type: integer
           minimum: 1
+          description: ID счета
         category_id:
           type: integer
+          description: ID статьи доходов или расходов
         contractor_contact_id:
           type: integer
           minimum: 0
           nullable: true
           default: null
+          description: ID контакта, с которым должна быть связана операция
         contractor:
           type: string
           minLength: 2
           nullable: true
           default: null
+          description: Имя нового контакта, который нужно создать, чтобы связать с ним операцию, если не заполнено значение параметра *contractor_contact_id*
         description:
           type: string
           minLength: 2
           nullable: true
           default: null
+          description: Комментарий к операции
         is_repeating:
           type: boolean
           default: false
           nullable: true
+          description: Признак повторяющейся операции
         repeating_frequency:
           type: integer
           minimum: 1
           nullable: true
           default: null
+          description: Периодичность повторения операции в виде количества отрезков времени, указанных в параметре *repeating_interval*, по истечении которых операция должна повториться (по умолчанию 1)
         repeating_interval:
           type: string
           nullable: true
           default: null
+          description: |
+            Отрезок времени для вычисления периодичности повторения повторяющейся операции
+            + **day**: день
+            + **week**: неделя
+            + **month**: месяц (значение по умолчанию)
+            + **year**: год
           enum:
-            - 'day'
-            - 'week'
-            - 'month'
-            - 'year'
+            - day
+            - week
+            - month
+            - year
         repeating_end_type:
           type: string
           nullable: true
           default: null
+          description: |
+            Длительность повторения повторяющейся операции
+            + **never**: повторять всегда (значение по умолчанию)
+            + **after**: повторять заданное количество раз
+            + **ondate**: повторять до указанной даты
+            Если указано значение '*never*', то, кроме данной операции, будет также создано несколько дополнительных операций в качестве ее повторения — их количество зависит от значения параметра *repeating_interval*:
+            + **day**: операции будут созданы на следующие 3 года
+            + **week**: операции будут созданы на следующие 16 недель
+            + **month**: операции будут созданы на следующие 36 месяцев
+            + **year**: операции будут созданы на следующие 10 лет
           enum:
-            - 'after'
-            - 'ondate'
+            - never
+            - after
+            - ondate
         repeating_end_after:
           type: integer
           nullable: true
           default: null
+          description: Количество повторений для повторяющейся операции, если в параметре *repeating_end_type* указано значение '*after*'
         repeating_end_ondate:
           type: string
           format: date
           nullable: true
           default: null
+          description: Дата окончания повторяющейся операции в формате «гггг-мм-дд»
         transfer_account_id:
           type: integer
           nullable: true
           default: null
+          description: ID счета, с которого нужно выполнить операцию-перевод
         transfer_incoming_amount:
-          type: number
+          type: integer
           nullable: true
           default: null
+          description: ID счета, на который нужно зачислить средства в рамках операции-перевода
         is_onbadge:
           type: boolean
           nullable: true
           default: null
+          description: Флаг, обозначающий незавершенную операцию, которую нужно провести вручную
         is_self_destruct_when_due:
           type: boolean
           nullable: true
           default: null
+          description: Флаг автоматического удаления повторяющейся операции при наступлении ее даты
         external:
           nullable: true
-          allOf:
-            - $ref: '#/components/schemas/TransactionExternalData'
+          $ref: '#/components/schemas/TransactionExternalData'
       required:
         - id
         - apply_to_all_in_future
@@ -1459,38 +2523,62 @@ components:
         - date
         - account_id
         - category_id
+
     TransactionExternalData:
       type: object
+      description: Свойства объекта другого приложения, связанного с операцией
       properties:
         source:
           type: string
+          description: ID приложения
         id:
           type: integer
+          description: Идентификатор объекта
         data:
           type: array
+          description: Данные, связанные с объектом
       required:
           - source
           - id
+
+    BalanceEntryDate:
+      type: object
+      description: Запись баланса для даты
+      properties:
+        date:
+          type: string
+          description: Дата начала периода
+        amount:
+          type: number
+          description: Баланс на начало периода
+        amountShorten:
+          type: string
+          description: Сокращенное обозначение суммы
 
     Error:
       type: object
       properties:
         error:
           type: string
+          description: Тип ошибки
         error_description:
           type: string
+          description: Описание ошибки
         trace:
           type: string
           nullable: true
+          description: Стек выполнения серверного кода
 
     OkAndFailIds:
       type: object
       properties:
         ok:
           type: array
+          description: Массив ID операций, которые были успешно удалены из корзины
           items:
             type: integer
         fail:
           type: array
+          description: Массив ID операций, которые не удалось удалить из корзины
           items:
             type: integer
