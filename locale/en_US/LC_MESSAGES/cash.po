@@ -55,6 +55,9 @@ msgstr ""
 msgid "Expense"
 msgstr ""
 
+msgid "Saldo"
+msgstr ""
+
 msgid "Please be sure to select <b>the right account and the right category type applicable to all selected transactions</b> to avoid wrong currency conversion effects."
 msgstr ""
 
