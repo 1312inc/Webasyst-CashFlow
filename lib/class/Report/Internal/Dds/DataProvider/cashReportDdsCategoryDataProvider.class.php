@@ -152,8 +152,23 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
             $this->categoryRep->findAllIncomeForContact(),
             $this->categoryRep->findAllExpenseForContact()
         );
+
+        $childs_cat = [];
+        /** @var cashCategory $category */
         foreach ($category_contact as $category) {
-            $statData[] = $this->createDdsStatDto($category, $rawData);
+            $parent_id = $category->getCategoryParentId();
+            if ($parent_id) {
+                $childs_cat[$parent_id][] = $this->createDdsStatDto($category, $rawData);
+            }
+        }
+        /** @var cashCategory $category */
+        foreach ($category_contact as $category) {
+            if ($category->getCategoryParentId() === null) {
+                $statData[] = $this->createDdsStatDto($category, $rawData);
+                if (isset($childs_cat[$category->getId()])) {
+                    $statData = array_merge($statData, $childs_cat[$category->getId()]);
+                }
+            }
         }
 
         // transfers income
