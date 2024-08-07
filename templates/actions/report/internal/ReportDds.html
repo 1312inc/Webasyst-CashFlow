@@ -41,11 +41,9 @@
                                 <div class="nowrap align-right{if $smarty.foreach.foreach_month_columns.iteration == 13}black bold{/if} {if $smarty.foreach.foreach_month_columns.iteration == 14} hidden{/if} {if isset($value['month']) && $value['month'] == $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y'}bold{/if} {if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y' ) || $currentPeriod->getValue() > $smarty.now|date_format:'Y')}gray{/if}">
                                     {if !in_array($datum->entity->getId(), [cashReportDdsService::ALL_INCOME_KEY, cashReportDdsService::ALL_EXPENSE_KEY, cashReportDdsService::SALDO_KEY]) && isset($value.currency)}
                                         {if $currenciesTotals[$value.currency]['per_month']|default:0 != 0}
-                                            {$size = 30 * abs($value.per_month/$currenciesTotals[$value.currency]['per_month'])}
-                                        {else}
-                                            {$size = 1}
+                                            {$size = 32 * abs($value.per_month/$currenciesTotals[$value.currency]['per_month'])}
                                         {/if}
-                                        {$size = ($size > 0 && $size < 6) ? 6 : $size}
+                                        {$size = ceil(min(max(2, $size), 32))}
                                         <div class="c-report-dds-dataCircle" style="display:flex;align-items:center;height:34px;">
                                             <div style="margin-left:auto;width:{$size}px;height:{$size}px;border-radius:50%;background-color:{$datum->entity->getColor()};{if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $currentPeriod->getValue() == $smarty.now|date_format:'Y' ) || $currentPeriod->getValue() > $smarty.now|date_format:'Y')}opacity: 0.5;{/if}"></div>
                                         </div>
