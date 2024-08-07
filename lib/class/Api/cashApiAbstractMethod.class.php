@@ -80,7 +80,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
             wa()->getResponse()->setStatus($handlerResult->getStatus());
         } catch (Exception $exception) {
             $this->response = cashApiErrorResponse::fromException($exception);
-            wa()->getResponse()->setStatus($this->response->getStatus());
+            $this->http_status_code = $exception->getCode();
         }
     }
 
@@ -115,6 +115,7 @@ abstract class cashApiAbstractMethod extends waAPIMethod
         try {
             return $this->fromGet($name, $required);
         } catch (waAPIException $exception) {
+            $this->http_status_code = $exception->getCode();
             throw new cashApiMissingParamException($name);
         }
     }
