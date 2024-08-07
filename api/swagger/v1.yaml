@@ -714,6 +714,7 @@ paths:
                   format: uri
                 description:
                   type: string
+                  format: text
                   minLength: 1
                   nullable: true
                   description: Описание
@@ -819,6 +820,7 @@ paths:
                     - -1
                 description:
                   type: string
+                  format: text
                   minLength: 1
                   nullable: true
                   description: Описание
@@ -2303,6 +2305,7 @@ components:
           description: Имя нового контакта, который нужно создать, чтобы связать с ним операцию, если не заполнено значение параметра *contractor_contact_id*
         description:
           type: string
+          format: text
           minLength: 2
           nullable: true
           default: null
@@ -2434,6 +2437,7 @@ components:
           description: Имя нового контакта, который нужно создать, чтобы связать с ним операцию, если не заполнено значение параметра *contractor_contact_id*
         description:
           type: string
+          format: text
           minLength: 2
           nullable: true
           default: null
