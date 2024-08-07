@@ -51,7 +51,7 @@
                                         </div>
                                     {/if}
                                     {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false} {$datum->currencies[$currency]->getSign()}
-                                    {if in_array($datum->entity->getId(), [cashReportDdsService::ALL_INCOME_KEY, cashReportDdsService::ALL_EXPENSE_KEY]) && ifset($value, 'imaginary', false)}
+                                    {if in_array($datum->entity->getId(), [cashReportDdsService::ALL_INCOME_KEY, cashReportDdsService::ALL_EXPENSE_KEY, cashReportDdsService::SALDO_KEY]) && ifset($value, 'imaginary', false)}
                                         <br><span class="hint">[`only checking`]</span>
                                     {/if}
                                 </div>
