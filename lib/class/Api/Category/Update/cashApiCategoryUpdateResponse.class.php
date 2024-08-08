@@ -12,7 +12,7 @@ class cashApiCategoryUpdateResponse extends cashApiAbstractResponse
      */
     public function __construct(cashApiCategoryResponseDto $account)
     {
-        parent::__construct(201);
+        parent::__construct(200);
 
         $this->response = $account;
     }

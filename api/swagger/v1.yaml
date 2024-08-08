@@ -829,7 +829,7 @@ paths:
                 - name
                 - currency
       responses:
-        201:
+        200:
           description: Свойства счета.
           content:
             application/json:
@@ -1190,7 +1190,7 @@ paths:
                 - parent_category_id
                 - glyph
       responses:
-        201:
+        200:
           description: Свойства обновленной статьи.
           content:
             application/json:
