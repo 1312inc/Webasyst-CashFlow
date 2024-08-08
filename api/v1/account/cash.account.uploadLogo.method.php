@@ -15,7 +15,9 @@ class cashAccountUploadLogoMethod extends cashApiAbstractMethod
     public function run(): cashApiResponseInterface
     {
         $file = waRequest::file('logo');
-        if (!$file->uploaded()) {
+        if ($file->count() === 0) {
+            return new cashApiErrorResponse('invalid_param', 'Required parameter is missing: logo');
+        } elseif (!$file->uploaded()) {
             return new cashApiErrorResponse(sprintf('File upload error: %s %s.', $file->error_code, $file->error));
         }
 
