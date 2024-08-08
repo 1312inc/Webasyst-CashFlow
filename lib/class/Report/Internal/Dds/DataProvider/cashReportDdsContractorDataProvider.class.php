@@ -33,6 +33,7 @@ from cash_transaction ct
          join cash_account ca on ct.account_id = ca.id
          join cash_category cc on ct.category_id = cc.id
 where ct.date between s:start and s:end
+  AND ct.category_id <> -1312
   and ca.is_archived = 0
   and ct.is_archived = 0
   and ct.contractor_contact_id is not null

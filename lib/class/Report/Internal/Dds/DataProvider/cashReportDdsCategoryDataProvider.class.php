@@ -35,6 +35,7 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
             JOIN cash_account ca ON ct.account_id = ca.id
             JOIN cash_category cc ON ct.category_id = cc.id
             WHERE ct.date >= s:start AND ct.date < s:end
+                AND ct.category_id <> -1312
                 AND ca.is_archived = 0
                 AND ct.is_archived = 0
             GROUP BY id, ca.currency, MONTH(ct.date), ca.is_imaginary
