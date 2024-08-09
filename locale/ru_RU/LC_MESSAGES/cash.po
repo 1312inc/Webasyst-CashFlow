@@ -55,6 +55,9 @@ msgstr "Доходы"
 msgid "Expense"
 msgstr "Расход"
 
+msgid "Saldo"
+msgstr "Сальдо"
+
 msgid "Please be sure to select <b>the right account and the right category type applicable to all selected transactions</b> to avoid wrong currency conversion effects."
 msgstr "Пожалуйста, выберите <b>правильный счет и правильную статью для всех выбранных операций</b>, чтобы избежать возможных ошибок при конвертации валют."
 
@@ -1253,3 +1256,9 @@ msgstr "Рекомендуем использовать виртуальные �
 
 msgid "What is a virtual account?"
 msgstr "Что такое виртуальный счет?"
+
+msgid "Sandbox accounts are not displayed in the cash flow report."
+msgstr "Счета-песочницы в общем отчете о ДДС не фигурируют."
+
+msgid "only checking"
+msgstr "только р/с"

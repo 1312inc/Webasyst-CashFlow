@@ -57,6 +57,7 @@ class cashCsvImportProcessInfoDto implements JsonSerializable
     /**
      * @inheritDoc
      */
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [

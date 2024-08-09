@@ -18,10 +18,15 @@ final class cashReportDdsStatDto
     public $currencies = [];
 
     /**
+     * @var bool
+     */
+    public $is_imaginary = false;
+
+    /**
      * cashReportDdsServiceStatDto constructor.
      *
      * @param cashReportDdsEntity $entity
-     * @param array               $valuesPerPeriods
+     * @param array $valuesPerPeriods
      */
     public function __construct(cashReportDdsEntity $entity, array $valuesPerPeriods)
     {
@@ -33,6 +38,7 @@ final class cashReportDdsStatDto
                 if (!isset($this->currencies[$currency])) {
                     $this->currencies[$currency] = cashCurrencyVO::fromWaCurrency($currency);
                 }
+                $this->is_imaginary = $this->is_imaginary || ((int) ifset($valuesPerPeriod, $currency, 'imaginary', 0) === -1);
             }
         }
     }

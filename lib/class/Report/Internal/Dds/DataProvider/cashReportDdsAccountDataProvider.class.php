@@ -34,6 +34,7 @@ final class cashReportDdsAccountDataProvider implements cashReportDdsDataProvide
                      join cash_account ca on ct.account_id = ca.id
                      join cash_category cc on ct.category_id = cc.id
             where ct.date >= s:start and ct.date < s:end
+              AND ct.category_id <> -1312
               and ca.is_archived = 0
               and ct.is_archived = 0
             group by cc.type, ct.account_id, ca.currency, MONTH(ct.date)",
@@ -99,59 +100,112 @@ final class cashReportDdsAccountDataProvider implements cashReportDdsDataProvide
             $rawData[$catType][$categoryTypeKey]['total'][$currency]['per_month'] += (float) $perMonth;
         }
 
-        $statDataIncome = $statDataExpense = [];
-
-
-//        $accounts = array_reduce(
-//            $this->accountRep->findAllActive(),
-//            function ($accounts, cashAccount $account) {
-//                $accounts[$account->getId()] = $account;
-//
-//                return $accounts;
-//            },
-//            []
-//        );
+        $statDataIncome = [];
+        $statDataExpense = [];
+        $stat_data_saldo = [];
 
         $statDataIncome[] = new cashReportDdsStatDto(
-            new cashReportDdsEntity(_w('All income'), cashReportDdsService::ALL_INCOME_KEY, false, true, '', true),
+            new cashReportDdsEntity(
+                _w('All income'),
+                cashReportDdsService::ALL_INCOME_KEY,
+                false,
+                true,
+                false,
+                '',
+                true
+            ),
             $rawData[cashCategory::TYPE_INCOME][cashReportDdsService::ALL_INCOME_KEY] ?? []
         );
         $statDataExpense[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(
-                _w('All expenses'), cashReportDdsService::ALL_EXPENSE_KEY, true, false, '', true
+                _w('All expenses'),
+                cashReportDdsService::ALL_EXPENSE_KEY,
+                true,
+                false,
+                false,
+                '',
+                true
             ),
             $rawData[cashCategory::TYPE_EXPENSE][cashReportDdsService::ALL_EXPENSE_KEY] ?? []
         );
 
+        $stat_data_saldo[] = new cashReportDdsStatDto(
+            new cashReportDdsEntity(
+                _w('Saldo'),
+                cashReportDdsService::SALDO_KEY,
+                false,
+                false,
+                true,
+                '',
+                true
+            ),
+            $this->getSaldo(
+                $rawData[cashCategory::TYPE_INCOME][cashReportDdsService::ALL_INCOME_KEY] ?? [],
+                $rawData[cashCategory::TYPE_EXPENSE][cashReportDdsService::ALL_EXPENSE_KEY] ?? []
+            )
+        );
+
         foreach ($this->accountRep->findAllActiveForContact() as $account) {
-            $data = $rawData[cashCategory::TYPE_INCOME][$account->getId()] ?? [];
-            if ($data) {
+            $inc_data = $rawData[cashCategory::TYPE_INCOME][$account->getId()] ?? [];
+            if ($inc_data) {
                 $statDataIncome[] = new cashReportDdsStatDto(
                     new cashReportDdsEntity(
                         $account->getName(),
                         $account->getId(),
                         false,
                         true,
+                        false,
                         $account->getIconHtml()
                     ),
-                    $data
+                    $inc_data
                 );
             }
-            $data = $rawData[cashCategory::TYPE_EXPENSE][$account->getId()] ?? [];
-            if ($data) {
+            $exp_data = $rawData[cashCategory::TYPE_EXPENSE][$account->getId()] ?? [];
+            if ($exp_data) {
                 $statDataExpense[] = new cashReportDdsStatDto(
                     new cashReportDdsEntity(
                         $account->getName(),
                         $account->getId(),
                         true,
                         false,
+                        false,
                         $account->getIconHtml()
                     ),
-                    $data
+                    $exp_data
+                );
+            }
+            if ($inc_data || $exp_data) {
+                $stat_data_saldo[] = new cashReportDdsStatDto(
+                    new cashReportDdsEntity(
+                        $account->getName(),
+                        $account->getId(),
+                        false,
+                        false,
+                        true,
+                        $account->getIconHtml()
+                    ),
+                    $this->getSaldo($inc_data, $exp_data)
                 );
             }
         }
 
-        return array_merge($statDataIncome, $statDataExpense) ?: [];
+        return array_merge($statDataIncome, $statDataExpense, $stat_data_saldo) ?: [];
+    }
+
+    private function getSaldo($inc_data, $exp_data)
+    {
+        $saldo_data = [];
+        $keys = array_keys($inc_data + $exp_data);
+        foreach ($keys as $_key) {
+            $currency_keys = array_keys(ifset($inc_data, $_key, []) + ifset($exp_data, $_key, []));
+            foreach ($currency_keys as $_currency) {
+                $saldo_data[$_key][$_currency] = [
+                    'type' => cashReportDdsService::SALDO_KEY,
+                    'per_month' => ifempty($inc_data, $_key, $_currency, 'per_month', 0) + ifempty($exp_data, $_key, $_currency, 'per_month', 0)
+                ] + ifempty($inc_data, $_key, $_currency, []) + ifempty($exp_data, $_key, $_currency, []);
+            }
+        }
+
+        return $saldo_data;
     }
 }

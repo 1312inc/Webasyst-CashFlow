@@ -6,6 +6,7 @@ if (!defined('TINKOFF_FILE_LOG')) {
 
 class cashTinkoffPlugin extends cashBusinessPlugin
 {
+    const DELTA_LAG_HOURS = 72; // 3 day
     const DEFAULT_UPDATE_TIMEOUT = 60; // min
     const LIMIT_STATEMENTS = 5000;
     const DEFAULT_START_DATE = '2006-01-01 00:00:00';

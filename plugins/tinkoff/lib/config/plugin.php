@@ -4,7 +4,7 @@ return array(
     'name' => 'Т-Бизнес',
     'description' => 'Импорт операций из Т-Бизнеса',
     'img' => 'img/tinkoff.svg',
-    'version' => '1.0.0',
+    'version' => '1.0.1',
     'vendor'  => '1021997',
     'import_api' => true,
     'handlers' => [

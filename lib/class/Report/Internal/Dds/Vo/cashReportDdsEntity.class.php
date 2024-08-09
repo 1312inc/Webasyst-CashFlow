@@ -33,6 +33,11 @@ final class cashReportDdsEntity
     private $income = false;
 
     /**
+     * @var bool
+     */
+    private $saldo = false;
+
+    /**
      * @var null|string
      */
     private $color;
@@ -47,6 +52,7 @@ final class cashReportDdsEntity
         string $id,
         bool $expense = false,
         bool $income = false,
+        bool $saldo = false,
         string $icon = '',
         bool $isHeader = false,
         ?string $color = null,
@@ -58,6 +64,7 @@ final class cashReportDdsEntity
         $this->isHeader = $isHeader;
         $this->expense = $expense;
         $this->income = $income;
+        $this->saldo = $saldo;
         $this->color = $color;
         $this->isChild = $isChild;
     }
@@ -90,6 +97,11 @@ final class cashReportDdsEntity
     public function isIncome(): bool
     {
         return $this->income;
+    }
+
+    public function isSaldo(): bool
+    {
+        return $this->saldo;
     }
 
     public function getColor(): ?string

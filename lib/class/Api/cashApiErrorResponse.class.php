@@ -37,6 +37,7 @@ class cashApiErrorResponse implements cashApiResponseInterface, JsonSerializable
         return $response;
     }
 
+    #[ReturnTypeWillChange]
     public function jsonSerialize(): array
     {
         $data = [

@@ -35,6 +35,7 @@ class cashReportDdsPieDto implements JsonSerializable
     /**
      * @return mixed|void
      */
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $data = [

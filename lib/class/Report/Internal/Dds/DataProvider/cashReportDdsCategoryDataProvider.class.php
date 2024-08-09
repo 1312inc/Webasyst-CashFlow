@@ -29,31 +29,25 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
      */
     public function getDataForPeriod(cashReportPeriod $period): array
     {
-        $sql = sprintf(
-            "select concat(ct.category_id, '|', if(ct.amount < 0, '%s', '%s')) id,
-           ca.currency currency,
-           MONTH(ct.date) month,
-           sum(ct.amount) per_month
-    from cash_transaction ct
-             join cash_account ca on ct.account_id = ca.id
-             join cash_category cc on ct.category_id = cc.id
-    where ct.date >= s:start and ct.date < s:end
-      and ca.is_archived = 0
-      and ct.is_archived = 0
-    group by id, ca.currency, MONTH(ct.date)",
-            cashCategory::TYPE_EXPENSE,
-            cashCategory::TYPE_INCOME
-        );
-
-        $data = $this->transactionModel->query(
-            $sql,
-            [
-                'start' => $period->getStart()->format('Y-m-d'),
-                'end' => $period->getEnd()->format('Y-m-d'),
-            ]
-        )->fetchAll();
+        $data = $this->transactionModel->query("
+            SELECT CONCAT(ct.category_id, '|', if(ct.amount < 0, s:cat_ex, s:cat_in)) id, ca.currency currency, MONTH(ct.date) month, SUM(ct.amount) per_month, ca.is_imaginary
+            FROM cash_transaction ct
+            JOIN cash_account ca ON ct.account_id = ca.id
+            JOIN cash_category cc ON ct.category_id = cc.id
+            WHERE ct.date >= s:start AND ct.date < s:end
+                AND ct.category_id <> -1312
+                AND ca.is_archived = 0
+                AND ct.is_archived = 0
+            GROUP BY id, ca.currency, MONTH(ct.date), ca.is_imaginary
+        ", [
+            'cat_ex' => cashCategory::TYPE_EXPENSE,
+            'cat_in' => cashCategory::TYPE_INCOME,
+            'start'  => $period->getStart()->format('Y-m-d'),
+            'end'    => $period->getEnd()->format('Y-m-d'),
+        ])->fetchAll();
 
         $rawData = [];
+        $current_month = (int) date('n');
         $categoriesWithChild = cash()->getModel(cashCategory::class)->getChildIdsWithParentIds();
 
         foreach ($data as $datum) {
@@ -80,7 +74,14 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
             }
 
             // "Все доходы": просто тип - income/expense
-            $this->calculateAmount($rawData[$type], $datum);
+            if (
+                0 === (int) $datum['is_imaginary']
+                || 1 === (int) $datum['is_imaginary'] && $datum['month'] > $current_month
+            ) {
+                $this->calculateAmount($rawData[$type], $datum);
+            } else {
+                $rawData[$type][$datum['month']][$datum['currency']]['imaginary'] = (int) $datum['is_imaginary'];
+            }
             $rawData[$type][$datum['month']][$datum['currency']]['max'] = max(
                 abs((float) $datum['per_month']),
                 abs($rawData[$type][$datum['month']][$datum['currency']]['max'])
@@ -88,28 +89,97 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
         }
 
         $statData = [];
-
         $transferCategory = $this->categoryRep->findTransferCategory();
 
         // incomes
         // total
         $statData[] = new cashReportDdsStatDto(
-            new cashReportDdsEntity(_w('All income'), cashReportDdsService::ALL_INCOME_KEY, false, true, '', true),
+            new cashReportDdsEntity(
+                _w('All income'),
+                cashReportDdsService::ALL_INCOME_KEY,
+                false,
+                true,
+                false,
+                '',
+                true
+            ),
             $rawData[cashCategory::TYPE_INCOME] ?? []
         );
 
-        // usual categories
-        foreach ($this->categoryRep->findAllIncomeForContact() as $category) {
-            $statData[] = $this->createDdsStatDto($category, $rawData);
+        // expenses
+        // total
+        $statData[] = new cashReportDdsStatDto(
+            new cashReportDdsEntity(
+                _w('All expenses'),
+                cashReportDdsService::ALL_EXPENSE_KEY,
+                true,
+                false,
+                false,
+                '',
+                true
+            ),
+            $rawData[cashCategory::TYPE_EXPENSE] ?? []
+        );
+
+        $saldos = [];
+        $keys = array_keys(ifempty($rawData, cashCategory::TYPE_INCOME, []) + ifempty($rawData, cashCategory::TYPE_EXPENSE, []));
+        foreach ($keys as $_key) {
+            $currency_keys = array_keys($rawData[cashCategory::TYPE_INCOME][$_key] + $rawData[cashCategory::TYPE_EXPENSE][$_key]);
+            foreach ($currency_keys as $_currency) {
+                $saldos[$_key][$_currency] = [
+                    'id' => cashReportDdsService::SALDO_KEY,
+                    'max' => 0,
+                    'per_month' => ifempty($rawData, cashCategory::TYPE_INCOME, $_key, $_currency, 'per_month', 0) + ifempty($rawData, cashCategory::TYPE_EXPENSE, $_key, $_currency, 'per_month', 0)
+                ] + ifempty($rawData, cashCategory::TYPE_INCOME, $_key, $_currency, []) + ifempty($rawData, cashCategory::TYPE_EXPENSE, $_key, $_currency, []);
+            }
         }
 
-        // transfers
+        // saldo
+        $statData[] = new cashReportDdsStatDto(
+            new cashReportDdsEntity(
+                _w('Saldo'),
+                cashReportDdsService::SALDO_KEY,
+                false,
+                false,
+                true,
+                '',
+                true
+            ),
+            $saldos
+        );
+
+        // usual categories
+        $category_contact = array_merge(
+            $this->categoryRep->findAllIncomeForContact(),
+            $this->categoryRep->findAllExpenseForContact()
+        );
+
+        $childs_cat = [];
+        /** @var cashCategory $category */
+        foreach ($category_contact as $category) {
+            $parent_id = $category->getCategoryParentId();
+            if ($parent_id) {
+                $childs_cat[$parent_id][] = $this->createDdsStatDto($category, $rawData);
+            }
+        }
+        /** @var cashCategory $category */
+        foreach ($category_contact as $category) {
+            if ($category->getCategoryParentId() === null) {
+                $statData[] = $this->createDdsStatDto($category, $rawData);
+                if (isset($childs_cat[$category->getId()])) {
+                    $statData = array_merge($statData, $childs_cat[$category->getId()]);
+                }
+            }
+        }
+
+        // transfers income
         $statData[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(
                 $transferCategory->getName(),
                 $transferCategory->getId(),
                 false,
                 true,
+                false,
                 sprintf('<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
                 false,
                 $transferCategory->getColor()
@@ -117,25 +187,13 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
             $rawData[sprintf('%s|%s', $transferCategory->getId(), cashCategory::TYPE_INCOME)] ?? []
         );
 
-        // expenses
-
-        // total
-        $statData[] = new cashReportDdsStatDto(
-            new cashReportDdsEntity(_w('All expenses'), cashReportDdsService::ALL_EXPENSE_KEY, true, false, '', true),
-            $rawData[cashCategory::TYPE_EXPENSE] ?? []
-        );
-
-        // usual categories
-        foreach ($this->categoryRep->findAllExpenseForContact() as $category) {
-            $statData[] = $this->createDdsStatDto($category, $rawData);
-        }
-
-        // transfers
+        // transfers expense
         $statData[] = new cashReportDdsStatDto(
             new cashReportDdsEntity(
                 $transferCategory->getName(),
                 $transferCategory->getId(),
                 true,
+                false,
                 false,
                 sprintf('<i class="icon rounded" style="background-color: %s"></i>', $transferCategory->getColor()),
                 false,
@@ -165,6 +223,7 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
                 $category->getId(),
                 $category->isExpense(),
                 $category->isIncome(),
+                false,
                 $category->getGlyph()
                     ? sprintf('<i class="fas %s" style="color: %s"></i>', $category->getGlyph(), $category->getColor())
                     : sprintf('<i class="icon rounded" style="background-color: %s"></i>', $category->getColor()),

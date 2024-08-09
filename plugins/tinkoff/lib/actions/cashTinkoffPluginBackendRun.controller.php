@@ -52,13 +52,15 @@ class cashTinkoffPluginBackendRunController extends waLongActionController
 
         if (!empty($profile['update_time'])) {
             $this->data['update_time'] = $profile['update_time'];
-            $from_date = (new DateTime(date('Y-m-d H:i:s', $profile['update_time'])))->format('c');
+            $from_date = (new DateTime(date('Y-m-d H:i:s', $profile['update_time'])));
+            $interval = DateInterval::createFromDateString(cashTinkoffPlugin::DELTA_LAG_HOURS.' hours');
+            $from_date->sub($interval);
         } elseif ($this->data['import_period'] === 'all') {
-            $from_date = (new DateTime(date('Y-m-d', strtotime(cashTinkoffPlugin::DEFAULT_START_DATE))))->format('c');
+            $from_date = (new DateTime(date('Y-m-d', strtotime(cashTinkoffPlugin::DEFAULT_START_DATE))));
         } else {
-            $from_date = (new DateTime(date('Y-m-d', strtotime($this->data['import_period']))))->format('c');
+            $from_date = (new DateTime(date('Y-m-d', strtotime($this->data['import_period']))));
         }
-        $this->data['from_date'] = $from_date;
+        $this->data['from_date'] = $from_date->format('c');
         $this->data['to_date'] = (new DateTime(date('Y-m-d H:i:s', strtotime('tomorrow'))))->format('c');
 
         $raw_data = $this->getStatementsData(null);

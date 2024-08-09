@@ -33,6 +33,7 @@ from cash_transaction ct
          join cash_account ca on ct.account_id = ca.id
          join cash_category cc on ct.category_id = cc.id
 where ct.date between s:start and s:end
+  AND ct.category_id <> -1312
   and ca.is_archived = 0
   and ct.is_archived = 0
   and ct.contractor_contact_id is not null
@@ -94,21 +95,19 @@ SQL;
             }
         }
 
-//        $accounts = array_reduce(
-//            $this->accountRep->findAllActive(),
-//            function ($accounts, cashAccount $account) {
-//                $accounts[$account->getId()] = $account;
-//
-//                return $accounts;
-//            },
-//            []
-//        );
-
         $statData = [];
         if ($expenseExists) {
             $statData[cashCategory::TYPE_EXPENSE] = [
                 new cashReportDdsStatDto(
-                    new cashReportDdsEntity(_w('All expenses'), cashReportDdsService::ALL_EXPENSE_KEY, true, false, '', true),
+                    new cashReportDdsEntity(
+                        _w('All expenses'),
+                        cashReportDdsService::ALL_EXPENSE_KEY,
+                        true,
+                        false,
+                        false,
+                        '',
+                        true
+                    ),
                     $rawData[cashCategory::TYPE_EXPENSE][cashReportDdsService::ALL_EXPENSE_KEY] ?? []
                 ),
             ];
@@ -116,7 +115,15 @@ SQL;
         if ($incomeExists) {
             $statData[cashCategory::TYPE_INCOME] = [
                 new cashReportDdsStatDto(
-                    new cashReportDdsEntity(_w('All income'), cashReportDdsService::ALL_INCOME_KEY, false, true, '', true),
+                    new cashReportDdsEntity(
+                        _w('All income'),
+                        cashReportDdsService::ALL_INCOME_KEY,
+                        false,
+                        true,
+                        false,
+                        '',
+                        true
+                    ),
                     $rawData[cashCategory::TYPE_INCOME][cashReportDdsService::ALL_INCOME_KEY] ?? []
                 ),
             ];
@@ -135,6 +142,7 @@ SQL;
                         $contact->getId(),
                         $type === cashCategory::TYPE_EXPENSE,
                         $type === cashCategory::TYPE_INCOME,
+                        false,
                         sprintf(
                             wa()->whichUI() == '1.3' ? '<i class="icon16 userpic20" style="background-image: url(%s);"></i>' : '<i class="icon userpic" style="background-image: url(%s);"></i>',
                             $contact->getPhoto(20)
@@ -147,6 +155,7 @@ SQL;
                         $id,
                         $type === cashCategory::TYPE_EXPENSE,
                         $type === cashCategory::TYPE_INCOME,
+                        false,
                         sprintf(
                             wa()->whichUI() == '1.3' ? '<i class="icon16 userpic20" style="background-image: url(%s);"></i>' : '<i class="icon userpic" style="background-image: url(%s);"></i>',
                             wa()->getRootUrl() . 'wa-content/img/userpic20.jpg'

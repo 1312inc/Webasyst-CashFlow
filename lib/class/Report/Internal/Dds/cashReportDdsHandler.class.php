@@ -52,6 +52,7 @@ final class cashReportDdsHandler implements cashReportHandlerInterface
                 'data' => $data,
                 'grouping' => $currentPeriod->getGrouping(),
                 'chartData' => json_encode($chartData, JSON_UNESCAPED_UNICODE),
+                'is_imaginary' => in_array(true, array_unique(array_column($data, 'is_imaginary')), true)
             ],
             true
         );
