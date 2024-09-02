@@ -1220,3 +1220,6 @@ msgstr ""
 
 msgid "Plugins"
 msgstr ""
+
+msgid "Cash POS"
+msgstr ""
