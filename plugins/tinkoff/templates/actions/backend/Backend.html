@@ -38,7 +38,7 @@
 
         {include 'templates/actions/import/ImportTab.html'}
 
-        <p>[`Импорт операций по счету в Т-Бизнесе для юридических лиц (ООО, ИП) по <a href="https://www.tbank.ru/business/open-api/">API</a>.`]</p>
+        <p>[`Автоматизированный импорт операций из Т-Бизнеса для юридических лиц (ООО, ИП) по <a href="https://www.tbank.ru/business/open-api/">API</a>.`]</p>
 
         {if $profile && count($profile.imports)}
         <div>
@@ -99,7 +99,7 @@
 
                     {if empty($profiles)}
 
-                        <button class="button green custom-mb-4 js-tinkoff-connect" type="button">[`Подключить Т-Бизнес API`]</button>
+                        <button class="button green custom-mb-4 js-tinkoff-connect" type="button">[`Войти в Т-Банк и включить импорт`]</button>
                         <p class="small">
                             или <a href="javascript:void(0);" class="js-on-self-mode">[`получить и ввести токен API самостоятельно (режим H2H)`]</a>
                             <span class="gray"> —

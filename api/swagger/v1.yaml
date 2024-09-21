@@ -1458,10 +1458,11 @@ paths:
             minimum: 1
         - in: query
           name: limit
-          description: Максимальное количество контактов, которое нужно получить (не больше 30, по умолчанию 5)
+          description: Максимальное количество контактов, которое нужно получить
           required: false
           schema:
             type: integer
+            default: 5
             maximum: 30
       responses:
         200:
@@ -1490,19 +1491,21 @@ paths:
       parameters:
         - in: query
           name: offset
-          description: Смещение относительно общего списка найденных контактов (по умолчанию 0)
+          description: Смещение относительно общего списка найденных контактов
           required: false
           schema:
             type: integer
             minimum: 0
+            default: 0
         - in: query
           name: limit
-          description: Максимальное количество контактов, которое нужно получить (по умолчанию 30)
+          description: Максимальное количество контактов, которое нужно получить
           required: false
           schema:
             type: integer
             minimum: 1
             maximum: 30
+            default: 30
       responses:
         200:
           description: Информация о найденных контактах.
