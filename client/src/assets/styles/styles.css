@@ -216,9 +216,6 @@ body.modal {
 .c-inline-calendar .flatpickr-calendar { box-shadow: none; margin: -0.25rem; }
 
 @media screen and (min-width: 761px) {
-  .sidebar {
-    z-index: 9999;
-  }
   .sidebar-body,
   .sidebar-footer {
     max-height: initial !important;
