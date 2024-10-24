@@ -188,7 +188,7 @@ class cashTinkoffPlugin extends cashBusinessPlugin
             $get_params += [
                 'operationStatus' => 'Transaction',
                 'accountNumber'   => $this->account_number,
-                'withBalances'    => (is_null($cursor) ? 'true' : '')
+                'withBalances'    => (is_null($cursor) ? 'true' : 'false')
             ];
             return $this->apiQuery(self::API_URL.'v1/statement?'.http_build_query($get_params));
         }
