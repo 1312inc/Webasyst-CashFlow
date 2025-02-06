@@ -165,7 +165,7 @@
     </div>
 </div>
 
-{if $wa->installer && $review_widget}
+{if $wa->installer && method_exists($wa->installer, 'reviewWidget') && $review_widget}
     {$wa->installer->reviewWidget('plugin/cash/tinkoff')}
 {/if}
 
