@@ -9,6 +9,7 @@ const draggableRef = ref()
 
 const category = computed(() => store.getters['category/getById'](props.transaction.category_id))
 const currency = computed(() => store.getters['account/getById'](props.transaction.account_id)?.currency)
+const isOverdue = computed(() => new Date(props.transaction.date) < new Date() && props.transaction.is_onbadge)
 
 onMounted(() => {
   handleOnTransactionDragStart()
@@ -40,6 +41,9 @@ function onClick () {
         ref="draggableRef"
         :style="`color: ${category.color}`"
         class="icg-row align-left nowrap"
+        :class="{
+          'icg-row--overdue': isOverdue
+        }"
         draggable="true"
         @click.prevent.stop="() => { if (!$helper.isTabletMediaQuery()) { onClick() } }"
       >
@@ -58,6 +62,11 @@ function onClick () {
           class="icon size-12 baseline"
         >
           <i
+            v-if="isOverdue"
+            class="fas fa-exclamation-triangle text-red"
+          />
+          <i
+            v-else
             class="rounded"
             :style="`background-color: ${category.color};`"
           />
