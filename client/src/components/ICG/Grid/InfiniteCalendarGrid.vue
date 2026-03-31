@@ -47,9 +47,10 @@ const itemsMap = computed(() => {
 })
 
 watch(daysInCalendar, () => {
+  const middleDays = daysInCalendar.value.slice(42, 84)
   emit('changeInterval', {
-    start: daysInCalendar.value[0].timestamp,
-    end: daysInCalendar.value[daysInCalendar.value.length - 1].timestamp
+    start: middleDays[0].timestamp,
+    end: middleDays[middleDays.length - 1].timestamp
   })
 }, {
   immediate: true
