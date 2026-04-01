@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <Fragment>
     <nav class="sidebar-mobile-toggle">
@@ -18,6 +19,14 @@
       ref="sidebarBody"
       class="sidebar-body hide-scrollbar"
     >
+      <div
+        class="custom-m-16"
+        style="position: sticky; top: 0; z-index: 999999;"
+      >
+        <CircleButtonsStack
+          @click="onCircleButtonsClick"
+        />
+      </div>
       <SearchField />
       <Bricks />
 
@@ -97,6 +106,7 @@ import SidebarCurrencyWidgets from './SidebarCurrencyWidgets'
 import ContactsList from '@/components/ContactsList/ContactsList'
 import Toggler from '@/components/Toggler/Toggler'
 import Bricks from '@/components/Bricks/Bricks'
+import CircleButtonsStack from '@/components/Buttons/CircleButtonsStack'
 
 export default {
   components: {
@@ -109,7 +119,8 @@ export default {
     SidebarCurrencyWidgets,
     Bricks,
     ContactsList,
-    Toggler
+    Toggler,
+    CircleButtonsStack
   },
 
   data () {
@@ -140,6 +151,11 @@ export default {
   },
 
   methods: {
+    onCircleButtonsClick (type) {
+      this.$eventBus.emit('openAddTransactionModal', {
+        type
+      })
+    },
     menuOpen () {
       ['Body', 'Footer'].forEach(h => {
         this.$refs[`sidebar${h}`].style['max-height'] =

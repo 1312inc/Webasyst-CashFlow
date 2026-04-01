@@ -16,7 +16,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "microtip/microtip";
 .button {
   width: 42px;
   height: 42px;
