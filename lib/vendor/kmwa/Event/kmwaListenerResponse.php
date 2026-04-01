@@ -18,6 +18,7 @@ class kmwaListenerResponse implements kmwaListenerResponseInterface
     /**
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function current()
     {
         return current($this->responses);
@@ -26,6 +27,7 @@ class kmwaListenerResponse implements kmwaListenerResponseInterface
     /**
      * @return mixed|void
      */
+    #[ReturnTypeWillChange]
     public function next()
     {
         return next($this->responses);
@@ -34,6 +36,7 @@ class kmwaListenerResponse implements kmwaListenerResponseInterface
     /**
      * @return int|mixed|string|null
      */
+    #[ReturnTypeWillChange]
     public function key()
     {
         return key($this->responses);
@@ -42,11 +45,13 @@ class kmwaListenerResponse implements kmwaListenerResponseInterface
     /**
      * @return bool
      */
+    #[ReturnTypeWillChange]
     public function valid()
     {
         return $this->current() !== false;
     }
 
+    #[ReturnTypeWillChange]
     public function rewind()
     {
         reset($this->responses);
@@ -55,6 +60,7 @@ class kmwaListenerResponse implements kmwaListenerResponseInterface
     /**
      * @return int
      */
+    #[ReturnTypeWillChange]
     public function count()
     {
         return count($this->responses);
