@@ -3,13 +3,28 @@ import { onMounted, ref } from 'vue'
 import { locale } from '@/plugins/locale'
 import { emitter } from '@/plugins/eventBus'
 import InfiniteCalendarGridDaySlotItem from './InfiniteCalendarGridDaySlotItem.vue'
+import InfiniteCalendarGridDaySlotItemSummary from './InfiniteCalendarGridDaySlotItemSummary.vue'
 import dayjs from 'dayjs'
 import { useRouter } from 'vue-router/composables'
 import { moment } from '@/plugins/numeralMoment.js'
 import store from '@/store'
 import { appState } from '@/utils/appState'
 
-const props = defineProps(['date', 'data'])
+const props = defineProps({
+  date: {
+    type: [String, Date],
+    default: ''
+  },
+  data: {
+    type: Array,
+    default: () => []
+  },
+  mode: {
+    type: String,
+    default: 'summary'
+  }
+})
+
 const router = useRouter()
 const dayRef = ref()
 
@@ -80,11 +95,20 @@ function onClick () {
       {{ date.getDate() }} <span v-if="date.getDate() === 1">{{ getMonthShort(date) }}</span>
     </div>
     <div class="small">
-      <InfiniteCalendarGridDaySlotItem
-        v-for="transaction in props.data"
-        :key="transaction.id"
-        :transaction="transaction"
-      />
+      <template v-if="props.mode === 'operations'">
+        <InfiniteCalendarGridDaySlotItem
+          v-for="transaction in props.data"
+          :key="transaction.id"
+          :transaction="transaction"
+        />
+      </template>
+      <template v-else-if="props.mode === 'summary'">
+        <InfiniteCalendarGridDaySlotItemSummary
+          v-for="summary in props.data"
+          :key="summary.date"
+          :summary="summary"
+        />
+      </template>
     </div>
   </div>
 </template>

@@ -13,13 +13,14 @@ const props = withDefaults(defineProps<{
   todayLabel?: string;
   items: Record<string, unknown>[];
   fieldWithDate: string;
+  mode: string;
 }>(), {
   firstDayOfWeek: 0,
   locale: 'en-US',
   todayLabel: 'Today'
 })
 
-const emit = defineEmits(['changeInterval'])
+const emit = defineEmits(['changeInterval', 'changeMode'])
 
 const wrapperRef = ref<HTMLElement | null>(null)
 const containerRef = ref<HTMLElement | null>(null)
@@ -64,6 +65,12 @@ watch(daysInCalendar, () => {
       <div class="icg-month">
         {{ activeMonth.toDate().toLocaleDateString(props.locale, { year: 'numeric', month: 'long' }).replace('г.', "") }}
       </div>
+      
+      <div class="toggle">
+        <span @click="emit('changeMode', 'summary')" :class="{'selected': props.mode === 'summary'}">Итого</span>
+        <span @click="emit('changeMode', 'operations')" :class="{'selected': props.mode === 'operations'}">Операции</span>
+      </div>
+
       <div class="icg-controls">
         <button @click="activeMonth = activeMonth.add(-1, 'M')">
           <svg

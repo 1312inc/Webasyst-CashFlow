@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <InfiniteCalendarGrid
     :first-day-of-week="1"
@@ -5,12 +6,15 @@
     :today-label="$t('today')"
     :items="dataDays"
     field-with-date="date"
+    :mode="mode"
     @changeInterval="handleMonthChange"
+    @changeMode="handleChangeMode"
   >
     <template #default="{ date, items }">
       <InfiniteCalendarGridDaySlot
         :date="new Date(date.timestamp)"
         :data="items"
+        :mode="mode"
       />
     </template>
   </InfiniteCalendarGrid>
@@ -25,10 +29,16 @@ import { ref } from 'vue'
 import { locale } from '@/plugins/locale'
 import store from '@/store'
 
+const mode = ref('summary')
 const dataDays = ref([])
 let startDate
 let endDate
 let controller
+
+try {
+  const storedMode = localStorage.getItem('cashCalendarMode')
+  if (storedMode && ['summary', 'operations'].includes(storedMode)) { mode.value = storedMode }
+} catch {}
 
 const handleMonthChange = ({ start, end }) => {
   startDate = start
@@ -39,18 +49,60 @@ const handleMonthChange = ({ start, end }) => {
   }
   controller = new AbortController()
 
-  api.get('cash.transaction.getList', {
-    signal: controller.signal,
-    params: {
-      from: dayjs(start).format('YYYY-MM-DD'),
-      to: dayjs(end).format('YYYY-MM-DD'),
-      reverse: 1
-    }
-  })
-    .then(({ data }) => {
-      dataDays.value = data.data
+  if (mode.value === 'summary') {
+    api.get('cash.aggregate.getChartData', {
+      signal: controller.signal,
+      params: {
+        from: dayjs(start).format('YYYY-MM-DD'),
+        to: dayjs(end).format('YYYY-MM-DD'),
+        group_by: 'day',
+        filter: 'search',
+        reverse: 1
+      }
     })
-    .catch((e) => e)
+      .then(({ data }) => {
+        const map = new Map()
+
+        for (const currencyData of data) {
+          const currency = currencyData.currency
+
+          for (const c of currencyData.data) {
+            if (c.amountIncome || c.amountExpense || c.amountProfit) {
+              const obj = {
+                ...c,
+                currency
+              }
+
+              const prev = map.get(c.period) || []
+              map.set(c.period, [...prev, obj])
+            }
+          }
+        }
+
+        dataDays.value = [...map.entries()].map(([date, data]) => ({ date, data }))
+      })
+      .catch((e) => e)
+  } else if (mode.value === 'operations') {
+    api.get('cash.transaction.getList', {
+      signal: controller.signal,
+      params: {
+        from: dayjs(start).format('YYYY-MM-DD'),
+        to: dayjs(end).format('YYYY-MM-DD'),
+        reverse: 1
+      }
+    })
+      .then(({ data }) => {
+        dataDays.value = data.data
+      })
+      .catch((e) => e)
+  }
+}
+
+const handleChangeMode = (newMode) => {
+  mode.value = newMode
+  dataDays.value = []
+  handleMonthChange({ start: startDate, end: endDate })
+  localStorage.setItem('cashCalendarMode', newMode)
 }
 
 store.subscribeAction({
