@@ -80,7 +80,7 @@ export default {
   width: var(--c-size);
   height: var(--c-size);
   padding: 0;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition: margin-left 220ms ease, transform 180ms ease, box-shadow 180ms ease;
 
   &:not(:first-child) {
     margin-left: calc(var(--c-overlap) * -1);
