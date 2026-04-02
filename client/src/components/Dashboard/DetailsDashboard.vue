@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="data"
+    v-if="data && dashboardData"
     class="c-breakdown-details"
   >
     <div class="flexbox custom-mb-24">
@@ -30,7 +30,10 @@
       </div>
     </div>
 
-    <DetailsDashboardItem :item-data="dashboardData" />
+    <DetailsDashboardItem
+      v-if="dashboardData"
+      :item-data="dashboardData"
+    />
 
     <portal>
       <Modal v-if="openModal">
@@ -66,7 +69,7 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['queryParams', 'detailsInterval']),
+    ...mapState('transaction', ['queryParams', 'detailsInterval', 'chartInterval']),
 
     dates () {
       return this.detailsInterval.from !== this.detailsInterval.to
@@ -88,6 +91,12 @@ export default {
 
   watch: {
     detailsInterval: 'fetchBreakDown'
+  },
+
+  mounted () {
+    this.$store.commit('transaction/setDetailsInterval', {
+      from: this.chartInterval.from, to: this.chartInterval.to
+    })
   },
 
   methods: {

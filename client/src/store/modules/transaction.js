@@ -3,6 +3,7 @@ import { moment } from '@/plugins/numeralMoment'
 import getDateFromLocalStorage from '../../utils/getDateFromLocalStorage'
 import { i18n } from '@/plugins/locale'
 import { DEFAULT_FUTURE_PERIOD } from '@/utils/constants'
+import { mergeArrays } from '../../utils/mergeArrays'
 
 const mutationDelete = (state, ids) => {
   ids.forEach(id => {
@@ -286,7 +287,7 @@ export default {
 
         const result = {
           ...state.transactions,
-          data: [...data.data.reverse(), ...state.transactions.data]
+          data: mergeArrays(data.data.toReverse(), state.transactions.data)
         }
 
         commit('setTransactions', result)
@@ -335,7 +336,7 @@ export default {
 
         const result = {
           ...data,
-          data: [...state.transactions.data, ...data.data]
+          data: mergeArrays(state.transactions.data, data.data)
         }
 
         commit('setTransactions', result)
