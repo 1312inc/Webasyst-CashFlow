@@ -72,7 +72,9 @@ final class cashAggregateFilter
         $self = new self;
 
         if ($hash) {
-            [$filter, $identifier] = explode('/', $hash);
+            $hash_arr = explode('/', $hash);
+            $filter = array_shift($hash_arr);
+            $identifier = array_shift($hash_arr);
 
             if (!in_array($filter, self::FILTERS, true)) {
                 throw new cashValidateException(
