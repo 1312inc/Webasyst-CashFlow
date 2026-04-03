@@ -1,5 +1,8 @@
 <template>
-  <BlankBox v-if="data && dashboardData">
+  <BlankBox
+    v-if="data && dashboardData"
+    class="custom-p-24"
+  >
     <div class="flexbox custom-mb-24">
       <div class="wide flexbox middle wrap-mobile">
         <div
@@ -17,14 +20,14 @@
           class="custom-ml-12 custom-ml-8-mobile"
         />
       </div>
-      <div>
+      <!-- <div>
         <button
           class="nobutton largest custom-p-0"
           @click="closeDashboard"
         >
           <i class="fas fa-times gray" />
         </button>
-      </div>
+      </div> -->
     </div>
 
     <DetailsDashboardItem
@@ -63,7 +66,8 @@ export default {
     return {
       data: null,
       openModal: false,
-      appState
+      appState,
+      isFetching: false
     }
   },
 
@@ -89,7 +93,8 @@ export default {
   },
 
   watch: {
-    detailsInterval: 'fetchBreakDown'
+    detailsInterval: 'fetchBreakDown',
+    queryParams: 'fetchBreakDown'
   },
 
   mounted () {
@@ -99,30 +104,34 @@ export default {
   },
 
   methods: {
-    fetchBreakDown (val) {
-      if (val.from && val.to) {
+    fetchBreakDown () {
+      if (this.detailsInterval.from && this.detailsInterval.to) {
+        this.isFetching = true
         api
           .get('cash.aggregate.getBreakDown', {
             params: {
-              from: val.from,
-              to: val.to,
+              from: this.detailsInterval.from,
+              to: this.detailsInterval.to,
               filter: this.queryParams.filter
             }
           })
           .then(({ data }) => {
             this.data = data
           })
+          .finally(() => {
+            this.isFetching = false
+          })
       } else {
         this.data = null
       }
-    },
-
-    closeDashboard () {
-      this.$store.dispatch('transaction/updateDetailsInterval', {
-        from: '',
-        to: ''
-      })
     }
+
+    // closeDashboard () {
+    //   this.$store.dispatch('transaction/updateDetailsInterval', {
+    //     from: '',
+    //     to: ''
+    //   })
+    // }
   }
 }
 </script>
