@@ -19,15 +19,19 @@
       ref="sidebarBody"
       class="sidebar-body hide-scrollbar"
     >
-      <div
-        class="custom-m-16"
-        style="position: sticky; top: 0; z-index: 999999;"
-      >
-        <CircleButtonsStack
-          @click="onCircleButtonsClick"
-        />
+      <div class="c-sidebar-sticky-header custom-pr-12">
+        <div class="flexbox">
+          <div class="c-sidebar-search wide">
+            <SearchField />
+          </div>
+          <CircleButtonsStack
+            class="c-sidebar-stack"
+            @click="onCircleButtonsClick"
+          />
+        </div>
       </div>
-      <SearchField />
+      <div class="c-sidebar-stickyDummy" />
+
       <Bricks />
 
       <!-- Widgets charts block -->
@@ -150,6 +154,17 @@ export default {
     }
   },
 
+  mounted () {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        document.querySelector('.c-sidebar-sticky-header').classList.toggle('is-sticky', !entry.isIntersecting)
+      },
+      { threshold: 1, rootMargin: '-1px 0px 0px 0px' }
+    )
+
+    observer.observe(document.querySelector('.c-sidebar-stickyDummy'))
+  },
+
   methods: {
     onCircleButtonsClick (type) {
       this.$eventBus.emit('openAddTransactionModal', {
@@ -181,5 +196,25 @@ export default {
     height: auto;
     max-height: 0;
   }
+}
+
+.c-sidebar-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 99999;
+  background: var(--background-color);
+}
+
+.c-sidebar-sticky-header.is-sticky {
+  box-shadow: 0 .1rem 1rem .1rem rgba(0, 0, 0, 0.1);
+}
+
+.c-sidebar-stack {
+  transform: translateY(12px);
+}
+
+.c-sidebar-sticky-header:has(.c-sidebar-stack:hover) .c-sidebar-search {
+  transition: all .2s;
+  opacity: 0;
 }
 </style>
