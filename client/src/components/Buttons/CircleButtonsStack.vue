@@ -13,8 +13,8 @@
       class="circle c-circle-buttons-stack__btn"
       :class="btn.buttonClass"
       type="button"
-      :aria-label="$t(btn.type)"
-      data-microtip-position="bottom"
+      :aria-label="btn.type ? $t(btn.type) : undefined"
+      :data-microtip-position=" btn.key === 'many' ? 'bottom-left' : 'bottom'"
       role="tooltip"
       @click="$emit('click', btn.type)"
     >
@@ -34,7 +34,9 @@ export default {
       default: () => ([
         { key: 'plus', buttonClass: 'c-button-add-income', iconClass: 'fas fa-plus', type: 'income' },
         { key: 'minus', buttonClass: 'c-button-add-expense', iconClass: 'fas fa-minus', type: 'expense' },
-        { key: 'more', buttonClass: 'light-gray', iconClass: 'fas fa-ellipsis-h', type: 'transfer' }
+        { key: 'more', buttonClass: 'light-gray', iconClass: 'fas fa-ellipsis-h', type: '' },
+        { key: 'transfer', buttonClass: 'gray', iconClass: 'fas fa-exchange-alt', type: 'transfer' },
+        { key: 'many', buttonClass: 'white', iconClass: 'fas fa-list-ul', type: 'addMany' }
       ])
     },
     sizePx: {
@@ -80,15 +82,30 @@ export default {
   width: var(--c-size);
   height: var(--c-size);
   padding: 0;
-  transition: margin-left 220ms ease, transform 180ms ease, box-shadow 180ms ease;
+  transition: margin 220ms ease, transform 180ms ease, box-shadow 180ms ease, scale 180ms ease, width 180ms ease;
 
   &:not(:first-child) {
     margin-left: calc(var(--c-overlap) * -1);
   }
 }
 
+.c-circle-buttons-stack:not(:hover) .gray,
+.c-circle-buttons-stack:not(:hover) .white {
+  scale: 0;
+  width: 0;
+  border: 0;
+  margin: 0;
+}
+
 .c-circle-buttons-stack:hover .c-circle-buttons-stack__btn {
   margin-left: 0;
+}
+
+.c-circle-buttons-stack:hover .light-gray {
+  scale: 0;
+  width: 0;
+  border: 0;
+  margin: 0;
 }
 
 .c-circle-buttons-stack:hover .c-circle-buttons-stack__btn + .c-circle-buttons-stack__btn {
