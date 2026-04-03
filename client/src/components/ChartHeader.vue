@@ -1,5 +1,5 @@
 <template>
-  <BlankBox class="custom-mt-24">
+  <BlankBox class="custom-mt-12">
     <div class="c-header flexbox">
       <div class="wide">
         <slot
