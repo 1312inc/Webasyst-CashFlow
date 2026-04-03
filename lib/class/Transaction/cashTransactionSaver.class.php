@@ -158,8 +158,8 @@ class cashTransactionSaver extends cashEntitySaver
             ->setCategory($category);
 
         if (empty($transaction->getDescription())) {
-            $transaction->setDescription(sprintf_wp('Receipt from %s', $account->getName()));
-            $transferTransaction->setDescription(sprintf_wp('Withdrawal to %s', $transaction->getAccount()->getName()));
+            $transaction->setDescription(sprintf_wp('Withdrawal to %s', $account->getName()));
+            $transferTransaction->setDescription(sprintf_wp('Receipt from %s', $transaction->getAccount()->getName()));
         }
 
         return $transferTransaction;
