@@ -12,5 +12,11 @@
         <span>{{ $t("plugins") }}</span>
       </a>
     </li>
+    <li v-if="$permissions.isAdmin">
+      <a :href="`${$helper.baseUrl}upgrade/`">
+        <i class="fas fa-plug" />
+        <span>{{ $t("premium") }}</span>
+      </a>
+    </li>
   </ul>
 </template>

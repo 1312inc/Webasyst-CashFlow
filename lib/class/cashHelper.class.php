@@ -41,4 +41,13 @@ final class cashHelper
     {
         return (float)str_replace(',','.',trim($value));
     }
+
+    /**
+     * @return bool
+     * @throws waException
+     */
+    public static function isPremium()
+    {
+        return waLicensing::check(cashConfig::APP_ID)->isPremium();
+    }
 }
