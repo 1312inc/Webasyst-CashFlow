@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="data && dashboardData"
-    class="c-breakdown-details"
-  >
+  <BlankBox v-if="data && dashboardData">
     <div class="flexbox custom-mb-24">
       <div class="wide flexbox middle wrap-mobile">
         <div
@@ -40,7 +37,7 @@
         <UpdateDetailsInterval @close="openModal = false" />
       </Modal>
     </portal>
-  </div>
+  </BlankBox>
 </template>
 
 <script>
@@ -51,13 +48,15 @@ import DetailsDashboardItem from './DetailsDashboardItem.vue'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 import ExportButton from '@/components/Buttons/ExportButton'
 import { appState } from '@/utils/appState'
+import BlankBox from '../BlankBox.vue'
 
 export default {
   components: {
     Modal,
     DetailsDashboardItem,
     UpdateDetailsInterval,
-    ExportButton
+    ExportButton,
+    BlankBox
   },
 
   data () {
@@ -127,18 +126,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.c-breakdown-details {
-  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1),
-    0 0.5rem 1.5rem -0.5rem rgba(0, 0, 0, 0.2);
-  border-radius: 0.375rem;
-  padding: 1rem 1.2rem;
-  margin: 1.7rem;
-
-  @include for-mobile {
-    padding: 1rem;
-    margin: 1rem;
-  }
-}
-</style>

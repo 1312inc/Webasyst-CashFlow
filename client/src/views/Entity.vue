@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div
     v-if="error"
@@ -30,7 +31,6 @@
         <ChartHeaderControls />
       </template>
     </ChartHeader>
-    <TransactionControls />
     <template v-if="$route.meta.showChart">
       <AmChartContainer />
       <DetailsDashboard />
@@ -57,7 +57,6 @@ import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
-import TransactionControls from '@/components/TransactionControls'
 import api from '@/plugins/api'
 import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
 
@@ -69,8 +68,7 @@ export default {
     AmChartContainer,
     DetailsDashboard,
     TransactionList,
-    AmChartPieStickyContainer,
-    TransactionControls
+    AmChartPieStickyContainer
   },
 
   mixins: [routerTransitionMixin],

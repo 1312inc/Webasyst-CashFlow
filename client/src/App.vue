@@ -1,5 +1,5 @@
 <template>
-  <DialogProvider class="content blank custom-pb-24 custom-pl-8 custom-pl-0-mobile">
+  <DialogProvider class="content custom-pb-24 custom-ml-12 custom-mr-24 custom-mr-12-mobile">
     <router-view />
     <TransactionModals />
   </DialogProvider>

@@ -1,30 +1,48 @@
 <template>
   <div>
-    <div v-if="$store.state.transaction.loading">
+    <BlankBox v-if="$store.state.transaction.loading">
       <SkeletonTransaction />
-    </div>
+    </BlankBox>
     <div v-else>
-      <TransactionListCreated />
-      <div
-        v-for="(group, index) in groups"
-        :key="group.name"
-      >
-        <TransactionListGroup
-          :group="group.items"
-          :type="group.name"
-          :index="index"
-          :visible-select-checkbox="visibleSelectCheckbox"
-          :show-founded-count="showFoundedCount"
+      <BlankBox>
+        <TransactionListCreated />
+      </BlankBox>
+      <BlankBox>
+        <div
+          v-for="(group, index) in groups.filter(g => ['tomorrow', 'yesterday'].includes(g.name))"
+          :key="group.name"
+        >
+          <TransactionListGroup
+            :group="group.items"
+            :type="group.name"
+            :index="index"
+            :visible-select-checkbox="visibleSelectCheckbox"
+            :show-founded-count="showFoundedCount"
+          />
+        </div>
+      </BlankBox>
+      <BlankBox>
+        <div
+          v-for="(group, index) in groups.filter(g => !(['tomorrow', 'yesterday'].includes(g.name)))"
+          :key="group.name"
+        >
+          <TransactionListGroup
+            :group="group.items"
+            :type="group.name"
+            :index="index"
+            :visible-select-checkbox="visibleSelectCheckbox"
+            :show-founded-count="showFoundedCount"
+          />
+        </div>
+        <Observer
+          v-if="observer &&
+            (isSplitFetchMode
+              ? (pastTransactionsOffset && pastTransactionsOffset < transactions.total)
+              : (transactions.data.length && transactions.data.length < transactions.total)
+            )"
+          @callback="() => { observerCallback(isSplitFetchMode ? pastTransactionsOffset : transactions.data.length) }"
         />
-      </div>
-      <Observer
-        v-if="observer &&
-          (isSplitFetchMode
-            ? (pastTransactionsOffset && pastTransactionsOffset < transactions.total)
-            : (transactions.data.length && transactions.data.length < transactions.total)
-          )"
-        @callback="() => { observerCallback(isSplitFetchMode ? pastTransactionsOffset : transactions.data.length) }"
-      />
+      </BlankBox>
     </div>
   </div>
 </template>
@@ -35,6 +53,7 @@ import TransactionListCreated from './TransactionListCreated'
 import TransactionListGroup from './TransactionListGroup'
 import SkeletonTransaction from './SkeletonTransaction'
 import Observer from './Observer'
+import BlankBox from '../BlankBox.vue'
 
 export default {
 
@@ -42,7 +61,8 @@ export default {
     TransactionListCreated,
     TransactionListGroup,
     SkeletonTransaction,
-    Observer
+    Observer,
+    BlankBox
   },
   props: {
     grouping: {

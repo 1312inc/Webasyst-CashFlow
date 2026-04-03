@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <ChartHeader>
@@ -7,7 +8,6 @@
         </h1>
       </template>
     </ChartHeader>
-    <TransactionControls />
     <div class="flexbox">
       <div class="wide">
         <TransactionList
@@ -26,15 +26,14 @@ import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
-import TransactionControls from '@/components/TransactionControls'
 
 export default {
 
   components: {
     ChartHeader,
     TransactionList,
-    AmChartPieStickyContainer,
-    TransactionControls
+    AmChartPieStickyContainer
+
   },
   mixins: [routerTransitionMixin],
 

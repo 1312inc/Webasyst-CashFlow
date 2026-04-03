@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-mb-16">
+  <div>
     <div
       v-if="showIncome"
       class="custom-mb-16"
