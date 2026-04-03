@@ -39,11 +39,16 @@ export default {
           `interval_${this.type}`,
           this.getNameByValue(value)
         )
-        if (this.$store.state.transaction.detailsInterval.from || this.$store.state.transaction.detailsInterval.to) {
-          this.$store.dispatch('transaction/updateDetailsInterval', { from: '', to: '' })
-        }
 
         this.$store.commit('transaction/updateChartInterval', {
+          from: this.$store.state.transaction.chartInterval.from,
+          to: this.$store.state.transaction.chartInterval.to,
+          [this.type]: value
+        })
+
+        this.$store.dispatch('transaction/updateDetailsInterval', {
+          from: this.$store.state.transaction.chartInterval.from,
+          to: this.$store.state.transaction.chartInterval.to,
           [this.type]: value
         })
       }

@@ -5,10 +5,14 @@
   >
     <div class="flexbox custom-mb-24">
       <div class="wide flexbox middle wrap-mobile">
-        <div
-          class="larger black bold custom-mb-0 custom-mb-8-mobile"
-          v-html="dates"
-        />
+        <div class="larger black bold custom-mb-0 custom-mb-8-mobile">
+          <div v-if="!isDefaultRange">
+            {{ dates }}
+          </div>
+          <div v-else>
+            {{ $t(rangeLabel) }}
+          </div>
+        </div>
         <button
           class="button light-gray custom-ml-12 custom-ml-0-mobile"
           @click="openModal = true"
@@ -52,6 +56,7 @@ import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 import ExportButton from '@/components/Buttons/ExportButton'
 import { appState } from '@/utils/appState'
 import BlankBox from '../BlankBox.vue'
+import { getIntervalFromLabel } from '@/utils/getDateFromLocalStorage'
 
 export default {
   components: {
@@ -67,21 +72,26 @@ export default {
       data: null,
       openModal: false,
       appState,
-      isFetching: false
+      isFetching: false,
+      rangeLabel: ''
     }
   },
 
   computed: {
     ...mapState('transaction', ['queryParams', 'detailsInterval', 'chartInterval']),
 
+    isDefaultRange () {
+      return this.detailsInterval.from === this.chartInterval.from && this.detailsInterval.to === this.chartInterval.to
+    },
+
     dates () {
       return this.detailsInterval.from !== this.detailsInterval.to
-        ? `<span class="nowrap">${this.$moment(
+        ? `${this.$moment(
             this.detailsInterval.from
-          ).format('LL')}</span> – <span class="nowrap">${this.$moment(
+          ).format('LL')} – ${this.$moment(
             this.detailsInterval.to
           ).format('LL')}`
-        : `${this.$moment(this.detailsInterval.from).format('LL')}</span>`
+        : `${this.$moment(this.detailsInterval.from).format('LL')}`
     },
 
     dashboardData () {
@@ -94,7 +104,7 @@ export default {
 
   watch: {
     detailsInterval: 'fetchBreakDown',
-    queryParams: 'fetchBreakDown'
+    'queryParams.filter': 'fetchBreakDown'
   },
 
   mounted () {
@@ -105,25 +115,26 @@ export default {
 
   methods: {
     fetchBreakDown () {
-      if (this.detailsInterval.from && this.detailsInterval.to) {
-        this.isFetching = true
-        api
-          .get('cash.aggregate.getBreakDown', {
-            params: {
-              from: this.detailsInterval.from,
-              to: this.detailsInterval.to,
-              filter: this.queryParams.filter
-            }
-          })
-          .then(({ data }) => {
-            this.data = data
-          })
-          .finally(() => {
-            this.isFetching = false
-          })
-      } else {
-        this.data = null
-      }
+      this.rangeLabel = getIntervalFromLabel('from')
+
+      const from = this.detailsInterval.from
+      const to = this.detailsInterval.to
+
+      this.isFetching = true
+      api
+        .get('cash.aggregate.getBreakDown', {
+          params: {
+            from,
+            to,
+            filter: this.queryParams.filter
+          }
+        })
+        .then(({ data }) => {
+          this.data = data
+        })
+        .finally(() => {
+          this.isFetching = false
+        })
     }
 
     // closeDashboard () {
