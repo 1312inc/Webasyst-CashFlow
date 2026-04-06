@@ -30,6 +30,12 @@ const props = defineProps({
             prefix: '+'
           })
         }}
+        <span
+          v-if="cur.countIncome > 1"
+          class="badge light-gray small"
+        >
+          {{ cur.countIncome }}
+        </span>
       </div>
       <div
         v-if="cur.amountExpense"
@@ -43,6 +49,12 @@ const props = defineProps({
             prefix: '-'
           })
         }}
+        <span
+          v-if="cur.countExpense > 1"
+          class="badge light-gray small"
+        >
+          {{ cur.countExpense }}
+        </span>
       </div>
       <div
         v-if="cur.amountProfit"
@@ -55,6 +67,12 @@ const props = defineProps({
             currencyCode: cur.currency,
           })
         }}
+        <span
+          v-if="cur.countProfit > 1"
+          class="badge light-gray small"
+        >
+          {{ cur.countProfit }}
+        </span>
       </div>
     </div>
   </div>
