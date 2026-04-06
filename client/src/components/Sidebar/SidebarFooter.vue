@@ -20,7 +20,7 @@ import { appState } from '@/utils/appState'
       <a :href="`${$helper.baseUrl}upgrade/`">
         <i
           class="fas fa-star"
-          :class="{'text-yellow': appState.isPremium}"
+          :class="{'text-yellow': !appState.isPremium}"
         />
         <span>{{ $t("premium") }}</span>
       </a>
