@@ -11,8 +11,21 @@
     </ChartHeader>
     <AlertImported />
     <AmChartContainer />
-    <DetailsDashboard />
-    <div class="flexbox">
+
+    <div class="c-details-container flexbox space-24 custom-mb-24">
+      <div class="wide">
+        <BlankBox :disable-bottom-margin="true">
+          <DetailsDashboard />
+        </BlankBox>
+      </div>
+      <div class="c-details-container__target">
+        <BlankBox :disable-bottom-margin="true">
+          здесь будет твоя финансовая цель, юзернем. но будет она только в премиум-версии, так что иди и <a href="...">покупай скорее апгрейд</a>.
+        </BlankBox>
+      </div>
+    </div>
+
+    <div class="flexbox space-24">
       <div class="wide">
         <TransactionList
           :show-tomorrow-group="true"
@@ -35,6 +48,7 @@ import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import AlertImported from '../components/AlertImported.vue'
+import BlankBox from '../components/BlankBox.vue'
 import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
 
 export default {
@@ -48,7 +62,8 @@ export default {
     DetailsDashboard,
     TransactionList,
     AmChartPieStickyContainer,
-    AlertImported
+    AlertImported,
+    BlankBox
   },
   mixins: [routerTransitionMixin],
 

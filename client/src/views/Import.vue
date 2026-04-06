@@ -15,7 +15,7 @@
         </div>
       </template>
     </ChartHeader>
-    <div class="flexbox">
+    <div class="flexbox space-24">
       <div class="wide no-sticky-controls">
         <TransactionList
           :show-today-group="false"

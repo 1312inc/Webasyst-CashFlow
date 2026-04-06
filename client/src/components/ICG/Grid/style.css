@@ -14,7 +14,7 @@
     align-items: start;
     gap: 1rem;
     justify-content: space-between;
-    padding: 1rem;
+    padding: 1rem 0;
   }
   
   @media screen and (max-width: 760px) {

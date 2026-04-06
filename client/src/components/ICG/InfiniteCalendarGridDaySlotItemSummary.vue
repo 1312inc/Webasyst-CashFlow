@@ -11,7 +11,7 @@ const props = defineProps({
 
 <template>
   <div
-    class="custom-p-8 align-left"
+    class="custom-p-8 align-left smaller nowrap"
     style="display: flex; flex-direction: column; gap: .2rem;"
   >
     <div

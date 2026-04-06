@@ -1,29 +1,27 @@
 <template>
-  <BlankBox
-    v-if="data && dashboardData"
-    class="custom-p-24"
-  >
-    <div class="flexbox custom-mb-24">
-      <div class="wide flexbox middle wrap-mobile">
-        <div class="larger black bold custom-mb-0 custom-mb-8-mobile">
-          <div v-if="!isDefaultRange">
-            {{ dates }}
+  <div class="custom-p-24">
+    <div v-if="data && dashboardData">
+      <div class="flexbox custom-mb-24">
+        <div class="wide flexbox middle wrap-mobile">
+          <div class="larger black bold custom-mb-0 custom-mb-8-mobile">
+            <div v-if="!isDefaultRange">
+              {{ dates }}
+            </div>
+            <div v-else>
+              {{ $t(rangeLabel) }}
+            </div>
           </div>
-          <div v-else>
-            {{ $t(rangeLabel) }}
-          </div>
+          <button
+            class="button light-gray custom-ml-12 custom-ml-0-mobile"
+            @click="openModal = true"
+          >
+            {{ $t("setDates") }}
+          </button>
+          <ExportButton
+            v-if="!appState.webView"
+            class="custom-ml-12 custom-ml-8-mobile"
+          />
         </div>
-        <button
-          class="button light-gray custom-ml-12 custom-ml-0-mobile"
-          @click="openModal = true"
-        >
-          {{ $t("setDates") }}
-        </button>
-        <ExportButton
-          v-if="!appState.webView"
-          class="custom-ml-12 custom-ml-8-mobile"
-        />
-      </div>
       <!-- <div>
         <button
           class="nobutton largest custom-p-0"
@@ -32,19 +30,35 @@
           <i class="fas fa-times gray" />
         </button>
       </div> -->
+      </div>
+
+      <DetailsDashboardItem
+        v-if="dashboardData"
+        :item-data="dashboardData"
+      />
+
+      <portal>
+        <Modal v-if="openModal">
+          <UpdateDetailsInterval @close="openModal = false" />
+        </Modal>
+      </portal>
     </div>
-
-    <DetailsDashboardItem
-      v-if="dashboardData"
-      :item-data="dashboardData"
-    />
-
-    <portal>
-      <Modal v-if="openModal">
-        <UpdateDetailsInterval @close="openModal = false" />
-      </Modal>
-    </portal>
-  </BlankBox>
+    <div
+      v-else
+      class="skeleton flexbox vertical space-24"
+    >
+      <div
+        v-for="i in 4"
+        :key="i"
+        :class="{'width-80': i === 1}"
+      >
+        <span
+          class="skeleton-line custom-m-0"
+          style="height: 40px;"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -55,7 +69,6 @@ import DetailsDashboardItem from './DetailsDashboardItem.vue'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 import ExportButton from '@/components/Buttons/ExportButton'
 import { appState } from '@/utils/appState'
-import BlankBox from '../BlankBox.vue'
 import { getIntervalFromLabel } from '@/utils/getDateFromLocalStorage'
 
 export default {
@@ -63,8 +76,7 @@ export default {
     Modal,
     DetailsDashboardItem,
     UpdateDetailsInterval,
-    ExportButton,
-    BlankBox
+    ExportButton
   },
 
   data () {

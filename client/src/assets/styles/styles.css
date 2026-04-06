@@ -226,3 +226,24 @@ body.modal {
   /* mobile */
   .alert.c-cashgap-prediction-banner { margin-top: 0; }
 }
+
+
+@media screen and (max-width: 1280px) {
+  .c-details-container {
+    flex-direction: column;
+  }
+}
+
+.c-details-container__target {
+  width: 340px;
+}
+
+@media screen and (max-width: 1280px) {
+  .c-details-container__target {
+    width: 100%;
+  }
+}
+
+.c-details-container .box {
+  height: 100%;
+}
