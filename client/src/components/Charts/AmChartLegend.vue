@@ -31,7 +31,7 @@
     </div>
 
     <div
-      v-if="totalAmountSelected"
+      v-if="totalAmountSelected && !hideTotalAmount"
       class="c-legend__item c-legend__item--column bordered-top custom-pt-12"
     >
       <div class="c-legend__item__square" />
@@ -70,6 +70,10 @@ export default {
     isColumnStyle: {
       type: Boolean,
       default: true
+    },
+    hideTotalAmount: {
+      type: Boolean,
+      default: false
     }
   },
 
