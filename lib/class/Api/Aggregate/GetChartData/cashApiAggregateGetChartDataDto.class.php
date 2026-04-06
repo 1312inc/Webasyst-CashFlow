@@ -55,9 +55,9 @@ final class cashApiAggregateGetChartDataDto
         $this->amountIncome = isset($data['incomeAmount']) ? round(abs($data['incomeAmount']), 2) : null;
         $this->amountExpense = isset($data['expenseAmount']) ? round(abs($data['expenseAmount']), 2) : null;
         $this->amountProfit = isset($data['profitAmount']) ? round(abs($data['profitAmount']), 2) : null;
-        $this->countIncome = isset($data['countIncome']) ? (int) $data['countIncome'] : null;
-        $this->countExpense = isset($data['countExpense']) ? (int) $data['countExpense'] : null;
-        $this->countProfit = isset($data['countProfit']) ? (int) $data['countProfit'] : null;
+        $this->countIncome = isset($data['countIncome']) ? (int) $data['countIncome'] : 0;
+        $this->countExpense = isset($data['countExpense']) ? (int) $data['countExpense'] : 0;
+        $this->countProfit = isset($data['countProfit']) ? (int) $data['countProfit'] : 0;
         $this->balance = isset($data['balance']) ? round($data['balance'], 2) : null;
         $this->period = ifset($data, 'groupkey', '');
     }
