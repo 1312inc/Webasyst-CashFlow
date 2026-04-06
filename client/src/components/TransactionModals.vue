@@ -10,14 +10,7 @@ import { ref, nextTick } from 'vue'
 const route = useRoute()
 
 const open = ref(false)
-const openMove = ref(false)
-const openAddBulk = ref(false)
-
-const addTransactionOpts = ref({
-  transactionToEdit: undefined,
-  defaultDate: undefined,
-  type: undefined
-})
+const addTransactionOpts = ref({})
 
 async function reOpen () {
   open.value = false
@@ -26,14 +19,7 @@ async function reOpen () {
 }
 
 emitter.on('openAddTransactionModal', (opts = {}) => {
-  addTransactionOpts.value = {}
-  if (opts.transaction) {
-    addTransactionOpts.value.transactionToEdit = opts.transaction
-  } else if (opts.defaultDate) {
-    addTransactionOpts.value.defaultDate = opts.defaultDate
-  } else if (opts.type) {
-    addTransactionOpts.value.type = opts.type
-  }
+  addTransactionOpts.value = opts
   open.value = true
 })
 
@@ -63,25 +49,15 @@ function onClick () {
       @close="open = false"
       @reOpen="reOpen"
     >
+      <TransactionMove v-if="addTransactionOpts.type === 'move'" />
+
+      <AddTransactionBulk v-else-if="addTransactionOpts.type === 'addMany'" />
+
       <AddTransaction
-        :transaction="addTransactionOpts.transactionToEdit"
+        :transaction="addTransactionOpts.transaction"
         :default-date="addTransactionOpts.defaultDate"
         :default-category-type="addTransactionOpts.type ?? 'expense'"
       />
-    </Modal>
-
-    <Modal
-      v-if="openMove"
-      @close="openMove = false"
-    >
-      <TransactionMove />
-    </Modal>
-
-    <Modal
-      v-if="openAddBulk"
-      @close="openAddBulk = false"
-    >
-      <AddTransactionBulk />
     </Modal>
   </portal>
 </template>
