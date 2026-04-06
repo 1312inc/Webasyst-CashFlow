@@ -30,6 +30,7 @@ class cashStaticLayout extends waLayout
                 'categories' => json_encode($categories, JSON_UNESCAPED_UNICODE),
                 'accounts' => json_encode($accounts, JSON_UNESCAPED_UNICODE),
                 'emptyFlow' => $just_installed,
+                'isPremium' => cashHelper::isPremium(),
             ]
         );
     }

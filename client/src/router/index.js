@@ -16,6 +16,8 @@ import { i18n } from '../plugins/locale'
 import { permissions } from '../plugins/permissions'
 import { moment } from '@/plugins/numeralMoment.js'
 
+const SSR_MODE_PAGE_URL_ALIASES = ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins', '/upgrade']
+
 Vue.use(VueRouter)
 
 // TODO: make settings file
@@ -151,7 +153,7 @@ const routes = [
   },
   {
     path: '/report',
-    alias: ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins']
+    alias: SSR_MODE_PAGE_URL_ALIASES
   },
   {
     path: '/404',

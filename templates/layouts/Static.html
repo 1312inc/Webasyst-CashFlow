@@ -39,7 +39,8 @@
             "accounts": {$accounts},
             "api_settings": {$api_settings},
             "emptyFlow": {json_encode(!empty($emptyFlow))},
-            "shopscriptInstalled": {json_encode(boolval($wa->shop))}
+            "shopscriptInstalled": {json_encode(boolval($wa->shop))},
+            "isPremium": {json_encode(boolval($isPremium))}
         };
     </script>
 

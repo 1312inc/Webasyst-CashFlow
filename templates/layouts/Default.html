@@ -17,7 +17,7 @@
     <script type="text/javascript" src="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.js"></script>
 
     <script src="{$wa_url}wa-content/js/jquery-wa/wa.js?v={$wa->version(true)}"></script>
-
+    
     <script>
         window.appState = {
             "accountName": "{$wa->accountName()}",
@@ -31,7 +31,8 @@
             "accounts": {$accounts},
             "api_settings": {$api_settings},
             "emptyFlow": {json_encode(!empty($emptyFlow))},
-            "shopscriptInstalled": {json_encode(boolval($wa->shop))}
+            "shopscriptInstalled": {json_encode(boolval($wa->shop))},
+            "isPremium": {json_encode(boolval($isPremium))}
         };
     </script>
 
