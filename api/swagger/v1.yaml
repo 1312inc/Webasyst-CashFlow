@@ -1327,6 +1327,7 @@ paths:
           description: |
             Хеш-строка для фильтрации списка финансовых операций
             Примеры:
+            + **all**: все операции
             + **account/1**: операции для счета, ID которого — 1
             + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
           schema:
@@ -1367,6 +1368,15 @@ paths:
                           amountProfit:
                             type: number
                             description: Сумма прибыли
+                          countExpense:
+                            type: integer
+                            description: Количество операций по расходам
+                          countIncome:
+                            type: integer
+                            description: Количество операций по доходам
+                          countProfit:
+                            type: integer
+                            description: Количество операций по прибыли
                           balance:
                             type: number
                             description: Баланс на окончание периода

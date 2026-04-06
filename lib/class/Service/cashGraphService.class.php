@@ -481,15 +481,18 @@ class cashGraphService
 
         //@todo category type
         $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
-            ->select(
-                [
+            ->select([
                     "{$grouping} groupkey",
                     'ca.currency currency',
                     'null balance',
                     'expenseAmount' => "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|0', ct.amount, 0)) expenseAmount",
                     'incomeAmount' => "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'inc|0', ct.amount, 0)) incomeAmount",
                     'profitAmount' => "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|1', ct.amount, 0)) profitAmount",
-                ]
+                ] + (null !== $paramsDto->filter->isFilterByAll() ? [
+                    'countExpense' => "COUNT(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|0', 1, NULL)) countExpense",
+                    'countIncome' => "COUNT(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'inc|0', 1, NULL)) countIncome",
+                    'countProfit' => "COUNT(if(concat(if(ct.amount< 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|1', 1, NULL)) countProfit",
+                ] : [])
             )
             ->from('cash_transaction', 'ct')
             ->andWhere(
