@@ -493,26 +493,22 @@ class cashGraphService
                     'countProfit' => "COUNT(if(concat(if(ct.amount< 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|1', 1, NULL)) countProfit",
             ])
             ->from('cash_transaction', 'ct')
-            ->andWhere(
-                [
-                    'account_access' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
-                        $paramsDto->contact
-                    ),
-                    'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
-                        $paramsDto->contact,
-                        'ct',
-                        'category_id'
-                    ),
-                    'ct.is_archived = 0',
-                    'ca.is_archived = 0',
-                ]
-            )
-            ->join(
-                [
-                    'join cash_account ca on ct.account_id = ca.id',
-                    'join cash_category cc on ct.category_id = cc.id',
-                ]
-            );
+            ->join([
+                'join cash_account ca on ct.account_id = ca.id',
+                'join cash_category cc on ct.category_id = cc.id',
+            ])
+            ->andWhere([
+                'account_access' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+                    $paramsDto->contact
+                ),
+                'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
+                    $paramsDto->contact,
+                    'ct',
+                    'category_id'
+                ),
+                'ct.is_archived = 0',
+                'ca.is_archived = 0',
+            ]);
 
         $calculateBalance = false;
         switch (true) {
@@ -557,6 +553,13 @@ class cashGraphService
             case null !== $paramsDto->filter->getCurrency():
                 $sqlParts->addAndWhere('ca.currency = s:currency')
                     ->addParam('currency', $paramsDto->filter->getCurrency());
+                $sqlParts->addAndWhere('
+                    CASE
+                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                        WHEN ca.is_imaginary = -1 THEN NULL
+                        ELSE ca.is_imaginary = 0
+                    END
+                ');
                 /** @var cashAccount[] $accounts */
                 $accounts = cash()->getEntityRepository(cashAccount::class)->findAll();
                 // проверим есть ли полный доступ хоть к одному счету в данной валюте
