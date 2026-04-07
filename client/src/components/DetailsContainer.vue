@@ -2,6 +2,7 @@
 import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import BlankBox from '../components/BlankBox.vue'
 import { useStorage } from '@vueuse/core'
+import AmChartTarget from './Charts/AmChartTarget.vue'
 
 const cashTargetBlockHidden = useStorage('cashTargetBlockHidden', { value: false, expiredAt: '' }, localStorage)
 
@@ -47,6 +48,7 @@ function closeTarget () {
             <i class="fas fa-times gray" />
           </a>
           <div>
+            <AmChartTarget />
             <i18n path="detailsTargetDesc">
               <template #username>
                 userName
