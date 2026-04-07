@@ -130,7 +130,14 @@ export default {
       this.rangeLabel = getIntervalFromLabel('from')
 
       const from = this.detailsInterval.from
-      const to = this.detailsInterval.to
+      let to = this.detailsInterval.to
+      const today = new Date()
+      const currentDate = today.toISOString().split('T')[0]
+
+      // Преобразуем строки в объекты Date для корректного сравнения
+      if (new Date(to) > today) {
+        to = currentDate
+      }
 
       this.isFetching = true
       api
