@@ -247,3 +247,9 @@ body.modal {
 .c-details-container .box {
   height: 100%;
 }
+
+.c-details-container__target__close {
+  top: 1rem;
+  right: 1rem;
+  position: absolute;
+}

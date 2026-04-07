@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <CashGapMessage />
@@ -12,18 +13,7 @@
     <AlertImported />
     <AmChartContainer />
 
-    <div class="c-details-container flexbox space-24 custom-mb-24">
-      <div class="wide">
-        <BlankBox :disable-bottom-margin="true">
-          <DetailsDashboard />
-        </BlankBox>
-      </div>
-      <div class="c-details-container__target">
-        <BlankBox :disable-bottom-margin="true">
-          здесь будет твоя финансовая цель, юзернем. но будет она только в премиум-версии, так что иди и <a href="...">покупай скорее апгрейд</a>.
-        </BlankBox>
-      </div>
-    </div>
+    <DetailsContainer />
 
     <div class="flexbox space-24">
       <div class="wide">
@@ -43,12 +33,11 @@ import ChartHeader from '@/components/ChartHeader'
 import ChartHeaderControls from '@/components/ChartHeaderControls'
 import ChartHeaderTitle from '@/components/ChartHeaderTitle'
 import AmChartContainer from '@/components/Charts/AmChartContainer'
-import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import AlertImported from '../components/AlertImported.vue'
-import BlankBox from '../components/BlankBox.vue'
+import DetailsContainer from '../components/DetailsContainer.vue'
 import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
 
 export default {
@@ -59,11 +48,10 @@ export default {
     ChartHeaderControls,
     ChartHeaderTitle,
     AmChartContainer,
-    DetailsDashboard,
     TransactionList,
     AmChartPieStickyContainer,
     AlertImported,
-    BlankBox
+    DetailsContainer
   },
   mixins: [routerTransitionMixin],
 

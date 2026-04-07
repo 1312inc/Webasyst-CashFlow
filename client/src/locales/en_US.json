@@ -248,5 +248,7 @@
         "message": "all transactions are only visible within the account, making it possible to emulate any isolated financial scenario under this account"
       }
     }
-  }
+  },
+  "detailsTargetDesc": "здесь будет твоя финансовая цель, {username}. но будет она только в премиум-версии, так что иди и {link}.",
+  "detailsTargetDescLink": "покупай скорее апгрейд" 
 }

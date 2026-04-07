@@ -13,6 +13,7 @@ const props = defineProps(['disableBottomMargin'])
 
 <style scoped>
   .box {
+    position: relative;
     box-sizing: border-box;
   }
 
