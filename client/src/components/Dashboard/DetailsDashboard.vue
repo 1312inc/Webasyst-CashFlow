@@ -1,50 +1,7 @@
 <template>
   <div class="custom-p-24">
-    <div v-if="data && dashboardData">
-      <div class="flexbox custom-mb-24">
-        <div class="wide flexbox middle wrap-mobile">
-          <div class="larger black bold custom-mb-0 custom-mb-8-mobile">
-            <div v-if="!isDefaultRange">
-              {{ dates }}
-            </div>
-            <div v-else>
-              {{ $t(rangeLabel) }}
-            </div>
-          </div>
-          <button
-            class="button light-gray custom-ml-12 custom-ml-0-mobile"
-            @click="openModal = true"
-          >
-            {{ $t("setDates") }}
-          </button>
-          <ExportButton
-            v-if="!appState.webView"
-            class="custom-ml-12 custom-ml-8-mobile"
-          />
-        </div>
-      <!-- <div>
-        <button
-          class="nobutton largest custom-p-0"
-          @click="closeDashboard"
-        >
-          <i class="fas fa-times gray" />
-        </button>
-      </div> -->
-      </div>
-
-      <DetailsDashboardItem
-        v-if="dashboardData"
-        :item-data="dashboardData"
-      />
-
-      <portal>
-        <Modal v-if="openModal">
-          <UpdateDetailsInterval @close="openModal = false" />
-        </Modal>
-      </portal>
-    </div>
     <div
-      v-else
+      v-if="isFetching"
       class="skeleton flexbox vertical space-24"
     >
       <div
@@ -58,6 +15,54 @@
         />
       </div>
     </div>
+    <template v-else>
+      <div v-if="data.length">
+        <div class="flexbox custom-mb-24">
+          <div class="wide flexbox middle wrap-mobile">
+            <div class="larger black bold custom-mb-0 custom-mb-8-mobile">
+              <div v-if="!isDefaultRange">
+                {{ dates }}
+              </div>
+              <div v-else>
+                {{ $t(rangeLabel) }}
+              </div>
+            </div>
+            <button
+              class="button light-gray custom-ml-12 custom-ml-0-mobile"
+              @click="openModal = true"
+            >
+              {{ $t("setDates") }}
+            </button>
+            <ExportButton
+              v-if="!appState.webView"
+              class="custom-ml-12 custom-ml-8-mobile"
+            />
+          </div>
+          <!-- <div>
+        <button
+          class="nobutton largest custom-p-0"
+          @click="closeDashboard"
+        >
+          <i class="fas fa-times gray" />
+        </button>
+      </div> -->
+        </div>
+
+        <DetailsDashboardItem
+          v-if="dashboardData"
+          :item-data="dashboardData"
+        />
+
+        <portal>
+          <Modal v-if="openModal">
+            <UpdateDetailsInterval @close="openModal = false" />
+          </Modal>
+        </portal>
+      </div>
+      <div v-else>
+        {{ $t('DetailsDashboardEmptyMessage') }}
+      </div>
+    </template>
   </div>
 </template>
 
@@ -81,7 +86,7 @@ export default {
 
   data () {
     return {
-      data: null,
+      data: [],
       openModal: false,
       appState,
       isFetching: false,
