@@ -88,13 +88,13 @@ function onClick () {
     style="width: 100%; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;"
     @click="onClick"
   >
-    <button class="circle small light-gray desktop-only icg-plus">
+    <button class="circle light-gray icg-plus">
       <i class="fas fa-plus" />
     </button>
     <div class="icg-day">
       {{ date.getDate() }} <span v-if="date.getDate() === 1">{{ getMonthShort(date) }}</span>
     </div>
-    <div class="small">
+    <div>
       <template v-if="props.mode === 'operations'">
         <InfiniteCalendarGridDaySlotItem
           v-for="transaction in props.data"
@@ -140,6 +140,13 @@ function onClick () {
     display: none;
   }
 
+}
+
+@media screen and (max-width: 760px) {
+  .icg-months-grid-day--current .icg-day {
+    width: 1rem;
+    height: 1rem;
+  }
 }
 
 .icg-plus {

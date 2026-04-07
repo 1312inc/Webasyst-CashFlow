@@ -11,7 +11,7 @@ const props = defineProps({
 
 <template>
   <div
-    class="custom-p-8 align-left smaller nowrap"
+    class="align-left nowrap"
     style="display: flex; flex-direction: column; gap: .2rem;"
   >
     <div
@@ -32,7 +32,7 @@ const props = defineProps({
         }}
         <span
           v-if="cur.countIncome > 1"
-          class="badge light-gray small"
+          class="badge light-gray"
         >
           {{ cur.countIncome }}
         </span>
@@ -51,7 +51,7 @@ const props = defineProps({
         }}
         <span
           v-if="cur.countExpense > 1"
-          class="badge light-gray small"
+          class="badge light-gray"
         >
           {{ cur.countExpense }}
         </span>
@@ -69,7 +69,7 @@ const props = defineProps({
         }}
         <span
           v-if="cur.countProfit > 1"
-          class="badge light-gray small"
+          class="badge light-gray"
         >
           {{ cur.countProfit }}
         </span>

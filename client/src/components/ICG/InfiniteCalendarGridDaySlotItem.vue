@@ -84,22 +84,25 @@ function onClick () {
       class="custom-p-8 align-left"
       style="display: flex; flex-direction: column; gap: .2rem;"
     >
-      <span
-        v-if="transaction.contractor_contact?.name"
-        class="small"
-      >{{ transaction.contractor_contact.name }}</span>
+      <span v-if="transaction.contractor_contact?.name">{{ transaction.contractor_contact.name }}</span>
       <span
         v-if="category"
         :style="`color: ${category.color}`"
-        class="bold nowrap small text-ellipsis"
-      >{{
-        category.name }}</span>
+        class="bold nowrap text-ellipsis"
+      >{{ category.name }}</span>
       <span class="hint">{{ transaction.description || $t('noDesc') }}</span>
     </div>
   </DropdownWaFloating>
 </template>
 
 <style>
+
+@media screen and (max-width: 1024px) {
+  .icg-months-grid-day {
+    font-size: 12px;
+  }
+}
+
 @media screen and (max-width: 1024px) {
   .icg-row {
     pointer-events: none;
