@@ -8,7 +8,6 @@ import dayjs from 'dayjs'
 import { useRouter } from 'vue-router/composables'
 import { moment } from '@/plugins/numeralMoment.js'
 import store from '@/store'
-import { appState } from '@/utils/appState'
 
 const props = defineProps({
   date: {
@@ -66,16 +65,14 @@ function getMonthShort (date) {
   } catch (_e) { }
 }
 
-function onClick () {
-  const t = dayRef.value?.querySelector('.icg-plus')
-  if (t || appState.webView) {
-    if (window.getComputedStyle(t, null).getPropertyValue('display') === 'none') {
-      router.push(`/date/${moment(props.date).format('YYYY-MM-DD')}/`)
-    } else {
-      emitter.emit('openAddTransactionModal', {
-        defaultDate: dayjs(props.date).format('YYYY-MM-DD')
-      })
-    }
+function onClick (e) {
+  const onPlus = e.target.closest('.icg-plus')
+  if (onPlus) {
+    emitter.emit('openAddTransactionModal', {
+      defaultDate: dayjs(props.date).format('YYYY-MM-DD')
+    })
+  } else {
+    router.push(`/date/${moment(props.date).format('YYYY-MM-DD')}/`)
   }
 }
 
