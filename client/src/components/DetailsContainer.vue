@@ -49,14 +49,13 @@ function closeTarget () {
           </a>
           <div>
             <AmChartTarget />
-            <i18n path="detailsTargetDesc">
-              <template #username>
-                userName
-              </template>
-              <template #link>
-                <a href="/upgrade">{{ $t('detailsTargetDescLink') }}</a>
-              </template>
-            </i18n>
+            <h5 class="align-center custom-mt-0 custom-mb-12">{{ $t('detailsTargetDescTitle') }}</h5>
+            <p class="small gray align-center width-90 custom-mx-auto custom-my-12">
+              {{ $t('detailsTargetDesc') }}
+            </p>
+            <div class="align-center custom-my-16">
+              <a href="/upgrade" class="button small green">{{ $t('detailsTargetDescLink') }}</a>
+            </div>
           </div>
         </div>
       </BlankBox>

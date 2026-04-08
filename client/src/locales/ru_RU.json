@@ -249,8 +249,9 @@
       }
     }
   },
-  "detailsTargetDesc": "здесь будет твоя финансовая цель, {username}. но будет она только в премиум-версии, так что иди и {link}.",
-  "detailsTargetDescLink": "покупай скорее апгрейд",
+  "detailsTargetDescTitle": "Цели и бюджет",
+  "detailsTargetDesc": "Скоро в премиум! Финансовые цели, бюджет, автоматизация и много других продвинутых фич для учета и прогноза.",
+  "detailsTargetDescLink": "Предзаказ премиум",
   "detailsDashboardEmptyTitle": "Рассказываем, как тут и че",
   "detailsDashboardEmptyMessage": "Превед, земляне! Добавляем операцию, не стесняемся — а мы покажем вам будущее!"
 }

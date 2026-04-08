@@ -46,13 +46,13 @@ onMounted(() => {
   range0.value = 0
   range0.endValue = 50
   range0.axisFill.fillOpacity = 1
-  range0.axisFill.fill = '#0abe5a'
+  range0.axisFill.fill = '#22d13d'
 
   const range1 = axis2.axisRanges.create()
   range1.value = 50
   range1.endValue = 146
   range1.axisFill.fillOpacity = 1
-  range1.axisFill.fill = '#ff421a'
+  range1.axisFill.fill = '#ed2509'
 
   /**
  * Label
