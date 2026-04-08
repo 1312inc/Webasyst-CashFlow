@@ -322,13 +322,6 @@ export default {
             state.isSplitFetchMode = false
           }
         }
-        // if view details mode
-        if (state.detailsInterval.from) {
-          params.from = state.detailsInterval.from
-        }
-        if (state.detailsInterval.to) {
-          params.to = state.detailsInterval.to
-        }
 
         const { data } = await api.get('cash.transaction.getList', {
           params
@@ -363,7 +356,7 @@ export default {
       }
     },
 
-    updateDetailsInterval ({ commit, dispatch }, data) {
+    updateDetailsInterval ({ commit, dispatch, state }, data) {
       commit('setDetailsInterval', data)
       if (!data.from && !data.to) {
         dispatch('fetchTransactions', {
@@ -373,7 +366,9 @@ export default {
         })
       } else {
         dispatch('fetchTransactions', {
-          offset: 0
+          offset: 0,
+          from: state.detailsInterval.from,
+          to: state.detailsInterval.to
         })
       }
     },
