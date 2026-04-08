@@ -54,6 +54,7 @@ function onClick () {
       <AddTransactionBulk v-else-if="addTransactionOpts.type === 'addMany'" />
 
       <AddTransaction
+        v-else
         :transaction="addTransactionOpts.transaction"
         :default-date="addTransactionOpts.defaultDate"
         :default-category-type="addTransactionOpts.type ?? 'expense'"

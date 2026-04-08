@@ -1,13 +1,8 @@
 <template>
   <div
-    class="dialog-body"
+
     style="width: 700px;"
   >
-    <div class="dialog-header">
-      <h2 class="custom-mb-0">
-        {{ $t("addMany") }}
-      </h2>
-    </div>
     <div class="dialog-content">
       <div
         v-for="(row, i) in data"
@@ -125,7 +120,7 @@
           </button>
           <button
             class="button light-gray"
-            @click="$parent.$emit('close')"
+            @click="$emit('close')"
           >
             {{ $t("cancel") }}
           </button>
@@ -239,7 +234,7 @@ export default {
         this.$store
           .dispatch('transactionBulk/bulkCreate', filteredRows)
           .then(() => {
-            this.$parent.$emit('close')
+            this.$emit('close')
           })
           .finally(() => {
             this.controlsDisabled = false

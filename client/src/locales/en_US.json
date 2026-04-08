@@ -55,7 +55,8 @@
       "Every day",
       "Every week",
       "Every year",
-      "Custom..."
+      "Custom...",
+      "No repeat"
     ],
     "list_short": [
       "month",
