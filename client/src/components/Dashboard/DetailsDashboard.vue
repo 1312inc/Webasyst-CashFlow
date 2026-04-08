@@ -61,10 +61,10 @@
       </div>
       <div v-else>
         <h2>
-          {{ $t('DetailsDashboardEmptyTitle') }}
+          {{ $t('detailsDashboardEmptyTitle') }}
         </h2>
         <p>
-          {{ $t('DetailsDashboardEmptyMessage') }}
+          {{ $t('detailsDashboardEmptyMessage') }}
         </p>
       </div>
     </template>
