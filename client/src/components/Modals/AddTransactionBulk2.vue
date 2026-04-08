@@ -1,8 +1,5 @@
 <template>
-  <div
-
-    style="width: 700px;"
-  >
+  <div>
     <div class="dialog-content">
       <div
         v-for="(row, i) in data"
@@ -25,6 +22,7 @@
         <div
           v-if="row.repeating_interval"
           class="wa-select small solid"
+          style="min-width: 164px;"
         >
           <select
             v-model="row.repeating_interval"
