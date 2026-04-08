@@ -236,16 +236,16 @@
     "name": "Account type",
     "types": {
       "checking": {
-        "name": "Checking ",
-        "message": "real money that makes up the today’s overall balance in the account currency"
+        "name": "Checking / Cash",
+        "message": "or active account — real money that makes up the today’s overall balance"
       },
       "virtual": {
-        "name": "Virtual",
-        "message": "all accounting features are available within the account, but its transactions won’t affect the overall currency balance for today, while planned future transactions will still form the forecast"
+        "name": "Project",
+        "message": "or passive account — all accounting features are available within the account, but its transactions won’t affect the overall balance for today, while planned future transactions will still form the forecast"
       },
       "virtualWithForecast": {
         "name": "Sandbox",
-        "message": "all transactions are only visible within the account, making it possible to emulate any isolated financial scenario under this account"
+        "message": "similar to project, but all transactions are only visible within the account, making it possible to emulate any isolated financial scenario under this account"
       }
     }
   },
