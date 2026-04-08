@@ -8,5 +8,6 @@ return [
     'loc/' => 'backend/loc',
     'plugins/?' => 'plugins/',
     'upgrade/?' => 'upgrade/',
+    'automation/?' => 'automation/',
     '*' => 'backend/',
 ];
