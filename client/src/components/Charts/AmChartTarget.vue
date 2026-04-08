@@ -15,20 +15,20 @@ onMounted(() => {
   const chart = am4core.create('chartTarget', am4charts.GaugeChart)
   chart.innerRadius = am4core.percent(82)
 
-  const axis = chart.xAxes.push(new am4charts.ValueAxis())
-  axis.min = 0
-  axis.max = 146
-  axis.strictMinMax = true
-  axis.renderer.radius = am4core.percent(80)
-  axis.renderer.line.strokeOpacity = 1
-  axis.renderer.ticks.template.disabled = false
-  axis.renderer.ticks.template.strokeOpacity = 1
-  axis.renderer.ticks.template.length = 10
-  axis.renderer.grid.template.disabled = true
-  axis.renderer.labels.template.radius = am4core.percent(30)
-  axis.renderer.labels.template.adapter.add('text', function (text) {
-    return text + '%'
-  })
+  // const axis = chart.xAxes.push(new am4charts.ValueAxis())
+  // axis.min = 0
+  // axis.max = 146
+  // axis.strictMinMax = true
+  // axis.renderer.radius = am4core.percent(80)
+  // axis.renderer.line.strokeOpacity = 1
+  // axis.renderer.ticks.template.disabled = false
+  // axis.renderer.ticks.template.strokeOpacity = 1
+  // axis.renderer.ticks.template.length = 10
+  // axis.renderer.grid.template.disabled = true
+  // axis.renderer.labels.template.radius = am4core.percent(30)
+  // axis.renderer.labels.template.adapter.add('text', function (text) {
+  //   return text + '%'
+  // })
 
   /**
  * Axis for ranges
@@ -86,7 +86,7 @@ onMounted(() => {
   })
 
   setInterval(function () {
-    const value = Math.round(Math.random() * 100)
+    const value = Math.round(Math.random() * 50) + 50
     new am4core.Animation(hand, {
       property: 'value',
       to: value

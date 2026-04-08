@@ -54,7 +54,7 @@ function closeTarget () {
               {{ $t('detailsTargetDesc') }}
             </p>
             <div class="align-center custom-my-16">
-              <a href="/upgrade" class="button small green">{{ $t('detailsTargetDescLink') }}</a>
+              <a :href="`${$helper.baseUrl}upgrade/`" class="button small green">{{ $t('detailsTargetDescLink') }}</a>
             </div>
           </div>
         </div>
