@@ -251,5 +251,6 @@
   },
   "detailsTargetDesc": "здесь будет твоя финансовая цель, {username}. но будет она только в премиум-версии, так что иди и {link}.",
   "detailsTargetDescLink": "покупай скорее апгрейд",
+  "detailsDashboardEmptyTitle": "Рассказываем, как тут и че",
   "detailsDashboardEmptyMessage": "Превед, земляне! Добавляем операцию, не стесняемся — а мы покажем вам будущее!"
 }

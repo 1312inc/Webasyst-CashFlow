@@ -60,7 +60,12 @@
         </portal>
       </div>
       <div v-else>
-        {{ $t('DetailsDashboardEmptyMessage') }}
+        <h2>
+          {{ $t('DetailsDashboardEmptyTitle') }}
+        </h2>
+        <p>
+          {{ $t('DetailsDashboardEmptyMessage') }}
+        </p>
       </div>
     </template>
   </div>
