@@ -58,14 +58,14 @@ onMounted(() => {
  * Label
  */
 
-  const label = chart.radarContainer.createChild(am4core.Label)
-  label.isMeasured = false
-  label.fontSize = 35
-  label.x = am4core.percent(50)
-  label.y = am4core.percent(100)
-  label.horizontalCenter = 'middle'
-  label.verticalCenter = 'bottom'
-  label.text = '50%'
+  // const label = chart.radarContainer.createChild(am4core.Label)
+  // label.isMeasured = false
+  // label.fontSize = 35
+  // label.x = am4core.percent(50)
+  // label.y = am4core.percent(100)
+  // label.horizontalCenter = 'middle'
+  // label.verticalCenter = 'bottom'
+  // label.text = '50%'
 
   /**
  * Hand
@@ -81,7 +81,7 @@ onMounted(() => {
   hand.events.on('propertychanged', function (ev) {
     range0.endValue = ev.target.value
     range1.value = ev.target.value
-    label.text = axis2.positionToValue(hand.currentPosition).toFixed(1)
+    // label.text = axis2.positionToValue(hand.currentPosition).toFixed(1)
     axis2.invalidate()
   })
 
