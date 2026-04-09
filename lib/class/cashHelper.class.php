@@ -69,13 +69,31 @@ final class cashHelper
 
         if (wa()->getLocale() == 'ru_RU')
         {
-            $pricing = array( 'compare_price' => '27 999', 'price' => '11 999 <span class="ruble">₽</span>', 'special' => '' );
-            if (date('Ymd')<='20251031') $pricing = array( 'compare_price' => '11 999', 'price' => '8 999 <span class="ruble">₽</span>', 'special' => '&minus;25% до 31.10', 'special_short' => '&minus;25% / 31.10', 'special_color' => 'orange' );
+            $pricing = array(
+                'compare_price' => '', 'price' => '34 999 <span class="ruble">₽</span>',
+                'upgrade_compare_price' => '34 999', 'upgrade_price' => '24 999 <span class="ruble">₽</span>',
+                'special' => ''
+            );
+            if (date('Ymd')<='20260430')
+                $pricing = array(
+                    'compare_price' => '34 999', 'price' => '13 999 <span class="ruble">₽</span>',
+                    'upgrade_compare_price' => '24 999', 'upgrade_price' => '9 999 <span class="ruble">₽</span>',
+                    'special' => '&minus;60% до 30.04', 'special_color' => 'red', 'special_button' => 'Предзаказ премиум'
+                );
+            elseif (date('Ymd')<='20260531')
+                $pricing = array(
+                    'compare_price' => '34 999', 'price' => '19 999 <span class="ruble">₽</span>',
+                    'upgrade_compare_price' => '24 999', 'upgrade_price' => '14 999 <span class="ruble">₽</span>',
+                    'special' => '&minus;40% до 31.05', 'special_color' => 'orange'
+                );
         }
         else
         {
-            $pricing = array( 'compare_price' => '$449', 'price' => '$199', 'special' => '' );
-            if (date('Ymd')<='20251031') $pricing = array( 'compare_price' => '$199', 'price' => '$149', 'special' => '&minus;25%', 'special_short' => '&minus;25% / 10.31', 'special_color' => 'orange' );
+            $pricing = array(
+                'compare_price' => '', 'price' => '$599',
+                'upgrade_compare_price' => '$599', 'upgrade_price' => '$399',
+                'special' => ''
+            );
         }
 
         return $pricing;
