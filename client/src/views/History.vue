@@ -6,9 +6,10 @@
         <h1 class="">
           {{ $t("history") }}
         </h1>
+        <TransactionControls />
       </template>
     </ChartHeader>
-    <TransactionControls />
+    <TransactionControlsSticky />
     <div class="flexbox space-24">
       <div class="wide">
         <TransactionList
@@ -28,6 +29,7 @@ import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import TransactionControls from '../components/TransactionControls.vue'
+import TransactionControlsSticky from '../components/TransactionControlsSticky.vue'
 
 export default {
 
@@ -35,7 +37,8 @@ export default {
     ChartHeader,
     TransactionList,
     AmChartPieStickyContainer,
-    TransactionControls
+    TransactionControls,
+    TransactionControlsSticky
 
   },
   mixins: [routerTransitionMixin],

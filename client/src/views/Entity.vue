@@ -23,6 +23,7 @@
             entity.entity_name
           }}</a>
         </h1>
+        <TransactionControls />
       </template>
       <template
         v-if="$route.meta.showChart"
@@ -31,7 +32,7 @@
         <ChartHeaderControls />
       </template>
     </ChartHeader>
-    <TransactionControls />
+    <TransactionControlsSticky />
     <template v-if="$route.meta.showChart">
       <AmChartContainer />
       <DetailsDashboard />
@@ -59,6 +60,7 @@ import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import TransactionControls from '../components/TransactionControls.vue'
+import TransactionControlsSticky from '../components/TransactionControlsSticky.vue'
 import api from '@/plugins/api'
 import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
 
@@ -71,7 +73,8 @@ export default {
     DetailsDashboard,
     TransactionList,
     AmChartPieStickyContainer,
-    TransactionControls
+    TransactionControls,
+    TransactionControlsSticky
   },
 
   mixins: [routerTransitionMixin],
