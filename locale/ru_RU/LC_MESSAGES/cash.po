@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: utf-8\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.8\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -386,7 +386,7 @@ msgid "Other"
 msgstr "Прочее"
 
 msgid "Transfers"
-msgstr "Переводы"
+msgstr "Между счетами"
 
 msgid "Clear import history"
 msgstr "Очистить историю импортов"
@@ -1265,3 +1265,132 @@ msgstr "только р/с"
 
 msgid "Cash POS"
 msgstr "Наличные в кассе"
+
+msgid "https://www.webasyst.com/my/buy/upgrade-to-premium/cash/"
+msgstr "https://www.webasyst.ru/my/buy/upgrade-to-premium/cash/"
+
+msgid "Upgrade to premium"
+msgstr "Апгрейд до премиум"
+
+msgid "All inclusive in the cloud"
+msgstr "В облаке все включено"
+
+msgid "In Webasyst Cloud, simply upgrade to the <b>Premium</b> plan and get all premium features at once with no extra purchase."
+msgstr "Просто смените тариф на <b>Премиум</b> и пользуйтесь всеми премиум-функциями без покупки лицензий и апгрейдов."
+
+msgid "Early launch offer gets you the best premium upgrade conditions possible."
+msgstr "Премиум-версия открывает ранний доступ ко всем новым функциям и обновлениям."
+
+msgid "Per-server license for the entire company. Unlimited users, all the premium features, and free updates forever."
+msgstr "Лицензия на один сервер и всю компанию. Сколько угодно пользователей, все функции, бесплатные обновления."
+
+msgid "upgrade basic &rarr; premium"
+msgstr "апгрейд база &rarr; премиум"
+
+msgid "new premium license"
+msgstr "новая премиум-лицензия"
+
+msgid "%s intro offer for upgrading existing app license to the premium version"
+msgstr "%s акция на апгрейд базовой лицензии до премиум-версии"
+
+msgid "special offer!"
+msgstr "спецпредложение!"
+
+msgid "One-time payment, not a subscription!"
+msgstr "Единоразовый платеж, не подписка!"
+
+msgid "Available now"
+msgstr "Уже здесь"
+
+msgid "Goals & budgets"
+msgstr "Цели и бюджет"
+
+msgid "Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast).<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>."
+msgstr "Задавайте финансовые цели и бюджеты в формате <code>статья &rarr; когда &rarr; сколько</code>, и приложение в <code>%</code> покажет, насколько вы отклоняетесь от траектории. Цели работают как дополнительный слой поверх запланированных операций (прогноза).<br><br> Примеры: <code>Продажи &rarr; Июнь &rarr; 1.5М</code>, <code>Реклама &rarr; (каждый месяц) &rarr; 50К</code>."
+
+msgid "May 2026"
+msgstr "Май 2026"
+
+msgid "Teammate accounts"
+msgstr "Подотчеты"
+
+msgid "Assign accounts to specific users on your team. Know whom is accountable for and how much."
+msgstr "Закрепляйте счета за сотрудниками. Контролируйте, у кого сколько на руках в подотчете."
+
+msgid "Automation / bots"
+msgstr "Автоматизация и боты"
+
+msgid "Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>"
+msgstr "Настраивайте правила в формате <code>событие &rarr; действие</code>. Правила работают как боты, которые следят за событиями в системе и автоматизируют создание и корректировку операций.<br><br> Пример: <code>Поступление от АРТИКУС на СЧЕТ_Т_БАНК</code> &rarr; <code>Создать 2 операции ПРОДАЖИ +30% & КОМИССИЯ -30% в СЧЕТ_ПРОЕКТА</code>"
+
+msgid "Multiple companies"
+msgstr "Несколько компаний"
+
+msgid "Split accounting across different entities such as LLCs, personal, etc."
+msgstr "Ведите независимый учет и прогноз по разным юрлицам, ООО, ИП."
+
+msgid "Later"
+msgstr "Позже"
+
+msgid "Scenarios"
+msgstr "Сценарии"
+
+msgid "Exclude individual transactions from the primary cash flow scenario, and include them into specific scenarios such as <em>Optimistic, Pessimistic, Gonna take a loan, What if there is a fire, What if it works out</em>, or any custom scenario."
+msgstr "Исключайте отдельные операции из основного учета и прикрепляйте их к кастомным финансовым сценариям: <em>Оптимистический, Пессимистический, Если взять кредит, Если вдруг пожар, Если все сработает</em> — любой сценарий, который сами создадите."
+
+msgid "Transaction templates"
+msgstr "Шаблоны операций"
+
+msgid "Create templates with fixed parameters (such as category, account, amount, etc.) that speed up your work and reduce mistakes."
+msgstr "Создавайте готовые шаблоны операций для быстрого добавления. Фиксируйте нужные параметры (статья, счет, сумма и т.д.), добавляйте новые операции быстрее и без ошибок."
+
+msgid "The Big Bang moment"
+msgstr "Закрытие периодов"
+
+msgid "Set a a specific date as a Big Bang moment and be sure that no can adjust anything before that date."
+msgstr "Устанавливайте «момент Большого взрыва» так, чтобы никто не мог переписать историю и редактировать архивные данные до заданной даты."
+
+msgid "Account groups"
+msgstr "Группы счетов"
+
+msgid "Evaluating either we need this feature in the app. <b>Yes or no? <a href=\"%s\" target=\"_blank\">Vote here!</a></b>"
+msgstr "Пока думаем, нужно ли добавлять фичу. <b>Да или нет? <a href=\"%s\" target=\"_blank\">Голосуйте здесь!</a></b>"
+
+msgid "https://support.webasyst.com/forum/ideas/"
+msgstr "https://support.webasyst.ru/forum/ideas/"
+
+msgid "Maybe"
+msgstr "Возможно"
+
+msgid "Tags & projects"
+msgstr "Теги и проекты"
+
+msgid "You are all set!"
+msgstr "Все подключено!"
+
+msgid "Thank you for being a premium user and for supporting the project."
+msgstr "Спасибо за покупку премиум-версии и поддержку проекта!"
+
+msgid "With premium, you are among the first to have access to all features."
+msgstr "У вас приоритетный доступ ко всем новым функциям и обновлениям."
+
+msgid "https://www.webasyst.com/store/app/cash/"
+msgstr "https://www.webasyst.ru/store/app/cash/"
+
+msgid "Bigger money needs to be better accounted"
+msgstr "Большие деньги начинаются с правильного подхода к учету"
+
+msgid "%d features available now, +%d more to come shortly."
+msgstr "%d премиум-функций доступно сейчас, еще %s на подходе."
+
+msgid "All scheduled features will be delivered as free updates via Installer."
+msgstr "Все обновления будут доступны в Инсталлере бесплатно."
+
+msgid "Premium"
+msgstr "Премиум"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Error"
+msgstr "Ошибка"

@@ -35,7 +35,7 @@
     </h4>
     <p class="width-60 width-100-mobile custom-mx-auto small">
         {if $_is_cloud}
-            [`In Webasyst Cloud, simply upgrade to the <b>Premium</b> plan and get all premium features at once with no extra purchase required.`]
+            [`In Webasyst Cloud, simply upgrade to the <b>Premium</b> plan and get all premium features at once with no extra purchase.`]
         {else}
             {if !empty($_premium_pricing.special)}
                 {sprintf('[`%s intro offer for upgrading existing app license to the premium version`]', sprintf('<span class="badge %s">%s</span>', $_premium_pricing.special_color, $_premium_pricing.special))} —
@@ -56,7 +56,7 @@
     <div class="flexbox space-12 wrap-mobile">
         <div class="wide">
             <h3 class="custom-mb-8{if !empty($_p.grayedout)} gray{/if}">
-                {if !$_is_free_feature}<i class="fas fa-star text-yellow small custom-mr-2" style="position: relative: top: -4px;"></i>{/if}
+                {if !$_is_free_feature && empty($_p.grayedout)}<i class="fas fa-star text-yellow small custom-mr-2" style="position: relative: top: -4px;"></i>{/if}
                 {$_p.title}
             </h3>
         </div>
@@ -84,19 +84,22 @@
 
             {$_premium_stuff[] = [
               'title' => '[`Goals & budgets`]',
-              'body' => '[`Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in adiitional to the planned transactions (forecast).<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>.`]',
+              'body' => '[`Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast).<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>.`]',
+              'eta_class' => 'green',
               'eta' => '[`May 2026`]'
             ]}
 
             {$_premium_stuff[] = [
-              'title' => '[`Teammates accounts`]',
+              'title' => '[`Teammate accounts`]',
               'body' => '[`Assign accounts to specific users on your team. Know whom is accountable for and how much.`]',
+              'eta_class' => 'green',
               'eta' => '[`May 2026`]'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Automation / bots`]',
               'body' => '[`Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>`]',
+              'eta_class' => 'green',
               'eta' => '[`May 2026`]'
             ]}
 
@@ -114,7 +117,7 @@
 
             {$_premium_stuff[] = [
               'title' => '[`Transaction templates`]',
-              'body' => '[`Pre-configured quick templates for adding new transactions even more quickly and easily. Create templates with fixed parameters (such as category, account, amount, etc.) that speed up your work and reduce mistakes.`]',
+              'body' => '[`Create templates with fixed parameters (such as category, account, amount, etc.) that speed up your work and reduce mistakes.`]',
               'eta' => '[`Later`]'
             ]}
 
@@ -124,10 +127,16 @@
               'eta' => '[`Later`]'
             ]}
 
+            {$_premium_stuff[] = [
+              'title' => '[`Account groups`]',
+              'body' => {sprintf('[`Evaluating either we need this feature in the app. <b>Yes or no? <a href="%s" target="_blank">Vote here!</a></b>`]', '[`https://support.webasyst.com/forum/ideas/`]')},
+              'grayedout' => true,
+              'eta' => '[`Maybe`]'
+            ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Tags & projects`]',
-              'body' => {sprintf('[`Evaluating either we need this feature in the app. <b>Yes or no? <a href="%s" target="_blank">Vote here!</a></b>`]', '[`https://support.webasyst.com/forum/`]')},
+              'body' => {sprintf('[`Evaluating either we need this feature in the app. <b>Yes or no? <a href="%s" target="_blank">Vote here!</a></b>`]', '[`https://support.webasyst.com/forum/ideas/`]')},
               'grayedout' => true,
               'eta' => '[`Maybe`]'
             ]}
@@ -166,6 +175,8 @@
 
                 <p class="small align-center custom-mb-24">
                     [`Early launch offer gets you the best premium upgrade conditions possible.`]
+                    <br>
+                    <a class="bold" href="[`https://www.webasyst.com/store/app/cash/`]" target="_blank">[`https://www.webasyst.com/store/app/cash/`]</a>
                     {* <br>
                     <b>{sprintf('[`%d features available now, +%d more to come shortly.`]', $_features_delivered, $_features_pending)}</b> *}
                 </p>
