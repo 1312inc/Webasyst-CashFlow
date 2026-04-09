@@ -1,5 +1,5 @@
 <template>
-  <BlankBox class="custom-mt-12">
+  <div class="custom-p-24">
     <div class="c-header flexbox">
       <div class="wide">
         <slot
@@ -11,7 +11,7 @@
         <slot name="controls" />
       </div>
     </div>
-  </BlankBox>
+  </div>
 </template>
 
 <script setup>
