@@ -6,7 +6,7 @@
       :class="{'desktop-and-tablet-only': $helper.isDesktopEnv}"
     >
       <BlankBox>
-        <div class="custom-px-12">
+        <div class="custom-px-16">
           <TransactionControls />
         </div>
       </BlankBox>

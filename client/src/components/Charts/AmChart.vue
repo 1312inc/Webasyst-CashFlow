@@ -2,7 +2,7 @@
   <div
     ref="chartdiv"
     :style="loadingChart && 'opacity:.2'"
-    class="c-chart-main smaller"
+    class="c-chart-main smaller custom-pt-16 custom-pr-12"
   />
 </template>
 

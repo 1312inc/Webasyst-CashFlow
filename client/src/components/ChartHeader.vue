@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-p-24">
+  <div class="custom-p-16">
     <div class="c-header flexbox">
       <div class="wide">
         <slot
