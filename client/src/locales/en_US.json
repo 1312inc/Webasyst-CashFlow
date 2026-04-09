@@ -246,10 +246,11 @@
       },
       "virtualWithForecast": {
         "name": "Sandbox",
-        "message": "similar to project, but all transactions are only visible within the account, making it possible to emulate any isolated financial scenario under this account"
+        "message": "similar to project, but all transactions — both past & future — won’t affect the general picture, making it possible to emulate any isolated financial scenario within this account"
       }
     }
   },
+  "accountTypeHint": "More on account types ›",
   "detailsTargetDescTitle": "Goals & Budget",
   "detailsTargetDesc": "Coming soon in premium! Financial goals, budgeting, and more amazing powerful features for accounting and predictions.",
   "detailsTargetDescLink": "Pre-order upgrade",
