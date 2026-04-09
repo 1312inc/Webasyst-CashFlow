@@ -155,10 +155,10 @@
   "Process": "Process",
   "processToday": "Mark as processed today",
   "processEdits": "Process with edits",
-  "profit": "Profit (cash out)",
+  "profit": "Profit / dividends",
   "incomeCategoryExplained": "Income transactions increase the account balance.",
   "expenseCategoryExplained": "Expense transactions decrease the account balance.",
-  "profitCategoryExplained": "For business, profit is similar to expense because its taking money out of business and thus decreasing the account balance. The Profit checkbox allows you to visually group this kind of expenses into separate blue columns.",
+  "profitCategoryExplained": "For business, profit and dividends are similar to expense because they mean taking money out of business and thus decreasing the account balance. The checkbox allows you to visually group this kind of expenses into separate blue column. It does not affect the accounting, but makes general picture easier to catch up visually.",
   "notifyMe": "Remind to process when due",
   "notifyMeAlert": "When the transaction date comes, a tiny little notification on the app icon will emerge and remind you to process (confirm) this transaction.",
   "error": {
