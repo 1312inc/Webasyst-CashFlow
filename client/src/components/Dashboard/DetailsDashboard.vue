@@ -66,6 +66,15 @@
         <p>
           {{ $t('detailsDashboardEmptyMessage') }}
         </p>
+        <ol class="separated">
+          <li>{{ $t('detailsDashboardEmptyBullet1') }}</li>
+          <li>{{ $t('detailsDashboardEmptyBullet2') }}</li>
+          <li>{{ $t('detailsDashboardEmptyBullet3') }}</li>
+        </ol>
+        <p>
+          {{ $t('detailsDashboardEmptyDocMessage') }}
+          <a href="#" target="_blank"><b>{{ $t('detailsDashboardEmptyDocLink') }}</b></a>
+        </p>
       </div>
     </template>
   </div>

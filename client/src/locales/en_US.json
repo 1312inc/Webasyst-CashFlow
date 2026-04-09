@@ -253,6 +253,11 @@
   "detailsTargetDescTitle": "Goals & Budget",
   "detailsTargetDesc": "Coming soon in premium! Financial goals, budgeting, and more amazing powerful features for accounting and predictions.",
   "detailsTargetDescLink": "Pre-order upgrade",
-  "detailsDashboardEmptyTitle": "Поздравлям",
-  "detailsDashboardEmptyMessage": "ДА! Превед, земляне! Добавляем операцию, не стесняемся — а мы покажем вам будущее!"
+  "detailsDashboardEmptyTitle": "Explaining how it all works",
+  "detailsDashboardEmptyMessage": "To quickly see the app ultimate purpose, try adding a few typical transactions that occur or a regular basis. The app will automatically calculate your cash flow and display all the necessary reports and charts. Test transactions can always be easily deleted.",
+  "detailsDashboardEmptyBullet1": "Click ‘Add Many’.",
+  "detailsDashboardEmptyBullet2": "Add 3—5 recurring transactions, e.g. sales plan (daily), rent, internet, salaries (monthly), and office supplies (weekly).",
+  "detailsDashboardEmptyBullet3": "Profit! See how much money will be in your account and when.",
+  "detailsDashboardEmptyDocMessage": "Sharing more about the app top features and use cases here:",
+  "detailsDashboardEmptyDocLink": "https://support.webasyst.com/cash/"
 }
