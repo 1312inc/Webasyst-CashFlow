@@ -51,13 +51,13 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
         chart.dataFields.currency = "currencySign";
         chart.links.template.tooltipText = `{fromName}→{toName}: {value} {currency}`;
         chart.links.template.colorMode = "gradient";
-        chart.links.template.fillOpacity = 1;
+        chart.links.template.fillOpacity = 0.6;
 
         const nodeTemplate = chart.nodes.template;
         nodeTemplate.adapter.add("visible", (e, target) => target.children.values[0].label.currentText !== 'stub');
 
         let hoverState = chart.links.template.states.create("hover");
-        hoverState.properties.fillOpacity = 0.6;
+        hoverState.properties.fillOpacity = 0.4;
 
     }
 
