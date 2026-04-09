@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import BlankBox from '../components/BlankBox.vue'
+
 </script>
 
 <style>
