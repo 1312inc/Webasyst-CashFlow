@@ -8,6 +8,7 @@
         </h1>
       </template>
     </ChartHeader>
+    <TransactionControls />
     <div class="flexbox space-24">
       <div class="wide">
         <TransactionList
@@ -26,6 +27,7 @@ import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
+import TransactionControls from '../components/TransactionControls.vue'
 import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
 
 export default {
@@ -33,7 +35,8 @@ export default {
   components: {
     ChartHeader,
     TransactionList,
-    AmChartPieStickyContainer
+    AmChartPieStickyContainer,
+    TransactionControls
   },
   mixins: [routerTransitionMixin],
 

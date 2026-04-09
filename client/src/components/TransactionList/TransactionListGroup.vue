@@ -403,7 +403,7 @@ export default {
 <style>
 .c-sticky-header-group {
   position: sticky;
-  top: 4rem;
+  top: calc(4rem + 60px);
   z-index: 99;
   background-color: var(--background-color-blank);
 }

@@ -1,7 +1,6 @@
 <script setup>
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/Modals/AddTransaction'
-import AddTransactionBulk from '@/components/Modals/AddTransactionBulk'
 import TransactionMove from '@/components/Modals/TransactionMove'
 import { emitter } from '@/plugins/eventBus'
 import { useRoute } from 'vue-router/composables'
@@ -50,8 +49,6 @@ function onClick () {
       @reOpen="reOpen"
     >
       <TransactionMove v-if="addTransactionOpts.type === 'move'" />
-
-      <AddTransactionBulk v-else-if="addTransactionOpts.type === 'addMany'" />
 
       <AddTransaction
         v-else

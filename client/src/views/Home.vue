@@ -10,6 +10,7 @@
         <ChartHeaderControls />
       </template>
     </ChartHeader>
+    <TransactionControls />
     <AlertImported />
     <AmChartContainer />
 
@@ -38,6 +39,7 @@ import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyConta
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import AlertImported from '../components/AlertImported.vue'
 import DetailsContainer from '../components/DetailsContainer.vue'
+import TransactionControls from '../components/TransactionControls.vue'
 import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
 
 export default {
@@ -51,7 +53,8 @@ export default {
     TransactionList,
     AmChartPieStickyContainer,
     AlertImported,
-    DetailsContainer
+    DetailsContainer,
+    TransactionControls
   },
   mixins: [routerTransitionMixin],
 

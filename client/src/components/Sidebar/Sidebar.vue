@@ -19,19 +19,7 @@
       ref="sidebarBody"
       class="sidebar-body hide-scrollbar"
     >
-      <div class="c-sidebar-sticky-header custom-pr-12">
-        <div class="flexbox">
-          <div class="c-sidebar-search wide">
-            <SearchField />
-          </div>
-          <CircleButtonsStack
-            class="c-sidebar-stack"
-            @click="onCircleButtonsClick"
-          />
-        </div>
-      </div>
-      <div class="c-sidebar-stickyDummy" />
-
+      <SearchField />
       <Bricks />
 
       <!-- Widgets charts block -->
@@ -110,7 +98,6 @@ import SidebarCurrencyWidgets from './SidebarCurrencyWidgets'
 import ContactsList from '@/components/ContactsList/ContactsList'
 import Toggler from '@/components/Toggler/Toggler'
 import Bricks from '@/components/Bricks/Bricks'
-import CircleButtonsStack from '@/components/Buttons/CircleButtonsStack'
 
 export default {
   components: {
@@ -123,8 +110,7 @@ export default {
     SidebarCurrencyWidgets,
     Bricks,
     ContactsList,
-    Toggler,
-    CircleButtonsStack
+    Toggler
   },
 
   data () {
@@ -154,23 +140,7 @@ export default {
     }
   },
 
-  mounted () {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        document.querySelector('.c-sidebar-sticky-header').classList.toggle('is-sticky', !entry.isIntersecting)
-      },
-      { threshold: 1, rootMargin: '-1px 0px 0px 0px' }
-    )
-
-    observer.observe(document.querySelector('.c-sidebar-stickyDummy'))
-  },
-
   methods: {
-    onCircleButtonsClick (type) {
-      this.$eventBus.emit('openAddTransactionModal', {
-        type
-      })
-    },
     menuOpen () {
       ['Body', 'Footer'].forEach(h => {
         this.$refs[`sidebar${h}`].style['max-height'] =
@@ -196,25 +166,5 @@ export default {
     height: auto;
     max-height: 0;
   }
-}
-
-.c-sidebar-sticky-header {
-  position: sticky;
-  top: 0;
-  z-index: 99999;
-  background: var(--background-color);
-}
-
-.c-sidebar-sticky-header.is-sticky {
-  box-shadow: 0 .1rem 1rem .1rem rgba(0, 0, 0, 0.1);
-}
-
-.c-sidebar-stack {
-  transform: translateY(12px);
-}
-
-.c-sidebar-sticky-header:has(.c-sidebar-stack:hover) .c-sidebar-search {
-  transition: all .2s;
-  opacity: 0;
 }
 </style>

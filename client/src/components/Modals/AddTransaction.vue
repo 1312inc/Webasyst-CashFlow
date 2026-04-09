@@ -41,6 +41,7 @@
         <div
           v-if="!isModeUpdate"
           class="toggle custom-mt-8"
+          style="flex: none;"
         >
           <span
             v-for="(type, i) in [
