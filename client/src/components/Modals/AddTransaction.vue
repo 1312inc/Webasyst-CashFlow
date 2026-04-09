@@ -578,16 +578,28 @@
               {{ $t("cancel") }}
             </button>
           </div>
-          <button
+
+          <div
             v-if="isModeUpdate"
-            :disabled="controlsDisabled"
-            class="button red outlined"
-            @click="remove"
+            class="flexbox middle space-12"
           >
-            <span>{{
-              model.apply_to_all_in_future ? $t("deleteAll") : $t("delete")
-            }}</span>
-          </button>
+            <div
+              v-if="model.id"
+              class="small gray"
+            >
+              id: {{ model.id }}
+            </div>
+
+            <button
+              :disabled="controlsDisabled"
+              class="button red outlined"
+              @click="remove"
+            >
+              <span>{{
+                model.apply_to_all_in_future ? $t("deleteAll") : $t("delete")
+              }}</span>
+            </button>
+          </div>
         </div>
       </div>
     </template>
