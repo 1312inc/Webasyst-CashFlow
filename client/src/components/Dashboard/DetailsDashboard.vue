@@ -59,23 +59,7 @@
           </Modal>
         </portal>
       </div>
-      <div v-else>
-        <h2>
-          {{ $t('detailsDashboardEmptyTitle') }}
-        </h2>
-        <p>
-          {{ $t('detailsDashboardEmptyMessage') }}
-        </p>
-        <ol class="separated">
-          <li>{{ $t('detailsDashboardEmptyBullet1') }}</li>
-          <li>{{ $t('detailsDashboardEmptyBullet2') }}</li>
-          <li>{{ $t('detailsDashboardEmptyBullet3') }}</li>
-        </ol>
-        <p>
-          {{ $t('detailsDashboardEmptyDocMessage') }}
-          <a href="#" target="_blank"><b>{{ $t('detailsDashboardEmptyDocLink') }}</b></a>
-        </p>
-      </div>
+      <DetailsDashboardEmpty v-else />
     </template>
   </div>
 </template>
@@ -89,13 +73,15 @@ import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 import ExportButton from '@/components/Buttons/ExportButton'
 import { appState } from '@/utils/appState'
 import { getIntervalFromLabel } from '@/utils/getDateFromLocalStorage'
+import DetailsDashboardEmpty from '../ContentBlocks/DetailsDashboardEmpty.vue'
 
 export default {
   components: {
     Modal,
     DetailsDashboardItem,
     UpdateDetailsInterval,
-    ExportButton
+    ExportButton,
+    DetailsDashboardEmpty
   },
 
   data () {

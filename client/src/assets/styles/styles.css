@@ -236,6 +236,7 @@ body.modal {
 
 .c-details-container__target {
   width: 340px;
+  flex: none;
 }
 
 @media screen and (max-width: 1280px) {
