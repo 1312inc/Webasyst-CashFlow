@@ -49,6 +49,9 @@ onBeforeUnmount(() => {
   z-index: 999;
   display: none;
 }
+.c-transaction-controls-sticky .box.rounded {
+  border-radius: 0;
+}
 
 .c-transaction-controls-sticky.is-sticky {
   display: block;
