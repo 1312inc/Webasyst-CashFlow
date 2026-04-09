@@ -16,6 +16,18 @@ return array(
             'PRIMARY' => 'id',
         ),
     ),
+    'cash_automation' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'sort' => array('int', 11, 'null' => 0, 'default' => '0'),
+        'app_id' => array('varchar', 64, 'null' => 0),
+        'action_id' => array('varchar', 255, 'null' => 0),
+        'conditions' => array('text'),
+        'rule_data' => array('text'),
+        ':keys' => array(
+            'PRIMARY' => 'id',
+        ),
+        ':options' => ['charset' => 'utf8mb4'],
+    ),
     'cash_category' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
         'name' => array('varchar', 64, 'null' => 0),
