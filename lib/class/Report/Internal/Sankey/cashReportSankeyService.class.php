@@ -81,7 +81,12 @@ SQL;
 
             $datumData = &$datum['data'];
             usort($datumData, static function (array $item1, array $item2) {
-                return $item1['value'] > $item2['value'];
+                if($item1['value'] > $item2['value']) {
+                    return 1;
+                } elseif($item1['value'] < $item2['value']) {
+                    return -1;
+                }
+                return 0;
             });
 
             array_walk($datumData, static function (&$item) use ($datum) {
