@@ -1,7 +1,7 @@
 html {
     --red:    #ff421a;
     --green:  #0abe5a;
-    --highlighted-overdue: #ffd4d4;
+    --highlighted-overdue: #ffe7e7;
 }
 
 html[data-theme='dark'] {

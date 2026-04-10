@@ -7,7 +7,7 @@
         <h1 class="">
           {{ $t("trash") }}
         </h1>
-        <p class="small custom-px-16-mobile">
+        <p class="small custom-px-16-mobile width-60 width-100-mobile">
           {{ $t("trashInfo") }}
         </p>
       </template>

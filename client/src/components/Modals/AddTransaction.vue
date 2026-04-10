@@ -6,7 +6,7 @@
     <div class="dialog-header">
       <div class="flexbox middle space-12 wrap-mobile">
         <div class="wide flexbox middle">
-          <h3 class="custom-mb-0">
+          <h3 class="custom-mb-0 custom-pt-4">
             <template v-if="transactionType === 'addMany'">
               {{ $t("addMany") }}
             </template>
