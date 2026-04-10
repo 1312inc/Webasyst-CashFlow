@@ -78,7 +78,7 @@ body.modal {
   color: var(--accent-color) !important;
 }
 
-.alert.c-cashgap-prediction-banner { border: none; border-radius: 0; padding: 1rem; }
+.alert.c-cashgap-prediction-banner { border: none; padding: 1rem; margin: 1rem 0 0; font-size: 0.9375rem; }
 
 .c-button-add-income { background: #16d15f; }
 .c-button-add-expense { background: #f7623a; }
