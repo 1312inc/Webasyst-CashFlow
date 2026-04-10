@@ -7,19 +7,18 @@
       <BlankBox>
         <TransactionListCreated />
       </BlankBox>
-      <BlankBox>
-        <div
-          v-for="(group, index) in groups.filter(g => ['tomorrow', 'yesterday'].includes(g.name))"
-          :key="group.name"
-        >
-          <TransactionListGroup
-            :group="group.items"
-            :type="group.name"
-            :index="index"
-            :visible-select-checkbox="visibleSelectCheckbox"
-            :show-founded-count="showFoundedCount"
-          />
-        </div>
+
+      <BlankBox
+        v-for="(group, index) in groups.filter(g => ['tomorrow', 'yesterday'].includes(g.name))"
+        :key="group.name"
+      >
+        <TransactionListGroup
+          :group="group.items"
+          :type="group.name"
+          :index="index"
+          :visible-select-checkbox="visibleSelectCheckbox"
+          :show-founded-count="showFoundedCount"
+        />
       </BlankBox>
 
       <BlankBox
