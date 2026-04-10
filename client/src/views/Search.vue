@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <ChartHeader :show-controls="false">
@@ -63,6 +64,13 @@ export default {
         offset: 0,
         filter: `search/${this.$route.query.text}`
       })
+    }
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('search.label'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
     }
   }
 }

@@ -56,6 +56,13 @@ export default {
       offset: 0,
       filter: ''
     })
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('transactions'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
   }
 }
 </script>

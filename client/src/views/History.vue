@@ -50,6 +50,13 @@ export default {
       offset: 0,
       filter: ''
     })
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('history'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
   }
 }
 </script>
