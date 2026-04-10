@@ -40,7 +40,7 @@ function onClick () {
       <div
         ref="draggableRef"
         :style="`color: ${category.color}`"
-        class="icg-row align-left nowrap"
+        class="icg-row align-left nowrap smaller"
         :class="{
           'icg-row--overdue': isOverdue
         }"
@@ -50,7 +50,7 @@ function onClick () {
         <span
           v-if="category.glyph"
           :key="category.color"
-          class="icon baseline"
+          class="icon"
         >
           <i
             :class="category.glyph"
@@ -59,7 +59,7 @@ function onClick () {
         </span>
         <span
           v-else
-          class="icon size-12 baseline"
+          class="icon size-8"
         >
           <i
             v-if="isOverdue"
