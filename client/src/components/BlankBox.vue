@@ -16,6 +16,7 @@ const props = defineProps(['disableBottomMargin'])
     position: relative;
     box-sizing: border-box;
     padding: 0;
+    overflow: clip;
   }
   .box.rounded {
     border-radius: 0.75rem;

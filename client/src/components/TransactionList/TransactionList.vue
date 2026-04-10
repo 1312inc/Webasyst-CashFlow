@@ -21,28 +21,27 @@
           />
         </div>
       </BlankBox>
-      <BlankBox>
-        <div
-          v-for="(group, index) in groups.filter(g => !(['tomorrow', 'yesterday'].includes(g.name)))"
-          :key="group.name"
-        >
-          <TransactionListGroup
-            :group="group.items"
-            :type="group.name"
-            :index="index"
-            :visible-select-checkbox="visibleSelectCheckbox"
-            :show-founded-count="showFoundedCount"
-          />
-        </div>
-        <Observer
-          v-if="observer &&
-            (isSplitFetchMode
-              ? (pastTransactionsOffset && pastTransactionsOffset < transactions.total)
-              : (transactions.data.length && transactions.data.length < transactions.total)
-            )"
-          @callback="() => { observerCallback(isSplitFetchMode ? pastTransactionsOffset : transactions.data.length) }"
+
+      <BlankBox
+        v-for="(group, index) in groups.filter(g => !(['tomorrow', 'yesterday'].includes(g.name)))"
+        :key="group.name"
+      >
+        <TransactionListGroup
+          :group="group.items"
+          :type="group.name"
+          :index="index"
+          :visible-select-checkbox="visibleSelectCheckbox"
+          :show-founded-count="showFoundedCount"
         />
       </BlankBox>
+      <Observer
+        v-if="observer &&
+          (isSplitFetchMode
+            ? (pastTransactionsOffset && pastTransactionsOffset < transactions.total)
+            : (transactions.data.length && transactions.data.length < transactions.total)
+          )"
+        @callback="() => { observerCallback(isSplitFetchMode ? pastTransactionsOffset : transactions.data.length) }"
+      />
     </div>
   </div>
 </template>
