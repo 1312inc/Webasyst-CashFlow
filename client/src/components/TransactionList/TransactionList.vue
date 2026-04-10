@@ -34,11 +34,11 @@
         />
       </BlankBox>
 
-      <BlankBox v-if="nextMonthIntervalLabel">
+      <div v-if="nextMonthIntervalLabel">
         <div class="align-center small gray custom-p-24">
           {{ nextMonthIntervalLabel }}
         </div>
-      </BlankBox>
+      </div>
 
       <BlankBox
         v-for="(group, index) in groups.filter(g => !(['tomorrow', 'yesterday', 'overdue', 'future', 'today'].includes(g.name)))"
@@ -61,11 +61,11 @@
         @callback="() => { observerCallback(isSplitFetchMode ? pastTransactionsOffset : transactions.data.length) }"
       />
 
-      <BlankBox v-if="transactions.data.length === transactions.total && transactions.limit * 2 < transactions.total">
+      <div v-if="transactions.data.length === transactions.total && transactions.limit * 2 < transactions.total">
         <div class="align-center small gray custom-p-24">
           {{ $t('allTransactionsProcessed') }}
         </div>
-      </BlankBox>
+      </div>
     </div>
   </div>
 </template>
