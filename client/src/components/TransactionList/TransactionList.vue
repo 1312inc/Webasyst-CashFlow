@@ -22,7 +22,26 @@
       </BlankBox>
 
       <BlankBox
-        v-for="(group, index) in groups.filter(g => !(['tomorrow', 'yesterday'].includes(g.name)))"
+        v-for="(group, index) in groups.filter(g => (['overdue', 'future', 'today'].includes(g.name)))"
+        :key="group.name"
+      >
+        <TransactionListGroup
+          :group="group.items"
+          :type="group.name"
+          :index="index"
+          :visible-select-checkbox="visibleSelectCheckbox"
+          :show-founded-count="showFoundedCount"
+        />
+      </BlankBox>
+
+      <BlankBox v-if="nextMonthIntervalLabel">
+        <div class="align-center small gray custom-p-24">
+          {{ nextMonthIntervalLabel }}
+        </div>
+      </BlankBox>
+
+      <BlankBox
+        v-for="(group, index) in groups.filter(g => !(['tomorrow', 'yesterday', 'overdue', 'future', 'today'].includes(g.name)))"
         :key="group.name"
       >
         <TransactionListGroup
@@ -41,6 +60,12 @@
           )"
         @callback="() => { observerCallback(isSplitFetchMode ? pastTransactionsOffset : transactions.data.length) }"
       />
+
+      <BlankBox v-if="transactions.data.length === transactions.total && transactions.limit * 2 < transactions.total">
+        <div class="align-center small gray custom-p-24">
+          {{ $t('allTransactionsProcessed') }}
+        </div>
+      </BlankBox>
     </div>
   </div>
 </template>
@@ -244,6 +269,27 @@ export default {
 
     showTodayGroupComputed () {
       return !this.detailsInterval.from && !this.detailsInterval.to ? this.showTodayGroup : false
+    },
+
+    nextMonthIntervalLabel () {
+      const nextMonthWithTransactions = this.groups.filter(g => !(['tomorrow', 'yesterday', 'overdue', 'future', 'today'].includes(g.name)))[0]?.name || '' // 2026-04 (YYYY-MM)
+      // Calculate days since today to the start of nextMonthWithTransactions (YYYY-MM)
+      if (nextMonthWithTransactions) {
+        const startOfMonth = this.$moment(nextMonthWithTransactions + '-01')
+        const today = this.$moment().startOf('day')
+        const diffDays = today.diff(startOfMonth, 'days')
+        if (diffDays >= 3 * 365) {
+          return this.$t('intervalLabels.eternity')
+        } else if (diffDays >= 1.5 * 365) {
+          return this.$t('intervalLabels.yearsPassed')
+        } else if (diffDays >= 365) {
+          return this.$t('intervalLabels.yearPassed')
+        } else if (diffDays >= 6 * 30) {
+          return this.$t('intervalLabels.monthsPassed')
+        }
+      }
+
+      return ''
     }
 
   },

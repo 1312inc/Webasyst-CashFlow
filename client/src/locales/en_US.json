@@ -175,6 +175,12 @@
   "cashGapIn": "Cash gap is expected in {inDays} days ({date})",
   "cashGapOut": "Going out of cash gap in {inDays} days ({date})",
   "inDays": "(in {days} days)",
+  "intervalLabels": {
+    "eternity": "Ages ago",
+    "yearsPassed": "A couple of years ago",
+    "yearPassed": "A year ago",
+    "monthsPassed": "A few months ago"
+  },
   "fileUploaderLabel": "Drop here or browse",
   "contacts": "Contacts",
   "createNewContact": "Create new Contact",
@@ -253,5 +259,6 @@
   "accountTypeHint": "More on account types ›",
   "detailsTargetDescTitle": "Goals & Budget",
   "detailsTargetDesc": "Coming soon in premium! Financial goals, budgeting, and more amazing powerful features for accounting and predictions.",
-  "detailsTargetDescLink": "Pre-order upgrade"
+  "detailsTargetDescLink": "Pre-order upgrade",
+  "allTransactionsProcessed": "That's all folks!" 
 }

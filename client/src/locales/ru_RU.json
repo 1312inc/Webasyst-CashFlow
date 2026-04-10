@@ -175,6 +175,12 @@
   "cashGapIn": "Кассовый разрыв ожидается через {inDays} дней ({date})",
   "cashGapOut": "Выходим в плюс через {inDays} дней ({date})",
   "inDays": "(через {days} дней)",
+  "intervalLabels": {
+    "eternity": "Как будто в прошлой жизни",
+    "yearsPassed": "Пара лет назад",
+    "yearPassed": "Год назад",
+    "monthsPassed": "Несколько месяцев назад"
+  },
   "fileUploaderLabel": "Выберите файл",
   "contacts": "Контакты",
   "createNewContact": "Создать новый контакт",
@@ -253,5 +259,6 @@
   "accountTypeHint": "Подробнее о типах счетов ›",
   "detailsTargetDescTitle": "Цели и бюджет",
   "detailsTargetDesc": "Скоро в премиум! Финансовые цели, бюджет, автоматизация и много других продвинутых фич для учета и прогноза.",
-  "detailsTargetDescLink": "Предзаказ премиум"
+  "detailsTargetDescLink": "Предзаказ премиум",
+  "allTransactionsProcessed": "На этом все"
 }
