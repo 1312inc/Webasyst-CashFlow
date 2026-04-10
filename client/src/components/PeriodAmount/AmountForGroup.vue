@@ -2,56 +2,73 @@
   <div
     v-if="currencies.length"
     class="flexbox justify-end middle wrap space-12"
+    :class="{'is-shown': isShown}"
   >
-    <div
-      v-for="currency in currencies"
-      :key="currency"
-      class="flexbox middle space-12"
-    >
-      <div
-        v-for="(type, i) in $_amountMixin_amountTypes"
-        :key="i"
-        :class="{
-          'text-green': type === 'income',
-          'text-red': type === 'expense',
-          'text-blue': type === 'profit'
-        }"
-        :title="
-          type === 'profit'
-            ? $t('profit')
-            : type === 'income'
-              ? $t('income')
-              : $t('expense')
-        "
-      >
-        <i
-          v-if="type === 'profit'"
-          class="fas fa-coins text-blue small"
-        />
-        <span class="small semibold">{{
-          $helper.toCurrency({
-            value: getTotalByCurrency(currency, type),
-            currencyCode: currency,
-            isAbs: true,
-            prefix: type === "income" ? "+ " : type === "expense" ? "− " : " "
-          })
-        }}</span>
+    <div class="flexbox space-12">
+      <div class="c-group-amount">
+        <div
+          v-for="currency in currencies"
+          :key="currency"
+          class="flexbox middle space-12"
+        >
+          <div
+            v-for="(type, i) in $_amountMixin_amountTypes"
+            :key="i"
+            :class="{
+              'text-green': type === 'income',
+              'text-red': type === 'expense',
+              'text-blue': type === 'profit'
+            }"
+            :title="
+              type === 'profit'
+                ? $t('profit')
+                : type === 'income'
+                  ? $t('income')
+                  : $t('expense')
+            "
+          >
+            <i
+              v-if="type === 'profit'"
+              class="fas fa-coins text-blue small"
+            />
+            <span class="small semibold">{{
+              $helper.toCurrency({
+                value: getTotalByCurrency(currency, type),
+                currencyCode: currency,
+                isAbs: true,
+                prefix: type === "income" ? "+ " : type === "expense" ? "− " : " "
+              })
+            }}</span>
+          </div>
+          <div
+            v-if="$_amountMixin_amountTypes.includes('profit')"
+            :title="$t('delta')"
+          >
+            <span class="small semibold gray">
+              {{
+                $helper.toCurrency({
+                  value: amountDelta(currency),
+                  currencyCode: currency,
+                  isDynamics: true,
+                  prefix: "&#916;&nbsp;"
+                })
+              }}
+            </span>
+          </div>
+        </div>
       </div>
-      <div
-        v-if="$_amountMixin_amountTypes.includes('profit')"
-        :title="$t('delta')"
+      <a
+        href="#"
+        class="button circle light-gray mobile-only"
+        @click.prevent="isShown = !isShown"
       >
-        <span class="small semibold gray">
-          {{
-            $helper.toCurrency({
-              value: amountDelta(currency),
-              currencyCode: currency,
-              isDynamics: true,
-              prefix: "&#916;&nbsp;"
-            })
-          }}
+        <span v-show="!isShown">
+          <i class="fas fa-chevron-down" />
         </span>
-      </div>
+        <span v-show="isShown">
+          <i class="fas fa-chevron-up" />
+        </span>
+      </a>
     </div>
   </div>
 </template>
@@ -65,6 +82,12 @@ export default {
     group: {
       type: Array,
       required: true
+    }
+  },
+
+  data () {
+    return {
+      isShown: false
     }
   },
 
@@ -113,3 +136,15 @@ export default {
   }
 }
 </script>
+
+<style>
+@media screen and (max-width: 760px) {
+  .c-group-amount {
+    display: none;
+  }
+
+  .is-shown .c-group-amount {
+    display: block;
+  }
+}
+</style>
