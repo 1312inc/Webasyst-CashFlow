@@ -176,10 +176,10 @@
   "cashGapOut": "Выходим в плюс через {inDays} дней ({date})",
   "inDays": "(через {days} дней)",
   "intervalLabels": {
-    "eternity": "Как будто в прошлой жизни",
-    "yearsPassed": "Пара лет назад",
-    "yearPassed": "Год назад",
-    "monthsPassed": "Несколько месяцев назад"
+    "eternity": "Тут прошла целая вечность...",
+    "yearsPassed": "Шли годы...",
+    "yearPassed": "Прошел год...",
+    "monthsPassed": "Несколькими месяцами ранее..."
   },
   "fileUploaderLabel": "Выберите файл",
   "contacts": "Контакты",
@@ -260,5 +260,5 @@
   "detailsTargetDescTitle": "Цели и бюджет",
   "detailsTargetDesc": "Скоро в премиум! Финансовые цели, бюджет, автоматизация и много других продвинутых фич для учета и прогноза.",
   "detailsTargetDescLink": "Предзаказ премиум",
-  "allTransactionsProcessed": "На этом все"
+  "allTransactionsProcessed": "На этом всё!"
 }

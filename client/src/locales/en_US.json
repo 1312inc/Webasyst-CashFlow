@@ -176,10 +176,10 @@
   "cashGapOut": "Going out of cash gap in {inDays} days ({date})",
   "inDays": "(in {days} days)",
   "intervalLabels": {
-    "eternity": "Ages ago",
-    "yearsPassed": "A couple of years ago",
-    "yearPassed": "A year ago",
-    "monthsPassed": "A few months ago"
+    "eternity": "One eternity earlier...",
+    "yearsPassed": "Years have passed...",
+    "yearPassed": "One year earlier...",
+    "monthsPassed": "Months earlier..."
   },
   "fileUploaderLabel": "Drop here or browse",
   "contacts": "Contacts",
@@ -260,5 +260,5 @@
   "detailsTargetDescTitle": "Goals & Budget",
   "detailsTargetDesc": "Coming soon in premium! Financial goals, budgeting, and more amazing powerful features for accounting and predictions.",
   "detailsTargetDescLink": "Pre-order upgrade",
-  "allTransactionsProcessed": "That's all folks!" 
+  "allTransactionsProcessed": "That's all folks!"
 }
