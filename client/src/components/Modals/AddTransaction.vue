@@ -127,7 +127,10 @@
               </label>
             </div>
           </div>
-          <div class="wide">
+          <div
+            class="wide"
+            style="max-width: 100%;"
+          >
             <!-- Start Currency Input section -->
             <div class="custom-mb-16">
               <input-currency
@@ -585,7 +588,7 @@
           >
             <div
               v-if="model.id"
-              class="small gray"
+              class="small gray desktop-only"
             >
               id: {{ model.id }}
             </div>
