@@ -20,7 +20,7 @@
 {capture "getpremiumbutton"}
 {if !$_is_premium}
 <figure class="box align-center c-upgrade-ad">
-    <a href="{$_upgrade_url}" class="button rounded {if !$_is_cloud}{$_premium_pricing.special_color|default:'green'}{else}green{/if} largest" target="_blank">{$_premium_pricing.special_button|default:'[`Upgrade to premium`]'}</a>
+    <a href="{$_upgrade_url}" class="button rounded {if !$_is_cloud}{$_premium_pricing.special_color|default:'green'}{else}green{/if} largest" target="_blank">{if $_is_cloud}[`Upgrade to premium`]{else}{$_premium_pricing.special_button|default:'[`Upgrade to premium`]'}{/if}</a>
     <h4>
         {if $_is_cloud}
             {if !empty($_premium_pricing.compare_price)}<strike class="gray">{$_premium_pricing.compare_price}</strike>{/if}
@@ -100,7 +100,7 @@
               'title' => '[`Automation / bots`]',
               'body' => '[`Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>`]',
               'eta_class' => 'green',
-              'eta' => '[`May 2026`]'
+              'eta' => '[`May / June 2026`]'
             ]}
 
             {$_premium_stuff[] = [

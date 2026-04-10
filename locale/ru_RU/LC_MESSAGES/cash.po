@@ -1270,7 +1270,7 @@ msgid "https://www.webasyst.com/my/buy/upgrade-to-premium/cash/"
 msgstr "https://www.webasyst.ru/my/buy/upgrade-to-premium/cash/"
 
 msgid "Upgrade to premium"
-msgstr "Апгрейд до премиум"
+msgstr "Хочу премиум!"
 
 msgid "All inclusive in the cloud"
 msgstr "В облаке все включено"
@@ -1310,6 +1310,9 @@ msgstr "Задавайте финансовые цели и бюджеты в ф
 
 msgid "May 2026"
 msgstr "Май 2026"
+
+msgid "May / June 2026"
+msgstr "Май-июнь 2026"
 
 msgid "Teammate accounts"
 msgstr "Подотчеты"
@@ -1378,7 +1381,7 @@ msgid "https://www.webasyst.com/store/app/cash/"
 msgstr "https://www.webasyst.ru/store/app/cash/"
 
 msgid "Bigger money needs to be better accounted"
-msgstr "Большие деньги начинаются с правильного подхода к учету"
+msgstr "Большие деньги начинаются с правильного учета"
 
 msgid "%d features available now, +%d more to come shortly."
 msgstr "%d премиум-функций доступно сейчас, еще %s на подходе."
