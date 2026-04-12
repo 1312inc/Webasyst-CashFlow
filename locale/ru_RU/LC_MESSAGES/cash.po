@@ -1270,28 +1270,28 @@ msgid "https://www.webasyst.com/my/buy/upgrade-to-premium/cash/"
 msgstr "https://www.webasyst.ru/my/buy/upgrade-to-premium/cash/"
 
 msgid "Upgrade to premium"
-msgstr "Хочу премиум!"
+msgstr "Хочу большие деньги!"
 
 msgid "All inclusive in the cloud"
 msgstr "В облаке все включено"
 
 msgid "In Webasyst Cloud, simply upgrade to the <b>Premium</b> plan and get all premium features at once with no extra purchase."
-msgstr "Просто смените тариф на <b>Премиум</b> и пользуйтесь всеми премиум-функциями без покупки лицензий и апгрейдов."
+msgstr "Просто смените тариф на <b>Премиум</b> и пользуйтесь всеми функциями премиум-версии «Большие деньги» без покупки лицензий и апгрейдов."
 
 msgid "Early launch offer gets you the best premium upgrade conditions possible."
-msgstr "Премиум-версия открывает ранний доступ ко всем новым функциям и обновлениям."
+msgstr "«Большие деньги» — это премиум-версия приложения с максимальными возможностями для учета и прогноза. Предзаказ открывает ранний доступ ко всем новым функциям и обновлениям."
 
 msgid "Per-server license for the entire company. Unlimited users, all the premium features, and free updates forever."
 msgstr "Лицензия на один сервер и всю компанию. Сколько угодно пользователей, все функции, бесплатные обновления."
 
 msgid "upgrade basic &rarr; premium"
-msgstr "апгрейд база &rarr; премиум"
+msgstr "апгрейд деньги &rarr; большие деньги"
 
 msgid "new premium license"
 msgstr "новая премиум-лицензия"
 
 msgid "%s intro offer for upgrading existing app license to the premium version"
-msgstr "%s акция на апгрейд базовой лицензии до премиум-версии"
+msgstr "%s акция на ранний апгрейд до премиум"
 
 msgid "special offer!"
 msgstr "спецпредложение!"
@@ -1390,7 +1390,7 @@ msgid "All scheduled features will be delivered as free updates via Installer."
 msgstr "Все обновления будут доступны в Инсталлере бесплатно."
 
 msgid "Premium"
-msgstr "Премиум"
+msgstr "Большие деньги"
 
 msgid "Cancel"
 msgstr "Отмена"

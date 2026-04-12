@@ -84,7 +84,7 @@ final class cashHelper
                 $pricing = array(
                     'compare_price' => '34 999', 'price' => '19 999 <span class="ruble">₽</span>',
                     'upgrade_compare_price' => '24 999', 'upgrade_price' => '14 999 <span class="ruble">₽</span>',
-                    'special' => '&minus;40% до 31.05', 'special_color' => 'red', 'special_button' => 'Премиум &minus;40% до 31.05'
+                    'special' => '&minus;40% до 31.05', 'special_color' => 'red', 'special_button' => 'Большие деньги &minus;40% до 31.05'
                 );
         }
         else
