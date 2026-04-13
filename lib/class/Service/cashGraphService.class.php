@@ -795,7 +795,7 @@ class cashGraphService
 
         $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
             ->select([
-                "if(ct.amount < 0, concat('expense|',cc.is_profit), 'income') `type`",
+                "if(ct.amount < 0, concat('expense|',cc.is_profit), 'income') transaction_type",
                 'ca.currency currency',
                 "{$detailing} detailed",
                 'sum(ct.amount) amount',
@@ -818,7 +818,7 @@ class cashGraphService
                 ),
                 'ca.is_archived = 0',
             ])
-            ->groupBy(['`type`', 'ca.currency', 'detailed'])
+            ->groupBy(['transaction_type', 'ca.currency', 'detailed'])
             ->params(['from' => $paramsDto->from->format('Y-m-d'), 'to' => $paramsDto->to->format('Y-m-d')]);
 
         if (null !== $paramsDto->filter->getCurrency()) {
