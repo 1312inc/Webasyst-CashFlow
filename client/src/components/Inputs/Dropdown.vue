@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="wa-select solid">
     <select
@@ -46,11 +47,7 @@ export default {
           [this.type]: value
         })
 
-        this.$store.dispatch('transaction/updateDetailsInterval', {
-          from: this.$store.state.transaction.chartInterval.from,
-          to: this.$store.state.transaction.chartInterval.to,
-          [this.type]: value
-        })
+        this.$store.dispatch('transaction/resetDetailsInterval')
       }
     }
   },

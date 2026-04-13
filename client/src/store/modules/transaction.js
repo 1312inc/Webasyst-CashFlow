@@ -15,6 +15,9 @@ const mutationDelete = (state, ids) => {
   })
 }
 
+const from = getDateFromLocalStorage('from') || moment().add(-1, 'Y').format('YYYY-MM-DD')
+const to = getDateFromLocalStorage('to') || moment().add(6, 'M').format('YYYY-MM-DD')
+
 export default {
   namespaced: true,
 
@@ -35,12 +38,12 @@ export default {
     loading: false,
     loadingFuture: false,
     chartInterval: {
-      from: getDateFromLocalStorage('from') || moment().add(-1, 'Y').format('YYYY-MM-DD'),
-      to: getDateFromLocalStorage('to') || moment().add(6, 'M').format('YYYY-MM-DD')
+      from,
+      to
     },
     detailsInterval: {
-      from: '',
-      to: ''
+      from,
+      to
     },
     activeGroupTransactions: {
       index: null,
@@ -361,19 +364,23 @@ export default {
 
     updateDetailsInterval ({ commit, dispatch, state }, data) {
       commit('setDetailsInterval', data)
-      if (!data.from && !data.to) {
-        dispatch('fetchTransactions', {
-          from: '',
-          to: DEFAULT_FUTURE_PERIOD,
-          offset: 0
-        })
-      } else {
-        dispatch('fetchTransactions', {
-          offset: 0,
-          from: state.detailsInterval.from,
-          to: state.detailsInterval.to
-        })
-      }
+      dispatch('fetchTransactions', {
+        offset: 0,
+        from: state.detailsInterval.from,
+        to: state.detailsInterval.to
+      })
+    },
+
+    resetDetailsInterval ({ commit, dispatch, state }) {
+      commit('setDetailsInterval', {
+        from: state.chartInterval.from,
+        to: state.chartInterval.to
+      })
+      dispatch('fetchTransactions', {
+        from: '',
+        to: DEFAULT_FUTURE_PERIOD,
+        offset: 0
+      })
     },
 
     async getTodayCount ({ commit }) {

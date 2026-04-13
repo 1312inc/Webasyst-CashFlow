@@ -121,14 +121,11 @@ export default {
   },
 
   watch: {
-    detailsInterval: 'fetchBreakDown',
+    detailsInterval: {
+      handler () { this.fetchBreakDown() },
+      immediate: true
+    },
     'queryParams.filter': 'fetchBreakDown'
-  },
-
-  mounted () {
-    this.$store.commit('transaction/setDetailsInterval', {
-      from: this.chartInterval.from, to: this.chartInterval.to
-    })
   },
 
   methods: {
