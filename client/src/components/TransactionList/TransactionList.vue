@@ -59,8 +59,8 @@
         @callback="() => { observerCallback(isSplitFetchMode ? pastTransactionsOffset : transactions.data.length) }"
       />
 
-      <div v-if="transactions.data.length === transactions.total && transactions.limit * 2 < transactions.total">
-        <div class="align-center small gray custom-pb-24">
+      <div v-if="(transactions.data.length === transactions.total) && transactions.data.length">
+        <div class="align-center small gray custom-p-24">
           {{ $t('allTransactionsProcessed') }}
         </div>
       </div>
