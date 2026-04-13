@@ -42,7 +42,6 @@ export default {
 <style lang="scss">
 .c-chart-pie-sticky-container {
   min-width: 340px;
-  padding-left: 1rem;
 
   &__inner {
     max-width: 340px;

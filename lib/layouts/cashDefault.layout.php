@@ -47,6 +47,7 @@ class cashDefaultLayout extends waLayout
                 'accounts' => json_encode($accounts, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'backend_layout_plugins' => $backendPlugins,
                 'emptyFlow' => $just_installed,
+                'isPremium' => cashHelper::isPremium(),
             ]
         );
     }

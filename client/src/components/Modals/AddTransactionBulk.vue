@@ -14,7 +14,10 @@
         :key="i"
         class="flexbox middle custom-mb-12 space-8"
       >
-        <div class="state-with-inner-icon left width-25">
+        <div
+          v-show="row.repeating_interval === null"
+          class="state-with-inner-icon left width-25"
+        >
           <DateField
             v-model="row.date"
             :class="{
@@ -22,6 +25,32 @@
             }"
           />
           <span class="icon"><i class="fas fa-calendar" /></span>
+        </div>
+
+        <div
+          v-if="row.repeating_interval"
+          class="wa-select small solid"
+        >
+          <select
+            v-model="row.repeating_interval"
+            @change="onIntervalChange(row)"
+          >
+            <option value="month">
+              {{ $t("howOften.list[0]") }}
+            </option>
+            <option value="day">
+              {{ $t("howOften.list[1]") }}
+            </option>
+            <option value="week">
+              {{ $t("howOften.list[2]") }}
+            </option>
+            <option value="year">
+              {{ $t("howOften.list[3]") }}
+            </option>
+            <option :value="null">
+              {{ $t("howOften.list[5]") }}
+            </option>
+          </select>
         </div>
 
         <div class="width-25">
@@ -34,7 +63,17 @@
             :row-modificator="$_rowModificatorMixin_rowModificator_category"
             :max-height="200"
             class="width-100"
+            @input="onCategoryChange(row, $event)"
           />
+        </div>
+
+        <div class="text-gray">
+          <div v-show="row.type === 'income'">
+            <i class="fa fa-arrow-right" />
+          </div>
+          <div v-show="row.type === 'expense'">
+            <i class="fa fa-arrow-left" />
+          </div>
         </div>
 
         <div class="width-25">
@@ -119,7 +158,10 @@ export default {
         amount: null,
         category_id: null,
         account_id: null,
-        date: null
+        date: null,
+        type: '',
+        is_repeating: true,
+        repeating_interval: 'month'
       },
       data: [],
       controlsDisabled: true
@@ -170,12 +212,26 @@ export default {
       this.model.account_id = this.accounts[0].id
     }
 
-    this.data = new Array(5).fill(null).map(() => ({ ...this.model }))
+    this.data = Array(5).fill(null).map(() => ({ ...this.model }))
   },
 
   methods: {
+    getCategoryType (id) {
+      const category = this.$store.getters['category/getById'](id)
+      return category ? category.type : ''
+    },
+
+    onCategoryChange (row, categoryId) {
+      row.type = this.getCategoryType(categoryId)
+    },
+
+    onIntervalChange (row) {
+      row.is_repeating = !!row.repeating_interval
+    },
+
     submit () {
       this.$v.$touch()
+
       if (!this.$v.$invalid) {
         this.controlsDisabled = true
         const filteredRows = this.data.filter(r => r.amount)

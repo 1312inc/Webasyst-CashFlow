@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <ChartHeader :show-controls="false">
@@ -7,7 +8,7 @@
         </h1>
       </template>
     </ChartHeader>
-    <div class="flexbox">
+    <div class="flexbox space-24">
       <div class="wide no-sticky-controls">
         <TransactionList
           :show-today-group="false"
@@ -63,6 +64,13 @@ export default {
         offset: 0,
         filter: `search/${this.$route.query.text}`
       })
+    }
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('search.label'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
     }
   }
 }

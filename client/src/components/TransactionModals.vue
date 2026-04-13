@@ -1,7 +1,6 @@
 <script setup>
 import Modal from '@/components/Modal'
 import AddTransaction from '@/components/Modals/AddTransaction'
-import AddTransactionBulk from '@/components/Modals/AddTransactionBulk'
 import TransactionMove from '@/components/Modals/TransactionMove'
 import { emitter } from '@/plugins/eventBus'
 import { useRoute } from 'vue-router/composables'
@@ -10,14 +9,7 @@ import { ref, nextTick } from 'vue'
 const route = useRoute()
 
 const open = ref(false)
-const openMove = ref(false)
-const openAddBulk = ref(false)
-
-const addTransactionOpts = ref({
-  transactionToEdit: undefined,
-  defaultDate: undefined,
-  type: undefined
-})
+const addTransactionOpts = ref({})
 
 async function reOpen () {
   open.value = false
@@ -26,14 +18,7 @@ async function reOpen () {
 }
 
 emitter.on('openAddTransactionModal', (opts = {}) => {
-  addTransactionOpts.value = {}
-  if (opts.transaction) {
-    addTransactionOpts.value.transactionToEdit = opts.transaction
-  } else if (opts.defaultDate) {
-    addTransactionOpts.value.defaultDate = opts.defaultDate
-  } else if (opts.type) {
-    addTransactionOpts.value.type = opts.type
-  }
+  addTransactionOpts.value = opts
   open.value = true
 })
 
@@ -63,25 +48,14 @@ function onClick () {
       @close="open = false"
       @reOpen="reOpen"
     >
+      <TransactionMove v-if="addTransactionOpts.type === 'move'" />
+
       <AddTransaction
-        :transaction="addTransactionOpts.transactionToEdit"
+        v-else
+        :transaction="addTransactionOpts.transaction"
         :default-date="addTransactionOpts.defaultDate"
         :default-category-type="addTransactionOpts.type ?? 'expense'"
       />
-    </Modal>
-
-    <Modal
-      v-if="openMove"
-      @close="openMove = false"
-    >
-      <TransactionMove />
-    </Modal>
-
-    <Modal
-      v-if="openAddBulk"
-      @close="openAddBulk = false"
-    >
-      <AddTransactionBulk />
     </Modal>
   </portal>
 </template>

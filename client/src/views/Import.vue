@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <ChartHeader
@@ -15,7 +16,7 @@
         </div>
       </template>
     </ChartHeader>
-    <div class="flexbox">
+    <div class="flexbox space-24">
       <div class="wide no-sticky-controls">
         <TransactionList
           :show-today-group="false"
@@ -61,6 +62,13 @@ export default {
       offset: 0,
       filter: `import/${this.$route.params.id}`
     })
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('importResults'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
   }
 }
 </script>

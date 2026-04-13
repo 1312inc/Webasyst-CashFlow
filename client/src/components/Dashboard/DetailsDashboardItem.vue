@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-mb-16">
+  <div>
     <div
       v-if="showIncome"
       class="custom-mb-16"
@@ -39,6 +39,7 @@
         :legend-items="itemData.income.data"
         :currency-code="itemData.currency"
         :is-column-style="false"
+        :hide-total-amount="true"
       />
     </div>
 
@@ -84,6 +85,7 @@
         :currency-code="itemData.currency"
         :is-reverse="true"
         :is-column-style="false"
+        :hide-total-amount="true"
       />
     </div>
 
@@ -121,6 +123,7 @@
         :legend-items="itemData.profit.data"
         :currency-code="itemData.currency"
         :is-column-style="false"
+        :hide-total-amount="true"
       />
     </div>
   </div>

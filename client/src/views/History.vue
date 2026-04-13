@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <ChartHeader>
@@ -5,10 +6,11 @@
         <h1 class="">
           {{ $t("history") }}
         </h1>
+        <TransactionControls />
       </template>
     </ChartHeader>
-    <TransactionControls />
-    <div class="flexbox">
+    <TransactionControlsSticky />
+    <div class="flexbox space-24">
       <div class="wide">
         <TransactionList
           :show-today-group="false"
@@ -26,7 +28,8 @@ import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
-import TransactionControls from '@/components/TransactionControls'
+import TransactionControls from '../components/TransactionControls.vue'
+import TransactionControlsSticky from '../components/TransactionControlsSticky.vue'
 
 export default {
 
@@ -34,7 +37,9 @@ export default {
     ChartHeader,
     TransactionList,
     AmChartPieStickyContainer,
-    TransactionControls
+    TransactionControls,
+    TransactionControlsSticky
+
   },
   mixins: [routerTransitionMixin],
 
@@ -45,6 +50,13 @@ export default {
       offset: 0,
       filter: ''
     })
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('history'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
   }
 }
 </script>

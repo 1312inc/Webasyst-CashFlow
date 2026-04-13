@@ -3,13 +3,27 @@ import { onMounted, ref } from 'vue'
 import { locale } from '@/plugins/locale'
 import { emitter } from '@/plugins/eventBus'
 import InfiniteCalendarGridDaySlotItem from './InfiniteCalendarGridDaySlotItem.vue'
+import InfiniteCalendarGridDaySlotItemSummary from './InfiniteCalendarGridDaySlotItemSummary.vue'
 import dayjs from 'dayjs'
 import { useRouter } from 'vue-router/composables'
 import { moment } from '@/plugins/numeralMoment.js'
 import store from '@/store'
-import { appState } from '@/utils/appState'
 
-const props = defineProps(['date', 'data'])
+const props = defineProps({
+  date: {
+    type: [String, Date],
+    default: ''
+  },
+  data: {
+    type: Array,
+    default: () => []
+  },
+  mode: {
+    type: String,
+    default: 'summary'
+  }
+})
+
 const router = useRouter()
 const dayRef = ref()
 
@@ -51,16 +65,14 @@ function getMonthShort (date) {
   } catch (_e) { }
 }
 
-function onClick () {
-  const t = dayRef.value?.querySelector('.icg-plus')
-  if (t || appState.webView) {
-    if (window.getComputedStyle(t, null).getPropertyValue('display') === 'none') {
-      router.push(`/date/${moment(props.date).format('YYYY-MM-DD')}/`)
-    } else {
-      emitter.emit('openAddTransactionModal', {
-        defaultDate: dayjs(props.date).format('YYYY-MM-DD')
-      })
-    }
+function onClick (e) {
+  const onPlus = e.target.closest('.icg-plus')
+  if (onPlus) {
+    emitter.emit('openAddTransactionModal', {
+      defaultDate: dayjs(props.date).format('YYYY-MM-DD')
+    })
+  } else {
+    router.push(`/date/${moment(props.date).format('YYYY-MM-DD')}/`)
   }
 }
 
@@ -73,18 +85,27 @@ function onClick () {
     style="width: 100%; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;"
     @click="onClick"
   >
-    <button class="circle small light-gray desktop-only icg-plus">
+    <button class="circle light-gray icg-plus">
       <i class="fas fa-plus" />
     </button>
     <div class="icg-day">
       {{ date.getDate() }} <span v-if="date.getDate() === 1">{{ getMonthShort(date) }}</span>
     </div>
-    <div class="small">
-      <InfiniteCalendarGridDaySlotItem
-        v-for="transaction in props.data"
-        :key="transaction.id"
-        :transaction="transaction"
-      />
+    <div>
+      <template v-if="props.mode === 'operations'">
+        <InfiniteCalendarGridDaySlotItem
+          v-for="transaction in props.data"
+          :key="transaction.id"
+          :transaction="transaction"
+        />
+      </template>
+      <template v-else-if="props.mode === 'summary'">
+        <InfiniteCalendarGridDaySlotItemSummary
+          v-for="summary in props.data"
+          :key="summary.date"
+          :summary="summary"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -116,6 +137,13 @@ function onClick () {
     display: none;
   }
 
+}
+
+@media screen and (max-width: 760px) {
+  .icg-months-grid-day--current .icg-day {
+    width: 1rem;
+    height: 1rem;
+  }
 }
 
 .icg-plus {

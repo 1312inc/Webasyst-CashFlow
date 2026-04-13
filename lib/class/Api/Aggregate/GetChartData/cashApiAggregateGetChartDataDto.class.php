@@ -21,6 +21,22 @@ final class cashApiAggregateGetChartDataDto
     public $amountProfit;
 
     /**
+     * @var int
+     */
+    public $countIncome;
+
+    /**
+     * @var int
+     */
+    public $countExpense;
+
+    /**
+     * @var int
+     */
+    public $countProfit;
+
+
+    /**
      * @var float|null
      */
     public $balance;
@@ -32,19 +48,17 @@ final class cashApiAggregateGetChartDataDto
 
     /**
      * cashApiAggregateGetChartDataDto constructor.
-     *
-     * @param $period
-     * @param $amountIncome
-     * @param $amountExpense
-     * @param $amountProfit
-     * @param $balance
+     * @param $data array
      */
-    public function __construct($period, $amountIncome, $amountExpense, $amountProfit, $balance)
+    public function __construct($data = [])
     {
-        $this->amountIncome = $amountIncome === null ? null : round(abs($amountIncome), 2);
-        $this->amountExpense = $amountExpense === null ? null : round(abs($amountExpense), 2);
-        $this->amountProfit = $amountProfit === null ? null : round(abs($amountProfit), 2);
-        $this->balance = $balance === null ? null : round($balance, 2);
-        $this->period = $period;
+        $this->amountIncome = isset($data['incomeAmount']) ? round(abs($data['incomeAmount']), 2) : null;
+        $this->amountExpense = isset($data['expenseAmount']) ? round(abs($data['expenseAmount']), 2) : null;
+        $this->amountProfit = isset($data['profitAmount']) ? round(abs($data['profitAmount']), 2) : null;
+        $this->countIncome = isset($data['countIncome']) ? (int) $data['countIncome'] : 0;
+        $this->countExpense = isset($data['countExpense']) ? (int) $data['countExpense'] : 0;
+        $this->countProfit = isset($data['countProfit']) ? (int) $data['countProfit'] : 0;
+        $this->balance = isset($data['balance']) ? round($data['balance'], 2) : null;
+        $this->period = ifset($data, 'groupkey', '');
     }
 }

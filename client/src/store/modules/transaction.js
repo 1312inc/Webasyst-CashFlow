@@ -3,6 +3,7 @@ import { moment } from '@/plugins/numeralMoment'
 import getDateFromLocalStorage from '../../utils/getDateFromLocalStorage'
 import { i18n } from '@/plugins/locale'
 import { DEFAULT_FUTURE_PERIOD } from '@/utils/constants'
+import { mergeArrays } from '../../utils/mergeArrays'
 
 const mutationDelete = (state, ids) => {
   ids.forEach(id => {
@@ -13,6 +14,9 @@ const mutationDelete = (state, ids) => {
     }
   })
 }
+
+const from = getDateFromLocalStorage('from') || moment().add(-1, 'Y').format('YYYY-MM-DD')
+const to = getDateFromLocalStorage('to') || moment().add(6, 'M').format('YYYY-MM-DD')
 
 export default {
   namespaced: true,
@@ -34,12 +38,12 @@ export default {
     loading: false,
     loadingFuture: false,
     chartInterval: {
-      from: getDateFromLocalStorage('from') || moment().add(-1, 'Y').format('YYYY-MM-DD'),
-      to: getDateFromLocalStorage('to') || moment().add(6, 'M').format('YYYY-MM-DD')
+      from,
+      to
     },
     detailsInterval: {
-      from: '',
-      to: ''
+      from,
+      to
     },
     activeGroupTransactions: {
       index: null,
@@ -59,6 +63,9 @@ export default {
   }),
 
   getters: {
+    isDetailsMode: state => {
+      return state.detailsInterval.from !== state.chartInterval.from || state.detailsInterval.to !== state.chartInterval.to
+    },
     getFutureTransactions: state => {
       return state.transactions.data.filter(t => moment().isBefore(moment(t.date)))
     },
@@ -286,7 +293,7 @@ export default {
 
         const result = {
           ...state.transactions,
-          data: [...data.data.reverse(), ...state.transactions.data]
+          data: mergeArrays(data.data.toReverse(), state.transactions.data)
         }
 
         commit('setTransactions', result)
@@ -321,13 +328,6 @@ export default {
             state.isSplitFetchMode = false
           }
         }
-        // if view details mode
-        if (state.detailsInterval.from) {
-          params.from = state.detailsInterval.from
-        }
-        if (state.detailsInterval.to) {
-          params.to = state.detailsInterval.to
-        }
 
         const { data } = await api.get('cash.transaction.getList', {
           params
@@ -335,7 +335,7 @@ export default {
 
         const result = {
           ...data,
-          data: [...state.transactions.data, ...data.data]
+          data: mergeArrays(state.transactions.data, data.data)
         }
 
         commit('setTransactions', result)
@@ -362,19 +362,25 @@ export default {
       }
     },
 
-    updateDetailsInterval ({ commit, dispatch }, data) {
+    updateDetailsInterval ({ commit, dispatch, state }, data) {
       commit('setDetailsInterval', data)
-      if (!data.from && !data.to) {
-        dispatch('fetchTransactions', {
-          from: '',
-          to: DEFAULT_FUTURE_PERIOD,
-          offset: 0
-        })
-      } else {
-        dispatch('fetchTransactions', {
-          offset: 0
-        })
-      }
+      dispatch('fetchTransactions', {
+        offset: 0,
+        from: state.detailsInterval.from,
+        to: state.detailsInterval.to
+      })
+    },
+
+    resetDetailsInterval ({ commit, dispatch, state }) {
+      commit('setDetailsInterval', {
+        from: state.chartInterval.from,
+        to: state.chartInterval.to
+      })
+      dispatch('fetchTransactions', {
+        from: '',
+        to: DEFAULT_FUTURE_PERIOD,
+        offset: 0
+      })
     },
 
     async getTodayCount ({ commit }) {

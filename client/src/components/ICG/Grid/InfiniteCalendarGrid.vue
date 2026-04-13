@@ -13,13 +13,14 @@ const props = withDefaults(defineProps<{
   todayLabel?: string;
   items: Record<string, unknown>[];
   fieldWithDate: string;
+  mode: string;
 }>(), {
   firstDayOfWeek: 0,
   locale: 'en-US',
   todayLabel: 'Today'
 })
 
-const emit = defineEmits(['changeInterval'])
+const emit = defineEmits(['changeInterval', 'changeMode'])
 
 const wrapperRef = ref<HTMLElement | null>(null)
 const containerRef = ref<HTMLElement | null>(null)
@@ -47,9 +48,10 @@ const itemsMap = computed(() => {
 })
 
 watch(daysInCalendar, () => {
+  const middleDays = daysInCalendar.value.slice(42, 84)
   emit('changeInterval', {
-    start: daysInCalendar.value[0].timestamp,
-    end: daysInCalendar.value[daysInCalendar.value.length - 1].timestamp
+    start: middleDays[0].timestamp,
+    end: middleDays[middleDays.length - 1].timestamp
   })
 }, {
   immediate: true
@@ -63,32 +65,40 @@ watch(daysInCalendar, () => {
       <div class="icg-month">
         {{ activeMonth.toDate().toLocaleDateString(props.locale, { year: 'numeric', month: 'long' }).replace('г.', "") }}
       </div>
-      <div class="icg-controls">
-        <button @click="activeMonth = activeMonth.add(-1, 'M')">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height=".8rem"
-            viewBox="0 0 320 512"
-          >
-            <path
-              d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"
-            />
-          </svg>
-        </button>
-        <button @click="activeMonth = dayjs()">
-          {{ props.todayLabel }}
-        </button>
-        <button @click="activeMonth = activeMonth.add(1, 'M')">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height=".8rem"
-            viewBox="0 0 320 512"
-          >
-            <path
-              d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"
-            />
-          </svg>
-        </button>
+
+      <div class="flexbox vertical-mobile">
+        <div class="toggle custom-mr-24 custom-mr-0-mobile custom-mb-8-mobile">
+          <span @click="emit('changeMode', 'summary')" :class="{'selected': props.mode === 'summary'}">Итого</span>
+          <span @click="emit('changeMode', 'operations')" :class="{'selected': props.mode === 'operations'}">Операции</span>
+        </div>
+
+        <div class="icg-controls">
+          <button @click="activeMonth = activeMonth.add(-1, 'M')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height=".8rem"
+              viewBox="0 0 320 512"
+            >
+              <path
+                d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"
+              />
+            </svg>
+          </button>
+          <button @click="activeMonth = dayjs()">
+            {{ props.todayLabel }}
+          </button>
+          <button @click="activeMonth = activeMonth.add(1, 'M')">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height=".8rem"
+              viewBox="0 0 320 512"
+            >
+              <path
+                d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
     <div class="icg-weekdays">

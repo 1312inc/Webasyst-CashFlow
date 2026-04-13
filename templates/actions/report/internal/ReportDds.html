@@ -94,7 +94,7 @@
                                 data-cash-period-value="{$reportPeriod->getValue()}"
                                 data-cash-period-start="{$reportPeriod->getStartDate()}"
                                 data-cash-period-end="{$reportPeriod->getEndDate()}"
-                                class="{if $reportPeriod->getValue() > $smarty.now|date_format:'Y'}opacity-50{/if} {if $reportPeriod->getValue() == $smarty.now|date_format:'Y'}bold{/if}"
+                                class="{if $reportPeriod->getValue() > $smarty.now|date_format:'Y'}opacity-50{/if} {if $reportPeriod->getValue() == $currentPeriod->getValue()}bold{/if}"
                                 >
                                     {$reportPeriod->getName()|escape}
                                 </a>

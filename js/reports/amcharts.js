@@ -115,14 +115,39 @@ function chartDonut (options, language) {
 
     // Add and configure Series
     const pieSeries = chart.series.push(new am4charts.PieSeries());
-    pieSeries.radius = am4core.percent(70);
+    pieSeries.radius = am4core.percent(62);
     pieSeries.dataFields.value = "value";
     pieSeries.dataFields.category = "name";
     pieSeries.slices.template.propertyFields.fill = "color";
-    pieSeries.slices.template.propertyFields.isActive = "isProfit";
+    pieSeries.slices.template.propertyFields.isActive = "isActive";
+    pieSeries.slices.template.states.getKey("active").properties.scale = 1;
+    pieSeries.slices.template.states.getKey("active").properties.shiftRadius = 0.3;
     pieSeries.ticks.template.adapter.add("disabled", (radius, target) => (target.dataItem && (target.dataItem.values.value.percent < 2)));
     pieSeries.labels.template.adapter.add("disabled", (radius, target) => (target.dataItem && (target.dataItem.values.value.percent < 2)));
     pieSeries.slices.template.tooltipText = "{category}: {value} " + options.currency;
+
+    if (typeof options.onSliceClick === 'function') {
+        pieSeries.slices.template.cursorOverStyle = am4core.MouseCursorStyle.pointer;
+        pieSeries.slices.template.events.on('hit', (event) => {
+            const context = event.target.dataItem?.dataContext;
+            if (context) {
+                options.onSliceClick(context, chart);
+            }
+        });
+    }
+
+    if (typeof options.onChartClick === 'function') {
+        chart.chartContainer.background.events.on('hit', () => {
+            options.onChartClick(chart);
+        });
+    }
+
+    return {
+        setData (nextData) {
+            chart.data = nextData;
+            chart.invalidateRawData();
+        }
+    };
 }
 
 export {

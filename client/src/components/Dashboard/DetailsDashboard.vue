@@ -1,81 +1,115 @@
 <template>
-  <div
-    v-if="data"
-    class="c-breakdown-details"
-  >
-    <div class="flexbox custom-mb-24">
-      <div class="wide flexbox middle wrap-mobile">
-        <div
-          class="larger black bold custom-mb-0 custom-mb-8-mobile"
-          v-html="dates"
-        />
-        <button
-          class="button light-gray custom-ml-12 custom-ml-0-mobile"
-          @click="openModal = true"
-        >
-          {{ $t("setDates") }}
-        </button>
-        <ExportButton
-          v-if="!appState.webView"
-          class="custom-ml-12 custom-ml-8-mobile"
+  <div class="custom-px-32 custom-py-16 custom-ml-4 custom-p-12-mobile custom-m-0-mobile">
+    <div
+      v-if="isFetching"
+      class="skeleton flexbox vertical space-24"
+    >
+      <div
+        v-for="i in 4"
+        :key="i"
+        :class="{'width-80': i === 1}"
+      >
+        <span
+          class="skeleton-line custom-m-0"
+          style="height: 40px;"
         />
       </div>
-      <div>
+    </div>
+    <template v-else>
+      <div v-if="data.length">
+        <div class="flexbox custom-mb-24">
+          <div class="wide flexbox middle wrap-mobile">
+            <div class="larger black bold custom-mb-0 custom-mb-8-mobile">
+              <div v-if="!isDefaultRange">
+                {{ dates }}
+              </div>
+              <div v-else>
+                {{ $t(rangeLabel) }}
+              </div>
+            </div>
+            <button
+              class="button light-gray custom-ml-12 custom-ml-0-mobile"
+              @click="openModal = true"
+            >
+              {{ $t("setDates") }}
+            </button>
+            <ExportButton
+              v-if="!appState.webView"
+              class="custom-ml-12 custom-ml-8-mobile"
+            />
+          </div>
+          <!-- <div>
         <button
           class="nobutton largest custom-p-0"
           @click="closeDashboard"
         >
           <i class="fas fa-times gray" />
         </button>
+      </div> -->
+        </div>
+
+        <DetailsDashboardItem
+          v-if="dashboardData"
+          :item-data="dashboardData"
+        />
+
+        <portal>
+          <Modal v-if="openModal">
+            <UpdateDetailsInterval @close="openModal = false" />
+          </Modal>
+        </portal>
       </div>
-    </div>
-
-    <DetailsDashboardItem :item-data="dashboardData" />
-
-    <portal>
-      <Modal v-if="openModal">
-        <UpdateDetailsInterval @close="openModal = false" />
-      </Modal>
-    </portal>
+      <DetailsDashboardEmpty v-else />
+    </template>
   </div>
 </template>
 
 <script>
 import api from '@/plugins/api'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import Modal from '@/components/Modal'
 import DetailsDashboardItem from './DetailsDashboardItem.vue'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 import ExportButton from '@/components/Buttons/ExportButton'
 import { appState } from '@/utils/appState'
+import { getIntervalFromLabel } from '@/utils/getDateFromLocalStorage'
+import DetailsDashboardEmpty from '../ContentBlocks/DetailsDashboardEmpty.vue'
 
 export default {
   components: {
     Modal,
     DetailsDashboardItem,
     UpdateDetailsInterval,
-    ExportButton
+    ExportButton,
+    DetailsDashboardEmpty
   },
 
   data () {
     return {
-      data: null,
+      data: [],
       openModal: false,
-      appState
+      appState,
+      isFetching: false,
+      rangeLabel: ''
     }
   },
 
   computed: {
-    ...mapState('transaction', ['queryParams', 'detailsInterval']),
+    ...mapState('transaction', ['queryParams', 'detailsInterval', 'chartInterval']),
+    ...mapGetters('transaction', ['isDetailsMode']),
+
+    isDefaultRange () {
+      return !this.isDetailsMode
+    },
 
     dates () {
       return this.detailsInterval.from !== this.detailsInterval.to
-        ? `<span class="nowrap">${this.$moment(
+        ? `${this.$moment(
             this.detailsInterval.from
-          ).format('LL')}</span> – <span class="nowrap">${this.$moment(
+          ).format('LL')} – ${this.$moment(
             this.detailsInterval.to
           ).format('LL')}`
-        : `${this.$moment(this.detailsInterval.from).format('LL')}</span>`
+        : `${this.$moment(this.detailsInterval.from).format('LL')}`
     },
 
     dashboardData () {
@@ -87,49 +121,50 @@ export default {
   },
 
   watch: {
-    detailsInterval: 'fetchBreakDown'
+    detailsInterval: {
+      handler () { this.fetchBreakDown() },
+      immediate: true
+    },
+    'queryParams.filter': 'fetchBreakDown'
   },
 
   methods: {
-    fetchBreakDown (val) {
-      if (val.from && val.to) {
-        api
-          .get('cash.aggregate.getBreakDown', {
-            params: {
-              from: val.from,
-              to: val.to,
-              filter: this.queryParams.filter
-            }
-          })
-          .then(({ data }) => {
-            this.data = data
-          })
-      } else {
-        this.data = null
-      }
-    },
+    fetchBreakDown () {
+      this.rangeLabel = getIntervalFromLabel('from')
 
-    closeDashboard () {
-      this.$store.dispatch('transaction/updateDetailsInterval', {
-        from: '',
-        to: ''
-      })
+      const from = this.detailsInterval.from
+      let to = this.detailsInterval.to
+      const today = new Date()
+      const currentDate = today.toISOString().split('T')[0]
+
+      // Преобразуем строки в объекты Date для корректного сравнения
+      if (new Date(to) > today && to === this.chartInterval.to) {
+        to = currentDate
+      }
+
+      this.isFetching = true
+      api
+        .get('cash.aggregate.getBreakDown', {
+          params: {
+            from,
+            to,
+            filter: this.queryParams.filter
+          }
+        })
+        .then(({ data }) => {
+          this.data = data
+        })
+        .finally(() => {
+          this.isFetching = false
+        })
     }
+
+    // closeDashboard () {
+    //   this.$store.dispatch('transaction/updateDetailsInterval', {
+    //     from: '',
+    //     to: ''
+    //   })
+    // }
   }
 }
 </script>
-
-<style lang="scss">
-.c-breakdown-details {
-  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1),
-    0 0.5rem 1.5rem -0.5rem rgba(0, 0, 0, 0.2);
-  border-radius: 0.375rem;
-  padding: 1rem 1.2rem;
-  margin: 1.7rem;
-
-  @include for-mobile {
-    padding: 1rem;
-    margin: 1rem;
-  }
-}
-</style>

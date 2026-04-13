@@ -9,6 +9,7 @@ const draggableRef = ref()
 
 const category = computed(() => store.getters['category/getById'](props.transaction.category_id))
 const currency = computed(() => store.getters['account/getById'](props.transaction.account_id)?.currency)
+const isOverdue = computed(() => new Date(props.transaction.date) < new Date() && props.transaction.is_onbadge)
 
 onMounted(() => {
   handleOnTransactionDragStart()
@@ -39,14 +40,17 @@ function onClick () {
       <div
         ref="draggableRef"
         :style="`color: ${category.color}`"
-        class="icg-row align-left nowrap"
+        class="icg-row align-left nowrap smaller"
+        :class="{
+          'icg-row--overdue': isOverdue
+        }"
         draggable="true"
         @click.prevent.stop="() => { if (!$helper.isTabletMediaQuery()) { onClick() } }"
       >
         <span
           v-if="category.glyph"
           :key="category.color"
-          class="icon baseline"
+          class="icon"
         >
           <i
             :class="category.glyph"
@@ -55,9 +59,14 @@ function onClick () {
         </span>
         <span
           v-else
-          class="icon size-12 baseline"
+          class="icon size-8"
         >
           <i
+            v-if="isOverdue"
+            class="fas fa-exclamation-triangle text-red"
+          />
+          <i
+            v-else
             class="rounded"
             :style="`background-color: ${category.color};`"
           />
@@ -75,22 +84,25 @@ function onClick () {
       class="custom-p-8 align-left"
       style="display: flex; flex-direction: column; gap: .2rem;"
     >
-      <span
-        v-if="transaction.contractor_contact?.name"
-        class="small"
-      >{{ transaction.contractor_contact.name }}</span>
+      <span v-if="transaction.contractor_contact?.name">{{ transaction.contractor_contact.name }}</span>
       <span
         v-if="category"
         :style="`color: ${category.color}`"
-        class="bold nowrap small text-ellipsis"
-      >{{
-        category.name }}</span>
+        class="bold nowrap text-ellipsis"
+      >{{ category.name }}</span>
       <span class="hint">{{ transaction.description || $t('noDesc') }}</span>
     </div>
   </DropdownWaFloating>
 </template>
 
 <style>
+
+@media screen and (max-width: 1024px) {
+  .icg-months-grid-day {
+    font-size: 12px;
+  }
+}
+
 @media screen and (max-width: 1024px) {
   .icg-row {
     pointer-events: none;

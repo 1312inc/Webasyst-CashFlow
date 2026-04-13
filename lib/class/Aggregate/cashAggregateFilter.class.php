@@ -2,6 +2,7 @@
 
 final class cashAggregateFilter
 {
+    public const FILTER_ALL        = 'all';
     public const FILTER_ACCOUNT    = 'account';
     public const FILTER_CATEGORY   = 'category';
     public const FILTER_CONTRACTOR = 'contractor';
@@ -12,6 +13,7 @@ final class cashAggregateFilter
     public const FILTER_EXTERNAL   = 'external';
 
     private const FILTERS = [
+        self::FILTER_ALL,
         self::FILTER_ACCOUNT,
         self::FILTER_CATEGORY,
         self::FILTER_CONTRACTOR,
@@ -21,6 +23,11 @@ final class cashAggregateFilter
         self::FILTER_SEARCH,
         self::FILTER_EXTERNAL,
     ];
+
+    /**
+     * @var null
+     */
+    private $all;
 
     /**
      * @var int|null
@@ -72,7 +79,9 @@ final class cashAggregateFilter
         $self = new self;
 
         if ($hash) {
-            [$filter, $identifier] = explode('/', $hash);
+            $hash_arr = explode('/', $hash);
+            $filter = array_shift($hash_arr);
+            $identifier = array_shift($hash_arr);
 
             if (!in_array($filter, self::FILTERS, true)) {
                 throw new cashValidateException(
@@ -147,6 +156,11 @@ final class cashAggregateFilter
     public function isFilterByAccount(): bool
     {
         return !empty($this->account);
+    }
+
+    public function isFilterByAll(): bool
+    {
+        return !empty($this->all);
     }
 
     public function getExternalId(): ?int

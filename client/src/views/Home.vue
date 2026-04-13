@@ -1,19 +1,23 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <CashGapMessage />
     <ChartHeader>
       <template #title>
         <ChartHeaderTitle />
+        <TransactionControls />
       </template>
       <template #controls>
         <ChartHeaderControls />
       </template>
     </ChartHeader>
-    <TransactionControls />
+    <TransactionControlsSticky />
     <AlertImported />
     <AmChartContainer />
-    <DetailsDashboard />
-    <div class="flexbox">
+
+    <DetailsContainer />
+
+    <div class="flexbox space-24">
       <div class="wide">
         <TransactionList
           :show-tomorrow-group="true"
@@ -31,12 +35,13 @@ import ChartHeader from '@/components/ChartHeader'
 import ChartHeaderControls from '@/components/ChartHeaderControls'
 import ChartHeaderTitle from '@/components/ChartHeaderTitle'
 import AmChartContainer from '@/components/Charts/AmChartContainer'
-import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import AlertImported from '../components/AlertImported.vue'
-import TransactionControls from '@/components/TransactionControls'
+import DetailsContainer from '../components/DetailsContainer.vue'
+import TransactionControls from '../components/TransactionControls.vue'
+import TransactionControlsSticky from '../components/TransactionControlsSticky.vue'
 import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
 
 export default {
@@ -47,11 +52,12 @@ export default {
     ChartHeaderControls,
     ChartHeaderTitle,
     AmChartContainer,
-    DetailsDashboard,
     TransactionList,
     AmChartPieStickyContainer,
     AlertImported,
-    TransactionControls
+    DetailsContainer,
+    TransactionControls,
+    TransactionControlsSticky
   },
   mixins: [routerTransitionMixin],
 

@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <ChartHeader
@@ -7,13 +8,13 @@
         <h1 class="">
           {{ $t("trash") }}
         </h1>
-        <p class="small custom-px-16-mobile">
+        <p class="small custom-px-16-mobile width-60 width-100-mobile">
           {{ $t("trashInfo") }}
         </p>
       </template>
     </ChartHeader>
 
-    <div class="flexbox">
+    <div class="flexbox space-24">
       <div class="wide no-sticky-controls">
         <TransactionList
           :show-today-group="false"
@@ -56,6 +57,13 @@ export default {
       offset: 0,
       filter: 'trash/0'
     })
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('trash'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
   }
 }
 </script>

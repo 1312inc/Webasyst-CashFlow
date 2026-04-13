@@ -69,6 +69,13 @@ const intervals = {
 
 export { intervals }
 
+export const getIntervalFromLabel = (type) => {
+  try {
+    const val = localStorage.getItem(`interval_${type}`)
+    return val
+  } catch {}
+}
+
 export default (type) => {
   const lsValue = localStorage.getItem(`interval_${type}`)
   return intervals[type].find((e) => e.key === lsValue)?.value

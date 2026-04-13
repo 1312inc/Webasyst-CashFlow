@@ -39,7 +39,8 @@
             "accounts": {$accounts},
             "api_settings": {$api_settings},
             "emptyFlow": {json_encode(!empty($emptyFlow))},
-            "shopscriptInstalled": {json_encode(boolval($wa->shop))}
+            "shopscriptInstalled": {json_encode(boolval($wa->shop))},
+            "isPremium": {json_encode(boolval($isPremium))}
         };
     </script>
 
@@ -53,9 +54,19 @@
         <div class="flexbox wrap-mobile">
             <div class="sidebar flexbox hide-scrollbar width-16rem mobile-friendly z-50">
                 {if $wa->isSingleAppMode()}
-                    <div class="custom-pl-12">
+                    <div id="wa-single-app-nav-container" class="box custom-py-0">
                         {$wa->headerSingleAppUser()}
                     </div>
+                    <script>
+                        $(function () {
+                            $('#wa-single-app-nav-container')
+                            .parent()
+                            .css({ 
+                                'z-index': 100500, 
+                                'overflow': 'visible' 
+                            });
+                        });
+                    </script>
                 {/if}
                 <div id="app-sidebar"></div>
             </div>

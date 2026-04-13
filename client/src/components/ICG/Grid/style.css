@@ -14,7 +14,7 @@
     align-items: start;
     gap: 1rem;
     justify-content: space-between;
-    padding: 1rem;
+    padding: 1rem 0;
   }
   
   @media screen and (max-width: 760px) {
@@ -129,3 +129,7 @@
   .icg-months-grid-day--weekend.icg-months-grid-day--active-month {
     background-color: rgba(0, 20, 80, 0.01) !important;
   }
+
+  .icg-months-grid-day:has(.icg-row--overdue) {
+    background-color: var(--highlighted-overdue)  !important;
+  }  

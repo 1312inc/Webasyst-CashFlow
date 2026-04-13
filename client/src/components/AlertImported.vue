@@ -27,13 +27,11 @@ onMounted(() => {
 
 <template>
   <div
+    v-if="show"
     style="max-width: 1000px;"
     class="custom-m-12 custom-ml-32 custom-ml-12-mobile"
   >
-    <div
-      v-if="show"
-      class="alert success small"
-    >
+    <div class="alert success small">
       <div class="flexbox space-16 full-width">
         <div v-if="message['show_success_import_hint']">
           <template v-if="$i18n.locale === 'ru_RU'">

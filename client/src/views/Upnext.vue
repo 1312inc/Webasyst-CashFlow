@@ -7,7 +7,7 @@
         </h1>
       </template>
     </ChartHeader>
-    <div class="flexbox">
+    <div class="flexbox space-24">
       <div class="wide no-sticky-controls">
         <TransactionList
           :observer="false"
@@ -38,6 +38,13 @@ export default {
 
   mounted () {
     this.$store.dispatch('transaction/fetchUpNextTransactions')
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('upnext'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
   }
 }
 </script>

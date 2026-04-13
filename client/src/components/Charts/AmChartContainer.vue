@@ -1,12 +1,17 @@
 <template>
-  <AmChart />
+  <BlankBox>
+    <AmChart />
+  </BlankBox>
 </template>
 
 <script>
 import AmChart from './AmChart'
+import BlankBox from '../BlankBox.vue'
+
 export default {
   components: {
-    AmChart
+    AmChart,
+    BlankBox
   },
 
   created () {

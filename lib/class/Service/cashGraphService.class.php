@@ -481,37 +481,34 @@ class cashGraphService
 
         //@todo category type
         $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
-            ->select(
-                [
+            ->select([
                     "{$grouping} groupkey",
                     'ca.currency currency',
                     'null balance',
                     'expenseAmount' => "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|0', ct.amount, 0)) expenseAmount",
                     'incomeAmount' => "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'inc|0', ct.amount, 0)) incomeAmount",
                     'profitAmount' => "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|1', ct.amount, 0)) profitAmount",
-                ]
-            )
+                    'countExpense' => "COUNT(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|0', 1, NULL)) countExpense",
+                    'countIncome' => "COUNT(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'inc|0', 1, NULL)) countIncome",
+                    'countProfit' => "COUNT(if(concat(if(ct.amount< 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|1', 1, NULL)) countProfit",
+            ])
             ->from('cash_transaction', 'ct')
-            ->andWhere(
-                [
-                    'account_access' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
-                        $paramsDto->contact
-                    ),
-                    'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
-                        $paramsDto->contact,
-                        'ct',
-                        'category_id'
-                    ),
-                    'ct.is_archived = 0',
-                    'ca.is_archived = 0',
-                ]
-            )
-            ->join(
-                [
-                    'join cash_account ca on ct.account_id = ca.id',
-                    'join cash_category cc on ct.category_id = cc.id',
-                ]
-            );
+            ->join([
+                'join cash_account ca on ct.account_id = ca.id',
+                'join cash_category cc on ct.category_id = cc.id',
+            ])
+            ->andWhere([
+                'account_access' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+                    $paramsDto->contact
+                ),
+                'category_access' => cash()->getContactRights()->getSqlForCategoryJoin(
+                    $paramsDto->contact,
+                    'ct',
+                    'category_id'
+                ),
+                'ct.is_archived = 0',
+                'ca.is_archived = 0',
+            ]);
 
         $calculateBalance = false;
         switch (true) {
@@ -556,6 +553,13 @@ class cashGraphService
             case null !== $paramsDto->filter->getCurrency():
                 $sqlParts->addAndWhere('ca.currency = s:currency')
                     ->addParam('currency', $paramsDto->filter->getCurrency());
+                $sqlParts->addAndWhere('
+                    CASE
+                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                        WHEN ca.is_imaginary = -1 THEN NULL
+                        ELSE ca.is_imaginary = 0
+                    END
+                ');
                 /** @var cashAccount[] $accounts */
                 $accounts = cash()->getEntityRepository(cashAccount::class)->findAll();
                 // проверим есть ли полный доступ хоть к одному счету в данной валюте
@@ -791,7 +795,7 @@ class cashGraphService
 
         $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
             ->select([
-                "if(ct.amount < 0, concat('expense|',cc.is_profit), 'income') `type`",
+                "if(ct.amount < 0, concat('expense|',cc.is_profit), 'income') transaction_type",
                 'ca.currency currency',
                 "{$detailing} detailed",
                 'sum(ct.amount) amount',
@@ -814,7 +818,7 @@ class cashGraphService
                 ),
                 'ca.is_archived = 0',
             ])
-            ->groupBy(['`type`', 'ca.currency', 'detailed'])
+            ->groupBy(['transaction_type', 'ca.currency', 'detailed'])
             ->params(['from' => $paramsDto->from->format('Y-m-d'), 'to' => $paramsDto->to->format('Y-m-d')]);
 
         if (null !== $paramsDto->filter->getCurrency()) {

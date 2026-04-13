@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <h2
@@ -22,8 +23,7 @@
         </h1>
       </template>
     </ChartHeader>
-    <TransactionControls :default-date="$route.params.date" />
-    <div class="flexbox">
+    <div class="flexbox space-24">
       <div class="wide">
         <TransactionList
           :show-future-group="false"
@@ -40,14 +40,12 @@ import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
-import TransactionControls from '@/components/TransactionControls'
 
 export default {
   components: {
     ChartHeader,
     TransactionList,
-    AmChartPieStickyContainer,
-    TransactionControls
+    AmChartPieStickyContainer
   },
   mixins: [routerTransitionMixin],
 
@@ -58,6 +56,13 @@ export default {
       offset: 0,
       filter: ''
     })
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('transactions'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
   }
 }
 </script>

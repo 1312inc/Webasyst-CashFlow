@@ -17,6 +17,10 @@ export default function (data, language, year, categoriesList) {
     });
 
     let activeCurrency = currencies[0];
+    const categoriesById = categoriesList.reduce((acc, category) => {
+        acc[category.id] = category;
+        return acc;
+    }, {});
 
     // Run Initial render
     am4core.ready(() => {
@@ -39,17 +43,76 @@ export default function (data, language, year, categoriesList) {
         am4core.disposeAllCharts();
 
         function donutAdapter (data) {
-            return Object.entries(data[activeCurrency].total).map((e, i) => {
-                const id = e[0];
-                const name = data[activeCurrency].data.columns[id][0];
-                const color = data[activeCurrency].data.colors[name][0];
+            const total = data[activeCurrency].total;
+            const columns = data[activeCurrency].data.columns;
+            const rootItems = [];
+            const childrenByParentId = {};
+
+            const flatItems = Object.entries(total).map(([id, value]) => {
+                if (!columns[id]) {
+                    return null;
+                }
+
+                const category = categoriesById[id];
                 return {
-                    name,
-                    color,
-                    value: e[1],
-                    isProfit: categoriesList.some(c => (c.id === id && +c.is_profit === 1))
+                    id,
+                    name: columns[id][0],
+                    color: data[activeCurrency].data.colors[columns[id][0]][0],
+                    value,
+                    isProfit: +category?.is_profit === 1,
+                    isActive: false
                 };
             });
+
+            flatItems.forEach((item) => {
+                if (!item) {
+                    return;
+                }
+
+                const category = categoriesById[item.id];
+                const parentId = category?.category_parent_id ? String(category.category_parent_id) : null;
+                const hasParent = parentId && categoriesById[parentId];
+
+                if (hasParent) {
+                    if (!childrenByParentId[parentId]) {
+                        childrenByParentId[parentId] = [];
+                    }
+                    childrenByParentId[parentId].push(item);
+                } else {
+                    rootItems.push(item);
+                }
+            });
+
+            return {
+                rootData: rootItems.map((item) => ({
+                    ...item,
+                    hasChildren: !!childrenByParentId[item.id]?.length
+                })),
+                childrenByParentId
+            };
+        }
+
+        function buildDonutData (rootData, childrenByParentId, expandedParentId) {
+            if (!expandedParentId || !childrenByParentId[expandedParentId]?.length) {
+                return rootData;
+            }
+
+            const nextData = [];
+            rootData.forEach((item) => {
+                if (item.id === expandedParentId) {
+                    childrenByParentId[expandedParentId].forEach((child) => {
+                        nextData.push({
+                            ...child,
+                            parentId: expandedParentId,
+                            isActive: true
+                        });
+                    });
+                } else {
+                    nextData.push(item);
+                }
+            });
+
+            return nextData;
         }
 
         // Renders Donuts
@@ -60,10 +123,28 @@ export default function (data, language, year, categoriesList) {
             if (data[`all_${type}`][activeCurrency]) {
                 const el = document.querySelector(`#chartdiv_${type}`);
                 el.parentElement.style.display = 'block';
-                chartDonut({
+                const { rootData, childrenByParentId } = donutAdapter(data[`all_${type}`]);
+                let expandedParentId = null;
+                const donut = chartDonut({
                     el,
-                    data: donutAdapter(data[`all_${type}`]),
-                    currency: currencySigns[activeCurrency]
+                    data: rootData,
+                    currency: currencySigns[activeCurrency],
+                    onSliceClick: (slice) => {
+                        if (slice.parentId) {
+                            expandedParentId = null;
+                            donut.setData(rootData);
+                            return;
+                        }
+
+                        if (slice.id && childrenByParentId[slice.id]?.length) {
+                            expandedParentId = expandedParentId === slice.id ? null : slice.id;
+                            donut.setData(buildDonutData(rootData, childrenByParentId, expandedParentId));
+                        }
+                    },
+                    onChartClick: () => {
+                        expandedParentId = null;
+                        donut.setData(rootData);
+                    }
                 }, language);
             }
         });

@@ -404,7 +404,7 @@ SQL;
                     )
                 );
 
-                cash()->getLogger()->debug('Transaction info added to order log: %s!', $message);
+                cash()->getLogger()->debug(sprintf('Transaction info added to order log: %s!', $message));
             }
 
             $this->settings->incTodayTransactionsCount();

@@ -12,14 +12,13 @@ import Entity from '../views/Entity.vue'
 import NotFound from '../views/NotFound.vue'
 import Calendar from '../views/Calendar.vue'
 import FormAdd from '../views/FormAdd.vue'
-import { i18n } from '../plugins/locale'
 import { permissions } from '../plugins/permissions'
 import { moment } from '@/plugins/numeralMoment.js'
 
+const SSR_MODE_PAGE_URL_ALIASES = ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins', '/upgrade']
+
 Vue.use(VueRouter)
 
-// TODO: make settings file
-const accountName = window.appState?.accountName || ''
 const baseUrl = window.appState?.baseUrl || '/'
 
 const routes = [
@@ -46,42 +45,27 @@ const routes = [
   {
     path: '/history',
     name: 'History',
-    component: History,
-    meta: {
-      title: `${i18n.t('history')} — ${accountName}`
-    }
+    component: History
   },
   {
     path: '/transactions',
     name: 'Transactions',
-    component: Transactions,
-    meta: {
-      title: `${i18n.t('transactions')} — ${accountName}`
-    }
+    component: Transactions
   },
   {
     path: '/calendar',
     name: 'Calendar',
-    component: Calendar,
-    meta: {
-      title: `${i18n.t('calendar')} — ${accountName}`
-    }
+    component: Calendar
   },
   {
     path: '/upnext',
     name: 'Upnext',
-    component: Upnext,
-    meta: {
-      title: `${i18n.t('upnext')} — ${accountName}`
-    }
+    component: Upnext
   },
   {
     path: '/date/:date',
     name: 'Date',
     component: Date,
-    meta: {
-      title: `${i18n.t('transactions')} — ${accountName}`
-    },
     beforeEnter: (to, from, next) => {
       if (moment(to.params.date, 'YYYY-MM-DD', true).isValid()) {
         next()
@@ -93,27 +77,20 @@ const routes = [
   {
     path: '/search',
     name: 'Search',
-    component: Search,
-    meta: {
-      title: `${i18n.t('search.label')} — ${accountName}`
-    }
+    component: Search
   },
   // TODO: make 404 guard for imports
   {
     path: '/import/:id',
     name: 'Import',
-    component: Import,
-    meta: {
-      title: `${i18n.t('importResults')} — ${accountName}`
-    }
+    component: Import
   },
   {
     path: '/trash',
     name: 'Trash',
     component: Trash,
     meta: {
-      requiresAdminRights: true,
-      title: `${i18n.t('trash')} — ${accountName}`
+      requiresAdminRights: true
     }
   },
   {
@@ -151,15 +128,12 @@ const routes = [
   },
   {
     path: '/report',
-    alias: ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins']
+    alias: SSR_MODE_PAGE_URL_ALIASES
   },
   {
     path: '/404',
     name: 'NotFound',
-    component: NotFound,
-    meta: {
-      title: `${i18n.t('404.title')} — ${accountName}`
-    }
+    component: NotFound
   },
   { path: '*', redirect: { name: 'NotFound' } }
 ]
@@ -183,10 +157,6 @@ router.beforeEach((to, from, next) => {
         name: 'Home'
       })
     }
-  }
-
-  if (to.meta.title) {
-    document.title = to.meta.title
   }
 
   next()

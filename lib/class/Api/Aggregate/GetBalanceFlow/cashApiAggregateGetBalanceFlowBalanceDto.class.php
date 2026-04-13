@@ -17,8 +17,7 @@ final class cashApiAggregateGetBalanceFlowBalanceDto
     public function __construct($date, $amount)
     {
         $this->date = $date;
-        $this->amount = round($amount, 2);
-//        $this->amount = $amount !== null ? round($amount, 2) : null;
+        $this->amount = round((float) $amount, 2);
         $this->amountShorten = cashShorteningService::money($this->amount);
     }
 }

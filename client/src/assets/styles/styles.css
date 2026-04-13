@@ -1,7 +1,7 @@
 html {
     --red:    #ff421a;
     --green:  #0abe5a;
-    --highlighted-overdue: #ffd4d4;
+    --highlighted-overdue: #ffe7e7;
 }
 
 html[data-theme='dark'] {
@@ -78,7 +78,7 @@ body.modal {
   color: var(--accent-color) !important;
 }
 
-.alert.c-cashgap-prediction-banner { border: none; border-radius: 0; padding: 1rem; }
+.alert.c-cashgap-prediction-banner { border: none; padding: 1rem; margin: 1rem 0 0; font-size: 0.9375rem; }
 
 .c-button-add-income { background: #16d15f; }
 .c-button-add-expense { background: #f7623a; }
@@ -225,4 +225,33 @@ body.modal {
 @media screen and (max-width: 760px) {
   /* mobile */
   .alert.c-cashgap-prediction-banner { margin-top: 0; }
+}
+
+
+@media screen and (max-width: 1280px) {
+  .c-details-container {
+    flex-direction: column;
+  }
+}
+
+.c-details-container__target {
+  width: 340px;
+  flex: none;
+}
+
+@media screen and (max-width: 1280px) {
+  .c-details-container__target {
+    width: 100%;
+  }
+}
+
+.c-details-container .box {
+  height: 100%;
+}
+
+.c-details-container__target__close {
+  top: 1rem;
+  right: 1rem;
+  position: absolute;
+  z-index: 1;
 }
