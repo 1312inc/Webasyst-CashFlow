@@ -97,12 +97,15 @@
               @updateUpcomingBlockOpened="(val) => upcomingBlockOpened = val"
             />
           </div>
-          <div class="flexbox space-12">
+          <div
+            class="flexbox space-12 wide"
+            style="justify-content: end;"
+          >
             <a
               v-if="filteredTransactions.length"
               href="#"
               class="button circle light-gray desktop-only"
-              @click="onStick"
+              @click.prevent="onStick"
             >
               <i class="fas fa-chart-pie" />
             </a>
@@ -409,14 +412,14 @@ export default {
   z-index: 999;
 }
 
-.c-transaction-section .button.circle {
-  display: none;
+.c-transaction-section .button.circle.desktop-only {
+  opacity: 0;
   transform: translateY(-6px);
   margin-bottom: -34px;
 }
 
 .c-transaction-section:hover .button.circle {
-  display: block;
+  opacity: 1;
 }
 
 @media screen and (max-width: 760px) {

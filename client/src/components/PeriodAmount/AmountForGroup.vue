@@ -9,7 +9,7 @@
         <div
           v-for="currency in currencies"
           :key="currency"
-          class="flexbox middle space-12"
+          class="flexbox middle wrap space-12"
         >
           <div
             v-for="(type, i) in $_amountMixin_amountTypes"
@@ -60,6 +60,7 @@
       <a
         href="#"
         class="button circle light-gray mobile-only"
+        style="flex: none;"
         @click.prevent="isShown = !isShown"
       >
         <span v-show="!isShown">
