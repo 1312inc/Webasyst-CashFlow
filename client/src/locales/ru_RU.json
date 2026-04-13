@@ -178,8 +178,8 @@
   "intervalLabels": {
     "eternity": "Тут прошла целая вечность...",
     "yearsPassed": "Шли годы...",
-    "yearPassed": "Прошел год...",
-    "monthsPassed": "Несколькими месяцами ранее..."
+    "yearPassed": "Тут прошел целый год...",
+    "monthsPassed": "Прошло несколько месяцев..."
   },
   "fileUploaderLabel": "Выберите файл",
   "contacts": "Контакты",

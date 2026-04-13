@@ -36,7 +36,7 @@
 
       <div
         v-if="nextMonthIntervalLabel({name: $moment().format('YYYY-MM')}, onlyStreamGroups[0])"
-        class="align-center small gray custom-p-24"
+        class="align-center small gray custom-pb-24"
       >
         {{ nextMonthIntervalLabel({name: $moment().format('YYYY-MM')}, onlyStreamGroups[0]) }}
       </div>
@@ -47,7 +47,7 @@
       >
         <div
           v-if="nextMonthIntervalLabel(onlyStreamGroups[index - 1], group)"
-          class="align-center small gray custom-p-24"
+          class="align-center small gray custom-pb-24"
         >
           {{ nextMonthIntervalLabel(onlyStreamGroups[index - 1], group) }}
         </div>
@@ -73,7 +73,7 @@
       />
 
       <div v-if="transactions.data.length === transactions.total && transactions.limit * 2 < transactions.total">
-        <div class="align-center small gray custom-p-24">
+        <div class="align-center small gray custom-pb-24">
           {{ $t('allTransactionsProcessed') }}
         </div>
       </div>
