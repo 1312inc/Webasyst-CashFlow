@@ -36,6 +36,7 @@
     <p class="width-60 width-100-mobile custom-mx-auto small">
         {if $_is_cloud}
             [`In Webasyst Cloud, simply upgrade to the <b>Premium</b> plan and get all premium features at once with no extra purchase.`]
+            {sprintf('[`Or get <a href="%s" target="_blank">new license</a> for the Custom plan.`]', $_upgrade_url)}
         {else}
             {if !empty($_premium_pricing.special)}
                 {sprintf('[`%s intro offer for upgrading existing app license to the premium version`]', sprintf('<span class="badge %s">%s</span>', $_premium_pricing.special_color, $_premium_pricing.special))} —

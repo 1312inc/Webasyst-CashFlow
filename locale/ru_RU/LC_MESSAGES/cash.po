@@ -1278,6 +1278,9 @@ msgstr "В облаке все включено"
 msgid "In Webasyst Cloud, simply upgrade to the <b>Premium</b> plan and get all premium features at once with no extra purchase."
 msgstr "Просто смените тариф на <b>Премиум</b> и пользуйтесь всеми функциями премиум-версии «Большие деньги» без покупки лицензий и апгрейдов."
 
+msgid "Or get <a href=\"%s\" target=\"_blank\">new license</a> for the Custom plan."
+msgstr "Или <a href=\"%s\" target=\"_blank\">подключите лицензию</a> на тарифе «Кастом»."
+
 msgid "Early launch offer gets you the best premium upgrade conditions possible."
 msgstr "«Большие деньги» — это премиум-версия приложения с максимальными возможностями для учета и прогноза. Предзаказ открывает ранний доступ ко всем новым функциям и обновлениям."
 
