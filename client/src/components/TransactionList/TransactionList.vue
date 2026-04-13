@@ -9,20 +9,7 @@
       </BlankBox>
 
       <BlankBox
-        v-for="(group, index) in groups.filter(g => ['tomorrow', 'yesterday'].includes(g.name))"
-        :key="group.name"
-      >
-        <TransactionListGroup
-          :group="group.items"
-          :type="group.name"
-          :index="index"
-          :visible-select-checkbox="visibleSelectCheckbox"
-          :show-founded-count="showFoundedCount"
-        />
-      </BlankBox>
-
-      <BlankBox
-        v-for="(group, index) in groups.filter(g => (['overdue', 'future', 'today'].includes(g.name)))"
+        v-for="(group, index) in groups.filter(g => ['overdue', 'future', 'tomorrow', 'today', 'yesterday'].includes(g.name))"
         :key="group.name"
       >
         <TransactionListGroup
@@ -276,7 +263,7 @@ export default {
     },
 
     onlyStreamGroups () {
-      return this.groups.filter(g => !(['tomorrow', 'yesterday', 'overdue', 'future', 'today'].includes(g.name)))
+      return this.groups.filter(g => !(['overdue', 'future', 'tomorrow', 'today', 'yesterday'].includes(g.name)))
     },
 
     showFutureGroupComputed () {
