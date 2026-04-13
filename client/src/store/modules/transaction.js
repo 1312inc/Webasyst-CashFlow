@@ -60,6 +60,9 @@ export default {
   }),
 
   getters: {
+    isDetailsMode: state => {
+      return state.detailsInterval.from !== state.chartInterval.from || state.detailsInterval.to !== state.chartInterval.to
+    },
     getFutureTransactions: state => {
       return state.transactions.data.filter(t => moment().isBefore(moment(t.date)))
     },

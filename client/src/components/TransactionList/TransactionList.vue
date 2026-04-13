@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import TransactionListCreated from './TransactionListCreated'
 import TransactionListGroup from './TransactionListGroup'
 import SkeletonTransaction from './SkeletonTransaction'
@@ -131,7 +131,8 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['transactions', 'detailsInterval', 'isSplitFetchMode']),
+    ...mapState('transaction', ['transactions', 'isSplitFetchMode']),
+    ...mapGetters('transaction', ['isDetailsMode']),
     transactionsWithoutJustCreated () {
       return this.$store.getters['transaction/getTransactionsWithoutJustCreated']
     },
@@ -187,7 +188,7 @@ export default {
       }
 
       // add tomorrow object
-      if (this.showTomorrowGroup) {
+      if (this.showTomorrowGroup && this.showRestGroupComputed) {
         result.push({
           name: 'tomorrow',
           items: []
@@ -203,7 +204,7 @@ export default {
       }
 
       // add yesterday object
-      if (this.showYesterdayGroup) {
+      if (this.showYesterdayGroup && this.showRestGroupComputed) {
         result.push({
           name: 'yesterday',
           items: []
@@ -234,7 +235,7 @@ export default {
         }
 
         // if tomorrow
-        if (e.date === tomorrow && this.showTomorrowGroup) {
+        if (e.date === tomorrow && this.showTomorrowGroup && this.showRestGroupComputed) {
           return add('tomorrow', e)
         }
 
@@ -249,7 +250,7 @@ export default {
         }
 
         // if yesterday
-        if (e.date === yesterday && this.showYesterdayGroup) {
+        if (e.date === yesterday && this.showYesterdayGroup && this.showRestGroupComputed) {
           return add('yesterday', e)
         }
 
@@ -264,11 +265,15 @@ export default {
     },
 
     showFutureGroupComputed () {
-      return !this.detailsInterval.from && !this.detailsInterval.to ? this.showFutureGroup : false
+      return !this.isDetailsMode ? this.showFutureGroup : false
     },
 
     showTodayGroupComputed () {
-      return !this.detailsInterval.from && !this.detailsInterval.to ? this.showTodayGroup : false
+      return !this.isDetailsMode ? this.showTodayGroup : false
+    },
+
+    showRestGroupComputed () {
+      return !this.isDetailsMode
     },
 
     nextMonthIntervalLabel () {

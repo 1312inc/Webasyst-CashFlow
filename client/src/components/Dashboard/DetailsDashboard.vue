@@ -66,7 +66,7 @@
 
 <script>
 import api from '@/plugins/api'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import Modal from '@/components/Modal'
 import DetailsDashboardItem from './DetailsDashboardItem.vue'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
@@ -96,9 +96,10 @@ export default {
 
   computed: {
     ...mapState('transaction', ['queryParams', 'detailsInterval', 'chartInterval']),
+    ...mapGetters('transaction', ['isDetailsMode']),
 
     isDefaultRange () {
-      return this.detailsInterval.from === this.chartInterval.from && this.detailsInterval.to === this.chartInterval.to
+      return !this.isDetailsMode
     },
 
     dates () {
