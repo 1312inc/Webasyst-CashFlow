@@ -34,24 +34,35 @@
         />
       </BlankBox>
 
-      <div v-if="nextMonthIntervalLabel">
-        <div class="align-center small gray custom-p-24">
-          {{ nextMonthIntervalLabel }}
-        </div>
+      <div
+        v-if="nextMonthIntervalLabel({name: $moment().format('YYYY-MM')}, onlyStreamGroups[0])"
+        class="align-center small gray custom-p-24"
+      >
+        {{ nextMonthIntervalLabel({name: $moment().format('YYYY-MM')}, onlyStreamGroups[0]) }}
       </div>
 
-      <BlankBox
-        v-for="(group, index) in groups.filter(g => !(['tomorrow', 'yesterday', 'overdue', 'future', 'today'].includes(g.name)))"
+      <div
+        v-for="(group, index) in onlyStreamGroups"
         :key="group.name"
       >
-        <TransactionListGroup
-          :group="group.items"
-          :type="group.name"
-          :index="index"
-          :visible-select-checkbox="visibleSelectCheckbox"
-          :show-founded-count="showFoundedCount"
-        />
-      </BlankBox>
+        <div
+          v-if="nextMonthIntervalLabel(onlyStreamGroups[index - 1], group)"
+          class="align-center small gray custom-p-24"
+        >
+          {{ nextMonthIntervalLabel(onlyStreamGroups[index - 1], group) }}
+        </div>
+
+        <BlankBox>
+          <TransactionListGroup
+            :group="group.items"
+            :type="group.name"
+            :index="index"
+            :visible-select-checkbox="visibleSelectCheckbox"
+            :show-founded-count="showFoundedCount"
+          />
+        </BlankBox>
+      </div>
+
       <Observer
         v-if="observer &&
           (isSplitFetchMode
@@ -264,6 +275,10 @@ export default {
       return result
     },
 
+    onlyStreamGroups () {
+      return this.groups.filter(g => !(['tomorrow', 'yesterday', 'overdue', 'future', 'today'].includes(g.name)))
+    },
+
     showFutureGroupComputed () {
       return !this.isDetailsMode ? this.showFutureGroup : false
     },
@@ -274,27 +289,6 @@ export default {
 
     showRestGroupComputed () {
       return !this.isDetailsMode
-    },
-
-    nextMonthIntervalLabel () {
-      const nextMonthWithTransactions = this.groups.filter(g => !(['tomorrow', 'yesterday', 'overdue', 'future', 'today'].includes(g.name)))[0]?.name || '' // 2026-04 (YYYY-MM)
-      // Calculate days since today to the start of nextMonthWithTransactions (YYYY-MM)
-      if (nextMonthWithTransactions) {
-        const startOfMonth = this.$moment(nextMonthWithTransactions + '-01')
-        const today = this.$moment().startOf('day')
-        const diffDays = today.diff(startOfMonth, 'days')
-        if (diffDays >= 3 * 365) {
-          return this.$t('intervalLabels.eternity')
-        } else if (diffDays >= 1.5 * 365) {
-          return this.$t('intervalLabels.yearsPassed')
-        } else if (diffDays >= 365) {
-          return this.$t('intervalLabels.yearPassed')
-        } else if (diffDays >= 6 * 30) {
-          return this.$t('intervalLabels.monthsPassed')
-        }
-      }
-
-      return ''
     }
 
   },
@@ -304,6 +298,26 @@ export default {
       this.$store.dispatch('transaction/fetchTransactions', {
         offset
       })
+    },
+
+    nextMonthIntervalLabel (groupFrom, groupTo) {
+      const lastTransactionFromDate = groupFrom?.name || ''
+      const firstTransactionToDate = groupTo?.name || ''
+
+      if (!lastTransactionFromDate || !firstTransactionToDate) return ''
+
+      const diffDays = this.$moment(lastTransactionFromDate + '-01').diff(this.$moment(firstTransactionToDate + '-01'), 'days')
+      if (diffDays >= 3 * 365) {
+        return this.$t('intervalLabels.eternity')
+      } else if (diffDays >= 1.5 * 365) {
+        return this.$t('intervalLabels.yearsPassed')
+      } else if (diffDays >= 365) {
+        return this.$t('intervalLabels.yearPassed')
+      } else if (diffDays >= 6 * 30) {
+        return this.$t('intervalLabels.monthsPassed')
+      }
+
+      return ''
     }
   }
 }
