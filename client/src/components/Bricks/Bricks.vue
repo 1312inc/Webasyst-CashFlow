@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div class="bricks custom-mt-0">
     <BrickTransactions />
@@ -29,7 +30,6 @@
       </div>
     </a>
     <a
-      v-if="$permissions.canSeeReport"
       :href="`${$helper.baseUrl}plan/`"
       class="brick custom-pt-8"
       :class="{

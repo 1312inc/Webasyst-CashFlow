@@ -16,7 +16,7 @@ import { i18n } from '../plugins/locale'
 import { permissions } from '../plugins/permissions'
 import { moment } from '@/plugins/numeralMoment.js'
 
-const SSR_MODE_PAGE_URL_ALIASES = ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins', '/upgrade', '/automation']
+const SSR_MODE_PAGE_URL_ALIASES = ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins', '/upgrade', '/automation', '/plan']
 
 Vue.use(VueRouter)
 
