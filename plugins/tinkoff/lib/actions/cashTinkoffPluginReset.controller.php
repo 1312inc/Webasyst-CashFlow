@@ -6,7 +6,7 @@ class cashTinkoffPluginResetController extends waJsonController
     {
         /** @var cashTinkoffPlugin $plugin */
         $plugin = wa()->getPlugin('tinkoff');
-        $rr = $plugin->saveSettings([
+        $plugin->saveSettings([
             'self_mode' => null,
             'profiles' => null,
             'tinkoff_token' => null
