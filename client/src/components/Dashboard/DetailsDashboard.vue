@@ -138,7 +138,7 @@ export default {
       const currentDate = today.toISOString().split('T')[0]
 
       // Преобразуем строки в объекты Date для корректного сравнения
-      if (new Date(to) > today && to === this.chartInterval.to) {
+      if (this.isDefaultRange) {
         to = currentDate
       }
 
