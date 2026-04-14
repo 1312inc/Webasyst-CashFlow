@@ -72,6 +72,14 @@ return array(
             'PRIMARY' => 'id',
         ),
     ),
+    'cash_plan' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'currency' => array('varchar', 3, 'null' => 0),
+        'account_id' => array('int', 11),
+        'category_id' => array('int', 11, 'null' => 0),
+        'month' => array('datetime'),
+        'amount' => array('decimal', '18,4', 'default' => '0.0000')
+    ),
     'cash_repeating_transaction' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
         'create_contact_id' => array('int', 11, 'null' => 0),

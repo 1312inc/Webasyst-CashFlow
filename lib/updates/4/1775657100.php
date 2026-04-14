@@ -7,8 +7,8 @@ try {
 } catch (waException $e) {
     $model->exec("
         CREATE TABLE IF NOT EXISTS `cash_automation` (
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `sort` int(11) NOT NULL DEFAULT '0',
+            `id` int NOT NULL AUTO_INCREMENT,
+            `sort` int NOT NULL DEFAULT '0',
             `app_id` varchar(64) NOT NULL,
             `action_id` varchar(255) NOT NULL,
             `conditions` text,
