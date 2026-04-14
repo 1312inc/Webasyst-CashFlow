@@ -4,15 +4,25 @@ import { createCurrencyToggler } from './currencyToggle.js';
 export default function (chartdivSelector, data, language, allCurrenciesItemText) {
 
     const currencies = Object.keys(data);
-    const mergedData = currencies.reduce((acc, c) => ([...acc, ...data[c]['data'].map(e => {
-        return {
-            ...e,
-            currency: data[c].details.code,
-            currencySign: data[c].details.sign,
-            color: e.color || '#365fff'
-        };
-    }
-    )]), []).reverse();
+    const mergedData = [];
+
+    // Merge data from all currencies, add currency info, and ensure a default color
+    currencies.forEach(currencyKey => {
+        const { data: currencyData, details } = data[currencyKey];
+        
+        currencyData.forEach(entry => {
+            if(entry.category_parent_id) return
+            mergedData.push({
+                ...entry,
+                currency: details.code,
+                currencySign: details.sign,
+                color: entry.color || '#365fff'
+            });
+        });
+    });
+
+    // Reverse to match original behavior
+    mergedData.reverse();
     let activeCurrency = null;
 
     am4core.ready(() => {
