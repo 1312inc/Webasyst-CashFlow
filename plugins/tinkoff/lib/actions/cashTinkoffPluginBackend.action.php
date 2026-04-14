@@ -23,7 +23,7 @@ class cashTinkoffPluginBackendAction extends waViewAction
         $cash_accounts = cash()->getModel(cashAccount::class)->getAllActiveForContactWithCounter(wa()->getUser());
         $root_path = $this->getConfig()->getRootPath();
         $plugin_settings = $plugin->getSettings();
-        $profiles = ifset($plugin_settings, 'profiles', []);
+        $profiles = ifempty($plugin_settings, 'profiles', []);
         $profile_run_data = $this->getStorage()->read('profile_run_data');
         foreach ($profiles as $_profile_id => &$_profile) {
             /** проверяем аккаунты */

@@ -126,6 +126,7 @@
                                 </div>
                             </div>
 
+                            <button class="button orange js-tinkoff-reset" type="button">[`Отключить всё нах`]</button>
                         </div>
 
                     {/if}
@@ -375,7 +376,7 @@
                     });
                 }
             });
-        })
+        });
     });
 
     $('.js-settings-show').on('click', function (e) {
@@ -387,6 +388,23 @@
     $('.js-on-self-mode').on('click', function (e) {
         e.preventDefault();
         $('.js-token-field').removeClass('hidden');
+    });
+
+    $('.js-tinkoff-reset').on('click', function (e) {
+        e.preventDefault();
+        $.waDialog.confirm({
+            title: 'Не совершайте ошибку',
+            text: 'Тут грозный предупредительный текст.',
+            success_button_title: 'Точно начать с начала',
+            success_button_class: 'danger',
+            cancel_button_title: 'Отказаться',
+            cancel_button_class: 'light-gray',
+            onSuccess: function () {
+                $.get('?plugin=tinkoff&module=reset', function () {
+                    window.location.reload();
+                });
+            }
+        });
     });
 
     $('.js-tinkoff-self-connect').on('click', function (e) {

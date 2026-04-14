@@ -20,10 +20,17 @@ class cashTinkoffPluginAuthController extends waJsonController
             /** no auth */
             wa()->getStorage()->del('cash.tinkoff_back_redirect');
             wa()->getStorage()->set('cash.tinkoff_back_redirect', $backend_url.'?plugin=tinkoff');
-            $answer = (new waServicesApi())->serviceCall('BANK', [
-                'sub_path' => 'get_userinfo',
-                'return_uri' => $backend_url.'?plugin=tinkoff&module=auth'
-            ]);
+            try {
+                $answer = (new waServicesApi())->serviceCall('BANK', [
+                    'sub_path' => 'get_userinfo',
+                    'return_uri' => $backend_url.'?plugin=tinkoff&module=auth'
+                ]);
+            } catch (waException $exception) {
+                $message = $exception->getMessage();
+                $this->setError($message);
+                waLog::log($message,TINKOFF_FILE_LOG);
+                return null;
+            }
             $status = ifset($answer, 'status', 200);
             $response = ifset($answer, 'response', []);
 
