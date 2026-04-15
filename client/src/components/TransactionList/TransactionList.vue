@@ -72,6 +72,8 @@ import SkeletonTransaction from './SkeletonTransaction'
 import Observer from './Observer'
 import BlankBox from '../BlankBox.vue'
 
+const PRIMARY_GROUP_NAMES = ['overdue', 'future', 'tomorrow', 'today', 'yesterday']
+
 export default {
 
   components: {
@@ -259,15 +261,11 @@ export default {
     },
 
     onlyStreamGroups () {
-      return this.groups.filter(g => !this.primaryGroupNames.includes(g.name))
-    },
-
-    primaryGroupNames () {
-      return ['overdue', 'future', 'tomorrow', 'today', 'yesterday']
+      return this.groups.filter(g => !PRIMARY_GROUP_NAMES.includes(g.name))
     },
 
     primaryGroups () {
-      return this.groups.filter(g => this.primaryGroupNames.includes(g.name))
+      return this.groups.filter(g => PRIMARY_GROUP_NAMES.includes(g.name))
     },
 
     currentMonthGroup () {
