@@ -126,7 +126,11 @@
                                 </div>
                             </div>
 
-                            <button class="button orange js-tinkoff-reset" type="button">[`Отключить всё нах`]</button>
+                            <div class="card c-profile c-add blank flexbox" style="align-items: center; background-color: transparent;">
+                                <div class="box wide align-center">
+                                    <a href="javascript:void(0);" class="small gray js-tinkoff-reset"><i class="fas fa-times-circle"></i> [`Перезапустить с нуля`]</a>
+                                </div>
+                            </div>
                         </div>
 
                     {/if}
@@ -394,10 +398,10 @@
         e.preventDefault();
         $.waDialog.confirm({
             title: 'Не совершайте ошибку',
-            text: 'Тут грозный предупредительный текст.',
-            success_button_title: 'Точно начать с начала',
+            text: 'Перезапускать импорт с нуля имеет смысл, только если что-то пошло совсем не так. Например, если нужно кардинально сменить режим работы и переключить плагин из авто-режима в селф-сервис или наоборот.',
+            success_button_title: 'Начать все с начала',
             success_button_class: 'danger',
-            cancel_button_title: 'Отказаться',
+            cancel_button_title: 'Ничего не менять',
             cancel_button_class: 'light-gray',
             onSuccess: function () {
                 $.get('?plugin=tinkoff&module=reset', function () {
