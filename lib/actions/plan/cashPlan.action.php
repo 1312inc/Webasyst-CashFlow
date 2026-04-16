@@ -26,45 +26,20 @@ class cashPlanAction extends cashViewAction
             }
         }
 
-        $this->handle($handler_params);
-    }
-
-    private function handle(array $params)
-    {
-        $report_service = new cashReportDdsService();
-
         $year = $params['year'] ?? 0;
         if (empty($year)) {
             $year = date('Y');
         }
+        $report_service = new cashReportDdsService();
         $current_period = cashReportPeriod::createForYear($year);
-
         $dds_types = $report_service->getTypes();
-        /** @var cashReportDdsTypeDto|string $type */
-        $type = $params['type'] ?? cashReportDdsService::TYPE_CATEGORY;
-        if (isset($dds_types[$type])) {
-            $type = $dds_types[$type];
-        } else {
-            throw new waException(sprintf('Unknown report type: %s', $type));
-        }
-
+        $type = $dds_types[cashReportDdsService::TYPE_CATEGORY];
         $periods = (new cashReportPeriodsFactory())->getPeriodsByYear();
         $data = $report_service->getDataForTypeAndPeriod($type, $current_period);
-        $type = array_reduce($data, static function ($type, cashReportDdsStatDto $dto) {
-            if ($dto->entity->isIncome()) {
-                $type->incomeEntities++;
-            }
-            if ($dto->entity->isExpense()) {
-                $type->expenseEntities++;
-            }
-
-            return $type;
-        }, $type);
 
         $this->view->assign([
             'type' => $type,
             'data' => $data,
-            'dds_types' => $dds_types,
             'report_periods' => $periods,
             'current_period' => $current_period,
             'grouping' => $current_period->getGrouping(),
