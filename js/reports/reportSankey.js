@@ -11,15 +11,35 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
         const { data: currencyData, details } = data[currencyKey];
         
         currencyData.forEach(entry => {
-            if(entry.category_parent_id) return
-            mergedData.push({
-                ...entry,
-                currency: details.code,
-                currencySign: details.sign,
-                color: entry.color || '#365fff'
-            });
-        });
+         
+            if(entry.direction === 'income') {
+                
+                const parentName = currencyData.find(e => e.from_id === entry.category_parent_id)?.from;
+                mergedData.push({
+                    ...entry,
+                    ...(parentName ? { from: parentName } : {}),
+                    currency: details.code,
+                    currencySign: details.sign,
+                    color: entry.color || '#365fff'
+                });
+
+            } else {
+
+                const parentName = currencyData.find(e => e.to_id === entry.category_parent_id)?.to;
+               
+
+                mergedData.push({
+                    ...entry,
+                    ...(parentName ? { to: parentName } : {}),
+                    currency: details.code,
+                    currencySign: details.sign,
+                    color: entry.color || '#365fff'
+                });
+
+            }
+        })
     });
+
 
     // Reverse to match original behavior
     mergedData.reverse();
