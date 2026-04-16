@@ -11,7 +11,7 @@ try {
             `currency` varchar(3) NOT NULL,
             `account_id` int DEFAULT NULL,
             `category_id` int NOT NULL,
-            `month` datetime,
+            `month` date,
             `amount` decimal(18,4) NOT NULL DEFAULT '0.0000',
             PRIMARY KEY (`id`)
         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8
