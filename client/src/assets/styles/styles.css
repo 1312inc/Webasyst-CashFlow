@@ -12,6 +12,16 @@ html[data-theme='dark'] {
     line-height: 1.3; /* required to override a similar rule for #wa element set in the wa-2.0.css */
 }
 
+@media print {
+  #wa-nav,
+  .sidebar,
+  .c-transaction-controls,
+  .c-details-container__target,
+  .c-chart-pie-sticky-container {
+    display: none;
+  }
+}
+
 .flexbox > .wide {
   min-width: 0;
 }
