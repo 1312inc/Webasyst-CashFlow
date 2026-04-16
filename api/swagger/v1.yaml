@@ -1530,6 +1530,65 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /cash.plan.get:
+    get:
+      externalDocs:
+        description: cash.plan.get
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.plan.get/
+      summary: Возвращает
+      tags:
+        - План
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: category_id
+          description: ID статьи доходов или расходов
+          schema:
+            type: integer
+        - in: query
+          name: currency
+          description: 3-буквенный код валюты
+          schema:
+            type: string
+        - in: query
+          name: date
+          description: Дата плана в формате «гггг-мм-дд»
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: account_id
+          description: ID счета
+          schema:
+            type: integer
+            default: null
+      responses:
+        200:
+          description: Информация о планах
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  currency:
+                    type: string
+                  account_id:
+                    type: integer
+                  category_id:
+                    type: integer
+                  from:
+                    type: string
+                  to:
+                    type: string
+                  amount:
+                    type: number
+                  amount_fact:
+                    type: number
+
   /cash.system.getCurrencies:
     get:
       externalDocs:
