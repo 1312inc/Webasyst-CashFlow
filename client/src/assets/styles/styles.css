@@ -14,11 +14,13 @@ html[data-theme='dark'] {
 
 @media print {
   #wa-nav,
+  .hidden-print,
   .sidebar,
   .c-transaction-controls,
   .c-details-container__target,
   .c-chart-pie-sticky-container,
-  .i-product-review-widget-wrappper {
+  .i-product-review-widget-wrappper,
+  .printPageButton {
     display: none;
   }
 }

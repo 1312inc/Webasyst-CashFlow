@@ -1,13 +1,14 @@
 <template>
   <div class="c-period-dropdowns-container">
     <div class="flexbox vertical-mobile space-12">
-      <button
-        class="button light-gray nowrap desktop-only"
-        @click="printPage()"
-      >
-        <i class="fas fa-print" />
-      </button>
-
+      <div class="printPageButton desktop-only">
+        <button
+          class="button light-gray nowrap"
+          @click="printPage()"
+        >
+          <i class="fas fa-print" />
+        </button>
+      </div>
       <CurrencyToggler />
       <div class="c-period-dropdowns flexbox fixed space-12 width-100-mobile">
         <div>

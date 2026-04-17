@@ -6,7 +6,7 @@
         {$wa->installer->reviewWidget('app/cash')}
     {/if}
 
-    <div class="flexbox wrap middle space-12">
+    <div class="flexbox wrap middle space-12 hidden-print">
         <ul class="tabs bordered-bottom custom-mb-24 custom-pl-0 wide">
             {foreach $reportsMenu as $reportsMenus}
                 {foreach $reportsMenus as $reportMenu}
@@ -16,8 +16,8 @@
                 {/foreach}
             {/foreach}
         </ul>
-        <div>
-            <button onclick="window.print()" class="button light-gray nowrap desktop-only">
+        <div class="printPageButton desktop-only">
+            <button onclick="window.print()" class="button light-gray nowrap">
                 <i class="fas fa-print"></i>
             </button>
         </div>
