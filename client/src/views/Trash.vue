@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <ChartHeader
@@ -7,7 +8,7 @@
         <h1 class="">
           {{ $t("trash") }}
         </h1>
-        <p class="small custom-px-16-mobile">
+        <p class="small custom-px-16-mobile width-60 width-100-mobile">
           {{ $t("trashInfo") }}
         </p>
       </template>
@@ -56,6 +57,13 @@ export default {
       offset: 0,
       filter: 'trash/0'
     })
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('trash'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
   }
 }
 </script>

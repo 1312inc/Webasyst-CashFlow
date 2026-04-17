@@ -6,8 +6,10 @@
         <h1 class="">
           {{ $t("allTransactions") }}
         </h1>
+        <TransactionControls />
       </template>
     </ChartHeader>
+    <TransactionControlsSticky />
     <div class="flexbox space-24">
       <div class="wide">
         <TransactionList
@@ -26,6 +28,8 @@ import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
+import TransactionControls from '../components/TransactionControls.vue'
+import TransactionControlsSticky from '../components/TransactionControlsSticky.vue'
 import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
 
 export default {
@@ -33,7 +37,9 @@ export default {
   components: {
     ChartHeader,
     TransactionList,
-    AmChartPieStickyContainer
+    AmChartPieStickyContainer,
+    TransactionControls,
+    TransactionControlsSticky
   },
   mixins: [routerTransitionMixin],
 
@@ -44,6 +50,13 @@ export default {
       offset: 0,
       filter: ''
     })
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('transactions'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
   }
 }
 </script>

@@ -7,12 +7,14 @@ import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 // eslint-disable-next-line camelcase
 import am4themes_animated from '@amcharts/amcharts4/themes/animated'
-import { onMounted } from 'vue'
+import { onBeforeUnmount, onMounted } from 'vue'
+
+let chart
 
 onMounted(() => {
   am4core.useTheme(am4themes_animated)
 
-  const chart = am4core.create('chartTarget', am4charts.GaugeChart)
+  chart = am4core.create('chartTarget', am4charts.GaugeChart)
   chart.innerRadius = am4core.percent(82)
 
   // const axis = chart.xAxes.push(new am4charts.ValueAxis())
@@ -92,6 +94,12 @@ onMounted(() => {
       to: value
     }, 1000, am4core.ease.cubicOut).start()
   }, 3000)
+})
+
+onBeforeUnmount(() => {
+  if (chart) {
+    chart.dispose()
+  }
 })
 
 </script>

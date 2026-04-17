@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
     <ChartHeader
@@ -61,6 +62,13 @@ export default {
       offset: 0,
       filter: `import/${this.$route.params.id}`
     })
+  },
+
+  metaInfo () {
+    return {
+      title: this.$t('importResults'),
+      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+    }
   }
 }
 </script>

@@ -61,8 +61,8 @@
           <div class="name for-checkbox">
             {{ $t("accountType.name") }}
           </div>
-          <div class="value">
-            <div class="custom-mb-12">
+          <div class="value" style="line-height: 1.2;">
+            <div class="custom-mb-16">
               <label>
                 <span class="wa-radio">
                   <input
@@ -76,7 +76,7 @@
                 <span class="hint">{{ $t("accountType.types.checking.message") }}</span>
               </label>
             </div>
-            <div class="custom-mb-12">
+            <div class="custom-mb-16">
               <label>
                 <span class="wa-radio">
                   <input
@@ -90,7 +90,7 @@
                 <span class="hint">{{ $t("accountType.types.virtual.message") }}</span>
               </label>
             </div>
-            <div>
+            <div class="custom-mb-16">
               <label>
                 <span class="wa-radio">
                   <input
@@ -104,6 +104,9 @@
                 <span class="hint">{{ $t("accountType.types.virtualWithForecast.message") }}</span>
               </label>
             </div>
+            <p class="small custom-mb-16">
+              <a href="###" target="_blank"><b>{{ $t("accountTypeHint") }}</b></a>
+            </p>
           </div>
         </div>
 

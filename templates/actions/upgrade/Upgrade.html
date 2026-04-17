@@ -20,21 +20,32 @@
 {capture "getpremiumbutton"}
 {if !$_is_premium}
 <figure class="box align-center c-upgrade-ad">
-    <a href="{$_upgrade_url}" class="button rounded {if !$_is_cloud}{$_premium_pricing.special_color|default:'green'}{else}green{/if} largest" target="_blank">[`Upgrade to premium`]</a>
+    <a href="{$_upgrade_url}" class="button rounded {if !$_is_cloud}{$_premium_pricing.special_color|default:'green'}{else}green{/if} largest" target="_blank">{if $_is_cloud}[`Upgrade to premium`]{else}{$_premium_pricing.special_button|default:'[`Upgrade to premium`]'}{/if}</a>
     <h4>
-        {if !empty($_premium_pricing.compare_price)}<strike class="gray">{$_premium_pricing.compare_price}</strike>{/if}
-        {if $_is_cloud}[`All inclusive in the cloud`]{else}{$_premium_pricing.price} / [`upgrade to premium`]{/if}
+        {if $_is_cloud}
+            {if !empty($_premium_pricing.compare_price)}<strike class="gray">{$_premium_pricing.compare_price}</strike>{/if}
+            [`All inclusive in the cloud`]
+        {else}
+            {if !empty($_premium_pricing.upgrade_compare_price)}<strike class="gray">{$_premium_pricing.upgrade_compare_price}</strike>{/if}
+            {$_premium_pricing.upgrade_price} / [`upgrade basic &rarr; premium`]
+            <br>
+            {if !empty($_premium_pricing.compare_price)}<strike class="gray">{$_premium_pricing.compare_price}</strike>{/if}
+            {$_premium_pricing.price} / [`new premium license`]
+        {/if}
     </h4>
     <p class="width-60 width-100-mobile custom-mx-auto small">
         {if $_is_cloud}
-            [`In Webasyst Cloud, simply upgrade to the <b>Premium</b> plan and get all premium features at once with no extra purchase required.`]
+            [`In Webasyst Cloud, simply upgrade to the <b>Premium</b> plan and get all premium features at once with no extra purchase.`]
+            {sprintf('[`Or get <a href="%s" target="_blank">new license</a> for the Custom plan.`]', $_upgrade_url)}
         {else}
             {if !empty($_premium_pricing.special)}
-                {sprintf('[`%s limited offer for upgrading existing app license to the premium version`]', sprintf('<span class="badge %s">%s</span>', $_premium_pricing.special_color, $_premium_pricing.special))}<br>
-                <b>{date('Y.m')}</b> [`special offer!`]
+                {sprintf('[`%s intro offer for upgrading existing app license to the premium version`]', sprintf('<span class="badge %s">%s</span>', $_premium_pricing.special_color, $_premium_pricing.special))} —
+                <b>{date('Y.m')} [`special offer!`]</b>
             {else}
-                [`Per-server license for the entire company. Unlimited users, all premium features, free updates forever.`]
+                [`Per-server license for the entire company. Unlimited users, all the premium features, and free updates forever.`]
             {/if}
+            <br>
+            <b>[`One-time payment, not a subscription!`]</b>
         {/if}
     </p>
 </figure>
@@ -45,8 +56,8 @@
 <div class="card c-premium-feature{if $_halfwidth} halfwidth{/if}">
     <div class="flexbox space-12 wrap-mobile">
         <div class="wide">
-            <h3 class="custom-mb-8">
-                {if !$_is_free_feature}<i class="fas fa-star text-yellow small custom-mr-2" style="position: relative: top: -4px;"></i>{/if}
+            <h3 class="custom-mb-8{if !empty($_p.grayedout)} gray{/if}">
+                {if !$_is_free_feature && empty($_p.grayedout)}<i class="fas fa-star text-yellow small custom-mr-2" style="position: relative: top: -4px;"></i>{/if}
                 {$_p.title}
             </h3>
         </div>
@@ -73,44 +84,61 @@
             {$_premium_stuff = []}
 
             {$_premium_stuff[] = [
+              'title' => '[`Goals & budgets`]',
+              'body' => '[`Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast).<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>.`]',
+              'eta_class' => 'green',
+              'eta' => '[`May 2026`]'
+            ]}
+
+            {$_premium_stuff[] = [
+              'title' => '[`Teammate accounts`]',
+              'body' => '[`Assign accounts to specific users on your team. Know whom is accountable for and how much.`]',
+              'eta_class' => 'green',
+              'eta' => '[`May 2026`]'
+            ]}
+
+            {$_premium_stuff[] = [
+              'title' => '[`Automation / bots`]',
+              'body' => '[`Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>`]',
+              'eta_class' => 'green',
+              'eta' => '[`May / June 2026`]'
+            ]}
+
+            {$_premium_stuff[] = [
               'title' => '[`Multiple companies`]',
-              'body' => '',
-              'eta' => '[`Soon`]'
-            ]}
-
-            {$_premium_stuff[] = [
-              'title' => '[`Automation`]',
-              'body' => '',
-              'eta' => '[`Soon`]'
-            ]}
-
-            {$_premium_stuff[] = [
-              'title' => '[`Goals & Budgets`]',
-              'body' => '',
-              'eta' => '[`Soon`]'
+              'body' => '[`Split accounting across different entities such as LLCs, personal, etc.`]',
+              'eta' => '[`Later`]'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Scenarios`]',
-              'body' => '',
-              'eta' => '[`Soon`]'
+              'body' => '[`Exclude individual transactions from the primary cash flow scenario, and include them into specific scenarios such as <em>Optimistic, Pessimistic, Gonna take a loan, What if there is a fire, What if it works out</em>, or any custom scenario.`]',
+              'eta' => '[`Later`]'
             ]}
 
             {$_premium_stuff[] = [
-              'title' => '[`Templates`]',
-              'body' => '',
-              'eta' => '[`Soon`]'
+              'title' => '[`Transaction templates`]',
+              'body' => '[`Create templates with fixed parameters (such as category, account, amount, etc.) that speed up your work and reduce mistakes.`]',
+              'eta' => '[`Later`]'
             ]}
 
             {$_premium_stuff[] = [
-              'title' => '[`Big bang / Smart archive`]',
-              'body' => '',
-              'eta' => '[`Soon`]'
+              'title' => '[`The Big Bang moment`]',
+              'body' => '[`Set a a specific date as a Big Bang moment and be sure that no can adjust anything before that date.`]',
+              'eta' => '[`Later`]'
             ]}
 
             {$_premium_stuff[] = [
-              'title' => '[`Projects & Tags`]',
-              'body' => '[`Evaluating either yes or no. Vote here!`]',
+              'title' => '[`Account groups`]',
+              'body' => {sprintf('[`Evaluating either we need this feature in the app. <b>Yes or no? <a href="%s" target="_blank">Vote here!</a></b>`]', '[`https://support.webasyst.com/forum/ideas/`]')},
+              'grayedout' => true,
+              'eta' => '[`Maybe`]'
+            ]}
+
+            {$_premium_stuff[] = [
+              'title' => '[`Tags & projects`]',
+              'body' => {sprintf('[`Evaluating either we need this feature in the app. <b>Yes or no? <a href="%s" target="_blank">Vote here!</a></b>`]', '[`https://support.webasyst.com/forum/ideas/`]')},
+              'grayedout' => true,
               'eta' => '[`Maybe`]'
             ]}
 
@@ -143,13 +171,15 @@
             {else}
 
                 <h1 class="top-padded align-center width-70 custom-mx-auto custom-mb-24 width-100-mobile">
-                    [`Bigger money loves better accounting`]
+                    [`Bigger money needs to be better accounted`]
                 </h1>
 
-                <p class="small align-center custom-mb-24">
+                <p class="small align-center custom-mb-24 width-90 custom-mx-auto">
                     [`Early launch offer gets you the best premium upgrade conditions possible.`]
                     <br>
-                    <b>{sprintf('[`%d features available now, +%d more to come shortly.`]', $_features_delivered, $_features_pending)}</b>
+                    <a class="bold" href="[`https://www.webasyst.com/store/app/cash/`]" target="_blank">[`https://www.webasyst.com/store/app/cash/`]</a>
+                    {* <br>
+                    <b>{sprintf('[`%d features available now, +%d more to come shortly.`]', $_features_delivered, $_features_pending)}</b> *}
                 </p>
 
             {/if}

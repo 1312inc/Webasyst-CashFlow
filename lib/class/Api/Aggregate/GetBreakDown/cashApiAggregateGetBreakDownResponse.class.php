@@ -36,7 +36,7 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
         }
 
         foreach ($data as $graphDatum) {
-            $categoryType = $categoryTypeMapping[$graphDatum['type']];
+            $categoryType = $categoryTypeMapping[$graphDatum['transaction_type']];
 
             $dataInfo = new cashApiAggregateGetBreakDownDataDto(
                 $graphDatum['amount'],

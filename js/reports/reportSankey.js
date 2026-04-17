@@ -4,15 +4,43 @@ import { createCurrencyToggler } from './currencyToggle.js';
 export default function (chartdivSelector, data, language, allCurrenciesItemText) {
 
     const currencies = Object.keys(data);
-    const mergedData = currencies.reduce((acc, c) => ([...acc, ...data[c]['data'].map(e => {
-        return {
-            ...e,
-            currency: data[c].details.code,
-            currencySign: data[c].details.sign,
-            color: e.color || '#365fff'
-        };
-    }
-    )]), []).reverse();
+    const mergedData = [];
+
+    // Merge data from all currencies, add currency info, and ensure a default color
+    currencies.forEach(currencyKey => {
+        const { data: currencyData, details } = data[currencyKey];
+        
+        currencyData.forEach(entry => {
+         
+            if(entry.direction === 'income') {
+                
+                const parentName = currencyData.find(e => e.from_id === entry.category_parent_id)?.from;
+                mergedData.push({
+                    ...entry,
+                    ...(parentName ? { from: parentName, label: `${parentName}/${entry.from}` } : { label: entry.from }),
+                    currency: details.code,
+                    currencySign: details.sign,
+                    color: entry.color || '#365fff'
+                });
+
+            } else {
+
+                const parentName = currencyData.find(e => e.to_id === entry.category_parent_id)?.to;
+                mergedData.push({
+                    ...entry,
+                    ...(parentName ? { to: parentName, label: `${parentName}/${entry.to}` } : { label: entry.to }),
+                    currency: details.code,
+                    currencySign: details.sign,
+                    color: entry.color || '#365fff'
+                });
+
+            }
+        })
+    });
+
+
+    // Reverse to match original behavior
+    mergedData.reverse();
     let activeCurrency = null;
 
     am4core.ready(() => {
@@ -49,15 +77,16 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
         chart.dataFields.value = "value";
         chart.dataFields.color = "color";
         chart.dataFields.currency = "currencySign";
-        chart.links.template.tooltipText = `{fromName}→{toName}: {value} {currency}`;
+        chart.dataFields.label = "label";
+        chart.links.template.tooltipText = `{fromName}→{label}: {value} {currency}`;
         chart.links.template.colorMode = "gradient";
-        chart.links.template.fillOpacity = 1;
+        chart.links.template.fillOpacity = 0.6;
 
         const nodeTemplate = chart.nodes.template;
         nodeTemplate.adapter.add("visible", (e, target) => target.children.values[0].label.currentText !== 'stub');
 
         let hoverState = chart.links.template.states.create("hover");
-        hoverState.properties.fillOpacity = 0.6;
+        hoverState.properties.fillOpacity = 0.4;
 
     }
 

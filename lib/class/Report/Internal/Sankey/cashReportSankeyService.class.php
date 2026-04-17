@@ -15,7 +15,7 @@ final class cashReportSankeyService
     public function getDataForPeriod(DateTimeImmutable $dateFrom, DateTimeImmutable $dateTo): array
     {
         $sql = <<<SQL
-(SELECT ca.currency, cc.name 'from', cc.id 'from_id', ca.name 'to', ca.id 'to_id', cc.color color, SUM(ABS(ct.amount)) value, 'income' direction
+(SELECT ca.currency, cc.name 'from', cc.id 'from_id', cc.category_parent_id 'category_parent_id', ca.name 'to', ca.id 'to_id', cc.color color, SUM(ABS(ct.amount)) value, 'income' direction
 FROM cash_transaction ct
          JOIN cash_category cc on ct.category_id = cc.id
          JOIN cash_account ca on ca.id = ct.account_id
@@ -26,7 +26,7 @@ WHERE ct.is_archived = 0
   AND ct.date <= s:date_to
 GROUP BY ct.category_id, ct.account_id)
 UNION ALL
-(SELECT ca.currency, ca.name 'from', ca.id 'from_id', cc.name 'to', cc.id 'to_id', cc.color color, SUM(ABS(ct.amount)) value, 'expense' direction
+(SELECT ca.currency, ca.name 'from', ca.id 'from_id', cc.category_parent_id 'category_parent_id', cc.name 'to', cc.id 'to_id', cc.color color, SUM(ABS(ct.amount)) value, 'expense' direction
 FROM cash_transaction ct
          JOIN cash_category cc on ct.category_id = cc.id
          JOIN cash_account ca on ca.id = ct.account_id
@@ -81,7 +81,12 @@ SQL;
 
             $datumData = &$datum['data'];
             usort($datumData, static function (array $item1, array $item2) {
-                return $item1['value'] > $item2['value'];
+                if($item1['value'] > $item2['value']) {
+                    return 1;
+                } elseif($item1['value'] < $item2['value']) {
+                    return -1;
+                }
+                return 0;
             });
 
             array_walk($datumData, static function (&$item) use ($datum) {

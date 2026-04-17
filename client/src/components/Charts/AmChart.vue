@@ -2,7 +2,7 @@
   <div
     ref="chartdiv"
     :style="loadingChart && 'opacity:.2'"
-    class="c-chart-main smaller"
+    class="c-chart-main smaller custom-pt-16 custom-pr-12"
   />
 </template>
 
@@ -90,7 +90,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('transaction', ['updateDetailsInterval']),
+    ...mapActions('transaction', ['updateDetailsInterval', 'resetDetailsInterval']),
 
     createChart () {
       if (this.chart) {
@@ -235,7 +235,7 @@ export default {
       chart.scrollbarX.startGrip.events.on('dragstop', dateAxisChanged)
       chart.scrollbarX.endGrip.events.on('dragstop', dateAxisChanged)
       chart.zoomOutButton.events.on('hit', () => {
-        this.updateDetailsInterval({ from: this.chartInterval.from, to: this.chartInterval.to })
+        this.resetDetailsInterval()
       })
 
       /**

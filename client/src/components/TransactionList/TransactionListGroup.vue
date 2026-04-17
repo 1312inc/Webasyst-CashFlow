@@ -2,14 +2,8 @@
   <div class="c-transaction-section">
     <div
       ref="el"
-      @mouseover="
-        isHover = true;
-        if ($refs.pieIcon) $refs.pieIcon.style.display = 'block';
-      "
-      @mouseleave="
-        isHover = false;
-        if ($refs.pieIcon) $refs.pieIcon.style.display = 'none';
-      "
+      @mouseover="isHover = true"
+      @mouseleave="isHover = false"
     >
       <div
         class="c-sticky-header-group"
@@ -103,16 +97,18 @@
               @updateUpcomingBlockOpened="(val) => upcomingBlockOpened = val"
             />
           </div>
-          <div class="flexbox middle space-12">
-            <div
+          <div
+            class="flexbox space-12 wide"
+            style="justify-content: end;"
+          >
+            <a
               v-if="filteredTransactions.length"
-              ref="pieIcon"
-              class="desktop-only c-pie-icon-helper"
-              style="display: none; cursor: pointer"
-              @click="onStick"
+              href="#"
+              class="button circle light-gray desktop-only"
+              @click.prevent="onStick"
             >
               <i class="fas fa-chart-pie" />
-            </div>
+            </a>
             <AmountForGroup
               :group="filteredTransactions"
             />
@@ -403,7 +399,7 @@ export default {
 <style>
 .c-sticky-header-group {
   position: sticky;
-  top: 4rem;
+  top: calc(4rem + 60px);
   z-index: 99;
   background-color: var(--background-color-blank);
 }
@@ -416,9 +412,15 @@ export default {
   z-index: 999;
 }
 
-/* .c-list--compact button {
-  margin-left: 1rem !important;
-} */
+.c-transaction-section .button.circle.desktop-only {
+  opacity: 0;
+  transform: translateY(-6px);
+  margin-bottom: -34px;
+}
+
+.c-transaction-section:hover .button.circle {
+  opacity: 1;
+}
 
 @media screen and (max-width: 760px) {
   .c-sticky-header-group {
@@ -432,11 +434,4 @@ export default {
   }
 }
 
-.c-pie-icon-helper {
-  opacity: 0.5;
-  transition: 0.2s opacity;
-}
-.c-pie-icon-helper:hover {
-  opacity: 1;
-}
 </style>

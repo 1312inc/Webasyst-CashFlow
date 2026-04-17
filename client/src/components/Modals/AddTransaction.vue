@@ -6,7 +6,7 @@
     <div class="dialog-header">
       <div class="flexbox middle space-12 wrap-mobile">
         <div class="wide flexbox middle">
-          <h3 class="custom-mb-0">
+          <h3 class="custom-mb-0 custom-pt-4">
             <template v-if="transactionType === 'addMany'">
               {{ $t("addMany") }}
             </template>
@@ -41,6 +41,7 @@
         <div
           v-if="!isModeUpdate"
           class="toggle custom-mt-8"
+          style="flex: none;"
         >
           <span
             v-for="(type, i) in [
@@ -126,7 +127,10 @@
               </label>
             </div>
           </div>
-          <div class="wide">
+          <div
+            class="wide"
+            style="max-width: 100%;"
+          >
             <!-- Start Currency Input section -->
             <div class="custom-mb-16">
               <input-currency
@@ -577,16 +581,28 @@
               {{ $t("cancel") }}
             </button>
           </div>
-          <button
+
+          <div
             v-if="isModeUpdate"
-            :disabled="controlsDisabled"
-            class="button red outlined"
-            @click="remove"
+            class="flexbox middle space-12"
           >
-            <span>{{
-              model.apply_to_all_in_future ? $t("deleteAll") : $t("delete")
-            }}</span>
-          </button>
+            <div
+              v-if="model.id"
+              class="small gray desktop-only"
+            >
+              id: {{ model.id }}
+            </div>
+
+            <button
+              :disabled="controlsDisabled"
+              class="button red outlined"
+              @click="remove"
+            >
+              <span>{{
+                model.apply_to_all_in_future ? $t("deleteAll") : $t("delete")
+              }}</span>
+            </button>
+          </div>
         </div>
       </div>
     </template>

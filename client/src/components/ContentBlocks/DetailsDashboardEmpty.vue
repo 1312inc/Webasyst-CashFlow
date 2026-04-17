@@ -1,0 +1,55 @@
+<script setup>
+
+</script>
+
+<template>
+  <div>
+    <!-- Текст для русских -->
+    <template v-if="$i18n.locale === 'ru_RU'">
+      <h2> Рассказываем, как тут и что </h2>
+      <p>
+        Чтобы быстро увидеть полезность приложения, попробуйте добавить несколько типовых операций, которые
+        происходят регулярно — каждый день, неделю, месяц. Приложение автоматически посчитает движение средств и
+        покажет нужные отчеты и графики. Пробные операции затем всегда легко удалить.
+      </p>
+      <ol class="separated">
+        <li>Нажмите <strong>«Сразу много»</strong>.</li>
+        <li>
+          Добавьте <strong>3-5 повторяющихся операций</strong>, например, план продаж (каждый день), аренда, интернет, зарплаты
+          (каждый месяц), кофе в офис (каждую неделю).
+        </li>
+        <li><strong>Профит!</strong> Увидите, сколько денег будет на счете и когда.</li>
+      </ol>
+      <p>
+        Подробнее о всех фишках приложения рассказываем и показываем на сайте <a
+          href="https://support.webasyst.ru/cash/"
+          target="_blank"
+        ><b>https://support.webasyst.ru/cash/</b></a>
+      </p>
+    </template>
+
+    <!-- Текст для нерусских -->
+    <template v-else>
+      <h2> Explaining how it all works </h2>
+      <p>
+        To quickly see the app ultimate purpose, try adding a few typical transactions that occur or a
+        regular basis. The app will automatically calculate your cash flow and display all the necessary
+        reports and charts. Test transactions can always be easily deleted.
+      </p>
+      <ol class="separated">
+        <li>Click <strong>‘Add Many’</strong>.</li>
+        <li>
+          Add <strong>3—5 recurring transactions</strong>, e.g. sales plan (daily), rent, internet, salaries (monthly), and
+          office supplies (weekly).
+        </li>
+        <li><strong>Profit!</strong> See how much money will be in your account and when.</li>
+      </ol>
+      <p>
+        Sharing more about the app top features and use cases here: <a
+          href="https://support.webasyst.ru/cash/"
+          target="_blank"
+        ><b>https://support.webasyst.com/cash/</b></a>
+      </p>
+    </template>
+  </div>
+</template>

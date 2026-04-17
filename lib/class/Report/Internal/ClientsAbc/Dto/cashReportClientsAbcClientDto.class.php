@@ -2,6 +2,12 @@
 
 class cashReportClientsAbcClientDto
 {
+
+    /**
+     * @var int
+     */
+    public $id;
+
     /**
      * @var string
      */

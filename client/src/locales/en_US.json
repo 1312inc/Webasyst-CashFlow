@@ -30,8 +30,8 @@
   "icon": "Icon",
   "desc": "Comment",
   "noDesc": "no description",
-  "addTransaction": "Add transaction",
-  "updateTransaction": "Update transaction",
+  "addTransaction": "Add",
+  "updateTransaction": "Update",
   "applyTo": {
     "name": "Apply changes to",
     "list": [
@@ -156,11 +156,11 @@
   "Process": "Process",
   "processToday": "Mark as processed today",
   "processEdits": "Process with edits",
-  "profit": "Profit (cash out)",
+  "profit": "Profit / dividends",
   "incomeCategoryExplained": "Income transactions increase the account balance.",
   "expenseCategoryExplained": "Expense transactions decrease the account balance.",
-  "profitCategoryExplained": "For business, profit is similar to expense because its taking money out of business and thus decreasing the account balance. The Profit checkbox allows you to visually group this kind of expenses into separate blue columns.",
-  "notifyMe": "Remind to process when due",
+  "profitCategoryExplained": "For business, profit and dividends are similar to expense because they mean taking money out of business and thus decreasing the account balance. The checkbox allows you to visually group this kind of expenses into separate blue column. It does not affect the accounting, but makes general picture easier to catch up visually.",
+  "notifyMe": "Alert when due",
   "notifyMeAlert": "When the transaction date comes, a tiny little notification on the app icon will emerge and remind you to process (confirm) this transaction.",
   "error": {
     "http": "Request failed",
@@ -176,6 +176,12 @@
   "cashGapIn": "Cash gap is expected in {inDays} days ({date})",
   "cashGapOut": "Going out of cash gap in {inDays} days ({date})",
   "inDays": "(in {days} days)",
+  "intervalLabels": {
+    "eternity": "One eternity earlier...",
+    "yearsPassed": "Years have passed...",
+    "yearPassed": "One year earlier...",
+    "monthsPassed": "Months earlier..."
+  },
   "fileUploaderLabel": "Drop here or browse",
   "contacts": "Contacts",
   "createNewContact": "Create new Contact",
@@ -217,7 +223,7 @@
   "allTransactions": "All transactions",
   "change": "Change",
   "trash": "Trash",
-  "trashInfo": "Deleted transactions are not counted in any cash flow and balance reports and are visible to the app admins only. Select one or more transactions to purge or restore.",
+  "trashInfo": "Deleted transactions are not counted in any cash flow and balance reports and are visible to the app admins only. Purge or restore transactions from here.",
   "restore": "Restore",
   "restoreInfo": "Editing is disabled for deleted transactions. Select this transaction and restore it first.",
   "purge": "Purge",
@@ -248,13 +254,13 @@
       },
       "virtualWithForecast": {
         "name": "Sandbox",
-        "message": "similar to project, but all transactions are only visible within the account, making it possible to emulate any isolated financial scenario under this account"
+        "message": "similar to project, but all transactions — both past & future — won’t affect the general picture, making it possible to emulate any isolated financial scenario within this account"
       }
     }
   },
+  "accountTypeHint": "More on account types ›",
   "detailsTargetDescTitle": "Goals & Budget",
   "detailsTargetDesc": "Coming soon in premium! Financial goals, budgeting, and more amazing powerful features for accounting and predictions.",
   "detailsTargetDescLink": "Pre-order upgrade",
-  "detailsDashboardEmptyTitle": "Поздравлям",
-  "detailsDashboardEmptyMessage": "ДА! Превед, земляне! Добавляем операцию, не стесняемся — а мы покажем вам будущее!"
+  "allTransactionsProcessed": "That's all folks!"
 }

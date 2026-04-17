@@ -1,7 +1,7 @@
 html {
     --red:    #ff421a;
     --green:  #0abe5a;
-    --highlighted-overdue: #ffd4d4;
+    --highlighted-overdue: #ffe7e7;
 }
 
 html[data-theme='dark'] {
@@ -10,6 +10,17 @@ html[data-theme='dark'] {
 
 #wa-app {
     line-height: 1.3; /* required to override a similar rule for #wa element set in the wa-2.0.css */
+}
+
+@media print {
+  #wa-nav,
+  .sidebar,
+  .c-transaction-controls,
+  .c-details-container__target,
+  .c-chart-pie-sticky-container,
+  .i-product-review-widget-wrappper {
+    display: none;
+  }
 }
 
 .flexbox > .wide {
@@ -78,7 +89,7 @@ body.modal {
   color: var(--accent-color) !important;
 }
 
-.alert.c-cashgap-prediction-banner { border: none; border-radius: 0; padding: 1rem; }
+.alert.c-cashgap-prediction-banner { border: none; padding: 1rem; margin: 1rem 0 0; font-size: 0.9375rem; }
 
 .c-button-add-income { background: #16d15f; }
 .c-button-add-expense { background: #f7623a; }
@@ -236,6 +247,7 @@ body.modal {
 
 .c-details-container__target {
   width: 340px;
+  flex: none;
 }
 
 @media screen and (max-width: 1280px) {
@@ -252,4 +264,5 @@ body.modal {
   top: 1rem;
   right: 1rem;
   position: absolute;
+  z-index: 1;
 }

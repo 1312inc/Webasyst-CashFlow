@@ -7,53 +7,72 @@
       <BlankBox>
         <TransactionListCreated />
       </BlankBox>
-      <BlankBox>
-        <div
-          v-for="(group, index) in groups.filter(g => ['tomorrow', 'yesterday'].includes(g.name))"
-          :key="group.name"
-        >
-          <TransactionListGroup
-            :group="group.items"
-            :type="group.name"
-            :index="index"
-            :visible-select-checkbox="visibleSelectCheckbox"
-            :show-founded-count="showFoundedCount"
-          />
-        </div>
-      </BlankBox>
-      <BlankBox>
-        <div
-          v-for="(group, index) in groups.filter(g => !(['tomorrow', 'yesterday'].includes(g.name)))"
-          :key="group.name"
-        >
-          <TransactionListGroup
-            :group="group.items"
-            :type="group.name"
-            :index="index"
-            :visible-select-checkbox="visibleSelectCheckbox"
-            :show-founded-count="showFoundedCount"
-          />
-        </div>
-        <Observer
-          v-if="observer &&
-            (isSplitFetchMode
-              ? (pastTransactionsOffset && pastTransactionsOffset < transactions.total)
-              : (transactions.data.length && transactions.data.length < transactions.total)
-            )"
-          @callback="() => { observerCallback(isSplitFetchMode ? pastTransactionsOffset : transactions.data.length) }"
+
+      <BlankBox
+        v-for="(group, index) in primaryGroups"
+        :key="group.name"
+      >
+        <TransactionListGroup
+          :group="group.items"
+          :type="group.name"
+          :index="index"
+          :visible-select-checkbox="visibleSelectCheckbox"
+          :show-founded-count="showFoundedCount"
         />
       </BlankBox>
+
+      <div
+        v-if="firstStreamGroupIntervalLabel"
+        class="align-center small gray custom-pb-24"
+      >
+        {{ firstStreamGroupIntervalLabel }}
+      </div>
+
+      <div
+        v-for="(group, index) in onlyStreamGroups"
+        :key="group.name"
+      >
+        <div
+          v-if="streamGroupIntervalLabels[index]"
+          class="align-center small gray custom-pb-24"
+        >
+          {{ streamGroupIntervalLabels[index] }}
+        </div>
+
+        <BlankBox>
+          <TransactionListGroup
+            :group="group.items"
+            :type="group.name"
+            :index="index"
+            :visible-select-checkbox="visibleSelectCheckbox"
+            :show-founded-count="showFoundedCount"
+          />
+        </BlankBox>
+      </div>
+
+      <Observer
+        v-if="showObserver"
+        @callback="handleObserverCallback"
+      />
+
+      <div v-if="(transactions.data.length === transactions.total) && transactions.data.length">
+        <div class="align-center small gray custom-p-24">
+          {{ $t('allTransactionsProcessed') }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import TransactionListCreated from './TransactionListCreated'
 import TransactionListGroup from './TransactionListGroup'
 import SkeletonTransaction from './SkeletonTransaction'
 import Observer from './Observer'
 import BlankBox from '../BlankBox.vue'
+
+const PRIMARY_GROUP_NAMES = ['overdue', 'future', 'tomorrow', 'today', 'yesterday']
 
 export default {
 
@@ -108,7 +127,8 @@ export default {
   },
 
   computed: {
-    ...mapState('transaction', ['transactions', 'detailsInterval', 'isSplitFetchMode']),
+    ...mapState('transaction', ['transactions', 'isSplitFetchMode']),
+    ...mapGetters('transaction', ['isDetailsMode']),
     transactionsWithoutJustCreated () {
       return this.$store.getters['transaction/getTransactionsWithoutJustCreated']
     },
@@ -164,7 +184,7 @@ export default {
       }
 
       // add tomorrow object
-      if (this.showTomorrowGroup) {
+      if (this.showTomorrowGroup && this.showRestGroupComputed) {
         result.push({
           name: 'tomorrow',
           items: []
@@ -180,7 +200,7 @@ export default {
       }
 
       // add yesterday object
-      if (this.showYesterdayGroup) {
+      if (this.showYesterdayGroup && this.showRestGroupComputed) {
         result.push({
           name: 'yesterday',
           items: []
@@ -211,7 +231,7 @@ export default {
         }
 
         // if tomorrow
-        if (e.date === tomorrow && this.showTomorrowGroup) {
+        if (e.date === tomorrow && this.showTomorrowGroup && this.showRestGroupComputed) {
           return add('tomorrow', e)
         }
 
@@ -226,7 +246,7 @@ export default {
         }
 
         // if yesterday
-        if (e.date === yesterday && this.showYesterdayGroup) {
+        if (e.date === yesterday && this.showYesterdayGroup && this.showRestGroupComputed) {
           return add('yesterday', e)
         }
 
@@ -240,21 +260,82 @@ export default {
       return result
     },
 
+    onlyStreamGroups () {
+      return this.groups.filter(g => !PRIMARY_GROUP_NAMES.includes(g.name))
+    },
+
+    primaryGroups () {
+      return this.groups.filter(g => PRIMARY_GROUP_NAMES.includes(g.name))
+    },
+
+    currentMonthGroup () {
+      return { name: this.$moment().format('YYYY-MM') }
+    },
+
+    firstStreamGroupIntervalLabel () {
+      return this.nextMonthIntervalLabel(this.currentMonthGroup, this.onlyStreamGroups[0])
+    },
+
+    streamGroupIntervalLabels () {
+      return this.onlyStreamGroups.map((group, index) => {
+        return this.nextMonthIntervalLabel(this.onlyStreamGroups[index - 1], group)
+      })
+    },
+
+    showObserver () {
+      if (!this.observer) return false
+
+      if (this.isSplitFetchMode) {
+        return Boolean(this.pastTransactionsOffset && this.pastTransactionsOffset < this.transactions.total)
+      }
+
+      return Boolean(this.transactions.data.length && this.transactions.data.length < this.transactions.total)
+    },
+
     showFutureGroupComputed () {
-      return !this.detailsInterval.from && !this.detailsInterval.to ? this.showFutureGroup : false
+      return !this.isDetailsMode ? this.showFutureGroup : false
     },
 
     showTodayGroupComputed () {
-      return !this.detailsInterval.from && !this.detailsInterval.to ? this.showTodayGroup : false
+      return !this.isDetailsMode ? this.showTodayGroup : false
+    },
+
+    showRestGroupComputed () {
+      return !this.isDetailsMode
     }
 
   },
 
   methods: {
+    handleObserverCallback () {
+      const offset = this.isSplitFetchMode ? this.pastTransactionsOffset : this.transactions.data.length
+      this.observerCallback(offset)
+    },
+
     observerCallback (offset) {
       this.$store.dispatch('transaction/fetchTransactions', {
         offset
       })
+    },
+
+    nextMonthIntervalLabel (groupFrom, groupTo) {
+      const lastTransactionFromDate = groupFrom?.name || ''
+      const firstTransactionToDate = groupTo?.name || ''
+
+      if (!lastTransactionFromDate || !firstTransactionToDate) return ''
+
+      const diffDays = this.$moment(lastTransactionFromDate + '-01').diff(this.$moment(firstTransactionToDate + '-01'), 'days')
+      if (diffDays >= 3 * 365) {
+        return this.$t('intervalLabels.eternity')
+      } else if (diffDays >= 1.5 * 365) {
+        return this.$t('intervalLabels.yearsPassed')
+      } else if (diffDays >= 365) {
+        return this.$t('intervalLabels.yearPassed')
+      } else if (diffDays >= 6 * 30) {
+        return this.$t('intervalLabels.monthsPassed')
+      }
+
+      return ''
     }
   }
 }

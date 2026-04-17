@@ -27,13 +27,18 @@ import api from '@/plugins/api'
 import dayjs from 'dayjs'
 import { ref } from 'vue'
 import { locale } from '@/plugins/locale'
+import { useTitle } from '@vueuse/core'
+import { i18n } from '../plugins/locale'
 import store from '@/store'
 
 const mode = ref('summary')
 const dataDays = ref([])
+
 let startDate
 let endDate
 let controller
+
+useTitle(`${i18n.t('calendar')} – ${window.appState?.accountName || ''}`)
 
 try {
   const storedMode = localStorage.getItem('cashCalendarMode')
