@@ -6,15 +6,23 @@
         {$wa->installer->reviewWidget('app/cash')}
     {/if}
 
-    <ul class="tabs bordered-bottom custom-mb-24 custom-pl-0">
-        {foreach $reportsMenu as $reportsMenus}
-            {foreach $reportsMenus as $reportMenu}
-                <li class="{if $reportMenu->getIdentifier() === $current_menu}selected{/if}">
-                    <a href="{$wa_app_url}report/{$reportMenu->getIdentifier()}/">{$reportMenu->getName()|escape}</a>
-                </li>
+    <div class="flexbox wrap middle space-12">
+        <ul class="tabs bordered-bottom custom-mb-24 custom-pl-0 wide">
+            {foreach $reportsMenu as $reportsMenus}
+                {foreach $reportsMenus as $reportMenu}
+                    <li class="{if $reportMenu->getIdentifier() === $current_menu}selected{/if}">
+                        <a href="{$wa_app_url}report/{$reportMenu->getIdentifier()}/">{$reportMenu->getName()|escape}</a>
+                    </li>
+                {/foreach}
             {/foreach}
-        {/foreach}
-    </ul>
+        </ul>
+        <div>
+            <button onclick="window.print()" class="button light-gray nowrap desktop-only">
+                <i class="fas fa-print"></i>
+            </button>
+        </div>
+    </div>
+    
 
     <section id="c-report">
         {$report_html}

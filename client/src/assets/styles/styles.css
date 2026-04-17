@@ -17,7 +17,8 @@ html[data-theme='dark'] {
   .sidebar,
   .c-transaction-controls,
   .c-details-container__target,
-  .c-chart-pie-sticky-container {
+  .c-chart-pie-sticky-container,
+  .i-product-review-widget-wrappper {
     display: none;
   }
 }
