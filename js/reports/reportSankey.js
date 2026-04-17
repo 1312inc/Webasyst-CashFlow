@@ -17,7 +17,7 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
                 const parentName = currencyData.find(e => e.from_id === entry.category_parent_id)?.from;
                 mergedData.push({
                     ...entry,
-                    ...(parentName ? { from: parentName } : {}),
+                    ...(parentName ? { from: parentName, label: `${parentName}/${entry.from}` } : { label: entry.from }),
                     currency: details.code,
                     currencySign: details.sign,
                     color: entry.color || '#365fff'
@@ -26,11 +26,9 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
             } else {
 
                 const parentName = currencyData.find(e => e.to_id === entry.category_parent_id)?.to;
-               
-
                 mergedData.push({
                     ...entry,
-                    ...(parentName ? { to: parentName } : {}),
+                    ...(parentName ? { to: parentName, label: `${parentName}/${entry.to}` } : { label: entry.to }),
                     currency: details.code,
                     currencySign: details.sign,
                     color: entry.color || '#365fff'
@@ -79,7 +77,8 @@ export default function (chartdivSelector, data, language, allCurrenciesItemText
         chart.dataFields.value = "value";
         chart.dataFields.color = "color";
         chart.dataFields.currency = "currencySign";
-        chart.links.template.tooltipText = `{fromName}→{toName}: {value} {currency}`;
+        chart.dataFields.label = "label";
+        chart.links.template.tooltipText = `{fromName}→{label}: {value} {currency}`;
         chart.links.template.colorMode = "gradient";
         chart.links.template.fillOpacity = 0.6;
 
