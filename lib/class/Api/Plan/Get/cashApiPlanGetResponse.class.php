@@ -9,6 +9,16 @@ class cashApiPlanGetResponse extends cashApiAbstractResponse
     {
         parent::__construct(200);
 
-        $this->response = $plans;
+        $this->response = $this->filterFields(
+            $plans,
+             ['id', 'currency', 'account_id', 'category_id', 'from', 'to', 'amount', 'amount_fact'],
+             [
+                 'id' => 'int',
+                 'account_id' => 'int',
+                 'category_id' => 'int',
+                 'amount' => 'float',
+                 'amount_fact' => 'float',
+             ]
+        );
     }
 }

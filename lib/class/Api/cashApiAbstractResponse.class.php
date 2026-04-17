@@ -5,6 +5,8 @@
  */
 abstract class cashApiAbstractResponse implements cashApiResponseInterface
 {
+    use cashDataHelperTrait;
+
     /**
      * @var int
      */
