@@ -9,8 +9,11 @@ class cashPlanGetMethod extends cashApiAbstractMethod
 
     public function run(): cashApiResponseInterface
     {
-        $model = cash()->getModel('cashPlan');
-        $plans = $model->getAll();
+        /** @var cashApiPlanGetRequest $request */
+        $request = $this->fillRequestWithParams(new cashApiPlanGetRequest());
+        $request->date = DateTimeImmutable::createFromFormat('Y-m-d|', $request->date);
+
+        $plans = (new cashApiPlanGetHandler())->handle($request);
 
         return new cashApiPlanGetResponse($plans);
     }

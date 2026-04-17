@@ -1570,24 +1570,26 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  currency:
-                    type: string
-                  account_id:
-                    type: integer
-                  category_id:
-                    type: integer
-                  from:
-                    type: string
-                  to:
-                    type: string
-                  amount:
-                    type: number
-                  amount_fact:
-                    type: number
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    currency:
+                      type: string
+                    account_id:
+                      type: integer
+                    category_id:
+                      type: integer
+                    from:
+                      type: string
+                    to:
+                      type: string
+                    amount:
+                      type: number
+                    amount_fact:
+                      type: number
 
   /cash.system.getCurrencies:
     get:
