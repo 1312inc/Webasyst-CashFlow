@@ -262,5 +262,9 @@
   "detailsTargetDescTitle": "Цели и бюджет",
   "detailsTargetDesc": "Скоро в большой премиум-версии: финансовые цели, бюджет, автоматизация, подотчеты и другие продвинутые фичи для учета, прогноза и роста.",
   "detailsTargetDescLink": "Предзаказ и подробности",
+  "detailsTargetPlanNotSet": "План не задан",
+  "detailsTargetSetGoal": "Задать цель",
+  "detailsTargetPlanLabel": "План",
+  "detailsTargetFactForecastLabel": "Факт + прогноз",
   "allTransactionsProcessed": "На этом всё!"
 }

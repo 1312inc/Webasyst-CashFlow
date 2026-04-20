@@ -165,13 +165,13 @@ function onCategoryChange (id) {
           </template>
           <template v-else-if="chartState.isEmptyMode">
             <h5 class="align-center custom-mt-0 custom-mb-12">
-              План не задан
+              {{ $t('detailsTargetPlanNotSet') }}
             </h5>
             <div class="align-center custom-my-16">
               <a
                 :href="`${$helper.baseUrl}plan/`"
                 class="button small light-gray"
-              >Задать цель</a>
+              >{{ $t('detailsTargetSetGoal') }}</a>
             </div>
           </template>
           <template v-else-if="currentCategory">
@@ -180,13 +180,13 @@ function onCategoryChange (id) {
             </h5>
             <div class="custom-mb-16">
               <span style="text-transform: capitalize;">{{ moment().format('MMMM YYYY') }}</span>
-              <br>План: {{
+              <br>{{ $t('detailsTargetPlanLabel') }}: {{
                 helpers.toCurrency({
                   value: chartState.amount,
                   currencyCode: chartState.currencyCode
                 })
               }}
-              <br>Факт + прогноз: {{
+              <br>{{ $t('detailsTargetFactForecastLabel') }}: {{
                 helpers.toCurrency({
                   value: chartState.amountFact,
                   currencyCode: chartState.currencyCode

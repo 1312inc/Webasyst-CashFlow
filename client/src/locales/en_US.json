@@ -262,5 +262,9 @@
   "detailsTargetDescTitle": "Goals & Budget",
   "detailsTargetDesc": "Coming soon in premium! Financial goals, budgeting, and more amazing powerful features for accounting and predictions.",
   "detailsTargetDescLink": "Pre-order upgrade",
+  "detailsTargetPlanNotSet": "Plan is not set",
+  "detailsTargetSetGoal": "Set goal",
+  "detailsTargetPlanLabel": "Plan",
+  "detailsTargetFactForecastLabel": "Actual + forecast",
   "allTransactionsProcessed": "That's all folks!"
 }
