@@ -18,6 +18,11 @@ final class cashReportDdsStatDto
     public $currencies = [];
 
     /**
+     * @var array
+     */
+    public $plans = [];
+
+    /**
      * @var bool
      */
     public $is_imaginary = false;

@@ -15,30 +15,48 @@ class cashPlanAction extends cashViewAction
 
     public function runAction($params = null)
     {
-        $handler_params = [];
-        $plan_params = waRequest::param('params', '', waRequest::TYPE_STRING_TRIM);
-        $plan_params = $plan_params ? explode('&', $plan_params) : [];
-        foreach ($plan_params as $_plan_param) {
-            $key_value = explode('=', $_plan_param);
-            $handler_params[$key_value[0]] = null;
-            if (count($key_value) === 2) {
-                $handler_params[$key_value[0]] = $key_value[1];
-            }
-        }
+        $plan_year = waRequest::get('year', 0, waRequest::TYPE_INT);
 
-        $year = $params['year'] ?? 0;
-        if (empty($year)) {
-            $year = date('Y');
+        if (empty($plan_year)) {
+            $plan_year = date('Y');
         }
         $report_service = new cashReportDdsService();
-        $current_period = cashReportPeriod::createForYear($year);
+        $current_period = cashReportPeriod::createForYear($plan_year);
         $dds_types = $report_service->getTypes();
         $type = $dds_types[cashReportDdsService::TYPE_CATEGORY];
         $periods = (new cashReportPeriodsFactory())->getPeriodsByYear();
         $data = $report_service->getDataForTypeAndPeriod($type, $current_period);
 
+        $plans_by_month = [];
+        $model = cash()->getModel('cashPlan');
+        $plans = $model->select('id, currency, category_id, MONTH(`month`) `month`, amount')
+            ->where('`month` BETWEEN s:date_start AND s:date_end', ['date_start' => $plan_year.'-01-01', 'date_end' => $plan_year.'-12-31'])
+            ->order('`month`, currency, category_id')
+            ->fetchAll();
+
+        foreach ($plans as $_plan) {
+            $plans_by_month[$_plan['month']][$_plan['currency']][] = $_plan;
+        }
+        unset($plans);
+
+        foreach ($data as $_data) {
+            if ($_data->entity->isHeader()) {
+                continue;
+            }
+            foreach ($_data->valuesPerPeriods as $_month => $values_per_period) {
+                foreach ($values_per_period as $_currency => $_value_per_period) {
+                    if (isset($plans_by_month[$_month][$_currency])) {
+                        foreach ($plans_by_month[$_month][$_currency] as $_plan) {
+                            if ($_plan['category_id'] == $_value_per_period['id'] && $_plan['month'] == $_value_per_period['month']) {
+                                $_data->plans[$_month][$_currency] = $_plan;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         $this->view->assign([
-            'type' => $type,
             'data' => $data,
             'report_periods' => $periods,
             'current_period' => $current_period,
