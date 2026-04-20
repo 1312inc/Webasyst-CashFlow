@@ -61,7 +61,10 @@
           <div class="name for-checkbox">
             {{ $t("accountType.name") }}
           </div>
-          <div class="value" style="line-height: 1.2;">
+          <div
+            class="value"
+            style="line-height: 1.2;"
+          >
             <div class="custom-mb-16">
               <label>
                 <span class="wa-radio">
@@ -105,8 +108,23 @@
               </label>
             </div>
             <p class="small custom-mb-16">
-              <a href="###" target="_blank"><b>{{ $t("accountTypeHint") }}</b></a>
+              <a
+                href="#"
+                target="_blank"
+              ><b>{{ $t("accountTypeHint") }}</b></a>
             </p>
+            <div>
+              <AddAccountAccountable :accountable-contact-id.sync="model.accountable_contact_id">
+                <span class="wa-radio">
+                  <input
+                    v-model="model.is_imaginary"
+                    type="radio"
+                    value="-1"
+                  >
+                  <span />
+                </span>
+              </AddAccountAccountable>
+            </div>
           </div>
         </div>
 
@@ -209,11 +227,14 @@ import { required } from 'vuelidate/dist/validators.min.js'
 import updateEntityMixin from '@/mixins/updateEntityMixin'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import IconUploader from '@/components/Inputs/IconUploader'
+import AddAccountAccountable from '@/components/Modals/AddAccountAccountable'
+
 export default {
 
   components: {
     InputCurrency,
-    IconUploader
+    IconUploader,
+    AddAccountAccountable
   },
 
   mixins: [updateEntityMixin],
@@ -229,7 +250,8 @@ export default {
         is_imaginary: '0',
         starting_balance: '',
         icon: '',
-        description: ''
+        description: '',
+        accountable_contact_id: null
       }
     }
   },
