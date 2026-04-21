@@ -2,7 +2,7 @@
 import BlankBox from '../components/BlankBox.vue'
 import AmChartTarget from './Charts/AmChartTarget.vue'
 import { useStorage } from '@vueuse/core'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, shallowRef, watch } from 'vue'
 import api from '@/plugins/api'
 import moment from 'moment'
 import { useRoute } from 'vue-router/composables'
@@ -10,67 +10,67 @@ import store from '@/store'
 import { helpers } from '@/plugins/helpers'
 
 const route = useRoute()
+
 const activeCurrencyParams = computed(() => {
-  let param = ''
-  if (route.name === 'Account') {
-    param = 'account_id'
-  }
-  if (route.name === 'Currency') {
-    param = 'currency'
-  }
-  return {
-    [param]: route.params.id
-  }
+  if (route.name === 'Account') return { account_id: route.params.id }
+  if (route.name === 'Currency') return { currency: route.params.id }
+  return {}
 })
 
 const cashTargetBlockHidden = useStorage('cashTargetBlockHidden', { value: false, expiredAt: '' }, localStorage)
 
-const currentCategory = ref(null)
-
-const isFetching = ref(false)
-const chartData = ref(null)
-
-const chartState = ref({
-  isPromoMode: !window.appState.isPremium, // TODO: add check for premium
-  isEmptyMode: false,
-  amount: 50,
-  amountFact: 50,
-  currencyCode: '',
-  color: ''
-})
-
-const categories = computed(() => {
-  if (!chartData.value) return []
-  // Deduplicate by category_id
-  const uniqueByCategory = []
-  const seenCategories = new Set()
-  for (const i of chartData.value) {
-    if (i.category_id && !seenCategories.has(i.category_id)) {
-      seenCategories.add(i.category_id)
-      uniqueByCategory.push(i)
-    }
-  }
-  return uniqueByCategory.map(i => {
-    const category = store.getters['category/getById'](i.category_id)
-    return {
-      name: category.name,
-      color: category.color,
-      id: i.category_id,
-      amount: i.amount,
-      amountFact: i.amount_fact,
-      currency: i.currency
-    }
-  })
-})
-
-// Сбросить, если 30 дней прошло
+// Сбросить флаг, если прошло 30 дней
 if (cashTargetBlockHidden.value.value && cashTargetBlockHidden.value.expiredAt) {
-  const expired = new Date(cashTargetBlockHidden.value.expiredAt) < new Date()
-  if (expired) {
+  if (new Date(cashTargetBlockHidden.value.expiredAt) < new Date()) {
     cashTargetBlockHidden.value.value = false
     cashTargetBlockHidden.value.expiredAt = ''
   }
 }
+
+const isPromoMode = !window.appState.isPremium // TODO: add check for premium
+const isFetching = ref(false)
+const isEmptyMode = ref(false)
+const chartData = shallowRef(null)
+const currentCategoryId = ref(null)
+const currentMonthLabel = ref(moment().format('MMMM YYYY'))
+
+const categories = computed(() => {
+  const data = chartData.value
+  if (!data || !data.length) return []
+  const seen = new Set()
+  const result = []
+  for (const i of data) {
+    if (!i.category_id || seen.has(i.category_id)) continue
+    seen.add(i.category_id)
+    const category = store.getters['category/getById'](i.category_id)
+    if (!category) continue
+    result.push({
+      id: i.category_id,
+      name: category.name,
+      color: category.color,
+      amount: i.amount,
+      amountFact: i.amount_fact,
+      currency: i.currency
+    })
+  }
+  return result
+})
+
+const currentCategory = computed(() => {
+  if (currentCategoryId.value == null) return null
+  return categories.value.find(i => i.id === currentCategoryId.value) || null
+})
+
+const chartState = computed(() => ({
+  isPromoMode,
+  isEmptyMode: isEmptyMode.value,
+  amount: currentCategory.value?.amount ?? 50,
+  amountFact: currentCategory.value?.amountFact ?? 50,
+  currencyCode: currentCategory.value?.currency ?? '',
+  color: currentCategory.value?.color ?? ''
+}))
+
+let fetchToken = 0
 
 watch(activeCurrencyParams, (value) => {
   fetchTarget(value)
@@ -78,7 +78,8 @@ watch(activeCurrencyParams, (value) => {
 
 function fetchTarget (params) {
   if (cashTargetBlockHidden.value.value) return
-  if (chartState.value.isPromoMode) return
+  if (isPromoMode) return
+  const token = ++fetchToken
   isFetching.value = true
   api
     .get('cash.plan.get', {
@@ -88,41 +89,36 @@ function fetchTarget (params) {
       }
     })
     .then(({ data }) => {
+      if (token !== fetchToken) return
       chartData.value = data
-      if (data.length > 0) {
-        onCategoryChange(data[0].category_id)
-        chartState.value.isEmptyMode = false
+      if (data && data.length > 0) {
+        isEmptyMode.value = false
+        currentCategoryId.value = +data[0].category_id
       } else {
-        chartState.value.isEmptyMode = true
+        isEmptyMode.value = true
+        currentCategoryId.value = null
       }
     })
     .finally(() => {
-      isFetching.value = false
+      if (token === fetchToken) isFetching.value = false
     })
 }
 
 function closeTarget () {
   const expiredAt = new Date()
   expiredAt.setDate(expiredAt.getDate() + 30)
-
   cashTargetBlockHidden.value.value = true
   cashTargetBlockHidden.value.expiredAt = expiredAt.toISOString()
 }
 
 function onCategoryChange (id) {
-  currentCategory.value = categories.value.find(i => i.id === +id)
-  if (currentCategory.value) {
-    chartState.value.amount = currentCategory.value.amount
-    chartState.value.amountFact = currentCategory.value.amountFact
-    chartState.value.currencyCode = currentCategory.value.currency
-    chartState.value.color = currentCategory.value.color
-  }
+  currentCategoryId.value = +id
 }
 </script>
 
 <template>
   <div
-    v-if="!(cashTargetBlockHidden.value && chartState.isPromoMode)"
+    v-if="!(cashTargetBlockHidden.value && isPromoMode)"
     class="c-details-container__target"
   >
     <BlankBox
@@ -140,7 +136,7 @@ function onCategoryChange (id) {
         class="custom-mx-auto"
       >
         <a
-          v-if="chartState.isPromoMode"
+          v-if="isPromoMode"
           href="#"
           class="c-details-container__target__close"
           @click.prevent="closeTarget"
@@ -149,14 +145,14 @@ function onCategoryChange (id) {
         </a>
         <div class="custom-mx-auto">
           <AmChartTarget
-            :is-promo-mode="chartState.isPromoMode"
-            :is-empty-mode="chartState.isEmptyMode"
+            :is-promo-mode="isPromoMode"
+            :is-empty-mode="isEmptyMode"
             :amount="chartState.amount"
             :amount-fact="chartState.amountFact"
             :color="chartState.color"
           />
 
-          <template v-if="chartState.isPromoMode">
+          <template v-if="isPromoMode">
             <h5 class="align-center custom-mt-0 custom-mb-12">
               {{ $t('detailsTargetDescTitle') }}
             </h5>
@@ -170,7 +166,7 @@ function onCategoryChange (id) {
               >{{ $t('detailsTargetDescLink') }}</a>
             </div>
           </template>
-          <template v-else-if="chartState.isEmptyMode">
+          <template v-else-if="isEmptyMode">
             <h5 class="align-center custom-mt-0 custom-mb-12">
               {{ $t('detailsTargetPlanNotSet') }}
             </h5>
@@ -186,7 +182,7 @@ function onCategoryChange (id) {
               {{ currentCategory.name }}
             </h5>
             <div class="custom-mb-16">
-              <span style="text-transform: capitalize;">{{ moment().format('MMMM YYYY') }}</span>
+              <span style="text-transform: capitalize;">{{ currentMonthLabel }}</span>
               <br>{{ $t('detailsTargetPlanLabel') }}: {{
                 helpers.toCurrency({
                   value: chartState.amount,
