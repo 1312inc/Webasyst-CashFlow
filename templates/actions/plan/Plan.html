@@ -1,8 +1,6 @@
 {function name="_render_cashflow_report_table" data=[]}
-<div class="c-report-dds-outer">
-    <div class="c-report-dds-inner">
-
-        {$currenciesTotals = $data[0]->valuesPerPeriods['max']|default:[]}
+<div class="c-report-dds-outer c-plan">
+    <div>
         <table class="small">
             <thead>
                 <tr>
@@ -19,7 +17,7 @@
                 <tr{if $datum->entity->isChild()} class="c-row-white"{/if}>
                 {if !empty($datum->valuesPerPeriods)}
                     <td class="nowrap c-column-sticky-left">
-                        <div title="{$datum->entity->getName()|escape}" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" {if $datum->entity->isChild()} class="custom-pl-16{/if}">
+                        <div title="{$datum->entity->getName()|escape}" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" {if $datum->entity->isChild()} class="custom-pl-16"{/if}>
                             {if $datum->entity->isHeader()}<b class="large">{/if}
                             {if !$datum->entity->isHeader()}<a href="{$wa_app_url}category/{$datum->entity->getId()}">{/if}
                             {$datum->entity->getIcon()}
@@ -28,14 +26,29 @@
                             {if $datum->entity->isHeader()}</b>{/if}
                         </div>
                     </td>
-                    {foreach $datum->valuesPerPeriods as $values name=foreach_month_columns}
-                    <td class="{if $smarty.foreach.foreach_month_columns.iteration == 13}c-column-sticky-right-totals align-right{/if}">
-                        {foreach $values as $currency => $value}
-                        <div class="nowrap align-right{if $smarty.foreach.foreach_month_columns.iteration == 13}black bold{/if} {if $smarty.foreach.foreach_month_columns.iteration == 14} hidden{/if} {if isset($value['month']) && $value['month'] == $smarty.now|date_format:'n' && $current_period->getValue() == $smarty.now|date_format:'Y'}bold{/if} {if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $current_period->getValue() == $smarty.now|date_format:'Y' ) || $current_period->getValue() > $smarty.now|date_format:'Y')}gray{/if}">
-                        {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false} {$datum->currencies[$currency]->getSign()}
-                        {if in_array($datum->entity->getId(), [cashReportDdsService::ALL_INCOME_KEY, cashReportDdsService::ALL_EXPENSE_KEY, cashReportDdsService::SALDO_KEY]) && ifset($value, 'imaginary', false)}
-                            <br><span class="hint">[`only checking`]</span>
+                    {foreach $datum->valuesPerPeriods as $key => $values name=foreach_month_columns}
+                    {if $key == 'plans'}
+                        {continue}
+                    {/if}
+                    {$for_plan = !$datum->entity->isHeader() && $key > 0 && $key < 13 && ($datum->entity->isIncome() || $datum->entity->isExpense())}
+                    <td
+                        class="{if $for_plan}js-plan-edit{/if}{if $key == 'total'} c-column-sticky-right-totals align-right{/if}{if isset($datum->valuesPerPeriods['plans'][$key])} highlighted{/if}"
+                        {if $for_plan}
+                        data-month="{$key}"
+                        style="cursor: pointer"
+                        data-entity-type="{if $datum->entity->isIncome()}income{elseif $datum->entity->isExpense()}expense{else}saldo{/if}"
                         {/if}
+                    >
+                        {foreach $values as $currency => $value}
+                        <div
+                            class="nowrap align-right{if $key == 'total' || isset($datum->valuesPerPeriods['plans'][$key][$currency])} black bold{/if}{if $key == 'max'} hidden{/if}{if isset($value['month']) && $value['month'] == $smarty.now|date_format:'n' && $current_period->getValue() == $smarty.now|date_format:'Y'} bold{/if}{if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $current_period->getValue() == $smarty.now|date_format:'Y' ) || $current_period->getValue() > $smarty.now|date_format:'Y')} gray{/if}"
+                            data-plan-id="{ifset($datum->valuesPerPeriods, 'plans', $key, $currency, 'id', '0')}"
+                            data-plan-currency="{ifset($datum->valuesPerPeriods, 'plans', $key, $currency, 'currency', '0')}"
+                        >
+                            {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false} {$datum->currencies[$currency]->getSign()}
+                            {if in_array($datum->entity->getId(), [cashReportDdsService::ALL_INCOME_KEY, cashReportDdsService::ALL_EXPENSE_KEY, cashReportDdsService::SALDO_KEY]) && ifset($value, 'imaginary', false)}
+                                <br><span class="hint">[`only checking`]</span>
+                            {/if}
                         </div>
                         {/foreach}
                     </td>
@@ -49,6 +62,18 @@
 </div>
 {/function}
 
+
+{$income_categories = []}
+{$expense_categories = []}
+{foreach $data as $datum}
+    {if !empty($datum->valuesPerPeriods) && !$datum->entity->isHeader()}
+        {if $datum->entity->isIncome()}
+            {$income_categories[$datum->entity->getId()] = $datum->entity->getName()}
+        {elseif $datum->entity->isExpense()}
+            {$expense_categories[$datum->entity->getId()] = $datum->entity->getName()}
+        {/if}
+    {/if}
+{/foreach}
 
 <div class="content box contentbox">
     <div id="report-category" class="block">
@@ -115,3 +140,133 @@
 
     </div>
 </div>
+
+<div class="hidden">
+    <div class="js-plan-dialog-header">
+        <h2>[`Установить план`]</h2>
+    </div>
+    <div class="js-plan-dialog-content">
+        <form>
+            <input type="hidden" name="id" value="">
+            <div class="fields">
+                <div class="field">
+                    <div class="name">[`Категория`]</div>
+                    <div class="value">
+                        <div class="wa-select">
+                            <select name="category_id">
+                                <option value="0">[`Выбрать`]</option>
+                                {foreach $income_categories as $i_id => $i_name}
+                                <option class="js-cat-income hidden" value="{$i_id|escape}">{$i_name|escape}</option>
+                                {/foreach}
+                                {foreach $expense_categories as $e_id => $e_name}
+                                <option class="js-cat-expense hidden" value="{$e_id|escape}">{$e_name|escape}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="name">[`Месяц`]</div>
+                    <div class="value">
+                        <label>
+                            <span class="wa-radio">
+                                <input type="radio" name="month" value="1" checked>
+                                <span></span>
+                            </span>
+                            [`выбранный в ячейке месяц`]
+                        </label><br>
+                        <label>
+                            <span class="wa-radio">
+                                <input type="radio" name="month" value="0">
+                                <span></span>
+                            </span>
+                            [`каждый месяц`]
+                        </label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="name">[`Валюта`]</div>
+                    <div class="value">
+                        <div class="wa-select">
+                            <select name="currency">
+                                {foreach $account_currencies as $currency}
+                                <option value="{$currency|escape}">{$currency|escape}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="name">[`Счёт`]</div>
+                    <div class="value">
+                        <div class="wa-select">
+                            <select name="account_id" disabled>
+                                <option value="0" selected>[`Нельзя выбрать`]</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="name">[`Сумма`]</div>
+                    <div class="value">
+                        <input type="number" name="amount" placeholder="999.50">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="js-plan-dialog-footer">
+        <div>
+            <button class="js-save-plan">[`Сохранить`]</button>
+            <button class="js-close-dialog">[`Закрыть`]</button>
+            <button class="orange align-right js-delete-plan hidden">[`Удалить`]</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.c-plan table').on('click', '.js-plan-edit', function () {
+        let that = this;
+        $.waDialog({
+            header: $('div.js-plan-dialog-header').html(),
+            content: $('div.js-plan-dialog-content').html(),
+            footer: $('div.js-plan-dialog-footer').html(),
+            onOpen: function ($dialog, dialog_instance) {
+                let month = $(that).data('month');
+                let entity_type = $(that).data('entity-type');
+                let plan_id = $(that).find('div').data('plan-id') || 0;
+
+                $dialog.find('[name="id"]').val(plan_id);
+                $dialog.find('.js-cat-'+ entity_type).removeClass('hidden');
+                $dialog.find('[name="month"]:first').val(month);
+
+                if (plan_id > 0) {
+                    $dialog.find('.js-delete-plan').removeClass('hidden');
+                }
+
+                $dialog.find('.js-save-plan').on('click', function () {
+                    $.post('{$wa_app_url}?module=plan&action=save', $dialog.find('form').serialize(), function (data) {
+                        if (data.status == 'ok') {
+                            dialog_instance.close();
+                            window.location.reload();
+                        } else {
+                            console.warn('PLAN SAVE ERROR', data.errors);
+                        }
+                    }, 'json')
+                });
+                $dialog.find('.js-delete-plan').on('click', function () {
+                    $.post('{$wa_app_url}?module=plan&action=delete', $dialog.find('form').serialize(), function (data) {
+                        if (data.status == 'ok') {
+                            dialog_instance.close();
+                            window.location.reload();
+                        } else {
+                            console.warn('PLAN DELETE ERROR', data.errors);
+                        }
+                    }, 'json')
+                    dialog_instance.close();
+                });
+            }
+        });
+    });
+</script>
+

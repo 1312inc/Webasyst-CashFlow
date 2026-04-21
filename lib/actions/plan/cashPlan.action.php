@@ -45,10 +45,11 @@ class cashPlanAction extends cashViewAction
             }
             foreach ($_data->valuesPerPeriods as $_month => $values_per_period) {
                 foreach ($values_per_period as $_currency => $_value_per_period) {
+                    $_data->valuesPerPeriods[$_month][$_currency]['plan'] = [];
                     if (isset($plans_by_month[$_month][$_currency])) {
                         foreach ($plans_by_month[$_month][$_currency] as $_plan) {
                             if ($_plan['category_id'] == $_value_per_period['id'] && $_plan['month'] == $_value_per_period['month']) {
-                                $_data->plans[$_month][$_currency] = $_plan;
+                                $_data->valuesPerPeriods['plans'][$_month][$_currency] = $_plan;
                             }
                         }
                     }
@@ -61,6 +62,7 @@ class cashPlanAction extends cashViewAction
             'report_periods' => $periods,
             'current_period' => $current_period,
             'grouping' => $current_period->getGrouping(),
+            'account_currencies' => cash()->getModel(cashAccount::class)->getCurrencies(),
             'is_imaginary' => in_array(true, array_unique(array_column($data, 'is_imaginary')), true)
         ]);
     }

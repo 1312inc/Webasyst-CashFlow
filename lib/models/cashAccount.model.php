@@ -328,4 +328,11 @@ SQL;
             ->query($sql, ['startDate' => $startDate, 'endDate' => $endDate, 'import_id' => $importId])
             ->fetchAll('id');
     }
+
+    public function getCurrencies()
+    {
+        $result = $this->select('DISTINCT currency')->fetchAll();
+
+        return array_column($result, 'currency');
+    }
 }
