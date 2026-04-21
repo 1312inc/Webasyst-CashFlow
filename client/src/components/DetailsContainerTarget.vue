@@ -10,7 +10,7 @@ import store from '@/store'
 import { helpers } from '@/plugins/helpers'
 
 const route = useRoute()
-const activeCurrencyCode = computed(() => {
+const activeCurrencyParams = computed(() => {
   let param = ''
   if (route.name === 'Account') {
     param = 'account_id'
@@ -35,7 +35,8 @@ const chartState = ref({
   isEmptyMode: false,
   amount: 50,
   amountFact: 50,
-  currencyCode: ''
+  currencyCode: '',
+  color: ''
 })
 
 const categories = computed(() => {
@@ -49,13 +50,17 @@ const categories = computed(() => {
       uniqueByCategory.push(i)
     }
   }
-  return uniqueByCategory.map(i => ({
-    name: store.getters['category/getById'](i.category_id).name,
-    id: i.category_id,
-    amount: i.amount,
-    amountFact: i.amount_fact,
-    currency: i.currency
-  }))
+  return uniqueByCategory.map(i => {
+    const category = store.getters['category/getById'](i.category_id)
+    return {
+      name: category.name,
+      color: category.color,
+      id: i.category_id,
+      amount: i.amount,
+      amountFact: i.amount_fact,
+      currency: i.currency
+    }
+  })
 })
 
 // Сбросить, если 30 дней прошло
@@ -67,7 +72,7 @@ if (cashTargetBlockHidden.value.value && cashTargetBlockHidden.value.expiredAt) 
   }
 }
 
-watch(activeCurrencyCode, (value) => {
+watch(activeCurrencyParams, (value) => {
   fetchTarget(value)
 }, { immediate: true })
 
@@ -110,6 +115,7 @@ function onCategoryChange (id) {
     chartState.value.amount = currentCategory.value.amount
     chartState.value.amountFact = currentCategory.value.amountFact
     chartState.value.currencyCode = currentCategory.value.currency
+    chartState.value.color = currentCategory.value.color
   }
 }
 </script>
@@ -147,6 +153,7 @@ function onCategoryChange (id) {
             :is-empty-mode="chartState.isEmptyMode"
             :amount="chartState.amount"
             :amount-fact="chartState.amountFact"
+            :color="chartState.color"
           />
 
           <template v-if="chartState.isPromoMode">

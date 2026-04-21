@@ -25,6 +25,10 @@ const props = defineProps({
   amountFact: {
     type: Number,
     default: 50
+  },
+  color: {
+    type: String,
+    default: '#22d13d'
   }
 })
 
@@ -91,7 +95,7 @@ function createChart () {
   range0.value = 0
   range0.endValue = props.amountFact
   range0.axisFill.fillOpacity = 1
-  range0.axisFill.fill = props.isPromoMode ? '#22d13d' : '#22d13d'
+  range0.axisFill.fill = props.isPromoMode ? '#22d13d' : props.color
 
   const range1 = axis2.axisRanges.create()
   range1.value = props.amountFact
