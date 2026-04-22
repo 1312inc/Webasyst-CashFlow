@@ -1467,6 +1467,16 @@ paths:
             type: integer
             minimum: 1
         - in: query
+          name: is_user
+          description: Флаг контакта-пользователя
+          required: false
+          schema:
+            type: string
+            default: null
+            enum:
+              - 0
+              - 1
+        - in: query
           name: limit
           description: Максимальное количество контактов, которое нужно получить
           required: false

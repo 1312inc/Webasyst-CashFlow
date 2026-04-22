@@ -22,6 +22,7 @@ final class cashContactSearchMethod extends cashApiNewAbstractMethod
         $request = new cashApiContactSearchRequest(
             $this->fromGet('term', false, ApiParamsCaster::CAST_STRING_TRIM),
             $this->fromGet('category_id', false, ApiParamsCaster::CAST_INT),
+            $this->fromGet('is_user', false, ApiParamsCaster::CAST_INT),
             $this->fromGet('limit', false, ApiParamsCaster::CAST_INT)
         );
 

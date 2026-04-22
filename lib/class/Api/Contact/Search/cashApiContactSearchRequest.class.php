@@ -17,15 +17,21 @@ final class cashApiContactSearchRequest
     /**
      * @var null|int
      */
+    private $is_user;
+
+    /**
+     * @var null|int
+     */
     private $limit;
 
-    public function __construct(?string $term, ?int $categoryId, ?int $limit)
+    public function __construct(?string $term, ?int $categoryId, ?int $is_user, ?int $limit)
     {
         if ($limit > self::MAX_LIMIT) {
             throw new cashValidateException(sprintf('Max search limit is %d', self::MAX_LIMIT));
         }
         $this->limit = $limit;
         $this->term = (string) $term;
+        $this->is_user = $is_user ?? null;
         $this->categoryId = empty($categoryId) ? null : $categoryId;
     }
 
@@ -37,6 +43,11 @@ final class cashApiContactSearchRequest
     public function getCategoryId(): ?int
     {
         return $this->categoryId;
+    }
+
+    public function isUser(): ?int
+    {
+        return $this->is_user;
     }
 
     public function getLimit(): ?int

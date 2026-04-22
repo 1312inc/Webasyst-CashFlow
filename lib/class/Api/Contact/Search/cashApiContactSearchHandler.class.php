@@ -11,7 +11,7 @@ final class cashApiContactSearchHandler implements cashApiHandlerInterface
     public function handle($request)
     {
         return (new cashAutocomplete())->findContacts(
-            new cashAutocompleteParamsDto($request->getTerm(), $request->getCategoryId()),
+            new cashAutocompleteParamsDto($request->getTerm(), $request->getCategoryId(), $request->isUser()),
             $request->getLimit()
         );
     }
