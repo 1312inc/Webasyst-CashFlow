@@ -41,11 +41,15 @@
                     >
                         {foreach $values as $currency => $value}
                         <div
-                            class="nowrap align-right{if $key == 'total' || isset($datum->valuesPerPeriods['plans'][$key][$currency])} black bold{/if}{if $key == 'max'} hidden{/if}{if isset($value['month']) && $value['month'] == $smarty.now|date_format:'n' && $current_period->getValue() == $smarty.now|date_format:'Y'} bold{/if}{if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $current_period->getValue() == $smarty.now|date_format:'Y' ) || $current_period->getValue() > $smarty.now|date_format:'Y')} gray{/if}"
+                            class="nowrap align-right{if $key == 'total'} black bold{/if}{if $key == 'max'} hidden{/if}{if isset($value['month']) && $value['month'] == $smarty.now|date_format:'n' && $current_period->getValue() == $smarty.now|date_format:'Y'} bold{/if}{if isset($value['month']) && (($value['month'] > $smarty.now|date_format:'n' && $current_period->getValue() == $smarty.now|date_format:'Y' ) || $current_period->getValue() > $smarty.now|date_format:'Y')} gray{/if}"
                             data-plan-id="{ifset($datum->valuesPerPeriods, 'plans', $key, $currency, 'id', '0')}"
                             data-plan-currency="{ifset($datum->valuesPerPeriods, 'plans', $key, $currency, 'currency', '0')}"
                         >
                             {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false} {$datum->currencies[$currency]->getSign()}
+
+                            {if $plan = ifset($datum->valuesPerPeriods, 'plans', $key, $currency, null)}
+                            <span class="black bold">{{round(abs($plan['amount']), 2)|wa_format_number:false}} {$datum->currencies[$plan['currency']]->getSign()}</span>
+                            {/if}
                             {if in_array($datum->entity->getId(), [cashReportDdsService::ALL_INCOME_KEY, cashReportDdsService::ALL_EXPENSE_KEY, cashReportDdsService::SALDO_KEY]) && ifset($value, 'imaginary', false)}
                                 <br><span class="hint">[`only checking`]</span>
                             {/if}
