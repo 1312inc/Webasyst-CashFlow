@@ -17,6 +17,9 @@ class cashAutocomplete
      */
     public function findContacts(cashAutocompleteParamsDto $params, int $limit = null): array
     {
+        $sqls = [];
+        $result = [];
+        $search_terms = [];
         $limit = $limit ?? 5;
         $key = sprintf('%s|%s|%s|%s', $params->getTerm(), $params->getCategoryId(), (string) $params->isUser(), (string) $limit);
         $found = cash()->getCache()->get($key);
@@ -26,18 +29,13 @@ class cashAutocomplete
 
         $q = $params->getTerm();
         $m = cash()->getModel();
-        $result = [];
-
         $where = '1=1';
         if ($params->isUser() !== null) {
             $where = 'c.is_user = '.($params->isUser() == 0 ? 0 : 1);
         }
 
         if ($q) {
-            // The plan is: try queries one by one (starting with fast ones),
-            // until we find 5 rows total.
-            $sqls = [];
-            $search_terms = [];   // by what term was search in current sql, need for highlighting
+            // The plan is: try queries one by one (starting with fast ones), until we find 5 rows total.
 
             // Name starts with requested string
             $sqls[] = "SELECT c.id, c.name, c.firstname, c.middlename, c.lastname, c.photo
@@ -161,61 +159,66 @@ class cashAutocomplete
                    WHERE {WHERE} AND e.email LIKE '_%" . $m->escape($q, 'like') . "%'
                    LIMIT {LIMIT}";
             $search_terms[] = $q;
+        } else {
+            $sqls[] = "SELECT c.id, c.name, c.firstname, c.middlename, c.lastname, c.photo
+                FROM wa_contact AS c
+                WHERE {WHERE}
+                LIMIT {LIMIT}";
+        }
 
-            foreach ($sqls as $index => $sql) {
-                if (count($result) >= $limit) {
-                    break;
+        foreach ($sqls as $index => $sql) {
+            if (count($result) >= $limit) {
+                break;
+            }
+
+            foreach ($m->query(str_replace(['{WHERE}', '{LIMIT}'], [$where, $limit], $sql)) as $c) {
+                if (!empty($result[$c['id']])) {
+                    continue;
                 }
 
-                foreach ($m->query(str_replace(['{WHERE}', '{LIMIT}'], [$where, $limit], $sql)) as $c) {
-                    if (!empty($result[$c['id']])) {
-                        continue;
+                if (!empty($c['firstname']) || !empty($c['middlename']) || !empty($c['lastname'])) {
+                    $c['name'] = waContactNameField::formatName($c);
+                }
+
+                $name = htmlspecialchars($c['name'], ENT_QUOTES, 'utf-8');
+                $email = htmlspecialchars(ifset($c['email'], ''), ENT_QUOTES, 'utf-8');
+                $phone = htmlspecialchars(ifset($c['phone'], ''), ENT_QUOTES, 'utf-8');
+
+                $terms = (array) ifset($search_terms, $index, []);
+                foreach ($terms as $term) {
+                    $term_safe = htmlspecialchars($term);
+                    $match = false;
+
+                    if ($this->match($name, $term_safe)) {
+                        $name = $this->prepare($name, $term_safe, false);
+                        $match = true;
                     }
 
-                    if (!empty($c['firstname']) || !empty($c['middlename']) || !empty($c['lastname'])) {
-                        $c['name'] = waContactNameField::formatName($c);
+                    if ($this->match($email, $term_safe)) {
+                        $email = $this->prepare($email, $term_safe, false);
+                        if ($email) {
+                            $email = '<i class="icon16 email"></i>' . $email;
+                        }
+                        $match = true;
                     }
 
-                    $name = htmlspecialchars($c['name'], ENT_QUOTES, 'utf-8');
-                    $email = htmlspecialchars(ifset($c['email'], ''), ENT_QUOTES, 'utf-8');
-                    $phone = htmlspecialchars(ifset($c['phone'], ''), ENT_QUOTES, 'utf-8');
-
-                    $terms = (array) $search_terms[$index];
-                    foreach ($terms as $term) {
-                        $term_safe = htmlspecialchars($term);
-                        $match = false;
-
-                        if ($this->match($name, $term_safe)) {
-                            $name = $this->prepare($name, $term_safe, false);
-                            $match = true;
+                    if ($this->match($phone, $term_safe)) {
+                        $phone = $this->prepare($phone, $term_safe, false);
+                        if ($phone) {
+                            $phone = '<i class="icon16 phone"></i>' . $phone;
                         }
-
-                        if ($this->match($email, $term_safe)) {
-                            $email = $this->prepare($email, $term_safe, false);
-                            if ($email) {
-                                $email = '<i class="icon16 email"></i>' . $email;
-                            }
-                            $match = true;
-                        }
-
-                        if ($this->match($phone, $term_safe)) {
-                            $phone = $this->prepare($phone, $term_safe, false);
-                            if ($phone) {
-                                $phone = '<i class="icon16 phone"></i>' . $phone;
-                            }
-                            $match = true;
-                        }
-
-                        if ($match) {
-                            break;
-                        }
+                        $match = true;
                     }
 
-                    $result[$c['id']] = $this->prepareData($c, $name, $email, $phone);
-
-                    if (count($result) >= $limit) {
-                        break 2;
+                    if ($match) {
+                        break;
                     }
+                }
+
+                $result[$c['id']] = $this->prepareData($c, $name, $email, $phone);
+
+                if (count($result) >= $limit) {
+                    break 2;
                 }
             }
         }

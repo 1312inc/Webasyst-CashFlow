@@ -26,7 +26,7 @@ final class cashContactSearchMethod extends cashApiNewAbstractMethod
             $this->fromGet('limit', false, ApiParamsCaster::CAST_INT)
         );
 
-        if (empty($request->getTerm()) && $request->getCategoryId() === null) {
+        if (empty($request->getTerm()) && $request->getCategoryId() === null && $request->isUser() === null) {
             throw new ApiMissingParamException('term, category_id');
         }
 
