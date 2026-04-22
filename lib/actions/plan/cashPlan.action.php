@@ -30,12 +30,18 @@ class cashPlanAction extends cashViewAction
         $plans_by_month = [];
         $model = cash()->getModel('cashPlan');
         $plans = $model->select('id, currency, category_id, MONTH(`month`) `month`, amount')
-            ->where('`month` BETWEEN s:date_start AND s:date_end', ['date_start' => $plan_year.'-01-01', 'date_end' => $plan_year.'-12-31'])
+            ->where('`month` IS NULL OR `month` BETWEEN s:date_start AND s:date_end', ['date_start' => $plan_year.'-01-01', 'date_end' => $plan_year.'-12-31'])
             ->order('`month`, currency, category_id')
             ->fetchAll();
 
         foreach ($plans as $_plan) {
-            $plans_by_month[$_plan['month']][$_plan['currency']][] = $_plan;
+            if (empty($_plan['month'])) {
+                for ($_m = 1; $_m < 13; $_m++) {
+                    $plans_by_month[$_m][$_plan['currency']][] = $_plan;
+                }
+            } else {
+                $plans_by_month[$_plan['month']][$_plan['currency']][] = $_plan;
+            }
         }
         unset($plans);
 
@@ -44,11 +50,14 @@ class cashPlanAction extends cashViewAction
                 continue;
             }
             foreach ($_data->valuesPerPeriods as $_month => $values_per_period) {
+                if (!is_numeric($_month)) {
+                    continue;
+                }
                 foreach ($values_per_period as $_currency => $_value_per_period) {
                     $_data->valuesPerPeriods[$_month][$_currency]['plan'] = [];
                     if (isset($plans_by_month[$_month][$_currency])) {
                         foreach ($plans_by_month[$_month][$_currency] as $_plan) {
-                            if ($_plan['category_id'] == $_value_per_period['id'] && $_plan['month'] == $_value_per_period['month']) {
+                            if ($_plan['category_id'] == $_value_per_period['id'] && ($_plan['month'] == $_value_per_period['month'] || $_plan['month'] === null)) {
                                 $_data->valuesPerPeriods['plans'][$_month][$_currency] = $_plan;
                             }
                         }
