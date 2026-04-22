@@ -107,24 +107,36 @@
                 <span class="hint">{{ $t("accountType.types.virtualWithForecast.message") }}</span>
               </label>
             </div>
+
+            <div class="custom-mb-16 ">
+              <label>
+                <span class="wa-radio">
+                  <input
+                    v-model="model.is_imaginary"
+                    type="radio"
+                    value="-2"
+                    :disabled="!isPremium"
+                  >
+                  <span />
+                </span>
+                Подотчет
+                <span class="hint">фывфывфыв</span>
+                <div v-if="!isPremium">
+                  <span class="hint text-red">только в премиум</span>
+                </div>
+              </label>
+              <AddAccountAccountable
+                :accountable-contact-id.sync="model.accountable_contact_id"
+                :disabled="model.is_imaginary !== '-2'"
+              />
+            </div>
+
             <p class="small custom-mb-16">
               <a
                 href="#"
                 target="_blank"
               ><b>{{ $t("accountTypeHint") }}</b></a>
             </p>
-            <div>
-              <AddAccountAccountable :accountable-contact-id.sync="model.accountable_contact_id">
-                <span class="wa-radio">
-                  <input
-                    v-model="model.is_imaginary"
-                    type="radio"
-                    value="-1"
-                  >
-                  <span />
-                </span>
-              </AddAccountAccountable>
-            </div>
           </div>
         </div>
 
@@ -251,7 +263,7 @@ export default {
         starting_balance: '',
         icon: '',
         description: '',
-        accountable_contact_id: null
+        accountable_contact_id: '0'
       }
     }
   },
@@ -274,7 +286,11 @@ export default {
         if (a.code > b.code) { return 1 }
         return 0
       })
+    },
+    isPremium () {
+      return window.appState.isPremium
     }
+
   },
 
   mounted () {

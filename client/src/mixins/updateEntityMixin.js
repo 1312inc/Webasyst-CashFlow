@@ -27,8 +27,17 @@ export default {
       this.$v.$touch()
       if (!this.$v.$invalid) {
         this.controlsDisabled = true
+
+        const params = {
+          ...this.model
+        }
+
+        if (params.is_imaginary === '-2') {
+          params.is_imaginary = '0'
+        }
+
         this.$store
-          .dispatch(`${entity}/update`, this.model)
+          .dispatch(`${entity}/update`, params)
           .then(() => {
             // FIX: Reload page in case of changing type of category / #106.306
             if (this.isModeUpdate && entity === 'category' && this.model.type !== this.editedItem.type) {
