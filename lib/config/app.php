@@ -1,7 +1,7 @@
 <?php
 return array (
   'name' => 'Cash Flow',
-  'icon' => 'img/cash.png',
+  'icon' => 'img/cash.svg',
   'version' => '3.9.0',
   'vendor'  => '1021997',
   'rights'  => true,
