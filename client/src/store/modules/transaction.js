@@ -293,7 +293,7 @@ export default {
 
         const result = {
           ...state.transactions,
-          data: mergeArrays(data.data.toReverse(), state.transactions.data)
+          data: mergeArrays(data.data.toReversed(), state.transactions.data)
         }
 
         commit('setTransactions', result)
