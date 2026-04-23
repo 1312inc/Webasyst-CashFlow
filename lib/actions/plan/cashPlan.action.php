@@ -20,17 +20,12 @@ class cashPlanAction extends cashViewAction
         if (empty($plan_year)) {
             $plan_year = date('Y');
         }
-        $report_service = new cashReportDdsService();
-        $current_period = cashReportPeriod::createForYear($plan_year);
-        $dds_types = $report_service->getTypes();
-        $type = $dds_types[cashReportDdsService::TYPE_CATEGORY];
-        $periods = (new cashReportPeriodsFactory())->getPeriodsByYear();
-        $data = $report_service->getDataForTypeAndPeriod($type, $current_period);
-
         $plans_by_month = [];
+        $plan_service = new cashPlanService($plan_year);
+        $data = $plan_service->getDataForPeriod();
         $model = cash()->getModel('cashPlan');
         $plans = $model->select('id, currency, category_id, MONTH(`month`) `month`, amount')
-            ->where('`month` IS NULL OR `month` BETWEEN s:date_start AND s:date_end', ['date_start' => $plan_year.'-01-01', 'date_end' => $plan_year.'-12-31'])
+            ->where('`month` IS NULL OR (`month` >= s:date_start AND `month` < s:date_end)', ['date_start' => $plan_service->getPeriod()->getStart()->format('Y-m-d'), 'date_end' => $plan_service->getPeriod()->getEnd()->format('Y-m-d')])
             ->order('`month`, currency, category_id')
             ->fetchAll();
 
@@ -68,9 +63,9 @@ class cashPlanAction extends cashViewAction
 
         $this->view->assign([
             'data' => $data,
-            'report_periods' => $periods,
-            'current_period' => $current_period,
-            'grouping' => $current_period->getGrouping(),
+            'report_periods' => $plan_service->getPeriodsByYear(),
+            'current_period' => $plan_service->getPeriod(),
+            'grouping' => $plan_service->getPeriod()->getGrouping(),
             'account_currencies' => cash()->getModel(cashAccount::class)->getCurrencies(),
             'is_imaginary' => in_array(true, array_unique(array_column($data, 'is_imaginary')), true)
         ]);

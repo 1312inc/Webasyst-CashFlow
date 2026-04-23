@@ -15,7 +15,6 @@
             <tbody>
             {foreach $data as $datum}
                 <tr{if $datum->entity->isChild()} class="c-row-white"{/if}>
-                {if !empty($datum->valuesPerPeriods)}
                     <td class="nowrap c-column-sticky-left">
                         <div title="{$datum->entity->getName()|escape}" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" {if $datum->entity->isChild()} class="custom-pl-16"{/if}>
                             {if $datum->entity->isHeader()}<b class="large">{/if}
@@ -56,8 +55,11 @@
                         </div>
                         {/foreach}
                     </td>
+                    {foreachelse}
+                    {for $foo=1 to 14}
+                    <td class="align-right">{if $foo < 14}-{/if}</td>
+                    {/for}
                     {/foreach}
-                {/if}
                 </tr>
             {/foreach}
             </tbody>
