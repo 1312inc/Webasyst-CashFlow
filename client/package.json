@@ -15,6 +15,7 @@
     "@floating-ui/vue": "^1.0.2",
     "@jaames/iro": "^5.5.2",
     "@linusborg/vue-simple-portal": "^0.1.5",
+    "@sentry/vue": "^10.49.0",
     "@uppy/core": "^3.5.1",
     "@uppy/drag-drop": "^3.0.3",
     "@uppy/xhr-upload": "^3.4.1",
