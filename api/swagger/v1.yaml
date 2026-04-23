@@ -1601,6 +1601,81 @@ paths:
                     amount_fact:
                       type: number
 
+  /cash.plan.set:
+    post:
+      externalDocs:
+        description: cash.plan.set
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.plan.set/
+      summary: CRUD плана
+      tags:
+        - План
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  default: null
+                  description: ID плана (отсутствие = добавление нового плана)
+                amount:
+                  type: number
+                  default: 0
+                  description: Сумма плана (0 = удаление плана)
+                category_id:
+                  type: integer
+                  description: ID статьи доходов или расходов
+                currency:
+                  type: string
+                  description: 3-буквенный код валюты
+                date:
+                  type: string
+                  format: date
+                  default: null
+                  description: Дата плана в формате «гггг-мм-дд» (отсутствие даты = каждый месяц)
+                account_id:
+                  type: integer
+                  description: ID счета
+              required:
+                - amount
+                - category_id
+                - currency
+      responses:
+        200:
+          description: Информация о плане
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  currency:
+                    type: string
+                  account_id:
+                    type: integer
+                  category_id:
+                    type: integer
+                  from:
+                    type: string
+                  to:
+                    type: string
+                  amount:
+                    type: number
+                  amount_fact:
+                    type: number
+        204:
+          description: Ответ в случаю удаления плана
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.system.getCurrencies:
     get:
       externalDocs:

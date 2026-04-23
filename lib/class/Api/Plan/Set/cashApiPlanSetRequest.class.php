@@ -1,14 +1,19 @@
 <?php
 
 /**
- * cashApiPlanGetRequest
+ * cashApiPlanSetRequest
  */
-final class cashApiPlanGetRequest
+final class cashApiPlanSetRequest
 {
     /**
      * @var int
      */
     public $id;
+
+    /**
+     * @var float
+     */
+    public $amount;
 
     /**
      * @var int

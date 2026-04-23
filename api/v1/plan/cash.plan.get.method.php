@@ -11,7 +11,6 @@ class cashPlanGetMethod extends cashApiAbstractMethod
     {
         /** @var cashApiPlanGetRequest $request */
         $request = $this->fillRequestWithParams(new cashApiPlanGetRequest());
-        $request->date = DateTimeImmutable::createFromFormat('Y-m-d|', $request->date);
 
         $plans = (new cashApiPlanGetHandler())->handle($request);
 
