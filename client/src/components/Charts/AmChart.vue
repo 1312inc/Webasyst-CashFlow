@@ -235,7 +235,7 @@ export default {
       chart.scrollbarX.startGrip.events.on('dragstop', dateAxisChanged)
       chart.scrollbarX.endGrip.events.on('dragstop', dateAxisChanged)
       chart.zoomOutButton.events.on('hit', () => {
-        this.resetDetailsInterval()
+        this.resetDetailsInterval(true)
       })
 
       /**

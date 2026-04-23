@@ -47,7 +47,7 @@ export default {
           [this.type]: value
         })
 
-        this.$store.dispatch('transaction/resetDetailsInterval')
+        this.$store.dispatch('transaction/resetDetailsInterval', true)
       }
     }
   },

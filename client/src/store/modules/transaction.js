@@ -371,16 +371,18 @@ export default {
       })
     },
 
-    resetDetailsInterval ({ commit, dispatch, state }) {
+    async resetDetailsInterval ({ commit, dispatch, state }, force = false) {
       commit('setDetailsInterval', {
         from: state.chartInterval.from,
         to: state.chartInterval.to
       })
-      dispatch('fetchTransactions', {
-        from: '',
-        to: DEFAULT_FUTURE_PERIOD,
-        offset: 0
-      })
+      if (force) {
+        await dispatch('fetchTransactions', {
+          from: '',
+          to: DEFAULT_FUTURE_PERIOD,
+          offset: 0
+        })
+      }
     },
 
     async getTodayCount ({ commit }) {
