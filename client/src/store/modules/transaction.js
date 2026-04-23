@@ -50,7 +50,7 @@ export default {
       name: '',
       items: []
     },
-    featurePeriod: 7,
+    featurePeriod: 180,
     chartData: [],
     chartDataCurrencyIndex: 0,
     loadingChart: true,

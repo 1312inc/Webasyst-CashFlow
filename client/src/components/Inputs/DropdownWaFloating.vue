@@ -1,37 +1,34 @@
 <script setup>
-import {
-  useFloating, flip,
-  shift
-} from '@floating-ui/vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
-const props = defineProps(['strategy', 'hideOnMobile'])
+const tippy = window.tippy
 
-const open = ref(false)
 const floating = ref(null)
 const reference = ref(null)
-const { floatingStyles } = useFloating(reference, floating, {
-  placement: 'bottom-start',
-  strategy: props.strategy ?? 'absolute',
-  middleware: [flip(), shift()]
+
+onMounted(() => {
+  if (!tippy || !floating.value || !reference.value) return
+  tippy(reference.value, {
+    content: floating.value,
+    interactive: true,
+    placement: 'bottom-start',
+    appendTo: () => document.body,
+    theme: 'transparent',
+    arrow: false,
+    offset: [0, 0]
+  })
 })
+
 </script>
 
 <template>
-  <div
-    ref="reference"
-    @mouseover="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = true } }"
-    @mouseleave="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = false } }"
-  >
-    <div @touchend="() => { if (!(hideOnMobile && $helper.isTabletMediaQuery())) { open = !open } }">
+  <div>
+    <div ref="reference">
       <slot name="toggler" />
     </div>
     <div
-      v-if="open"
       ref="floating"
       class="dropdown is-opened"
-      :class="{ 'no-pointer': props.strategy === 'fixed' }"
-      :style="floatingStyles"
     >
       <div
         class="dropdown-body"
@@ -43,6 +40,26 @@ const { floatingStyles } = useFloating(reference, floating, {
   </div>
 </template>
 
+<style>
+.tippy-box[data-theme~='transparent'] {
+  background-color: transparent;
+  color: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  border: 0;
+  box-shadow: 0;
+  padding: 0;
+}
+.tippy-box[data-theme~='transparent'] .tippy-arrow {
+  width: 0;
+  height: 0;
+}
+
+</style>
+
 <style scoped>
 button {
   margin: 0;
@@ -52,12 +69,6 @@ button {
   z-index: 9999;
 }
 
-.dropdown.no-pointer {
-  pointer-events: none;
-}
-</style>
-
-<style scoped>
 .dropdown-body {
   position: relative;
   display: block;

@@ -32,10 +32,7 @@ function onClick () {
 </script>
 
 <template>
-  <DropdownWaFloating
-    strategy="fixed"
-    :hide-on-mobile="true"
-  >
+  <DropdownWaFloating>
     <template #toggler>
       <div
         ref="draggableRef"
