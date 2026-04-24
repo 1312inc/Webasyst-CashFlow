@@ -694,6 +694,9 @@ paths:
                   type: string
                   minLength: 3
                   description: 3-буквенный код валюты
+                accountable_contact_id:
+                  type: integer
+                  description: ID пользователя привязанного к подотчету
                 is_imaginary:
                   type: integer
                   default: 0
@@ -2142,6 +2145,10 @@ components:
           type: integer
           description: ID клиента
           nullable: true
+        accountable_contact_id:
+          type: integer
+          nullable: true
+          description: ID пользователя привязанного к подотчету
         is_archived:
           type: boolean
           description: Признак удаленного счета

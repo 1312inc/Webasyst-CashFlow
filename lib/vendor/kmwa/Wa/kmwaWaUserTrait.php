@@ -61,6 +61,11 @@ trait kmwaWaUserTrait
     protected $exists = false;
 
     /**
+     * @var bool
+     */
+    protected $is_user = false;
+
+    /**
      * @var int
      */
     protected $lastActivity = 0;
@@ -115,6 +120,14 @@ trait kmwaWaUserTrait
     }
 
     /**
+     * @return bool
+     */
+    public function isUser()
+    {
+        return $this->is_user;
+    }
+
+    /**
      * @return int
      */
     public function getLastActivity()
@@ -164,6 +177,7 @@ trait kmwaWaUserTrait
             $this->userPic = $this->contact->getPhoto(20);
             $this->status = $this->contact->getStatus();
             $this->exists = $this->contact->get('is_user') != -1;
+            $this->is_user = $this->contact->get('is_user') > 0;
             $this->email = $this->contact->get('email', 'default');
             $this->timezone = $this->contact->getTimezone();
             $this->firstName = $this->contact->get('firstname');
