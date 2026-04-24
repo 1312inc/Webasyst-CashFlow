@@ -9,6 +9,10 @@ class cashPlanSetMethod extends cashApiAbstractMethod
 
     public function run(): cashApiResponseInterface
     {
+        if (!cashHelper::isPremium()) {
+            return new cashApiErrorResponse('payment_required', 'Payment premium version required', 402);
+        }
+
         /** @var cashApiPlanSetRequest $request */
         $request = $this->fillRequestWithParams(new cashApiPlanSetRequest());
 

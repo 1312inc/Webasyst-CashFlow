@@ -1668,9 +1668,15 @@ paths:
                   amount_fact:
                     type: number
         204:
-          description: Ответ в случаю удаления плана
+          description: Ответ в случаи удаления плана.
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата.
           content:
             application/json:
               schema:
