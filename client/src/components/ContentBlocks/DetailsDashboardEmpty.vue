@@ -29,7 +29,7 @@ import { appState } from '@/utils/appState'
         ><b>https://support.webasyst.ru/cash/</b></a>
       </p>
       <p>
-        А еще не забудьте установить наше мобильное приложение:
+        А еще не забудьте установить мобильное приложение, чтобы работать с деньгами не только на компьютере:
       </p>
     </template>
 
@@ -62,7 +62,6 @@ import { appState } from '@/utils/appState'
 
     <div
       class="flexbox wrap-mobile middle space-12"
-      style="justify-content: center;"
     >
       <a
         :href="`https://apps.apple.com/${$i18n.locale === 'ru_RU' ? 'ru' : 'us'}/app/webasyst-cash-flow/id6450029747`"
