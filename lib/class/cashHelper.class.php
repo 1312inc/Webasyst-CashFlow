@@ -33,6 +33,18 @@ final class cashHelper
     }
 
     /**
+     * @param $contact_id
+     * @return cashUser
+     * @throws waException
+     */
+    public static function getContact($contact_id)
+    {
+        $repository = cash()->getEntityRepository(cashUser::class);
+
+        return $repository->getUser($contact_id);
+    }
+
+    /**
      * @param $value
      *
      * @return float
