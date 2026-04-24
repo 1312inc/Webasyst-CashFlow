@@ -11,6 +11,7 @@ final class cashAggregateFilter
     public const FILTER_CURRENCY   = 'currency';
     public const FILTER_SEARCH     = 'search';
     public const FILTER_EXTERNAL   = 'external';
+    public const FILTER_CALENDAR   = 'calendar';
 
     private const FILTERS = [
         self::FILTER_ALL,
@@ -22,6 +23,7 @@ final class cashAggregateFilter
         self::FILTER_CURRENCY,
         self::FILTER_SEARCH,
         self::FILTER_EXTERNAL,
+        self::FILTER_CALENDAR,
     ];
 
     /**
@@ -74,6 +76,11 @@ final class cashAggregateFilter
      */
     private $externalSource;
 
+    /**
+     * @var string|null
+     */
+    private $calendar;
+
     public static function createFromHash(?string $hash): cashAggregateFilter
     {
         $self = new self;
@@ -95,6 +102,8 @@ final class cashAggregateFilter
                     $self->externalSource = $externalData[0];
                     $self->external = (int) $externalData[1];
                 }
+            } elseif (in_array($filter, [self::FILTER_ALL, self::FILTER_CALENDAR], true)) {
+                $self->$filter = true;
             } elseif (property_exists($self, $filter)) {
                 $self->$filter = in_array(
                     $filter,
@@ -171,5 +180,10 @@ final class cashAggregateFilter
     public function getExternalSource(): ?string
     {
         return $this->externalSource;
+    }
+
+    public function isFilterByCalendar(): bool
+    {
+        return !empty($this->calendar);
     }
 }
