@@ -40,6 +40,11 @@ class cashAccount extends cashAbstractEntity
     /**
      * @var int
      */
+    private $accountable_contact_id;
+
+    /**
+     * @var int
+     */
     private $is_archived = 0;
 
     /**
@@ -188,6 +193,26 @@ class cashAccount extends cashAbstractEntity
     public function setCustomerContactId($customerContactId)
     {
         $this->customer_contact_id = $customerContactId;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAccountableContactId()
+    {
+        return $this->accountable_contact_id;
+    }
+
+    /**
+     * @param $accountableContactId
+     *
+     * @return $this
+     */
+    public function setAccountableContactId($accountableContactId)
+    {
+        $this->accountable_contact_id = $accountableContactId;
 
         return $this;
     }

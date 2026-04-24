@@ -7,6 +7,7 @@ return array(
         'icon' => array('varchar', 255),
         'currency' => array('varchar', 3, 'null' => 0),
         'customer_contact_id' => array('int', 11),
+        'accountable_contact_id' => array('int', 11),
         'is_archived' => array('tinyint', 4, 'default' => '0'),
         'sort' => array('int', 11),
         'create_datetime' => array('datetime', 'null' => 0),
