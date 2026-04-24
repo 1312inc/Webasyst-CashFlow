@@ -50,7 +50,7 @@ msgid "No category"
 msgstr "Без статьи"
 
 msgid "Income"
-msgstr "Доходы"
+msgstr "Поступления"
 
 msgid "Expense"
 msgstr "Расход"
@@ -74,7 +74,7 @@ msgid "Edit transaction"
 msgstr "Редактировать операцию"
 
 msgid "New income"
-msgstr "Добавить доход"
+msgstr "Добавить поступление"
 
 msgid "New expense"
 msgstr "Добавить расход"
@@ -170,7 +170,7 @@ msgid "Show next %s (%d transactions)"
 msgstr "Показать план на %s (%d операций)"
 
 msgid "Add income"
-msgstr "Доход"
+msgstr "Поступление"
 
 msgid "Add expense"
 msgstr "Расход"
@@ -242,7 +242,7 @@ msgid "%d transactions per page"
 msgstr "%d операций на странице"
 
 msgid "No category (income)"
-msgstr "Без статьи (доход)"
+msgstr "Без статьи (поступление)"
 
 msgid "No category (expense)"
 msgstr "Без статьи (расход)"
@@ -374,7 +374,7 @@ msgid "New account"
 msgstr "Новый счет"
 
 msgid "New income category"
-msgstr "Новая статья доходов"
+msgstr "Новая статья поступлениий"
 
 msgid "Expenses"
 msgstr "Расходы"
@@ -566,7 +566,7 @@ msgid "Set depending on the amount:"
 msgstr "В зависимости от суммы:"
 
 msgid "Income (amount > 0)"
-msgstr "Доход (сумма > 0)"
+msgstr "Поступление (сумма > 0)"
 
 msgid "Expenses (amount < 0)"
 msgstr "Расход (сумма < 0)"
@@ -935,7 +935,7 @@ msgid "Clear import history (don’t worry, imported transactions will not be af
 msgstr "Очистить историю импорта (не волнуйтесь, импортированные операции не будут затронуты)?"
 
 msgid "New income category:"
-msgstr "Новая статья доходов:"
+msgstr "Новая статья поступлений:"
 
 msgid "New expense category:"
 msgstr "Новая статья расходов:"
@@ -1007,7 +1007,7 @@ msgid "Hooray! <strong>Created %d income &amp; %d expense transactions</strong> 
 msgstr "Ура! <strong>Создали %d доходных и %d расходных операций</strong> на основе данных об оплаченных заказах Shop-Script."
 
 msgid "<strong class=\"highlighted\">%s</strong> (see above) — this is how much cash you <i>would</i> have on hand right now if there were only sales (income), but no business expenses such as salaries, office rent, marketing, purchase & supplies, and so on."
-msgstr "<strong class=\"highlighted\">%s</strong> (см. баланс счета выше) — это та сумма наличных в кассе, которая <i>была бы</i> у вас прямо сейчас, если бы у бизнеса были только доходы (продажи) и никаких расходов, таких как зарплаты, аренда, маркетинг, закупки и так далее."
+msgstr "<strong class=\"highlighted\">%s</strong> (см. баланс счета выше) — это та сумма наличных в кассе, которая <i>была бы</i> у вас прямо сейчас, если бы у бизнеса были только поступления (доходы) и никаких расходов, таких как зарплаты, аренда, маркетинг, закупки и так далее."
 
 msgid ""
 "<strong>Add (or import from a CSV file) your historical expenses now</strong> to get to know your real cash on hand forecast. It’s easy — try clicking on %s button below.<br>\n"
@@ -1105,7 +1105,7 @@ msgid "All expenses"
 msgstr "Все расходы"
 
 msgid "All income"
-msgstr "Все доходы"
+msgstr "Все поступления"
 
 msgid "Download error log"
 msgstr "Скачать журнал ошибок"
@@ -1198,7 +1198,7 @@ msgid "All currencies"
 msgstr "Все валюты"
 
 msgid "A — most valuable clients whom together make 80% of your total income.<br> B — clients who make next 15% of your income.<br> C — less valuable clients making the rest 5% income."
-msgstr "A — наиболее ценные клиенты, обеспечивающие 80% вашего общего дохода.<br> B — клиенты, обеспечивающие следующие 15% дохода.<br> C — малодоходные клиенты с общим вкладом в оставшиеся 5% дохода."
+msgstr "A — наиболее ценные клиенты, обеспечивающие 80% ваших общих поступлений.<br> B — клиенты, обеспечивающие следующие 15% поступлений.<br> C — малодоходные клиенты с общим вкладом в оставшиеся 5% поступлений."
 
 msgid "No clients in this segment."
 msgstr "В этом сегменте нет клиентов."

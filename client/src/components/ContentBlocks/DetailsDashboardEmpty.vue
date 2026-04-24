@@ -6,7 +6,7 @@
   <div>
     <!-- Текст для русских -->
     <template v-if="$i18n.locale === 'ru_RU'">
-      <h2> Рассказываем, как тут и что </h2>
+      <h2 class="custom-mt-8"> Рассказываем, с чего начать </h2>
       <p>
         Чтобы быстро увидеть полезность приложения, попробуйте добавить несколько типовых операций, которые
         происходят регулярно — каждый день, неделю, месяц. Приложение автоматически посчитает движение средств и
@@ -15,8 +15,8 @@
       <ol class="separated">
         <li>Нажмите <strong>«Сразу много»</strong>.</li>
         <li>
-          Добавьте <strong>3-5 повторяющихся операций</strong>, например, план продаж (каждый день), аренда, интернет, зарплаты
-          (каждый месяц), кофе в офис (каждую неделю).
+          Добавьте <strong>3-5 повторяющихся операций</strong>, например, план продаж (каждый день), кофе в офис (каждую неделю), аренда, интернет, зарплаты
+          (каждый месяц).
         </li>
         <li><strong>Профит!</strong> Увидите, сколько денег будет на счете и когда.</li>
       </ol>
@@ -26,11 +26,17 @@
           target="_blank"
         ><b>https://support.webasyst.ru/cash/</b></a>
       </p>
+      <p>
+        А еще не забудьте установить наше мобильное приложение:
+      </p>
+
+      ...БЕЙДЖИКИ...
+
     </template>
 
     <!-- Текст для нерусских -->
     <template v-else>
-      <h2> Explaining how it all works </h2>
+      <h2> Explaining where to start </h2>
       <p>
         To quickly see the app ultimate purpose, try adding a few typical transactions that occur or a
         regular basis. The app will automatically calculate your cash flow and display all the necessary
@@ -50,6 +56,12 @@
           target="_blank"
         ><b>https://support.webasyst.com/cash/</b></a>
       </p>
+      <p>
+        And don’t forget to install our cozy mobile app and to keep your money in sync:
+      </p>
+
+      ...БЕЙДЖИКИ...
+
     </template>
   </div>
 </template>
