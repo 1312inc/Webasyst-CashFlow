@@ -1,12 +1,14 @@
 <script setup>
-
+import { appState } from '@/utils/appState'
 </script>
 
 <template>
   <div>
     <!-- Текст для русских -->
     <template v-if="$i18n.locale === 'ru_RU'">
-      <h2 class="custom-mt-8"> Рассказываем, с чего начать </h2>
+      <h2 class="custom-mt-8">
+        Рассказываем, с чего начать
+      </h2>
       <p>
         Чтобы быстро увидеть полезность приложения, попробуйте добавить несколько типовых операций, которые
         происходят регулярно — каждый день, неделю, месяц. Приложение автоматически посчитает движение средств и
@@ -29,9 +31,6 @@
       <p>
         А еще не забудьте установить наше мобильное приложение:
       </p>
-
-      ...БЕЙДЖИКИ...
-
     </template>
 
     <!-- Текст для нерусских -->
@@ -59,9 +58,47 @@
       <p>
         And don’t forget to install our cozy mobile app and to keep your money in sync:
       </p>
-
-      ...БЕЙДЖИКИ...
-
     </template>
+
+    <div
+      class="flexbox wrap-mobile middle space-12"
+      style="justify-content: center;"
+    >
+      <a
+        :href="`https://apps.apple.com/${$i18n.locale === 'ru_RU' ? 'ru' : 'us'}/app/webasyst-cash-flow/id6450029747`"
+        target="_blank"
+      >
+        <img
+          :src="`${appState.baseStaticUrl}img/badge-appstore${$i18n.locale === 'ru_RU' ? '-ru' : ''}.png`"
+          class="c-app-inline-badge"
+          style="height: 50px;"
+          alt="App Store"
+        >
+      </a>
+      <a
+        href="https://play.google.com/store/apps/details?id=com.webasyst.cash"
+        target="_blank"
+      >
+        <img
+          :src="`${appState.baseStaticUrl}img/badge-googleplay${$i18n.locale === 'ru_RU' ? '-ru' : ''}.png`"
+          class="c-app-inline-badge"
+          style="height: 50px;"
+          alt="Google Play"
+        >
+      </a>
+      <template v-if="$i18n.locale === 'ru_RU'">
+        <a
+          href="https://apps.rustore.ru/app/com.webasyst.cash"
+          target="_blank"
+        >
+          <img
+            :src="`${appState.baseStaticUrl}img/badge-rustore.svg`"
+            class="c-app-inline-badge"
+            style="height: 50px;"
+            alt="RuStore"
+          >
+        </a>
+      </template>
+    </div>
   </div>
 </template>
