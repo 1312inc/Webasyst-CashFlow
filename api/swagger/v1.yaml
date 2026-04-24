@@ -804,6 +804,9 @@ paths:
                   type: string
                   minLength: 3
                   description: 3-буквенный код валюты
+                accountable_contact_id:
+                  type: integer
+                  description: ID пользователя привязанного к подотчету
                 icon:
                   type: string
                   minLength: 1
