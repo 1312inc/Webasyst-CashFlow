@@ -161,6 +161,7 @@ final class cashTransactionFilterService
 
         $selectQueryParts->addAndWhere('ct.category_id in (i:category_ids)')
             ->addParam('category_ids', array_merge([$dto->filter->getCategoryId()], $categoryChildIds));
+        $this->makeImaginaryFilter($selectQueryParts);
     }
 
     /**
@@ -175,13 +176,7 @@ final class cashTransactionFilterService
     ): void {
         $selectQueryParts->addAndWhere('ca.currency = s:currency')
             ->addParam('currency', $dto->filter->getCurrency());
-        $selectQueryParts->addAndWhere('
-            CASE
-                WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
-                WHEN ca.is_imaginary = -1 THEN NULL
-                ELSE ca.is_imaginary = 0
-            END
-        ');
+        $this->makeImaginaryFilter($selectQueryParts);
     }
 
     /**
@@ -265,6 +260,17 @@ final class cashTransactionFilterService
         cashSelectQueryParts $selectQueryParts
     ): void {
         $selectQueryParts->addAndWhere('ct.is_archived = 1', 'isArchived');
+    }
+
+    private function makeImaginaryFilter(cashSelectQueryParts $selectQueryParts): void
+    {
+        $selectQueryParts->addAndWhere('
+            CASE
+                WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                WHEN ca.is_imaginary = -1 THEN NULL
+                ELSE ca.is_imaginary = 0
+            END
+        ');
     }
 
     /**
@@ -363,6 +369,9 @@ final class cashTransactionFilterService
                 $this->makeBaseSqlForExternalFilter($dto, $sqlParts);
 
                 break;
+
+            default:
+                $this->makeImaginaryFilter($sqlParts);
         }
 
         return $sqlParts;
