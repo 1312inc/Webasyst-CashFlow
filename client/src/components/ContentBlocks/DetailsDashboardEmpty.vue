@@ -20,7 +20,7 @@ import { appState } from '@/utils/appState'
           Добавьте <strong>3-5 повторяющихся операций</strong>, например, план продаж (каждый день), кофе в офис (каждую неделю), аренда, интернет, зарплаты
           (каждый месяц).
         </li>
-        <li><strong>Профит!</strong> Увидите, сколько денег будет на счете и когда.</li>
+        <li>Профит! <strong>Увидите, сколько денег будет</strong> на счете и когда.</li>
       </ol>
       <p>
         Подробнее о всех фишках приложения рассказываем и показываем на сайте <a
@@ -47,7 +47,7 @@ import { appState } from '@/utils/appState'
           Add <strong>3—5 recurring transactions</strong>, e.g. sales plan (daily), rent, internet, salaries (monthly), and
           office supplies (weekly).
         </li>
-        <li><strong>Profit!</strong> See how much money will be in your account and when.</li>
+        <li>Profit! <strong>See how much money</strong> will be in your account and when.</li>
       </ol>
       <p>
         Sharing more about the app top features and use cases here: <a
