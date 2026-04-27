@@ -52,21 +52,22 @@ function waitForTippy () {
 </template>
 
 <style>
-.tippy-box[data-theme~='transparent'] {
+[data-theme~='transparent'] {
   background-color: transparent;
   color: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  margin: 0;
+  padding: 0 !important;
+  margin: 0 !important;
   border-radius: 0;
   border: 0;
-  box-shadow: 0;
-  padding: 0;
+  box-shadow: 0 !important;
 }
-.tippy-box[data-theme~='transparent'] .tippy-arrow {
+[data-theme~='transparent'] .tippy-arrow {
   width: 0;
   height: 0;
+}
+[data-theme~='transparent'] .wa-tooltip-content {
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 </style>
