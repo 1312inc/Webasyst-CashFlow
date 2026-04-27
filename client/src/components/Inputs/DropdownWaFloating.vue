@@ -28,7 +28,7 @@ onMounted(() => {
     </div>
     <div
       ref="floating"
-      class="dropdown is-opened"
+      class="dropdown"
     >
       <div
         class="dropdown-body"
@@ -71,8 +71,11 @@ button {
 
 .dropdown-body {
   position: relative;
-  display: block;
   left: auto;
   top: auto;
+}
+
+[data-tippy-root] .dropdown-body {
+  display: block;
 }
 </style>

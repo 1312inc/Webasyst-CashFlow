@@ -57,7 +57,9 @@ export default {
     todayCount: {},
     showFutureTransactionsMoreLink: {
       7: false,
-      30: false
+      30: false,
+      90: false,
+      180: false
     },
     isSplitFetchMode: false
   }),
@@ -288,7 +290,9 @@ export default {
         const isNotFullFutureOffset = data.data.length + data.offset < data.total
         commit('setShowFutureTransactionsMoreLink', {
           7: moment(data.data[data.data.length - 1].date).isBefore(moment().add(7, 'd')) && isNotFullFutureOffset,
-          30: isNotFullFutureOffset
+          30: isNotFullFutureOffset,
+          90: isNotFullFutureOffset,
+          180: isNotFullFutureOffset
         })
 
         const result = {
