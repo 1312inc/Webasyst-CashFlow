@@ -1551,7 +1551,7 @@ paths:
       externalDocs:
         description: cash.plan.get
         url: https://developers.webasyst.ru/api/explorer/cash/cash.plan.get/
-      summary: Возвращает
+      summary: Возвращает список планов (целей) для периода, в который попадает указанная дата.
       tags:
         - План
       security:
@@ -1559,12 +1559,12 @@ paths:
       parameters:
         - in: query
           name: category_id
-          description: ID статьи доходов или расходов
+          description: Фильтр по статье доходов или расходов
           schema:
             type: integer
         - in: query
           name: currency
-          description: 3-буквенный код валюты
+          description: Фильтр по валюте (3-буквенный код валюты ISO 4217)
           schema:
             type: string
         - in: query
@@ -1576,13 +1576,13 @@ paths:
             format: date
         - in: query
           name: account_id
-          description: ID счета
+          description: Фильтр по счету
           schema:
             type: integer
             default: null
       responses:
         200:
-          description: Информация о планах
+          description: Список планов (целей)
           content:
             application/json:
               schema:
@@ -1612,7 +1612,7 @@ paths:
       externalDocs:
         description: cash.plan.set
         url: https://developers.webasyst.ru/api/explorer/cash/cash.plan.set/
-      summary: CRUD плана
+      summary: Сохранение плана
       tags:
         - План
       security:
@@ -1630,13 +1630,13 @@ paths:
                 amount:
                   type: number
                   default: 0
-                  description: Сумма плана (0 = удаление плана)
+                  description: Сумма (0 = удаление плана)
                 category_id:
                   type: integer
                   description: ID статьи доходов или расходов
                 currency:
                   type: string
-                  description: 3-буквенный код валюты
+                  description: 3-буквенный код валюты ISO 4217
                 date:
                   type: string
                   format: date
@@ -1682,7 +1682,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         402:
-          description: Необходима оплата.
+          description: Необходима оплата (фича доступна только в премиум-версии).
           content:
             application/json:
               schema:
