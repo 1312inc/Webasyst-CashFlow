@@ -1306,7 +1306,7 @@ msgid "Available now"
 msgstr "Уже здесь"
 
 msgid "Goals & budgets"
-msgstr "Цели и бюджет"
+msgstr "Планы, цели, бюджет"
 
 msgid "Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast).<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>."
 msgstr "Задавайте финансовые цели и бюджеты в формате <code>статья &rarr; когда &rarr; сколько</code>, и приложение в <code>%</code> покажет, насколько вы отклоняетесь от траектории. Цели работают как дополнительный слой поверх запланированных операций (прогноза).<br><br> Примеры: <code>Продажи &rarr; Июнь &rarr; 1.5М</code>, <code>Реклама &rarr; (каждый месяц) &rarr; 50К</code>."
@@ -1324,7 +1324,7 @@ msgid "Assign accounts to specific users on your team. Know whom is accountable 
 msgstr "Закрепляйте счета за сотрудниками. Контролируйте, у кого сколько на руках в подотчете."
 
 msgid "Automation / bots"
-msgstr "Автоматизация и боты"
+msgstr "Автоматизация и роботы-помощники"
 
 msgid "Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>"
 msgstr "Настраивайте правила в формате <code>событие &rarr; действие</code>. Правила работают как боты, которые следят за событиями в системе и автоматизируют создание и корректировку операций.<br><br> Пример: <code>Поступление от АРТИКУС на СЧЕТ_Т_БАНК</code> &rarr; <code>Создать 2 операции ПРОДАЖИ +30% & КОМИССИЯ -30% в СЧЕТ_ПРОЕКТА</code>"
@@ -1384,7 +1384,7 @@ msgid "https://www.webasyst.com/store/app/cash/"
 msgstr "https://www.webasyst.ru/store/app/cash/"
 
 msgid "Bigger money needs to be better accounted"
-msgstr "Большие деньги начинаются с правильного учета"
+msgstr "Большие деньги там, где правильный учет"
 
 msgid "%d features available now, +%d more to come shortly."
 msgstr "%d премиум-функций доступно сейчас, еще %s на подходе."
