@@ -180,27 +180,27 @@ function onCategoryChange (id) {
           <template v-else-if="currentCategory">
             <h5 class="align-center custom-mt-0 custom-mb-12">
               {{ currentCategory.name }}
+              <br><span class="gray" style="text-transform: capitalize;">{{ currentMonthLabel }}</span>
             </h5>
-            <div class="custom-mb-16">
-              <span style="text-transform: capitalize;">{{ currentMonthLabel }}</span>
-              <br>{{ $t('detailsTargetPlanLabel') }}: {{
+            <div class="custom-mb-16 align-center small">
+              {{ $t('detailsTargetPlanLabel') }}: <b>{{
                 helpers.toCurrency({
                   value: chartState.amount,
                   currencyCode: chartState.currencyCode
                 })
-              }}
-              <br>{{ $t('detailsTargetFactForecastLabel') }}: {{
+              }}</b>
+              <br>{{ $t('detailsTargetFactForecastLabel') }}: <b>{{
                 helpers.toCurrency({
                   value: chartState.amountFact,
                   currencyCode: chartState.currencyCode
                 })
-              }}
+              }}</b>
             </div>
           </template>
 
           <div
             v-if="categories.length"
-            class="wa-select solid width-100"
+            class="wa-select small solid width-100"
           >
             <select @change="(event) => { onCategoryChange(event.target.value) }">
               <option
