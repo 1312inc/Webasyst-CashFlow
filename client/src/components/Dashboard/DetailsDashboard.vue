@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-px-32 custom-py-16 custom-ml-4 custom-p-12-mobile custom-m-0-mobile">
+  <div class="custom-px-24 custom-py-16 custom-ml-4 custom-p-12-mobile custom-m-0-mobile">
     <div
       v-if="isFetching"
       class="skeleton flexbox vertical space-24"
