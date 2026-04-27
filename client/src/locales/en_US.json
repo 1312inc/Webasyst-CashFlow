@@ -197,7 +197,7 @@
   "selectedContact": "Transaction will be linked with the selected contractor",
   "hide": "Hide",
   "show": "Show",
-  "showMore": "Show more",
+  "showMore": "More",
   "navigation": "{action} menu",
   "collapseTransactionDesc": "{count} transactions ({category})",
   "repeatingTransactionDesc": "{repeats} transactions",

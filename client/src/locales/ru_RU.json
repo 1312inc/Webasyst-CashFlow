@@ -197,7 +197,7 @@
   "selectedContact": "Операция будет связана с выбранным контактом",
   "hide": "Скрыть",
   "show": "Показать",
-  "showMore": "Показать еще",
+  "showMore": "Ещё",
   "navigation": "{action} меню",
   "collapseTransactionDesc": "{count} операций ({category})",
   "repeatingTransactionDesc": "{repeats} операций",

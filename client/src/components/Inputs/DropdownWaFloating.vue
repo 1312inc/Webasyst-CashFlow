@@ -1,13 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-const tippy = window.tippy
-
 const floating = ref(null)
 const reference = ref(null)
 
-onMounted(() => {
+onMounted(async () => {
+  const tippy = await waitForTippy()
+
   if (!tippy || !floating.value || !reference.value) return
+
   tippy(reference.value, {
     content: floating.value,
     interactive: true,
@@ -19,6 +20,16 @@ onMounted(() => {
   })
 })
 
+function waitForTippy () {
+  return new Promise((resolve) => {
+    const check = () => {
+      if (window.tippy) resolve(window.tippy)
+      else setTimeout(check, 100)
+    }
+    check()
+  })
+}
+
 </script>
 
 <template>
@@ -28,7 +39,7 @@ onMounted(() => {
     </div>
     <div
       ref="floating"
-      class="dropdown"
+      class="dropdown is-opened"
     >
       <div
         class="dropdown-body"
@@ -75,7 +86,4 @@ button {
   top: auto;
 }
 
-[data-tippy-root] .dropdown-body {
-  display: block;
-}
 </style>
