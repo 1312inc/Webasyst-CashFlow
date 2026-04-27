@@ -37,8 +37,14 @@ class cashPlanSetMethod extends cashApiAbstractMethod
 
         /** @var cashCategoryRepository $repository */
         $repository = cash()->getEntityRepository(cashCategory::class);
-        if (!$repository->findById($request->category_id)) {
+        $category = $repository->findById($request->category_id);
+        if (empty($category)) {
             return new cashApiErrorResponse('invalid_param', 'Unknown category');
+        }
+
+        $request->amount = abs($request->amount);
+        if (cashCategory::TYPE_EXPENSE === $category->getType()) {
+            $request->amount = -$request->amount;
         }
 
         $plan = (new cashApiPlanSetHandler())->handle($request);
