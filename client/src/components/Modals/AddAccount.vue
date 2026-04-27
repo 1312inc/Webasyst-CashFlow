@@ -126,6 +126,7 @@
                 </div>
               </label>
               <AddAccountAccountable
+                v-if="isPremium"
                 :accountable-contact-id.sync="model.accountable_contact_id"
                 :disabled="model.is_imaginary !== '-2'"
               />

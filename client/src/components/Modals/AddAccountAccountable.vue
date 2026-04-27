@@ -5,7 +5,7 @@
   >
     <select
       v-model="accountableContactIdModel"
-      :disabled="disabled"
+      :disabled="disabled || contacts.length === 0"
     >
       <option
         value="0"

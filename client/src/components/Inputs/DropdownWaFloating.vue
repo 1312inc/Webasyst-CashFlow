@@ -53,12 +53,9 @@ function waitForTippy () {
 
 <style>
 [data-theme~='transparent'] {
-  background-color: transparent;
-  color: transparent;
+  background-color: transparent !important;
   padding: 0 !important;
   margin: 0 !important;
-  border-radius: 0;
-  border: 0;
   box-shadow: 0 !important;
 }
 [data-theme~='transparent'] .tippy-arrow {
@@ -68,6 +65,9 @@ function waitForTippy () {
 [data-theme~='transparent'] .wa-tooltip-content {
   padding: 0 !important;
   margin: 0 !important;
+}
+.wa-tooltip-box[data-theme~='transparent'] {
+  line-height: 0;
 }
 
 </style>
