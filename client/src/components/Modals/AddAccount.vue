@@ -119,10 +119,10 @@
                   >
                   <span />
                 </span>
-                Подотчет
-                <span class="hint">фывфывфыв</span>
+                {{ $t("accountType.types.accountable.name") }}
+                <span class="hint">hint</span>
                 <div v-if="!isPremium">
-                  <span class="hint text-red">только в премиум</span>
+                  <span class="hint text-red">{{ $t("premiumOnly") }}</span>
                 </div>
               </label>
               <AddAccountAccountable

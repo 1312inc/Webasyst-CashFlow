@@ -10,7 +10,7 @@
       <option
         value="0"
       >
-        Выберите пользователя
+        {{ $t("selectUser") }}
       </option>
       <option
         v-for="contact in contacts"
