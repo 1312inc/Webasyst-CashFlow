@@ -237,7 +237,7 @@
   "plugins": "Plugins",
   "automation": "Automation",
   "premium": "Big cash",
-  "premiumOnly": "Premium only",
+  "premiumOnly": "Available in Big Cash only",
   "contactsWillSoon": "Contacts with linked transactions will appear here soon.",
   "Order": "Order",
   "orOrder": "or order",
@@ -248,16 +248,20 @@
     "name": "Account type",
     "types": {
       "checking": {
-        "name": "Checking / Cash",
+        "name": "Checking / cash",
         "message": "or active account — real money that makes up the today’s overall balance"
       },
       "virtual": {
-        "name": "Project",
+        "name": "Virtual / liabilities",
         "message": "or passive account — all accounting features are available within the account, but its transactions won’t affect the overall balance for today, while planned future transactions will still form the forecast"
       },
       "virtualWithForecast": {
         "name": "Sandbox",
         "message": "similar to project, but all transactions — both past & future — won’t affect the general picture, making it possible to emulate any isolated financial scenario within this account"
+      },
+      "accountable": {
+        "name": "Accountable",
+        "message": "active account linked to someone from your team. Real money to be accounted."
       }
     }
   },

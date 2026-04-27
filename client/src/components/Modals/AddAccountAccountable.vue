@@ -1,6 +1,6 @@
 <template>
   <div
-    class="wa-select solid"
+    class="wa-select small solid"
     style="margin-top: 12px;"
   >
     <select
