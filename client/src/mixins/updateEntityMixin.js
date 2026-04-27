@@ -16,7 +16,13 @@ export default {
     if (this.editedItem) {
       for (const prop in this.model) {
         if (prop in this.editedItem) {
-          this.model[prop] = this.editedItem[prop]
+          if (prop === 'is_imaginary' && this.editedItem.is_imaginary === 0) {
+            if (this.editedItem.accountable_contact_id) {
+              this.model[prop] = '-2'
+            } else {
+              this.model[prop] = '0'
+            }
+          } else { this.model[prop] = this.editedItem[prop] }
         }
       }
     }

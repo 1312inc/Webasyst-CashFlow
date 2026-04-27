@@ -11,6 +11,7 @@
           :src="account.icon"
           alt=""
           class="size-20"
+          :class="{ 'userpic': account.accountable_contact_id }"
         >
         <span v-else>
           <i :class="`fas ${accountIcon}`" />

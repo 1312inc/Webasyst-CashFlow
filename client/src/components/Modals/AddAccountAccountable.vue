@@ -4,9 +4,8 @@
     style="margin-top: 12px;"
   >
     <select
-      :value="accountableContactId"
+      v-model="accountableContactIdModel"
       :disabled="disabled"
-      @change="$emit('update:accountableContactId', $event.target.value)"
     >
       <option
         value="0"
@@ -26,11 +25,11 @@
 
 <script setup>
 
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps({
   accountableContactId: {
-    type: String,
+    type: [String, Number],
     default: '0'
   },
   disabled: {
@@ -42,6 +41,10 @@ const props = defineProps({
 const emit = defineEmits(['update:accountableContactId'])
 
 const contacts = ref([])
+const accountableContactIdModel = computed({
+  get: () => props.accountableContactId,
+  set: (value) => emit('update:accountableContactId', value)
+})
 
 watch(() => props.disabled, async (isDisabled) => {
   if (isDisabled) {
@@ -61,6 +64,6 @@ watch(() => props.disabled, async (isDisabled) => {
   } catch (e) {
     console.error('Ошибка при получении контактов:', e)
   }
-})
+}, { immediate: true })
 
 </script>
