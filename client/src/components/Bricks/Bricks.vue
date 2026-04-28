@@ -29,18 +29,6 @@
         <span>{{ $t("import") }}</span>
       </div>
     </a>
-    <a
-      :href="`${$helper.baseUrl}plan/`"
-      class="brick custom-pt-8"
-      :class="{
-        'selected': $route.path === '/plan/'
-      }"
-    >
-      <div class="flexbox middle space-8">
-        <span class="icon"><i class="fas fa-download" /></span>
-        <span>{{ $t("plan") }}</span>
-      </div>
-    </a>
   </div>
 </template>
 
