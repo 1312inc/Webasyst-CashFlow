@@ -27,8 +27,10 @@
             [`All inclusive in the cloud`]
         {else}
             {if !empty($_premium_pricing.upgrade_compare_price)}<strike class="gray">{$_premium_pricing.upgrade_compare_price}</strike>{/if}
-            {$_premium_pricing.upgrade_price} — [`upgrade basic &rarr; premium`]
-            <br>
+            {if !empty($_premium_pricing.upgrade_price)}
+                {$_premium_pricing.upgrade_price} — [`upgrade basic &rarr; premium`]
+                <br>
+            {/if}
             {if !empty($_premium_pricing.compare_price)}<strike class="gray">{$_premium_pricing.compare_price}</strike>{/if}
             {$_premium_pricing.price} — [`new premium license`]
         {/if}
@@ -107,24 +109,28 @@
             {$_premium_stuff[] = [
               'title' => '[`Multiple companies`]',
               'body' => '[`Split accounting across different entities such as LLCs, personal, etc.`]',
+              'eta_class' => 'light-gray',
               'eta' => '[`Later`]'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Scenarios`]',
               'body' => '[`Exclude individual transactions from the primary cash flow scenario, and include them into specific scenarios such as <em>Optimistic, Pessimistic, Gonna take a loan, What if there is a fire, What if it works out</em>, or any custom scenario.`]',
+              'eta_class' => 'light-gray',
               'eta' => '[`May / June 2026`]'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Transaction templates`]',
               'body' => '[`Create templates with fixed parameters (such as category, account, amount, etc.) that speed up your work and reduce mistakes.`]',
+              'eta_class' => 'light-gray',
               'eta' => '[`Later`]'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`The Big Bang moment`]',
               'body' => '[`Set a a specific date as a Big Bang moment and be sure that no can adjust anything before that date.`]',
+              'eta_class' => 'light-gray',
               'eta' => '[`Later`]'
             ]}
 
@@ -132,6 +138,7 @@
               'title' => '[`Account groups`]',
               'body' => {sprintf('[`Evaluating either we need this feature in the app. <b>Yes or no? <a href="%s" target="_blank">Vote here!</a></b>`]', '[`https://support.webasyst.com/forum/ideas/`]')},
               'grayedout' => true,
+              'eta_class' => 'light-gray',
               'eta' => '[`Maybe`]'
             ]}
 
@@ -139,6 +146,7 @@
               'title' => '[`Tags & projects`]',
               'body' => {sprintf('[`Evaluating either we need this feature in the app. <b>Yes or no? <a href="%s" target="_blank">Vote here!</a></b>`]', '[`https://support.webasyst.com/forum/ideas/`]')},
               'grayedout' => true,
+              'eta_class' => 'light-gray',
               'eta' => '[`Maybe`]'
             ]}
 
