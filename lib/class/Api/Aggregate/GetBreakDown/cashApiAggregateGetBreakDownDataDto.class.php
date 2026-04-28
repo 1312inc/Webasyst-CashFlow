@@ -25,15 +25,21 @@ final class cashApiAggregateGetBreakDownDataDto
      */
     public $category_id;
 
+    public $children_amount;
+
     /**
      * cashApiAggregateGetBreakDownDto constructor.
      *
-     * @param                   $amount
+     * @param $data
      * @param cashCategory|null $category
      */
-    public function __construct($amount, ?cashCategory $category)
+    public function __construct($data, ?cashCategory $category)
     {
+        $amount = ifset($data, 'amount', 0);
         $this->amount = abs(round($amount, 2));
+        if (!$this->children_amount = ifset($data, 'children_amount', null)) {
+            unset($this->children_amount);
+        }
         if ($category) {
             $this->category_name = $category->getName();
             $this->category_color = $category->getColor();

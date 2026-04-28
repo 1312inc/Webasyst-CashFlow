@@ -786,25 +786,24 @@ class cashGraphService
      */
     public function getAggregateBreakDownData(cashAggregateGetBreakDownFilterParamsDto $paramsDto): array
     {
-        $detailing = '';
+        $select = [
+            "if(ct.amount < 0, concat('expense|',cc.is_profit), 'income') transaction_type",
+            'ca.currency currency'
+        ];
+
         switch ($paramsDto->detailsBy) {
             case cashAggregateGetBreakDownFilterParamsDto::DETAILS_BY_CATEGORY:
-                $detailing = 'ct.category_id';
-
+                $select[] = 'ct.category_id detailed';
+                $select[] = 'cc.category_parent_id';
                 break;
 
             case cashAggregateGetBreakDownFilterParamsDto::DETAILS_BY_CONTACT:
-                $detailing = 'ct.contractor_contact_id';
+                $select[] = 'ct.contractor_contact_id detailed';
                 break;
         }
-
+        $select[] = 'sum(IF(ct.amount > 0, ct.amount, -ct.amount)) amount';
         $sqlParts = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
-            ->select([
-                "if(ct.amount < 0, concat('expense|',cc.is_profit), 'income') transaction_type",
-                'ca.currency currency',
-                "{$detailing} detailed",
-                'sum(ct.amount) amount',
-            ])
+            ->select($select)
             ->from('cash_transaction', 'ct')
             ->join([
                 'join cash_account ca on ct.account_id = ca.id',
@@ -824,6 +823,7 @@ class cashGraphService
                 'ca.is_archived = 0',
             ])
             ->groupBy(['transaction_type', 'ca.currency', 'detailed'])
+            ->orderBy(['cc.sort'])
             ->params(['from' => $paramsDto->from->format('Y-m-d'), 'to' => $paramsDto->to->format('Y-m-d')]);
 
         if (null !== $paramsDto->filter->getCurrency()) {
@@ -836,7 +836,7 @@ class cashGraphService
             ');
         }
 
-        return $this->filterSqlForAggregateBreakDown($sqlParts, $paramsDto)->query()->fetchAll();
+        return $this->filterSqlForAggregateBreakDown($sqlParts, $paramsDto)->query()->fetchAll('detailed');
     }
 
     /**

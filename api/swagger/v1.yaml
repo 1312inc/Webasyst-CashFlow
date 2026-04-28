@@ -1031,6 +1031,174 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /cash.aggregate.getBreakDown:
+    get:
+      externalDocs:
+        description: cash.aggregate.getBreakDown
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.aggregate.getBreakDown/
+      summary: Возвращает сводную информацию о расходах, доходах и прибыли за указанный период.
+      tags:
+        - Агрегация данных
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: from
+          description: Дата начала периода в формате «гггг-мм-дд»
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          description: Дата окончания периода в формате «гггг-мм-дд»
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: filter
+          description: |
+            Хеш-строка для фильтрации списка финансовых операций
+            Примеры:
+            + **account/1**: операции для счета с ID = 1
+            + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: children_help_parents
+          description: Включить вложенные операции
+          schema:
+            type: integer
+            default: 0
+            enum:
+              - 0
+              - 1
+      responses:
+        200:
+          description: Набор данных для каждой из валют счетов.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  description: Набор данных для каждой из валют счетов
+                  allOf:
+                    - $ref: '#/components/schemas/aggregateGetBreakDownResponse'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.aggregate.getChartData:
+    get:
+      externalDocs:
+        description: cash.aggregate.getChartData
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.aggregate.getChartData/
+      summary: Возвращает информацию о расходах, доходах и прибыли за указанный период с группировкой по дням, месяцам или годам.
+      tags:
+        - Агрегация данных
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: from
+          description: Дата начала периода в формате «гггг-мм-дд»
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          description: Дата окончания периода в формате «гггг-мм-дд»
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: group_by
+          description: |
+            Группировка данных
+            + **day**: по дням (только для периодов не более 10 000 дней)
+            + **month**: по месяцам
+            + **year**: по годам
+          required: true
+          schema:
+            type: string
+            enum:
+              - 'day'
+              - 'month'
+              - 'year'
+        - in: query
+          name: filter
+          required: true
+          description: |
+            Хеш-строка для фильтрации списка финансовых операций
+            Примеры:
+            + **all**: все операции
+            + **account/1**: операции для счета, ID которого — 1
+            + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        200:
+          description: Набор данных для каждой из валют счетов.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    currency:
+                      type: string
+                      description: 3-буквенный код валюты
+                    data:
+                      type: array
+                      description: Массив данных для каждого интервала времени, соответствующего способу группировки
+                      items:
+                        type: object
+                        properties:
+                          period:
+                            type: string
+                            description: |
+                              Обозначение отрезка времени в одном из форматов:
+                              + **гггг-дд-мм**: для начала периода, для конца периода, а также для каждого отрезка времени, если указан тип группировки '*day*'
+                              + **гггг-мм**: для каждого отрезка времени, кроме начала и конца, если указан тип группировки '*month*'
+                              + **гггг**: для каждого отрезка времени, кроме начала и конца, если указан тип группировки '*year*'
+                          amountExpense:
+                            type: number
+                            description: Сумма расходов
+                          amountIncome:
+                            type: number
+                            description: Сумма доходов
+                          amountProfit:
+                            type: number
+                            description: Сумма прибыли
+                          countExpense:
+                            type: integer
+                            description: Количество операций по расходам
+                          countIncome:
+                            type: integer
+                            description: Количество операций по доходам
+                          countProfit:
+                            type: integer
+                            description: Количество операций по прибыли
+                          balance:
+                            type: number
+                            description: Баланс на окончание периода
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.category.getList:
     get:
       externalDocs:
@@ -1281,165 +1449,6 @@ paths:
       responses:
         200:
           description: Успешное выполнение запроса.
-        400:
-          description: Ошибка.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /cash.aggregate.getChartData:
-    get:
-      externalDocs:
-        description: cash.aggregate.getChartData
-        url: https://developers.webasyst.ru/api/explorer/cash/cash.aggregate.getChartData/
-      summary: Возвращает информацию о расходах, доходах и прибыли за указанный период с группировкой по дням, месяцам или годам.
-      tags:
-        - Агрегация данных
-      security:
-        - ApiKeyAuth: [ ]
-      parameters:
-        - in: query
-          name: from
-          description: Дата начала периода в формате «гггг-мм-дд»
-          required: true
-          schema:
-            type: string
-            format: date
-        - in: query
-          name: to
-          description: Дата окончания периода в формате «гггг-мм-дд»
-          required: true
-          schema:
-            type: string
-            format: date
-        - in: query
-          name: group_by
-          description: |
-            Группировка данных
-            + **day**: по дням (только для периодов не более 10 000 дней)
-            + **month**: по месяцам
-            + **year**: по годам
-          required: true
-          schema:
-            type: string
-            enum:
-              - 'day'
-              - 'month'
-              - 'year'
-        - in: query
-          name: filter
-          required: true
-          description: |
-            Хеш-строка для фильтрации списка финансовых операций
-            Примеры:
-            + **all**: все операции
-            + **account/1**: операции для счета, ID которого — 1
-            + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
-          schema:
-            type: string
-            minLength: 1
-      responses:
-        200:
-          description: Набор данных для каждой из валют счетов.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    currency:
-                      type: string
-                      description: 3-буквенный код валюты
-                    data:
-                      type: array
-                      description: Массив данных для каждого интервала времени, соответствующего способу группировки
-                      items:
-                        type: object
-                        properties:
-                          period:
-                            type: string
-                            description: |
-                              Обозначение отрезка времени в одном из форматов:
-                              + **гггг-дд-мм**: для начала периода, для конца периода, а также для каждого отрезка времени, если указан тип группировки '*day*'
-                              + **гггг-мм**: для каждого отрезка времени, кроме начала и конца, если указан тип группировки '*month*'
-                              + **гггг**: для каждого отрезка времени, кроме начала и конца, если указан тип группировки '*year*'
-                          amountExpense:
-                            type: number
-                            description: Сумма расходов
-                          amountIncome:
-                            type: number
-                            description: Сумма доходов
-                          amountProfit:
-                            type: number
-                            description: Сумма прибыли
-                          countExpense:
-                            type: integer
-                            description: Количество операций по расходам
-                          countIncome:
-                            type: integer
-                            description: Количество операций по доходам
-                          countProfit:
-                            type: integer
-                            description: Количество операций по прибыли
-                          balance:
-                            type: number
-                            description: Баланс на окончание периода
-        400:
-          description: Ошибка.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /cash.aggregate.getBreakDown:
-    get:
-      externalDocs:
-        description: cash.aggregate.getBreakDown
-        url: https://developers.webasyst.ru/api/explorer/cash/cash.aggregate.getBreakDown/
-      summary: Возвращает сводную информацию о расходах, доходах и прибыли за указанный период.
-      tags:
-        - Агрегация данных
-      security:
-        - ApiKeyAuth: [ ]
-      parameters:
-        - in: query
-          name: from
-          description: Дата начала периода в формате «гггг-мм-дд»
-          required: true
-          schema:
-            type: string
-            format: date
-        - in: query
-          name: to
-          description: Дата окончания периода в формате «гггг-мм-дд»
-          required: true
-          schema:
-            type: string
-            format: date
-        - in: query
-          name: filter
-          description: |
-            Хеш-строка для фильтрации списка финансовых операций
-            Примеры:
-            + **account/1**: операции для счета с ID = 1
-            + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
-          required: true
-          schema:
-            type: string
-            minLength: 1
-      responses:
-        200:
-          description: Набор данных для каждой из валют счетов.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  description: Набор данных для каждой из валют счетов
-                  allOf:
-                    - $ref: '#/components/schemas/aggregateGetBreakDownResponse'
         400:
           description: Ошибка.
           content:
@@ -2053,6 +2062,10 @@ components:
           type: number
           example: 1000.1
           description: Сумма
+        children_amount:
+          type: number
+          nullable: true
+          description: Сумма категорий-потомков
         category_name:
           type: string
           description: Название статьи

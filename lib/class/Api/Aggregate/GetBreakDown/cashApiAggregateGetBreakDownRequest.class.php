@@ -19,4 +19,9 @@ final class cashApiAggregateGetBreakDownRequest
      * @var string
      */
     public $filter = '';
+
+    /**
+     * @var int
+     */
+    public $children_help_parents;
 }

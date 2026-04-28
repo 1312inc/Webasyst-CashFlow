@@ -12,10 +12,10 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
      *
      * @param array $data
      * @param array $currencies
-     *
+     * @param int $children_help_parents
      * @throws waException
      */
-    public function __construct(array $data, array $currencies)
+    public function __construct(array $data, array $currencies, int $children_help_parents)
     {
         parent::__construct(200);
 
@@ -35,15 +35,26 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
             ];
         }
 
+        if ($children_help_parents) {
+            foreach ($data as $_dt) {
+                if (!empty($_dt['category_parent_id']) && !empty($data[$_dt['category_parent_id']])) {
+                    if (empty($data[$_dt['category_parent_id']]['children_amount'])) {
+                        $data[$_dt['category_parent_id']]['children_amount'] = $_dt['amount'];
+                    } else {
+                        $data[$_dt['category_parent_id']]['children_amount'] += $_dt['amount'];
+                    }
+                }
+            }
+        }
         foreach ($data as $graphDatum) {
             $categoryType = $categoryTypeMapping[$graphDatum['transaction_type']];
 
             $dataInfo = new cashApiAggregateGetBreakDownDataDto(
-                $graphDatum['amount'],
+                $graphDatum,
                 $this->getCategory($graphDatum['detailed'])
             );
             $response[$graphDatum['currency']][$categoryType]->data[] = $dataInfo;
-            $response[$graphDatum['currency']][$categoryType]->totalAmount += abs($dataInfo->amount);
+            $response[$graphDatum['currency']][$categoryType]->totalAmount += $dataInfo->amount;
         }
 
         $this->response = array_values($response);

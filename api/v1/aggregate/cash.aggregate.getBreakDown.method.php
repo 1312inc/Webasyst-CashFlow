@@ -18,9 +18,10 @@ class cashAggregateGetBreakDownMethod extends cashApiAbstractMethod
         $request = $this->fillRequestWithParams(new cashApiAggregateGetBreakDownRequest());
         $request->to = DateTimeImmutable::createFromFormat('Y-m-d|', $request->to);
         $request->from = DateTimeImmutable::createFromFormat('Y-m-d|', $request->from);
+        $request->children_help_parents = empty($request->children_help_parents) ? 0 : 1;
 
         [$data, $currencies] = (new cashApiAggregateGetBreakDownHandler())->handle($request);
 
-        return new cashApiAggregateGetBreakDownResponse($data, $currencies);
+        return new cashApiAggregateGetBreakDownResponse((array) $data, (array) $currencies, $request->children_help_parents);
     }
 }
