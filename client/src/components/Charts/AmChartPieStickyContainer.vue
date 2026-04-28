@@ -1,24 +1,10 @@
 <template>
   <div
     v-if="$helper.isDesktopEnv"
-    sticky-container
     class="c-chart-pie-sticky-container"
   >
-    <div
-      v-sticky
-      sticky-offset="{top: 80}"
-      sticky-z-index="12"
-    >
-      <div class="c-chart-pie-sticky-container__inner">
-        <AmChartPieSticky
-          v-if="
-            $store.state.transaction.transactions.data.length &&
-              (!selectedOnlyMode
-                ? true
-                : $store.state.transactionBulk.selectedTransactionsIds.length)
-          "
-        />
-      </div>
+    <div class="c-chart-pie-sticky-container__inner">
+      <AmChartPieSticky v-if="shouldRenderChart" />
     </div>
   </div>
 </template>
@@ -35,6 +21,17 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  computed: {
+    hasTransactions () {
+      return this.$store.state.transaction.transactions.data.length > 0
+    },
+    hasSelectedTransactions () {
+      return this.$store.state.transactionBulk.selectedTransactionsIds.length > 0
+    },
+    shouldRenderChart () {
+      return this.hasTransactions && (!this.selectedOnlyMode || this.hasSelectedTransactions)
+    }
   }
 }
 </script>
@@ -42,6 +39,10 @@ export default {
 <style lang="scss">
 .c-chart-pie-sticky-container {
   width: 300px;
+  flex: none;
+  position: sticky;
+  top: 4rem;
+  align-self: flex-start;
 
   &__inner {
     margin: 0 auto;
