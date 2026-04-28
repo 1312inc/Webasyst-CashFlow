@@ -1579,7 +1579,6 @@ paths:
         - in: query
           name: date
           description: Дата плана в формате «гггг-мм-дд»
-          required: true
           schema:
             type: string
             format: date
