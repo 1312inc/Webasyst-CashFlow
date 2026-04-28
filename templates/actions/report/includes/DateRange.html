@@ -23,7 +23,7 @@
         <button class="dropdown-toggle button light-gray" type="button">[`Select dates...`]</button>
         <div class="dropdown-body">
             <ul class="menu">
-                {if $withNextRange}
+                {if !empty($withNextRange)}
                     <li>
                         <a data-range="-30" href="#"><span>{sprintf('[`Next %d days`]', 30)}</span></a>
                     </li>

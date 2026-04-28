@@ -1,6 +1,14 @@
 <template>
   <div class="c-period-dropdowns-container">
     <div class="flexbox vertical-mobile space-12">
+      <div class="printPageButton desktop-only">
+        <button
+          class="button light-gray nowrap"
+          @click="printPage()"
+        >
+          <i class="fas fa-print" />
+        </button>
+      </div>
       <CurrencyToggler />
       <div class="c-period-dropdowns flexbox fixed space-12 width-100-mobile">
         <div>
@@ -22,17 +30,13 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import CurrencyToggler from '@/components/CurrencyToggler'
 import Dropdown from '@/components/Inputs/Dropdown'
 import AmountForPeriod from '@/components/PeriodAmount/AmountForPeriod'
 
-export default {
-  components: {
-    CurrencyToggler,
-    Dropdown,
-    AmountForPeriod
-  }
+function printPage () {
+  window.print()
 }
 </script>
 

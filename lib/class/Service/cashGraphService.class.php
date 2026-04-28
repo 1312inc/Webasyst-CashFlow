@@ -512,6 +512,11 @@ class cashGraphService
 
         $calculateBalance = false;
         switch (true) {
+            case $paramsDto->filter->isFilterByCalendar():
+                $sqlParts->addAndWhere('ct.category_id <> -1312');
+
+                break;
+
             case null !== $paramsDto->filter->getAccountId():
                 $sqlParts->addAndWhere('ct.account_id = i:account_id')
                     ->addParam('account_id', $paramsDto->filter->getAccountId());

@@ -27,10 +27,12 @@
             [`All inclusive in the cloud`]
         {else}
             {if !empty($_premium_pricing.upgrade_compare_price)}<strike class="gray">{$_premium_pricing.upgrade_compare_price}</strike>{/if}
-            {$_premium_pricing.upgrade_price} / [`upgrade basic &rarr; premium`]
-            <br>
+            {if !empty($_premium_pricing.upgrade_price)}
+                {$_premium_pricing.upgrade_price} — [`upgrade basic &rarr; premium`]
+                <br>
+            {/if}
             {if !empty($_premium_pricing.compare_price)}<strike class="gray">{$_premium_pricing.compare_price}</strike>{/if}
-            {$_premium_pricing.price} / [`new premium license`]
+            {$_premium_pricing.price} — [`new premium license`]
         {/if}
     </h4>
     <p class="width-60 width-100-mobile custom-mx-auto small">
@@ -39,13 +41,13 @@
             {sprintf('[`Or get <a href="%s" target="_blank">new license</a> for the Custom plan.`]', $_upgrade_url)}
         {else}
             {if !empty($_premium_pricing.special)}
+                <b>[`One-time payment, not a subscription!`]</b>
+                <br>
                 {sprintf('[`%s intro offer for upgrading existing app license to the premium version`]', sprintf('<span class="badge %s">%s</span>', $_premium_pricing.special_color, $_premium_pricing.special))} —
                 <b>{date('Y.m')} [`special offer!`]</b>
             {else}
                 [`Per-server license for the entire company. Unlimited users, all the premium features, and free updates forever.`]
             {/if}
-            <br>
-            <b>[`One-time payment, not a subscription!`]</b>
         {/if}
     </p>
 </figure>
@@ -101,30 +103,34 @@
               'title' => '[`Automation / bots`]',
               'body' => '[`Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>`]',
               'eta_class' => 'green',
-              'eta' => '[`May / June 2026`]'
+              'eta' => '[`May 2026`]'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Multiple companies`]',
               'body' => '[`Split accounting across different entities such as LLCs, personal, etc.`]',
+              'eta_class' => 'light-gray',
               'eta' => '[`Later`]'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Scenarios`]',
               'body' => '[`Exclude individual transactions from the primary cash flow scenario, and include them into specific scenarios such as <em>Optimistic, Pessimistic, Gonna take a loan, What if there is a fire, What if it works out</em>, or any custom scenario.`]',
-              'eta' => '[`Later`]'
+              'eta_class' => 'light-gray',
+              'eta' => '[`May / June 2026`]'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Transaction templates`]',
               'body' => '[`Create templates with fixed parameters (such as category, account, amount, etc.) that speed up your work and reduce mistakes.`]',
+              'eta_class' => 'light-gray',
               'eta' => '[`Later`]'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`The Big Bang moment`]',
               'body' => '[`Set a a specific date as a Big Bang moment and be sure that no can adjust anything before that date.`]',
+              'eta_class' => 'light-gray',
               'eta' => '[`Later`]'
             ]}
 
@@ -132,6 +138,7 @@
               'title' => '[`Account groups`]',
               'body' => {sprintf('[`Evaluating either we need this feature in the app. <b>Yes or no? <a href="%s" target="_blank">Vote here!</a></b>`]', '[`https://support.webasyst.com/forum/ideas/`]')},
               'grayedout' => true,
+              'eta_class' => 'light-gray',
               'eta' => '[`Maybe`]'
             ]}
 
@@ -139,6 +146,7 @@
               'title' => '[`Tags & projects`]',
               'body' => {sprintf('[`Evaluating either we need this feature in the app. <b>Yes or no? <a href="%s" target="_blank">Vote here!</a></b>`]', '[`https://support.webasyst.com/forum/ideas/`]')},
               'grayedout' => true,
+              'eta_class' => 'light-gray',
               'eta' => '[`Maybe`]'
             ]}
 

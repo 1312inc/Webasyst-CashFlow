@@ -16,7 +16,13 @@ export default {
     if (this.editedItem) {
       for (const prop in this.model) {
         if (prop in this.editedItem) {
-          this.model[prop] = this.editedItem[prop]
+          if (prop === 'is_imaginary' && this.editedItem.is_imaginary === 0) {
+            if (this.editedItem.accountable_contact_id) {
+              this.model[prop] = '-2'
+            } else {
+              this.model[prop] = '0'
+            }
+          } else { this.model[prop] = this.editedItem[prop] }
         }
       }
     }
@@ -27,8 +33,17 @@ export default {
       this.$v.$touch()
       if (!this.$v.$invalid) {
         this.controlsDisabled = true
+
+        const params = {
+          ...this.model
+        }
+
+        if (params.is_imaginary === '-2') {
+          params.is_imaginary = '0'
+        }
+
         this.$store
-          .dispatch(`${entity}/update`, this.model)
+          .dispatch(`${entity}/update`, params)
           .then(() => {
             // FIX: Reload page in case of changing type of category / #106.306
             if (this.isModeUpdate && entity === 'category' && this.model.type !== this.editedItem.type) {

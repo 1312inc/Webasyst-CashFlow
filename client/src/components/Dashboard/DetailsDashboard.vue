@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-px-32 custom-py-16 custom-ml-4 custom-p-12-mobile custom-m-0-mobile">
+  <div class="custom-px-24 custom-py-16 custom-ml-4 custom-p-12-mobile custom-m-0-mobile">
     <div
       v-if="isFetching"
       class="skeleton flexbox vertical space-24"
@@ -138,7 +138,7 @@ export default {
       const currentDate = today.toISOString().split('T')[0]
 
       // Преобразуем строки в объекты Date для корректного сравнения
-      if (new Date(to) > today && to === this.chartInterval.to) {
+      if (this.isDefaultRange) {
         to = currentDate
       }
 

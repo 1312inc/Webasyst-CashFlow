@@ -4,7 +4,7 @@ const setIntervalDate = (days, interval) => {
   return moment().add(days, interval).format('YYYY-MM-DD')
 }
 
-const intervals = {
+export const intervals = {
   from: [
     {
       key: '-1_M',
@@ -67,11 +67,17 @@ const intervals = {
   ]
 }
 
-export { intervals }
+export const setIntervalFromLabel = (type, value) => {
+  localStorage.setItem(`interval_${type}`, value)
+}
 
 export const getIntervalFromLabel = (type) => {
   try {
-    const val = localStorage.getItem(`interval_${type}`)
+    let val = localStorage.getItem(`interval_${type}`)
+    if (!val) {
+      val = type === 'from' ? '-1_Y' : '6_M'
+      setIntervalFromLabel(type, val)
+    }
     return val
   } catch {}
 }

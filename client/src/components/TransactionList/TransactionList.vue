@@ -9,7 +9,7 @@
       </BlankBox>
 
       <BlankBox
-        v-for="(group, index) in groups.filter(g => ['overdue', 'future', 'tomorrow', 'today', 'yesterday'].includes(g.name))"
+        v-for="(group, index) in primaryGroups"
         :key="group.name"
       >
         <TransactionListGroup
@@ -22,10 +22,10 @@
       </BlankBox>
 
       <div
-        v-if="nextMonthIntervalLabel({name: $moment().format('YYYY-MM')}, onlyStreamGroups[0])"
+        v-if="firstStreamGroupIntervalLabel"
         class="align-center small gray custom-pb-24"
       >
-        {{ nextMonthIntervalLabel({name: $moment().format('YYYY-MM')}, onlyStreamGroups[0]) }}
+        {{ firstStreamGroupIntervalLabel }}
       </div>
 
       <div
@@ -33,10 +33,10 @@
         :key="group.name"
       >
         <div
-          v-if="nextMonthIntervalLabel(onlyStreamGroups[index - 1], group)"
+          v-if="streamGroupIntervalLabels[index]"
           class="align-center small gray custom-pb-24"
         >
-          {{ nextMonthIntervalLabel(onlyStreamGroups[index - 1], group) }}
+          {{ streamGroupIntervalLabels[index] }}
         </div>
 
         <BlankBox>
@@ -51,12 +51,8 @@
       </div>
 
       <Observer
-        v-if="observer &&
-          (isSplitFetchMode
-            ? (pastTransactionsOffset && pastTransactionsOffset < transactions.total)
-            : (transactions.data.length && transactions.data.length < transactions.total)
-          )"
-        @callback="() => { observerCallback(isSplitFetchMode ? pastTransactionsOffset : transactions.data.length) }"
+        v-if="showObserver"
+        @callback="handleObserverCallback"
       />
 
       <div v-if="(transactions.data.length === transactions.total) && transactions.data.length">
@@ -75,6 +71,8 @@ import TransactionListGroup from './TransactionListGroup'
 import SkeletonTransaction from './SkeletonTransaction'
 import Observer from './Observer'
 import BlankBox from '../BlankBox.vue'
+
+const PRIMARY_GROUP_NAMES = ['overdue', 'future', 'tomorrow', 'today', 'yesterday']
 
 export default {
 
@@ -263,7 +261,35 @@ export default {
     },
 
     onlyStreamGroups () {
-      return this.groups.filter(g => !(['overdue', 'future', 'tomorrow', 'today', 'yesterday'].includes(g.name)))
+      return this.groups.filter(g => !PRIMARY_GROUP_NAMES.includes(g.name))
+    },
+
+    primaryGroups () {
+      return this.groups.filter(g => PRIMARY_GROUP_NAMES.includes(g.name))
+    },
+
+    currentMonthGroup () {
+      return { name: this.$moment().format('YYYY-MM') }
+    },
+
+    firstStreamGroupIntervalLabel () {
+      return this.nextMonthIntervalLabel(this.currentMonthGroup, this.onlyStreamGroups[0])
+    },
+
+    streamGroupIntervalLabels () {
+      return this.onlyStreamGroups.map((group, index) => {
+        return this.nextMonthIntervalLabel(this.onlyStreamGroups[index - 1], group)
+      })
+    },
+
+    showObserver () {
+      if (!this.observer) return false
+
+      if (this.isSplitFetchMode) {
+        return Boolean(this.pastTransactionsOffset && this.pastTransactionsOffset < this.transactions.total)
+      }
+
+      return Boolean(this.transactions.data.length && this.transactions.data.length < this.transactions.total)
     },
 
     showFutureGroupComputed () {
@@ -281,6 +307,11 @@ export default {
   },
 
   methods: {
+    handleObserverCallback () {
+      const offset = this.isSplitFetchMode ? this.pastTransactionsOffset : this.transactions.data.length
+      this.observerCallback(offset)
+    },
+
     observerCallback (offset) {
       this.$store.dispatch('transaction/fetchTransactions', {
         offset

@@ -16,6 +16,12 @@ import { appState } from '@/utils/appState'
         <span>{{ $t("plugins") }}</span>
       </a>
     </li>
+    <li v-if="$permissions.isAdmin" style="display: none;">
+      <a :href="`${$helper.baseUrl}automation/`">
+        <i class="fas fa-plug" />
+        <span>{{ $t("automation") }}</span>
+      </a>
+    </li>
     <li v-if="$permissions.isAdmin">
       <a :href="`${$helper.baseUrl}upgrade/`">
         <i

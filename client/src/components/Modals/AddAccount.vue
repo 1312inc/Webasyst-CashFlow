@@ -61,7 +61,10 @@
           <div class="name for-checkbox">
             {{ $t("accountType.name") }}
           </div>
-          <div class="value" style="line-height: 1.2;">
+          <div
+            class="value"
+            style="line-height: 1.2;"
+          >
             <div class="custom-mb-16">
               <label>
                 <span class="wa-radio">
@@ -104,8 +107,36 @@
                 <span class="hint">{{ $t("accountType.types.virtualWithForecast.message") }}</span>
               </label>
             </div>
+
+            <div class="custom-mb-16 ">
+              <label>
+                <span class="wa-radio">
+                  <input
+                    v-model="model.is_imaginary"
+                    type="radio"
+                    value="-2"
+                    :disabled="!isPremium"
+                  >
+                  <span />
+                </span>
+                {{ $t("accountType.types.accountable.name") }}
+                <span class="hint">{{ $t("accountType.types.accountable.message") }}</span>
+                <div v-if="!isPremium">
+                  <span class="hint text-green bold">{{ $t("premiumOnly") }}</span>
+                </div>
+              </label>
+              <AddAccountAccountable
+                v-if="isPremium"
+                :accountable-contact-id.sync="model.accountable_contact_id"
+                :disabled="model.is_imaginary !== '-2'"
+              />
+            </div>
+
             <p class="small custom-mb-16">
-              <a href="###" target="_blank"><b>{{ $t("accountTypeHint") }}</b></a>
+              <a
+                href="#"
+                target="_blank"
+              ><b>{{ $t("accountTypeHint") }}</b></a>
             </p>
           </div>
         </div>
@@ -209,11 +240,14 @@ import { required } from 'vuelidate/dist/validators.min.js'
 import updateEntityMixin from '@/mixins/updateEntityMixin'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import IconUploader from '@/components/Inputs/IconUploader'
+import AddAccountAccountable from '@/components/Modals/AddAccountAccountable'
+
 export default {
 
   components: {
     InputCurrency,
-    IconUploader
+    IconUploader,
+    AddAccountAccountable
   },
 
   mixins: [updateEntityMixin],
@@ -229,7 +263,8 @@ export default {
         is_imaginary: '0',
         starting_balance: '',
         icon: '',
-        description: ''
+        description: '',
+        accountable_contact_id: '0'
       }
     }
   },
@@ -252,7 +287,11 @@ export default {
         if (a.code > b.code) { return 1 }
         return 0
       })
+    },
+    isPremium () {
+      return window.appState.isPremium
     }
+
   },
 
   mounted () {

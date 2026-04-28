@@ -694,6 +694,9 @@ paths:
                   type: string
                   minLength: 3
                   description: 3-буквенный код валюты
+                accountable_contact_id:
+                  type: integer
+                  description: ID пользователя привязанного к подотчету
                 is_imaginary:
                   type: integer
                   default: 0
@@ -801,6 +804,9 @@ paths:
                   type: string
                   minLength: 3
                   description: 3-буквенный код валюты
+                accountable_contact_id:
+                  type: integer
+                  description: ID пользователя привязанного к подотчету
                 icon:
                   type: string
                   minLength: 1
@@ -1467,6 +1473,16 @@ paths:
             type: integer
             minimum: 1
         - in: query
+          name: is_user
+          description: Флаг контакта-пользователя
+          required: false
+          schema:
+            type: string
+            default: null
+            enum:
+              - 0
+              - 1
+        - in: query
           name: limit
           description: Максимальное количество контактов, которое нужно получить
           required: false
@@ -1525,6 +1541,148 @@ paths:
                 $ref: '#/components/schemas/contactListResponse'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.plan.get:
+    get:
+      externalDocs:
+        description: cash.plan.get
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.plan.get/
+      summary: Возвращает список планов (целей) для периода, в который попадает указанная дата.
+      tags:
+        - План
+      security:
+        - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: category_id
+          description: Фильтр по статье доходов или расходов
+          schema:
+            type: integer
+        - in: query
+          name: currency
+          description: Фильтр по валюте (3-буквенный код валюты ISO 4217)
+          schema:
+            type: string
+        - in: query
+          name: date
+          description: Дата плана в формате «гггг-мм-дд»
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: account_id
+          description: Фильтр по счету
+          schema:
+            type: integer
+            default: null
+      responses:
+        200:
+          description: Список планов (целей)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    currency:
+                      type: string
+                    account_id:
+                      type: integer
+                    category_id:
+                      type: integer
+                    from:
+                      type: string
+                    to:
+                      type: string
+                    amount:
+                      type: number
+                    amount_fact:
+                      type: number
+
+  /cash.plan.set:
+    post:
+      externalDocs:
+        description: cash.plan.set
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.plan.set/
+      summary: Сохранение плана
+      tags:
+        - План
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  default: null
+                  description: ID плана (отсутствие = добавление нового плана)
+                amount:
+                  type: number
+                  default: 0
+                  description: Сумма (0 = удаление плана)
+                category_id:
+                  type: integer
+                  description: ID статьи доходов или расходов
+                currency:
+                  type: string
+                  description: 3-буквенный код валюты ISO 4217
+                date:
+                  type: string
+                  format: date
+                  default: null
+                  description: Дата плана в формате «гггг-мм-дд» (отсутствие даты = каждый месяц)
+                account_id:
+                  type: integer
+                  description: ID счета
+              required:
+                - amount
+                - category_id
+                - currency
+      responses:
+        200:
+          description: Информация о плане
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  currency:
+                    type: string
+                  account_id:
+                    type: integer
+                  category_id:
+                    type: integer
+                  from:
+                    type: string
+                  to:
+                    type: string
+                  amount:
+                    type: number
+                  amount_fact:
+                    type: number
+        204:
+          description: Ответ в случаи удаления плана.
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
           content:
             application/json:
               schema:
@@ -1990,6 +2148,10 @@ components:
           type: integer
           description: ID клиента
           nullable: true
+        accountable_contact_id:
+          type: integer
+          nullable: true
+          description: ID пользователя привязанного к подотчету
         is_archived:
           type: boolean
           description: Признак удаленного счета

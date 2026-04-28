@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-px-32 custom-py-16 custom-ml-4 custom-p-8-mobile custom-mb-12-mobile">
+  <div class="custom-px-24 custom-py-16 custom-ml-4 custom-p-8-mobile custom-mb-12-mobile">
     <div class="c-header flexbox">
       <div class="wide">
         <slot

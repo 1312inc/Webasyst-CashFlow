@@ -7,6 +7,7 @@ return array(
         'icon' => array('varchar', 255),
         'currency' => array('varchar', 3, 'null' => 0),
         'customer_contact_id' => array('int', 11),
+        'accountable_contact_id' => array('int', 11),
         'is_archived' => array('tinyint', 4, 'default' => '0'),
         'sort' => array('int', 11),
         'create_datetime' => array('datetime', 'null' => 0),
@@ -15,6 +16,18 @@ return array(
         ':keys' => array(
             'PRIMARY' => 'id',
         ),
+    ),
+    'cash_automation' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'sort' => array('int', 11, 'null' => 0, 'default' => '0'),
+        'app_id' => array('varchar', 64, 'null' => 0),
+        'action_id' => array('varchar', 255, 'null' => 0),
+        'conditions' => array('text'),
+        'rule_data' => array('text'),
+        ':keys' => array(
+            'PRIMARY' => 'id',
+        ),
+        ':options' => ['charset' => 'utf8mb4'],
     ),
     'cash_category' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
@@ -59,6 +72,14 @@ return array(
         ':keys' => array(
             'PRIMARY' => 'id',
         ),
+    ),
+    'cash_plan' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'currency' => array('varchar', 3, 'null' => 0),
+        'account_id' => array('int', 11),
+        'category_id' => array('int', 11, 'null' => 0),
+        'month' => array('date'),
+        'amount' => array('decimal', '18,4', 'default' => '0.0000')
     ),
     'cash_repeating_transaction' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),

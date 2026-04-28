@@ -77,6 +77,7 @@
   "account": "Account",
   "category": "Category",
   "contractor": "Contractor",
+  "accountable": "Accountable",
   "addIncome": "Income",
   "addExpense": "Expense",
   "changeSettings": "change settings",
@@ -141,6 +142,7 @@
   "2_Y": "Next 2 years",
   "3_Y": "Next 3 years",
   "reports": "Reports",
+  "plan": "Plan",
   "search": {
     "label": "Search",
     "noResults": "No results"
@@ -196,7 +198,7 @@
   "selectedContact": "Transaction will be linked with the selected contractor",
   "hide": "Hide",
   "show": "Show",
-  "showMore": "Show more",
+  "showMore": "More",
   "navigation": "{action} menu",
   "collapseTransactionDesc": "{count} transactions ({category})",
   "repeatingTransactionDesc": "{repeats} transactions",
@@ -214,6 +216,7 @@
   "specify": "Specify",
   "recipient": "recipient",
   "payee": "payee",
+  "selectUser": "Select user",
   "parentCategory": "Parent category",
   "notSelected": "Not selected",
   "shortMonth": "mo",
@@ -232,7 +235,9 @@
   "compactView": "Compact View",
   "listView": "List View",
   "plugins": "Plugins",
-  "premium": "Premium",
+  "automation": "Automation",
+  "premium": "Big cash",
+  "premiumOnly": "Available in Big Cash only",
   "contactsWillSoon": "Contacts with linked transactions will appear here soon.",
   "Order": "Order",
   "orOrder": "or order",
@@ -243,16 +248,20 @@
     "name": "Account type",
     "types": {
       "checking": {
-        "name": "Checking / Cash",
+        "name": "Checking / cash",
         "message": "or active account — real money that makes up the today’s overall balance"
       },
       "virtual": {
-        "name": "Project",
+        "name": "Virtual / liabilities",
         "message": "or passive account — all accounting features are available within the account, but its transactions won’t affect the overall balance for today, while planned future transactions will still form the forecast"
       },
       "virtualWithForecast": {
         "name": "Sandbox",
         "message": "similar to project, but all transactions — both past & future — won’t affect the general picture, making it possible to emulate any isolated financial scenario within this account"
+      },
+      "accountable": {
+        "name": "Accountable",
+        "message": "active account linked to someone from your team. Real money to be accounted."
       }
     }
   },
@@ -260,5 +269,9 @@
   "detailsTargetDescTitle": "Goals & Budget",
   "detailsTargetDesc": "Coming soon in premium! Financial goals, budgeting, and more amazing powerful features for accounting and predictions.",
   "detailsTargetDescLink": "Pre-order upgrade",
+  "detailsTargetPlanNotSet": "Plan is not set",
+  "detailsTargetSetGoal": "Set goal",
+  "detailsTargetPlanLabel": "Plan",
+  "detailsTargetFactForecastLabel": "Actual + forecast",
   "allTransactionsProcessed": "That's all folks!"
 }

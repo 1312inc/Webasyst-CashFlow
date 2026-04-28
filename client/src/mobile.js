@@ -9,7 +9,6 @@ import { i18n } from './plugins/locale'
 import Numeral from './plugins/numeralMoment'
 import Vuelidate from 'vuelidate'
 import Errors from './plugins/errors'
-import Sticky from './plugins/sticky'
 import VuePortal from '@linusborg/vue-simple-portal'
 import IsOnline from './plugins/isOnline'
 import VueMeta from 'vue-meta'
@@ -23,7 +22,6 @@ Vue.use(Numeral)
 Vue.use(Errors)
 Vue.use(Vuelidate)
 Vue.use(Helpers)
-Vue.use(Sticky)
 Vue.use(VuePortal)
 Vue.use(IsOnline)
 Vue.use(VueMeta)

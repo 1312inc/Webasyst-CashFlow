@@ -50,7 +50,7 @@ msgid "No category"
 msgstr "Без статьи"
 
 msgid "Income"
-msgstr "Доходы"
+msgstr "Поступления"
 
 msgid "Expense"
 msgstr "Расход"
@@ -74,7 +74,7 @@ msgid "Edit transaction"
 msgstr "Редактировать операцию"
 
 msgid "New income"
-msgstr "Добавить доход"
+msgstr "Добавить поступление"
 
 msgid "New expense"
 msgstr "Добавить расход"
@@ -170,7 +170,7 @@ msgid "Show next %s (%d transactions)"
 msgstr "Показать план на %s (%d операций)"
 
 msgid "Add income"
-msgstr "Доход"
+msgstr "Поступление"
 
 msgid "Add expense"
 msgstr "Расход"
@@ -242,7 +242,7 @@ msgid "%d transactions per page"
 msgstr "%d операций на странице"
 
 msgid "No category (income)"
-msgstr "Без статьи (доход)"
+msgstr "Без статьи (поступление)"
 
 msgid "No category (expense)"
 msgstr "Без статьи (расход)"
@@ -374,7 +374,7 @@ msgid "New account"
 msgstr "Новый счет"
 
 msgid "New income category"
-msgstr "Новая статья доходов"
+msgstr "Новая статья поступлениий"
 
 msgid "Expenses"
 msgstr "Расходы"
@@ -566,7 +566,7 @@ msgid "Set depending on the amount:"
 msgstr "В зависимости от суммы:"
 
 msgid "Income (amount > 0)"
-msgstr "Доход (сумма > 0)"
+msgstr "Поступление (сумма > 0)"
 
 msgid "Expenses (amount < 0)"
 msgstr "Расход (сумма < 0)"
@@ -935,7 +935,7 @@ msgid "Clear import history (don’t worry, imported transactions will not be af
 msgstr "Очистить историю импорта (не волнуйтесь, импортированные операции не будут затронуты)?"
 
 msgid "New income category:"
-msgstr "Новая статья доходов:"
+msgstr "Новая статья поступлений:"
 
 msgid "New expense category:"
 msgstr "Новая статья расходов:"
@@ -1007,7 +1007,7 @@ msgid "Hooray! <strong>Created %d income &amp; %d expense transactions</strong> 
 msgstr "Ура! <strong>Создали %d доходных и %d расходных операций</strong> на основе данных об оплаченных заказах Shop-Script."
 
 msgid "<strong class=\"highlighted\">%s</strong> (see above) — this is how much cash you <i>would</i> have on hand right now if there were only sales (income), but no business expenses such as salaries, office rent, marketing, purchase & supplies, and so on."
-msgstr "<strong class=\"highlighted\">%s</strong> (см. баланс счета выше) — это та сумма наличных в кассе, которая <i>была бы</i> у вас прямо сейчас, если бы у бизнеса были только доходы (продажи) и никаких расходов, таких как зарплаты, аренда, маркетинг, закупки и так далее."
+msgstr "<strong class=\"highlighted\">%s</strong> (см. баланс счета выше) — это та сумма наличных в кассе, которая <i>была бы</i> у вас прямо сейчас, если бы у бизнеса были только поступления (доходы) и никаких расходов, таких как зарплаты, аренда, маркетинг, закупки и так далее."
 
 msgid ""
 "<strong>Add (or import from a CSV file) your historical expenses now</strong> to get to know your real cash on hand forecast. It’s easy — try clicking on %s button below.<br>\n"
@@ -1105,7 +1105,7 @@ msgid "All expenses"
 msgstr "Все расходы"
 
 msgid "All income"
-msgstr "Все доходы"
+msgstr "Все поступления"
 
 msgid "Download error log"
 msgstr "Скачать журнал ошибок"
@@ -1198,7 +1198,7 @@ msgid "All currencies"
 msgstr "Все валюты"
 
 msgid "A — most valuable clients whom together make 80% of your total income.<br> B — clients who make next 15% of your income.<br> C — less valuable clients making the rest 5% income."
-msgstr "A — наиболее ценные клиенты, обеспечивающие 80% вашего общего дохода.<br> B — клиенты, обеспечивающие следующие 15% дохода.<br> C — малодоходные клиенты с общим вкладом в оставшиеся 5% дохода."
+msgstr "A — наиболее ценные клиенты, обеспечивающие 80% ваших общих поступлений.<br> B — клиенты, обеспечивающие следующие 15% поступлений.<br> C — малодоходные клиенты с общим вкладом в оставшиеся 5% поступлений."
 
 msgid "No clients in this segment."
 msgstr "В этом сегменте нет клиентов."
@@ -1306,7 +1306,7 @@ msgid "Available now"
 msgstr "Уже здесь"
 
 msgid "Goals & budgets"
-msgstr "Цели и бюджет"
+msgstr "Планы, цели, бюджет"
 
 msgid "Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast).<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>."
 msgstr "Задавайте финансовые цели и бюджеты в формате <code>статья &rarr; когда &rarr; сколько</code>, и приложение в <code>%</code> покажет, насколько вы отклоняетесь от траектории. Цели работают как дополнительный слой поверх запланированных операций (прогноза).<br><br> Примеры: <code>Продажи &rarr; Июнь &rarr; 1.5М</code>, <code>Реклама &rarr; (каждый месяц) &rarr; 50К</code>."
@@ -1324,7 +1324,7 @@ msgid "Assign accounts to specific users on your team. Know whom is accountable 
 msgstr "Закрепляйте счета за сотрудниками. Контролируйте, у кого сколько на руках в подотчете."
 
 msgid "Automation / bots"
-msgstr "Автоматизация и боты"
+msgstr "Автоматизация и роботы-помощники"
 
 msgid "Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>"
 msgstr "Настраивайте правила в формате <code>событие &rarr; действие</code>. Правила работают как боты, которые следят за событиями в системе и автоматизируют создание и корректировку операций.<br><br> Пример: <code>Поступление от АРТИКУС на СЧЕТ_Т_БАНК</code> &rarr; <code>Создать 2 операции ПРОДАЖИ +30% & КОМИССИЯ -30% в СЧЕТ_ПРОЕКТА</code>"
@@ -1384,7 +1384,7 @@ msgid "https://www.webasyst.com/store/app/cash/"
 msgstr "https://www.webasyst.ru/store/app/cash/"
 
 msgid "Bigger money needs to be better accounted"
-msgstr "Большие деньги начинаются с правильного учета"
+msgstr "Большие деньги там, где правильный учет"
 
 msgid "%d features available now, +%d more to come shortly."
 msgstr "%d премиум-функций доступно сейчас, еще %s на подходе."

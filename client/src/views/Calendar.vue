@@ -61,7 +61,7 @@ const handleMonthChange = ({ start, end }) => {
         from: dayjs(start).format('YYYY-MM-DD'),
         to: dayjs(end).format('YYYY-MM-DD'),
         group_by: 'day',
-        filter: 'all',
+        filter: 'calendar',
         reverse: 1
       }
     })

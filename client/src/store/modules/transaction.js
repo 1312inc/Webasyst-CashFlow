@@ -50,14 +50,16 @@ export default {
       name: '',
       items: []
     },
-    featurePeriod: 7,
+    featurePeriod: 180,
     chartData: [],
     chartDataCurrencyIndex: 0,
     loadingChart: true,
     todayCount: {},
     showFutureTransactionsMoreLink: {
       7: false,
-      30: false
+      30: false,
+      90: false,
+      180: false
     },
     isSplitFetchMode: false
   }),
@@ -288,12 +290,14 @@ export default {
         const isNotFullFutureOffset = data.data.length + data.offset < data.total
         commit('setShowFutureTransactionsMoreLink', {
           7: moment(data.data[data.data.length - 1].date).isBefore(moment().add(7, 'd')) && isNotFullFutureOffset,
-          30: isNotFullFutureOffset
+          30: isNotFullFutureOffset,
+          90: isNotFullFutureOffset,
+          180: isNotFullFutureOffset
         })
 
         const result = {
           ...state.transactions,
-          data: mergeArrays(data.data.toReverse(), state.transactions.data)
+          data: mergeArrays(data.data.toReversed(), state.transactions.data)
         }
 
         commit('setTransactions', result)
@@ -371,16 +375,18 @@ export default {
       })
     },
 
-    resetDetailsInterval ({ commit, dispatch, state }) {
+    async resetDetailsInterval ({ commit, dispatch, state }, force = false) {
       commit('setDetailsInterval', {
         from: state.chartInterval.from,
         to: state.chartInterval.to
       })
-      dispatch('fetchTransactions', {
-        from: '',
-        to: DEFAULT_FUTURE_PERIOD,
-        offset: 0
-      })
+      if (force) {
+        await dispatch('fetchTransactions', {
+          from: '',
+          to: DEFAULT_FUTURE_PERIOD,
+          offset: 0
+        })
+      }
     },
 
     async getTodayCount ({ commit }) {

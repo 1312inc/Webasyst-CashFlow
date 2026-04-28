@@ -33,6 +33,18 @@ final class cashHelper
     }
 
     /**
+     * @param $contact_id
+     * @return cashUser
+     * @throws waException
+     */
+    public static function getContact($contact_id)
+    {
+        $repository = cash()->getEntityRepository(cashUser::class);
+
+        return $repository->getUser($contact_id);
+    }
+
+    /**
      * @param $value
      *
      * @return float
@@ -70,32 +82,53 @@ final class cashHelper
         if (wa()->getLocale() == 'ru_RU')
         {
             $pricing = array(
-                'compare_price' => '', 'price' => '34 999 <span class="ruble">₽</span>',
-                'upgrade_compare_price' => '34 999', 'upgrade_price' => '24 999 <span class="ruble">₽</span>',
+                'compare_price' => '34 999', 'price' => '12 999 <span class="ruble">₽</span>/год',
+                'upgrade_compare_price' => '34 999', 'upgrade_price' => '24 999 <span class="ruble">₽</span>/навсегда',
                 'special' => ''
             );
             if (date('Ymd')<='20260430')
                 $pricing = array(
                     'compare_price' => '34 999', 'price' => '13 999 <span class="ruble">₽</span>',
-                    'upgrade_compare_price' => '24 999', 'upgrade_price' => '9 999 <span class="ruble">₽</span>',
-                    'special' => '&minus;60% до 30.04', 'special_color' => 'green', 'special_button' => 'Предзаказ &minus;60% до 30.04'
+                    'upgrade_compare_price' => '24 999', 'upgrade_price' => '<span class="text-red">9 999 <span class="ruble">₽</span></span>',
+                    'special' => '&minus;60% до 30.04', 'special_color' => 'red', 'special_button' => 'Предзаказ &minus;60% до 30.04'
                 );
             elseif (date('Ymd')<='20260531')
                 $pricing = array(
-                    'compare_price' => '34 999', 'price' => '19 999 <span class="ruble">₽</span>',
-                    'upgrade_compare_price' => '24 999', 'upgrade_price' => '14 999 <span class="ruble">₽</span>',
-                    'special' => '&minus;40% до 31.05', 'special_color' => 'red', 'special_button' => 'Большие деньги &minus;40% до 31.05'
+                    'compare_price' => '34 999', 'price' => '18 999 <span class="ruble">₽</span>',
+                    'special' => '&minus;45% до 31.05', 'special_color' => 'red', 'special_button' => 'Большие деньги &minus;45% до 31.05'
                 );
         }
         else
         {
             $pricing = array(
-                'compare_price' => '', 'price' => '$599',
+                'compare_price' => '$599', 'price' => '$219/yr',
                 'upgrade_compare_price' => '$599', 'upgrade_price' => '$399',
                 'special' => ''
             );
         }
 
         return $pricing;
+    }
+
+    /**
+     * @param $date
+     * @param $tz
+     * @return string|null
+     */
+    public static function convertDateToISO8601($date, $tz = 'UTC')
+    {
+        if (empty($date)) {
+            return null;
+        }
+        try {
+            $dt = new DateTime((string) $date);
+            if ($tz) {
+                $dt->setTimezone(new DateTimeZone($tz));
+            }
+        } catch (Exception $ex) {
+            return $date;
+        }
+
+        return $dt->format('Y-m-d\TH:i:s.u\Z');
     }
 }

@@ -27,6 +27,7 @@
           'text-orange': categoryType === 'expense',
           'text-green': categoryType === 'income'
         }"
+        :style="category && `color: ${category.color} !important`"
         class="icon"
       >
         <span v-show="categoryType === 'expense'">

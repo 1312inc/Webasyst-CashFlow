@@ -36,7 +36,7 @@ table.c-import-conditions td .c-condition { background: var(--background-color);
 .c-report-dds-inner table tr.c-row-white th,
 .c-report-dds-inner table tr.c-row-white td { background: var(--background-color-blank); font-size: 0.75rem; }
 .c-report-dds-inner table .c-column-sticky-left {
-    position: sticky; left: 0; width: 130px;
+    position: sticky; left: 0; width: 155px;
     background: var(--background-color-blank);
     background: linear-gradient(90deg, var(--background-color-blank) 0%, var(--background-color-blank) 80%, rgba(255,255,255,0) 100%);
     color: var(--text-color-stronger);
