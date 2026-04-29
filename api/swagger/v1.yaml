@@ -1608,12 +1608,15 @@ paths:
                       type: integer
                     from:
                       type: string
+                      nullable: true
                     to:
                       type: string
+                      nullable: true
                     amount:
                       type: number
                     amount_fact:
                       type: number
+                      nullable: true
 
   /cash.plan.set:
     post:
