@@ -8,20 +8,14 @@ import store from '@/store'
 const incomeCategories = computed(() => store.getters['category/getByType']('income'))
 const expenseCategories = computed(() => store.getters['category/getByType']('expense'))
 const planData = ref([])
+const breakdownData = ref([])
 const selectedCurrency = ref('')
 const currentMonthFirstDay = ref(new Date().toISOString().slice(0, 7) + '-01')
 const monthPickerEl = ref(null)
 let monthPicker = null
 const isTotalPlanMode = computed(() => currentMonthFirstDay.value == null)
 const currencies = computed(() => {
-  const seen = new Set()
-  const result = []
-  for (const plan of planData.value) {
-    if (!plan.currency || seen.has(plan.currency)) continue
-    seen.add(plan.currency)
-    result.push(plan.currency)
-  }
-  return result
+  return breakdownData.value.map(item => item.currency).filter(Boolean)
 })
 const filteredPlanData = computed(() => {
   if (!selectedCurrency.value) return planData.value
@@ -31,6 +25,26 @@ const planByCategoryId = computed(() => {
   const result = {}
   for (const plan of filteredPlanData.value) {
     result[plan.category_id] = plan
+  }
+  return result
+})
+const selectedBreakdown = computed(() => {
+  return breakdownData.value.find(item => item.currency === selectedCurrency.value) || null
+})
+const factByCategoryId = computed(() => {
+  const result = {}
+  const breakdown = selectedBreakdown.value
+  if (!breakdown) return result
+  const groups = [
+    { items: breakdown.income?.data || [], sign: 1 },
+    { items: breakdown.expense?.data || [], sign: -1 },
+    { items: breakdown.profit?.data || [], sign: 1 }
+  ]
+  for (const group of groups) {
+    for (const item of group.items) {
+      if (!item?.category_id) continue
+      result[item.category_id] = (Number(item.amount) || 0) * group.sign
+    }
   }
   return result
 })
@@ -55,7 +69,7 @@ const balanceDeviationPercent = computed(() => {
 
 onMounted(() => {
   initMonthPicker()
-  fetchPlan()
+  fetchData()
 })
 
 onBeforeUnmount(() => {
@@ -82,7 +96,7 @@ function initMonthPicker () {
       const year = selectedDate.getFullYear()
       const month = String(selectedDate.getMonth() + 1).padStart(2, '0')
       currentMonthFirstDay.value = `${year}-${month}-01`
-      fetchPlan()
+      fetchData()
     }
   })
 }
@@ -90,37 +104,57 @@ function initMonthPicker () {
 function setTotalPlanMode () {
   currentMonthFirstDay.value = null
   if (monthPicker) monthPicker.clear()
-  fetchPlan()
+  fetchData()
 }
 
-async function fetchPlan () {
+function getMonthRange () {
+  const source = currentMonthFirstDay.value || (new Date().toISOString().slice(0, 7) + '-01')
+  const [year, month] = source.split('-').map(Number)
+  const from = `${year}-${String(month).padStart(2, '0')}-01`
+  const lastDay = new Date(year, month, 0).getDate()
+  const to = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
+  return { from, to }
+}
+
+async function fetchData () {
   try {
-    const params = {}
-    if (currentMonthFirstDay.value) {
-      params.date = currentMonthFirstDay.value
+    if (!currentMonthFirstDay.value) {
+      const nextPlanData = await requestPlanData()
+      planData.value = nextPlanData
+      return
     }
-    const { data } = await api.get('cash.plan.get', {
-      params
-    })
-    /*
-    [{
-        "id": 8,
-        "currency": "RUB",
-        "account_id": null,
-        "category_id": 2,
-        "from": "2026-04-01",
-        "to": "2026-04-30",
-        "amount": 29400,
-        "amount_fact": 235
-    }, ...]
-    */
-    planData.value = Array.isArray(data) ? data : []
-    if (!selectedCurrency.value && currencies.value.length) {
-      selectedCurrency.value = currencies.value[0]
+
+    const [nextPlanData, nextBreakdownData] = await Promise.all([requestPlanData(), requestBreakdownData()])
+    planData.value = nextPlanData
+    breakdownData.value = nextBreakdownData
+
+    const nextCurrencies = nextBreakdownData.map(item => item.currency).filter(Boolean)
+    if (!nextCurrencies.includes(selectedCurrency.value)) {
+      selectedCurrency.value = nextCurrencies[0] || ''
     }
-  } catch (_) {
-    planData.value = []
-  }
+  } catch (_) {}
+}
+
+async function requestPlanData () {
+  const { data } = await api.get('cash.plan.get', {
+    params: {
+      date: currentMonthFirstDay.value
+    }
+  })
+  return Array.isArray(data) ? data : []
+}
+
+async function requestBreakdownData () {
+  const { from, to } = getMonthRange()
+  const { data } = await api.get('cash.aggregate.getBreakDown', {
+    params: {
+      from,
+      to,
+      filter: 'all',
+      children_help_parents: 1
+    }
+  })
+  return Array.isArray(data) ? data : []
 }
 
 function getPlanAmount (categoryId) {
@@ -128,20 +162,21 @@ function getPlanAmount (categoryId) {
 }
 
 function getFactAmount (categoryId) {
-  return planByCategoryId.value[categoryId]?.amount_fact ?? ''
+  if (isTotalPlanMode.value) return ''
+  return factByCategoryId.value[categoryId] ?? ''
 }
 
 function getDeviationAmount (categoryId) {
   const planAmount = Number(getPlanAmount(categoryId))
   const factAmount = Number(getFactAmount(categoryId))
-  if (Number.isNaN(planAmount) || Number.isNaN(factAmount)) return ''
+  if (Number.isNaN(planAmount) || Number.isNaN(factAmount) || planAmount === 0 || isTotalPlanMode.value) return ''
   return factAmount - planAmount
 }
 
 function getDeviationPercent (categoryId) {
   const planAmount = Number(getPlanAmount(categoryId))
   const deviationAmount = Number(getDeviationAmount(categoryId))
-  if (!planAmount || Number.isNaN(deviationAmount)) return ''
+  if (!planAmount || Number.isNaN(deviationAmount) || planAmount === 0 || isTotalPlanMode.value) return ''
   return `${((deviationAmount / planAmount) * 100).toFixed(2)}%`
 }
 
@@ -382,22 +417,22 @@ async function updatePlanAmount (categoryId, amount) {
             Сальдо
           </td>
           <td class="amount-cell">
-            {{ balancePlanTotal }}
+            {{ balancePlanTotal || '–' }}
           </td>
           <td class="amount-cell">
-            {{ balanceFactTotal }}
+            {{ balanceFactTotal || '–' }}
           </td>
           <td
             class="amount-cell"
             :class="getBalanceDeviationClass()"
           >
-            {{ balanceDeviationAmount }}
+            {{ balanceDeviationAmount || '–' }}
           </td>
           <td
             class="amount-cell"
             :class="getBalanceDeviationClass()"
           >
-            {{ balanceDeviationPercent || '-' }}
+            {{ balanceDeviationPercent || '–' }}
           </td>
         </tr>
       </tbody>
