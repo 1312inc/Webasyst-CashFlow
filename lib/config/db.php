@@ -79,7 +79,10 @@ return array(
         'account_id' => array('int', 11),
         'category_id' => array('int', 11, 'null' => 0),
         'month' => array('date'),
-        'amount' => array('decimal', '18,4', 'default' => '0.0000')
+        'amount' => array('decimal', '18,4', 'default' => '0.0000'),
+        ':keys' => array(
+            'PRIMARY' => 'id',
+        ),
     ),
     'cash_repeating_transaction' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
