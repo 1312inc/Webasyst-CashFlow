@@ -127,6 +127,11 @@ const routes = [
     }
   },
   {
+    path: '/planb',
+    name: 'PlanB',
+    component: () => import('../views/PlanB.vue')
+  },
+  {
     path: '/report',
     alias: SSR_MODE_PAGE_URL_ALIASES
   },
