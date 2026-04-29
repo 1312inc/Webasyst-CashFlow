@@ -68,7 +68,7 @@ final class cashPlanService
     public function getDataForPeriod(): array
     {
         $data = $this->transaction_model->query("
-            SELECT CONCAT(ct.category_id, '|', if(ct.amount < 0, s:cat_ex, s:cat_in)) id, ca.currency currency, MONTH(ct.date) month, SUM(ct.amount) per_month, ca.is_imaginary
+            SELECT CONCAT(ct.category_id, '|', if(ct.amount < 0, s:cat_ex, s:cat_in)) id, ca.currency currency, MONTH(ct.date) month, SUM(ct.amount) per_month
             FROM cash_transaction ct
             JOIN cash_account ca ON ct.account_id = ca.id
             JOIN cash_category cc ON ct.category_id = cc.id
@@ -76,7 +76,12 @@ final class cashPlanService
                 AND ct.category_id <> -1312
                 AND ca.is_archived = 0
                 AND ct.is_archived = 0
-            GROUP BY id, ca.currency, MONTH(ct.date), ca.is_imaginary
+                AND CASE
+                    WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                    WHEN ca.is_imaginary = -1 THEN NULL
+                    ELSE ca.is_imaginary = 0
+                END
+            GROUP BY id, ca.currency, MONTH(ct.date)
         ", [
             'cat_ex' => cashCategory::TYPE_EXPENSE,
             'cat_in' => cashCategory::TYPE_INCOME,
@@ -85,7 +90,6 @@ final class cashPlanService
         ])->fetchAll();
 
         $raw_data = [];
-        $current_month = (int) date('n');
         $categories_with_child = cash()->getModel(cashCategory::class)->getChildIdsWithParentIds();
 
         foreach ($data as $datum) {
@@ -112,14 +116,7 @@ final class cashPlanService
             }
 
             // "Все доходы": просто тип - income/expense
-            if (
-                0 === (int)$datum['is_imaginary']
-                || 1 === (int)$datum['is_imaginary'] && $datum['month'] > $current_month
-            ) {
-                $this->calculateAmount($raw_data[$type], $datum);
-            } else {
-                $raw_data[$type][$datum['month']][$datum['currency']]['imaginary'] = (int)$datum['is_imaginary'];
-            }
+            $this->calculateAmount($raw_data[$type], $datum);
             $raw_data[$type][$datum['month']][$datum['currency']]['max'] = max(
                 abs((float)$datum['per_month']),
                 abs($raw_data[$type][$datum['month']][$datum['currency']]['max'])
