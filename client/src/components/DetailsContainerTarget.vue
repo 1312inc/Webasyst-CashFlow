@@ -8,6 +8,7 @@ import moment from 'moment'
 import { useRoute } from 'vue-router/composables'
 import store from '@/store'
 import { helpers } from '@/plugins/helpers'
+import { emitter } from '@/plugins/eventBus'
 
 const route = useRoute()
 
@@ -27,12 +28,16 @@ if (cashTargetBlockHidden.value.value && cashTargetBlockHidden.value.expiredAt) 
   }
 }
 
-const isPromoMode = true
+const isPromoMode = !window.appState.isPremium // TODO: add check for premium
 const isFetching = ref(false)
 const isEmptyMode = ref(false)
 const chartData = shallowRef(null)
 const currentCategoryId = ref(null)
-const currentMonthLabel = ref(moment().format('MMMM YYYY'))
+const fetchDate = ref(moment().format('YYYY-MM-DD'))
+
+const currentMonthLabel = computed(() => {
+  return moment(fetchDate.value).format('MMMM YYYY')
+})
 
 const categories = computed(() => {
   const data = chartData.value
@@ -76,6 +81,11 @@ watch(activeCurrencyParams, (value) => {
   fetchTarget(value)
 }, { immediate: true })
 
+emitter.on('hitOnChartBalance', (event) => {
+  fetchDate.value = event.date
+  fetchTarget(activeCurrencyParams.value)
+})
+
 function fetchTarget (params) {
   if (cashTargetBlockHidden.value.value) return
   if (isPromoMode) return
@@ -84,7 +94,7 @@ function fetchTarget (params) {
   api
     .get('cash.plan.get', {
       params: {
-        date: moment().format('YYYY-MM-DD'),
+        date: fetchDate.value,
         ...params
       }
     })

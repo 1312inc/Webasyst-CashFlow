@@ -14,6 +14,7 @@ import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesDark from '@amcharts/amcharts4/themes/amchartsdark'
 import am4langRU from '@amcharts/amcharts4/lang/ru_RU'
+import { emitter } from '@/plugins/eventBus'
 
 let prefersColorSchemeDark = isDarkMode
 
@@ -176,6 +177,20 @@ export default {
         this.updateDetailsInterval({ from, to })
       })
       chart.cursor = cursor
+      chart.plotContainer.events.on('hit', (ev) => {
+        if (ev.event.target.closest('[role="button"]')) return
+
+        const point = am4core.utils.documentPointToSprite(ev.point, chart.plotContainer)
+        const relX = point.x / chart.plotContainer.pixelWidth
+        const axisPos = this.dateAxis2.toAxisPosition(relX)
+        const clickedDate = this.dateAxis2.positionToDate(axisPos)
+        const nearestItem = this.getNearestBalanceDataItem(clickedDate)
+        if (!nearestItem) return
+
+        emitter.emit('hitOnChartBalance', {
+          date: this.$moment(nearestItem.dateX).format('YYYY-MM-DD')
+        })
+      })
 
       // Future dates hover
       const rangeFututre = this.dateAxis.axisRanges.create()
@@ -229,13 +244,22 @@ export default {
         let to = this.$moment(this.dateAxis.maxZoomed)
         to = to > this.$moment(this.chartInterval.to) ? this.chartInterval.to : to.format('YYYY-MM-DD')
         this.updateDetailsInterval({ from, to })
+
+        emitter.emit('hitOnChartBalance', {
+          date: this.$moment(from).format('YYYY-MM-DD')
+        })
       }
 
       chart.scrollbarX.thumb.events.on('dragstop', dateAxisChanged)
       chart.scrollbarX.startGrip.events.on('dragstop', dateAxisChanged)
       chart.scrollbarX.endGrip.events.on('dragstop', dateAxisChanged)
+
       chart.zoomOutButton.events.on('hit', () => {
         this.resetDetailsInterval(true)
+
+        emitter.emit('hitOnChartBalance', {
+          date: this.$moment().format('YYYY-MM-DD')
+        })
       })
 
       /**
@@ -585,6 +609,27 @@ export default {
         decline: this.$helper.toCurrency({ value: minimumAmount, currencyCode: this.activeChartData.currency }),
         declineDate: this.$moment(minimumDate).format('L')
       })
+    },
+
+    getNearestBalanceDataItem (clickedDate) {
+      if (!this.balanceSeries || this.balanceSeries.isDisposed()) return null
+
+      const targetTs = +clickedDate
+      let nearest = null
+      let minDiff = Number.MAX_SAFE_INTEGER
+
+      this.balanceSeries.dataItems.each((item) => {
+        const dateX = item.dateX
+        if (!dateX) return
+
+        const diff = Math.abs(+dateX - targetTs)
+        if (diff < minDiff) {
+          minDiff = diff
+          nearest = item
+        }
+      })
+
+      return nearest
     }
   }
 }
