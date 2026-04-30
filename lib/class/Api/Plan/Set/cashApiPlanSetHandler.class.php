@@ -28,7 +28,11 @@ class cashApiPlanSetHandler implements cashApiHandlerInterface
             $model->deleteById($request->id);
             return [];
         } else {
-            $model->updateById($request->id, $plan);
+            if ($model->getById($request->id)) {
+                $model->updateById($request->id, $plan);
+            } else {
+                throw new kmwaNotFoundException(_w('Plan not found'));
+            }
         }
 
         $plans = (new cashApiPlanGetHandler)->handle($request);
