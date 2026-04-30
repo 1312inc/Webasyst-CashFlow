@@ -13,6 +13,7 @@ const selectedCurrency = ref('')
 const currentMonthFirstDay = ref(new Date().toISOString().slice(0, 7) + '-01')
 const monthPickerEl = ref(null)
 let monthPicker = null
+
 const isTotalPlanMode = computed(() => currentMonthFirstDay.value == null)
 const currencies = computed(() => {
   return breakdownData.value.map(item => item.currency).filter(Boolean)
@@ -65,6 +66,24 @@ const balanceDeviationAmount = computed(() => balanceFactTotal.value - balancePl
 const balanceDeviationPercent = computed(() => {
   if (!balancePlanTotal.value) return ''
   return `${((balanceDeviationAmount.value / balancePlanTotal.value) * 100).toFixed(2)}%`
+})
+
+const childrenByParentId = computed(() => {
+  const result = {}
+  for (const category of allCategories.value) {
+    const parentId = category.parent_category_id
+    if (!parentId) continue
+    if (!result[parentId]) result[parentId] = []
+    result[parentId].push(category.id)
+  }
+  return result
+})
+const ghostAmounts = computed(() => {
+  const result = new Set()
+  for (const category of allCategories.value) {
+    getComputedPlanAmount(category.id, result)
+  }
+  return result
 })
 
 onMounted(() => {
@@ -157,8 +176,39 @@ async function requestBreakdownData () {
   return Array.isArray(data) ? data : []
 }
 
+function getOwnPlanAmount (categoryId) {
+  const amount = planByCategoryId.value[categoryId]?.amount
+  if (amount === null || typeof amount === 'undefined' || amount === '') return null
+  return Number(amount)
+}
+
+function getComputedPlanAmount (categoryId, ghostSet, visited = new Set()) {
+  if (visited.has(categoryId)) return null
+  visited.add(categoryId)
+
+  const ownAmount = getOwnPlanAmount(categoryId)
+  if (ownAmount !== null) return ownAmount
+
+  const children = childrenByParentId.value[categoryId] || []
+  if (!children.length) return null
+
+  let sum = 0
+  let hasChildAmount = false
+  for (const childId of children) {
+    const childAmount = getComputedPlanAmount(childId, ghostSet, new Set(visited))
+    if (childAmount === null) continue
+    hasChildAmount = true
+    sum += childAmount
+  }
+
+  if (!hasChildAmount) return null
+  if (ghostSet) ghostSet.add(categoryId)
+  return sum
+}
+
 function getPlanAmount (categoryId) {
-  return planByCategoryId.value[categoryId]?.amount ?? ''
+  const amount = getComputedPlanAmount(categoryId, null)
+  return amount === null ? '' : amount
 }
 
 function getFactAmount (categoryId) {
@@ -208,16 +258,22 @@ async function updatePlanAmount (categoryId, amount) {
 
   try {
     const { data } = await api.post('cash.plan.set', payload)
-    const savedPlan = data && typeof data === 'object'
-      ? data
-      : { ...payload, amount_fact: existingPlan?.amount_fact ?? 0 }
-    const index = planData.value.findIndex(plan =>
-      plan.category_id === categoryId && plan.currency === currency
-    )
-    if (index > -1) {
-      planData.value.splice(index, 1, savedPlan)
+    if (data && typeof data === 'object') {
+      const index = planData.value.findIndex(plan =>
+        plan.id === data.id
+      )
+      if (index > -1) {
+        planData.value.splice(index, 1, data)
+      } else {
+        planData.value.push(data)
+      }
     } else {
-      planData.value.push(savedPlan)
+      const index = planData.value.findIndex(plan =>
+        plan.id === payload.id
+      )
+      if (index > -1) {
+        planData.value.splice(index, 1)
+      }
     }
   } catch (_) {}
 }
@@ -297,7 +353,10 @@ async function updatePlanAmount (categoryId, amount) {
               </router-link>
             </div>
           </td>
-          <td class="amount-cell">
+          <td
+            class="amount-cell"
+            :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
+          >
             <input
               class="amount-input"
               type="number"
@@ -310,13 +369,13 @@ async function updatePlanAmount (categoryId, amount) {
           </td>
           <td
             class="amount-cell"
-            :class="getDeviationClass(category.id)"
+            :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
           >
             {{ getDeviationAmount(category.id) || '–' }}
           </td>
           <td
             class="amount-cell"
-            :class="getDeviationClass(category.id)"
+            :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
           >
             {{ getDeviationPercent(category.id) || '-' }}
           </td>
@@ -365,7 +424,10 @@ async function updatePlanAmount (categoryId, amount) {
               </router-link>
             </div>
           </td>
-          <td class="amount-cell">
+          <td
+            class="amount-cell"
+            :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
+          >
             <input
               class="amount-input"
               type="number"
@@ -378,13 +440,13 @@ async function updatePlanAmount (categoryId, amount) {
           </td>
           <td
             class="amount-cell"
-            :class="getDeviationClass(category.id)"
+            :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
           >
             {{ getDeviationAmount(category.id) || '–' }}
           </td>
           <td
             class="amount-cell"
-            :class="getDeviationClass(category.id)"
+            :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
           >
             {{ getDeviationPercent(category.id) || '-' }}
           </td>
@@ -487,14 +549,31 @@ async function updatePlanAmount (categoryId, amount) {
 
 .amount-input {
   width: 100%;
+  background: transparent !important;
+  border-width: 0px !important;
+}
+
+.is-ghost-amount .amount-input {
+  color: #CCCCCC !important;
+}
+
+.amount-input:hover {
+  background-color: var(--highlighted-yellow) !important;
 }
 
 .is-negative {
   color: #c0392b;
 }
+.is-negative.is-ghost-amount {
+  opacity: 0.5;
+}
 
 .is-positive {
   color: #1f9d55;
+}
+
+.is-positive.is-ghost-amount {
+  opacity: 0.5;
 }
 
 </style>
