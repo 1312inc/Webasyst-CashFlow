@@ -42,7 +42,7 @@ class cashPlanSetMethod extends cashApiAbstractMethod
             return new cashApiErrorResponse('invalid_param', 'Unknown category');
         }
 
-        $request->amount = abs($request->amount);
+        $request->amount = abs((float) $request->amount);
         if (cashCategory::TYPE_EXPENSE === $category->getType()) {
             $request->amount = -$request->amount;
         }
