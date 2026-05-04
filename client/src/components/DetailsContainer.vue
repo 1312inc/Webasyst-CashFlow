@@ -7,6 +7,7 @@ import { computed } from 'vue'
 
 const route = useRoute()
 const isCategoryPage = computed(() => route.name === 'Category')
+const isCurrencyPage = computed(() => route.name === 'Currency')
 
 </script>
 
@@ -20,6 +21,6 @@ const isCategoryPage = computed(() => route.name === 'Category')
         <DetailsDashboard />
       </BlankBox>
     </div>
-    <DetailsContainerTarget />
+    <DetailsContainerTarget v-if="isCurrencyPage" />
   </div>
 </template>
