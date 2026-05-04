@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { waitForTippy } from '@/utils/waiters'
 
 const floating = ref(null)
 const reference = ref(null)
@@ -19,16 +20,6 @@ onMounted(async () => {
     offset: [0, 0]
   })
 })
-
-function waitForTippy () {
-  return new Promise((resolve) => {
-    const check = () => {
-      if (window.tippy) resolve(window.tippy)
-      else setTimeout(check, 100)
-    }
-    check()
-  })
-}
 
 </script>
 

@@ -16,6 +16,7 @@ import WAtippy from './plugins/tippy'
 import VueMeta from 'vue-meta'
 import eventBus from './plugins/eventBus'
 import { Plugin } from 'vue-fragment'
+import { triggerTooltip } from './runtime/waTooltipWarmup'
 import './assets/styles/styles.css'
 
 import * as Sentry from '@sentry/vue'
@@ -34,7 +35,7 @@ Vue.use(WAtippy)
 Vue.use(VueMeta)
 Vue.use(eventBus)
 Vue.use(Plugin)
-
+triggerTooltip()
 const contentSelector = '#app-content'
 const sidebarSelector = '#app-sidebar'
 
