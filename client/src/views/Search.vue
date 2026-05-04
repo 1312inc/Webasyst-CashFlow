@@ -16,6 +16,7 @@
           :grouping="false"
           :visible-select-checkbox="true"
           :show-founded-count="true"
+          :hide-interval-labels="true"
         />
       </div>
       <AmChartPieStickyContainer :selected-only-mode="true" />

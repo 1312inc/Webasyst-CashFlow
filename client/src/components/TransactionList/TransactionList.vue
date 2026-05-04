@@ -22,7 +22,7 @@
       </BlankBox>
 
       <div
-        v-if="firstStreamGroupIntervalLabel"
+        v-if="firstStreamGroupIntervalLabel && !hideIntervalLabels"
         class="align-center small gray custom-pb-24"
       >
         {{ firstStreamGroupIntervalLabel }}
@@ -33,7 +33,7 @@
         :key="group.name"
       >
         <div
-          v-if="streamGroupIntervalLabels[index]"
+          v-if="streamGroupIntervalLabels[index] && !hideIntervalLabels"
           class="align-center small gray custom-pb-24"
         >
           {{ streamGroupIntervalLabels[index] }}
@@ -121,6 +121,10 @@ export default {
       default: false
     },
     showFoundedCount: {
+      type: Boolean,
+      default: false
+    },
+    hideIntervalLabels: {
       type: Boolean,
       default: false
     }
