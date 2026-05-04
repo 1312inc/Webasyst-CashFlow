@@ -5,6 +5,9 @@
  */
 class cashAutomationAction extends cashViewAction
 {
+    private $plugin_conditions = [];
+    private $plugin_actions = [];
+
     public function preExecute()
     {
         if (wa()->whichUI() === '2.0') {
@@ -16,7 +19,29 @@ class cashAutomationAction extends cashViewAction
 
     public function runAction($params = null)
     {
-        wa('shop');
+        /**
+         * @event backend_automation_view
+         * @since 4.0.0
+         *
+         * @return cashEvent
+         */
+        $event = new cashEvent(cashEventStorage::WA_BACKEND_AUTOMATION_VIEW);
+        $event_result = cash()->waDispatchEvent($event);
+
+        foreach ($event_result as $plugin_id => $_data) {
+            $plugin_id = preg_replace('#-plugin$#', '', $plugin_id);
+            if (isset($_data['conditions'])) {
+                foreach ($_data['conditions'] as $_condition_id => $_condition) {
+                    $this->plugin_conditions["{$plugin_id}_$_condition_id"] = $_condition;
+                }
+            }
+            if (isset($_data['actions'])) {
+                foreach ($_data['actions'] as $_action_id => $_action) {
+                    $this->plugin_actions["{$plugin_id}_$_action_id"] = $_action;
+                }
+            }
+        }
+
         $this->view->assign([
             'events'           => $this->getEvents(),
             'conditions'       => $this->getConditions(),
@@ -44,8 +69,9 @@ class cashAutomationAction extends cashViewAction
             'category_id' => ['name' => _w('Статья'), 'operators' => ['=', '!=']],
             'date'        => ['name' => _w('Дата операции'), 'operators' => ['<', '>']],
         ];
-        $plugin_conditions = [];
-        $conditions += $plugin_conditions;
+        if ($this->plugin_conditions) {
+            $conditions += $this->plugin_conditions;
+        }
 
         return $conditions;
     }
@@ -60,8 +86,9 @@ class cashAutomationAction extends cashViewAction
             'send_mail'          => _w('Отправить письмо'),
             'action_ss'          => _w('Сделать действие с заказом ШС'),
         ];
-        $plugin_actions = [];
-        $actions += $plugin_actions;
+        if ($this->plugin_actions) {
+            $actions += $this->plugin_actions;
+        }
 
         return $actions;
     }
@@ -69,15 +96,7 @@ class cashAutomationAction extends cashViewAction
     private function getRules()
     {
         $automation_model = new cashAutomationModel();
-        $rules = $automation_model->getRules();
 
-        foreach ($rules as &$_rule) {
-            if (isset($_rule['rule_data']['user_id'])) {
-                $user = new waContact($_rule['rule_data']['user_id']);
-                $_rule['rule_data']['user_name'] = waContactNameField::formatName($user);
-            }
-        }
-
-        return $rules;
+        return $automation_model->getRules();
     }
 }
