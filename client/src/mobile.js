@@ -12,6 +12,7 @@ import Errors from './plugins/errors'
 import VuePortal from '@linusborg/vue-simple-portal'
 import IsOnline from './plugins/isOnline'
 import VueMeta from 'vue-meta'
+import { triggerTooltip } from './runtime/waTooltipWarmup'
 import './assets/styles/styles.css'
 
 Vue.config.productionTip = false
@@ -25,7 +26,7 @@ Vue.use(Helpers)
 Vue.use(VuePortal)
 Vue.use(IsOnline)
 Vue.use(VueMeta)
-
+triggerTooltip()
 useDark({
   selector: 'html',
   attribute: 'data-theme',
