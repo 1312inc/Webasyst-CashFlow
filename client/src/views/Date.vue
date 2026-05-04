@@ -21,6 +21,7 @@
           </a>
           {{ $moment($route.params.date).format('LL') }}
         </h1>
+        <TransactionControls />
       </template>
     </ChartHeader>
     <div class="flexbox space-24">
@@ -40,12 +41,14 @@ import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
+import TransactionControls from '../components/TransactionControls.vue'
 
 export default {
   components: {
     ChartHeader,
     TransactionList,
-    AmChartPieStickyContainer
+    AmChartPieStickyContainer,
+    TransactionControls
   },
   mixins: [routerTransitionMixin],
 

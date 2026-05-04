@@ -154,7 +154,7 @@ export default {
     addTransaction (type) {
       this.$eventBus.emit('openAddTransactionModal', {
         type,
-        defaultDate: this.defaultDate
+        ...(this.$route.name === 'Date' ? { defaultDate: this.$route.params.date } : {})
       })
     },
 
