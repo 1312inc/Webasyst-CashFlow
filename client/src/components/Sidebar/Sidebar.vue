@@ -20,10 +20,11 @@
       class="sidebar-body hide-scrollbar"
     >
       <SearchField />
-      <Bricks />
 
       <!-- Widgets charts block -->
       <SidebarCurrencyWidgets />
+
+      <Bricks />
 
       <!-- Accounts list block -->
       <SidebarHeading updating-entity-name="Account">
