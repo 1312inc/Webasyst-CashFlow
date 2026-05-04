@@ -1,9 +1,12 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import flatpickr from 'flatpickr'
 import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect'
 import api from '@/plugins/api'
 import store from '@/store'
+import Modal from '@/components/Modal'
+import { appState } from '@/utils/appState'
 
 const incomeCategories = computed(() => store.getters['category/getByType']('income'))
 const expenseCategories = computed(() => store.getters['category/getByType']('expense'))
@@ -12,6 +15,8 @@ const breakdownData = ref([])
 const selectedCurrency = ref('')
 const currentMonthFirstDay = ref(new Date().toISOString().slice(0, 7) + '-01')
 const monthPickerEl = ref(null)
+const isFetching = ref(false)
+const openPremiumModal = ref(false)
 let monthPicker = null
 
 const isTotalPlanMode = computed(() => currentMonthFirstDay.value == null)
@@ -135,15 +140,20 @@ function getMonthRange () {
   return { from, to }
 }
 
+let fetchToken = 0
 async function fetchData () {
+  const token = ++fetchToken
+  isFetching.value = true
   try {
     if (!currentMonthFirstDay.value) {
       const nextPlanData = await requestPlanData()
+      if (token !== fetchToken) return
       planData.value = nextPlanData
       return
     }
 
     const [nextPlanData, nextBreakdownData] = await Promise.all([requestPlanData(), requestBreakdownData()])
+    if (token !== fetchToken) return
     planData.value = nextPlanData
     breakdownData.value = nextBreakdownData
 
@@ -151,7 +161,10 @@ async function fetchData () {
     if (!nextCurrencies.includes(selectedCurrency.value)) {
       selectedCurrency.value = nextCurrencies[0] || ''
     }
-  } catch (_) {}
+  } catch (_) {
+  } finally {
+    if (token === fetchToken) isFetching.value = false
+  }
 }
 
 async function requestPlanData () {
@@ -253,7 +266,7 @@ async function updatePlanAmount (categoryId, amount) {
     amount,
     category_id: categoryId,
     currency,
-    date: currentMonthFirstDay.value
+    date: isTotalPlanMode.value ? null : currentMonthFirstDay.value
   }
 
   try {
@@ -275,7 +288,16 @@ async function updatePlanAmount (categoryId, amount) {
         planData.value.splice(index, 1)
       }
     }
-  } catch (_) {}
+  } catch (e) {
+    if (e.response.status === 402) {
+      openPremiumModal.value = true
+    }
+  }
+}
+
+function onClickGoToPremium () {
+  openPremiumModal.value = false
+  window.location.href = `${appState.baseUrl}upgrade/`
 }
 </script>
 
@@ -313,6 +335,14 @@ async function updatePlanAmount (categoryId, amount) {
     </div>
 
     <h2>Income Categories</h2>
+
+    <div
+      v-if="!appState.isPremium"
+      class="alert info"
+    >
+      Эта фишка только в премиум!
+    </div>
+
     <table>
       <thead>
         <tr>
@@ -361,6 +391,7 @@ async function updatePlanAmount (categoryId, amount) {
               class="amount-input"
               type="number"
               :value="getPlanAmount(category.id)"
+              :disabled="isFetching"
               @change="updatePlanAmount(category.id, $event.target.value)"
             >
           </td>
@@ -432,6 +463,7 @@ async function updatePlanAmount (categoryId, amount) {
               class="amount-input"
               type="number"
               :value="getPlanAmount(category.id)"
+              :disabled="isFetching"
               @change="updatePlanAmount(category.id, $event.target.value)"
             >
           </td>
@@ -499,6 +531,30 @@ async function updatePlanAmount (categoryId, amount) {
         </tr>
       </tbody>
     </table>
+
+    <portal v-if="openPremiumModal">
+      <Modal @close="openPremiumModal = false">
+        <div class="dialog-body">
+          <div class="dialog-content">
+            это только в премиум"
+          </div>
+          <div class="dialog-footer">
+            <button
+              class="button"
+              @click="onClickGoToPremium"
+            >
+              Перейти
+            </button>
+            <button
+              class="button outlined light-gray"
+              @click="openPremiumModal = false"
+            >
+              Закрыть
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </portal>
   </div>
 </template>
 
@@ -545,11 +601,12 @@ async function updatePlanAmount (categoryId, amount) {
   width: 140px;
   max-width: 140px;
   min-width: 140px;
+  text-align: right;
 }
 
 .amount-input {
   width: 100%;
-  background: transparent !important;
+  background: var(--highlighted-yellow) !important;
   border-width: 0px !important;
 }
 
@@ -558,7 +615,7 @@ async function updatePlanAmount (categoryId, amount) {
 }
 
 .amount-input:hover {
-  background-color: var(--highlighted-yellow) !important;
+  opacity: .5;
 }
 
 .is-negative {

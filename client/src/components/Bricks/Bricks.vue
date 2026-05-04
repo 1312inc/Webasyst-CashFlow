@@ -22,7 +22,7 @@
       :class="{
         'selected': $route.name === 'Plan'
       }"
-      @click.prevent="() => { $router.push('/plan') }"
+      @click.prevent="() => { $router.push('/budget') }"
     >
       <div class="flexbox middle space-8">
         <span class="icon"><i class="fas fa-download" /></span>
