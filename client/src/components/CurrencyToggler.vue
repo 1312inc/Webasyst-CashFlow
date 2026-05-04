@@ -28,3 +28,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.toggle {
+  align-self: start;
+}
+</style>
