@@ -1,0 +1,64 @@
+{$condition = []}
+{$condition_key = '%%CONDITION_KEY%%'}
+{$rule_id = ifset($rule, 'id', '%%RULE_ID%%')}
+
+{if $rule && $rule.conditions}
+    {$condition_key = 0}
+    {$condition = ifset($rule, 'conditions', $condition_key, [])}
+{/if}
+
+<tr data-rule-id="{$rule_id}">
+    <td class="valign-top c-automation-sort-handle">
+        {** SORT **}
+        <i class="fas fa-grip-vertical text-light-gray cursor-pointer automation-rows-handle"></i>
+        <input type="hidden" name="rules[{$rule_id}][sort]" value="{$rule.sort|default:'0'|escape}" class="js-sort-rule">
+    </td>
+    <td class="valign-top">
+        {** EVENT **}
+        <div class="wa-select small">
+            <select name="rules[{$rule_id}][action_id]" class="bold">
+                {foreach $events as $_event_id => $_event}
+                <option value="{$_event_id}"{if $rule && $rule.action_id == $_event_id} selected{/if}>[`{$_event}`]</option>
+                {/foreach}
+            </select>
+        </div>
+    </td>
+    <td class="valign-top">
+        {** CONDITION **}
+        {$condition_id = ifset($condition, 'condition_id', '')}
+        {$condition_operator = ifset($condition, 'operator', '')}
+        <div class="wa-select smaller">
+            <select class="c-condition-selector" name="rules[{$rule_id}][conditions][{$condition_key}][condition_id]">
+            {foreach $conditions as $_condition_id => $_condition}
+                <option value="{$_condition_id|escape}"{if $_condition_id == $condition_id} selected{/if}>{$_condition.name|escape}</option>
+            {/foreach}
+            </select>
+        </div>
+        {foreach $conditions as $_condition_id => $_condition}
+            {if $_condition.operators}
+            <div class="wa-select smaller{if $_condition_id != $condition_id} hidden{/if}">
+                <select data-condition-id="{$_condition_id|escape}" name="rules[{$rule_id}][conditions][{$condition_key}][operator]"{if $_condition_id != $condition_id} disabled{/if}>
+                    {foreach $_condition.operators as $_operator}
+                    <option value="{$_operator}"{if $_operator == $condition_operator} selected{/if}>{$_operator|escape}</option>
+                    {/foreach}
+                </select>
+            </div>
+            {/if}
+        {/foreach}
+        <input type="text" name="rules[{$rule_id}][conditions][{$condition_key}][value]" class="smaller{if !isset($condition.value)} hidden{/if}" value="{$condition.value|default:''|escape}" placeholder="[`Значение`]">
+    </td>
+    <td class="valign-top">
+        {** ACTION **}
+        {$action = ifset($rule, 'rule_data', 'action', '')}
+        <div class="wa-select small">
+            <select name="rules[{$rule_id}][rule_data][action]" class="c-action-selector">
+                {foreach $actions as $_action_id => $_action}
+                <option value="{$_action_id|escape}"{if $_action_id == $action} selected{/if}>{$_action|escape}</option>
+                {/foreach}
+            </select>
+        </div>
+    </td>
+    <td class="valign-top">
+        <a href="javascript:void(0);" class="c-delete-rule text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
+    </td>
+</tr>
