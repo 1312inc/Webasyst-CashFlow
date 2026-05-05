@@ -289,7 +289,7 @@ async function updatePlanAmount (categoryId, amount) {
       }
     }
   } catch (e) {
-    if (e.response.status === 402) {
+    if (e.response?.status === 402) {
       openPremiumModal.value = true
     }
   }
