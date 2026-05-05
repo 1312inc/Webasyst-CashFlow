@@ -36,8 +36,19 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
         }
 
         if ($children_help_parents) {
+            $this->getCategory(0);
             foreach ($data as $_dt) {
-                if (!empty($_dt['category_parent_id']) && !empty($data[$_dt['category_parent_id']])) {
+                if (!empty($_dt['category_parent_id'])) {
+                    if (empty($data[$_dt['category_parent_id']])) {
+                        $_c = $this->getCategory($_dt['category_parent_id']);
+                        $data[$_dt['category_parent_id']] = [
+                            'amount' => 0,
+                            'currency' => $_dt['currency'],
+                            'detailed' => $_dt['category_parent_id'],
+                            'category_parent_id' => null,
+                            'transaction_type' => $_c->getType().'|'.($_c->getIsProfit() ? 1 : 0),
+                        ];
+                    }
                     if (empty($data[$_dt['category_parent_id']]['children_amount'])) {
                         $data[$_dt['category_parent_id']]['children_amount'] = $_dt['amount'];
                     } else {
