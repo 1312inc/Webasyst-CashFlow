@@ -41,34 +41,35 @@
           :account="account"
         />
       </SortableList>
-      <div class="heading">
-        <span>Скрытые счета ({{ accountsSandbox.length }})</span>
-        <a
-          href="#"
-          class="count action"
-          @click.prevent="showSandbox = !showSandbox"
+      <template v-if="accountsSandbox.length">
+        <div class="heading">
+          <span>Скрытые счета ({{ accountsSandbox.length }})</span>
+          <a
+            href="#"
+            class="count action"
+            @click.prevent="showSandbox = !showSandbox"
+          >
+            <span v-show="showSandbox">
+              <i class="fas fa-chevron-up" />
+            </span>
+            <span v-show="!showSandbox">
+              <i class="fas fa-chevron-down" />
+            </span>
+          </a>
+        </div>
+        <SortableList
+          v-if="showSandbox"
+          :items="accountsSandbox"
+          sorting-target="sandbox"
+          :group="{name: 'sandbox', pull: false}"
         >
-          <span v-show="showSandbox">
-            <i class="fas fa-chevron-up" />
-          </span>
-          <span v-show="!showSandbox">
-            <i class="fas fa-chevron-down" />
-          </span>
-        </a>
-      </div>
-      <SortableList
-        v-if="showSandbox"
-        :items="accountsSandbox"
-        sorting-target="sandbox"
-        :group="{name: 'sandbox', pull: false}"
-      >
-        <SortableItemAccount
-          v-for="sandbox in accountsSandbox"
-          :key="sandbox.id"
-          :account="sandbox"
-        />
-      </SortableList>
-
+          <SortableItemAccount
+            v-for="sandbox in accountsSandbox"
+            :key="sandbox.id"
+            :account="sandbox"
+          />
+        </SortableList>
+      </template>
       <Toggler>
         <template #categories>
           <SidebarCategories />
