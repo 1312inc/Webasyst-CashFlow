@@ -265,12 +265,7 @@ final class cashTransactionFilterService
     private function makeImaginaryFilter(cashSelectQueryParts $selectQueryParts, $excludeSandboxOnly = false): void
     {
         if ($excludeSandboxOnly)
-            $selectQueryParts->addAndWhere('
-                CASE
-                    WHEN ca.is_imaginary = -1 THEN NULL
-                    ELSE true
-                END
-            ');
+            $selectQueryParts->addAndWhere('IF (ca.is_imaginary = -1, NULL, true)');
         else
             $selectQueryParts->addAndWhere('
                 CASE
