@@ -4,19 +4,6 @@
     <BrickTransactions />
     <BrickCalendar />
     <a
-      v-if="$permissions.canSeeReport"
-      :href="`${$helper.baseUrl}report/dds/`"
-      class="brick custom-pt-8"
-      :class="{
-        'selected': $route.path.includes('/report/')
-      }"
-    >
-      <div class="flexbox middle space-8">
-        <span class="icon"><i class="fas fa-chart-pie" /></span>
-        <span>{{ $t("reports") }}</span>
-      </div>
-    </a>
-    <a
       :href="`${$helper.baseUrl}plan/`"
       class="brick custom-pt-8"
       :class="{
@@ -25,8 +12,21 @@
       @click.prevent="() => { $router.push('/budget') }"
     >
       <div class="flexbox middle space-8">
-        <span class="icon"><i class="fas fa-download" /></span>
+        <span class="icon"><i class="fas fa-tachometer-alt text-green" /></span>
         <span>{{ $t("plan") }}</span>
+      </div>
+    </a>
+    <a
+      v-if="$permissions.canSeeReport"
+      :href="`${$helper.baseUrl}report/dds/`"
+      class="brick custom-pt-8"
+      :class="{
+        'selected': $route.path.includes('/report/')
+      }"
+    >
+      <div class="flexbox middle space-8">
+        <span class="icon"><i class="fas fa-chart-pie text-pink" /></span>
+        <span>{{ $t("reports") }}</span>
       </div>
     </a>
   </div>

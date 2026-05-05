@@ -4,9 +4,7 @@
     :class="{ selected: $route.name === 'Calendar' }"
     class="brick"
   >
-    <div class="flexbox middle space-8">
-      <span class="icon"><i class="far fa-calendar-alt" /></span>
-      {{ $t("calendar") }}
-    </div>
+    <span class="icon"><i class="far fa-calendar-alt" /></span>
+    {{ $t("calendar") }}
   </router-link>
 </template>

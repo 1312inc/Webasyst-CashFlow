@@ -4,17 +4,15 @@
     :class="{ selected: $route.name === 'Transactions' }"
     class="brick"
   >
-    <div class="flexbox middle space-8">
-      <span
-        v-if="count > 0"
-        :class="{ badge: todayCount.onbadge > 0 }"
-        class="count"
-      >{{ count }}</span>
-      <span
-        class="icon"
-      ><i class="fas fa-list" /></span>
-      {{ $t("transactions") }}
-    </div>
+    <span
+      v-if="count > 0"
+      :class="{ badge: todayCount.onbadge > 0 }"
+      class="count"
+    >{{ count }}</span>
+    <span
+      class="icon"
+    ><i class="fas fa-list" /></span>
+    {{ $t("transactions") }}
   </router-link>
 </template>
 
@@ -36,12 +34,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.count {
-  position: absolute;
-  right: 0;
-  top: 0;
-  transform: translate(50%, -50%);
-}
-</style>

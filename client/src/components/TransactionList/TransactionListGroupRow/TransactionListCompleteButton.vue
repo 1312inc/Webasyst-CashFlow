@@ -20,7 +20,7 @@
         >
           <i class="fas fa-check text-red" />
           <span>
-            <span class="semibold black">{{ $t("processToday") }}</span>
+            <span class="semibold black nowrap">{{ $t("processToday") }}</span>
             <p class="hint custom-mt-4">
               {{
                 $t("amountOnDate", {
@@ -42,7 +42,7 @@
         >
           <i class="fas fa-check text-red" />
           <span>
-            <span class="semibold black">{{ $t("Process") }} {{ $moment(transaction.date).format("LL") }}</span>
+            <span class="semibold black nowrap">{{ $t("Process") }} {{ $moment(transaction.date).format("LL") }}</span>
             <p class="hint custom-mt-4">
               {{
                 $t("amountOnDate", {
@@ -62,7 +62,7 @@
           class="custom-p-8"
           @click.prevent.stop="$emit('processEdit')"
         >
-          <i class="fas fa-pencil-alt" /><span class="semibold black">{{ $t("processEdits") }}</span></a>
+          <i class="fas fa-pencil-alt" /><span class="semibold black nowrap">{{ $t("processEdits") }}</span></a>
       </li>
     </ul>
   </DropdownWaFloating>
