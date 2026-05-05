@@ -13,25 +13,25 @@ class cashApiPlanSetHandler implements cashApiHandlerInterface
      */
     public function handle($request)
     {
-        $plan = [
+        $data = [
             'currency'    => $request->currency,
             'account_id'  => $request->account_id,
             'category_id' => $request->category_id,
             'month'       => ($request->date ? date('Y-m', strtotime($request->date)).'-01' : null),
-            'amount'      => $request->amount,
         ];
 
         $model = cash()->getModel('cashPlan');
-        if (empty($request->id)) {
-            $request->id = $model->insert($plan);
-        } elseif (empty($request->amount)) {
-            $model->deleteById($request->id);
+
+        if (empty($request->amount)) {
+            $model->deleteByField($data);
             return [];
+        } elseif ($plan = $model->getByField($data)) {
+            $model->updateByField($plan, ['amount' => $request->amount]);
         } else {
-            if ($model->getById($request->id)) {
-                $model->updateById($request->id, $plan);
-            } else {
-                throw new kmwaNotFoundException(_w('Plan not found'));
+            $data['amount'] = $request->amount;
+            $id = $model->insert($data);
+            if (!$id) {
+                throw new kmwaNotFoundException(_w('Plan has not been saved'));
             }
         }
 
