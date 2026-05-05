@@ -1598,8 +1598,6 @@ paths:
                 items:
                   type: object
                   properties:
-                    id:
-                      type: integer
                     currency:
                       type: string
                     account_id:
@@ -1634,10 +1632,6 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: integer
-                  default: null
-                  description: ID плана (отсутствие = добавление нового плана)
                 amount:
                   type: number
                   default: 0
@@ -1668,8 +1662,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  id:
-                    type: integer
                   currency:
                     type: string
                   account_id:
