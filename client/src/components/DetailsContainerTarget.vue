@@ -15,6 +15,12 @@ const route = useRoute()
 const activeCurrencyParams = computed(() => {
   if (route.name === 'Account') return { account_id: route.params.id }
   if (route.name === 'Currency') return { currency: route.params.id }
+  if (route.name === 'Category') {
+    return {
+      category_id: route.params.id,
+      currency: store.getters['transaction/activeCurrencyCode']
+    }
+  }
   return {}
 })
 
@@ -212,7 +218,7 @@ function onCategoryChange (id) {
           </template>
 
           <div
-            v-if="categories.length"
+            v-if="categories.length > 1"
             class="wa-select small solid width-100"
           >
             <select @change="(event) => { onCategoryChange(event.target.value) }">
