@@ -31,14 +31,41 @@
         {{ $t("accounts") }}
       </SidebarHeading>
       <SortableList
-        :items="accounts"
+        :items="accountWithoutSandbox"
         sorting-target="account"
         :group="{name: 'accounts', pull: false}"
       >
         <SortableItemAccount
-          v-for="account in accounts"
+          v-for="account in accountWithoutSandbox"
           :key="account.id"
           :account="account"
+        />
+      </SortableList>
+      <div class="heading">
+        <span>Скрытые счета</span>
+        <a
+          href="#"
+          class="count action"
+          @click.prevent="showSandbox = !showSandbox"
+        >
+          <span v-show="showSandbox">
+            <i class="fas fa-chevron-up" />
+          </span>
+          <span v-show="!showSandbox">
+            <i class="fas fa-chevron-down" />
+          </span>
+        </a>
+      </div>
+      <SortableList
+        v-if="showSandbox"
+        :items="accountsSandbox"
+        sorting-target="sandbox"
+        :group="{name: 'sandbox', pull: false}"
+      >
+        <SortableItemAccount
+          v-for="sandbox in accountsSandbox"
+          :key="sandbox.id"
+          :account="sandbox"
         />
       </SortableList>
 
@@ -116,7 +143,8 @@ export default {
 
   data () {
     return {
-      mobileMenuOpen: false
+      mobileMenuOpen: false,
+      showSandbox: false
     }
   },
 
@@ -129,6 +157,14 @@ export default {
 
     categoriesTransfer () {
       return this.categoriesByType('transfer')
+    },
+
+    accountsSandbox () {
+      return this.accounts.filter(account => account.is_imaginary === -1)
+    },
+
+    accountWithoutSandbox () {
+      return this.accounts.filter(account => account.is_imaginary !== -1)
     }
   },
 
