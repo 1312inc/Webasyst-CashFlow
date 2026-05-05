@@ -42,7 +42,7 @@
         />
       </SortableList>
       <div class="heading">
-        <span>Скрытые счета</span>
+        <span>Скрытые счета ({{ accountsSandbox.length }})</span>
         <a
           href="#"
           class="count action"
