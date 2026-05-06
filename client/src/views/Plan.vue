@@ -371,10 +371,25 @@ function onClickGoToPremium () {
             :class="{ 'is-child-category': category.parent_category_id }"
           >
             <div class="flexbox middle">
-              <i
-                class="icon rounded"
-                :style="{ backgroundColor: category.color }"
-              />
+              <span
+                v-if="category.glyph"
+                :key="category.color"
+                class="icon"
+              >
+                <i
+                  :class="category.glyph"
+                  :style="`color:${category.color};`"
+                />
+              </span>
+              <span
+                v-else
+                class="icon"
+              >
+                <i
+                  class="rounded"
+                  :style="`background-color:${category.color};`"
+                />
+              </span>
               <router-link
                 class="category-name-link"
                 :to="{ name: 'Category', params: { id: category.id } }"
@@ -443,10 +458,25 @@ function onClickGoToPremium () {
             :class="{ 'is-child-category': category.parent_category_id }"
           >
             <div class="flexbox middle">
-              <i
-                class="icon rounded"
-                :style="{ backgroundColor: category.color }"
-              />
+              <span
+                v-if="category.glyph"
+                :key="category.color"
+                class="icon"
+              >
+                <i
+                  :class="category.glyph"
+                  :style="`color:${category.color};`"
+                />
+              </span>
+              <span
+                v-else
+                class="icon"
+              >
+                <i
+                  class="rounded"
+                  :style="`background-color:${category.color};`"
+                />
+              </span>
               <router-link
                 class="category-name-link"
                 :to="{ name: 'Category', params: { id: category.id } }"
@@ -575,11 +605,11 @@ function onClickGoToPremium () {
   font-weight: 600;
 }
 
-.icon.rounded {
+.icon {
   margin-right: 6px;
 }
 
-.is-child-category .icon.rounded {
+.is-child-category .icon {
   margin-left: 12px;
 }
 
