@@ -1598,6 +1598,8 @@ paths:
                 items:
                   type: object
                   properties:
+                    id:
+                      type: integer
                     currency:
                       type: string
                     account_id:

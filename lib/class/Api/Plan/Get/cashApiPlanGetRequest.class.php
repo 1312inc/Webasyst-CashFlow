@@ -8,6 +8,11 @@ final class cashApiPlanGetRequest
     /**
      * @var int
      */
+    public $id;
+
+    /**
+     * @var int
+     */
     public $category_id;
 
     /**
