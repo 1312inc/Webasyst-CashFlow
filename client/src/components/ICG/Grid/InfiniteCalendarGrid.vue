@@ -112,6 +112,30 @@ const itemsMap = computed(() => {
   }
   return map
 })
+const monthTotals = computed(() => {
+  const totals = {
+    income: 0,
+    expense: 0,
+    profit: 0
+  }
+
+  for (const item of filteredItems.value) {
+    const fieldContent = item[props.fieldWithDate]
+    if (!fieldContent) continue
+    const date = dayjs(fieldContent)
+    if (!date.isValid() || !date.isSame(activeMonth.value, 'month')) continue
+
+    if (Array.isArray(item.data)) {
+      for (const row of item.data) {
+        totals.income += Number(row.amountIncome) || 0
+        totals.expense += Number(row.amountExpense) || 0
+        totals.profit += Number(row.amountProfit) || 0
+      }
+    }
+  }
+
+  return totals
+})
 
 watch(daysInCalendar, () => {
   const middleDays = daysInCalendar.value.slice(42, 84)
@@ -218,7 +242,7 @@ watch(daysInCalendar, () => {
           }"
           :style="{ height: `${cellHeight}px` }"
         >
-          <slot v-bind="{ date, items: itemsMap[date.localeDate] }" />
+          <slot v-bind="{ date, items: itemsMap[date.localeDate], monthTotals }" />
         </div>
       </div>
     </div>

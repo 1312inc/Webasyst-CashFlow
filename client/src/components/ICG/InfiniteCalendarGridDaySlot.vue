@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { locale } from '@/plugins/locale'
 import { emitter } from '@/plugins/eventBus'
 import InfiniteCalendarGridDaySlotItem from './InfiniteCalendarGridDaySlotItem.vue'
@@ -21,11 +21,52 @@ const props = defineProps({
   mode: {
     type: String,
     default: 'summary'
+  },
+  isCurrentMonth: {
+    type: Boolean,
+    default: false
+  },
+  monthTotals: {
+    type: Object,
+    default: () => ({
+      income: 0,
+      expense: 0,
+      profit: 0
+    })
   }
 })
 
 const router = useRouter()
 const dayRef = ref()
+const chartKeys = ['income', 'expense', 'profit']
+
+const dayTotals = computed(() => {
+  const totals = {
+    income: 0,
+    expense: 0,
+    profit: 0
+  }
+  if (props.mode !== 'summary') return totals
+  for (const item of props.data) {
+    if (!Array.isArray(item.data)) continue
+    for (const row of item.data) {
+      totals.income += Number(row.amountIncome) || 0
+      totals.expense += Number(row.amountExpense) || 0
+      totals.profit += Number(row.amountProfit) || 0
+    }
+  }
+  return totals
+})
+
+const chartCircles = computed(() => {
+  return chartKeys.map((key) => {
+    const monthValue = Number(props.monthTotals?.[key]) || 0
+    const dayValue = Number(dayTotals.value[key]) || 0
+    const ratio = monthValue > 0 ? Math.min(1, dayValue / monthValue) : 0
+    const size = Math.round(6 + (ratio * 16))
+    return { key, ratio, size }
+  }).filter(c => c.ratio > 0)
+})
 
 onMounted(() => {
   handleOnTransactionDrop()
@@ -92,6 +133,18 @@ function onClick (e) {
       {{ date.getDate() }} <span v-if="date.getDate() === 1">{{ getMonthShort(date) }}</span>
     </div>
     <div>
+      <div
+        v-if="props.mode === 'summary' && props.isCurrentMonth && chartCircles.length"
+        class="icg-charts"
+      >
+        <span
+          v-for="circle in chartCircles"
+          :key="circle.key"
+          class="icg-chart-circle"
+          :class="`icg-chart-circle--${circle.key}`"
+          :style="{ width: `${circle.size}px`, height: `${circle.size}px` }"
+        />
+      </div>
       <template v-if="props.mode === 'operations'">
         <InfiniteCalendarGridDaySlotItem
           v-for="transaction in props.data"
@@ -159,5 +212,30 @@ function onClick (e) {
   :hover>& {
     display: block;
   }
+}
+
+.icg-charts {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 10px;
+  margin-bottom: 6px;
+}
+
+.icg-chart-circle {
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.icg-chart-circle--income {
+  background: var(--green);
+}
+
+.icg-chart-circle--expense {
+  background: var(--red);
+}
+
+.icg-chart-circle--profit {
+  background: var(--blue);
 }
 </style>

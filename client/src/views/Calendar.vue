@@ -10,11 +10,13 @@
     @changeInterval="handleMonthChange"
     @changeMode="handleChangeMode"
   >
-    <template #default="{ date, items }">
+    <template #default="{ date, items, monthTotals }">
       <InfiniteCalendarGridDaySlot
         :date="new Date(date.timestamp)"
         :data="items"
         :mode="mode"
+        :is-current-month="date.isCurrentMonth"
+        :month-totals="monthTotals"
       />
     </template>
   </InfiniteCalendarGrid>
