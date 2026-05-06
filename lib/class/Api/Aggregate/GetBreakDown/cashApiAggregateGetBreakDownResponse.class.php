@@ -23,6 +23,7 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
         $categoryTypeMapping = [
             'expense|1' => 'profit',
             'expense|0' => 'expense',
+            'income|0' => 'income',
             'income' => 'income',
         ];
 
