@@ -31,54 +31,27 @@
         {{ $t("accounts") }}
       </SidebarHeading>
       <SortableList
-        :items="accountWithoutSandbox"
+        :items="accountsList"
         sorting-target="account"
         :group="{name: 'accounts', pull: false}"
       >
         <SortableItemAccount
-          v-for="account in accountWithoutSandbox"
+          v-for="account in accountsList"
           :key="account.id"
           :account="account"
         />
       </SortableList>
-      <template v-if="accountsSandbox.length">
-        <div
-          class="flexbox middle custom-mx-12"
-          style="cursor: pointer;"
-          @click.prevent="showSandbox = !showSandbox"
-        >
-          <div class="wide flexbox middle space-8">
-            <div>
-              <span
-                v-show="showSandbox"
-                class="text-light-gray"
-              >
-                <i class="fas fa-chevron-up" />
-              </span>
-              <span
-                v-show="!showSandbox"
-                class="text-light-gray"
-              >
-                <i class="fas fa-chevron-down" />
-              </span>
-            </div>
-            <span class="small">{{ $t("hiddenAccounts") }}</span>
-          </div>
-          <span class="small badge light-gray">{{ accountsSandbox.length }}</span>
-        </div>
-        <SortableList
-          v-if="showSandbox"
-          :items="accountsSandbox"
-          sorting-target="account"
-          :group="{name: 'sandbox', pull: false}"
-        >
-          <SortableItemAccount
-            v-for="sandbox in accountsSandbox"
-            :key="sandbox.id"
-            :account="sandbox"
-          />
-        </SortableList>
-      </template>
+
+      <div
+        v-if="accountsSandbox.length && !showSandbox"
+        class="flexbox middle custom-mx-12"
+        style="cursor: pointer;"
+        @click.prevent="showSandbox = !showSandbox"
+      >
+        <span class="small wide">{{ $t("hiddenAccounts") }}</span>
+        <span class="small badge light-gray">{{ accountsSandbox.length }}</span>
+      </div>
+
       <Toggler>
         <template #categories>
           <SidebarCategories />
@@ -175,7 +148,12 @@ export default {
 
     accountWithoutSandbox () {
       return this.accounts.filter(account => account.is_imaginary !== -1)
+    },
+
+    accountsList () {
+      return this.showSandbox ? this.accounts : this.accountWithoutSandbox
     }
+
   },
 
   watch: {
