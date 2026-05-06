@@ -343,7 +343,7 @@ function onClickGoToPremium () {
       Эта фишка только в премиум!
     </div>
 
-    <table>
+    <table class="bigdata">
       <thead>
         <tr>
           <th />
@@ -403,7 +403,7 @@ function onClickGoToPremium () {
             :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
           >
             <input
-              class="amount-input"
+              class="amount-input bold"
               type="number"
               :value="getPlanAmount(category.id)"
               :disabled="isFetching"
@@ -411,19 +411,19 @@ function onClickGoToPremium () {
             >
           </td>
           <td class="amount-cell">
-            {{ getFactAmount(category.id) || '–' }}
+            {{ getFactAmount(category.id) || '—' }}
+          </td>
+          <td
+            class="amount-cell bold"
+            :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
+          >
+            {{ getDeviationAmount(category.id) || '—' }}
           </td>
           <td
             class="amount-cell"
             :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
           >
-            {{ getDeviationAmount(category.id) || '–' }}
-          </td>
-          <td
-            class="amount-cell"
-            :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
-          >
-            {{ getDeviationPercent(category.id) || '-' }}
+            {{ getDeviationPercent(category.id) || '—' }}
           </td>
         </tr>
       </tbody>
@@ -498,19 +498,19 @@ function onClickGoToPremium () {
             >
           </td>
           <td class="amount-cell">
-            {{ getFactAmount(category.id) || '–' }}
+            {{ getFactAmount(category.id) || '—' }}
           </td>
           <td
             class="amount-cell"
             :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
           >
-            {{ getDeviationAmount(category.id) || '–' }}
+            {{ getDeviationAmount(category.id) || '—' }}
           </td>
           <td
             class="amount-cell"
             :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
           >
-            {{ getDeviationPercent(category.id) || '-' }}
+            {{ getDeviationPercent(category.id) || '—' }}
           </td>
         </tr>
       </tbody>
@@ -541,22 +541,22 @@ function onClickGoToPremium () {
             Сальдо
           </td>
           <td class="amount-cell">
-            {{ balancePlanTotal || '–' }}
+            {{ balancePlanTotal || '—' }}
           </td>
           <td class="amount-cell">
-            {{ balanceFactTotal || '–' }}
+            {{ balanceFactTotal || '—' }}
           </td>
           <td
             class="amount-cell"
             :class="getBalanceDeviationClass()"
           >
-            {{ balanceDeviationAmount || '–' }}
+            {{ balanceDeviationAmount || '—' }}
           </td>
           <td
             class="amount-cell"
             :class="getBalanceDeviationClass()"
           >
-            {{ balanceDeviationPercent || '–' }}
+            {{ balanceDeviationPercent || '—' }}
           </td>
         </tr>
       </tbody>
