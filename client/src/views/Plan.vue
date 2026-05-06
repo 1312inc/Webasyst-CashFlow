@@ -262,7 +262,7 @@ async function updatePlanAmount (categoryId, amount) {
   const existingPlan = getPlanEntry(categoryId)
   const currency = selectedCurrency.value || existingPlan?.currency || currencies.value[0] || ''
   const payload = {
-    id: existingPlan?.id || null,
+    // id: existingPlan?.id || null,
     amount,
     category_id: categoryId,
     currency,
