@@ -184,22 +184,28 @@ function onCategoryChange (id) {
           </template>
           <template v-else-if="isEmptyMode">
             <h5 class="align-center custom-mt-0 custom-mb-12">
-              {{ $t('detailsTargetPlanNotSet') }}
+              <span style="text-transform: capitalize;">
+                {{ currentMonthLabel }}
+              </span>
+              <br><span
+                class="gray"
+              >{{ $t('detailsTargetPlanNotSet') }}</span>
             </h5>
             <div class="align-center custom-my-16">
               <a
-                :href="`${$helper.baseUrl}plan/`"
+                :href="`${$helper.baseUrl}budget/`"
                 class="button small light-gray"
               >{{ $t('detailsTargetSetGoal') }}</a>
             </div>
           </template>
           <template v-else-if="currentCategory">
             <h5 class="align-center custom-mt-0 custom-mb-12">
-              {{ currentCategory.name }}
+              <span style="text-transform: capitalize;">
+                {{ currentMonthLabel }}
+              </span>
               <br><span
                 class="gray"
-                style="text-transform: capitalize;"
-              >{{ currentMonthLabel }}</span>
+              >{{ currentCategory.name }}</span>
             </h5>
             <div class="custom-mb-16 align-center small">
               {{ $t('detailsTargetPlanLabel') }}: <b>{{

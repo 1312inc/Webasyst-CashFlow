@@ -167,7 +167,7 @@
   "error": {
     "http": "Request failed",
     "api": "API error",
-    "nonJsonTitle": "Something's wrong with the API (api.php). Not a JSON response",
+    "nonJsonTitle": "Something’s wrong with the API (api.php). Not a JSON response",
     "nonJsonText": "Please contact your hosting provider or admin who had been configuring Webasyst on your server"
   },
   "arrow": {
@@ -271,8 +271,10 @@
   "detailsTargetDesc": "Coming soon in premium! Financial goals, budgeting, and more amazing powerful features for accounting and predictions.",
   "detailsTargetDescLink": "Pre-order upgrade",
   "detailsTargetPlanNotSet": "Plan is not set",
-  "detailsTargetSetGoal": "Set goal",
+  "detailsTargetSetGoal": "Set plan",
   "detailsTargetPlanLabel": "Plan",
   "detailsTargetFactForecastLabel": "Actual + forecast",
-  "allTransactionsProcessed": "That's all folks!"
+  "detailsTargetFactLabel": "Actual",
+  "detailsTargetForecastLabel": "Forecast",
+  "allTransactionsProcessed": "That’s all folks!"
 }
