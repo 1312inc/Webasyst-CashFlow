@@ -22,7 +22,7 @@
       <SearchField />
 
       <Bricks />
-      
+
       <!-- Widgets charts block -->
       <SidebarCurrencyWidgets />
 
@@ -42,25 +42,34 @@
         />
       </SortableList>
       <template v-if="accountsSandbox.length">
-        <div class="heading">
-          <span>Скрытые счета ({{ accountsSandbox.length }})</span>
-          <a
-            href="#"
-            class="count action"
-            @click.prevent="showSandbox = !showSandbox"
-          >
-            <span v-show="showSandbox">
-              <i class="fas fa-chevron-up" />
-            </span>
-            <span v-show="!showSandbox">
-              <i class="fas fa-chevron-down" />
-            </span>
-          </a>
+        <div
+          class="flexbox middle custom-mx-12"
+          style="cursor: pointer;"
+          @click.prevent="showSandbox = !showSandbox"
+        >
+          <div class="wide flexbox middle space-8">
+            <div>
+              <span
+                v-show="showSandbox"
+                class="text-light-gray"
+              >
+                <i class="fas fa-chevron-up" />
+              </span>
+              <span
+                v-show="!showSandbox"
+                class="text-light-gray"
+              >
+                <i class="fas fa-chevron-down" />
+              </span>
+            </div>
+            <span class="small">{{ $t("hiddenAccounts") }}</span>
+          </div>
+          <span class="small badge light-gray">{{ accountsSandbox.length }}</span>
         </div>
         <SortableList
           v-if="showSandbox"
           :items="accountsSandbox"
-          sorting-target="sandbox"
+          sorting-target="account"
           :group="{name: 'sandbox', pull: false}"
         >
           <SortableItemAccount
