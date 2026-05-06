@@ -558,13 +558,7 @@ class cashGraphService
             case null !== $paramsDto->filter->getCurrency():
                 $sqlParts->addAndWhere('ca.currency = s:currency')
                     ->addParam('currency', $paramsDto->filter->getCurrency());
-                $sqlParts->addAndWhere('
-                    CASE
-                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
-                        WHEN ca.is_imaginary = -1 THEN NULL
-                        ELSE ca.is_imaginary = 0
-                    END
-                ');
+
                 /** @var cashAccount[] $accounts */
                 $accounts = cash()->getEntityRepository(cashAccount::class)->findAll();
                 // проверим есть ли полный доступ хоть к одному счету в данной валюте
@@ -580,6 +574,19 @@ class cashGraphService
                 }
 
                 break;
+        }
+        if (!$paramsDto->filter->getAccountId()) {
+            if (null !== $paramsDto->filter->getCurrency()) {
+                $sqlParts->addAndWhere('
+                    CASE
+                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                        WHEN ca.is_imaginary = -1 THEN NULL
+                        ELSE ca.is_imaginary = 0
+                    END
+                ');
+            } else {
+                $sqlParts->addAndWhere('IF (ca.is_imaginary = -1, NULL, true)');
+            }
         }
 
         $data = $sqlParts->addAndWhere(sprintf('%s between s:from and s:to', $grouping))
@@ -826,14 +833,18 @@ class cashGraphService
             ->orderBy(['cc.sort'])
             ->params(['from' => $paramsDto->from->format('Y-m-d'), 'to' => $paramsDto->to->format('Y-m-d')]);
 
-        if (null !== $paramsDto->filter->getCurrency()) {
-            $sqlParts->addAndWhere('
-                CASE
-                    WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
-                    WHEN ca.is_imaginary = -1 THEN NULL
-                    ELSE ca.is_imaginary = 0
-                END
-            ');
+        if (!$paramsDto->filter->getAccountId()) {
+            if (null !== $paramsDto->filter->getCurrency()) {
+                $sqlParts->addAndWhere('
+                    CASE
+                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                        WHEN ca.is_imaginary = -1 THEN NULL
+                        ELSE ca.is_imaginary = 0
+                    END
+                ');
+            } else {
+                $sqlParts->addAndWhere('IF (ca.is_imaginary = -1, NULL, true)');
+            }
         }
 
         return $this->filterSqlForAggregateBreakDown($sqlParts, $paramsDto)->query()->fetchAll('detailed');
