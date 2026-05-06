@@ -55,6 +55,7 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
                     } else {
                         $data[$_dt['category_parent_id']]['children_amount'] += $_dt['amount'];
                     }
+                    $data[$_dt['category_parent_id']]['amount'] += $_dt['amount'];
                 }
             }
         }
