@@ -41,8 +41,13 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
         return $model->query("
             SELECT cp.id, cp.currency, cp.account_id, cp.category_id, @date_from `from`, @date_to `to`, cp.amount, SUM(IF(ct.amount, ct.amount, 0)) amount_fact
             FROM cash_plan cp 
-            LEFT JOIN cash_transaction ct ON ct.category_id = cp.category_id AND ct.`date` >= @date_from AND ct.`date` < DATE_ADD(@date_to, INTERVAL 1 DAY)
-            LEFT JOIN cash_account ca ON ca.id = ct.account_id AND ca.currency = cp.currency
+            LEFT JOIN cash_account ca ON ca.currency = cp.currency
+            LEFT JOIN cash_transaction ct ON ca.id = ct.account_id AND ct.category_id = cp.category_id 
+            AND CASE
+                WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                WHEN ca.is_imaginary = -1 THEN NULL
+                ELSE ca.is_imaginary = 0
+            END
             WHERE ".implode(' AND ', $where)."
             GROUP BY cp.id, cp.currency, cp.account_id, cp.category_id, cp.amount 
             ORDER BY cp.currency, cp.account_id, cp.category_id
