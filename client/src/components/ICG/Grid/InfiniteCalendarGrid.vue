@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import dayjs from 'dayjs'
 import { defineEmits, computed, ref, watch } from 'vue'
 
@@ -7,30 +7,96 @@ import './style.css'
 import { getWeekDaysNames } from './utils'
 import { useCalendarScroll } from './useCalendarScroll'
 
-const props = withDefaults(defineProps<{
-  firstDayOfWeek?: 0 | 1;
-  locale?: string;
-  todayLabel?: string;
-  items: Record<string, unknown>[];
-  fieldWithDate: string;
-  mode: string;
-}>(), {
-  firstDayOfWeek: 0,
-  locale: 'en-US',
-  todayLabel: 'Today'
+const props = defineProps({
+  firstDayOfWeek: {
+    type: Number,
+    default: 0
+  },
+  locale: {
+    type: String,
+    default: 'en-US'
+  },
+  todayLabel: {
+    type: String,
+    default: 'Today'
+  },
+  items: {
+    type: Array,
+    default: () => []
+  },
+  fieldWithDate: {
+    type: String,
+    default: ''
+  },
+  mode: {
+    type: String,
+    default: 'summary'
+  }
 })
 
 const emit = defineEmits(['changeInterval', 'changeMode'])
 
-const wrapperRef = ref<HTMLElement | null>(null)
-const containerRef = ref<HTMLElement | null>(null)
+const wrapperRef = ref(null)
+const containerRef = ref(null)
+const selectedCurrency = ref('')
 
 const { cellHeight, activeMonth, daysInCalendar } = useCalendarScroll(wrapperRef, containerRef, props.firstDayOfWeek)
 const weekDaysNames = getWeekDaysNames(props.locale, props.firstDayOfWeek)
 
-const itemsMap = computed(() => {
-  const map: Record<string, unknown[]> = {}
+const currencies = computed(() => {
+  const list = []
   for (const item of props.items) {
+    const record = item
+    if (typeof record.currency === 'string' && !list.includes(record.currency)) {
+      list.push(record.currency)
+    }
+    const nested = record.data
+    if (Array.isArray(nested)) {
+      for (const sub of nested) {
+        const nestedRecord = sub
+        if (typeof nestedRecord.currency === 'string' && !list.includes(nestedRecord.currency)) {
+          list.push(nestedRecord.currency)
+        }
+      }
+    }
+  }
+  return list
+})
+
+watch(currencies, (value) => {
+  if (!value.includes(selectedCurrency.value)) {
+    selectedCurrency.value = value[0] || ''
+  }
+}, { immediate: true })
+
+const filteredItems = computed(() => {
+  if (!selectedCurrency.value) return props.items
+  const result = []
+  for (const item of props.items) {
+    const record = item
+
+    if (typeof record.currency === 'string' && record.currency === selectedCurrency.value) {
+      result.push(item)
+      continue
+    }
+
+    if (Array.isArray(record.data)) {
+      const filteredData = record.data
+        .filter(sub => sub.currency === selectedCurrency.value)
+      if (filteredData.length) {
+        result.push({
+          ...record,
+          data: filteredData
+        })
+      }
+    }
+  }
+  return result
+})
+
+const itemsMap = computed(() => {
+  const map = {}
+  for (const item of filteredItems.value) {
     const fieldContent = item[props.fieldWithDate]
     if (typeof fieldContent === 'string' || typeof fieldContent === 'number') {
       const date = new Date(fieldContent)
@@ -68,8 +134,28 @@ watch(daysInCalendar, () => {
 
       <div class="flexbox vertical-mobile">
         <div class="toggle custom-mr-24 custom-mr-0-mobile custom-mb-8-mobile">
-          <span @click="emit('changeMode', 'summary')" :class="{'selected': props.mode === 'summary'}">Итого</span>
-          <span @click="emit('changeMode', 'operations')" :class="{'selected': props.mode === 'operations'}">Операции</span>
+          <span
+            :class="{ 'selected': props.mode === 'summary' }"
+            @click="emit('changeMode', 'summary')"
+          >Итого</span>
+          <span
+            :class="{ 'selected': props.mode === 'operations' }"
+            @click="emit('changeMode', 'operations')"
+          >Операции</span>
+        </div>
+
+        <div
+          v-if="currencies.length > 1"
+          class="toggle custom-mr-24 custom-mr-0-mobile custom-mb-8-mobile"
+        >
+          <span
+            v-for="currency in currencies"
+            :key="currency"
+            :class="{ selected: selectedCurrency === currency }"
+            @click="selectedCurrency = currency"
+          >
+            {{ currency }}
+          </span>
         </div>
 
         <div class="icg-controls">

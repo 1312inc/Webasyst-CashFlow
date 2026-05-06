@@ -110,7 +110,7 @@ function onClick (e) {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 
 .dragover {
   outline: 1px solid var(--border-color-hard);
@@ -121,23 +121,27 @@ function onClick (e) {
   color: var(--text-color-strong);
 }
 
-.icg-months-grid-day--current .icg-day {
-  background-color: var(--red);
-  color: var(--white);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 100%;
-  margin-left: auto;
-  transform: translateX(.2rem) translateY(-.2rem);
-
-  span {
-    display: none;
-  }
-
+.icg-months-grid-day--current {
+  background-color: var(--highlighted-yellow) !important;
 }
+
+// .icg-months-grid-day--current .icg-day {
+//   background-color: var(--red);
+//   color: var(--white);
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   width: 2rem;
+//   height: 2rem;
+//   border-radius: 100%;
+//   margin-left: auto;
+//   transform: translateX(.2rem) translateY(-.2rem);
+
+//   span {
+//     display: none;
+//   }
+
+// }
 
 @media screen and (max-width: 760px) {
   .icg-months-grid-day--current .icg-day {

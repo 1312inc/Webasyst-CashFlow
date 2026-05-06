@@ -1,9 +1,9 @@
 import dayjs from 'dayjs'
-import { type Ref, onMounted, onBeforeUnmount, nextTick, ref, computed, watch } from 'vue'
+import { onMounted, onBeforeUnmount, nextTick, ref, computed, watch } from 'vue'
 import onceWheel from './oncewheel'
 import { useElementSize } from '@vueuse/core'
 
-export const useCalendarScroll = (wrapperRef: Ref<HTMLElement | null>, containerRef: Ref<HTMLElement | null>, firstDayOfWeek: 0 | 1) => {
+export const useCalendarScroll = (wrapperRef, containerRef, firstDayOfWeek) => {
   const currentSlide = ref(1)
   const wheelOn = ref(true)
   const transitionOn = ref(true)
@@ -41,7 +41,7 @@ export const useCalendarScroll = (wrapperRef: Ref<HTMLElement | null>, container
     if (wheelOn.value) { if (currentSlide.value > 0) { currentSlide.value-- } }
   }
 
-  const goToSlide = (num: number) => {
+  const goToSlide = (num) => {
     if (containerRef.value) {
       const targetEl = containerRef.value.querySelectorAll('.icg-months-grid-day--first-day')[num]
       if (targetEl instanceof HTMLElement) {
@@ -86,7 +86,7 @@ export const useCalendarScroll = (wrapperRef: Ref<HTMLElement | null>, container
     })
   })
 
-  let unwheel: undefined | (() => void)
+  let unwheel
 
   onMounted(() => {
     if (wrapperRef.value) { unwheel = onceWheel(wrapperRef.value, scrollDownHandler, scrollUpHandler) }

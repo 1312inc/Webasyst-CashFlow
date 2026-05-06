@@ -66,6 +66,23 @@ const handleMonthChange = ({ start, end }) => {
       }
     })
       .then(({ data }) => {
+        // [
+        //   {
+        //       "currency": "KRW",
+        //       "data": [
+        //           {
+        //               "amountIncome": 0,
+        //               "amountExpense": 0,
+        //               "amountProfit": 0,
+        //               "countIncome": 0,
+        //               "countExpense": 0,
+        //               "countProfit": 0,
+        //               "balance": null,
+        //               "period": "2026-06-01"
+        //           },
+        //         ]
+        //   }
+        // ]
         const map = new Map()
 
         for (const currencyData of data) {

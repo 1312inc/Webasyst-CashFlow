@@ -1,12 +1,12 @@
-export default function onceWheel (element: HTMLElement, scrollDownHandler: () => void, scrolUpHandler: () => void) {
+export default function onceWheel (element, scrollDownHandler, scrolUpHandler) {
   let wheelPower = 0
   let wheelLock = false
   let wheelTimeStamp = 0
-  let wheelLockTimer: ReturnType<typeof setTimeout> | null = null
+  let wheelLockTimer = null
   const deltaThreshold = 10
   const noiseThreshold = 10
 
-  function handler (event: WheelEvent) {
+  function handler (event) {
     const delta = -event.deltaY
     const absDelta = Math.abs(delta)
 
@@ -35,7 +35,7 @@ export default function onceWheel (element: HTMLElement, scrollDownHandler: () =
     element.removeEventListener('wheel', handler)
   }
 
-  function lock (absDelta: number) {
+  function lock (absDelta) {
     wheelPower = absDelta
     wheelLock = true
   }
