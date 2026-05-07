@@ -39,7 +39,7 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
         $model->exec('SET @date_to:= '.($date_to ? "'$date_to'" : 'NULL'));
 
         return $model->query("
-            SELECT cp.id, cp.currency, cp.account_id, cp.category_id, @date_from `from`, @date_to `to`, cp.amount, SUM(IF(ct.amount, ct.amount, 0)) amount_fact
+            SELECT cp.id, cp.currency, cp.account_id, cp.category_id, IF(cp.`month` IS NULL, cp.`month`, @date_from) `from`, IF(cp.`month` IS NULL, cp.`month`, @date_to) `to`, cp.amount, SUM(IF(ct.amount, ct.amount, 0)) amount_fact
             FROM cash_plan cp 
             LEFT JOIN cash_account ca ON ca.currency = cp.currency
             LEFT JOIN cash_transaction ct ON ca.id = ct.account_id AND ct.category_id = cp.category_id 
