@@ -1,26 +1,65 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import flatpickr from 'flatpickr'
 import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect'
 import api from '@/plugins/api'
 import store from '@/store'
 import Modal from '@/components/Modal'
 import { appState } from '@/utils/appState'
+import { useRoute, useRouter } from 'vue-router/composables'
+
+const route = useRoute()
+const router = useRouter()
+
+const TOTAL_PLAN_QUERY_VALUE = 'total'
+const MONTH_QUERY_RE = /^\d{4}-\d{2}$/
+
+function getCurrentMonthFirstDay () {
+  return new Date().toISOString().slice(0, 7) + '-01'
+}
+
+function parseMonthFromQuery (rawValue) {
+  if (typeof rawValue !== 'string' || !rawValue) return getCurrentMonthFirstDay()
+  if (rawValue === TOTAL_PLAN_QUERY_VALUE) return null
+  if (MONTH_QUERY_RE.test(rawValue)) return `${rawValue}-01`
+  return getCurrentMonthFirstDay()
+}
+
+function parseCurrencyFromQuery (rawValue) {
+  return typeof rawValue === 'string' ? rawValue : ''
+}
 
 const incomeCategories = computed(() => store.getters['category/getByType']('income'))
 const expenseCategories = computed(() => store.getters['category/getByType']('expense'))
 const planData = ref([])
 const breakdownData = ref([])
-const selectedCurrency = ref('')
-const currentMonthFirstDay = ref(new Date().toISOString().slice(0, 7) + '-01')
+const selectedCurrency = ref(parseCurrencyFromQuery(route.query.currency))
+const currentMonthFirstDay = ref(parseMonthFromQuery(route.query.month))
 const monthPickerEl = ref(null)
 const isFetching = ref(false)
 const openPremiumModal = ref(false)
 let monthPicker = null
+let isSyncingUrl = false
 
 const isTotalPlanMode = computed(() => currentMonthFirstDay.value == null)
+
+function collectCurrenciesFromPlan (plans) {
+  const seen = new Set()
+  const list = []
+  for (const plan of plans) {
+    const code = plan?.currency
+    if (!code || seen.has(code)) continue
+    seen.add(code)
+    list.push(code)
+  }
+  return list
+}
+
 const currencies = computed(() => {
+  if (isTotalPlanMode.value) {
+    return collectCurrenciesFromPlan(planData.value)
+  }
   return breakdownData.value.map(item => item.currency).filter(Boolean)
 })
 const filteredPlanData = computed(() => {
@@ -100,6 +139,66 @@ onBeforeUnmount(() => {
   if (monthPicker) monthPicker.destroy()
 })
 
+function buildQueryFromState () {
+  const next = { ...route.query }
+
+  if (currentMonthFirstDay.value === null) {
+    next.month = TOTAL_PLAN_QUERY_VALUE
+  } else {
+    const ym = currentMonthFirstDay.value.slice(0, 7)
+    if (ym === getCurrentMonthFirstDay().slice(0, 7)) {
+      delete next.month
+    } else {
+      next.month = ym
+    }
+  }
+
+  if (selectedCurrency.value) {
+    next.currency = selectedCurrency.value
+  } else {
+    delete next.currency
+  }
+
+  return next
+}
+
+function syncUrl () {
+  const next = buildQueryFromState()
+  const current = route.query
+  const sameKeys = Object.keys(next).length === Object.keys(current).length
+  const sameValues = sameKeys && Object.keys(next).every(k => next[k] === current[k])
+  if (sameValues) return
+  isSyncingUrl = true
+  router.replace({ query: next }).catch(() => {}).finally(() => {
+    isSyncingUrl = false
+  })
+}
+
+watch(currentMonthFirstDay, syncUrl)
+watch(selectedCurrency, syncUrl)
+
+watch(() => route.query, (next, prev) => {
+  if (isSyncingUrl) return
+  const nextMonth = parseMonthFromQuery(next.month)
+  const nextCurrency = parseCurrencyFromQuery(next.currency)
+  let needFetch = false
+  if (nextMonth !== currentMonthFirstDay.value) {
+    currentMonthFirstDay.value = nextMonth
+    if (monthPicker) {
+      if (nextMonth) {
+        monthPicker.setDate(nextMonth, false)
+      } else {
+        monthPicker.clear()
+      }
+    }
+    needFetch = true
+  }
+  if (nextCurrency !== selectedCurrency.value && (nextCurrency || prev.currency)) {
+    selectedCurrency.value = nextCurrency
+  }
+  if (needFetch) fetchData()
+})
+
 function initMonthPicker () {
   if (!monthPickerEl.value) return
   monthPicker = flatpickr(monthPickerEl.value, {
@@ -149,6 +248,11 @@ async function fetchData () {
       const nextPlanData = await requestPlanData()
       if (token !== fetchToken) return
       planData.value = nextPlanData
+
+      const nextCurrencies = collectCurrenciesFromPlan(nextPlanData)
+      if (!nextCurrencies.includes(selectedCurrency.value)) {
+        selectedCurrency.value = nextCurrencies[0] || ''
+      }
       return
     }
 
@@ -311,7 +415,7 @@ function onClickGoToPremium () {
           type="text"
         >
         <button
-          class="total-plan-button"
+          class="total-plan-button nowrap"
           :class="{ active: isTotalPlanMode }"
           type="button"
           @click="setTotalPlanMode"
