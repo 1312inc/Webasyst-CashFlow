@@ -45,7 +45,7 @@
       <div
         v-if="accountsSandbox.length && !showSandbox"
         class="flexbox middle custom-mx-12"
-        style="cursor: pointer;"
+        style="cursor: pointer; margin-top: -9px;"
         @click.prevent="showSandbox = !showSandbox"
       >
         <span class="small custom-ml-4 custom-mr-12 gray"><i class="fas fa-chevron-down"></i></span>
