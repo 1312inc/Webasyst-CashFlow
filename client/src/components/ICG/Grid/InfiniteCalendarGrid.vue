@@ -112,29 +112,39 @@ const itemsMap = computed(() => {
   }
   return map
 })
-const monthTotals = computed(() => {
-  const totals = {
-    income: 0,
-    expense: 0,
-    profit: 0
-  }
 
+/** Max of |income|, |expense|, |profit| per day, then max across days (active month, filtered currency). Largest circle = 32px. */
+const monthChartMaxAbs = computed(() => {
+  const byDay = {}
   for (const item of filteredItems.value) {
     const fieldContent = item[props.fieldWithDate]
     if (!fieldContent) continue
     const date = dayjs(fieldContent)
     if (!date.isValid() || !date.isSame(activeMonth.value, 'month')) continue
 
+    const key = date.format('YYYY-MM-DD')
+    if (!byDay[key]) {
+      byDay[key] = { income: 0, expense: 0, profit: 0 }
+    }
     if (Array.isArray(item.data)) {
       for (const row of item.data) {
-        totals.income += Number(row.amountIncome) || 0
-        totals.expense += Number(row.amountExpense) || 0
-        totals.profit += Number(row.amountProfit) || 0
+        byDay[key].income += Number(row.amountIncome) || 0
+        byDay[key].expense += Number(row.amountExpense) || 0
+        byDay[key].profit += Number(row.amountProfit) || 0
       }
     }
   }
 
-  return totals
+  let maxAbs = 0
+  for (const t of Object.values(byDay)) {
+    const dayPeak = Math.max(
+      Math.abs(t.income),
+      Math.abs(t.expense),
+      Math.abs(t.profit)
+    )
+    if (dayPeak > maxAbs) maxAbs = dayPeak
+  }
+  return maxAbs
 })
 
 watch(daysInCalendar, () => {
@@ -242,7 +252,7 @@ watch(daysInCalendar, () => {
           }"
           :style="{ height: `${cellHeight}px` }"
         >
-          <slot v-bind="{ date, items: itemsMap[date.localeDate], monthTotals }" />
+          <slot v-bind="{ date, items: itemsMap[date.localeDate], monthChartMaxAbs }" />
         </div>
       </div>
     </div>

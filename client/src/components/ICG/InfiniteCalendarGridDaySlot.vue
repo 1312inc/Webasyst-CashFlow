@@ -26,15 +26,14 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  monthTotals: {
-    type: Object,
-    default: () => ({
-      income: 0,
-      expense: 0,
-      profit: 0
-    })
+  monthChartMaxAbs: {
+    type: Number,
+    default: 0
   }
 })
+
+const CHART_CIRCLE_MAX_PX = 32
+const CHART_CIRCLE_MIN_PX = 5
 
 const router = useRouter()
 const dayRef = ref()
@@ -59,13 +58,18 @@ const dayTotals = computed(() => {
 })
 
 const chartCircles = computed(() => {
+  const maxAbs = Number(props.monthChartMaxAbs) || 0
   return chartKeys.map((key) => {
-    const monthValue = Number(props.monthTotals?.[key]) || 0
     const dayValue = Number(dayTotals.value[key]) || 0
-    const ratio = monthValue > 0 ? Math.min(1, dayValue / monthValue) : 0
-    const size = Math.round(6 + (ratio * 16))
-    return { key, ratio, size }
-  }).filter(c => c.ratio > 0)
+    const absVal = Math.abs(dayValue)
+    const ratio = maxAbs > 0 ? Math.min(1, absVal / maxAbs) : 0
+    const proportional = maxAbs > 0 ? Math.round(ratio * CHART_CIRCLE_MAX_PX) : 0
+    const size =
+      absVal > 0 && maxAbs > 0
+        ? Math.min(CHART_CIRCLE_MAX_PX, Math.max(CHART_CIRCLE_MIN_PX, proportional))
+        : 0
+    return { key, ratio, size, absVal }
+  }).filter(c => c.absVal > 0 && c.size > 0)
 })
 
 onMounted(() => {
@@ -218,7 +222,7 @@ function onClick (e) {
   display: flex;
   align-items: center;
   gap: 4px;
-  min-height: 10px;
+  min-height: 32px;
   margin-bottom: 6px;
 }
 
