@@ -55,7 +55,6 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
                     } else {
                         $data[$_dt['category_parent_id']]['children_amount'] += $_dt['amount'];
                     }
-                    $data[$_dt['category_parent_id']]['amount'] += $_dt['amount'];
                 }
             }
         }
@@ -66,6 +65,9 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
                 $graphDatum,
                 $this->getCategory($graphDatum['detailed'])
             );
+            if ($children_help_parents && !empty($graphDatum['children_amount'])) {
+                $dataInfo->amount += $graphDatum['children_amount'];
+            }
             $response[$graphDatum['currency']][$categoryType]->data[] = $dataInfo;
             $response[$graphDatum['currency']][$categoryType]->totalAmount += $dataInfo->amount;
         }

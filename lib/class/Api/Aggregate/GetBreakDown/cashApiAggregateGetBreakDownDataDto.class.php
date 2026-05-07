@@ -37,7 +37,7 @@ final class cashApiAggregateGetBreakDownDataDto
     {
         $amount = ifset($data, 'amount', 0);
         $this->amount = abs(round($amount, 2));
-        if (!$this->children_amount = ifset($data, 'children_amount', null)) {
+        if (!$this->children_amount = (float) ifset($data, 'children_amount', 0)) {
             unset($this->children_amount);
         }
         if ($category) {
