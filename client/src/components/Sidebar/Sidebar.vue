@@ -48,8 +48,9 @@
         style="cursor: pointer;"
         @click.prevent="showSandbox = !showSandbox"
       >
-        <span class="small wide">{{ $t("hiddenAccounts") }}</span>
-        <span class="small badge light-gray">{{ accountsSandbox.length }}</span>
+        <span class="small custom-ml-4 custom-mr-12 gray"><i class="fas fa-chevron-down"></i></span>
+        <span class="small wide gray">{{ $t("hiddenAccounts") }}</span>
+        <span class="smaller badge light-gray">{{ accountsSandbox.length }}</span>
       </div>
 
       <Toggler>
