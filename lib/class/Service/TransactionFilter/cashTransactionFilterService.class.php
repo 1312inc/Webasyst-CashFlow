@@ -195,6 +195,8 @@ final class cashTransactionFilterService
 
         $selectQueryParts->addAndWhere('ct.contractor_contact_id = i:contractor_contact_id')
             ->addParam('contractor_contact_id', $dto->filter->getContractorId());
+
+        $this->makeImaginaryFilter($selectQueryParts, true);
     }
 
     /**
