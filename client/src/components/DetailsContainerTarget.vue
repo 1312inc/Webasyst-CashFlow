@@ -9,6 +9,7 @@ import { useRoute } from 'vue-router/composables'
 import store from '@/store'
 import { helpers } from '@/plugins/helpers'
 import { emitter } from '@/plugins/eventBus'
+import DropdownWaFloating from './Inputs/DropdownWaFloating.vue'
 
 const route = useRoute()
 
@@ -80,6 +81,27 @@ const chartState = computed(() => ({
   currencyCode: currentCategory.value?.currency ?? '',
   color: currentCategory.value?.color ?? ''
 }))
+
+const targetDeviationAmount = computed(() => {
+  if (!currentCategory.value) return ''
+  const planAmount = Number(currentCategory.value.amount)
+  const factAmount = Number(currentCategory.value.amountFact)
+  if (Number.isNaN(planAmount) || Number.isNaN(factAmount) || planAmount === 0) return ''
+  return factAmount - planAmount
+})
+
+const targetDeviationPercent = computed(() => {
+  const planAmount = Number(currentCategory.value?.amount)
+  const deviationAmount = Number(targetDeviationAmount.value)
+  if (targetDeviationAmount.value === '' || !planAmount || Number.isNaN(deviationAmount)) return ''
+  return `${((deviationAmount / planAmount) * 100).toFixed(2)}%`
+})
+
+const targetDeviationClass = computed(() => {
+  const deviationAmount = Number(targetDeviationAmount.value)
+  if (targetDeviationAmount.value === '' || Number.isNaN(deviationAmount) || deviationAmount === 0) return ''
+  return deviationAmount < 0 ? 'text-red' : 'text-green'
+})
 
 let fetchToken = 0
 
@@ -203,9 +225,31 @@ function onCategoryChange (id) {
               <span style="text-transform: capitalize;">
                 {{ currentMonthLabel }}
               </span>
-              <br><span
-                class="gray"
-              >{{ currentCategory.name }}</span>
+              <div
+                class="flexbox"
+                style="justify-content: center;"
+              >
+                <component :is="categories.length ? DropdownWaFloating : 'div'">
+                  <template #toggler>
+                    <span class="gray">{{ currentCategory.name }} </span>
+                    <i
+                      v-if="categories.length"
+                      class="fas fa-chevron-down text-light-gray"
+                    />
+                  </template>
+                  <ul
+                    v-if="categories.length"
+                    class="menu"
+                  >
+                    <li
+                      v-for="category in categories"
+                      :key="category.id"
+                    >
+                      <a @click.prevent="onCategoryChange(category.id)">{{ category.name }}</a>
+                    </li>
+                  </ul>
+                </component>
+              </div>
             </h5>
             <div class="custom-mb-16 align-center small">
               {{ $t('detailsTargetPlanLabel') }}: <b>{{
@@ -220,23 +264,17 @@ function onCategoryChange (id) {
                   currencyCode: chartState.currencyCode
                 })
               }}</b>
+              <br>{{ $t('detailsTargetDeviationLabel') }}: <b :class="targetDeviationClass">{{
+                targetDeviationAmount ? helpers.toCurrency({
+                  value: targetDeviationAmount,
+                  currencyCode: chartState.currencyCode
+                }) : '—'
+              }}</b>
+              <br>{{ $t('detailsTargetDeviationPercentLabel') }}: <b :class="targetDeviationClass">{{
+                targetDeviationPercent || '—'
+              }}</b>
             </div>
           </template>
-
-          <div
-            v-if="categories.length > 1"
-            class="wa-select small solid width-100"
-          >
-            <select @change="(event) => { onCategoryChange(event.target.value) }">
-              <option
-                v-for="category in categories"
-                :key="category.id"
-                :value="category.id"
-              >
-                {{ category.name }}
-              </option>
-            </select>
-          </div>
         </div>
       </div>
     </BlankBox>

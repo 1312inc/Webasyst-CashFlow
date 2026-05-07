@@ -33,17 +33,26 @@ const props = defineProps({
 })
 
 const maxAmount = computed(() => {
-  return props.isPromoMode ? 146 : props.amount * 1.46
+  return props.isPromoMode ? 146 : Math.max(props.amount, props.amountFact) * 1.46
 })
 
 let chart
 let intervalId
+let appearTimeoutId
 
 onMounted(() => {
   createChart()
 })
 
 onBeforeUnmount(() => {
+  if (appearTimeoutId) {
+    clearTimeout(appearTimeoutId)
+    appearTimeoutId = undefined
+  }
+  if (intervalId) {
+    clearInterval(intervalId)
+    intervalId = undefined
+  }
   if (chart) {
     chart.dispose()
   }
@@ -59,6 +68,11 @@ watch(props, () => {
 function createChart () {
   if (intervalId) {
     clearInterval(intervalId)
+    intervalId = undefined
+  }
+  if (appearTimeoutId) {
+    clearTimeout(appearTimeoutId)
+    appearTimeoutId = undefined
   }
 
   am4core.useTheme(am4themes_animated)
@@ -107,18 +121,18 @@ function createChart () {
  * Label
  */
 
-  const label = chart.radarContainer.createChild(am4core.Label)
-  label.isMeasured = false
-  label.fontSize = 35
-  label.x = am4core.percent(50)
-  label.y = am4core.percent(100)
-  label.horizontalCenter = 'middle'
-  label.verticalCenter = 'bottom'
-  if (!props.isPromoMode) {
-    label.text = props.amount > 0
-      ? Math.round((props.amountFact / props.amount) * 100) + '%'
-      : '0%'
-  }
+  // const label = chart.radarContainer.createChild(am4core.Label)
+  // label.isMeasured = false
+  // label.fontSize = 35
+  // label.x = am4core.percent(50)
+  // label.y = am4core.percent(100)
+  // label.horizontalCenter = 'middle'
+  // label.verticalCenter = 'bottom'
+  // if (!props.isPromoMode) {
+  //   label.text = props.amount > 0
+  //     ? Math.round((props.amountFact / props.amount) * 100) + '%'
+  //     : '0%'
+  // }
 
   /**
  * Hand
@@ -129,7 +143,18 @@ function createChart () {
   hand.innerRadius = am4core.percent(20)
   hand.startWidth = 10
   hand.pin.disabled = true
-  hand.value = props.amount
+  hand.value = 0
+
+  const handAppearDuration = 900
+  const handAppearEase = am4core.ease.cubicOut
+  appearTimeoutId = setTimeout(() => {
+    appearTimeoutId = undefined
+    if (!hand || hand.isDisposed()) return
+    new am4core.Animation(hand, {
+      property: 'value',
+      to: props.amount
+    }, handAppearDuration, handAppearEase).start()
+  }, 0)
 
   if (props.isPromoMode) {
     hand.events.on('propertychanged', function (ev) {

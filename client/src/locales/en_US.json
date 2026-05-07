@@ -276,5 +276,7 @@
   "detailsTargetFactForecastLabel": "Actual + forecast",
   "detailsTargetFactLabel": "Actual",
   "detailsTargetForecastLabel": "Forecast",
+  "detailsTargetDeviationLabel": "Deviation",
+  "detailsTargetDeviationPercentLabel": "Deviation, %",
   "allTransactionsProcessed": "That’s all folks!"
 }

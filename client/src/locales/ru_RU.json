@@ -276,5 +276,7 @@
   "detailsTargetFactForecastLabel": "Факт + прогноз",
   "detailsTargetFactLabel": "Факт",
   "detailsTargetForecastLabel": "Прогноз",
+  "detailsTargetDeviationLabel": "Отклонение",
+  "detailsTargetDeviationPercentLabel": "Отклонение, %",
   "allTransactionsProcessed": "На этом всё!"
 }
