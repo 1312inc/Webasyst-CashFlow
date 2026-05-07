@@ -406,22 +406,15 @@ function onClickGoToPremium () {
 </script>
 
 <template>
-  <div>
+  <div class="box custom-p-16">
     <h1>{{ $t('planView.title') }}</h1>
     <div class="flexbox vertical-mobile space-8">
-      <div class="month-picker">
+      <div class="month-picker custom-mr-8">
         <input
           ref="monthPickerEl"
           type="text"
+          class="button light-gray"
         >
-        <button
-          class="total-plan-button nowrap"
-          :class="{ active: isTotalPlanMode }"
-          type="button"
-          @click="setTotalPlanMode"
-        >
-          {{ $t('planView.totalPlanButton') }}
-        </button>
       </div>
       <div
         v-if="currencies.length"
@@ -436,9 +429,15 @@ function onClickGoToPremium () {
           {{ currency }}
         </span>
       </div>
+      <button
+        class="total-plan-button nowrap nobutton"
+        :class="{ active: isTotalPlanMode }"
+        type="button"
+        @click="setTotalPlanMode"
+      >
+        {{ $t('planView.totalPlanButton') }}
+      </button>
     </div>
-
-    <h2>{{ $t('planView.incomeCategoriesTitle') }}</h2>
 
     <div
       v-if="!appState.isPremium"
@@ -447,7 +446,9 @@ function onClickGoToPremium () {
       {{ $t('planView.premiumAlert') }}
     </div>
 
-    <table class="bigdata">
+    <h4 class="gray custom-mb-4">{{ $t('planView.incomeCategoriesTitle') }}</h4>
+
+    <table class="bigdata custom-mt-4">
       <thead>
         <tr>
           <th />
@@ -533,8 +534,8 @@ function onClickGoToPremium () {
       </tbody>
     </table>
 
-    <h2>{{ $t('planView.expenseCategoriesTitle') }}</h2>
-    <table>
+    <h4 class="gray custom-mb-4">{{ $t('planView.expenseCategoriesTitle') }}</h4>
+    <table class="bigdata custom-mt-4">
       <thead>
         <tr>
           <th />
@@ -594,7 +595,7 @@ function onClickGoToPremium () {
             :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
           >
             <input
-              class="amount-input"
+              class="amount-input bold"
               type="number"
               :value="getPlanAmount(category.id)"
               :disabled="isFetching"
@@ -605,7 +606,7 @@ function onClickGoToPremium () {
             {{ getFactAmount(category.id) || '—' }}
           </td>
           <td
-            class="amount-cell"
+            class="amount-cell bold"
             :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
           >
             {{ getDeviationAmount(category.id) || '—' }}
@@ -620,8 +621,8 @@ function onClickGoToPremium () {
       </tbody>
     </table>
 
-    <h2>{{ $t('planView.balanceSectionTitle') }}</h2>
-    <table>
+    <h4 class="gray custom-mb-4">{{ $t('planView.balanceSectionTitle') }}</h4>
+    <table class="bigdata custom-mt-4">
       <thead>
         <tr>
           <th />
@@ -644,14 +645,14 @@ function onClickGoToPremium () {
           <td class="category-name-cell">
             {{ $t('planView.balanceRowLabel') }}
           </td>
-          <td class="amount-cell">
+          <td class="amount-cell bold">
             {{ balancePlanTotal || '—' }}
           </td>
           <td class="amount-cell">
             {{ balanceFactTotal || '—' }}
           </td>
           <td
-            class="amount-cell"
+            class="amount-cell bold"
             :class="getBalanceDeviationClass()"
           >
             {{ balanceDeviationAmount || '—' }}
