@@ -407,7 +407,7 @@ function onClickGoToPremium () {
 
 <template>
   <div>
-    <h1>Plan B</h1>
+    <h1>{{ $t('planView.title') }}</h1>
     <div class="flexbox vertical-mobile space-8">
       <div class="month-picker">
         <input
@@ -420,7 +420,7 @@ function onClickGoToPremium () {
           type="button"
           @click="setTotalPlanMode"
         >
-          Общий план
+          {{ $t('planView.totalPlanButton') }}
         </button>
       </div>
       <div
@@ -438,13 +438,13 @@ function onClickGoToPremium () {
       </div>
     </div>
 
-    <h2>Income Categories</h2>
+    <h2>{{ $t('planView.incomeCategoriesTitle') }}</h2>
 
     <div
       v-if="!appState.isPremium"
       class="alert info"
     >
-      Эта фишка только в премиум!
+      {{ $t('planView.premiumAlert') }}
     </div>
 
     <table class="bigdata">
@@ -452,16 +452,16 @@ function onClickGoToPremium () {
         <tr>
           <th />
           <th class="amount-cell">
-            План, {{ selectedCurrency }}
+            {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
           </th>
           <th class="amount-cell">
-            Факт, {{ selectedCurrency }}
+            {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
           </th>
           <th class="amount-cell">
-            Отклонение, {{ selectedCurrency }}
+            {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
           </th>
           <th class="amount-cell">
-            Отклонение, %
+            {{ $t('planView.columnDeviationPercent') }}
           </th>
         </tr>
       </thead>
@@ -533,22 +533,22 @@ function onClickGoToPremium () {
       </tbody>
     </table>
 
-    <h2>Expense Categories</h2>
+    <h2>{{ $t('planView.expenseCategoriesTitle') }}</h2>
     <table>
       <thead>
         <tr>
           <th />
           <th class="amount-cell">
-            План, {{ selectedCurrency }}
+            {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
           </th>
           <th class="amount-cell">
-            Факт, {{ selectedCurrency }}
+            {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
           </th>
           <th class="amount-cell">
-            Отклонение, {{ selectedCurrency }}
+            {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
           </th>
           <th class="amount-cell">
-            Отклонение, %
+            {{ $t('planView.columnDeviationPercent') }}
           </th>
         </tr>
       </thead>
@@ -620,29 +620,29 @@ function onClickGoToPremium () {
       </tbody>
     </table>
 
-    <h2>Balance</h2>
+    <h2>{{ $t('planView.balanceSectionTitle') }}</h2>
     <table>
       <thead>
         <tr>
           <th />
           <th class="amount-cell">
-            План, {{ selectedCurrency }}
+            {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
           </th>
           <th class="amount-cell">
-            Факт, {{ selectedCurrency }}
+            {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
           </th>
           <th class="amount-cell">
-            Отклонение, {{ selectedCurrency }}
+            {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
           </th>
           <th class="amount-cell">
-            Отклонение, %
+            {{ $t('planView.columnDeviationPercent') }}
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td class="category-name-cell">
-            Сальдо
+            {{ $t('planView.balanceRowLabel') }}
           </td>
           <td class="amount-cell">
             {{ balancePlanTotal || '—' }}
@@ -670,20 +670,20 @@ function onClickGoToPremium () {
       <Modal @close="openPremiumModal = false">
         <div class="dialog-body">
           <div class="dialog-content">
-            это только в премиум"
+            {{ $t('planView.premiumDialogText') }}
           </div>
           <div class="dialog-footer">
             <button
               class="button"
               @click="onClickGoToPremium"
             >
-              Перейти
+              {{ $t('planView.premiumDialogPrimaryButton') }}
             </button>
             <button
               class="button outlined light-gray"
               @click="openPremiumModal = false"
             >
-              Закрыть
+              {{ $t('close') }}
             </button>
           </div>
         </div>

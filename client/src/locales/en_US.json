@@ -278,5 +278,20 @@
   "detailsTargetForecastLabel": "Forecast",
   "detailsTargetDeviationLabel": "Deviation",
   "detailsTargetDeviationPercentLabel": "Deviation, %",
-  "allTransactionsProcessed": "That’s all folks!"
+  "allTransactionsProcessed": "That’s all folks!",
+  "planView": {
+    "title": "Plan",
+    "totalPlanButton": "Total plan",
+    "incomeCategoriesTitle": "Income",
+    "expenseCategoriesTitle": "Expenses",
+    "balanceSectionTitle": "Balance",
+    "balanceRowLabel": "Balance",
+    "premiumAlert": "This feature is available in the premium version only",
+    "premiumDialogText": "This feature is available in the premium version only",
+    "premiumDialogPrimaryButton": "Upgrade",
+    "columnPlanWithCurrency": "Plan, {currency}",
+    "columnFactWithCurrency": "Actual, {currency}",
+    "columnDeviationWithCurrency": "Deviation, {currency}",
+    "columnDeviationPercent": "Deviation, %"
+  }
 }

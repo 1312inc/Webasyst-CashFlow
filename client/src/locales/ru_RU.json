@@ -278,5 +278,20 @@
   "detailsTargetForecastLabel": "Прогноз",
   "detailsTargetDeviationLabel": "Отклонение",
   "detailsTargetDeviationPercentLabel": "Отклонение, %",
-  "allTransactionsProcessed": "На этом всё!"
+  "allTransactionsProcessed": "На этом всё!",
+  "planView": {
+    "title": "Бюджет",
+    "totalPlanButton": "Общий план",
+    "incomeCategoriesTitle": "Поступления",
+    "expenseCategoriesTitle": "Расходы",
+    "balanceSectionTitle": "Баланс",
+    "balanceRowLabel": "Сальдо",
+    "premiumAlert": "Эта фишка только в премиум-версии",
+    "premiumDialogText": "Это только в премиум-версии",
+    "premiumDialogPrimaryButton": "Перейти",
+    "columnPlanWithCurrency": "План, {currency}",
+    "columnFactWithCurrency": "Факт, {currency}",
+    "columnDeviationWithCurrency": "Отклонение, {currency}",
+    "columnDeviationPercent": "Отклонение, %"
+  }
 }
