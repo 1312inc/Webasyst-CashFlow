@@ -10,6 +10,7 @@ import store from '@/store'
 import { helpers } from '@/plugins/helpers'
 import { emitter } from '@/plugins/eventBus'
 import DropdownWaFloating from './Inputs/DropdownWaFloating.vue'
+import { i18n } from '@/plugins/locale'
 
 const route = useRoute()
 
@@ -101,6 +102,16 @@ const targetDeviationClass = computed(() => {
   const deviationAmount = Number(targetDeviationAmount.value)
   if (targetDeviationAmount.value === '' || Number.isNaN(deviationAmount) || deviationAmount === 0) return ''
   return deviationAmount < 0 ? 'text-red' : 'text-green'
+})
+
+const detailsTargetFactForecastLabel = computed(() => {
+  if (moment(fetchDate.value).isSame(moment(), 'month')) {
+    return i18n.t('detailsTargetFactForecastLabel')
+  } else if (moment(fetchDate.value).isBefore(moment(), 'month')) {
+    return i18n.t('detailsTargetFactLabel')
+  } else {
+    return i18n.t('detailsTargetForecastLabel')
+  }
 })
 
 let fetchToken = 0
@@ -258,7 +269,7 @@ function onCategoryChange (id) {
                   currencyCode: chartState.currencyCode
                 })
               }}</b>
-              <br>{{ $t('detailsTargetFactForecastLabel') }}: <b>{{
+              <br>{{ detailsTargetFactForecastLabel }}: <b>{{
                 helpers.toCurrency({
                   value: chartState.amountFact,
                   currencyCode: chartState.currencyCode
