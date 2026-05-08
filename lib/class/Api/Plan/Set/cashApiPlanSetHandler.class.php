@@ -36,7 +36,14 @@ class cashApiPlanSetHandler implements cashApiHandlerInterface
         }
 
         $plans = (new cashApiPlanGetHandler)->handle($request);
+        $plan = array_shift($plans);
+        if (
+            ($request->date && empty($plan['from']))
+            || (!$request->date && !empty($plan['from']))
+        ) {
+            $plan = array_shift($plans);
+        }
 
-        return reset($plans);
+        return $plan;
     }
 }

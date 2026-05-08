@@ -14,9 +14,6 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
     public function handle($request)
     {
         $model = cash()->getModel('cashPlan');
-
-        $date_from = null;
-        $date_to = null;
         $where = ['1=1'];
 
         if (isset($request->currency)) {
