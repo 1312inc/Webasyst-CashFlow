@@ -15,9 +15,10 @@ const props = defineProps({
     style="display: flex; flex-direction: column; gap: .2rem;"
   >
     <div
-      class="flexbox wrap space-12"
       v-for="cur in props.summary.data"
       :key="cur.currency"
+      class="flexbox wrap space-4"
+      style="justify-content: center;"
     >
       <div
         v-if="cur.amountIncome"

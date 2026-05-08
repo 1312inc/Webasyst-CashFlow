@@ -171,11 +171,11 @@ watch(daysInCalendar, () => {
           <span
             :class="{ 'selected': props.mode === 'summary' }"
             @click="emit('changeMode', 'summary')"
-          >Итого</span>
+          >{{ $t('calendarGrid.modeSummary') }}</span>
           <span
             :class="{ 'selected': props.mode === 'operations' }"
             @click="emit('changeMode', 'operations')"
-          >Операции</span>
+          >{{ $t('calendarGrid.modeOperations') }}</span>
         </div>
 
         <div

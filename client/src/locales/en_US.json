@@ -279,6 +279,10 @@
   "detailsTargetDeviationLabel": "Deviation",
   "detailsTargetDeviationPercentLabel": "Deviation, %",
   "allTransactionsProcessed": "That’s all folks!",
+  "calendarGrid": {
+    "modeSummary": "Summary",
+    "modeOperations": "Details"
+  },
   "planView": {
     "title": "Plan",
     "totalPlanButton": "Total plan",

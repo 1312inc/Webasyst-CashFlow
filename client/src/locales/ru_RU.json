@@ -279,6 +279,10 @@
   "detailsTargetDeviationLabel": "Отклонение",
   "detailsTargetDeviationPercentLabel": "Отклонение, %",
   "allTransactionsProcessed": "На этом всё!",
+  "calendarGrid": {
+    "modeSummary": "Наглядно",
+    "modeOperations": "Подробно"
+  },
   "planView": {
     "title": "Бюджет",
     "totalPlanButton": "Общий план",

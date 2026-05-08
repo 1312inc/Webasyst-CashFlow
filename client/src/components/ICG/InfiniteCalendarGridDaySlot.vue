@@ -32,7 +32,7 @@ const props = defineProps({
   }
 })
 
-const CHART_CIRCLE_MAX_PX = 32
+const CHART_CIRCLE_MAX_PX = 40
 const CHART_CIRCLE_MIN_PX = 5
 
 const router = useRouter()
@@ -126,8 +126,7 @@ function onClick (e) {
 <template>
   <div
     ref="dayRef"
-    class="absolute align-right custom-p-8"
-    style="width: 100%; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;"
+    class="absolute align-right custom-p-8 icg-day-slot"
     @click="onClick"
   >
     <button class="circle light-gray icg-plus">
@@ -136,7 +135,7 @@ function onClick (e) {
     <div class="icg-day">
       {{ date.getDate() }} <span v-if="date.getDate() === 1">{{ getMonthShort(date) }}</span>
     </div>
-    <div>
+    <div class="icg-day-slot-content">
       <div
         v-if="props.mode === 'summary' && props.isCurrentMonth && chartCircles.length"
         class="icg-charts"
@@ -168,6 +167,22 @@ function onClick (e) {
 </template>
 
 <style lang="scss">
+
+.icg-day-slot {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.icg-day-slot-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
 .dragover {
   outline: 1px solid var(--border-color-hard);
@@ -221,6 +236,7 @@ function onClick (e) {
 .icg-charts {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   min-height: 32px;
   margin-bottom: 6px;
