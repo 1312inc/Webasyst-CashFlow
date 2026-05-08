@@ -32,8 +32,11 @@ const props = defineProps({
   }
 })
 
+const displayAmount = computed(() => Math.abs(props.amount))
+const displayAmountFact = computed(() => Math.abs(props.amountFact))
+
 const maxAmount = computed(() => {
-  return props.isPromoMode ? 146 : Math.max(props.amount, props.amountFact) * 1.46
+  return props.isPromoMode ? 146 : Math.max(displayAmount.value, displayAmountFact.value) * 1.46
 })
 
 let chart
@@ -107,12 +110,12 @@ function createChart () {
 
   const range0 = axis2.axisRanges.create()
   range0.value = 0
-  range0.endValue = props.amountFact
+  range0.endValue = displayAmountFact.value
   range0.axisFill.fillOpacity = 1
   range0.axisFill.fill = props.isPromoMode ? '#22d13d' : props.color
 
   const range1 = axis2.axisRanges.create()
-  range1.value = props.amountFact
+  range1.value = displayAmountFact.value
   range1.endValue = maxAmount.value
   range1.axisFill.fillOpacity = 1
   range1.axisFill.fill = props.isPromoMode ? '#ed2509' : '#EEEEEE'
@@ -152,7 +155,7 @@ function createChart () {
     if (!hand || hand.isDisposed()) return
     new am4core.Animation(hand, {
       property: 'value',
-      to: props.amount
+      to: displayAmount.value
     }, handAppearDuration, handAppearEase).start()
   }, 0)
 
