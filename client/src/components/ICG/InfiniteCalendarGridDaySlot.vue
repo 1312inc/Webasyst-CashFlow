@@ -136,6 +136,7 @@ function onClick (e) {
       {{ date.getDate() }} <span v-if="date.getDate() === 1">{{ getMonthShort(date) }}</span>
     </div>
     <div class="icg-day-slot-content">
+      <div />
       <div
         v-if="props.mode === 'summary' && props.isCurrentMonth && chartCircles.length"
         class="icg-charts"
@@ -179,9 +180,13 @@ function onClick (e) {
 
 .icg-day-slot-content {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: center;
+
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
+  align-items: end;
 }
 
 .dragover {
