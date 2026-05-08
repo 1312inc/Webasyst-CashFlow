@@ -64,7 +64,11 @@ const categories = computed(() => {
       currency: i.currency
     })
   }
-  return result.sort((a, b) => a.sort - b.sort)
+  return result.sort((a, b) => {
+    if (a.type === 'income' && b.type !== 'income') return -1
+    if (a.type !== 'income' && b.type === 'income') return 1
+    return a.sort - b.sort
+  })
 })
 
 const currentCategory = computed(() => {
