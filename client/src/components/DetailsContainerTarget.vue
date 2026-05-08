@@ -58,15 +58,13 @@ const categories = computed(() => {
     const category = store.getters['category/getById'](i.category_id)
     if (!category) continue
     result.push({
-      id: i.category_id,
-      name: category.name,
-      color: category.color,
+      ...category,
       amount: i.amount,
       amountFact: i.amount_fact,
       currency: i.currency
     })
   }
-  return result
+  return result.sort((a, b) => a.sort - b.sort)
 })
 
 const currentCategory = computed(() => {
@@ -240,23 +238,43 @@ function onCategoryChange (id) {
                 class="flexbox"
                 style="justify-content: center;"
               >
-                <component :is="categories.length ? DropdownWaFloating : 'div'">
+                <component :is="categories.length > 1 ? DropdownWaFloating : 'div'">
                   <template #toggler>
                     <span class="gray">{{ currentCategory.name }} </span>
                     <i
-                      v-if="categories.length"
+                      v-if="categories.length > 1"
                       class="fas fa-chevron-down text-light-gray"
                     />
                   </template>
                   <ul
-                    v-if="categories.length"
+                    v-if="categories.length > 1"
                     class="menu"
                   >
                     <li
                       v-for="category in categories"
                       :key="category.id"
                     >
-                      <a @click.prevent="onCategoryChange(category.id)">{{ category.name }}</a>
+                      <a @click.prevent="onCategoryChange(category.id)">
+                        <span
+                          v-if="category.glyph"
+                          :key="category.color"
+                          class="icon"
+                        >
+                          <i
+                            :class="category.glyph"
+                            :style="`color:${category.color};`"
+                          />
+                        </span>
+                        <span
+                          v-else
+                          class="icon"
+                        >
+                          <i
+                            class="rounded"
+                            :style="`background-color:${category.color};`"
+                          />
+                        </span>
+                        {{ category.name }}</a>
                     </li>
                   </ul>
                 </component>
