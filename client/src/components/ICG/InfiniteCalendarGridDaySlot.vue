@@ -133,9 +133,12 @@ function onClick (e) {
       <i class="fas fa-plus" />
     </button>
     <div class="icg-day">
+      <span class="icon size-16">
+        <i class="fas fa-exclamation-triangle text-red" />
+      </span>
       {{ date.getDate() }} <span v-if="date.getDate() === 1">{{ getMonthShort(date) }}</span>
     </div>
-    <div class="icg-day-slot-content">
+    <div :class="props.mode === 'summary' ? 'icg-day-slot-content-circles' : 'icg-day-slot-content-col'">
       <div />
       <div
         v-if="props.mode === 'summary' && props.isCurrentMonth && chartCircles.length"
@@ -169,6 +172,14 @@ function onClick (e) {
 
 <style lang="scss">
 
+.icg-day-slot .icg-day .icon {
+  display: none;
+}
+
+.icg-day-slot:has(.icg-row--overdue) .icg-day .icon {
+  display: inline-block;
+}
+
 .icg-day-slot {
   width: 100%;
   height: 100%;
@@ -178,15 +189,18 @@ function onClick (e) {
   cursor: pointer;
 }
 
-.icg-day-slot-content {
+.icg-day-slot-content-circles {
   flex: 1;
-  // display: flex;
-  // flex-direction: column;
-  // justify-content: center;
-
   display: grid;
   grid-template-rows: 1fr auto 1fr;
   align-items: end;
+}
+
+.icg-day-slot-content-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
 }
 
 .dragover {
