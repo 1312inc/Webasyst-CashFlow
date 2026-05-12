@@ -765,12 +765,11 @@ function onClickGoToPremium () {
 
 .amount-input {
   width: 100%;
-  background: var(--highlighted-yellow) !important;
   border-width: 0px !important;
 }
 
 .is-ghost-amount .amount-input {
-  color: #CCCCCC !important;
+  color: var(--light-gray) !important;
 }
 
 .amount-input:hover {
