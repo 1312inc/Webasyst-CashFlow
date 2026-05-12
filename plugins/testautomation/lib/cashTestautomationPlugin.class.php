@@ -5,18 +5,18 @@ class cashTestautomationPlugin extends waPlugin
     private static function getConditions()
     {
         return [
-            'testautomation_by_user' => ['name' => 'Имя пользователя', 'operators' => ['==', '<>', '??']],
-            'testautomation_by_inn'  => ['name' => 'ИНН', 'operators' => ['^...$', '==', '!=']],
-            'testautomation_by_bank' => ['name' => 'Банк', 'operators' => ['#...#', '==', '!=']],
+            'by_user' => ['name' => 'Имя пользователя', 'operators' => ['==', '<>', '??']],
+            'by_inn'  => ['name' => 'ИНН', 'operators' => ['^...$', '==', '!=']],
+            'by_bank' => ['name' => 'Банк', 'operators' => ['#...#', '==', '!=']],
         ];
     }
 
     private static function getActions()
     {
         return  [
-            'testautomation_repeat_transaction' => 'Создавать рекурентную операцию',
-            'testautomation_send_sms'           => 'Отправить СМС',
-            'testautomation_create_reminder'    => 'Создать напоминание',
+            'repeat_transaction' => 'Создавать рекурентную операцию',
+            'send_sms'           => 'Отправить СМС',
+            'create_reminder'    => 'Создать напоминание',
         ];
     }
 
