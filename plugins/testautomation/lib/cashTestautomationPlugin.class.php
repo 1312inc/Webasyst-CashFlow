@@ -37,17 +37,17 @@ class cashTestautomationPlugin extends waPlugin
         $conditions = self::getConditions();
         $condition = ifset($params, 'condition', 'condition_id', '');
         if (empty($conditions[$condition])) {
-            cash()->getLogger()->log(['В плагине нет такого условия для выполнения', 'PARAMS' => $params], cashHelper::AUTOMATION_LOG);
+            cash()->getLogger()->log(['В плагине нет такого условия для выполнения', 'PARAMS' => $params], cashAutomation::AUTOMATION_LOG);
             return false;
         }
         $actions = self::getActions();
         $action = ifset($params, 'action', '');
         if (empty($actions[$action])) {
-            cash()->getLogger()->log(['В плагине нет такого действия для выполнения', 'PARAMS' => $params], cashHelper::AUTOMATION_LOG);
+            cash()->getLogger()->log(['В плагине нет такого действия для выполнения', 'PARAMS' => $params], cashAutomation::AUTOMATION_LOG);
             return false;
         }
 
-        cash()->getLogger()->log(['Плагин выполнил: '.$actions[$action].' C условием: '.var_export($conditions[$condition], true), 'PARAMS' => $params], cashHelper::AUTOMATION_LOG);
+        cash()->getLogger()->log(['Плагин выполнил: '.$actions[$action].' C условием: '.var_export($conditions[$condition], true), 'PARAMS' => $params], cashAutomation::AUTOMATION_LOG);
 
         return true;
     }

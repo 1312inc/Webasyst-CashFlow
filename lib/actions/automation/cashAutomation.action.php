@@ -33,12 +33,12 @@ class cashAutomationAction extends cashViewAction
             if (isset($_data['conditions'])) {
                 foreach ($_data['conditions'] as $_condition_id => $_condition) {
                     $_condition['plugin_id'] = $plugin_id;
-                    $this->plugin_conditions[$_condition_id] = $_condition;
+                    $this->plugin_conditions["{$plugin_id}_$_condition_id"] = $_condition;
                 }
             }
             if (isset($_data['actions'])) {
                 foreach ($_data['actions'] as $_action_id => $_action) {
-                    $this->plugin_actions[$_action_id] = [
+                    $this->plugin_actions["{$plugin_id}_$_action_id"] = [
                         'action' => $_action,
                         'plugin_id' => $plugin_id,
                     ];
