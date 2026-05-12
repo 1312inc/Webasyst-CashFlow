@@ -427,25 +427,29 @@ function onClickGoToPremium () {
   <div class="box custom-p-16">
     <h1>{{ $t('planView.title') }}</h1>
     <div class="flexbox vertical-mobile space-8">
-      <div class="month-picker custom-mr-8">
-        <input
-          ref="monthPickerEl"
-          type="text"
-          class="button light-gray"
-        >
-      </div>
-      <div
-        v-if="currencies.length"
-        class="toggle"
-      >
-        <span
-          v-for="currency in currencies"
-          :key="currency"
-          :class="{ selected: selectedCurrency === currency }"
-          @click="selectedCurrency = currency"
-        >
-          {{ currency }}
-        </span>
+      <div class="flexbox middle space-8">
+        <div class="month-picker">
+          <input
+            ref="monthPickerEl"
+            type="text"
+            class="button light-gray"
+          >
+        </div>
+        <div style="flex: 1; overflow: hidden;">
+          <div
+            v-if="currencies.length"
+            class="toggle"
+          >
+            <span
+              v-for="currency in currencies"
+              :key="currency"
+              :class="{ selected: selectedCurrency === currency }"
+              @click="selectedCurrency = currency"
+            >
+              {{ currency }}
+            </span>
+          </div>
+        </div>
       </div>
       <button
         class="total-plan-button nowrap nobutton"
@@ -468,228 +472,236 @@ function onClickGoToPremium () {
       {{ $t('planView.incomeCategoriesTitle') }}
     </h4>
 
-    <table class="bigdata custom-mt-4">
-      <thead>
-        <tr>
-          <th />
-          <th class="amount-cell">
-            {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
-          </th>
-          <th class="amount-cell">
-            {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
-          </th>
-          <th class="amount-cell">
-            {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
-          </th>
-          <th class="amount-cell">
-            {{ $t('planView.columnDeviationPercent') }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="category in incomeCategories"
-          :key="category.id"
-        >
-          <td
-            class="category-name-cell"
-            :class="{ 'is-child-category': category.parent_category_id }"
+    <div class="plan-table-scroll custom-mt-4">
+      <table class="bigdata">
+        <thead>
+          <tr>
+            <th />
+            <th class="amount-cell">
+              {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationPercent') }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="category in incomeCategories"
+            :key="category.id"
           >
-            <div class="flexbox middle">
-              <span
-                v-if="category.glyph"
-                :key="category.color"
-                class="icon"
-              >
-                <i
-                  :class="category.glyph"
-                  :style="`color:${category.color};`"
-                />
-              </span>
-              <span
-                v-else
-                class="icon"
-              >
-                <i
-                  class="rounded"
-                  :style="`background-color:${category.color};`"
-                />
-              </span>
-              <router-link
-                class="category-name-link"
-                :to="{ name: 'Category', params: { id: category.id } }"
-              >
-                {{ category.name }}
-              </router-link>
-            </div>
-          </td>
-          <td
-            class="amount-cell"
-            :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
-          >
-            <input
-              class="amount-input bold"
-              type="number"
-              :value="getPlanAmount(category.id)"
-              :disabled="isFetching"
-              @change="updatePlanAmount(category.id, $event.target.value)"
+            <td
+              class="category-name-cell"
+              :class="{ 'is-child-category': category.parent_category_id }"
             >
-          </td>
-          <td class="amount-cell">
-            {{ getFactAmount(category.id) || '—' }}
-          </td>
-          <td
-            class="amount-cell bold"
-            :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
-          >
-            {{ getDeviationAmount(category.id) || '—' }}
-          </td>
-          <td
-            class="amount-cell"
-            :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
-          >
-            {{ getDeviationPercent(category.id) || '—' }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              <div class="flexbox middle">
+                <span
+                  v-if="category.glyph"
+                  :key="category.color"
+                  class="icon"
+                >
+                  <i
+                    :class="category.glyph"
+                    :style="`color:${category.color};`"
+                  />
+                </span>
+                <span
+                  v-else
+                  class="icon"
+                >
+                  <i
+                    class="rounded"
+                    :style="`background-color:${category.color};`"
+                  />
+                </span>
+                <router-link
+                  class="category-name-link"
+                  :to="{ name: 'Category', params: { id: category.id } }"
+                >
+                  {{ category.name }}
+                </router-link>
+              </div>
+            </td>
+            <td
+              class="amount-cell"
+              :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
+            >
+              <input
+                class="amount-input bold"
+                type="number"
+                :value="ghostAmounts.has(category.id) ? '' : getPlanAmount(category.id)"
+                :placeholder="ghostAmounts.has(category.id) ? getPlanAmount(category.id) : ''"
+                :disabled="isFetching"
+                @change="updatePlanAmount(category.id, $event.target.value)"
+              >
+            </td>
+            <td class="amount-cell">
+              {{ getFactAmount(category.id) || '—' }}
+            </td>
+            <td
+              class="amount-cell bold"
+              :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
+            >
+              {{ getDeviationAmount(category.id) || '—' }}
+            </td>
+            <td
+              class="amount-cell"
+              :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
+            >
+              {{ getDeviationPercent(category.id) || '—' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <h4 class="gray custom-mb-4">
       {{ $t('planView.expenseCategoriesTitle') }}
     </h4>
-    <table class="bigdata custom-mt-4">
-      <thead>
-        <tr>
-          <th />
-          <th class="amount-cell">
-            {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
-          </th>
-          <th class="amount-cell">
-            {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
-          </th>
-          <th class="amount-cell">
-            {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
-          </th>
-          <th class="amount-cell">
-            {{ $t('planView.columnDeviationPercent') }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="category in expenseCategories"
-          :key="category.id"
-        >
-          <td
-            class="category-name-cell"
-            :class="{ 'is-child-category': category.parent_category_id }"
+    <div class="plan-table-scroll custom-mt-4">
+      <table class="bigdata">
+        <thead>
+          <tr>
+            <th />
+            <th class="amount-cell">
+              {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationPercent') }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="category in expenseCategories"
+            :key="category.id"
           >
-            <div class="flexbox middle">
-              <span
-                v-if="category.glyph"
-                :key="category.color"
-                class="icon"
-              >
-                <i
-                  :class="category.glyph"
-                  :style="`color:${category.color};`"
-                />
-              </span>
-              <span
-                v-else
-                class="icon"
-              >
-                <i
-                  class="rounded"
-                  :style="`background-color:${category.color};`"
-                />
-              </span>
-              <router-link
-                class="category-name-link"
-                :to="{ name: 'Category', params: { id: category.id } }"
-              >
-                {{ category.name }}
-              </router-link>
-            </div>
-          </td>
-          <td
-            class="amount-cell"
-            :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
-          >
-            <input
-              class="amount-input bold"
-              type="number"
-              :value="getPlanAmount(category.id)"
-              :disabled="isFetching"
-              @change="updatePlanAmount(category.id, $event.target.value)"
+            <td
+              class="category-name-cell"
+              :class="{ 'is-child-category': category.parent_category_id }"
             >
-          </td>
-          <td class="amount-cell">
-            {{ getFactAmount(category.id) || '—' }}
-          </td>
-          <td
-            class="amount-cell bold"
-            :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
-          >
-            {{ getDeviationAmount(category.id) || '—' }}
-          </td>
-          <td
-            class="amount-cell"
-            :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
-          >
-            {{ getDeviationPercent(category.id) || '—' }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              <div class="flexbox middle">
+                <span
+                  v-if="category.glyph"
+                  :key="category.color"
+                  class="icon"
+                >
+                  <i
+                    :class="category.glyph"
+                    :style="`color:${category.color};`"
+                  />
+                </span>
+                <span
+                  v-else
+                  class="icon"
+                >
+                  <i
+                    class="rounded"
+                    :style="`background-color:${category.color};`"
+                  />
+                </span>
+                <router-link
+                  class="category-name-link"
+                  :to="{ name: 'Category', params: { id: category.id } }"
+                >
+                  {{ category.name }}
+                </router-link>
+              </div>
+            </td>
+            <td
+              class="amount-cell"
+              :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
+            >
+              <input
+                class="amount-input bold"
+                type="number"
+                :value="ghostAmounts.has(category.id) ? '' : getPlanAmount(category.id)"
+                :placeholder="ghostAmounts.has(category.id) ? getPlanAmount(category.id) : ''"
+                :disabled="isFetching"
+                @change="updatePlanAmount(category.id, $event.target.value)"
+              >
+            </td>
+            <td class="amount-cell">
+              {{ getFactAmount(category.id) || '—' }}
+            </td>
+            <td
+              class="amount-cell bold"
+              :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
+            >
+              {{ getDeviationAmount(category.id) || '—' }}
+            </td>
+            <td
+              class="amount-cell"
+              :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
+            >
+              {{ getDeviationPercent(category.id) || '—' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <h4 class="gray custom-mb-4">
       {{ $t('planView.balanceSectionTitle') }}
     </h4>
-    <table class="bigdata custom-mt-4">
-      <thead>
-        <tr>
-          <th />
-          <th class="amount-cell">
-            {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
-          </th>
-          <th class="amount-cell">
-            {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
-          </th>
-          <th class="amount-cell">
-            {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
-          </th>
-          <th class="amount-cell">
-            {{ $t('planView.columnDeviationPercent') }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="category-name-cell">
-            {{ $t('planView.balanceRowLabel') }}
-          </td>
-          <td class="amount-cell bold">
-            {{ balancePlanTotal || '—' }}
-          </td>
-          <td class="amount-cell">
-            {{ balanceFactTotal || '—' }}
-          </td>
-          <td
-            class="amount-cell bold"
-            :class="getBalanceDeviationClass()"
-          >
-            {{ balanceDeviationAmount || '—' }}
-          </td>
-          <td
-            class="amount-cell"
-            :class="getBalanceDeviationClass()"
-          >
-            {{ balanceDeviationPercent || '—' }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="plan-table-scroll custom-mt-4">
+      <table class="bigdata">
+        <thead>
+          <tr>
+            <th />
+            <th class="amount-cell">
+              {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationPercent') }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="category-name-cell">
+              {{ $t('planView.balanceRowLabel') }}
+            </td>
+            <td class="amount-cell bold">
+              {{ balancePlanTotal || '—' }}
+            </td>
+            <td class="amount-cell">
+              {{ balanceFactTotal || '—' }}
+            </td>
+            <td
+              class="amount-cell bold"
+              :class="getBalanceDeviationClass()"
+            >
+              {{ balanceDeviationAmount || '—' }}
+            </td>
+            <td
+              class="amount-cell"
+              :class="getBalanceDeviationClass()"
+            >
+              {{ balanceDeviationPercent || '—' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <portal v-if="openPremiumModal">
       <Modal @close="openPremiumModal = false">
@@ -720,6 +732,28 @@ function onClickGoToPremium () {
 <style>
 @import 'flatpickr/dist/plugins/monthSelect/style.css';
 
+.plan-table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.plan-table-scroll table {
+  width: 100%;
+  min-width: 760px;
+}
+
+@media screen and (max-width: 760px) {
+  .plan-table-scroll {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
 .flatpickr-monthSelect-month {
   padding: 0 6px !important;
 }
@@ -747,6 +781,13 @@ function onClickGoToPremium () {
   max-width: 200px;
 }
 
+@media screen and (max-width: 760px) {
+  .category-name-cell {
+    width: 90px;
+    max-width: 90px;
+  }
+}
+
 .category-name-link {
   display: inline-block;
   max-width: calc(200px - 26px);
@@ -763,12 +804,23 @@ function onClickGoToPremium () {
   text-align: right;
 }
 
+@media screen and (max-width: 760px) {
+  .amount-cell {
+    width: 70px;
+    max-width: 70px;
+    min-width: 70px;
+  }
+}
+
 .amount-input {
   width: 100%;
   border-width: 0px !important;
 }
 
 .is-ghost-amount .amount-input {
+  color: var(--light-gray) !important;
+}
+.is-ghost-amount .amount-input::placeholder {
   color: var(--light-gray) !important;
 }
 

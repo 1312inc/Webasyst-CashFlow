@@ -194,6 +194,7 @@
           {{ $moment(transaction.date).toDate().toLocaleDateString($moment.locale(), { month: 'short', day: 'numeric' }) }}
         </div>
         <div class="hint">
+          {{ $moment(transaction.date).format('dddd') }}<br>
           {{ $moment(transaction.date).from($moment().startOf('day')) }}
         </div>
       </div>
