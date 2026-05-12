@@ -122,10 +122,28 @@ const childrenByParentId = computed(() => {
   }
   return result
 })
+function isPlanMissingMonthRange (plan) {
+  if (!plan) return false
+  const from = plan.from
+  const to = plan.to
+  return (from == null || from === '') && (to == null || to === '')
+}
+
 const ghostAmounts = computed(() => {
   const result = new Set()
   for (const category of allCategories.value) {
     getComputedPlanAmount(category.id, result)
+  }
+  if (!isTotalPlanMode.value) {
+    const visited = new Set()
+    for (const plan of [...filteredPlanData.value].sort((a, b) => b.from - a.from).reverse()) {
+      if (!plan?.category_id) continue
+      if (visited.has(plan.category_id)) continue
+      visited.add(plan.category_id)
+      if (isPlanMissingMonthRange(plan)) {
+        result.add(plan.category_id)
+      }
+    }
   }
   return result
 })
@@ -366,7 +384,7 @@ async function updatePlanAmount (categoryId, amount) {
   const existingPlan = getPlanEntry(categoryId)
   const currency = selectedCurrency.value || existingPlan?.currency || currencies.value[0] || ''
   const payload = {
-    // id: existingPlan?.id || null,
+    id: existingPlan?.id || null,
     amount,
     category_id: categoryId,
     currency,
@@ -446,7 +464,9 @@ function onClickGoToPremium () {
       {{ $t('planView.premiumAlert') }}
     </div>
 
-    <h4 class="gray custom-mb-4">{{ $t('planView.incomeCategoriesTitle') }}</h4>
+    <h4 class="gray custom-mb-4">
+      {{ $t('planView.incomeCategoriesTitle') }}
+    </h4>
 
     <table class="bigdata custom-mt-4">
       <thead>
@@ -534,7 +554,9 @@ function onClickGoToPremium () {
       </tbody>
     </table>
 
-    <h4 class="gray custom-mb-4">{{ $t('planView.expenseCategoriesTitle') }}</h4>
+    <h4 class="gray custom-mb-4">
+      {{ $t('planView.expenseCategoriesTitle') }}
+    </h4>
     <table class="bigdata custom-mt-4">
       <thead>
         <tr>
@@ -621,7 +643,9 @@ function onClickGoToPremium () {
       </tbody>
     </table>
 
-    <h4 class="gray custom-mb-4">{{ $t('planView.balanceSectionTitle') }}</h4>
+    <h4 class="gray custom-mb-4">
+      {{ $t('planView.balanceSectionTitle') }}
+    </h4>
     <table class="bigdata custom-mt-4">
       <thead>
         <tr>
