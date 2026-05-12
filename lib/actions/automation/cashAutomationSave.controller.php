@@ -26,7 +26,7 @@ class cashAutomationSaveController extends cashJsonController
         $insert = [];
         $update = [];
         foreach ($rules_data as $_rule_id => $_rule) {
-            $_rule['app_id'] = cashConfig::APP_ID;
+            $_rule['app_id'] = ifset($_rule, 'app_id', cashConfig::APP_ID);
             $_rule['conditions'] = (isset($_rule['conditions']) ? array_values($_rule['conditions']) : null);
             if ($_rule_id < 1) {
                 $insert[] = $_rule;

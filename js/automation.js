@@ -27,12 +27,14 @@ $.extend($.automation = $.automation || {}, {
             $table_tbody.on('change', '.c-condition-selector', function () {
                 let val_cond = $(this).val();
                 let $tr = $(this).closest('tr');
+                let plugin_id = $(this).find('option:selected').data('plugin-id');
 
                 $tr.find('input').removeClass('hidden');
                 $tr.find('select[data-condition-id]').closest('div').addClass('hidden');
                 $tr.find('select[data-condition-id]').prop('disabled', true);
                 $tr.find('select[data-condition-id="'+ val_cond +'"]').closest('div').removeClass('hidden');
                 $tr.find('select[data-condition-id="'+ val_cond +'"]').prop('disabled', false);
+                $tr.find('.js-app-id-rule').val('cash'+ (plugin_id ? '.'+ plugin_id : ''));
             });
         })();
 

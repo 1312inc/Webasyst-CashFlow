@@ -12,6 +12,7 @@
         {** SORT **}
         <i class="fas fa-grip-vertical text-light-gray cursor-pointer automation-rows-handle"></i>
         <input type="hidden" name="rules[{$rule_id}][sort]" value="{$rule.sort|default:'0'|escape}" class="js-sort-rule">
+        <input type="hidden" name="rules[{$rule_id}][app_id]" value="{$rule.app_id|default:cashConfig::APP_ID|escape}" class="js-app-id-rule">
     </td>
     <td class="valign-top">
         {** EVENT **}
@@ -30,7 +31,7 @@
         <div class="wa-select smaller">
             <select class="c-condition-selector" name="rules[{$rule_id}][conditions][{$condition_key}][condition_id]">
             {foreach $conditions as $_condition_id => $_condition}
-                <option value="{$_condition_id|escape}"{if $_condition_id == $condition_id} selected{/if}>{$_condition.name|escape}</option>
+                <option value="{$_condition_id|escape}"{if $_condition_id == $condition_id} selected{/if}{if !empty($_condition.plugin_id)} data-plugin-id="{$_condition.plugin_id|escape}"{/if}>{$_condition.name|escape}</option>
             {/foreach}
             </select>
         </div>
@@ -53,7 +54,7 @@
         <div class="wa-select small">
             <select name="rules[{$rule_id}][rule_data][action]" class="c-action-selector">
                 {foreach $actions as $_action_id => $_action}
-                <option value="{$_action_id|escape}"{if $_action_id == $action} selected{/if}>{$_action|escape}</option>
+                <option value="{$_action_id|escape}"{if $_action_id == $action} selected{/if}{if !empty($_action.plugin_id)} data-plugin-id="{$_action.plugin_id|escape}"{/if}>{$_action.action|escape}</option>
                 {/foreach}
             </select>
         </div>

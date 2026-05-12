@@ -5,6 +5,7 @@
  */
 final class cashHelper
 {
+    const AUTOMATION_LOG = 'automation';
     /**
      * @return array
      * @throws waException
@@ -130,5 +131,79 @@ final class cashHelper
         }
 
         return $dt->format('Y-m-d\TH:i:s.u\Z');
+    }
+
+    /**
+     * @param $action_object waAPIMethod
+     * @param $response array
+     * @return array|null
+     * @throws waException
+     */
+    public static function automationEvent($action_object, $response)
+    {
+        $map = [
+            'cashTransactionCreateMethod' => 'create',
+            'cashTransactionUpdateMethod' => 'update',
+            'cashTransactionDeleteMethod' => 'delete'
+        ];
+        $class = get_class($action_object);
+        $action = ifset($map, $class, null);
+        if (!$action) {
+            return null;
+        }
+        $action_id = 'transaction_'.$action;
+        $automation_model = new cashAutomationModel();
+        $rules = $automation_model->getByField('action_id', $action_id, true);
+
+        $actions = cashAutomationAction::getActions();
+
+        foreach ($rules as $rule) {
+            $condition = ifset($rule, 'conditions', 0, []);
+            $condition_id = ifset($condition, 'condition_id', '');
+            $operator = ifset($condition, 'operator', '');
+            $rule_data = ifset($rule, 'rule_data', []);
+            $rule_action = ifset($rule_data, 'action', null);
+            list($app, $plugin_id) = explode('.', $rule['app_id'].'.');
+            $found = empty($condition);
+
+
+            if ($plugin_id) {
+                $params = [
+                    'action_id'   => $action_id,
+                    'condition'   => $condition,
+                    'action'      => $rule_action,
+                    'transaction' => $response
+                ];
+
+                $all_enabled_plugins = wa('cash')->getConfig()->getPlugins();
+                if ($method = ifset($all_enabled_plugins, $plugin_id, 'handlers', cashEventStorage::WA_BACKEND_AUTOMATION_HANDLE, null)) {
+                    try {
+                        $found = wa()->getPlugin($plugin_id)->$method($params);
+                    } catch (Exception $ex) {
+                        cash()->getLogger()->error($ex->getMessage());
+                    }
+                }
+            } else {
+                switch ($condition_id) {
+                    case 'amount':
+                        break;
+                    case 'description':
+                        break;
+                    case 'account_id':
+                        break;
+                    case 'category_id':
+                        break;
+                    case 'date':
+                        break;
+                    default:
+                }
+            }
+
+            if ($found) {
+                break;
+            }
+        }
+
+        return [];
     }
 }

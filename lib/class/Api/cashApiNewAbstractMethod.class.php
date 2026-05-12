@@ -38,6 +38,7 @@ abstract class cashApiNewAbstractMethod extends waAPIMethod
             $this->response = $handlerResult->getResponseBody();
             $this->http_status_code = $handlerResult->getStatus();
             wa()->getResponse()->setStatus($this->http_status_code);
+            cashHelper::automationEvent($this, (array) $this->response);
         } catch (Exception $exception) {
             $this->response = cashApiErrorResponse::fromException($exception);
             $this->http_status_code = $this->response->getStatus() ?: $exception->getCode() ?: 500;
