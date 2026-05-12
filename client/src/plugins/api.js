@@ -16,7 +16,7 @@ const api = axios.create({
 })
 
 api.interceptors.response.use((response) => {
-  if (!response.headers['content-type'].includes('application/json')) {
+  if (response.status === 200 && !response.headers['content-type']?.includes('application/json')) {
     store.commit('errors/error', {
       title: 'error.api',
       method: i18n.t('error.nonJsonTitle'),
@@ -25,7 +25,10 @@ api.interceptors.response.use((response) => {
   }
   return response
 }, (error) => {
-  if (!error.response.headers['content-type'].includes('application/json')) {
+  if (!error.response) {
+    return Promise.reject(error)
+  }
+  if (!error.response.headers['content-type']?.includes('application/json')) {
     store.commit('errors/error', {
       title: 'error.api',
       method: error.response.config.url,
