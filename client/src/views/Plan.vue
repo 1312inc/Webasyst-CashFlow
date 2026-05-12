@@ -817,9 +817,6 @@ function onClickGoToPremium () {
   border-width: 0px !important;
 }
 
-.is-ghost-amount .amount-input {
-  color: var(--light-gray) !important;
-}
 .is-ghost-amount .amount-input::placeholder {
   color: var(--light-gray) !important;
 }
