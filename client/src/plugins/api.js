@@ -28,6 +28,10 @@ api.interceptors.response.use((response) => {
   if (!error.response) {
     return Promise.reject(error)
   }
+  // show premium modal
+  if (error.response.status === 402) {
+    return Promise.reject(error)
+  }
   if (!error.response.headers['content-type']?.includes('application/json')) {
     store.commit('errors/error', {
       title: 'error.api',
