@@ -281,7 +281,8 @@
   "allTransactionsProcessed": "На этом всё!",
   "calendarGrid": {
     "modeSummary": "Наглядно",
-    "modeOperations": "Подробно"
+    "modeOperations": "Подробно",
+    "filterAllOperations": "Все операции"
   },
   "planView": {
     "title": "Бюджет",

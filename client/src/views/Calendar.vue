@@ -9,6 +9,7 @@
     :mode="mode"
     @changeInterval="handleMonthChange"
     @changeMode="handleChangeMode"
+    @changeChartFilter="onChartFilterChange"
   >
     <template #default="{ date, items, monthChartMaxAbs }">
       <InfiniteCalendarGridDaySlot
@@ -35,12 +36,20 @@ import store from '@/store'
 
 const mode = ref('summary')
 const dataDays = ref([])
+const chartFilterParam = ref('calendar')
 
 let startDate
 let endDate
 let controller
 
 useTitle(`${i18n.t('calendar')} – ${window.appState?.accountName || ''}`)
+
+function onChartFilterChange (filter) {
+  chartFilterParam.value = filter
+  if (startDate != null && endDate != null) {
+    handleMonthChange({ start: startDate, end: endDate })
+  }
+}
 
 try {
   const storedMode = localStorage.getItem('cashCalendarMode')
@@ -63,7 +72,7 @@ const handleMonthChange = ({ start, end }) => {
         from: dayjs(start).format('YYYY-MM-DD'),
         to: dayjs(end).format('YYYY-MM-DD'),
         group_by: 'day',
-        filter: 'calendar',
+        filter: chartFilterParam.value,
         reverse: 1
       }
     })

@@ -4,13 +4,18 @@ import { waitForTippy } from '@/utils/waiters'
 
 const floating = ref(null)
 const reference = ref(null)
+const tippyInstance = ref(null)
+
+function hide () {
+  tippyInstance.value?.hide()
+}
 
 onMounted(async () => {
   const tippy = await waitForTippy()
 
   if (!tippy || !floating.value || !reference.value) return
 
-  tippy(reference.value, {
+  tippyInstance.value = tippy(reference.value, {
     content: floating.value,
     interactive: true,
     placement: 'bottom-start',
@@ -36,7 +41,9 @@ onMounted(async () => {
         class="dropdown-body"
         style="min-width: 200px;"
       >
-        <slot />
+        <slot
+          :close="hide"
+        />
       </div>
     </div>
   </div>

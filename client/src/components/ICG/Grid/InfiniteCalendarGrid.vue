@@ -2,10 +2,14 @@
 import dayjs from 'dayjs'
 import { defineEmits, computed, ref, watch } from 'vue'
 
+import currencyIcons from '@/utils/currencyIcons'
+import DropdownWaFloating from '@/components/Inputs/DropdownWaFloating.vue'
 import './style.css'
 
 import { getWeekDaysNames } from './utils'
 import { useCalendarScroll } from './useCalendarScroll'
+import store from '@/store'
+import { i18n } from '@/plugins/locale'
 
 const props = defineProps({
   firstDayOfWeek: {
@@ -34,69 +38,79 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['changeInterval', 'changeMode'])
+const emit = defineEmits(['changeInterval', 'changeMode', 'changeChartFilter'])
 
 const wrapperRef = ref(null)
 const containerRef = ref(null)
-const selectedCurrency = ref('')
 
 const { cellHeight, activeMonth, daysInCalendar } = useCalendarScroll(wrapperRef, containerRef, props.firstDayOfWeek)
 const weekDaysNames = getWeekDaysNames(props.locale, props.firstDayOfWeek)
 
-const currencies = computed(() => {
-  const list = []
-  for (const item of props.items) {
-    const record = item
-    if (typeof record.currency === 'string' && !list.includes(record.currency)) {
-      list.push(record.currency)
-    }
-    const nested = record.data
-    if (Array.isArray(nested)) {
-      for (const sub of nested) {
-        const nestedRecord = sub
-        if (typeof nestedRecord.currency === 'string' && !list.includes(nestedRecord.currency)) {
-          list.push(nestedRecord.currency)
-        }
-      }
-    }
-  }
-  return list
+const accounts = computed(() => store.state.account.accounts)
+const incomeCategories = computed(() => store.getters['category/getByType']('income'))
+const expenseCategories = computed(() => store.getters['category/getByType']('expense'))
+const currenciesForFiltering = computed(() => store.getters['account/currenciesInAccounts'] || [])
+
+const activeChartFilter = ref({
+  type: 'calendar',
+  id: null,
+  label: ''
 })
 
-watch(currencies, (value) => {
-  if (!value.includes(selectedCurrency.value)) {
-    selectedCurrency.value = value[0] || ''
+const filterButtonLabel = computed(() => {
+  if (activeChartFilter.value.type === 'calendar') {
+    return i18n.t('calendarGrid.filterAllOperations')
   }
-}, { immediate: true })
-
-const filteredItems = computed(() => {
-  if (!selectedCurrency.value) return props.items
-  const result = []
-  for (const item of props.items) {
-    const record = item
-
-    if (typeof record.currency === 'string' && record.currency === selectedCurrency.value) {
-      result.push(item)
-      continue
-    }
-
-    if (Array.isArray(record.data)) {
-      const filteredData = record.data
-        .filter(sub => sub.currency === selectedCurrency.value)
-      if (filteredData.length) {
-        result.push({
-          ...record,
-          data: filteredData
-        })
-      }
-    }
-  }
-  return result
+  return activeChartFilter.value.label || i18n.t('calendarGrid.filterAllOperations')
 })
+
+function isChartFilterActive (type, id = undefined) {
+  const a = activeChartFilter.value
+  if (type === 'calendar') return a.type === 'calendar'
+  return a.type === type && a.id === id
+}
+
+function applyChartFilter (close, apiFilter, next) {
+  activeChartFilter.value = next
+  emit('changeChartFilter', apiFilter)
+  if (typeof close === 'function') close()
+}
+
+function selectCalendarFilter (close) {
+  applyChartFilter(close, 'calendar', {
+    type: 'calendar',
+    id: null,
+    label: ''
+  })
+}
+
+function selectCurrencyFilter (close, code) {
+  applyChartFilter(close, `currency/${code}`, {
+    type: 'currency',
+    id: code,
+    label: code
+  })
+}
+
+function selectAccountFilter (close, account) {
+  applyChartFilter(close, `account/${account.id}`, {
+    type: 'account',
+    id: account.id,
+    label: account.name
+  })
+}
+
+function selectCategoryFilter (close, category) {
+  applyChartFilter(close, `category/${category.id}`, {
+    type: 'category',
+    id: category.id,
+    label: category.name
+  })
+}
 
 const itemsMap = computed(() => {
   const map = {}
-  for (const item of filteredItems.value) {
+  for (const item of props.items) {
     const fieldContent = item[props.fieldWithDate]
     if (typeof fieldContent === 'string' || typeof fieldContent === 'number') {
       const date = new Date(fieldContent)
@@ -113,10 +127,10 @@ const itemsMap = computed(() => {
   return map
 })
 
-/** Max of |income|, |expense|, |profit| per day, then max across days (active month, filtered currency). Largest circle = 32px. */
+/** Max of |income|, |expense|, |profit| per day, then max across days (active month). Largest circle = 32px. */
 const monthChartMaxAbs = computed(() => {
   const byDay = {}
-  for (const item of filteredItems.value) {
+  for (const item of props.items) {
     const fieldContent = item[props.fieldWithDate]
     if (!fieldContent) continue
     const date = dayjs(fieldContent)
@@ -162,12 +176,14 @@ watch(daysInCalendar, () => {
 <template>
   <div class="icg">
     <div class="icg-header">
-      <div class="icg-month">
-        {{ activeMonth.toDate().toLocaleDateString(props.locale, { year: 'numeric', month: 'long' }).replace('г.', "") }}
-      </div>
-
-      <div class="flexbox vertical-mobile">
-        <div class="toggle custom-mr-24 custom-mr-0-mobile custom-mb-8-mobile">
+      <div
+        class="flexbox vertical-mobile space-16"
+        style="align-items: start;"
+      >
+        <div class="icg-month nowrap">
+          {{ activeMonth.toDate().toLocaleDateString(props.locale, { year: 'numeric', month: 'long' }).replace('г.', "") }}
+        </div>
+        <div class="toggle">
           <span
             :class="{ 'selected': props.mode === 'summary' }"
             @click="emit('changeMode', 'summary')"
@@ -177,48 +193,171 @@ watch(daysInCalendar, () => {
             @click="emit('changeMode', 'operations')"
           >{{ $t('calendarGrid.modeOperations') }}</span>
         </div>
+        <DropdownWaFloating v-if="props.mode === 'summary'">
+          <template #toggler>
+            <button class="button light-gray nowrap">
+              <span class="icon text-gray">
+                <i class="fas fa-filter" />
+              </span>
+              {{ filterButtonLabel }}
+            </button>
+          </template>
 
-        <div
-          v-if="currencies.length > 1"
-          class="toggle custom-mr-24 custom-mr-0-mobile custom-mb-8-mobile"
-        >
-          <span
-            v-for="currency in currencies"
-            :key="currency"
-            :class="{ selected: selectedCurrency === currency }"
-            @click="selectedCurrency = currency"
+          <template #default="{ close }">
+            <div>
+              <ul class="menu custom-mt-0">
+                <li
+                  :class="{ 'selected': isChartFilterActive('calendar') }"
+                >
+                  <a
+                    href="#"
+                    @click.prevent="selectCalendarFilter(close)"
+                  >{{ $t('calendarGrid.filterAllOperations') }}</a>
+                </li>
+              </ul>
+              <div class="heading">
+                {{ $t('currency') }}
+              </div>
+              <ul class="menu">
+                <li
+                  v-for="currency in currenciesForFiltering"
+                  :key="'cur-' + currency"
+                  :class="{ 'selected': isChartFilterActive('currency', currency) }"
+                >
+                  <a
+                    href="#"
+                    @click.prevent="selectCurrencyFilter(close, currency)"
+                  >{{ currency }}</a>
+                </li>
+              </ul>
+              <div class="heading">
+                {{ $t('account') }}
+              </div>
+              <ul class="menu">
+                <li
+                  v-for="account in accounts"
+                  :key="'acc-' + account.id"
+                  :class="{ 'selected': isChartFilterActive('account', account.id) }"
+                >
+                  <a
+                    href="#"
+                    @click.prevent="selectAccountFilter(close, account)"
+                  ><span class="icon">
+                     <img
+                       v-if="$helper.isValidHttpUrl(account.icon)"
+                       :src="account.icon"
+                       alt=""
+                       class="size-20"
+                       :class="{ 'userpic': account.accountable_contact_id }"
+                     >
+                     <span v-else>
+                       <i :class="`fas ${currencyIcons[account.currency] || currencyIcons.default}`" />
+                     </span>
+                   </span>
+                    <span>{{ account.name }}</span></a>
+                </li>
+              </ul>
+              <div class="heading">
+                {{ $t('income') }}
+              </div>
+              <ul class="menu">
+                <li
+                  v-for="category in incomeCategories"
+                  :key="'inc-' + category.id"
+                  :class="{ 'selected': isChartFilterActive('category', category.id) }"
+                >
+                  <a
+                    href="#"
+                    @click.prevent="selectCategoryFilter(close, category)"
+                  >
+                    <span
+                      v-if="category.glyph"
+                      :key="category.color"
+                      class="icon"
+                    >
+                      <i
+                        :class="category.glyph"
+                        :style="`color:${category.color};`"
+                      />
+                    </span>
+                    <span
+                      v-else
+                      class="icon"
+                    >
+                      <i
+                        class="rounded"
+                        :style="`background-color:${category.color};`"
+                      />
+                    </span>
+                    {{ category.name }}</a>
+                </li>
+              </ul>
+              <div class="heading">
+                {{ $t('expense') }}
+              </div>
+              <ul class="menu">
+                <li
+                  v-for="category in expenseCategories"
+                  :key="'exp-' + category.id"
+                  :class="{ 'selected': isChartFilterActive('category', category.id) }"
+                >
+                  <a
+                    href="#"
+                    @click.prevent="selectCategoryFilter(close, category)"
+                  >
+                    <span
+                      v-if="category.glyph"
+                      :key="category.color"
+                      class="icon"
+                    >
+                      <i
+                        :class="category.glyph"
+                        :style="`color:${category.color};`"
+                      />
+                    </span>
+                    <span
+                      v-else
+                      class="icon"
+                    >
+                      <i
+                        class="rounded"
+                        :style="`background-color:${category.color};`"
+                      />
+                    </span>
+                    {{ category.name }}</a>
+                </li>
+              </ul>
+            </div>
+          </template>
+        </DropdownWaFloating>
+      </div>
+
+      <div class="icg-controls">
+        <button @click="activeMonth = activeMonth.add(-1, 'M')">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height=".8rem"
+            viewBox="0 0 320 512"
           >
-            {{ currency }}
-          </span>
-        </div>
-
-        <div class="icg-controls">
-          <button @click="activeMonth = activeMonth.add(-1, 'M')">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height=".8rem"
-              viewBox="0 0 320 512"
-            >
-              <path
-                d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"
-              />
-            </svg>
-          </button>
-          <button @click="activeMonth = dayjs()">
-            {{ props.todayLabel }}
-          </button>
-          <button @click="activeMonth = activeMonth.add(1, 'M')">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height=".8rem"
-              viewBox="0 0 320 512"
-            >
-              <path
-                d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"
-              />
-            </svg>
-          </button>
-        </div>
+            <path
+              d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"
+            />
+          </svg>
+        </button>
+        <button @click="activeMonth = dayjs()">
+          {{ props.todayLabel }}
+        </button>
+        <button @click="activeMonth = activeMonth.add(1, 'M')">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height=".8rem"
+            viewBox="0 0 320 512"
+          >
+            <path
+              d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"
+            />
+          </svg>
+        </button>
       </div>
     </div>
     <div class="icg-weekdays">
