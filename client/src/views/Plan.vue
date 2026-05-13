@@ -33,7 +33,6 @@ function parseCurrencyFromQuery (rawValue) {
 const incomeCategories = computed(() => store.getters['category/getByType']('income'))
 const expenseCategories = computed(() => store.getters['category/getByType']('expense'))
 const planData = ref([])
-const breakdownData = ref([])
 const selectedCurrency = ref(parseCurrencyFromQuery(route.query.currency))
 const currentMonthFirstDay = ref(parseMonthFromQuery(route.query.month))
 const monthPickerEl = ref(null)
@@ -44,24 +43,7 @@ let isSyncingUrl = false
 
 const isTotalPlanMode = computed(() => currentMonthFirstDay.value == null)
 
-function collectCurrenciesFromPlan (plans) {
-  const seen = new Set()
-  const list = []
-  for (const plan of plans) {
-    const code = plan?.currency
-    if (!code || seen.has(code)) continue
-    seen.add(code)
-    list.push(code)
-  }
-  return list
-}
-
-const currencies = computed(() => {
-  if (isTotalPlanMode.value) {
-    return collectCurrenciesFromPlan(planData.value)
-  }
-  return breakdownData.value.map(item => item.currency).filter(Boolean)
-})
+const currencies = computed(() => store.getters['account/currenciesInAccounts'] || [])
 const filteredPlanData = computed(() => {
   if (!selectedCurrency.value) return planData.value
   return planData.value.filter(plan => plan.currency === selectedCurrency.value)
@@ -70,26 +52,6 @@ const planByCategoryId = computed(() => {
   const result = {}
   for (const plan of filteredPlanData.value) {
     result[plan.category_id] = plan
-  }
-  return result
-})
-const selectedBreakdown = computed(() => {
-  return breakdownData.value.find(item => item.currency === selectedCurrency.value) || null
-})
-const factByCategoryId = computed(() => {
-  const result = {}
-  const breakdown = selectedBreakdown.value
-  if (!breakdown) return result
-  const groups = [
-    { items: breakdown.income?.data || [], sign: 1 },
-    { items: breakdown.expense?.data || [], sign: -1 },
-    { items: breakdown.profit?.data || [], sign: 1 }
-  ]
-  for (const group of groups) {
-    for (const item of group.items) {
-      if (!item?.category_id) continue
-      result[item.category_id] = (Number(item.amount) || 0) * group.sign
-    }
   }
   return result
 })
@@ -248,13 +210,15 @@ function setTotalPlanMode () {
   fetchData()
 }
 
-function getMonthRange () {
-  const source = currentMonthFirstDay.value || (new Date().toISOString().slice(0, 7) + '-01')
-  const [year, month] = source.split('-').map(Number)
-  const from = `${year}-${String(month).padStart(2, '0')}-01`
-  const lastDay = new Date(year, month, 0).getDate()
-  const to = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
-  return { from, to }
+function syncSelectedCurrencyWithAccounts () {
+  const list = currencies.value
+  if (!list.length) {
+    selectedCurrency.value = ''
+    return
+  }
+  if (!selectedCurrency.value || !list.includes(selectedCurrency.value)) {
+    selectedCurrency.value = list[0]
+  }
 }
 
 let fetchToken = 0
@@ -262,27 +226,10 @@ async function fetchData () {
   const token = ++fetchToken
   isFetching.value = true
   try {
-    if (!currentMonthFirstDay.value) {
-      const nextPlanData = await requestPlanData()
-      if (token !== fetchToken) return
-      planData.value = nextPlanData
-
-      const nextCurrencies = collectCurrenciesFromPlan(nextPlanData)
-      if (!nextCurrencies.includes(selectedCurrency.value)) {
-        selectedCurrency.value = nextCurrencies[0] || ''
-      }
-      return
-    }
-
-    const [nextPlanData, nextBreakdownData] = await Promise.all([requestPlanData(), requestBreakdownData()])
+    const nextPlanData = await requestPlanData()
     if (token !== fetchToken) return
     planData.value = nextPlanData
-    breakdownData.value = nextBreakdownData
-
-    const nextCurrencies = nextBreakdownData.map(item => item.currency).filter(Boolean)
-    if (!nextCurrencies.includes(selectedCurrency.value)) {
-      selectedCurrency.value = nextCurrencies[0] || ''
-    }
+    syncSelectedCurrencyWithAccounts()
   } catch (_) {
   } finally {
     if (token === fetchToken) isFetching.value = false
@@ -293,19 +240,6 @@ async function requestPlanData () {
   const { data } = await api.get('cash.plan.get', {
     params: {
       date: currentMonthFirstDay.value
-    }
-  })
-  return Array.isArray(data) ? data : []
-}
-
-async function requestBreakdownData () {
-  const { from, to } = getMonthRange()
-  const { data } = await api.get('cash.aggregate.getBreakDown', {
-    params: {
-      from,
-      to,
-      filter: 'all',
-      children_help_parents: 1
     }
   })
   return Array.isArray(data) ? data : []
@@ -346,9 +280,39 @@ function getPlanAmount (categoryId) {
   return amount === null ? '' : amount
 }
 
+function getOwnFactAmount (categoryId) {
+  const raw = planByCategoryId.value[categoryId]?.amount_fact
+  if (raw === null || typeof raw === 'undefined' || raw === '') return null
+  return Number(raw)
+}
+
+function getComputedFactAmount (categoryId, visited = new Set()) {
+  if (visited.has(categoryId)) return null
+  visited.add(categoryId)
+
+  const ownAmount = getOwnFactAmount(categoryId)
+  if (ownAmount !== null) return ownAmount
+
+  const children = childrenByParentId.value[categoryId] || []
+  if (!children.length) return null
+
+  let sum = 0
+  let hasChildAmount = false
+  for (const childId of children) {
+    const childAmount = getComputedFactAmount(childId, new Set(visited))
+    if (childAmount === null) continue
+    hasChildAmount = true
+    sum += childAmount
+  }
+
+  if (!hasChildAmount) return null
+  return sum
+}
+
 function getFactAmount (categoryId) {
   if (isTotalPlanMode.value) return ''
-  return factByCategoryId.value[categoryId] ?? ''
+  const amount = getComputedFactAmount(categoryId)
+  return amount === null ? '' : amount
 }
 
 function getDeviationAmount (categoryId) {
@@ -473,7 +437,10 @@ function onClickGoToPremium () {
     </h4>
 
     <div class="plan-table-scroll custom-mt-4">
-      <table class="bigdata">
+      <table
+        class="bigdata"
+        :class="{ loading: isFetching }"
+      >
         <thead>
           <tr>
             <th />
@@ -565,7 +532,10 @@ function onClickGoToPremium () {
       {{ $t('planView.expenseCategoriesTitle') }}
     </h4>
     <div class="plan-table-scroll custom-mt-4">
-      <table class="bigdata">
+      <table
+        class="bigdata"
+        :class="{ loading: isFetching }"
+      >
         <thead>
           <tr>
             <th />
@@ -657,7 +627,10 @@ function onClickGoToPremium () {
       {{ $t('planView.balanceSectionTitle') }}
     </h4>
     <div class="plan-table-scroll custom-mt-4">
-      <table class="bigdata">
+      <table
+        class="bigdata"
+        :class="{ loading: isFetching }"
+      >
         <thead>
           <tr>
             <th />
@@ -731,6 +704,10 @@ function onClickGoToPremium () {
 
 <style>
 @import 'flatpickr/dist/plugins/monthSelect/style.css';
+
+.bigdata.loading {
+  opacity: 0.5;
+}
 
 .plan-table-scroll {
   width: 100%;
