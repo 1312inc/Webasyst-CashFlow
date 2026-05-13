@@ -24,31 +24,27 @@ final class cashReportDdsAccountDataProvider implements cashReportDdsDataProvide
      */
     public function getDataForPeriod(cashReportPeriod $period): array
     {
-        $sql = sprintf(
-            "select ct.account_id account,
-                   if(ct.amount < 0, '%s', '%s') category_type,
-                   ca.currency currency,
-                   MONTH(ct.date) month,
-                   sum(ct.amount) per_month
-            from cash_transaction ct
-                     join cash_account ca on ct.account_id = ca.id
-                     join cash_category cc on ct.category_id = cc.id
-            where ct.date >= s:start and ct.date < s:end
-              AND ct.category_id <> -1312
-              and ca.is_archived = 0
-              and ct.is_archived = 0
-            group by cc.type, ct.account_id, ca.currency, MONTH(ct.date)",
-            cashCategory::TYPE_EXPENSE,
-            cashCategory::TYPE_INCOME
-        );
-
-        $data = $this->transactionModel->query(
-            $sql,
-            [
-                'start' => $period->getStart()->format('Y-m-d'),
-                'end' => $period->getEnd()->format('Y-m-d'),
-            ]
-        )->fetchAll();
+        $data = $this->transactionModel->query("
+            SELECT ct.account_id account, IF(ct.amount < 0, s:cat_ex, s:cat_in) category_type, ca.currency currency, MONTH(ct.date) month, SUM(ct.amount) per_month, ca.is_imaginary
+            FROM cash_transaction ct
+            JOIN cash_account ca ON ct.account_id = ca.id
+            JOIN cash_category cc ON ct.category_id = cc.id
+            WHERE ct.date >= s:start AND ct.date < s:end
+                AND ct.category_id <> -1312
+                AND ca.is_archived = 0
+                AND ct.is_archived = 0
+                AND CASE
+                    WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                    WHEN ca.is_imaginary = -1 THEN NULL
+                    ELSE ca.is_imaginary = 0
+                END
+            GROUP BY category_type, ct.account_id, ca.currency, MONTH(ct.date)
+        ", [
+            'cat_ex' => cashCategory::TYPE_EXPENSE,
+            'cat_in' => cashCategory::TYPE_INCOME,
+            'start'  => $period->getStart()->format('Y-m-d'),
+            'end'    => $period->getEnd()->format('Y-m-d'),
+        ])->fetchAll();
 
         $rawData = [];
 
@@ -88,14 +84,14 @@ final class cashReportDdsAccountDataProvider implements cashReportDdsDataProvide
                 $rawData[$catType][$account]['total'][$currency]['per_month'] = .0;
             }
 
-            $rawData[$catType][$account][$month][$currency]['per_month'] = (float) $perMonth;
-            $rawData[$catType][$account]['total'][$currency]['per_month'] += (float) $perMonth;
-
             if ($catType === cashCategory::TYPE_INCOME) {
                 $categoryTypeKey = cashReportDdsService::ALL_INCOME_KEY;
             } else {
                 $categoryTypeKey = cashReportDdsService::ALL_EXPENSE_KEY;
             }
+            $rawData[$catType][$categoryTypeKey][$month][$currency]['imaginary'] = (int) $datum['is_imaginary'];
+            $rawData[$catType][$account][$month][$currency]['per_month'] = (float) $perMonth;
+            $rawData[$catType][$account]['total'][$currency]['per_month'] += (float) $perMonth;
             $rawData[$catType][$categoryTypeKey][$month][$currency]['per_month'] += (float) $perMonth;
             $rawData[$catType][$categoryTypeKey]['total'][$currency]['per_month'] += (float) $perMonth;
         }
