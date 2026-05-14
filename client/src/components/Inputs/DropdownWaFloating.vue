@@ -39,7 +39,7 @@ onMounted(async () => {
     >
       <div
         class="dropdown-body"
-        style="min-width: 200px;"
+        style="min-width: 280px;"
       >
         <slot
           :close="hide"
