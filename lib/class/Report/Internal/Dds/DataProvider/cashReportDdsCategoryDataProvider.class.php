@@ -38,11 +38,7 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
                 AND ct.category_id <> -1312
                 AND ca.is_archived = 0
                 AND ct.is_archived = 0
-                AND CASE
-                    WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
-                    WHEN ca.is_imaginary = -1 THEN NULL
-                    ELSE ca.is_imaginary = 0
-                END
+                AND IF (ca.is_imaginary = -1, NULL, true) 
             GROUP BY id, ca.currency, MONTH(ct.date)
         ", [
             'cat_ex' => cashCategory::TYPE_EXPENSE,
