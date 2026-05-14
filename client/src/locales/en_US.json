@@ -281,8 +281,8 @@
   "allTransactionsProcessed": "That’s all folks!",
   "calendarGrid": {
     "modeSummary": "Summary",
-    "modeOperations": "Details",
-    "filterAllOperations": "All operations"
+    "modeOperations": "All transactions",
+    "filterAllOperations": "All accounts and currencies"
   },
   "planView": {
     "title": "Plan",

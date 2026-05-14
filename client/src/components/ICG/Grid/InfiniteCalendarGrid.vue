@@ -183,23 +183,14 @@ watch(daysInCalendar, () => {
         <div class="icg-month nowrap">
           {{ activeMonth.toDate().toLocaleDateString(props.locale, { year: 'numeric', month: 'long' }).replace('г.', "") }}
         </div>
-        <div class="toggle">
-          <span
-            :class="{ 'selected': props.mode === 'summary' }"
-            @click="emit('changeMode', 'summary')"
-          >{{ $t('calendarGrid.modeSummary') }}</span>
-          <span
-            :class="{ 'selected': props.mode === 'operations' }"
-            @click="emit('changeMode', 'operations')"
-          >{{ $t('calendarGrid.modeOperations') }}</span>
-        </div>
+
         <DropdownWaFloating v-if="props.mode === 'summary'">
           <template #toggler>
-            <button class="button light-gray nowrap">
-              <span class="icon text-gray">
-                <i class="fas fa-filter" />
+            <button class="button light-gray large nowrap">
+              <strong>{{ filterButtonLabel }}</strong>
+              <span class="icon text-light-gray">
+                <i class="fas fa-chevron-down custom-mt-2 custom-ml-4 fa-xs" />
               </span>
-              {{ filterButtonLabel }}
             </button>
           </template>
 
@@ -215,7 +206,7 @@ watch(daysInCalendar, () => {
                   >{{ $t('calendarGrid.filterAllOperations') }}</a>
                 </li>
               </ul>
-              <div class="heading">
+              <div class="heading custom-ml-12">
                 {{ $t('currency') }}
               </div>
               <ul class="menu">
@@ -230,7 +221,7 @@ watch(daysInCalendar, () => {
                   >{{ currency }}</a>
                 </li>
               </ul>
-              <div class="heading">
+              <div class="heading custom-ml-12">
                 {{ $t('account') }}
               </div>
               <ul class="menu">
@@ -257,7 +248,7 @@ watch(daysInCalendar, () => {
                     <span>{{ account.name }}</span></a>
                 </li>
               </ul>
-              <div class="heading">
+              <div class="heading custom-ml-12">
                 {{ $t('income') }}
               </div>
               <ul class="menu">
@@ -292,7 +283,7 @@ watch(daysInCalendar, () => {
                     {{ category.name }}</a>
                 </li>
               </ul>
-              <div class="heading">
+              <div class="heading custom-ml-12">
                 {{ $t('expense') }}
               </div>
               <ul class="menu">
@@ -333,6 +324,16 @@ watch(daysInCalendar, () => {
       </div>
 
       <div class="icg-controls">
+        <div class="toggle custom-mr-16">
+          <span
+            :class="{ 'selected': props.mode === 'summary' }"
+            @click="emit('changeMode', 'summary')"
+          >{{ $t('calendarGrid.modeSummary') }}</span>
+          <span
+            :class="{ 'selected': props.mode === 'operations' }"
+            @click="emit('changeMode', 'operations')"
+          >{{ $t('calendarGrid.modeOperations') }}</span>
+        </div>
         <button @click="activeMonth = activeMonth.add(-1, 'M')">
           <svg
             xmlns="http://www.w3.org/2000/svg"
