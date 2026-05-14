@@ -189,7 +189,14 @@ function onClick (e) {
   cursor: pointer;
 }
 
+@media screen and (max-width: 760px) {
+  .icg-day-slot {
+    padding: .3rem !important;
+  }
+}
+
 .icg-day-slot-content-circles {
+  overflow: hidden;
   flex: 1;
   display: grid;
   grid-template-rows: 1fr auto 1fr;
@@ -259,6 +266,12 @@ function onClick (e) {
   gap: 4px;
   min-height: 32px;
   margin-bottom: 6px;
+}
+
+@media screen and (max-width: 760px) {
+  .icg-charts {
+    display: none;
+  }
 }
 
 .icg-chart-circle {

@@ -57,6 +57,14 @@
     border-bottom-width: 1px;
     box-sizing: border-box;
   }
+
+  @media screen and (max-width: 760px) {
+    .icg-weekdays__cell {
+      font-size: 12px;
+      padding-right: .5rem;
+      padding-bottom: .5rem;
+    }
+  }
   
   .icg-weekdays__cell,
   .icg-months-grid-day {

@@ -96,7 +96,7 @@ function onClick () {
 
 @media screen and (max-width: 1024px) {
   .icg-months-grid-day {
-    font-size: 12px;
+    font-size: 10px;
   }
 }
 
