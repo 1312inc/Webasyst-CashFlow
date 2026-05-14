@@ -847,7 +847,7 @@ class cashGraphService
             }
         }
 
-        return $this->filterSqlForAggregateBreakDown($sqlParts, $paramsDto)->query()->fetchAll('detailed');
+        return $this->filterSqlForAggregateBreakDown($sqlParts, $paramsDto)->query()->fetchAll();
     }
 
     /**

@@ -38,6 +38,7 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
 
         if ($children_help_parents) {
             $this->getCategory(0);
+            $data = array_combine(array_column($data, 'detailed'), $data);
             foreach ($data as $_dt) {
                 if (!empty($_dt['category_parent_id'])) {
                     if (empty($data[$_dt['category_parent_id']])) {
