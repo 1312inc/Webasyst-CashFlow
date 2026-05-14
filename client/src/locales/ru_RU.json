@@ -105,7 +105,7 @@
   "emptyList": "Нет операций",
   "emptyListUpcoming": "На заданный период запланированных операций нет",
   "emptyListToday": "Сегодня операций нет",
-  "nextDays": "Следующие {count} дней",
+  "nextDays": "Будущие {count} дней",
   "Next 90 days": "Будущие 90 дней",
   "tomorrow": "Завтра",
   "justCreated": "Только что",

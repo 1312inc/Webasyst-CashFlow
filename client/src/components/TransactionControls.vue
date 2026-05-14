@@ -76,7 +76,7 @@
       </div>
       <div>
         <button
-          class="button nobutton gray nowrap"
+          class="button light-gray nowrap"
           @click="addTransaction('addMany')"
         >
           <span>

@@ -37,7 +37,7 @@
       }"
     >
       <div class="flexbox middle space-8">
-        <span class="icon"><i class="fas fa-tachometer-alt text-purple" /></span>
+        <span class="icon"><i class="fas fa-tachometer-alt text-red" /></span>
         <span>{{ $t("plan") }}</span>
       </div>
     </router-link>
@@ -50,7 +50,7 @@
       }"
     >
       <div class="flexbox middle space-8">
-        <span class="icon"><i class="fas fa-robot text-orange" /></span>
+        <span class="icon"><i class="fas fa-robot text-light-gray" /></span>
         <span>{{ $t("bots") }}</span>
       </div>
     </a>
