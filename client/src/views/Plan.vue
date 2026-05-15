@@ -745,11 +745,11 @@ function onClickGoToPremium () {
   font-weight: 600;
 }
 
-.icon {
+.category-name-cell .icon {
   margin-right: 6px;
 }
 
-.is-child-category .icon {
+.category-name-cell.is-child-category .icon {
   margin-left: 12px;
 }
 
