@@ -8,6 +8,7 @@ import store from '@/store'
 import Modal from '@/components/Modal'
 import { appState } from '@/utils/appState'
 import { useRoute, useRouter } from 'vue-router/composables'
+import { moment } from '@/plugins/numeralMoment'
 
 const route = useRoute()
 const router = useRouter()
@@ -221,12 +222,67 @@ function syncSelectedCurrencyWithAccounts () {
   }
 }
 
+function planFactKey (currency, categoryId) {
+  return `${currency}\0${categoryId}`
+}
+
+function buildFactAmountMapFromBreakdown (breakdownData) {
+  const map = new Map()
+  if (!Array.isArray(breakdownData)) return map
+
+  const typeGroups = [
+    { field: 'income', sign: 1 },
+    { field: 'expense', sign: -1 },
+    { field: 'profit', sign: 1 }
+  ]
+
+  for (const block of breakdownData) {
+    const currency = block?.currency
+    if (!currency) continue
+    for (const { field, sign } of typeGroups) {
+      const items = block[field]?.data
+      if (!Array.isArray(items)) continue
+      for (const row of items) {
+        if (!row?.category_id) continue
+        if (row.amount == null || row.amount === '') continue
+        map.set(planFactKey(currency, row.category_id), Number(row.amount) * sign)
+      }
+    }
+  }
+  return map
+}
+
+function mergePlanWithBreakdownFacts (planRows, breakdownData) {
+  const factMap = buildFactAmountMapFromBreakdown(breakdownData)
+
+  return planRows.map((plan) => {
+    if (!plan?.category_id || !plan?.currency) return plan
+    const key = planFactKey(plan.currency, plan.category_id)
+    if (!factMap.has(key)) {
+      return plan
+    }
+    return {
+      ...plan,
+      amount_fact: factMap.get(key) // eslint-disable-line camelcase
+    }
+  })
+}
+
 let fetchToken = 0
 async function fetchData () {
   const token = ++fetchToken
   isFetching.value = true
   try {
-    const nextPlanData = await requestPlanData()
+    let nextPlanData
+    if (isTotalPlanMode.value) {
+      nextPlanData = await requestPlanData()
+    } else {
+      const [planRows, breakdownData] = await Promise.all([
+        requestPlanData(),
+        requestBreakDownData()
+      ])
+      nextPlanData = mergePlanWithBreakdownFacts(planRows, breakdownData)
+    }
     if (token !== fetchToken) return
     planData.value = nextPlanData
     syncSelectedCurrencyWithAccounts()
@@ -234,6 +290,18 @@ async function fetchData () {
   } finally {
     if (token === fetchToken) isFetching.value = false
   }
+}
+
+async function requestBreakDownData () {
+  const { data } = await api.get('cash.aggregate.getBreakDown', {
+    params: {
+      children_help_parents: 1,
+      filter: 'all',
+      from: currentMonthFirstDay.value,
+      to: moment(currentMonthFirstDay.value).endOf('month').format('YYYY-MM-DD')
+    }
+  })
+  return Array.isArray(data) ? data : []
 }
 
 async function requestPlanData () {
@@ -509,7 +577,7 @@ function onClickGoToPremium () {
               >
             </td>
             <td class="amount-cell">
-              {{ getFactAmount(category.id) || '—' }}
+              {{ getFactAmount(category.id) || 0 }}
             </td>
             <td
               class="amount-cell bold"
@@ -604,7 +672,7 @@ function onClickGoToPremium () {
               >
             </td>
             <td class="amount-cell">
-              {{ getFactAmount(category.id) || '—' }}
+              {{ getFactAmount(category.id) || 0 }}
             </td>
             <td
               class="amount-cell bold"
@@ -657,7 +725,7 @@ function onClickGoToPremium () {
               {{ balancePlanTotal || '—' }}
             </td>
             <td class="amount-cell">
-              {{ balanceFactTotal || '—' }}
+              {{ balanceFactTotal || 0 }}
             </td>
             <td
               class="amount-cell bold"
