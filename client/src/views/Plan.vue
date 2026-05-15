@@ -255,9 +255,13 @@ function buildFactAmountMapFromBreakdown (breakdownData) {
 function mergePlanWithBreakdownFacts (planRows, breakdownData) {
   const factMap = buildFactAmountMapFromBreakdown(breakdownData)
 
-  return planRows.map((plan) => {
+  const monthFrom = currentMonthFirstDay.value
+  const monthTo = moment(currentMonthFirstDay.value).endOf('month').format('YYYY-MM-DD')
+  const seen = new Set()
+  const merged = planRows.map((plan) => {
     if (!plan?.category_id || !plan?.currency) return plan
     const key = planFactKey(plan.currency, plan.category_id)
+    seen.add(key)
     if (!factMap.has(key)) {
       return plan
     }
@@ -266,6 +270,25 @@ function mergePlanWithBreakdownFacts (planRows, breakdownData) {
       amount_fact: factMap.get(key) // eslint-disable-line camelcase
     }
   })
+
+  for (const [key, factAmount] of factMap) {
+    if (seen.has(key)) continue
+    const sep = key.indexOf('\0')
+    const currency = key.slice(0, sep)
+    const categoryId = Number(key.slice(sep + 1))
+    merged.push({
+      id: null,
+      currency,
+      category_id: categoryId, // eslint-disable-line camelcase
+      account_id: null,
+      amount: null,
+      amount_fact: factAmount, // eslint-disable-line camelcase
+      from: monthFrom,
+      to: monthTo
+    })
+  }
+
+  return merged
 }
 
 let fetchToken = 0
