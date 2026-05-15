@@ -39,7 +39,7 @@ final class cashReportDdsCategoryDataProvider implements cashReportDdsDataProvid
                 AND ca.is_archived = 0
                 AND ct.is_archived = 0
                 AND IF (ca.is_imaginary = -1, NULL, true) 
-            GROUP BY id, ca.currency, MONTH(ct.date)
+            GROUP BY id, ca.currency, MONTH(ct.date),  ca.is_imaginary
         ", [
             'cat_ex' => cashCategory::TYPE_EXPENSE,
             'cat_in' => cashCategory::TYPE_INCOME,
