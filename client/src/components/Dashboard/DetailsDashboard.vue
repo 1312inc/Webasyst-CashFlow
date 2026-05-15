@@ -65,8 +65,8 @@
           :item-data="dashboardData"
         />
 
-        <portal>
-          <Modal v-if="openModal">
+        <portal v-if="openModal">
+          <Modal @close="openModal = false">
             <UpdateDetailsInterval @close="openModal = false" />
           </Modal>
         </portal>
@@ -93,9 +93,9 @@ const CURRENT_PERIOD_STORAGE_KEY = 'currentPeriod'
 function readCurrentPeriodFromStorage () {
   try {
     const v = localStorage.getItem(CURRENT_PERIOD_STORAGE_KEY)
-    return v === 'from' || v === 'to' ? v : 'from'
+    return v === 'from' || v === 'to' ? v : 'to'
   } catch (_) {
-    return 'from'
+    return 'to'
   }
 }
 
