@@ -177,8 +177,8 @@ export default {
       const today = new Date()
       const currentDate = today.toISOString().split('T')[0]
 
-      const from = this.currentPeriod === 'from' ? this.detailsInterval.from : currentDate
-      const to = this.currentPeriod === 'to' ? this.detailsInterval.to : currentDate
+      const from = !this.isDefaultRange ? this.detailsInterval.from : this.currentPeriod === 'from' ? this.detailsInterval.from : currentDate
+      const to = !this.isDefaultRange ? this.detailsInterval.to : this.currentPeriod === 'to' ? this.detailsInterval.to : currentDate
 
       this.isFetching = true
       api
@@ -198,6 +198,9 @@ export default {
     },
 
     setPeriod (period) {
+      if (!this.isDefaultRange) {
+        this.$store.dispatch('transaction/resetDetailsInterval')
+      }
       this.currentPeriod = period
     }
 
