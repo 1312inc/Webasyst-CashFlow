@@ -1,10 +1,11 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { waitForTippy } from '@/utils/waiters'
 
 const floating = ref(null)
 const reference = ref(null)
 const tippyInstance = ref(null)
+const isInitialized = ref(false)
 
 function hide () {
   tippyInstance.value?.hide()
@@ -22,8 +23,15 @@ onMounted(async () => {
     appendTo: () => document.body,
     theme: 'transparent',
     arrow: false,
-    offset: [0, 0]
+    offset: [0, 0],
+    onCreate () {
+      isInitialized.value = true
+    }
   })
+})
+
+onBeforeUnmount(() => {
+  tippyInstance.value?.destroy()
 })
 
 </script>
@@ -35,7 +43,8 @@ onMounted(async () => {
     </div>
     <div
       ref="floating"
-      class="dropdown is-opened"
+      :class="{ 'is-opened': isInitialized }"
+      class="dropdown"
     >
       <div
         class="dropdown-body"
