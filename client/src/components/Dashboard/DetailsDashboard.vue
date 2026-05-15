@@ -165,8 +165,7 @@ export default {
       handler () { this.fetchBreakDown() },
       immediate: true
     },
-    'queryParams.filter': 'fetchBreakDown',
-    currentPeriod: 'fetchBreakDown'
+    'queryParams.filter': 'fetchBreakDown'
   },
 
   methods: {
@@ -198,10 +197,12 @@ export default {
     },
 
     setPeriod (period) {
+      this.currentPeriod = period
       if (!this.isDefaultRange) {
         this.$store.dispatch('transaction/resetDetailsInterval')
+      } else {
+        this.fetchBreakDown()
       }
-      this.currentPeriod = period
     }
 
   }
