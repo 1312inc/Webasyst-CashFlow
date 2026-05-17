@@ -42,9 +42,9 @@ onBeforeUnmount(() => {
       <slot name="toggler" />
     </div>
     <div
+      v-show="isInitialized"
       ref="floating"
-      :class="{ 'is-opened': isInitialized }"
-      class="dropdown"
+      class="dropdown is-opened"
     >
       <div
         class="dropdown-body"
