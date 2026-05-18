@@ -80,8 +80,9 @@ function formatSignedNumber (value) {
   if (value === '' || value == null) return ''
   const num = Number(value)
   if (Number.isNaN(num)) return ''
-  if (num > 0) return `+${num}`
-  return num
+  const formatted = num.toFixed(2)
+  if (num > 0) return `+${formatted}`
+  return formatted
 }
 
 function formatSignedPercent (pct) {
