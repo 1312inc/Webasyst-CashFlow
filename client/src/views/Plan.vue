@@ -228,6 +228,16 @@ function setTotalPlanMode () {
   fetchData()
 }
 
+function navigateMonth (delta) {
+  const base = currentMonthFirstDay.value || getCurrentMonthFirstDay()
+  const next = moment(base).add(delta, 'month').startOf('month').format('YYYY-MM-DD')
+  currentMonthFirstDay.value = next
+  if (monthPicker) {
+    monthPicker.setDate(next, false)
+  }
+  fetchData()
+}
+
 function syncSelectedCurrencyWithAccounts () {
   const list = currencies.value
   if (!list.length) {
@@ -503,14 +513,32 @@ function onClickGoToPremium () {
 <template>
   <div class="box custom-p-16">
     <h1>{{ $t('planView.title') }}</h1>
-    <div class="flexbox vertical-mobile space-8">
-      <div class="flexbox middle space-8">
-        <div class="month-picker">
-          <input
-            ref="monthPickerEl"
-            type="text"
-            class="button light-gray"
+    <div class="flexbox vertical-mobile space-16">
+      <div class="flexbox middle space-16">
+        <div class="flexbox middle space-8">
+          <button
+            type="button"
+            class="navigate-month-left light-gray custom-m-0"
+            :disabled="isFetching"
+            @click="navigateMonth(-1)"
           >
+            <i class="fas fa-chevron-left" />
+          </button>
+          <div class="month-picker">
+            <input
+              ref="monthPickerEl"
+              type="text"
+              class="button light-gray"
+            >
+          </div>
+          <button
+            type="button"
+            class="navigate-month-right light-gray custom-m-0"
+            :disabled="isFetching"
+            @click="navigateMonth(1)"
+          >
+            <i class="fas fa-chevron-right" />
+          </button>
         </div>
         <div style="flex: 1; overflow: hidden;">
           <div
@@ -852,6 +880,7 @@ function onClickGoToPremium () {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 140px;
 }
 
 .total-plan-button.active {
