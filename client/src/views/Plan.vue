@@ -72,8 +72,24 @@ const balanceFactTotal = computed(() => {
 const balanceDeviationAmount = computed(() => balanceFactTotal.value - balancePlanTotal.value)
 const balanceDeviationPercent = computed(() => {
   if (!balancePlanTotal.value) return ''
-  return `${((balanceDeviationAmount.value / balancePlanTotal.value) * 100).toFixed(2)}%`
+  const pct = ((balanceDeviationAmount.value / balancePlanTotal.value) * 100).toFixed(2)
+  return formatSignedPercent(pct)
 })
+
+function formatSignedNumber (value) {
+  if (value === '' || value == null) return ''
+  const num = Number(value)
+  if (Number.isNaN(num)) return ''
+  if (num > 0) return `+${num}`
+  return num
+}
+
+function formatSignedPercent (pct) {
+  const num = Number(pct)
+  if (Number.isNaN(num)) return ''
+  const prefix = num > 0 ? '+' : ''
+  return `${prefix}${pct}%`
+}
 
 const childrenByParentId = computed(() => {
   const result = {}
@@ -417,7 +433,12 @@ function getDeviationPercent (categoryId) {
   const planAmount = Number(getPlanAmount(categoryId))
   const deviationAmount = Number(getDeviationAmount(categoryId))
   if (!planAmount || Number.isNaN(deviationAmount) || planAmount === 0 || isTotalPlanMode.value) return ''
-  return `${((deviationAmount / planAmount) * 100).toFixed(2)}%`
+  const pct = ((deviationAmount / planAmount) * 100).toFixed(2)
+  return formatSignedPercent(pct)
+}
+
+function getDeviationAmountDisplay (categoryId) {
+  return formatSignedNumber(getDeviationAmount(categoryId))
 }
 
 function getDeviationClass (categoryId) {
@@ -606,7 +627,7 @@ function onClickGoToPremium () {
               class="amount-cell bold"
               :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
             >
-              {{ getDeviationAmount(category.id) || '—' }}
+              {{ getDeviationAmountDisplay(category.id) || '—' }}
             </td>
             <td
               class="amount-cell"
@@ -701,7 +722,7 @@ function onClickGoToPremium () {
               class="amount-cell bold"
               :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
             >
-              {{ getDeviationAmount(category.id) || '—' }}
+              {{ getDeviationAmountDisplay(category.id) || '—' }}
             </td>
             <td
               class="amount-cell"
@@ -754,7 +775,7 @@ function onClickGoToPremium () {
               class="amount-cell bold"
               :class="getBalanceDeviationClass()"
             >
-              {{ balanceDeviationAmount || '—' }}
+              {{ formatSignedNumber(balanceDeviationAmount) || '—' }}
             </td>
             <td
               class="amount-cell"

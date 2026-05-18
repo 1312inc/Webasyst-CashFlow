@@ -97,7 +97,12 @@ const targetDeviationPercent = computed(() => {
   const planAmount = Number(currentCategory.value?.amount)
   const deviationAmount = Number(targetDeviationAmount.value)
   if (targetDeviationAmount.value === '' || !planAmount || Number.isNaN(deviationAmount)) return ''
-  return `${((deviationAmount / planAmount) * 100).toFixed(2)}%`
+  const pct = ((deviationAmount / planAmount) * 100).toFixed(2)
+  const result = helpers.toCurrency({
+    value: pct,
+    isDynamics: true
+  })
+  return `${result}%`
 })
 
 const targetDeviationClass = computed(() => {
@@ -300,7 +305,8 @@ function onCategoryChange (id) {
               <br>{{ $t('detailsTargetDeviationLabel') }}: <b :class="targetDeviationClass">{{
                 targetDeviationAmount ? helpers.toCurrency({
                   value: targetDeviationAmount,
-                  currencyCode: chartState.currencyCode
+                  currencyCode: chartState.currencyCode,
+                  isDynamics: true
                 }) : '—'
               }}</b>
               <br>{{ $t('detailsTargetDeviationPercentLabel') }}: <b :class="targetDeviationClass">{{
