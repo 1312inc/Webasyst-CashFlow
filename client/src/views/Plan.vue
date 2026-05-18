@@ -348,6 +348,7 @@ async function requestBreakDownData () {
       children_help_parents: 1,
       filter: 'all',
       from: currentMonthFirstDay.value,
+      imaginary_past_force_add: 1,
       to: moment(currentMonthFirstDay.value).endOf('month').format('YYYY-MM-DD')
     }
   })
