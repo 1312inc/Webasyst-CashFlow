@@ -513,7 +513,7 @@ function onClickGoToPremium () {
         </div>
         <div style="flex: 1; overflow: hidden;">
           <div
-            v-if="currencies.length"
+            v-if="currencies.length > 1"
             class="toggle"
           >
             <span
