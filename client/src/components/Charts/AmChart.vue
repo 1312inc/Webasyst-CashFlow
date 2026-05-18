@@ -182,8 +182,8 @@ export default {
 
         const point = am4core.utils.documentPointToSprite(ev.point, chart.plotContainer)
         const relX = point.x / chart.plotContainer.pixelWidth
-        const axisPos = this.dateAxis2.toAxisPosition(relX)
-        const clickedDate = this.dateAxis2.positionToDate(axisPos)
+        const axisPos = this.dateAxis.toAxisPosition(relX)
+        const clickedDate = this.dateAxis.positionToDate(axisPos)
         const nearestItem = this.getNearestBalanceDataItem(clickedDate)
         if (!nearestItem) return
 
@@ -612,24 +612,42 @@ export default {
     },
 
     getNearestBalanceDataItem (clickedDate) {
-      if (!this.balanceSeries || this.balanceSeries.isDisposed()) return null
-
       const targetTs = +clickedDate
       let nearest = null
       let minDiff = Number.MAX_SAFE_INTEGER
 
-      this.balanceSeries.dataItems.each((item) => {
-        const dateX = item.dateX
-        if (!dateX) return
+      if (this.balanceSeries && !this.balanceSeries.isDisposed()) {
+        this.balanceSeries.dataItems.each((item) => {
+          const dateX = item.dateX
+          if (!dateX) return
+
+          const diff = Math.abs(+dateX - targetTs)
+          if (diff < minDiff) {
+            minDiff = diff
+            nearest = item
+          }
+        })
+        if (nearest) return nearest
+      }
+
+      const timeline = this.chart?.data
+      if (!Array.isArray(timeline) || !timeline.length) return null
+
+      let nearestPeriod = null
+      for (const row of timeline) {
+        if (!row?.period) continue
+        const dateX = new Date(row.period)
+        if (Number.isNaN(+dateX)) continue
 
         const diff = Math.abs(+dateX - targetTs)
         if (diff < minDiff) {
           minDiff = diff
-          nearest = item
+          nearestPeriod = row.period
         }
-      })
+      }
 
-      return nearest
+      if (!nearestPeriod) return null
+      return { dateX: new Date(nearestPeriod) }
     }
   }
 }
