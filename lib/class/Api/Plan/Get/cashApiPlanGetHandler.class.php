@@ -17,50 +17,80 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
         $where = ['1=1'];
 
         if (isset($request->currency)) {
-            $where[] = 'cp.currency = s:currency';
+            $where['currency'] = 'currency = s:currency';
         }
         if (isset($request->category_id)) {
-            $where[] = 'cp.category_id = i:category_id';
+            $where['category_id'] = 'category_id = i:category_id';
         }
         if (isset($request->account_id)) {
-            $where[] = '(cp.account_id = i:account_id)';
+            $where['account_id'] = 'account_id = i:account_id';
         }
-        if (empty($request->date)) {
-            $where[] = 'cp.`month` IS NULL';
-            return $model->query("
-                SELECT cp.id, cp.currency, cp.account_id, cp.category_id, NULL `from`, NULL `to`, cp.amount, NULL amount_fact             
-                FROM cash_plan cp
-                LEFT JOIN cash_account ca ON ca.currency = cp.currency
+
+        $total_facts = [];
+        $date_from = null;
+        $date_to = null;
+        if ($request->date) {
+            $date = DateTimeImmutable::createFromFormat('Y-m-d|', $request->date);
+            $date_from = $date->modify('first day of this month')->format('Y-m-d');
+            $date_to = $date->modify('last day of this month')->format('Y-m-d');
+
+            $where['imaginary'] = 'IF(ca.is_imaginary = -1, NULL, true)';
+            $where['date'] = 'ct.date >= s:date_from AND ct.date < DATE_ADD(s:date_to, INTERVAL 1 DAY)';
+
+            $total_facts = $model->query("
+                SELECT ct.account_id, ca.currency, ct.category_id, SUM(ct.amount) amount_fact
+                FROM cash_transaction ct
+                LEFT JOIN cash_account ca ON ca.id = ct.account_id
                 WHERE ".implode(' AND ', $where)."
-                GROUP BY cp.id, cp.currency, cp.account_id, cp.category_id, cp.amount 
-                ORDER BY cp.currency, cp.account_id, cp.category_id
+                GROUP BY ct.account_id, category_id 
+                ORDER BY ca.currency, category_id
             ", [
                 'currency'    => $request->currency,
                 'category_id' => $request->category_id,
                 'account_id'  => $request->account_id,
+                'date_from'   => $date_from,
+                'date_to'     => $date_to,
             ])->fetchAll();
+            unset($where['imaginary'], $where['date']);
+            $where['month'] = "(`month` IS NULL OR `month` = '$date_from')";
+        } else {
+            $where['month'] = '`month` IS NULL';
         }
 
-        $date = DateTimeImmutable::createFromFormat('Y-m-d|', $request->date);
-        $date_from = $date->modify('first day of this month')->format('Y-m-d');
-        $date_to = $date->modify('last day of this month')->format('Y-m-d');
-        $where[] = '(cp.`month` IS NULL OR (cp.`month` >= @date_from AND cp.`month` < DATE_ADD(@date_to, INTERVAL 1 DAY)))';
-
-        $model->exec('SET @date_from:= '.($date_from ? "'$date_from'" : 'NULL'));
-        $model->exec('SET @date_to:= '.($date_to ? "'$date_to'" : 'NULL'));
-
-        return $model->query("
-            SELECT cp.id, cp.currency, cp.account_id, cp.category_id, IF(cp.`month` IS NULL, cp.`month`, @date_from) `from`, IF(cp.`month` IS NULL, cp.`month`, @date_to) `to`, cp.amount, IF(@date_to IS NULL, NULL, SUM(IF(ct.amount, ct.amount, 0))) amount_fact             
-            FROM cash_plan cp
-            LEFT JOIN cash_account ca ON ca.currency = cp.currency
-            LEFT JOIN cash_transaction ct ON ca.id = ct.account_id AND ct.category_id = cp.category_id AND IF(ca.is_imaginary = -1, NULL, true) AND ct.`date` >= @date_from AND ct.`date` < DATE_ADD(@date_to, INTERVAL 1 DAY)
+        $plans = $model->query("
+            SELECT *, NULL `from`, NULL `to`, NULL amount_fact
+            FROM cash_plan
             WHERE ".implode(' AND ', $where)."
-            GROUP BY cp.id, cp.currency, cp.account_id, cp.category_id, cp.amount 
-            ORDER BY cp.currency, cp.account_id, cp.category_id
+            ORDER BY currency, account_id, category_id
         ", [
             'currency'    => $request->currency,
             'category_id' => $request->category_id,
             'account_id'  => $request->account_id,
         ])->fetchAll();
+
+        foreach ($plans as &$plan) {
+            $plan['from'] = (is_null($plan['month']) ? null : $date_from);
+            $plan['to'] = (is_null($plan['month']) ? null : $date_to);
+
+            if (is_null($plan['month'])) {
+                /** для общего типа плана */
+                $plan['amount_fact'] = null;
+            } else {
+                foreach ($total_facts as $_fact) {
+                    $is_currency_type = $plan['currency'] == $_fact['currency'] && $plan['category_id'] == $_fact['category_id'];
+                    if ($is_currency_type && $plan['account_id'] == $_fact['account_id']) {
+                        /** для месячного плана конкретного счета */
+                        $plan['amount_fact'] = $_fact['amount_fact'];
+                        break;
+                    } elseif ($is_currency_type) {
+                        /** для месячного плана конкретного счета */
+                        $plan['amount_fact'] += $_fact['amount_fact'];
+                    }
+                }
+            }
+        }
+        unset($plan);
+
+        return $plans;
     }
 }
