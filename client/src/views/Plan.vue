@@ -650,7 +650,7 @@ function onClickGoToPremium () {
               >
             </td>
             <td class="amount-cell">
-              {{ getFactAmount(category.id) || 0 }}
+              {{ getFactAmount(category.id) || (isTotalPlanMode ? '—' : 0) }}
             </td>
             <td
               class="amount-cell bold"
@@ -745,7 +745,7 @@ function onClickGoToPremium () {
               >
             </td>
             <td class="amount-cell">
-              {{ getFactAmount(category.id) || 0 }}
+              {{ getFactAmount(category.id) || (isTotalPlanMode ? '—' : 0) }}
             </td>
             <td
               class="amount-cell bold"
@@ -798,13 +798,13 @@ function onClickGoToPremium () {
               {{ balancePlanTotal || '—' }}
             </td>
             <td class="amount-cell">
-              {{ balanceFactTotal || 0 }}
+              {{ balanceFactTotal || (isTotalPlanMode ? '—' : 0) }}
             </td>
             <td
               class="amount-cell bold"
               :class="getBalanceDeviationClass()"
             >
-              {{ formatSignedNumber(balanceDeviationAmount) || '—' }}
+              {{ balanceDeviationAmount ? formatSignedNumber(balanceDeviationAmount) : '—' }}
             </td>
             <td
               class="amount-cell"
