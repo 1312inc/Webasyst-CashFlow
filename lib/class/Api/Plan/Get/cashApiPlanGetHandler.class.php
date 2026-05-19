@@ -41,9 +41,10 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
                 'ct.date >= s:date_from AND ct.date < DATE_ADD(s:date_to, INTERVAL 1 DAY)'
             ];
             $total_facts = $model->query("
-                SELECT ct.account_id, ca.currency, ct.category_id, SUM(ct.amount) amount_fact
+                SELECT ct.account_id, ca.currency, ct.category_id, cc.category_parent_id, SUM(ct.amount) amount_fact
                 FROM cash_transaction ct
                 LEFT JOIN cash_account ca ON ca.id = ct.account_id
+                LEFT JOIN cash_category cc ON cc.id = ct.category_id 
                 WHERE ".implode(' AND ', $_where + $where)."
                 GROUP BY ct.account_id, category_id 
                 ORDER BY ca.currency, category_id
@@ -86,6 +87,10 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
                         break;
                     } elseif ($is_currency_type) {
                         /** для месячного плана конкретного счета */
+                        $plan['amount_fact'] += $_fact['amount_fact'];
+                    }
+
+                    if (ifempty($_fact, 'category_parent_id', null) == $plan['category_id']) {
                         $plan['amount_fact'] += $_fact['amount_fact'];
                     }
                 }
