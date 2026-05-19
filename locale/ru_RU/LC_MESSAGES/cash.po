@@ -1282,7 +1282,7 @@ msgid "Or get <a href=\"%s\" target=\"_blank\">new license</a> for the Custom pl
 msgstr "Или <a href=\"%s\" target=\"_blank\">подключите лицензию</a> на тарифе «Кастом»."
 
 msgid "Early launch offer gets you the best premium upgrade conditions possible."
-msgstr "«Большие деньги» — это премиум-версия приложения с максимальными возможностями для учета и прогноза. Предзаказ открывает ранний доступ ко всем новым функциям и обновлениям."
+msgstr "«Большие деньги» — это премиум-версия приложения с максимальными возможностями для учета, планирования финансов и прогнозирования движения средств."
 
 msgid "Per-server license for the entire company. Unlimited users, all the premium features, and free updates forever."
 msgstr "Лицензия на один сервер и всю компанию. Сколько угодно пользователей, все функции, бесплатные обновления."
@@ -1314,8 +1314,11 @@ msgstr "Задавайте финансовые цели и бюджеты в ф
 msgid "May 2026"
 msgstr "Май 2026"
 
-msgid "May / June 2026"
-msgstr "Май-июнь 2026"
+msgid "June 2026"
+msgstr "Июнь 2026"
+
+msgid "Arriving"
+msgstr "На подлете"
 
 msgid "Teammate accounts"
 msgstr "Подотчеты"
