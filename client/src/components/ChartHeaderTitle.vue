@@ -113,7 +113,8 @@ export default {
     },
 
     isShowImaginaryMessage () {
-      return this.$store.state.account.accounts.some(account => account.is_imaginary === 1)
+      return this.$route.name === 'Currency' &&
+        this.$store.state.account.accounts.some(account => account.is_imaginary === 1)
     }
 
   },
