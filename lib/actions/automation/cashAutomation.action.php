@@ -57,21 +57,21 @@ class cashAutomationAction extends cashViewAction
     private function getEvents()
     {
         return [
-            'transaction_add'    => _w('Add transaction'),
-            'transaction_update' => _w('Update transaction'),
-            'transaction_delete' => _w('Delete transaction'),
+            'transaction_add'    => _w('New transaction created'),
+            'transaction_update' => _w('Exising transaction edited'),
+            'transaction_delete' => _w('Transaction deleted'),
         ];
     }
 
     public static function getConditions()
     {
         return [
-            ''            => ['name' => _w('Select condition...'), 'operators' => []],
-            'amount'      => ['name' => _w('Сумма операции'), 'operators' => ['>', '<', '=']],
-            'description' => ['name' => _w('Описание операции'), 'operators' => ['=', '!=', '%...%']],
-            'account_id'  => ['name' => _w('Счёт'), 'operators' => ['=', '!=']],
-            'category_id' => ['name' => _w('Статья'), 'operators' => ['=', '!=']],
-            'date'        => ['name' => _w('Дата операции'), 'operators' => ['<', '>']],
+            ''            => ['name' => _w('Configure...'), 'operators' => []],
+            'amount'      => ['name' => _w('Amount'), 'operators' => ['>', '<', '=']],
+            'description' => ['name' => _w('Description'), 'operators' => ['=', '!=', '%...%']],
+            'account_id'  => ['name' => _w('Account'), 'operators' => ['=', '!=']],
+            'category_id' => ['name' => _w('Category'), 'operators' => ['=', '!=']],
+            'date'        => ['name' => _w('Date'), 'operators' => ['<', '>']],
         ];
     }
 
