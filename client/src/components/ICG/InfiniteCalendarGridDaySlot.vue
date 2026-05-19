@@ -32,8 +32,8 @@ const props = defineProps({
   }
 })
 
-const CHART_CIRCLE_MAX_PX = 40
-const CHART_CIRCLE_MIN_PX = 5
+const CHART_CIRCLE_MAX_PX = 60
+const CHART_CIRCLE_MIN_PX = 6
 
 const router = useRouter()
 const dayRef = ref()

@@ -281,8 +281,8 @@
   "detailsTargetDeviationPercentLabel": "Отклонение, %",
   "allTransactionsProcessed": "На этом всё!",
   "calendarGrid": {
-    "modeSummary": "Наглядно",
-    "modeOperations": "Все операции",
+    "modeSummary": "Наглядно итого",
+    "modeOperations": "Списком",
     "filterAllOperations": "Все счета и валюты"
   },
   "planView": {

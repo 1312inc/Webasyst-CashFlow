@@ -206,7 +206,7 @@ watch(daysInCalendar, () => {
                   >{{ $t('calendarGrid.filterAllOperations') }}</a>
                 </li>
               </ul>
-              <div class="heading custom-ml-12">
+              <div class="heading custom-ml-12 custom-pb-4">
                 {{ $t('currency') }}
               </div>
               <ul class="menu">
@@ -221,7 +221,7 @@ watch(daysInCalendar, () => {
                   >{{ currency }}</a>
                 </li>
               </ul>
-              <div class="heading custom-ml-12">
+              <div class="heading custom-ml-12 custom-pb-4">
                 {{ $t('account') }}
               </div>
               <ul class="menu">
@@ -248,7 +248,7 @@ watch(daysInCalendar, () => {
                     <span>{{ account.name }}</span></a>
                 </li>
               </ul>
-              <div class="heading custom-ml-12">
+              <div class="heading custom-ml-12 custom-pb-4">
                 {{ $t('income') }}
               </div>
               <ul class="menu">
@@ -283,7 +283,7 @@ watch(daysInCalendar, () => {
                     {{ category.name }}</a>
                 </li>
               </ul>
-              <div class="heading custom-ml-12">
+              <div class="heading custom-ml-12 custom-pb-4">
                 {{ $t('expense') }}
               </div>
               <ul class="menu">
