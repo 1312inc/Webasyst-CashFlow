@@ -518,7 +518,7 @@ function onClickGoToPremium () {
   <div class="box custom-p-16">
     <h1>{{ $t('planView.title') }}</h1>
     <div class="flexbox vertical-mobile space-16">
-      <div class="flexbox middle space-16">
+      <div class="flexbox middle space-16 wide">
         <div class="flexbox middle space-8">
           <button
             type="button"
@@ -561,7 +561,7 @@ function onClickGoToPremium () {
         </div>
       </div>
       <button
-        class="total-plan-button nowrap nobutton"
+        class="total-plan-button nowrap outlined light-gray"
         :class="{ active: isTotalPlanMode }"
         type="button"
         @click="setTotalPlanMode"

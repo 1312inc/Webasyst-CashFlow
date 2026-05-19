@@ -288,8 +288,8 @@
   },
   "planView": {
     "title": "Бюджет",
-    "totalPlanButton": "Общий план",
-    "totalPlanIntro": "Общий план — это база, {username}",
+    "totalPlanButton": "Настроить дефолты",
+    "totalPlanIntro": "Здесь настраивается общий базовый бюджет без привязки к месяцу. Дефолтные значения будут использоваться, только если планы на выбранный месяц не заданы.",
     "incomeCategoriesTitle": "Поступления",
     "expenseCategoriesTitle": "Расходы",
     "balanceSectionTitle": "Баланс",

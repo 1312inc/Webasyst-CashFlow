@@ -288,8 +288,8 @@
   },
   "planView": {
     "title": "Plan",
-    "totalPlanButton": "Total plan",
-    "totalPlanIntro": "The total plan is the base plan, {username}",
+    "totalPlanButton": "Configure defaults",
+    "totalPlanIntro": "Configure the basic default budget that will be used as a fallback only when no budget is set for a particular month.",
     "incomeCategoriesTitle": "Income",
     "expenseCategoriesTitle": "Expenses",
     "balanceSectionTitle": "Balance",
