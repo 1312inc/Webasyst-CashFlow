@@ -280,7 +280,7 @@
   "detailsTargetDeviationLabel": "Deviation",
   "detailsTargetDeviationPercentLabel": "Deviation, %",
   "allTransactionsProcessed": "That’s all folks!",
-  "chartHeaderImaginaryAccountsHint": "Real money only here! Virtual accounts are excluded from the past. Future transactions on them are still shown for an accurate forecast.",
+  "chartHeaderImaginaryAccountsHint": "Cash on hand on all checking accounts. Virtual accounts are included in the future forecast but hidden from the past in this view.",
   "calendarGrid": {
     "modeSummary": "Summary",
     "modeOperations": "All transactions",

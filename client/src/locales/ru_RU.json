@@ -280,7 +280,7 @@
   "detailsTargetDeviationLabel": "Отклонение",
   "detailsTargetDeviationPercentLabel": "Отклонение, %",
   "allTransactionsProcessed": "На этом всё!",
-  "chartHeaderImaginaryAccountsHint": "Тут только наличка! Виртуальные счета в прошлом исключены. А в будущем их операции видны для правильного прогноза.",
+  "chartHeaderImaginaryAccountsHint": "Общий баланс наличных на всех расчетных счетах. Виртуальные счета формируют только прогноз и в истории операций в данном представлении не видны.",
   "calendarGrid": {
     "modeSummary": "Наглядно итого",
     "modeOperations": "Списком",

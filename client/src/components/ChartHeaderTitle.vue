@@ -44,7 +44,7 @@
       </div>
       <p
         v-if="isShowImaginaryMessage"
-        class="small"
+        class="small custom-mt-12"
       >
         {{ $t('chartHeaderImaginaryAccountsHint') }}
       </p>
