@@ -89,7 +89,7 @@ const isPremium = computed(() => window.appState?.isPremium)
 <style>
 .c-icon-with-badge {
   position: relative;
-
+  top: -1px;
 }
 
 .c-icon-badge {
@@ -100,14 +100,13 @@ const isPremium = computed(() => window.appState?.isPremium)
   background-color: var(--background-color-blank);
   border-radius: 50%;
   padding: 1px;
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 2px 1px var(--border-color-soft);
-  font-size: 8px;
+  font-size: 7px;
 }
 
 </style>
