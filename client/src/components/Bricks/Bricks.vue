@@ -38,7 +38,18 @@
       }"
     >
       <div class="flexbox middle space-8">
-        <span class="icon"><i class="fas fa-tachometer-alt text-red" /></span>
+        <div class="c-icon-with-badge">
+          <span class="icon"><i
+            class="fas fa-tachometer-alt"
+            :class="{'text-red': isPremium, 'text-light-gray': !isPremium}"
+          /></span>
+          <span
+            v-if="!isPremium"
+            class="c-icon-badge"
+          >
+            <i class="fas fa-star text-yellow" />
+          </span>
+        </div>
         <span>{{ $t("plan") }}</span>
       </div>
     </router-link>
@@ -51,7 +62,15 @@
       }"
     >
       <div class="flexbox middle space-8">
-        <span class="icon"><i class="fas fa-robot text-light-gray" /></span>
+        <div class="c-icon-with-badge">
+          <span class="icon"><i class="fas fa-robot text-light-gray" /></span>
+          <span
+            v-if="!isPremium"
+            class="c-icon-badge"
+          >
+            <i class="fas fa-star text-yellow" />
+          </span>
+        </div>
         <span>{{ $t("bots") }}</span>
       </div>
     </a>
@@ -61,4 +80,34 @@
 <script setup>
 import BrickCalendar from './BrickCalendar'
 import BrickTransactions from './BrickTransactions'
+import { computed } from 'vue'
+
+const isPremium = computed(() => window.appState?.isPremium)
+
 </script>
+
+<style>
+.c-icon-with-badge {
+  position: relative;
+
+}
+
+.c-icon-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  transform: translate(50%, 50%);
+  background-color: var(--background-color-blank);
+  border-radius: 50%;
+  padding: 1px;
+  width: 10px;
+  height: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 2px 1px var(--border-color-soft);
+  font-size: 8px;
+}
+
+</style>
