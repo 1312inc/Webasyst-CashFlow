@@ -212,13 +212,13 @@ function onCategoryChange (id) {
             <h5 class="align-center custom-mt-0 custom-mb-12">
               {{ $t('detailsTargetDescTitle') }}
             </h5>
-            <p class="small gray align-center width-90 custom-mx-auto custom-my-12">
+            <p class="small gray align-center custom-mx-auto custom-my-12">
               {{ $t('detailsTargetDesc') }}
             </p>
             <div class="align-center custom-my-16">
               <a
                 :href="`${$helper.baseUrl}upgrade/`"
-                class="button small green"
+                class="button small yellow"
               >{{ $t('detailsTargetDescLink') }}</a>
             </div>
           </template>

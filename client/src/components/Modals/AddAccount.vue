@@ -122,7 +122,7 @@
                 {{ $t("accountType.types.accountable.name") }}
                 <span class="hint">{{ $t("accountType.types.accountable.message") }}</span>
                 <div v-if="!isPremium">
-                  <span class="hint text-green bold">{{ $t("premiumOnly") }}</span>
+                  <span class="hint text-yellow bold">{{ $t("premiumOnly") }}</span>
                 </div>
               </label>
               <AddAccountAccountable
@@ -134,7 +134,7 @@
 
             <p class="small custom-mb-16">
               <a
-                href="#"
+                href="https://support.webasyst.ru/46619/what-is-a-cashflow-account-checking-virtual-sandbox/"
                 target="_blank"
               ><b>{{ $t("accountTypeHint") }}</b></a>
             </p>

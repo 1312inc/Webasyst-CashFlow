@@ -569,8 +569,9 @@ function onClickGoToPremium () {
 
     <div
       v-if="!appState.isPremium"
-      class="alert info"
+      class="alert warning small custom-mt-16"
     >
+      <i class="fas fa-star small"></i>
       {{ $t('planView.premiumAlert') }}
     </div>
 
@@ -822,20 +823,24 @@ function onClickGoToPremium () {
       <Modal @close="openPremiumModal = false">
         <div class="dialog-body">
           <div class="dialog-content">
-            {{ $t('planView.premiumDialogText') }}
+            <h3>
+              <i class="fas fa-star text-yellow small"></i>
+              {{ $t('planView.premiumDialogTitle') }}
+            </h3>
+            <p>{{ $t('planView.premiumDialogText') }}</p>
           </div>
           <div class="dialog-footer">
             <button
-              class="button"
+              class="button yellow custom-mr-12"
               @click="onClickGoToPremium"
             >
               {{ $t('planView.premiumDialogPrimaryButton') }}
             </button>
             <button
-              class="button outlined light-gray"
+              class="button light-gray"
               @click="openPremiumModal = false"
             >
-              {{ $t('close') }}
+              {{ $t('planView.premiumDialogSecondaryButton') }}
             </button>
           </div>
         </div>
