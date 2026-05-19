@@ -288,6 +288,7 @@
   "planView": {
     "title": "Plan",
     "totalPlanButton": "Total plan",
+    "totalPlanIntro": "The total plan is the base plan, {username}",
     "incomeCategoriesTitle": "Income",
     "expenseCategoriesTitle": "Expenses",
     "balanceSectionTitle": "Balance",

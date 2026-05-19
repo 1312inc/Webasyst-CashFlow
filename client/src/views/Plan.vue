@@ -3,7 +3,9 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import flatpickr from 'flatpickr'
 import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect'
+import { Russian } from 'flatpickr/dist/l10n/ru.js'
 import api from '@/plugins/api'
+import { locale } from '@/plugins/locale'
 import store from '@/store'
 import Modal from '@/components/Modal'
 import { appState } from '@/utils/appState'
@@ -204,6 +206,7 @@ function initMonthPicker () {
     dateFormat: 'Y-m-01',
     altInput: true,
     altFormat: 'F Y',
+    ...(locale === 'ru_RU' && { locale: Russian }),
     plugins: [
       monthSelectPlugin({
         shorthand: true,
@@ -571,9 +574,16 @@ function onClickGoToPremium () {
       v-if="!appState.isPremium"
       class="alert warning small custom-mt-16"
     >
-      <i class="fas fa-star small"></i>
+      <i class="fas fa-star small" />
       {{ $t('planView.premiumAlert') }}
     </div>
+
+    <p
+      v-if="isTotalPlanMode"
+      class="small"
+    >
+      {{ $t('planView.totalPlanIntro', { username: appState.accountName || '' }) }}
+    </p>
 
     <h4 class="gray custom-mb-4">
       {{ $t('planView.incomeCategoriesTitle') }}
@@ -824,7 +834,7 @@ function onClickGoToPremium () {
         <div class="dialog-body">
           <div class="dialog-content">
             <h3>
-              <i class="fas fa-star text-yellow small"></i>
+              <i class="fas fa-star text-yellow small" />
               {{ $t('planView.premiumDialogTitle') }}
             </h3>
             <p>{{ $t('planView.premiumDialogText') }}</p>

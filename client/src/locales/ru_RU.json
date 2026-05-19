@@ -288,6 +288,7 @@
   "planView": {
     "title": "Бюджет",
     "totalPlanButton": "Общий план",
+    "totalPlanIntro": "Общий план — это база, {username}",
     "incomeCategoriesTitle": "Поступления",
     "expenseCategoriesTitle": "Расходы",
     "balanceSectionTitle": "Баланс",
