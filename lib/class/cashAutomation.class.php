@@ -27,7 +27,7 @@ class cashAutomation
             return false;
         };
         $map = [
-            'cashTransactionCreateMethod' => 'create',
+            'cashTransactionCreateMethod' => 'add',
             'cashTransactionUpdateMethod' => 'update',
             'cashTransactionDeleteMethod' => 'delete'
         ];
@@ -39,7 +39,7 @@ class cashAutomation
         $action_id = 'transaction_'.$action;
         $automation_model = new cashAutomationModel();
         $rules = $automation_model->getByField('action_id', $action_id, true);
-
+        $response = (array) (empty($response[0]) ? $response : reset($response));
         $actions = cashAutomationAction::getActions();
         $conditions = cashAutomationAction::getConditions();
 
