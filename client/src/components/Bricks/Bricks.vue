@@ -30,6 +30,7 @@
       </div>
     </a>
     <router-link
+      v-if="$permissions.isAdmin"
       to="/budget"
       class="brick custom-pt-8"
       :class="{
