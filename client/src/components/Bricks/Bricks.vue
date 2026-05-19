@@ -68,7 +68,7 @@
             v-if="!isPremium"
             class="c-icon-badge"
           >
-            <i class="fas fa-star text-yellow" />
+            <i class="fas fa-star text-light-gray" />
           </span>
         </div>
         <span>{{ $t("bots") }}</span>
