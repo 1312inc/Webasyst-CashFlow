@@ -282,8 +282,8 @@
   "allTransactionsProcessed": "На этом всё!",
   "chartHeaderImaginaryAccountsHint": "Тут только наличка! Виртуальные счета в прошлом исключены. А в будущем их операции видны для правильного прогноза.",
   "calendarGrid": {
-    "modeSummary": "Наглядно",
-    "modeOperations": "Все операции",
+    "modeSummary": "Наглядно итого",
+    "modeOperations": "Списком",
     "filterAllOperations": "Все счета и валюты"
   },
   "planView": {
