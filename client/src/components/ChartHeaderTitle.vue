@@ -42,6 +42,12 @@
           </button>
         </div>
       </div>
+      <p
+        v-if="isShowImaginaryMessage"
+        class="small"
+      >
+        {{ $t('chartHeaderImaginaryAccountsHint') }}
+      </p>
       <portal>
         <Modal
           v-if="open"
@@ -104,7 +110,12 @@ export default {
         this.currentEntity.stat?.summary ||
         this.currentEntity.balances?.now.amount
       )
+    },
+
+    isShowImaginaryMessage () {
+      return this.$store.state.account.accounts.some(account => account.is_imaginary === 1)
     }
+
   },
 
   methods: {
