@@ -34,14 +34,17 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
             $date_from = $date->modify('first day of this month')->format('Y-m-d');
             $date_to = $date->modify('last day of this month')->format('Y-m-d');
 
-            $where['imaginary'] = 'IF(ca.is_imaginary = -1, NULL, true)';
-            $where['date'] = 'ct.date >= s:date_from AND ct.date < DATE_ADD(s:date_to, INTERVAL 1 DAY)';
-
+            $_where = [
+                'ca.is_archived != 1',
+                'ct.is_archived != 1',
+                'IF(ca.is_imaginary = -1, NULL, true)',
+                'ct.date >= s:date_from AND ct.date < DATE_ADD(s:date_to, INTERVAL 1 DAY)'
+            ];
             $total_facts = $model->query("
                 SELECT ct.account_id, ca.currency, ct.category_id, SUM(ct.amount) amount_fact
                 FROM cash_transaction ct
                 LEFT JOIN cash_account ca ON ca.id = ct.account_id
-                WHERE ".implode(' AND ', $where)."
+                WHERE ".implode(' AND ', $_where + $where)."
                 GROUP BY ct.account_id, category_id 
                 ORDER BY ca.currency, category_id
             ", [
@@ -51,7 +54,6 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
                 'date_from'   => $date_from,
                 'date_to'     => $date_to,
             ])->fetchAll();
-            unset($where['imaginary'], $where['date']);
             $where['month'] = "(`month` IS NULL OR `month` = '$date_from')";
         } else {
             $where['month'] = '`month` IS NULL';
