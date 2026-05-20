@@ -912,8 +912,7 @@ function onClickGoToPremium () {
 }
 
 .category-name-cell {
-  width: 200px;
-  max-width: 200px;
+  max-width: 400px;
 }
 
 @media screen and (max-width: 760px) {
