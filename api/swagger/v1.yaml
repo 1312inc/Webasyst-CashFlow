@@ -1076,6 +1076,15 @@ paths:
             enum:
               - 0
               - 1
+        - in: query
+          name: imaginary_past_force_add
+          description: Не отсекать операции по счетам
+          schema:
+            type: integer
+            default: 0
+            enum:
+              - 0
+              - 1
       responses:
         200:
           description: Набор данных для каждой из валют счетов.

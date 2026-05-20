@@ -24,7 +24,7 @@ final class cashApiAggregateGetBreakDownHandler implements cashApiHandlerInterfa
 
         $graphService = new cashGraphService();
 
-        $data = $graphService->getAggregateBreakDownData($paramsDto);
+        $data = $graphService->getAggregateBreakDownData($paramsDto, $request);
         $existingCurrencies = $graphService->getAggregateBreakDownCurrencies($paramsDto);
 
         return [$data, $existingCurrencies];

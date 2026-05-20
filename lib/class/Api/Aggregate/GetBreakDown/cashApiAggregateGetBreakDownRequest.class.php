@@ -24,4 +24,9 @@ final class cashApiAggregateGetBreakDownRequest
      * @var int
      */
     public $children_help_parents;
+
+    /**
+     * @var int
+     */
+    public $imaginary_past_force_add;
 }

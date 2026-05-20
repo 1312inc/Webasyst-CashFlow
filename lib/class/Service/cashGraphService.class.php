@@ -787,11 +787,11 @@ class cashGraphService
 
     /**
      * @param cashAggregateGetBreakDownFilterParamsDto $paramsDto
-     *
+     * @param cashApiAggregateGetBreakDownRequest $request
      * @return array
      * @throws waException
      */
-    public function getAggregateBreakDownData(cashAggregateGetBreakDownFilterParamsDto $paramsDto): array
+    public function getAggregateBreakDownData(cashAggregateGetBreakDownFilterParamsDto $paramsDto, cashApiAggregateGetBreakDownRequest $request): array
     {
         $select = [
             "if(ct.amount < 0, concat('expense|',cc.is_profit), 'income') transaction_type",
@@ -834,7 +834,7 @@ class cashGraphService
             ->params(['from' => $paramsDto->from->format('Y-m-d'), 'to' => $paramsDto->to->format('Y-m-d')]);
 
         if (!$paramsDto->filter->getAccountId()) {
-            if (null !== $paramsDto->filter->getCurrency()) {
+            if (null !== $paramsDto->filter->getCurrency() && empty($request->imaginary_past_force_add)) {
                 $sqlParts->addAndWhere('
                     CASE
                         WHEN ca.is_imaginary = 1 THEN ct.date > NOW()

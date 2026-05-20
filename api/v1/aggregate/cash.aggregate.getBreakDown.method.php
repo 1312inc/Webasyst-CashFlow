@@ -19,6 +19,7 @@ class cashAggregateGetBreakDownMethod extends cashApiAbstractMethod
         $request->to = DateTimeImmutable::createFromFormat('Y-m-d|', $request->to);
         $request->from = DateTimeImmutable::createFromFormat('Y-m-d|', $request->from);
         $request->children_help_parents = empty($request->children_help_parents) ? 0 : 1;
+        $request->imaginary_past_force_add = empty($request->imaginary_past_force_add) ? 0 : 1;
 
         [$data, $currencies] = (new cashApiAggregateGetBreakDownHandler())->handle($request);
 
