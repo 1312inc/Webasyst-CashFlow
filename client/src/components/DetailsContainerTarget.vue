@@ -79,8 +79,8 @@ const currentCategory = computed(() => {
 const chartState = computed(() => ({
   isPromoMode,
   isEmptyMode: isEmptyMode.value,
-  amount: currentCategory.value?.amount ?? isPromoMode ? 50 : 0,
-  amountFact: currentCategory.value?.amountFact ?? isPromoMode ? 50 : 0,
+  amount: currentCategory.value?.amount ?? (isPromoMode ? 50 : 0),
+  amountFact: currentCategory.value?.amountFact ?? (isPromoMode ? 50 : 0),
   currencyCode: currentCategory.value?.currency ?? '',
   color: currentCategory.value?.color ?? ''
 }))
