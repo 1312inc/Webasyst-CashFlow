@@ -13,22 +13,11 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
      */
     public function handle($request)
     {
-        $model = cash()->getModel('cashPlan');
         $where = ['1=1'];
-
-        if (isset($request->currency)) {
-            $where['currency'] = 'currency = s:currency';
-        }
-        if (isset($request->category_id)) {
-            $where['category_id'] = 'category_id = i:category_id';
-        }
-        if (isset($request->account_id)) {
-            $where['account_id'] = 'account_id = i:account_id';
-        }
-
         $total_facts = [];
         $date_from = null;
         $date_to = null;
+        $model = cash()->getModel('cashPlan');
         if ($request->date) {
             $date = DateTimeImmutable::createFromFormat('Y-m-d|', $request->date);
             $date_from = $date->modify('first day of this month')->format('Y-m-d');
@@ -45,19 +34,26 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
                 FROM cash_transaction ct
                 LEFT JOIN cash_account ca ON ca.id = ct.account_id
                 LEFT JOIN cash_category cc ON cc.id = ct.category_id 
-                WHERE ".implode(' AND ', $_where + $where)."
-                GROUP BY ct.account_id, category_id 
-                ORDER BY ca.currency, category_id
+                WHERE ".implode(' AND ', $_where)."
+                GROUP BY ct.account_id, ct.category_id
+                ORDER BY ca.id, ca.currency, cc.id
             ", [
-                'currency'    => $request->currency,
-                'category_id' => $request->category_id,
-                'account_id'  => $request->account_id,
-                'date_from'   => $date_from,
-                'date_to'     => $date_to,
+                'date_from' => $date_from,
+                'date_to'   => $date_to,
             ])->fetchAll();
             $where['month'] = "(`month` IS NULL OR `month` = '$date_from')";
         } else {
             $where['month'] = '`month` IS NULL';
+        }
+
+        if (isset($request->currency)) {
+            $where['currency'] = 'currency = s:currency';
+        }
+        if (isset($request->category_id)) {
+            $where['category_id'] = 'category_id = i:category_id';
+        }
+        if (isset($request->account_id)) {
+            $where['account_id'] = 'account_id = i:account_id';
         }
 
         $plans = $model->query("
