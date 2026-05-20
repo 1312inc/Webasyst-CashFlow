@@ -141,6 +141,8 @@ function createChart () {
  * Hand
  */
 
+  if (!props.amountFact) return
+
   const hand = chart.hands.push(new am4charts.ClockHand())
   hand.axis = axis2
   hand.innerRadius = am4core.percent(20)

@@ -79,8 +79,8 @@ const currentCategory = computed(() => {
 const chartState = computed(() => ({
   isPromoMode,
   isEmptyMode: isEmptyMode.value,
-  amount: currentCategory.value?.amount ?? 50,
-  amountFact: currentCategory.value?.amountFact ?? 50,
+  amount: currentCategory.value?.amount ?? 0,
+  amountFact: currentCategory.value?.amountFact ?? 0,
   currencyCode: currentCategory.value?.currency ?? '',
   color: currentCategory.value?.color ?? ''
 }))
@@ -297,10 +297,10 @@ function onCategoryChange (id) {
                 })
               }}</b>
               <br>{{ detailsTargetFactForecastLabel }}: <b>{{
-                helpers.toCurrency({
+                chartState.amountFact ? helpers.toCurrency({
                   value: chartState.amountFact,
                   currencyCode: chartState.currencyCode
-                })
+                }) : '—'
               }}</b>
               <br>{{ $t('detailsTargetDeviationLabel') }}: <b :class="targetDeviationClass">{{
                 targetDeviationAmount ? helpers.toCurrency({
