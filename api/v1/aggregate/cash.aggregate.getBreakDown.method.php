@@ -22,6 +22,6 @@ class cashAggregateGetBreakDownMethod extends cashApiAbstractMethod
 
         [$data, $currencies] = (new cashApiAggregateGetBreakDownHandler())->handle($request);
 
-        return new cashApiAggregateGetBreakDownResponse((array) $data, (array) $currencies, $request->children_help_parents);
+        return new cashApiAggregateGetBreakDownResponse((array) $data, (array) $currencies, $request);
     }
 }

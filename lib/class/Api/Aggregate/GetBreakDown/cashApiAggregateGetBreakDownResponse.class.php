@@ -12,10 +12,10 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
      *
      * @param array $data
      * @param array $currencies
-     * @param int $children_help_parents
+     * @param cashApiAggregateGetBreakDownRequest $request
      * @throws waException
      */
-    public function __construct(array $data, array $currencies, int $children_help_parents)
+    public function __construct(array $data, array $currencies, cashApiAggregateGetBreakDownRequest $request)
     {
         parent::__construct(200);
 
@@ -36,26 +36,27 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
             ];
         }
 
-        if ($children_help_parents) {
+        if ($request->children_help_parents) {
+            $children_amounts = [];
+            $category_ids = array_column($data, 'detailed');
             $this->getCategory(0);
-            $data = array_combine(array_column($data, 'detailed'), $data);
             foreach ($data as $_dt) {
                 if (!empty($_dt['category_parent_id'])) {
-                    if (empty($data[$_dt['category_parent_id']])) {
-                        $_c = $this->getCategory($_dt['category_parent_id']);
-                        $data[$_dt['category_parent_id']] = [
-                            'amount' => 0,
-                            'currency' => $_dt['currency'],
-                            'detailed' => $_dt['category_parent_id'],
-                            'category_parent_id' => null,
-                            'transaction_type' => $_c->getType().'|'.($_c->getIsProfit() ? 1 : 0),
-                        ];
+                    $parent_category_ids[$_dt['category_parent_id']] = 1;
+                    if (empty($children_amounts[$_dt['currency']][$_dt['category_parent_id']])) {
+                        $children_amounts[$_dt['currency']][$_dt['category_parent_id']] = 0;
+                        if (!in_array($_dt['category_parent_id'], $category_ids)) {
+                            $_c = $this->getCategory($_dt['category_parent_id']);
+                            $data[] = [
+                                'amount' => 0,
+                                'currency' => $_dt['currency'],
+                                'detailed' => $_dt['category_parent_id'],
+                                'category_parent_id' => null,
+                                'transaction_type' => $_c->getType().'|'.($_c->getIsProfit() ? 1 : 0),
+                            ];
+                        }
                     }
-                    if (empty($data[$_dt['category_parent_id']]['children_amount'])) {
-                        $data[$_dt['category_parent_id']]['children_amount'] = $_dt['amount'];
-                    } else {
-                        $data[$_dt['category_parent_id']]['children_amount'] += $_dt['amount'];
-                    }
+                    $children_amounts[$_dt['currency']][$_dt['category_parent_id']] += $_dt['amount'];
                 }
             }
         }
@@ -66,11 +67,11 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
                 $graphDatum,
                 $this->getCategory($graphDatum['detailed'])
             );
-            if ($children_help_parents && !empty($graphDatum['children_amount'])) {
-                $dataInfo->amount += $graphDatum['children_amount'];
+            if ($request->children_help_parents && !empty($children_amounts[$graphDatum['currency']][$graphDatum['detailed']])) {
+                $dataInfo->amount += $children_amounts[$graphDatum['currency']][$graphDatum['detailed']];
             }
             $response[$graphDatum['currency']][$categoryType]->data[] = $dataInfo;
-            if (!$children_help_parents || empty($graphDatum['category_parent_id'])) {
+            if (!$request->children_help_parents || empty($graphDatum['category_parent_id'])) {
                 $response[$graphDatum['currency']][$categoryType]->totalAmount += $dataInfo->amount;
             }
         }
