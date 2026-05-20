@@ -122,10 +122,7 @@
           </div>
         </div>
 
-        <div
-          v-if="!model.parent_category_id"
-          class="field"
-        >
+        <div class="field">
           <div class="name for-input">
             {{ $t("color") }}
           </div>
