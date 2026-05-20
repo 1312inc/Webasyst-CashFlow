@@ -1186,10 +1186,10 @@ msgid "ShowButton"
 msgstr "Показать"
 
 msgid "Stream"
-msgstr "Поток"
+msgstr "Пульс"
 
 msgid "Sankey"
-msgstr "Карта финансов"
+msgstr "Структура"
 
 msgid "No data message"
 msgstr "Недостаточно данных для построения отчета."
