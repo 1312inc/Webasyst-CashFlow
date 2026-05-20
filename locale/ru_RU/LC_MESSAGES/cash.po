@@ -1318,7 +1318,7 @@ msgid "June 2026"
 msgstr "Июнь 2026"
 
 msgid "Arriving"
-msgstr "На подлете"
+msgstr "На подходе"
 
 msgid "Teammate accounts"
 msgstr "Подотчеты"
@@ -1403,3 +1403,15 @@ msgstr "Отмена"
 
 msgid "Error"
 msgstr "Ошибка"
+
+msgid "Automation bots"
+msgstr "Боты и автоматизация"
+
+msgid "Bots track all events occurring in the app and help you automate routine accounting operations such as adding new and updating existing transactions."
+msgstr "Боты следят за событиями в приложении и помогают автоматизировать все рутинные операции по учету на основе заданных вами правил: создают новые операции, обновляют параметры существующих и т.д."
+
+msgid "Available only in the Big Cash app premium version."
+msgstr "Этот раздел доступен только в премиум-версии «Большие деньги»."
+
+msgid "See all premium features"
+msgstr "Что еще есть в премиум"
