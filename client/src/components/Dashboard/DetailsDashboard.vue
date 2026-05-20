@@ -157,15 +157,21 @@ export default {
           localStorage.setItem(CURRENT_PERIOD_STORAGE_KEY, value)
         } catch (_) {}
       }
+    },
+
+    breakdownWatchKey () {
+      const { from, to } = this.detailsInterval
+      return `${from}|${to}|${this.queryParams.filter}`
     }
   },
 
   watch: {
-    detailsInterval: {
-      handler () { this.fetchBreakDown() },
+    breakdownWatchKey: {
+      handler () {
+        this.fetchBreakDown()
+      },
       immediate: true
-    },
-    'queryParams.filter': 'fetchBreakDown'
+    }
   },
 
   methods: {
