@@ -73,8 +73,8 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
 
             if (is_null($plan['month'])) {
                 /** для общего типа плана */
-                $plan['amount_fact'] = null;
             } else {
+                $plan['amount_fact'] = 0;
                 foreach ($total_facts as $_fact) {
                     $is_currency_type = $plan['currency'] == $_fact['currency'] && $plan['category_id'] == $_fact['category_id'];
                     if ($is_currency_type && $plan['account_id'] == $_fact['account_id']) {
