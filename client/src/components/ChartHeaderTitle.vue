@@ -114,14 +114,10 @@ export default {
     },
 
     isShowImaginaryMessage () {
-      if (this.$route.name !== 'Currency') return false
-      const countByCurrency = {}
-      for (const account of this.$store.state.account.accounts) {
-        if (account.is_imaginary !== 1) continue
-        countByCurrency[account.currency] = (countByCurrency[account.currency] || 0) + 1
-        if (countByCurrency[account.currency] > 1) return true
-      }
-      return false
+      const currency = this.$route.params.id
+      if (!currency) return false
+      return this.$route.name === 'Currency' &&
+        this.$store.state.account.accounts.some(account => account.is_imaginary === 1 && account.currency === currency)
     }
 
   },
