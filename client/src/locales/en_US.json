@@ -296,6 +296,7 @@
     "balanceSectionTitle": "Balance",
     "allIncomeRowLabel": "All income",
     "allExpenseRowLabel": "All expenses",
+    "balanceRowLabel": "Balance",
     "premiumAlert": "This feature is only available in the ‘Big cash’ app premium version",
     "premiumDialogTitle": "Big cash",
     "premiumDialogText": "Upgrade to the ‘Big cash’ app premium version to instantely unlock all features and to make this dialog go away once and for all.",

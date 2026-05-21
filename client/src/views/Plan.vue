@@ -60,23 +60,6 @@ const planByCategoryId = computed(() => {
 })
 const allCategories = computed(() => [...incomeCategories.value, ...expenseCategories.value])
 
-function sumCategoriesAmount (categories, amountGetter) {
-  return categories.reduce((sum, category) => {
-    const value = Number(amountGetter(category.id))
-    return Number.isNaN(value) ? sum : sum + value
-  }, 0)
-}
-
-const incomePlanTotal = computed(() => sumCategoriesAmount(incomeCategories.value, getPlanAmount))
-const incomeFactTotal = computed(() => sumCategoriesAmount(incomeCategories.value, getFactAmount))
-const incomeDeviationAmount = computed(() => incomeFactTotal.value - incomePlanTotal.value)
-const incomeDeviationPercent = computed(() => getTotalsDeviationPercent(incomePlanTotal.value, incomeDeviationAmount.value))
-
-const expensePlanTotal = computed(() => sumCategoriesAmount(expenseCategories.value, getPlanAmount))
-const expenseFactTotal = computed(() => sumCategoriesAmount(expenseCategories.value, getFactAmount))
-const expenseDeviationAmount = computed(() => expenseFactTotal.value - expensePlanTotal.value)
-const expenseDeviationPercent = computed(() => getTotalsDeviationPercent(expensePlanTotal.value, expenseDeviationAmount.value))
-
 const detailsTargetFactForecastLabel = computed(() => {
   if (moment(currentMonthFirstDay.value).isSame(moment(), 'month')) {
     return i18n.t('detailsTargetFactForecastLabel')
@@ -453,6 +436,41 @@ function getFactAmount (categoryId) {
   return amount === null ? '' : amount
 }
 
+function categoryHasPlan (categoryId) {
+  const plan = getPlanAmount(categoryId)
+  return plan !== '' && !Number.isNaN(Number(plan))
+}
+
+function sumCategoriesPlanTotal (categories) {
+  return categories.reduce((sum, category) => {
+    const value = Number(getPlanAmount(category.id))
+    return Number.isNaN(value) ? sum : sum + value
+  }, 0)
+}
+
+function sumCategoriesFactTotal (categories) {
+  return categories.reduce((sum, category) => {
+    if (!categoryHasPlan(category.id)) return sum
+    const value = Number(getFactAmount(category.id))
+    return Number.isNaN(value) ? sum : sum + value
+  }, 0)
+}
+
+const incomePlanTotal = computed(() => sumCategoriesPlanTotal(incomeCategories.value))
+const incomeFactTotal = computed(() => sumCategoriesFactTotal(incomeCategories.value))
+const incomeDeviationAmount = computed(() => incomeFactTotal.value - incomePlanTotal.value)
+const incomeDeviationPercent = computed(() => getSummaryDeviationPercent(incomePlanTotal.value, incomeDeviationAmount.value))
+
+const expensePlanTotal = computed(() => sumCategoriesPlanTotal(expenseCategories.value))
+const expenseFactTotal = computed(() => sumCategoriesFactTotal(expenseCategories.value))
+const expenseDeviationAmount = computed(() => expenseFactTotal.value - expensePlanTotal.value)
+const expenseDeviationPercent = computed(() => getSummaryDeviationPercent(expensePlanTotal.value, expenseDeviationAmount.value))
+
+const balancePlanTotal = computed(() => incomePlanTotal.value + expensePlanTotal.value)
+const balanceFactTotal = computed(() => incomeFactTotal.value + expenseFactTotal.value)
+const balanceDeviationAmount = computed(() => balanceFactTotal.value - balancePlanTotal.value)
+const balanceDeviationPercent = computed(() => getSummaryDeviationPercent(balancePlanTotal.value, balanceDeviationAmount.value))
+
 function getDeviationAmount (categoryId) {
   const planAmount = Number(getPlanAmount(categoryId))
   const factAmount = Number(getFactAmount(categoryId))
@@ -478,13 +496,13 @@ function getDeviationClass (categoryId) {
   return deviationAmount < 0 ? 'is-negative' : 'is-positive'
 }
 
-function getTotalsDeviationPercent (planTotal, deviationAmount) {
+function getSummaryDeviationPercent (planTotal, deviationAmount) {
   if (!planTotal) return ''
   const pct = ((deviationAmount / planTotal) * 100).toFixed(2)
   return formatSignedPercent(pct)
 }
 
-function getTotalsDeviationClass (deviationAmount) {
+function getSummaryDeviationClass (deviationAmount) {
   if (deviationAmount === 0) return ''
   return deviationAmount < 0 ? 'is-negative' : 'is-positive'
 }
@@ -843,13 +861,13 @@ function onClickGoToPremium () {
             </td>
             <td
               class="amount-cell bold"
-              :class="getTotalsDeviationClass(incomeDeviationAmount)"
+              :class="getSummaryDeviationClass(incomeDeviationAmount)"
             >
               {{ incomeDeviationAmount ? formatSignedNumber(incomeDeviationAmount) : '—' }}
             </td>
             <td
               class="amount-cell"
-              :class="getTotalsDeviationClass(incomeDeviationAmount)"
+              :class="getSummaryDeviationClass(incomeDeviationAmount)"
             >
               {{ incomeDeviationPercent || '—' }}
             </td>
@@ -866,15 +884,38 @@ function onClickGoToPremium () {
             </td>
             <td
               class="amount-cell bold"
-              :class="getTotalsDeviationClass(expenseDeviationAmount)"
+              :class="getSummaryDeviationClass(expenseDeviationAmount)"
             >
               {{ expenseDeviationAmount ? formatSignedNumber(expenseDeviationAmount) : '—' }}
             </td>
             <td
               class="amount-cell"
-              :class="getTotalsDeviationClass(expenseDeviationAmount)"
+              :class="getSummaryDeviationClass(expenseDeviationAmount)"
             >
               {{ expenseDeviationPercent || '—' }}
+            </td>
+          </tr>
+          <tr>
+            <td class="category-name-cell">
+              {{ $t('planView.balanceRowLabel') }}
+            </td>
+            <td class="amount-cell bold">
+              {{ balancePlanTotal || '—' }}
+            </td>
+            <td class="amount-cell">
+              {{ balanceFactTotal || (isTotalPlanMode ? '—' : 0) }}
+            </td>
+            <td
+              class="amount-cell bold"
+              :class="getSummaryDeviationClass(balanceDeviationAmount)"
+            >
+              {{ balanceDeviationAmount ? formatSignedNumber(balanceDeviationAmount) : '—' }}
+            </td>
+            <td
+              class="amount-cell"
+              :class="getSummaryDeviationClass(balanceDeviationAmount)"
+            >
+              {{ balanceDeviationPercent || '—' }}
             </td>
           </tr>
         </tbody>
