@@ -297,20 +297,20 @@ function onCategoryChange (id) {
                 })
               }}</b>
               <br>{{ detailsTargetFactForecastLabel }}: <b>{{
-                chartState.amountFact ? helpers.toCurrency({
+                helpers.toCurrency({
                   value: chartState.amountFact,
                   currencyCode: chartState.currencyCode
-                }) : '—'
+                })
               }}</b>
               <br>{{ $t('detailsTargetDeviationLabel') }}: <b :class="targetDeviationClass">{{
-                targetDeviationAmount ? helpers.toCurrency({
+                helpers.toCurrency({
                   value: targetDeviationAmount,
                   currencyCode: chartState.currencyCode,
                   isDynamics: true
-                }) : '—'
+                })
               }}</b>
               <br>{{ $t('detailsTargetDeviationPercentLabel') }}: <b :class="targetDeviationClass">{{
-                targetDeviationPercent || '—'
+                targetDeviationPercent
               }}</b>
             </div>
           </template>
