@@ -88,7 +88,7 @@ const detailsTargetFactForecastLabel = computed(() => {
 })
 
 const isEmptyCurrentMonth = computed(() => {
-  return planData.value.length === 0 && !isTotalPlanMode.value
+  return planData.value.length === 0 && !isTotalPlanMode.value && !isFetching.value
 })
 
 function formatSignedNumber (value) {
