@@ -283,7 +283,7 @@
   "chartHeaderImaginaryAccountsHint": "Общий баланс наличных на всех расчетных счетах. Виртуальные счета формируют только прогноз и в истории операций в данном представлении не видны.",
   "calendarGrid": {
     "modeSummary": "Наглядно итого",
-    "modeOperations": "Списком",
+    "modeOperations": "Подробно",
     "filterAllOperations": "Все счета и валюты"
   },
   "planView": {
