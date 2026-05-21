@@ -5,7 +5,7 @@ import flatpickr from 'flatpickr'
 import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect'
 import { Russian } from 'flatpickr/dist/l10n/ru.js'
 import api from '@/plugins/api'
-import { locale } from '@/plugins/locale'
+import { locale, i18n } from '@/plugins/locale'
 import store from '@/store'
 import Modal from '@/components/Modal'
 import { appState } from '@/utils/appState'
@@ -76,6 +76,16 @@ const balanceDeviationPercent = computed(() => {
   if (!balancePlanTotal.value) return ''
   const pct = ((balanceDeviationAmount.value / balancePlanTotal.value) * 100).toFixed(2)
   return formatSignedPercent(pct)
+})
+
+const detailsTargetFactForecastLabel = computed(() => {
+  if (moment(currentMonthFirstDay.value).isSame(moment(), 'month')) {
+    return i18n.t('detailsTargetFactForecastLabel')
+  } else if (moment(currentMonthFirstDay.value).isBefore(moment(), 'month')) {
+    return i18n.t('detailsTargetFactLabel')
+  } else {
+    return i18n.t('detailsTargetForecastLabel')
+  }
 })
 
 function formatSignedNumber (value) {
@@ -602,7 +612,7 @@ function onClickGoToPremium () {
               {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
             </th>
             <th class="amount-cell">
-              {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
+              {{ detailsTargetFactForecastLabel }}, {{ selectedCurrency }}
             </th>
             <th class="amount-cell">
               {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
@@ -697,7 +707,7 @@ function onClickGoToPremium () {
               {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
             </th>
             <th class="amount-cell">
-              {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
+              {{ detailsTargetFactForecastLabel }}, {{ selectedCurrency }}
             </th>
             <th class="amount-cell">
               {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
@@ -792,7 +802,7 @@ function onClickGoToPremium () {
               {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
             </th>
             <th class="amount-cell">
-              {{ $t('planView.columnFactWithCurrency', { currency: selectedCurrency }) }}
+              {{ detailsTargetFactForecastLabel }}, {{ selectedCurrency }}
             </th>
             <th class="amount-cell">
               {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
