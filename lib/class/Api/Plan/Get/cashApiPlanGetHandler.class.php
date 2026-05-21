@@ -60,7 +60,7 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
             SELECT *, NULL `from`, NULL `to`, NULL amount_fact
             FROM cash_plan
             WHERE ".implode(' AND ', $where)."
-            ORDER BY currency, account_id, category_id
+            ORDER BY currency, account_id, category_id, `month` DESC
         ", [
             'currency'    => $request->currency,
             'category_id' => $request->category_id,
