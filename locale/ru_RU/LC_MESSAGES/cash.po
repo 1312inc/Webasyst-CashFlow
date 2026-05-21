@@ -1371,6 +1371,9 @@ msgstr "https://support.webasyst.ru/forum/ideas/"
 msgid "Maybe"
 msgstr "Возможно"
 
+msgid "Soon"
+msgstr "Скоро"
+
 msgid "Tags & projects"
 msgstr "Теги и проекты"
 
