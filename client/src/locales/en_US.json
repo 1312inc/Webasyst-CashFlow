@@ -290,6 +290,7 @@
     "title": "Plan",
     "totalPlanButton": "Configure defaults",
     "totalPlanIntro": "Configure the basic default budget that will be used as a fallback only when no budget is set for a particular month.",
+    "emptyMonthHint": "Set financial goals and track how you follow them.",
     "incomeCategoriesTitle": "Income",
     "expenseCategoriesTitle": "Expenses",
     "balanceSectionTitle": "Balance",

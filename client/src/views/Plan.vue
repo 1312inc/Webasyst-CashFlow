@@ -88,6 +88,10 @@ const detailsTargetFactForecastLabel = computed(() => {
   }
 })
 
+const isEmptyCurrentMonth = computed(() => {
+  return planData.value.length === 0 && !isTotalPlanMode.value
+})
+
 function formatSignedNumber (value) {
   if (value === '' || value == null) return ''
   const num = Number(value)
@@ -588,6 +592,13 @@ function onClickGoToPremium () {
       <i class="fas fa-star small" />
       {{ $t('planView.premiumAlert') }}
     </div>
+
+    <p
+      v-if="isEmptyCurrentMonth"
+      class="small"
+    >
+      {{ $t('planView.emptyMonthHint') }}
+    </p>
 
     <p
       v-if="isTotalPlanMode"
