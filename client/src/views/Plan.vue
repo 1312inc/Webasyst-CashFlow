@@ -288,7 +288,8 @@ function mergePlanWithBreakdownFacts (planRows, breakdownData) {
   const monthFrom = currentMonthFirstDay.value
   const monthTo = moment(currentMonthFirstDay.value).endOf('month').format('YYYY-MM-DD')
   const seen = new Set()
-  const merged = planRows.map((plan) => {
+  const filteredPlanRows = planRows.filter(plan => isTotalPlanMode.value ? (!plan.from && !plan.to) : (plan.from && plan.to))
+  const merged = filteredPlanRows.map((plan) => {
     if (!plan?.category_id || !plan?.currency) return plan
     const key = planFactKey(plan.currency, plan.category_id)
     seen.add(key)
