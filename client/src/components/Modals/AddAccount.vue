@@ -120,7 +120,7 @@
                   <span />
                 </span>
                 {{ $t("accountType.types.accountable.name") }}
-                <span class="hint">{{ $t("accountType.types.accountable.message") }}</span>
+                <span class="hint">{{ $t("accountType.types.accountable.message") }}<br></span>
                 <div v-if="!isPremium">
                   <span class="hint text-yellow bold">{{ $t("premiumOnly") }}</span>
                 </div>

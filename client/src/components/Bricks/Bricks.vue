@@ -25,7 +25,7 @@
       }"
     >
       <div class="flexbox middle space-8">
-        <span class="icon"><i class="fas fa-download text-blue" /></span>
+        <span class="icon"><i class="fas fa-download text-brown" /></span>
         <span>{{ $t("import") }}</span>
       </div>
     </a>
