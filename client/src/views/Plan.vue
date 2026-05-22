@@ -1054,14 +1054,14 @@ function onClickGoToPremium () {
 }
 
 .is-negative {
-  color: #c0392b;
+  color: var(--red);
 }
 .is-negative.is-ghost-amount {
-  opacity: 0.5;
+  opacity: 0.42;
 }
 
 .is-positive {
-  color: #1f9d55;
+  color: var(--green);
 }
 
 .is-positive.is-ghost-amount {

@@ -12,7 +12,7 @@
       }"
     >
       <div class="flexbox middle space-8">
-        <span class="icon"><i class="fas fa-chart-pie text-green" /></span>
+        <span class="icon"><i class="fas fa-chart-pie text-blue" /></span>
         <span>{{ $t("reports") }}</span>
       </div>
     </a>
@@ -25,7 +25,7 @@
       }"
     >
       <div class="flexbox middle space-8">
-        <span class="icon"><i class="fas fa-download text-brown" /></span>
+        <span class="icon"><i class="fas fa-download text-green" /></span>
         <span>{{ $t("import") }}</span>
       </div>
     </a>
