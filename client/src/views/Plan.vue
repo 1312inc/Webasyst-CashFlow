@@ -647,7 +647,7 @@ function onClickGoToPremium () {
             <th class="amount-cell">
               {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
             </th>
-            <th class="amount-cell">
+            <th class="amount-cell nowrap">
               {{ detailsTargetFactForecastLabel }}, {{ selectedCurrency }}
             </th>
             <th class="amount-cell">
@@ -742,7 +742,7 @@ function onClickGoToPremium () {
             <th class="amount-cell">
               {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
             </th>
-            <th class="amount-cell">
+            <th class="amount-cell nowrap">
               {{ detailsTargetFactForecastLabel }}, {{ selectedCurrency }}
             </th>
             <th class="amount-cell">
@@ -828,7 +828,6 @@ function onClickGoToPremium () {
     </h4>
     <div class="plan-table-scroll custom-mt-4">
       <table
-        class="bigdata"
         :class="{ loading: isFetching }"
       >
         <thead>
@@ -837,7 +836,7 @@ function onClickGoToPremium () {
             <th class="amount-cell">
               {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
             </th>
-            <th class="amount-cell">
+            <th class="amount-cell nowrap">
               {{ detailsTargetFactForecastLabel }}, {{ selectedCurrency }}
             </th>
             <th class="amount-cell">
@@ -907,13 +906,11 @@ function onClickGoToPremium () {
             </td>
             <td
               class="amount-cell bold"
-              :class="getSummaryDeviationClass(balanceDeviationAmount)"
             >
               {{ balanceDeviationAmount ? formatSignedNumber(balanceDeviationAmount) : '—' }}
             </td>
             <td
               class="amount-cell"
-              :class="getSummaryDeviationClass(balanceDeviationAmount)"
             >
               {{ balanceDeviationPercent || '—' }}
             </td>
@@ -1000,8 +997,12 @@ function onClickGoToPremium () {
   margin-right: 6px;
 }
 
+.category-name-cell.is-child-category {
+  font-size: 0.875rem;
+}
+
 .category-name-cell.is-child-category .icon {
-  margin-left: 12px;
+  margin-left: 1.5rem;
 }
 
 .category-name-cell {
