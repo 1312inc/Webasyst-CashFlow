@@ -1644,9 +1644,9 @@ paths:
               type: object
               properties:
                 amount:
-                  type: number
-                  default: 0
-                  description: Сумма (0 = удаление плана)
+                  type: string
+                  default: ''
+                  description: Сумма (пустое поле = удаление плана)
                 category_id:
                   type: integer
                   description: ID статьи доходов или расходов
@@ -1662,7 +1662,6 @@ paths:
                   type: integer
                   description: ID счета
               required:
-                - amount
                 - category_id
                 - currency
       responses:
