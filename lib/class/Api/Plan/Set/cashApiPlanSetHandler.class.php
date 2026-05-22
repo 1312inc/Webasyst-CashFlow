@@ -22,7 +22,7 @@ class cashApiPlanSetHandler implements cashApiHandlerInterface
 
         $model = cash()->getModel('cashPlan');
 
-        if ($request->amount == '') {
+        if ($request->amount === '') {
             $model->deleteByField($data);
             return [];
         } elseif ($plan = $model->getByField($data)) {

@@ -6,7 +6,7 @@
 final class cashApiPlanSetRequest
 {
     /**
-     * @var float
+     * @var string|float
      */
     public $amount;
 
