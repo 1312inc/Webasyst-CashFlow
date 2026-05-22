@@ -511,6 +511,10 @@ function getPlanEntry (categoryId) {
   return planByCategoryId.value[categoryId] || null
 }
 
+function dashCondition (value) {
+  return value === null || value === '' || value === undefined ? '—' : value
+}
+
 async function updatePlanAmount (categoryId, amount) {
   const existingPlan = getPlanEntry(categoryId)
   const currency = selectedCurrency.value || existingPlan?.currency || currencies.value[0] || ''
@@ -709,19 +713,19 @@ function onClickGoToPremium () {
               >
             </td>
             <td class="amount-cell">
-              {{ getFactAmount(category.id) || (isTotalPlanMode ? '—' : 0) }}
+              {{ dashCondition(getFactAmount(category.id)) }}
             </td>
             <td
               class="amount-cell bold"
               :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
             >
-              {{ getDeviationAmountDisplay(category.id) || '—' }}
+              {{ dashCondition(getDeviationAmountDisplay(category.id)) }}
             </td>
             <td
               class="amount-cell"
               :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
             >
-              {{ getDeviationPercent(category.id) || '—' }}
+              {{ dashCondition(getDeviationPercent(category.id)) }}
             </td>
           </tr>
         </tbody>
@@ -804,19 +808,19 @@ function onClickGoToPremium () {
               >
             </td>
             <td class="amount-cell">
-              {{ getFactAmount(category.id) || (isTotalPlanMode ? '—' : 0) }}
+              {{ dashCondition(getFactAmount(category.id)) }}
             </td>
             <td
               class="amount-cell bold"
               :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
             >
-              {{ getDeviationAmountDisplay(category.id) || '—' }}
+              {{ dashCondition(getDeviationAmountDisplay(category.id)) }}
             </td>
             <td
               class="amount-cell"
               :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
             >
-              {{ getDeviationPercent(category.id) || '—' }}
+              {{ dashCondition(getDeviationPercent(category.id)) }}
             </td>
           </tr>
         </tbody>
@@ -853,22 +857,22 @@ function onClickGoToPremium () {
               {{ $t('planView.allIncomeRowLabel') }}
             </td>
             <td class="amount-cell bold">
-              {{ incomePlanTotal || '—' }}
+              {{ dashCondition(incomePlanTotal) }}
             </td>
             <td class="amount-cell">
-              {{ incomeFactTotal || (isTotalPlanMode ? '—' : 0) }}
+              {{ dashCondition(incomeFactTotal) }}
             </td>
             <td
               class="amount-cell bold"
               :class="getSummaryDeviationClass(incomeDeviationAmount)"
             >
-              {{ incomeDeviationAmount ? formatSignedNumber(incomeDeviationAmount) : '—' }}
+              {{ dashCondition(incomeDeviationAmount) }}
             </td>
             <td
               class="amount-cell"
               :class="getSummaryDeviationClass(incomeDeviationAmount)"
             >
-              {{ incomeDeviationPercent || '—' }}
+              {{ dashCondition(incomeDeviationPercent) }}
             </td>
           </tr>
           <tr>
@@ -876,22 +880,22 @@ function onClickGoToPremium () {
               {{ $t('planView.allExpenseRowLabel') }}
             </td>
             <td class="amount-cell bold">
-              {{ expensePlanTotal || '—' }}
+              {{ dashCondition(expensePlanTotal) }}
             </td>
             <td class="amount-cell">
-              {{ expenseFactTotal || (isTotalPlanMode ? '—' : 0) }}
+              {{ dashCondition(expenseFactTotal) }}
             </td>
             <td
               class="amount-cell bold"
               :class="getSummaryDeviationClass(expenseDeviationAmount)"
             >
-              {{ expenseDeviationAmount ? formatSignedNumber(expenseDeviationAmount) : '—' }}
+              {{ dashCondition(expenseDeviationAmount) }}
             </td>
             <td
               class="amount-cell"
               :class="getSummaryDeviationClass(expenseDeviationAmount)"
             >
-              {{ expenseDeviationPercent || '—' }}
+              {{ dashCondition(expenseDeviationPercent) }}
             </td>
           </tr>
           <tr>
@@ -899,20 +903,20 @@ function onClickGoToPremium () {
               {{ $t('planView.balanceRowLabel') }}
             </td>
             <td class="amount-cell bold">
-              {{ balancePlanTotal || '—' }}
+              {{ dashCondition(balancePlanTotal) }}
             </td>
             <td class="amount-cell">
-              {{ balanceFactTotal || (isTotalPlanMode ? '—' : 0) }}
+              {{ dashCondition(balanceFactTotal) }}
             </td>
             <td
               class="amount-cell bold"
             >
-              {{ balanceDeviationAmount ? formatSignedNumber(balanceDeviationAmount) : '—' }}
+              {{ dashCondition(balanceDeviationAmount) }}
             </td>
             <td
               class="amount-cell"
             >
-              {{ balanceDeviationPercent || '—' }}
+              {{ dashCondition(balanceDeviationPercent) }}
             </td>
           </tr>
         </tbody>
