@@ -450,8 +450,9 @@ function sumCategoriesPlanTotal (categories) {
 
 function sumCategoriesFactTotal (categories) {
   return categories.reduce((sum, category) => {
-    if (!categoryHasPlan(category.id)) return sum
-    const value = Number(getFactAmount(category.id))
+    const raw = getFactAmount(category.id)
+    if (raw === '') return sum
+    const value = Number(raw)
     return Number.isNaN(value) ? sum : sum + value
   }, 0)
 }
@@ -472,16 +473,21 @@ const balanceDeviationAmount = computed(() => balanceFactTotal.value - balancePl
 const balanceDeviationPercent = computed(() => getSummaryDeviationPercent(balancePlanTotal.value, balanceDeviationAmount.value))
 
 function getDeviationAmount (categoryId) {
+  if (isTotalPlanMode.value || !categoryHasPlan(categoryId)) return ''
   const planAmount = Number(getPlanAmount(categoryId))
-  const factAmount = Number(getFactAmount(categoryId))
-  if (Number.isNaN(planAmount) || Number.isNaN(factAmount) || planAmount === 0 || isTotalPlanMode.value) return ''
+  const factRaw = getFactAmount(categoryId)
+  if (factRaw === '') return ''
+  const factAmount = Number(factRaw)
+  if (Number.isNaN(planAmount) || Number.isNaN(factAmount)) return ''
   return factAmount - planAmount
 }
 
 function getDeviationPercent (categoryId) {
+  if (isTotalPlanMode.value || !categoryHasPlan(categoryId)) return ''
   const planAmount = Number(getPlanAmount(categoryId))
   const deviationAmount = Number(getDeviationAmount(categoryId))
-  if (!planAmount || Number.isNaN(deviationAmount) || planAmount === 0 || isTotalPlanMode.value) return ''
+  if (Number.isNaN(deviationAmount)) return ''
+  if (planAmount === 0) return '100.00%'
   const pct = ((deviationAmount / planAmount) * 100).toFixed(2)
   return formatSignedPercent(pct)
 }
@@ -497,8 +503,9 @@ function getDeviationClass (categoryId) {
 }
 
 function getSummaryDeviationPercent (planTotal, deviationAmount) {
-  if (!planTotal) return ''
-  const pct = ((deviationAmount / planTotal) * 100).toFixed(2)
+  const plan = Number(planTotal)
+  if (Number.isNaN(plan) || plan === 0) return ''
+  const pct = ((deviationAmount / plan) * 100).toFixed(2)
   return formatSignedPercent(pct)
 }
 
@@ -542,7 +549,10 @@ async function updatePlanAmount (categoryId, amount) {
         plan.id === payload.id
       )
       if (index > -1) {
-        planData.value.splice(index, 1)
+        planData.value.splice(index, 1, {
+          ...planData.value[index],
+          amount: ''
+        })
       }
     }
   } catch (e) {
