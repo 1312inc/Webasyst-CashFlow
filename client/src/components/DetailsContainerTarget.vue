@@ -8,12 +8,21 @@ import moment from 'moment'
 import { useRoute } from 'vue-router/composables'
 import store from '@/store'
 import { helpers } from '@/plugins/helpers'
+import { emitter } from '@/plugins/eventBus'
+import DropdownWaFloating from './Inputs/DropdownWaFloating.vue'
+import { i18n } from '@/plugins/locale'
 
 const route = useRoute()
 
 const activeCurrencyParams = computed(() => {
   if (route.name === 'Account') return { account_id: route.params.id }
   if (route.name === 'Currency') return { currency: route.params.id }
+  if (route.name === 'Category') {
+    return {
+      category_id: route.params.id,
+      currency: store.getters['transaction/activeCurrencyCode']
+    }
+  }
   return {}
 })
 
@@ -27,12 +36,16 @@ if (cashTargetBlockHidden.value.value && cashTargetBlockHidden.value.expiredAt) 
   }
 }
 
-const isPromoMode = true
+const isPromoMode = !window.appState.isPremium // TODO: add check for premium
 const isFetching = ref(false)
 const isEmptyMode = ref(false)
 const chartData = shallowRef(null)
 const currentCategoryId = ref(null)
-const currentMonthLabel = ref(moment().format('MMMM YYYY'))
+const fetchDate = ref(moment().format('YYYY-MM-DD'))
+
+const currentMonthLabel = computed(() => {
+  return moment(fetchDate.value).format('MMMM YYYY')
+})
 
 const categories = computed(() => {
   const data = chartData.value
@@ -45,15 +58,17 @@ const categories = computed(() => {
     const category = store.getters['category/getById'](i.category_id)
     if (!category) continue
     result.push({
-      id: i.category_id,
-      name: category.name,
-      color: category.color,
+      ...category,
       amount: i.amount,
       amountFact: i.amount_fact,
       currency: i.currency
     })
   }
-  return result
+  return result.sort((a, b) => {
+    if (a.type === 'income' && b.type !== 'income') return -1
+    if (a.type !== 'income' && b.type === 'income') return 1
+    return a.sort - b.sort
+  })
 })
 
 const currentCategory = computed(() => {
@@ -64,17 +79,58 @@ const currentCategory = computed(() => {
 const chartState = computed(() => ({
   isPromoMode,
   isEmptyMode: isEmptyMode.value,
-  amount: currentCategory.value?.amount ?? 50,
-  amountFact: currentCategory.value?.amountFact ?? 50,
+  amount: currentCategory.value?.amount ?? (isPromoMode ? 50 : 0),
+  amountFact: currentCategory.value?.amountFact ?? (isPromoMode ? 50 : 0),
   currencyCode: currentCategory.value?.currency ?? '',
   color: currentCategory.value?.color ?? ''
 }))
+
+const targetDeviationAmount = computed(() => {
+  if (!currentCategory.value) return ''
+  const planAmount = Number(currentCategory.value.amount)
+  const factAmount = Number(currentCategory.value.amountFact)
+  if (Number.isNaN(planAmount) || Number.isNaN(factAmount) || planAmount === 0) return ''
+  return factAmount - planAmount
+})
+
+const targetDeviationPercent = computed(() => {
+  const planAmount = Number(currentCategory.value?.amount)
+  const deviationAmount = Number(targetDeviationAmount.value)
+  if (targetDeviationAmount.value === '' || !planAmount || Number.isNaN(deviationAmount)) return ''
+  const pct = ((deviationAmount / planAmount) * 100).toFixed(2)
+  const result = helpers.toCurrency({
+    value: pct,
+    isDynamics: true
+  })
+  return `${result}%`
+})
+
+const targetDeviationClass = computed(() => {
+  const deviationAmount = Number(targetDeviationAmount.value)
+  if (targetDeviationAmount.value === '' || Number.isNaN(deviationAmount) || deviationAmount === 0) return ''
+  return deviationAmount < 0 ? 'text-red' : 'text-green'
+})
+
+const detailsTargetFactForecastLabel = computed(() => {
+  if (moment(fetchDate.value).isSame(moment(), 'month')) {
+    return i18n.t('detailsTargetFactForecastLabel')
+  } else if (moment(fetchDate.value).isBefore(moment(), 'month')) {
+    return i18n.t('detailsTargetFactLabel')
+  } else {
+    return i18n.t('detailsTargetForecastLabel')
+  }
+})
 
 let fetchToken = 0
 
 watch(activeCurrencyParams, (value) => {
   fetchTarget(value)
 }, { immediate: true })
+
+emitter.on('hitOnChartBalance', (event) => {
+  fetchDate.value = event.date
+  fetchTarget(activeCurrencyParams.value)
+})
 
 function fetchTarget (params) {
   if (cashTargetBlockHidden.value.value) return
@@ -84,7 +140,7 @@ function fetchTarget (params) {
   api
     .get('cash.plan.get', {
       params: {
-        date: moment().format('YYYY-MM-DD'),
+        date: fetchDate.value,
         ...params
       }
     })
@@ -156,34 +212,82 @@ function onCategoryChange (id) {
             <h5 class="align-center custom-mt-0 custom-mb-12">
               {{ $t('detailsTargetDescTitle') }}
             </h5>
-            <p class="small gray align-center width-90 custom-mx-auto custom-my-12">
+            <p class="small gray align-center custom-mx-auto custom-my-12">
               {{ $t('detailsTargetDesc') }}
             </p>
             <div class="align-center custom-my-16">
               <a
                 :href="`${$helper.baseUrl}upgrade/`"
-                class="button small green"
+                class="button small yellow"
               >{{ $t('detailsTargetDescLink') }}</a>
             </div>
           </template>
           <template v-else-if="isEmptyMode">
             <h5 class="align-center custom-mt-0 custom-mb-12">
-              {{ $t('detailsTargetPlanNotSet') }}
+              <span style="text-transform: capitalize;">
+                {{ currentMonthLabel }}
+              </span>
+              <br><span
+                class="gray"
+              >{{ $t('detailsTargetPlanNotSet') }}</span>
             </h5>
             <div class="align-center custom-my-16">
               <a
-                :href="`${$helper.baseUrl}plan/`"
+                :href="`${$helper.baseUrl}budget/`"
                 class="button small light-gray"
               >{{ $t('detailsTargetSetGoal') }}</a>
             </div>
           </template>
           <template v-else-if="currentCategory">
             <h5 class="align-center custom-mt-0 custom-mb-12">
-              {{ currentCategory.name }}
-              <br><span
-                class="gray"
-                style="text-transform: capitalize;"
-              >{{ currentMonthLabel }}</span>
+              <span style="text-transform: capitalize;">
+                {{ currentMonthLabel }}
+              </span>
+              <div
+                class="flexbox"
+                style="justify-content: center;"
+              >
+                <component :is="categories.length > 1 ? DropdownWaFloating : 'div'">
+                  <template #toggler>
+                    <span class="gray">{{ currentCategory.name }} </span>
+                    <i
+                      v-if="categories.length > 1"
+                      class="fas fa-chevron-down text-light-gray"
+                    />
+                  </template>
+                  <ul
+                    v-if="categories.length > 1"
+                    class="menu"
+                  >
+                    <li
+                      v-for="category in categories"
+                      :key="category.id"
+                    >
+                      <a @click.prevent="onCategoryChange(category.id)">
+                        <span
+                          v-if="category.glyph"
+                          :key="category.color"
+                          class="icon"
+                        >
+                          <i
+                            :class="category.glyph"
+                            :style="`color:${category.color};`"
+                          />
+                        </span>
+                        <span
+                          v-else
+                          class="icon"
+                        >
+                          <i
+                            class="rounded"
+                            :style="`background-color:${category.color};`"
+                          />
+                        </span>
+                        {{ category.name }}</a>
+                    </li>
+                  </ul>
+                </component>
+              </div>
             </h5>
             <div class="custom-mb-16 align-center small">
               {{ $t('detailsTargetPlanLabel') }}: <b>{{
@@ -192,29 +296,24 @@ function onCategoryChange (id) {
                   currencyCode: chartState.currencyCode
                 })
               }}</b>
-              <br>{{ $t('detailsTargetFactForecastLabel') }}: <b>{{
+              <br>{{ detailsTargetFactForecastLabel }}: <b>{{
                 helpers.toCurrency({
                   value: chartState.amountFact,
                   currencyCode: chartState.currencyCode
                 })
               }}</b>
+              <br>{{ $t('detailsTargetDeviationLabel') }}: <b :class="targetDeviationClass">{{
+                helpers.toCurrency({
+                  value: targetDeviationAmount,
+                  currencyCode: chartState.currencyCode,
+                  isDynamics: true
+                })
+              }}</b>
+              <br>{{ $t('detailsTargetDeviationPercentLabel') }}: <b :class="targetDeviationClass">{{
+                targetDeviationPercent
+              }}</b>
             </div>
           </template>
-
-          <div
-            v-if="categories.length"
-            class="wa-select small solid width-100"
-          >
-            <select @change="(event) => { onCategoryChange(event.target.value) }">
-              <option
-                v-for="category in categories"
-                :key="category.id"
-                :value="category.id"
-              >
-                {{ category.name }}
-              </option>
-            </select>
-          </div>
         </div>
       </div>
     </BlankBox>

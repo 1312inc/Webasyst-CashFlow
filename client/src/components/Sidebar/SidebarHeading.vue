@@ -1,5 +1,5 @@
 <template>
-  <h6 class="heading">
+  <h6 class="heading custom-mt-16">
     <span><slot /></span>
     <a
       v-if="$permissions.isAdmin"

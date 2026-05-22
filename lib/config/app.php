@@ -2,7 +2,7 @@
 return array (
   'name' => 'Cash Flow',
   'icon' => 'img/cash.svg',
-  'version' => '3.9.11',
+  'version' => '4.0.0',
   'vendor'  => '1021997',
   'rights'  => true,
   'sash_color' => '#16d15f',

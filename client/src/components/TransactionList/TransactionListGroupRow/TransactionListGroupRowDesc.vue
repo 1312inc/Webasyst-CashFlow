@@ -31,21 +31,6 @@
         />
       </span>
     </template>
-    <!-- if repeating transactions in future -->
-    <template v-else-if="isRepeatingGroup">
-      <div
-        class="black text-ellipsis"
-        :title="
-          $t('repeatingTransactionDesc', {
-            repeats: transaction.affected_transactions
-          })
-        "
-      >
-        <span class="smaller custom-mr-4">
-          <i class="fas fa-redo opacity-50" />
-        </span>
-      </div>
-    </template>
     <!-- regular transaction -->
     <template v-else>
       <span
@@ -69,32 +54,15 @@
           class="fas"
         />
       </span>
-      <span
-        v-if="transaction.repeating_id"
-        :title="title"
-      >
-        <span class="smaller custom-mr-4">
-          <i class="fas fa-redo opacity-50" />
-        </span>
-      </span>
     </template>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['transaction', 'collapseHeaderData', 'isRepeatingGroup', 'category'],
+  props: ['transaction', 'collapseHeaderData', 'category'],
 
   computed: {
-    title () {
-      return this.$tc(
-        `repeatingInfo.interval.${this.transaction.repeating_data.interval}`,
-        this.transaction.repeating_data.frequency,
-        {
-          frequency: this.transaction.repeating_data.frequency
-        }
-      )
-    },
 
     categoryComputed () {
       const parent = this.category.parent_category_id

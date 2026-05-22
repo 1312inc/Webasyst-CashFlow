@@ -1,5 +1,6 @@
 {
   "accounts": "Accounts",
+  "hiddenAccounts": "Hidden accounts",
   "categories": "Categories",
   "expense": "Expense",
   "income": "Income",
@@ -142,7 +143,8 @@
   "2_Y": "Next 2 years",
   "3_Y": "Next 3 years",
   "reports": "Reports",
-  "plan": "Plan",
+  "plan": "Budget",
+  "bots": "Bots",
   "search": {
     "label": "Search",
     "noResults": "No results"
@@ -166,7 +168,7 @@
   "error": {
     "http": "Request failed",
     "api": "API error",
-    "nonJsonTitle": "Something's wrong with the API (api.php). Not a JSON response",
+    "nonJsonTitle": "Something’s wrong with the API (api.php). Not a JSON response",
     "nonJsonText": "Please contact your hosting provider or admin who had been configuring Webasyst on your server"
   },
   "arrow": {
@@ -237,7 +239,7 @@
   "plugins": "Plugins",
   "automation": "Automation",
   "premium": "Big cash",
-  "premiumOnly": "Available in Big Cash only",
+  "premiumOnly": "Available in premium only",
   "contactsWillSoon": "Contacts with linked transactions will appear here soon.",
   "Order": "Order",
   "orOrder": "or order",
@@ -267,11 +269,42 @@
   },
   "accountTypeHint": "More on account types ›",
   "detailsTargetDescTitle": "Goals & Budget",
-  "detailsTargetDesc": "Coming soon in premium! Financial goals, budgeting, and more amazing powerful features for accounting and predictions.",
-  "detailsTargetDescLink": "Pre-order upgrade",
+  "detailsTargetDesc": "Upgrade to the ‘Big cash’ premium version! Financial goals, budgeting, and more amazing powerful features for accounting, planning, and predictions.",
+  "detailsTargetDescLink": "Big cash is here",
   "detailsTargetPlanNotSet": "Plan is not set",
-  "detailsTargetSetGoal": "Set goal",
+  "detailsTargetSetGoal": "Set plan",
   "detailsTargetPlanLabel": "Plan",
   "detailsTargetFactForecastLabel": "Actual + forecast",
-  "allTransactionsProcessed": "That's all folks!"
+  "detailsTargetFactLabel": "Actual",
+  "detailsTargetForecastLabel": "Forecast",
+  "detailsTargetDeviationLabel": "Deviation",
+  "detailsTargetDeviationPercentLabel": "Deviation, %",
+  "allTransactionsProcessed": "That’s all folks!",
+  "chartHeaderImaginaryAccountsHint": "Cash on hand on all checking accounts. Virtual accounts are included in the future forecast but hidden from the past in this view.",
+  "calendarGrid": {
+    "modeSummary": "Summary",
+    "modeOperations": "All transactions",
+    "filterAllOperations": "All accounts and currencies"
+  },
+  "planView": {
+    "title": "Plan",
+    "totalPlanButton": "Configure defaults",
+    "totalPlanIntro": "Configure the basic default budget that will be used as a fallback only when no budget is set for a particular month.",
+    "emptyMonthHint": "Set financial goals and track how you follow them. Goals are set on a montly basis and define your general budget.",
+    "incomeCategoriesTitle": "Income",
+    "expenseCategoriesTitle": "Expenses",
+    "balanceSectionTitle": "Totals",
+    "allIncomeRowLabel": "All income",
+    "allExpenseRowLabel": "All expenses",
+    "balanceRowLabel": "Balance",
+    "premiumAlert": "This feature is only available in the ‘Big cash’ app premium version",
+    "premiumDialogTitle": "Big cash",
+    "premiumDialogText": "Upgrade to the ‘Big cash’ app premium version to instantely unlock all features and to make this dialog go away once and for all.",
+    "premiumDialogPrimaryButton": "See what’s there in premium",
+    "premiumDialogSecondaryButton": "No thanks",
+    "columnPlanWithCurrency": "Plan, {currency}",
+    "columnFactWithCurrency": "Actual, {currency}",
+    "columnDeviationWithCurrency": "Deviation, {currency}",
+    "columnDeviationPercent": "Deviation, %"
+  }
 }

@@ -76,7 +76,7 @@
       </div>
       <div>
         <button
-          class="button nobutton gray nowrap"
+          class="button light-gray nowrap"
           @click="addTransaction('addMany')"
         >
           <span>
@@ -154,7 +154,7 @@ export default {
     addTransaction (type) {
       this.$eventBus.emit('openAddTransactionModal', {
         type,
-        defaultDate: this.defaultDate
+        ...(this.$route.name === 'Date' ? { defaultDate: this.$route.params.date } : {})
       })
     },
 

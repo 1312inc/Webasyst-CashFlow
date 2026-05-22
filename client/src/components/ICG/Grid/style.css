@@ -11,6 +11,7 @@
   .icg-header {
     flex: none;
     display: flex;
+    flex-wrap: wrap;
     align-items: start;
     gap: 1rem;
     justify-content: space-between;
@@ -55,6 +56,14 @@
     border-color: rgba(209, 213, 219, 0.4);
     border-bottom-width: 1px;
     box-sizing: border-box;
+  }
+
+  @media screen and (max-width: 760px) {
+    .icg-weekdays__cell {
+      font-size: 12px;
+      padding-right: .5rem;
+      padding-bottom: .5rem;
+    }
   }
   
   .icg-weekdays__cell,

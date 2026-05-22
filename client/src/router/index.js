@@ -15,7 +15,7 @@ import FormAdd from '../views/FormAdd.vue'
 import { permissions } from '../plugins/permissions'
 import { moment } from '@/plugins/numeralMoment.js'
 
-const SSR_MODE_PAGE_URL_ALIASES = ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins', '/upgrade', '/automation', '/plan']
+const SSR_MODE_PAGE_URL_ALIASES = ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins', '/upgrade', '/automation']
 
 Vue.use(VueRouter)
 
@@ -125,6 +125,11 @@ const routes = [
         next({ name: 'NotFound' })
       }
     }
+  },
+  {
+    path: '/budget',
+    name: 'Plan',
+    component: () => import('../views/Plan.vue')
   },
   {
     path: '/report',

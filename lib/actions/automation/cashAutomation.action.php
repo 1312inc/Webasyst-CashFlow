@@ -5,6 +5,9 @@
  */
 class cashAutomationAction extends cashViewAction
 {
+    private $plugin_conditions = [];
+    private $plugin_actions = [];
+
     public function preExecute()
     {
         if (wa()->whichUI() === '2.0') {
@@ -16,125 +19,78 @@ class cashAutomationAction extends cashViewAction
 
     public function runAction($params = null)
     {
+        /**
+         * @event backend_automation_view
+         * @since 4.0.0
+         *
+         * @return cashEvent
+         */
+        $event = new cashEvent(cashEventStorage::WA_BACKEND_AUTOMATION_VIEW);
+        $event_result = cash()->waDispatchEvent($event);
+
+        foreach ($event_result as $plugin_id => $_data) {
+            $plugin_id = preg_replace('#-plugin$#', '', $plugin_id);
+            if (isset($_data['conditions'])) {
+                foreach ($_data['conditions'] as $_condition_id => $_condition) {
+                    $_condition['plugin_id'] = $plugin_id;
+                    $this->plugin_conditions["{$plugin_id}_$_condition_id"] = $_condition;
+                }
+            }
+            if (isset($_data['actions'])) {
+                foreach ($_data['actions'] as $_action_id => $_action) {
+                    $this->plugin_actions["{$plugin_id}_$_action_id"] = [
+                        'action' => $_action,
+                        'plugin_id' => $plugin_id,
+                    ];
+                }
+            }
+        }
+
         $this->view->assign([
-            'actions'          => $this->getActions(),
-            'conditions'       => self::getConditions(),
-            'assignments'      => $this->getAssignments(),
-            'assignment_rules' => $this->getRules(),
-            'storefronts'      => shopStorefrontList::getAllStorefronts(),
-            'sales_channel'    => $this->getSalesChannel(),
-            'payments'         => $this->getPayments(),
-            'shipping'         => $this->getShipping(),
-            'customer_groups'  => $this->getCustomerGroups(),
-            'user_groups'      => $this->getTeamGroups(),
-            'product_types'    => $this->getProductTypes(),
-            'stocks'           => shopHelper::getStocks()
+            'events'           => $this->getEvents(),
+            'conditions'       => self::getConditions() + ($this->plugin_conditions ?: []),
+            'actions'          => self::getActions() + ($this->plugin_actions ?: []),
+            'automation_rules' => $this->getRules(),
         ]);
+    }
+
+    private function getEvents()
+    {
+        return [
+            'transaction_add'    => _w('New transaction created'),
+            'transaction_update' => _w('Exising transaction edited'),
+            'transaction_delete' => _w('Transaction deleted'),
+        ];
     }
 
     public static function getConditions()
     {
         return [
-            ''                     => _w('Add condition...'),
-            'by_storefront'        => _w('Storefront'),
-            'by_amount'            => _w('Order total'),
-            'by_channel_id'        => _w('Sales channel'),
-            'by_payment_id'        => _w('Payment'),
-            'by_shipping_id'       => _w('Shipping'),
-            'by_customer_group_id' => _w('Customer category'),
-            'by_prod_type_id'      => _w('Product in the order'),
-            'by_sku_id'            => _w('SKU in the order'),
-            'by_stock_id'          => _w('Stock'),
+            ''            => ['name' => _w('Configure...'), 'operators' => []],
+            'amount'      => ['name' => _w('Amount'), 'operators' => ['>', '<', '=']],
+            'description' => ['name' => _w('Description'), 'operators' => ['=', '!=', '%...%']],
+            'account_id'  => ['name' => _w('Account'), 'operators' => ['=', '!=']],
+            'category_id' => ['name' => _w('Category'), 'operators' => ['=', '!=']],
+            'date'        => ['name' => _w('Date'), 'operators' => ['<', '>']],
         ];
     }
 
-    private function getActions()
-    {
-        wa('shop');
-        $workflow = new shopWorkflow();
-        $actions = $workflow->getAvailableActions();
-
-        return array_combine(array_keys($actions), array_column($actions, 'name'));
-    }
-
-    private function getAssignments()
+    public static function getActions()
     {
         return [
-            'user_action'   => _w('Action performer'),
-            'user_id'       => _w('Specific user...'),
-            'user_low_busy' => _w('Least busy user'),
-            'user_reset'    => _w('Remove assignment'),
+            'self_update'        => ['action' => _w('Обновить эту же операцию (с которой произошло действие)')],
+            'self_delete'        => ['action' => _w('Удалить эту операцию')],
+            'create_transaction' => ['action' => _w('Создать новую операцию')],
+            'other_update'       => ['action' => _w('Обновить другую операцию')],
+            'send_mail'          => ['action' => _w('Отправить письмо')],
+            'action_ss'          => ['action' => _w('Сделать действие с заказом ШС')],
         ];
-    }
-
-    private function getSalesChannel()
-    {
-        $sales_channel_model = new shopSalesChannelModel();
-        $sales_channel = $sales_channel_model->getAll();
-
-        return array_combine(array_column($sales_channel, 'id'), array_column($sales_channel, 'name'));
-    }
-
-    private function getPayments()
-    {
-        $plugin_model = new shopPluginModel();
-        $payments = $plugin_model->listPlugins('payment');
-
-        return array_combine(array_keys($payments), array_column($payments, 'name'));
-    }
-
-    private function getShipping()
-    {
-        $plugin_model = new shopPluginModel();
-        $shipping = $plugin_model->listPlugins('shipping');
-
-        return array_combine(array_keys($shipping), array_column($shipping, 'name'));
-    }
-
-    private function getCustomerGroups()
-    {
-        $categories = [];
-        $ccm = new waContactCategoryModel();
-        foreach ($ccm->getAll('id') as $c) {
-            if ($c['app_id'] == 'shop') {
-                $categories[$c['id']] = ifset($c, 'name', '');
-            }
-        }
-
-        return $categories;
-    }
-
-    private function getProductTypes()
-    {
-        $type_model = new shopTypeModel();
-        $product_types = $type_model->getTypes();
-
-        return array_combine(array_keys($product_types), array_column($product_types, 'name'));
-    }
-
-    private function getTeamGroups()
-    {
-        $groups = shopHelper::getTeamGroups();
-        $groups[] = [
-            'id' => 'all',
-            'name' => _w('All users'),
-        ];
-
-        return $groups;
     }
 
     private function getRules()
     {
         $automation_model = new cashAutomationModel();
-        $rules = $automation_model->getRules();
 
-        foreach ($rules as &$_rule) {
-            if (isset($_rule['rule_data']['user_id'])) {
-                $user = new waContact($_rule['rule_data']['user_id']);
-                $_rule['rule_data']['user_name'] = waContactNameField::formatName($user);
-            }
-        }
-
-        return $rules;
+        return $automation_model->getRules();
     }
 }

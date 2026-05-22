@@ -3,7 +3,6 @@
     :list="items"
     :disabled="!$permissions.isAdmin"
     :component-data="{attrs: { 'data-parentid': parentId }}"
-    :force-fallback="true"
     :delay="1000"
     :delay-on-touch-only="true"
     :group="group"

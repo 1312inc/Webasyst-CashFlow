@@ -1,5 +1,6 @@
 {** @var $info cashShopBackendOrderDto **}
 
+{if !$wa->isSingleAppMode()}
 <div class="s-block">
     <h5 class="heading custom-mx-0 custom-mb-8">
         <a href="{$info->link}" target="_blank" class="count action">
@@ -75,3 +76,4 @@
         </a>
     </div>
 </div>
+{/if}

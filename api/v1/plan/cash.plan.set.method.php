@@ -17,9 +17,6 @@ class cashPlanSetMethod extends cashApiAbstractMethod
         $request = $this->fillRequestWithParams(new cashApiPlanSetRequest());
 
         $errors = [];
-        if (!isset($request->amount)) {
-            $errors[] = 'amount';
-        }
         if (empty($request->category_id)) {
             $errors[] = 'category_id';
         }
@@ -42,9 +39,14 @@ class cashPlanSetMethod extends cashApiAbstractMethod
             return new cashApiErrorResponse('invalid_param', 'Unknown category');
         }
 
-        $request->amount = abs($request->amount);
-        if (cashCategory::TYPE_EXPENSE === $category->getType()) {
-            $request->amount = -$request->amount;
+        $request->amount = ifset($request->amount, '');
+        if (is_numeric($request->amount)) {
+            $request->amount = abs((float) $request->amount);
+            if (cashCategory::TYPE_EXPENSE === $category->getType()) {
+                $request->amount = -$request->amount;
+            }
+        } elseif ($request->amount != '') {
+            return new cashApiErrorResponse('invalid_param', 'Amount non-numeric');
         }
 
         $plan = (new cashApiPlanSetHandler())->handle($request);

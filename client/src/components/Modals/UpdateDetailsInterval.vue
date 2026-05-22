@@ -87,17 +87,12 @@ export default {
   methods: {
     submit () {
       this.controlsDisabled = true
+      this.$emit('close')
       this.$store
         .dispatch('transaction/updateDetailsInterval', {
           from: this.interval.from,
           to: this.interval.to,
           outOfChart: true
-        })
-        .then(() => {
-          this.$emit('close')
-        })
-        .finally(() => {
-          this.controlsDisabled = true
         })
     }
   }

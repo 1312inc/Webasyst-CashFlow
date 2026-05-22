@@ -42,6 +42,13 @@
           </button>
         </div>
       </div>
+      <p
+        v-if="isShowImaginaryMessage"
+        class="small custom-mt-12"
+        style="max-width: 600px;"
+      >
+        {{ $t('chartHeaderImaginaryAccountsHint') }}
+      </p>
       <portal>
         <Modal
           v-if="open"
@@ -104,7 +111,15 @@ export default {
         this.currentEntity.stat?.summary ||
         this.currentEntity.balances?.now.amount
       )
+    },
+
+    isShowImaginaryMessage () {
+      const currency = this.$route.params.id
+      if (!currency) return false
+      return this.$route.name === 'Currency' &&
+        this.$store.state.account.accounts.some(account => account.is_imaginary === 1 && account.currency === currency)
     }
+
   },
 
   methods: {

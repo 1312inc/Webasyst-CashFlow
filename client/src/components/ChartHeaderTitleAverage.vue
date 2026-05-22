@@ -5,7 +5,6 @@
     :title="$t('forecasted')"
     class="opacity-50 nowrap custom-mt-4 semibold small"
   >
-    <i class="fas fa-tachometer-alt" />
     {{
       $helper.toCurrency({
         value: average,

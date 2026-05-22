@@ -1,0 +1,1075 @@
+<!-- eslint-disable vue/multi-word-component-names -->
+<script setup>
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import flatpickr from 'flatpickr'
+import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect'
+import { Russian } from 'flatpickr/dist/l10n/ru.js'
+import api from '@/plugins/api'
+import { locale, i18n } from '@/plugins/locale'
+import store from '@/store'
+import Modal from '@/components/Modal'
+import { appState } from '@/utils/appState'
+import { useRoute, useRouter } from 'vue-router/composables'
+import { moment } from '@/plugins/numeralMoment'
+
+const route = useRoute()
+const router = useRouter()
+
+const TOTAL_PLAN_QUERY_VALUE = 'total'
+const MONTH_QUERY_RE = /^\d{4}-\d{2}$/
+
+function getCurrentMonthFirstDay () {
+  return new Date().toISOString().slice(0, 7) + '-01'
+}
+
+function parseMonthFromQuery (rawValue) {
+  if (typeof rawValue !== 'string' || !rawValue) return getCurrentMonthFirstDay()
+  if (rawValue === TOTAL_PLAN_QUERY_VALUE) return null
+  if (MONTH_QUERY_RE.test(rawValue)) return `${rawValue}-01`
+  return getCurrentMonthFirstDay()
+}
+
+function parseCurrencyFromQuery (rawValue) {
+  return typeof rawValue === 'string' ? rawValue : ''
+}
+
+const incomeCategories = computed(() => store.getters['category/getByType']('income'))
+const expenseCategories = computed(() => store.getters['category/getByType']('expense'))
+const planData = ref([])
+const selectedCurrency = ref(parseCurrencyFromQuery(route.query.currency))
+const currentMonthFirstDay = ref(parseMonthFromQuery(route.query.month))
+const monthPickerEl = ref(null)
+const isFetching = ref(false)
+const openPremiumModal = ref(false)
+let monthPicker = null
+let isSyncingUrl = false
+
+const isTotalPlanMode = computed(() => currentMonthFirstDay.value == null)
+
+const currencies = computed(() => store.getters['account/currenciesInAccounts'] || [])
+const filteredPlanData = computed(() => {
+  if (!selectedCurrency.value) return planData.value
+  return planData.value.filter(plan => plan.currency === selectedCurrency.value)
+})
+const planByCategoryId = computed(() => {
+  const result = {}
+  for (const plan of filteredPlanData.value) {
+    result[plan.category_id] = plan
+  }
+  return result
+})
+const allCategories = computed(() => [...incomeCategories.value, ...expenseCategories.value])
+
+const detailsTargetFactForecastLabel = computed(() => {
+  if (moment(currentMonthFirstDay.value).isSame(moment(), 'month')) {
+    return i18n.t('detailsTargetFactForecastLabel')
+  } else if (moment(currentMonthFirstDay.value).isBefore(moment(), 'month')) {
+    return i18n.t('detailsTargetFactLabel')
+  } else {
+    return i18n.t('detailsTargetForecastLabel')
+  }
+})
+
+const isEmptyCurrentMonth = computed(() => {
+  return planData.value.every(plan => typeof plan.amount !== 'number') &&
+    !isTotalPlanMode.value &&
+    !isFetching.value
+})
+
+function formatSignedNumber (value) {
+  if (value === '' || value == null) return ''
+  const num = Number(value)
+  if (Number.isNaN(num)) return ''
+  const formatted = num.toFixed(2)
+  if (num > 0) return `+${formatted}`
+  return formatted
+}
+
+function formatSignedPercent (pct) {
+  const num = Number(pct)
+  if (Number.isNaN(num)) return ''
+  const prefix = num > 0 ? '+' : ''
+  return `${prefix}${pct}%`
+}
+
+const childrenByParentId = computed(() => {
+  const result = {}
+  for (const category of allCategories.value) {
+    const parentId = category.parent_category_id
+    if (!parentId) continue
+    if (!result[parentId]) result[parentId] = []
+    result[parentId].push(category.id)
+  }
+  return result
+})
+function isPlanMissingMonthRange (plan) {
+  if (!plan) return false
+  const from = plan.from
+  const to = plan.to
+  return (from == null || from === '') && (to == null || to === '')
+}
+
+const ghostAmounts = computed(() => {
+  const result = new Set()
+  for (const category of allCategories.value) {
+    getComputedPlanAmount(category.id, result)
+  }
+  if (!isTotalPlanMode.value) {
+    const visited = new Set()
+    for (const plan of [...filteredPlanData.value].sort((a, b) => b.from - a.from).reverse()) {
+      if (!plan?.category_id) continue
+      if (visited.has(plan.category_id)) continue
+      visited.add(plan.category_id)
+      if (isPlanMissingMonthRange(plan)) {
+        result.add(plan.category_id)
+      }
+    }
+  }
+  return result
+})
+
+onMounted(() => {
+  initMonthPicker()
+  fetchData()
+})
+
+onBeforeUnmount(() => {
+  if (monthPicker) monthPicker.destroy()
+})
+
+function buildQueryFromState () {
+  const next = { ...route.query }
+
+  if (currentMonthFirstDay.value === null) {
+    next.month = TOTAL_PLAN_QUERY_VALUE
+  } else {
+    const ym = currentMonthFirstDay.value.slice(0, 7)
+    if (ym === getCurrentMonthFirstDay().slice(0, 7)) {
+      delete next.month
+    } else {
+      next.month = ym
+    }
+  }
+
+  if (selectedCurrency.value) {
+    next.currency = selectedCurrency.value
+  } else {
+    delete next.currency
+  }
+
+  return next
+}
+
+function syncUrl () {
+  const next = buildQueryFromState()
+  const current = route.query
+  const sameKeys = Object.keys(next).length === Object.keys(current).length
+  const sameValues = sameKeys && Object.keys(next).every(k => next[k] === current[k])
+  if (sameValues) return
+  isSyncingUrl = true
+  router.replace({ query: next }).catch(() => {}).finally(() => {
+    isSyncingUrl = false
+  })
+}
+
+watch(currentMonthFirstDay, syncUrl)
+watch(selectedCurrency, syncUrl)
+
+watch(() => route.query, (next, prev) => {
+  if (isSyncingUrl) return
+  const nextMonth = parseMonthFromQuery(next.month)
+  const nextCurrency = parseCurrencyFromQuery(next.currency)
+  let needFetch = false
+  if (nextMonth !== currentMonthFirstDay.value) {
+    currentMonthFirstDay.value = nextMonth
+    if (monthPicker) {
+      if (nextMonth) {
+        monthPicker.setDate(nextMonth, false)
+      } else {
+        monthPicker.clear()
+      }
+    }
+    needFetch = true
+  }
+  if (nextCurrency !== selectedCurrency.value && (nextCurrency || prev.currency)) {
+    selectedCurrency.value = nextCurrency
+  }
+  if (needFetch) fetchData()
+})
+
+function initMonthPicker () {
+  if (!monthPickerEl.value) return
+  monthPicker = flatpickr(monthPickerEl.value, {
+    defaultDate: currentMonthFirstDay.value,
+    dateFormat: 'Y-m-01',
+    altInput: true,
+    altFormat: 'F Y',
+    ...(locale === 'ru_RU' && { locale: Russian }),
+    plugins: [
+      monthSelectPlugin({
+        shorthand: true,
+        dateFormat: 'Y-m-01',
+        altFormat: 'F Y'
+      })
+    ],
+    onChange: (selectedDates) => {
+      const selectedDate = selectedDates[0]
+      if (!selectedDate) return
+      const year = selectedDate.getFullYear()
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0')
+      currentMonthFirstDay.value = `${year}-${month}-01`
+      fetchData()
+    }
+  })
+}
+
+function setTotalPlanMode () {
+  currentMonthFirstDay.value = null
+  if (monthPicker) monthPicker.clear()
+  fetchData()
+}
+
+function navigateMonth (delta) {
+  const base = currentMonthFirstDay.value || getCurrentMonthFirstDay()
+  const next = moment(base).add(delta, 'month').startOf('month').format('YYYY-MM-DD')
+  currentMonthFirstDay.value = next
+  if (monthPicker) {
+    monthPicker.setDate(next, false)
+  }
+  fetchData()
+}
+
+function syncSelectedCurrencyWithAccounts () {
+  const list = currencies.value
+  if (!list.length) {
+    selectedCurrency.value = ''
+    return
+  }
+  if (!selectedCurrency.value || !list.includes(selectedCurrency.value)) {
+    selectedCurrency.value = list[0]
+  }
+}
+
+function planFactKey (currency, categoryId) {
+  return `${currency}\0${categoryId}`
+}
+
+function buildFactAmountMapFromBreakdown (breakdownData) {
+  const map = new Map()
+  if (!Array.isArray(breakdownData)) return map
+
+  const typeGroups = [
+    { field: 'income', sign: 1 },
+    { field: 'expense', sign: -1 },
+    { field: 'profit', sign: 1 }
+  ]
+
+  for (const block of breakdownData) {
+    const currency = block?.currency
+    if (!currency) continue
+    for (const { field, sign } of typeGroups) {
+      const items = block[field]?.data
+      if (!Array.isArray(items)) continue
+      for (const row of items) {
+        if (!row?.category_id) continue
+        if (row.amount == null || row.amount === '') continue
+        map.set(planFactKey(currency, row.category_id), Number(row.amount) * sign)
+      }
+    }
+  }
+  return map
+}
+
+function mergePlanWithBreakdownFacts (planRows, breakdownData) {
+  const factMap = buildFactAmountMapFromBreakdown(breakdownData)
+
+  const monthFrom = currentMonthFirstDay.value
+  const monthTo = moment(currentMonthFirstDay.value).endOf('month').format('YYYY-MM-DD')
+  const seen = new Set()
+  const filteredPlanRows = planRows.filter(plan => isTotalPlanMode.value ? (!plan.from && !plan.to) : (plan.from && plan.to))
+  const merged = filteredPlanRows.map((plan) => {
+    if (!plan?.category_id || !plan?.currency) return plan
+    const key = planFactKey(plan.currency, plan.category_id)
+    seen.add(key)
+    if (!factMap.has(key)) {
+      return plan
+    }
+    return {
+      ...plan,
+      amount_fact: factMap.get(key) // eslint-disable-line camelcase
+    }
+  })
+
+  for (const [key, factAmount] of factMap) {
+    if (seen.has(key)) continue
+    const sep = key.indexOf('\0')
+    const currency = key.slice(0, sep)
+    const categoryId = Number(key.slice(sep + 1))
+    merged.push({
+      id: null,
+      currency,
+      category_id: categoryId, // eslint-disable-line camelcase
+      account_id: null,
+      amount: null,
+      amount_fact: factAmount, // eslint-disable-line camelcase
+      from: monthFrom,
+      to: monthTo
+    })
+  }
+
+  return merged
+}
+
+let fetchToken = 0
+async function fetchData () {
+  const token = ++fetchToken
+  isFetching.value = true
+  try {
+    let nextPlanData
+    if (isTotalPlanMode.value) {
+      nextPlanData = await requestPlanData()
+    } else {
+      const [planRows, breakdownData] = await Promise.all([
+        requestPlanData(),
+        requestBreakDownData()
+      ])
+      nextPlanData = mergePlanWithBreakdownFacts(planRows, breakdownData)
+    }
+    if (token !== fetchToken) return
+    planData.value = nextPlanData
+    syncSelectedCurrencyWithAccounts()
+  } catch (_) {
+  } finally {
+    if (token === fetchToken) isFetching.value = false
+  }
+}
+
+async function requestBreakDownData () {
+  const { data } = await api.get('cash.aggregate.getBreakDown', {
+    params: {
+      children_help_parents: 1,
+      filter: 'all',
+      from: currentMonthFirstDay.value,
+      imaginary_past_force_add: 1,
+      to: moment(currentMonthFirstDay.value).endOf('month').format('YYYY-MM-DD')
+    }
+  })
+  return Array.isArray(data) ? data : []
+}
+
+async function requestPlanData () {
+  const { data } = await api.get('cash.plan.get', {
+    params: {
+      date: currentMonthFirstDay.value
+    }
+  })
+  return Array.isArray(data) ? data : []
+}
+
+function getOwnPlanAmount (categoryId) {
+  const amount = planByCategoryId.value[categoryId]?.amount
+  if (amount === null || typeof amount === 'undefined' || amount === '') return null
+  return Number(amount)
+}
+
+function getComputedPlanAmount (categoryId, ghostSet, visited = new Set()) {
+  if (visited.has(categoryId)) return null
+  visited.add(categoryId)
+
+  const ownAmount = getOwnPlanAmount(categoryId)
+  if (ownAmount !== null) return ownAmount
+
+  const children = childrenByParentId.value[categoryId] || []
+  if (!children.length) return null
+
+  let sum = 0
+  let hasChildAmount = false
+  for (const childId of children) {
+    const childAmount = getComputedPlanAmount(childId, ghostSet, new Set(visited))
+    if (childAmount === null) continue
+    hasChildAmount = true
+    sum += childAmount
+  }
+
+  if (!hasChildAmount) return null
+  if (ghostSet) ghostSet.add(categoryId)
+  return sum
+}
+
+function getPlanAmount (categoryId) {
+  const amount = getComputedPlanAmount(categoryId, null)
+  return amount === null ? '' : amount
+}
+
+function getOwnFactAmount (categoryId) {
+  const raw = planByCategoryId.value[categoryId]?.amount_fact
+  if (raw === null || typeof raw === 'undefined' || raw === '') return null
+  return Number(raw)
+}
+
+function getComputedFactAmount (categoryId, visited = new Set()) {
+  if (visited.has(categoryId)) return null
+  visited.add(categoryId)
+
+  const ownAmount = getOwnFactAmount(categoryId)
+  if (ownAmount !== null) return ownAmount
+
+  const children = childrenByParentId.value[categoryId] || []
+  if (!children.length) return null
+
+  let sum = 0
+  let hasChildAmount = false
+  for (const childId of children) {
+    const childAmount = getComputedFactAmount(childId, new Set(visited))
+    if (childAmount === null) continue
+    hasChildAmount = true
+    sum += childAmount
+  }
+
+  if (!hasChildAmount) return null
+  return sum
+}
+
+function getFactAmount (categoryId) {
+  if (isTotalPlanMode.value) return ''
+  const amount = getComputedFactAmount(categoryId)
+  return amount === null ? '' : amount
+}
+
+function categoryHasPlan (categoryId) {
+  const plan = getPlanAmount(categoryId)
+  return plan !== '' && !Number.isNaN(Number(plan))
+}
+
+function sumCategoriesPlanTotal (categories) {
+  return categories.reduce((sum, category) => {
+    const value = Number(getPlanAmount(category.id))
+    return Number.isNaN(value) ? sum : sum + value
+  }, 0)
+}
+
+function sumCategoriesFactTotal (categories) {
+  return categories.reduce((sum, category) => {
+    if (!categoryHasPlan(category.id)) return sum
+    const value = Number(getFactAmount(category.id))
+    return Number.isNaN(value) ? sum : sum + value
+  }, 0)
+}
+
+const incomePlanTotal = computed(() => sumCategoriesPlanTotal(incomeCategories.value))
+const incomeFactTotal = computed(() => sumCategoriesFactTotal(incomeCategories.value))
+const incomeDeviationAmount = computed(() => incomeFactTotal.value - incomePlanTotal.value)
+const incomeDeviationPercent = computed(() => getSummaryDeviationPercent(incomePlanTotal.value, incomeDeviationAmount.value))
+
+const expensePlanTotal = computed(() => sumCategoriesPlanTotal(expenseCategories.value))
+const expenseFactTotal = computed(() => sumCategoriesFactTotal(expenseCategories.value))
+const expenseDeviationAmount = computed(() => expenseFactTotal.value - expensePlanTotal.value)
+const expenseDeviationPercent = computed(() => getSummaryDeviationPercent(expensePlanTotal.value, expenseDeviationAmount.value))
+
+const balancePlanTotal = computed(() => incomePlanTotal.value + expensePlanTotal.value)
+const balanceFactTotal = computed(() => incomeFactTotal.value + expenseFactTotal.value)
+const balanceDeviationAmount = computed(() => balanceFactTotal.value - balancePlanTotal.value)
+const balanceDeviationPercent = computed(() => getSummaryDeviationPercent(balancePlanTotal.value, balanceDeviationAmount.value))
+
+function getDeviationAmount (categoryId) {
+  const planAmount = Number(getPlanAmount(categoryId))
+  const factAmount = Number(getFactAmount(categoryId))
+  if (Number.isNaN(planAmount) || Number.isNaN(factAmount) || planAmount === 0 || isTotalPlanMode.value) return ''
+  return factAmount - planAmount
+}
+
+function getDeviationPercent (categoryId) {
+  const planAmount = Number(getPlanAmount(categoryId))
+  const deviationAmount = Number(getDeviationAmount(categoryId))
+  if (!planAmount || Number.isNaN(deviationAmount) || planAmount === 0 || isTotalPlanMode.value) return ''
+  const pct = ((deviationAmount / planAmount) * 100).toFixed(2)
+  return formatSignedPercent(pct)
+}
+
+function getDeviationAmountDisplay (categoryId) {
+  return formatSignedNumber(getDeviationAmount(categoryId))
+}
+
+function getDeviationClass (categoryId) {
+  const deviationAmount = Number(getDeviationAmount(categoryId))
+  if (Number.isNaN(deviationAmount) || deviationAmount === 0) return ''
+  return deviationAmount < 0 ? 'is-negative' : 'is-positive'
+}
+
+function getSummaryDeviationPercent (planTotal, deviationAmount) {
+  if (!planTotal) return ''
+  const pct = ((deviationAmount / planTotal) * 100).toFixed(2)
+  return formatSignedPercent(pct)
+}
+
+function getSummaryDeviationClass (deviationAmount) {
+  if (deviationAmount === 0) return ''
+  return deviationAmount < 0 ? 'is-negative' : 'is-positive'
+}
+
+function getPlanEntry (categoryId) {
+  return planByCategoryId.value[categoryId] || null
+}
+
+function dashCondition (value) {
+  return value === null || value === '' || value === undefined ? '—' : value
+}
+
+async function updatePlanAmount (categoryId, amount) {
+  const existingPlan = getPlanEntry(categoryId)
+  const currency = selectedCurrency.value || existingPlan?.currency || currencies.value[0] || ''
+  const payload = {
+    id: existingPlan?.id || null,
+    amount,
+    category_id: categoryId,
+    currency,
+    date: isTotalPlanMode.value ? null : currentMonthFirstDay.value
+  }
+
+  try {
+    const { data } = await api.post('cash.plan.set', payload)
+    if (data && typeof data === 'object') {
+      const index = planData.value.findIndex(plan =>
+        plan.id === data.id
+      )
+      if (index > -1) {
+        planData.value.splice(index, 1, data)
+      } else {
+        planData.value.push(data)
+      }
+    } else {
+      const index = planData.value.findIndex(plan =>
+        plan.id === payload.id
+      )
+      if (index > -1) {
+        planData.value.splice(index, 1)
+      }
+    }
+  } catch (e) {
+    if (e.response?.status === 402) {
+      openPremiumModal.value = true
+    }
+  }
+}
+
+function onClickGoToPremium () {
+  openPremiumModal.value = false
+  window.location.href = `${appState.baseUrl}upgrade/`
+}
+</script>
+
+<template>
+  <div class="box custom-p-16">
+    <h1>{{ $t('planView.title') }}</h1>
+    <div class="flexbox vertical-mobile space-16">
+      <div class="flexbox middle space-16 wide">
+        <div class="flexbox middle space-8">
+          <button
+            type="button"
+            class="navigate-month-left light-gray custom-m-0"
+            :disabled="isFetching"
+            @click="navigateMonth(-1)"
+          >
+            <i class="fas fa-chevron-left" />
+          </button>
+          <div class="month-picker">
+            <input
+              ref="monthPickerEl"
+              type="text"
+              class="button light-gray"
+            >
+          </div>
+          <button
+            type="button"
+            class="navigate-month-right light-gray custom-m-0"
+            :disabled="isFetching"
+            @click="navigateMonth(1)"
+          >
+            <i class="fas fa-chevron-right" />
+          </button>
+        </div>
+        <div style="flex: 1; overflow: hidden;">
+          <div
+            v-if="currencies.length > 1"
+            class="toggle"
+          >
+            <span
+              v-for="currency in currencies"
+              :key="currency"
+              :class="{ selected: selectedCurrency === currency }"
+              @click="selectedCurrency = currency"
+            >
+              {{ currency }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <button
+        class="total-plan-button nowrap outlined light-gray"
+        :class="{ active: isTotalPlanMode }"
+        type="button"
+        @click="setTotalPlanMode"
+      >
+        {{ $t('planView.totalPlanButton') }}
+      </button>
+    </div>
+
+    <div
+      v-if="!appState.isPremium"
+      class="alert warning small custom-mt-16"
+    >
+      <i class="fas fa-star small" />
+      {{ $t('planView.premiumAlert') }}
+    </div>
+
+    <p
+      v-if="isEmptyCurrentMonth"
+      class="small"
+    >
+      {{ $t('planView.emptyMonthHint') }}
+    </p>
+
+    <p
+      v-if="isTotalPlanMode"
+      class="small"
+    >
+      {{ $t('planView.totalPlanIntro', { username: appState.accountName || '' }) }}
+    </p>
+
+    <h4 class="gray custom-mb-4">
+      {{ $t('planView.incomeCategoriesTitle') }}
+    </h4>
+
+    <div class="plan-table-scroll custom-mt-4">
+      <table
+        class="bigdata"
+        :class="{ loading: isFetching }"
+      >
+        <thead>
+          <tr>
+            <th />
+            <th class="amount-cell">
+              {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell nowrap">
+              {{ detailsTargetFactForecastLabel }}, {{ selectedCurrency }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationPercent') }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="category in incomeCategories"
+            :key="category.id"
+          >
+            <td
+              class="category-name-cell"
+              :class="{ 'is-child-category': category.parent_category_id }"
+            >
+              <div class="flexbox middle">
+                <span
+                  v-if="category.glyph"
+                  :key="category.color"
+                  class="icon"
+                >
+                  <i
+                    :class="category.glyph"
+                    :style="`color:${category.color};`"
+                  />
+                </span>
+                <span
+                  v-else
+                  class="icon"
+                >
+                  <i
+                    class="rounded"
+                    :style="`background-color:${category.color};`"
+                  />
+                </span>
+                <router-link
+                  class="category-name-link"
+                  :to="{ name: 'Category', params: { id: category.id } }"
+                >
+                  {{ category.name }}
+                </router-link>
+              </div>
+            </td>
+            <td
+              class="amount-cell"
+              :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
+            >
+              <input
+                class="amount-input bold"
+                type="number"
+                :value="ghostAmounts.has(category.id) ? '' : getPlanAmount(category.id)"
+                :placeholder="ghostAmounts.has(category.id) ? getPlanAmount(category.id) : ''"
+                :disabled="isFetching"
+                @change="updatePlanAmount(category.id, $event.target.value)"
+              >
+            </td>
+            <td class="amount-cell">
+              {{ dashCondition(getFactAmount(category.id)) }}
+            </td>
+            <td
+              class="amount-cell bold"
+              :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
+            >
+              {{ dashCondition(getDeviationAmountDisplay(category.id)) }}
+            </td>
+            <td
+              class="amount-cell"
+              :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
+            >
+              {{ dashCondition(getDeviationPercent(category.id)) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="gray custom-mb-4">
+      {{ $t('planView.expenseCategoriesTitle') }}
+    </h4>
+    <div class="plan-table-scroll custom-mt-4">
+      <table
+        class="bigdata"
+        :class="{ loading: isFetching }"
+      >
+        <thead>
+          <tr>
+            <th />
+            <th class="amount-cell">
+              {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell nowrap">
+              {{ detailsTargetFactForecastLabel }}, {{ selectedCurrency }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationPercent') }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="category in expenseCategories"
+            :key="category.id"
+          >
+            <td
+              class="category-name-cell"
+              :class="{ 'is-child-category': category.parent_category_id }"
+            >
+              <div class="flexbox middle">
+                <span
+                  v-if="category.glyph"
+                  :key="category.color"
+                  class="icon"
+                >
+                  <i
+                    :class="category.glyph"
+                    :style="`color:${category.color};`"
+                  />
+                </span>
+                <span
+                  v-else
+                  class="icon"
+                >
+                  <i
+                    class="rounded"
+                    :style="`background-color:${category.color};`"
+                  />
+                </span>
+                <router-link
+                  class="category-name-link"
+                  :to="{ name: 'Category', params: { id: category.id } }"
+                >
+                  {{ category.name }}
+                </router-link>
+              </div>
+            </td>
+            <td
+              class="amount-cell"
+              :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
+            >
+              <input
+                class="amount-input bold"
+                type="number"
+                :value="ghostAmounts.has(category.id) ? '' : getPlanAmount(category.id)"
+                :placeholder="ghostAmounts.has(category.id) ? getPlanAmount(category.id) : ''"
+                :disabled="isFetching"
+                @change="updatePlanAmount(category.id, $event.target.value)"
+              >
+            </td>
+            <td class="amount-cell">
+              {{ dashCondition(getFactAmount(category.id)) }}
+            </td>
+            <td
+              class="amount-cell bold"
+              :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
+            >
+              {{ dashCondition(getDeviationAmountDisplay(category.id)) }}
+            </td>
+            <td
+              class="amount-cell"
+              :class="[getDeviationClass(category.id), { 'is-ghost-amount': ghostAmounts.has(category.id) }]"
+            >
+              {{ dashCondition(getDeviationPercent(category.id)) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 class="gray custom-mb-4">
+      {{ $t('planView.balanceSectionTitle') }}
+    </h4>
+    <div class="plan-table-scroll custom-mt-4">
+      <table
+        :class="{ loading: isFetching }"
+      >
+        <thead>
+          <tr>
+            <th />
+            <th class="amount-cell">
+              {{ $t('planView.columnPlanWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell nowrap">
+              {{ detailsTargetFactForecastLabel }}, {{ selectedCurrency }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationWithCurrency', { currency: selectedCurrency }) }}
+            </th>
+            <th class="amount-cell">
+              {{ $t('planView.columnDeviationPercent') }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="category-name-cell">
+              {{ $t('planView.allIncomeRowLabel') }}
+            </td>
+            <td class="amount-cell bold">
+              {{ dashCondition(incomePlanTotal) }}
+            </td>
+            <td class="amount-cell">
+              {{ dashCondition(incomeFactTotal) }}
+            </td>
+            <td
+              class="amount-cell bold"
+              :class="getSummaryDeviationClass(incomeDeviationAmount)"
+            >
+              {{ dashCondition(incomeDeviationAmount) }}
+            </td>
+            <td
+              class="amount-cell"
+              :class="getSummaryDeviationClass(incomeDeviationAmount)"
+            >
+              {{ dashCondition(incomeDeviationPercent) }}
+            </td>
+          </tr>
+          <tr>
+            <td class="category-name-cell">
+              {{ $t('planView.allExpenseRowLabel') }}
+            </td>
+            <td class="amount-cell bold">
+              {{ dashCondition(expensePlanTotal) }}
+            </td>
+            <td class="amount-cell">
+              {{ dashCondition(expenseFactTotal) }}
+            </td>
+            <td
+              class="amount-cell bold"
+              :class="getSummaryDeviationClass(expenseDeviationAmount)"
+            >
+              {{ dashCondition(expenseDeviationAmount) }}
+            </td>
+            <td
+              class="amount-cell"
+              :class="getSummaryDeviationClass(expenseDeviationAmount)"
+            >
+              {{ dashCondition(expenseDeviationPercent) }}
+            </td>
+          </tr>
+          <tr>
+            <td class="category-name-cell">
+              {{ $t('planView.balanceRowLabel') }}
+            </td>
+            <td class="amount-cell bold">
+              {{ dashCondition(balancePlanTotal) }}
+            </td>
+            <td class="amount-cell">
+              {{ dashCondition(balanceFactTotal) }}
+            </td>
+            <td
+              class="amount-cell bold"
+            >
+              {{ dashCondition(balanceDeviationAmount) }}
+            </td>
+            <td
+              class="amount-cell"
+            >
+              {{ dashCondition(balanceDeviationPercent) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <portal v-if="openPremiumModal">
+      <Modal @close="openPremiumModal = false">
+        <div class="dialog-body">
+          <div class="dialog-content">
+            <h3>
+              <i class="fas fa-star text-yellow small" />
+              {{ $t('planView.premiumDialogTitle') }}
+            </h3>
+            <p>{{ $t('planView.premiumDialogText') }}</p>
+          </div>
+          <div class="dialog-footer">
+            <button
+              class="button yellow custom-mr-12"
+              @click="onClickGoToPremium"
+            >
+              {{ $t('planView.premiumDialogPrimaryButton') }}
+            </button>
+            <button
+              class="button light-gray"
+              @click="openPremiumModal = false"
+            >
+              {{ $t('planView.premiumDialogSecondaryButton') }}
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </portal>
+  </div>
+</template>
+
+<style>
+@import 'flatpickr/dist/plugins/monthSelect/style.css';
+
+.bigdata.loading {
+  opacity: 0.5;
+}
+
+.plan-table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.plan-table-scroll table {
+  width: 100%;
+  min-width: 760px;
+}
+
+@media screen and (max-width: 760px) {
+  .plan-table-scroll {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.flatpickr-monthSelect-month {
+  padding: 0 6px !important;
+}
+
+.month-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 140px;
+}
+
+.total-plan-button.active {
+  font-weight: 600;
+}
+
+.category-name-cell .icon {
+  margin-right: 6px;
+}
+
+.category-name-cell.is-child-category {
+  font-size: 0.875rem;
+}
+
+.category-name-cell.is-child-category .icon {
+  margin-left: 1.5rem;
+}
+
+.category-name-cell {
+  max-width: 400px;
+}
+
+@media screen and (max-width: 760px) {
+  .category-name-cell {
+    width: 90px;
+    max-width: 90px;
+  }
+}
+
+.category-name-link {
+  display: inline-block;
+  max-width: calc(200px - 26px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.amount-cell {
+  width: 140px;
+  max-width: 140px;
+  min-width: 140px;
+  text-align: right;
+}
+
+@media screen and (max-width: 760px) {
+  .amount-cell {
+    width: 70px;
+    max-width: 70px;
+    min-width: 70px;
+  }
+}
+
+.amount-input {
+  width: 100%;
+  border-width: 0px !important;
+}
+
+.is-ghost-amount .amount-input::placeholder {
+  color: var(--light-gray) !important;
+}
+
+.amount-input:hover {
+  opacity: .5;
+}
+
+.is-negative {
+  color: var(--red);
+}
+.is-negative.is-ghost-amount {
+  opacity: 0.42;
+}
+
+.is-positive {
+  color: var(--green);
+}
+
+.is-positive.is-ghost-amount {
+  opacity: 0.5;
+}
+
+</style>

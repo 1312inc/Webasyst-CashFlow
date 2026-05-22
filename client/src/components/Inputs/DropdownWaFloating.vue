@@ -1,24 +1,37 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { waitForTippy } from '@/utils/waiters'
 
 const floating = ref(null)
 const reference = ref(null)
+const tippyInstance = ref(null)
+const isInitialized = ref(false)
+
+function hide () {
+  tippyInstance.value?.hide()
+}
 
 onMounted(async () => {
   const tippy = await waitForTippy()
 
   if (!tippy || !floating.value || !reference.value) return
 
-  tippy(reference.value, {
+  tippyInstance.value = tippy(reference.value, {
     content: floating.value,
     interactive: true,
     placement: 'bottom-start',
     appendTo: () => document.body,
     theme: 'transparent',
     arrow: false,
-    offset: [0, 0]
+    offset: [0, 0],
+    onCreate () {
+      isInitialized.value = true
+    }
   })
+})
+
+onBeforeUnmount(() => {
+  tippyInstance.value?.destroy()
 })
 
 </script>
@@ -29,14 +42,17 @@ onMounted(async () => {
       <slot name="toggler" />
     </div>
     <div
+      v-show="isInitialized"
       ref="floating"
       class="dropdown is-opened"
     >
       <div
         class="dropdown-body"
-        style="min-width: 200px;"
+        style="min-width: 280px;"
       >
-        <slot />
+        <slot
+          :close="hide"
+        />
       </div>
     </div>
   </div>

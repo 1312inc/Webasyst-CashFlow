@@ -1186,10 +1186,10 @@ msgid "ShowButton"
 msgstr "Показать"
 
 msgid "Stream"
-msgstr "Поток"
+msgstr "Пульс"
 
 msgid "Sankey"
-msgstr "Карта финансов"
+msgstr "Структура"
 
 msgid "No data message"
 msgstr "Недостаточно данных для построения отчета."
@@ -1282,7 +1282,7 @@ msgid "Or get <a href=\"%s\" target=\"_blank\">new license</a> for the Custom pl
 msgstr "Или <a href=\"%s\" target=\"_blank\">подключите лицензию</a> на тарифе «Кастом»."
 
 msgid "Early launch offer gets you the best premium upgrade conditions possible."
-msgstr "«Большие деньги» — это премиум-версия приложения с максимальными возможностями для учета и прогноза. Предзаказ открывает ранний доступ ко всем новым функциям и обновлениям."
+msgstr "«Большие деньги» — это премиум-версия приложения с максимальными возможностями для учета, планирования финансов и прогнозирования движения средств."
 
 msgid "Per-server license for the entire company. Unlimited users, all the premium features, and free updates forever."
 msgstr "Лицензия на один сервер и всю компанию. Сколько угодно пользователей, все функции, бесплатные обновления."
@@ -1314,8 +1314,11 @@ msgstr "Задавайте финансовые цели и бюджеты в ф
 msgid "May 2026"
 msgstr "Май 2026"
 
-msgid "May / June 2026"
-msgstr "Май-июнь 2026"
+msgid "June 2026"
+msgstr "Июнь 2026"
+
+msgid "Arriving"
+msgstr "На подходе"
 
 msgid "Teammate accounts"
 msgstr "Подотчеты"
@@ -1368,6 +1371,9 @@ msgstr "https://support.webasyst.ru/forum/ideas/"
 msgid "Maybe"
 msgstr "Возможно"
 
+msgid "Soon"
+msgstr "Скоро"
+
 msgid "Tags & projects"
 msgstr "Теги и проекты"
 
@@ -1400,3 +1406,15 @@ msgstr "Отмена"
 
 msgid "Error"
 msgstr "Ошибка"
+
+msgid "Automation bots"
+msgstr "Боты и автоматизация"
+
+msgid "Bots track all events occurring in the app and help you automate routine accounting operations such as adding new and updating existing transactions."
+msgstr "Боты следят за событиями в приложении и помогают автоматизировать все рутинные операции по учету на основе заданных вами правил: создают новые операции, обновляют параметры существующих и т.д."
+
+msgid "Available only in the Big Cash app premium version."
+msgstr "Этот раздел доступен только в премиум-версии «Большие деньги»."
+
+msgid "See all premium features"
+msgstr "Что еще есть в премиум"

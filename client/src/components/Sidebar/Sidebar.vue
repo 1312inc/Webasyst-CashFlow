@@ -20,26 +20,38 @@
       class="sidebar-body hide-scrollbar"
     >
       <SearchField />
-      <Bricks />
 
       <!-- Widgets charts block -->
       <SidebarCurrencyWidgets />
+      
+      <Bricks />
 
       <!-- Accounts list block -->
       <SidebarHeading updating-entity-name="Account">
         {{ $t("accounts") }}
       </SidebarHeading>
       <SortableList
-        :items="accounts"
+        :items="accountsList"
         sorting-target="account"
         :group="{name: 'accounts', pull: false}"
       >
         <SortableItemAccount
-          v-for="account in accounts"
+          v-for="account in accountsList"
           :key="account.id"
           :account="account"
         />
       </SortableList>
+
+      <div
+        v-if="accountsSandbox.length && !showSandbox"
+        class="flexbox middle custom-mx-12"
+        style="cursor: pointer; margin-top: -9px;"
+        @click.prevent="showSandbox = !showSandbox"
+      >
+        <span class="small custom-ml-4 custom-mr-12 gray"><i class="fas fa-chevron-down"></i></span>
+        <span class="small wide gray">{{ $t("hiddenAccounts") }}</span>
+        <span class="smaller badge light-gray">{{ accountsSandbox.length }}</span>
+      </div>
 
       <Toggler>
         <template #categories>
@@ -115,7 +127,8 @@ export default {
 
   data () {
     return {
-      mobileMenuOpen: false
+      mobileMenuOpen: false,
+      showSandbox: false
     }
   },
 
@@ -128,7 +141,20 @@ export default {
 
     categoriesTransfer () {
       return this.categoriesByType('transfer')
+    },
+
+    accountsSandbox () {
+      return this.accounts.filter(account => account.is_imaginary === -1)
+    },
+
+    accountWithoutSandbox () {
+      return this.accounts.filter(account => account.is_imaginary !== -1)
+    },
+
+    accountsList () {
+      return this.showSandbox ? this.accounts : this.accountWithoutSandbox
     }
+
   },
 
   watch: {

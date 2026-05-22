@@ -1,9 +1,9 @@
 <template>
   <div
     v-if="balanceFlow.length > 0"
-    class="custom-mt-24"
+    class="custom-mt-16"
   >
-    <div class="heading">
+    <div class="heading custom-mt-0">
       {{ $moment().format("LL") }}
     </div>
     <div class="bricks">

@@ -1,5 +1,5 @@
 <template>
-  <div class="box custom-mt-8 custom-mb-8">
+  <div class="box custom-mt-4 custom-mb-4">
     <form
       class="state-with-inner-icon left width-100"
       style="position: relative;"

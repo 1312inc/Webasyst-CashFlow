@@ -7,6 +7,8 @@ abstract class cashAbstractWidget extends waWidget
      */
     private static $settingsModel;
 
+    private $incognitoMode;
+
     protected static function getSettingModel(): waWidgetSettingsModel
     {
         if (self::$settingsModel === null) {

@@ -17,35 +17,47 @@
     </div>
     <template v-else>
       <div v-if="data.length">
-        <div class="flexbox custom-mb-24">
-          <div class="wide flexbox middle wrap-mobile">
-            <div class="larger black bold custom-mb-0 custom-mb-8-mobile">
-              <div v-if="!isDefaultRange">
-                {{ dates }}
+        <div class="flexbox custom-mb-24 space-12 wrap-mobile">
+          <div class="wide custom-mb-0 custom-mb-8-mobile">
+            <div class="flexbox space-8 middle">
+              <div class="larger black bold">
+                <div v-if="!isDefaultRange">
+                  {{ dates }}
+                </div>
+                <div v-else>
+                  {{ $t(currentPeriod === 'from' ? rangeLabelFrom : rangeLabelTo) }}
+                </div>
               </div>
-              <div v-else>
-                {{ $t(rangeLabel) }}
-              </div>
+
+              <DropdownWaFloating>
+                <template #toggler>
+                  <button class="circle light-gray">
+                    <span class="icon"><i class="fas fa-ellipsis-v" /></span>
+                  </button>
+                </template>
+                <ul class="menu">
+                  <li>
+                    <a @click.prevent="setPeriod('from')"><span>{{ $t(rangeLabelFrom) }}</span></a>
+                  </li>
+                  <li>
+                    <a @click.prevent="setPeriod('to')"><span>{{ $t(rangeLabelTo) }}</span></a>
+                  </li>
+                </ul>
+              </DropdownWaFloating>
             </div>
+          </div>
+
+          <div class="flexbox space-8 wrap-mobile">
             <button
-              class="button light-gray custom-ml-12 custom-ml-0-mobile"
+              class="button light-gray"
               @click="openModal = true"
             >
               {{ $t("setDates") }}
             </button>
             <ExportButton
               v-if="!appState.webView"
-              class="custom-ml-12 custom-ml-8-mobile"
             />
           </div>
-          <!-- <div>
-        <button
-          class="nobutton largest custom-p-0"
-          @click="closeDashboard"
-        >
-          <i class="fas fa-times gray" />
-        </button>
-      </div> -->
         </div>
 
         <DetailsDashboardItem
@@ -53,8 +65,8 @@
           :item-data="dashboardData"
         />
 
-        <portal>
-          <Modal v-if="openModal">
+        <portal v-if="openModal">
+          <Modal @close="openModal = false">
             <UpdateDetailsInterval @close="openModal = false" />
           </Modal>
         </portal>
@@ -74,6 +86,18 @@ import ExportButton from '@/components/Buttons/ExportButton'
 import { appState } from '@/utils/appState'
 import { getIntervalFromLabel } from '@/utils/getDateFromLocalStorage'
 import DetailsDashboardEmpty from '../ContentBlocks/DetailsDashboardEmpty.vue'
+import DropdownWaFloating from '../Inputs/DropdownWaFloating.vue'
+
+const CURRENT_PERIOD_STORAGE_KEY = 'currentPeriod'
+
+function readCurrentPeriodFromStorage () {
+  try {
+    const v = localStorage.getItem(CURRENT_PERIOD_STORAGE_KEY)
+    return v === 'from' || v === 'to' ? v : 'to'
+  } catch (_) {
+    return 'to'
+  }
+}
 
 export default {
   components: {
@@ -81,7 +105,8 @@ export default {
     DetailsDashboardItem,
     UpdateDetailsInterval,
     ExportButton,
-    DetailsDashboardEmpty
+    DetailsDashboardEmpty,
+    DropdownWaFloating
   },
 
   data () {
@@ -90,7 +115,9 @@ export default {
       openModal: false,
       appState,
       isFetching: false,
-      rangeLabel: ''
+      rangeLabelFrom: '',
+      rangeLabelTo: '',
+      dashboardCurrentPeriod: readCurrentPeriodFromStorage()
     }
   },
 
@@ -117,30 +144,46 @@ export default {
         i =>
           i.currency === this.$store.getters['transaction/activeCurrencyCode']
       )
+    },
+
+    currentPeriod: {
+      get () {
+        return this.dashboardCurrentPeriod
+      },
+      set (value) {
+        if (value !== 'from' && value !== 'to') return
+        this.dashboardCurrentPeriod = value
+        try {
+          localStorage.setItem(CURRENT_PERIOD_STORAGE_KEY, value)
+        } catch (_) {}
+      }
+    },
+
+    breakdownWatchKey () {
+      const { from, to } = this.detailsInterval
+      return `${from}|${to}|${this.queryParams.filter}`
     }
   },
 
   watch: {
-    detailsInterval: {
-      handler () { this.fetchBreakDown() },
+    breakdownWatchKey: {
+      handler () {
+        this.fetchBreakDown()
+      },
       immediate: true
-    },
-    'queryParams.filter': 'fetchBreakDown'
+    }
   },
 
   methods: {
     fetchBreakDown () {
-      this.rangeLabel = getIntervalFromLabel('from')
+      this.rangeLabelFrom = getIntervalFromLabel('from')
+      this.rangeLabelTo = getIntervalFromLabel('to')
 
-      const from = this.detailsInterval.from
-      let to = this.detailsInterval.to
       const today = new Date()
       const currentDate = today.toISOString().split('T')[0]
 
-      // Преобразуем строки в объекты Date для корректного сравнения
-      if (this.isDefaultRange) {
-        to = currentDate
-      }
+      const from = !this.isDefaultRange ? this.detailsInterval.from : this.currentPeriod === 'from' ? this.detailsInterval.from : currentDate
+      const to = !this.isDefaultRange ? this.detailsInterval.to : this.currentPeriod === 'to' ? this.detailsInterval.to : currentDate
 
       this.isFetching = true
       api
@@ -157,14 +200,17 @@ export default {
         .finally(() => {
           this.isFetching = false
         })
+    },
+
+    setPeriod (period) {
+      this.currentPeriod = period
+      if (!this.isDefaultRange) {
+        this.$store.dispatch('transaction/resetDetailsInterval')
+      } else {
+        this.fetchBreakDown()
+      }
     }
 
-    // closeDashboard () {
-    //   this.$store.dispatch('transaction/updateDetailsInterval', {
-    //     from: '',
-    //     to: ''
-    //   })
-    // }
   }
 }
 </script>

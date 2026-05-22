@@ -17,6 +17,7 @@ const mutationDelete = (state, ids) => {
 
 const from = getDateFromLocalStorage('from') || moment().add(-1, 'Y').format('YYYY-MM-DD')
 const to = getDateFromLocalStorage('to') || moment().add(6, 'M').format('YYYY-MM-DD')
+let fetchTransactionsRunId = 0
 
 export default {
   namespaced: true,
@@ -274,7 +275,8 @@ export default {
       }
     },
 
-    async fetchTransactionsFuture ({ commit, state, getters }, to) {
+    async fetchTransactionsFuture ({ commit, state, getters }, payload) {
+      const { to, runId } = typeof payload === 'object' ? payload : { to: payload, runId: fetchTransactionsRunId }
       commit('setLoadingFuture', true)
       try {
         const { data } = await api.get('cash.transaction.getList', {
@@ -286,6 +288,7 @@ export default {
             reverse: 1
           }
         })
+        if (runId !== fetchTransactionsRunId) return
 
         const isNotFullFutureOffset = data.data.length + data.offset < data.total
         commit('setShowFutureTransactionsMoreLink', {
@@ -304,11 +307,14 @@ export default {
       } catch (_) {
 
       } finally {
-        commit('setLoadingFuture', false)
+        if (runId === fetchTransactionsRunId) {
+          commit('setLoadingFuture', false)
+        }
       }
     },
 
     async fetchTransactions ({ commit, state, dispatch }, userParams = {}) {
+      const runId = ++fetchTransactionsRunId
       try {
         commit('updateQueryParams', userParams)
         const params = { ...state.queryParams }
@@ -322,7 +328,7 @@ export default {
 
           if (!params.from && params.to && moment().isBefore(params.to)) {
             state.isSplitFetchMode = true
-            dispatch('fetchTransactionsFuture', params.to)
+            dispatch('fetchTransactionsFuture', { to: params.to, runId })
             const today = moment().format('YYYY-MM-DD')
             commit('updateQueryParams', {
               to: today
@@ -336,6 +342,7 @@ export default {
         const { data } = await api.get('cash.transaction.getList', {
           params
         })
+        if (runId !== fetchTransactionsRunId) return false
 
         const result = {
           ...data,
@@ -346,7 +353,9 @@ export default {
       } catch (_) {
         return false
       } finally {
-        commit('setLoading', false)
+        if (runId === fetchTransactionsRunId) {
+          commit('setLoading', false)
+        }
       }
     },
 

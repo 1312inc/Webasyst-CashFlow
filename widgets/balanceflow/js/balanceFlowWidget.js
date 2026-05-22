@@ -110,9 +110,7 @@ function makeBallanceFlowWidget (options) {
     ).toFixed(2);
     $average.classList.add(averageAmount >= 0 ? "text-green" : "text-red");
     $average.innerHTML =
-        '<i class="fas fa-tachometer-alt"></i>' +
-        " " +
-        (averageAmount > 0 ? "+" : "") +
+        (averageAmount >= 0 ? "+" : "") +
         new Intl.NumberFormat(options.locale).format(averageAmount) +
         " " +
         options.currencySign +

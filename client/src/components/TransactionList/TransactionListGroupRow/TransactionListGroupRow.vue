@@ -95,7 +95,6 @@
           <TransactionListGroupRowDesc
             :transaction="transaction"
             :collapse-header-data="collapseHeaderData"
-            :is-repeating-group="isRepeatingGroup"
             :category="category"
           />
 
@@ -112,6 +111,28 @@
                 isDynamics: true
               })
             }}
+          </div>
+          <!-- if repeating transactions in future -->
+          <div
+            v-if="isRepeatingGroup"
+            class="black text-ellipsis"
+            :title="
+              $t('repeatingTransactionDesc', {
+                repeats: transaction.affected_transactions
+              })
+            "
+          >
+            <span class="smaller custom-mr-4">
+              <i class="fas fa-redo opacity-50" />
+            </span>
+          </div>
+
+          <div
+            v-else-if="transaction.repeating_id"
+            :title="title"
+            class="smaller custom-mr-4"
+          >
+            <i class="fas fa-redo opacity-50" />
           </div>
         </div>
         <div class="flexbox full-width middle space-8 small">
@@ -173,6 +194,7 @@
           {{ $moment(transaction.date).toDate().toLocaleDateString($moment.locale(), { month: 'short', day: 'numeric' }) }}
         </div>
         <div class="hint">
+          {{ $moment(transaction.date).format('dddd') }}<br>
           {{ $moment(transaction.date).from($moment().startOf('day')) }}
         </div>
       </div>
@@ -315,6 +337,16 @@ export default {
   },
 
   computed: {
+    title () {
+      return this.$tc(
+        `repeatingInfo.interval.${this.transaction.repeating_data.interval}`,
+        this.transaction.repeating_data.frequency,
+        {
+          frequency: this.transaction.repeating_data.frequency
+        }
+      )
+    },
+
     account () {
       return (
         this.$store.getters['account/getById'](this.transaction.account_id) ||

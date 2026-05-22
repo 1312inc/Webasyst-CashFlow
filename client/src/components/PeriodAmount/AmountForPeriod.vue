@@ -42,7 +42,7 @@
           <span class="smaller semibold gray">
             {{
               $helper.toCurrency({
-                value: $_amountMixin_amountDelta(period),
+                value: $_amountMixin_amountDelta(period) || 0,
                 currencyCode: currencyCode,
                 isDynamics: true,
                 prefix: "&#916;&nbsp;"
