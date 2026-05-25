@@ -1,6 +1,130 @@
 {$_page_title = _w("Cash automation")}
 
 <script src="{$wa_app_static_url}js/automation.js?{$wa->version()}"></script>
+
+{function condition_block __rule_id=null condition=null}
+    {$rule_name = ''}
+    {$_rule_id = ifempty($__rule_id, '%%RULE_ID%%')}
+    {$condition_name = '%%RULE_NAME%%'}
+    {$compare_op = ifset($condition, 'operator', null)}
+    {if $condition}
+        {$condition_rand = mt_rand(1000, 10000)}
+
+        {foreach cashAutomationAction::getConditions() as $_name => $_rule_name}
+            {if $condition['condition_id'] == $_name}
+                {$rule_name = $_name}
+                {$condition_name = $_rule_name.name}
+                {break}
+            {/if}
+        {/foreach}
+    {else}
+        {$condition_rand = '%%CONDITION_ID%%'}
+    {/if}
+
+    <div class="js-condition-block box uploadbox rounded custom-mb-12 custom-p-8 flexbox space-8 middle" style="text-align: left;">
+        <span class="c-condition-name small">{$condition_name}</span>
+        <div class="nowrap wide">
+            {foreach $conditions as $_condition_id => $_condition}
+                {if $_condition.operators}
+                    <select class="{$_condition_id|escape}{if $rule_name != $_condition_id} hidden{/if}" name="rules[{$_rule_id}][conditions][{$condition_rand}][operator]"{if $rule_name != $_condition_id} disabled{/if}>
+                        {foreach $_condition.operators as $_operator}
+                        <option value="{$_operator}"{if $_operator == $compare_op} selected{/if}>{$_operator|escape}</option>
+                        {/foreach}
+                    </select>
+                {/if}
+                {if $_condition_id}
+                    <input
+                        type="text"
+                        class="smaller {$_condition_id|escape}{if $rule_name != $_condition_id} hidden{/if}"
+                        name="rules[{$_rule_id}][conditions][{$condition_rand}][value]"
+                        value="{$condition.value|default:''|escape}"{if $rule_name != $_condition_id} disabled{/if}
+                        placeholder="[`Значение`]"
+                    >
+                    <input
+                        type="hidden"
+                        class="{$_condition_id|escape}"
+                        name="rules[{$_rule_id}][conditions][{$condition_rand}][condition_id]"
+                        value="{$_condition_id|default:''|escape}"{if $rule_name != $_condition_id} disabled{/if}
+                    >
+                    {if !empty($_condition.plugin_id)}
+                        <input
+                            type="hidden"
+                            class="{$_condition_id|escape}"
+                            name="rules[{$_rule_id}][conditions][{$condition_rand}][plugin_id]"
+                            value="{$_condition.plugin_id|escape}"{if $rule_name != $_condition_id} disabled{/if}
+                        >
+                    {/if}
+                {/if}
+            {/foreach}
+        </div>
+        <span class="custom-ml-8 align-right">
+            <a href="#" title="[`Delete`]" class="c-delete-condition text-blue"><i class="fas fa-times-circle text-gray"></i></a>
+        </span>
+    </div>
+{/function}
+
+{capture 'new_condition'}
+    {strip}
+        {condition_block}
+    {/strip}
+{/capture}
+
+{function rule_condition_editor_form _rule_id=null rule_conditions=null}
+    {if $rule_conditions}
+        {foreach $rule_conditions as $_condition}
+            {condition_block __rule_id=$_rule_id condition=$_condition}
+        {/foreach}
+    {/if}
+    <div class="wa-select smaller">
+        <select class="add-condition-selector">
+            {foreach $conditions as $name => $_condition}
+            <option value="{$name}">{$_condition.name|escape}</option>
+            {/foreach}
+        </select>
+    </div>
+{/function}
+
+{function automation_rule rule=null}
+    {$rule_id = ifset($rule, 'id', '%%RULE_ID%%')}
+    <tr data-rule-id="{$rule_id}">
+        <td class="valign-top c-automation-sort-handle">
+            <i class="fas fa-grip-vertical text-light-gray cursor-pointer automation-rows-handle"></i>
+            <input type="hidden" name="rules[{$rule_id}][app_id]" value="{$rule.app_id|default:cashConfig::APP_ID|escape}" class="js-app-id-rule">
+            <input type="hidden" name="rules[{$rule_id}][sort]" value="{$rule.sort|default:'0'|escape}" class="js-sort-rule">
+        </td>
+        <td class="valign-top">
+            <div class="wa-select small">
+                <select name="rules[{$rule_id}][action_id]" class="bold">
+                    {foreach $events as $_event_id => $_event}
+                    <option value="{$_event_id}"{if $rule && $rule.action_id == $_event_id} selected{/if}>[`{$_event}`]</option>
+                    {/foreach}
+                </select>
+            </div>
+            <h6 class="gray small custom-mt-16 custom-mb-8">[`Conditions (AND)`]</h6>
+            {if $rule && !empty($rule.conditions)}
+                {rule_condition_editor_form _rule_id=$rule_id rule_conditions=$rule.conditions}
+            {else}
+                {rule_condition_editor_form}
+            {/if}
+        </td>
+        <td class="valign-top">
+            {$action = ifset($rule, 'rule_data', 'action', '')}
+            <div class="wa-select small">
+                <select name="rules[{$rule_id}][rule_data][action]" class="c-action-selector">
+                    {foreach $actions as $_action_id => $_action}
+                    <option value="{$_action_id|escape}"{if $_action_id == $action} selected{/if}>{$_action.action|escape}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </td>
+        <td class="valign-top">
+            <a href="javascript:void(0);" class="c-delete-rule text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
+        </td>
+    </tr>
+{/function}
+
+
+
 <form method="post" action="?module=automationSave" id="c-automation-rules-form" autocomplete="off">
     <div class="c-automatoin-form box contentbox">
         <h1>[`Automation bots`]</h1>
@@ -37,20 +161,19 @@
                         <tr>
                             <th class="min-width"></th>
                             <th>[`Event`]</th>
-                            <th>[`Condition`]</th>
                             <th>[`Action`]</th>
                             <th class="min-width"></th>
                         </tr>
                     </thead>
                     <tbody>
+                        {foreach $automation_rules as $rule}
+                            {automation_rule rule=$rule}
+                        {/foreach}
                         {capture 'new_automation_rule'}
                             {strip}
-                                {include file="templates/actions/automation/Automation.include.html" rule=[] inline}
+                                {automation_rule}
                             {/strip}
                         {/capture}
-                        {foreach $automation_rules as $rule}
-                            {include file="templates/actions/automation/Automation.include.html" inline}
-                        {/foreach}
                     </tbody>
                 </table>
 
@@ -71,6 +194,7 @@
     document.title = {$_page_title|json_encode} +" — "+ {json_encode($wa->accountName(false))};
 
     $.automation.Init({
+        new_condition: {json_encode($smarty.capture.new_condition)},
         new_automation_rule: {json_encode($smarty.capture.new_automation_rule)}
     });
 </script>

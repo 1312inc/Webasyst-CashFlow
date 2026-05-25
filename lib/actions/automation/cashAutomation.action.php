@@ -5,9 +5,6 @@
  */
 class cashAutomationAction extends cashViewAction
 {
-    private $plugin_conditions = [];
-    private $plugin_actions = [];
-
     public function preExecute()
     {
         if (wa()->whichUI() === '2.0') {
@@ -19,37 +16,10 @@ class cashAutomationAction extends cashViewAction
 
     public function runAction($params = null)
     {
-        /**
-         * @event backend_automation_view
-         * @since 4.0.0
-         *
-         * @return cashEvent
-         */
-        $event = new cashEvent(cashEventStorage::WA_BACKEND_AUTOMATION_VIEW);
-        $event_result = cash()->waDispatchEvent($event);
-
-        foreach ($event_result as $plugin_id => $_data) {
-            $plugin_id = preg_replace('#-plugin$#', '', $plugin_id);
-            if (isset($_data['conditions'])) {
-                foreach ($_data['conditions'] as $_condition_id => $_condition) {
-                    $_condition['plugin_id'] = $plugin_id;
-                    $this->plugin_conditions["{$plugin_id}_$_condition_id"] = $_condition;
-                }
-            }
-            if (isset($_data['actions'])) {
-                foreach ($_data['actions'] as $_action_id => $_action) {
-                    $this->plugin_actions["{$plugin_id}_$_action_id"] = [
-                        'action' => $_action,
-                        'plugin_id' => $plugin_id,
-                    ];
-                }
-            }
-        }
-
         $this->view->assign([
             'events'           => $this->getEvents(),
-            'conditions'       => self::getConditions() + ($this->plugin_conditions ?: []),
-            'actions'          => self::getActions() + ($this->plugin_actions ?: []),
+            'conditions'       => self::getConditions(),
+            'actions'          => self::getActions(),
             'automation_rules' => $this->getRules(),
         ]);
     }
@@ -72,7 +42,7 @@ class cashAutomationAction extends cashViewAction
             'account_id'  => ['name' => _w('Account'), 'operators' => ['=', '!=']],
             'category_id' => ['name' => _w('Category'), 'operators' => ['=', '!=']],
             'date'        => ['name' => _w('Date'), 'operators' => ['<', '>']],
-        ];
+        ] + self::getDataPlugin('conditions');
     }
 
     public static function getActions()
@@ -84,7 +54,44 @@ class cashAutomationAction extends cashViewAction
             'other_update'       => ['action' => _w('Обновить другую операцию')],
             'send_mail'          => ['action' => _w('Отправить письмо')],
             'action_ss'          => ['action' => _w('Сделать действие с заказом ШС')],
-        ];
+        ] + self::getDataPlugin('actions');
+    }
+
+    private static function getDataPlugin($name)
+    {
+        static $plugin_conditions;
+        static $plugin_actions;
+
+        if (empty($plugin_conditions) || empty($plugin_actions)) {
+            /**
+             * @event backend_automation_view
+             * @since 4.0.0
+             *
+             * @return cashEvent
+             */
+            $event = new cashEvent(cashEventStorage::WA_BACKEND_AUTOMATION_VIEW);
+            $event_result = cash()->waDispatchEvent($event);
+
+            foreach ($event_result as $plugin_id => $_data) {
+                $plugin_id = preg_replace('#-plugin$#', '', $plugin_id);
+                if (isset($_data['conditions'])) {
+                    foreach ($_data['conditions'] as $_condition_id => $_condition) {
+                        $_condition['plugin_id'] = $plugin_id;
+                        $plugin_conditions["{$plugin_id}_$_condition_id"] = $_condition;
+                    }
+                }
+                if (isset($_data['actions'])) {
+                    foreach ($_data['actions'] as $_action_id => $_action) {
+                        $plugin_actions["{$plugin_id}_$_action_id"] = [
+                            'action' => $_action,
+                            'plugin_id' => $plugin_id,
+                        ];
+                    }
+                }
+            }
+        }
+
+        return ($name === 'conditions' ? $plugin_conditions : $plugin_actions);
     }
 
     private function getRules()

@@ -40,81 +40,85 @@ class cashAutomation
         $automation_model = new cashAutomationModel();
         $rules = $automation_model->getByField('action_id', $action_id, true);
         $response = (array) (empty($response[0]) ? $response : reset($response));
-        $actions = cashAutomationAction::getActions();
-        $conditions = cashAutomationAction::getConditions();
+        $known_actions = cashAutomationAction::getActions();
+        $known_conditions = cashAutomationAction::getConditions();
 
         foreach ($rules as $rule) {
-            $condition = ifset($rule, 'conditions', 0, []);
-            $condition_id = ifset($condition, 'condition_id', null);
+            $condition_done = 0;
+            $conditions = ifset($rule, 'conditions', []);
             $rule_data = ifset($rule, 'rule_data', []);
             $rule_action = ifset($rule_data, 'action', null);
-            list($app, $plugin_id) = explode('.', $rule['app_id'].'.');
-            $found = empty($condition);
+            $found = empty($conditions);
+            foreach ($conditions as $_condition) {
+                $condition_id = ifset($_condition, 'condition_id', null);
 
-            if ($plugin_id) {
-                $condition['condition_id'] = str_replace($plugin_id.'_', '', $condition_id);
-                $params = [
-                    'action_id'   => $action_id,
-                    'condition'   => $condition,
-                    'action'      => str_replace($plugin_id.'_', '', $rule_action),
-                    'transaction' => $response
-                ];
+                if ($plugin_id = ifset($_condition, 'plugin_id', null)) {
+                    $_condition['condition_id'] = str_replace($plugin_id.'_', '', $condition_id);
+                    $params = [
+                        'action_id'   => $action_id,
+                        'condition'   => $_condition,
+                        'action'      => str_replace($plugin_id.'_', '', $rule_action),
+                        'transaction' => $response
+                    ];
 
-                $all_enabled_plugins = wa('cash')->getConfig()->getPlugins();
-                if ($method = ifset($all_enabled_plugins, $plugin_id, 'handlers', cashEventStorage::WA_BACKEND_AUTOMATION_HANDLE, null)) {
-                    try {
-                        $found = wa()->getPlugin($plugin_id)->$method($params);
-                    } catch (Exception $ex) {
-                        cash()->getLogger()->error($ex->getMessage());
+                    $all_enabled_plugins = wa('cash')->getConfig()->getPlugins();
+                    if ($method = ifset($all_enabled_plugins, $plugin_id, 'handlers', cashEventStorage::WA_BACKEND_AUTOMATION_HANDLE, null)) {
+                        try {
+                            $found = wa()->getPlugin($plugin_id)->$method($params);
+                        } catch (Exception $ex) {
+                            cash()->getLogger()->error($ex->getMessage());
+                        }
                     }
-                }
-            } elseif (!empty($conditions[$condition_id]) && !empty($actions[$rule_action])) {
-                $value = ifset($condition,'value', null);
-                $operator = ifset($condition, 'operator', '');
-                switch ($condition_id) {
-                    case 'amount':
-                        if ($compare(ifset($response, 'amount', null), $value, $operator)) {
-                            $found = true;
+                } elseif (!empty($known_conditions[$condition_id]) && !empty($known_actions[$rule_action])) {
+                    $value = ifset($_condition,'value', null);
+                    $operator = ifset($_condition, 'operator', '');
+                    switch ($condition_id) {
+                        case 'amount':
+                            if ($compare(ifset($response, 'amount', null), $value, $operator)) {
+                                $found = true;
+                            }
+                            break;
+                        case 'description':
+                            if ($compare(ifset($response, 'description', null), $value, $operator)) {
+                                $found = true;
+                            }
+                            break;
+                        case 'account_id':
+                            if ($compare(ifset($response, 'account_id', null), $value, $operator)) {
+                                $found = true;
+                            }
+                            break;
+                        case 'category_id':
+                            if ($compare(ifset($response, 'category_id', null), $value, $operator)) {
+                                $found = true;
+                            }
+                            break;
+                        case 'date':
+                            if ($compare(ifset($response, 'date', null), $value, $operator)) {
+                                $found = true;
+                            }
+                            break;
+                        default:
+                    }
+                    if ($found) {
+                        switch ($rule_action) {
+                            case 'self_update':
+                            case 'self_delete':
+                            case 'create_transaction':
+                            case 'other_update':
+                            case 'send_mail':
+                            case 'action_ss':
+                            default:
+                                cash()->getLogger()->log(['Действие "'.ifset($known_actions, $rule_action, 'action', 'NULL').'" выполнено', 'RULE' => $rule, 'TRANSACTION' => $response], self::AUTOMATION_LOG);
                         }
-                        break;
-                    case 'description':
-                        if ($compare(ifset($response, 'description', null), $value, $operator)) {
-                            $found = true;
-                        }
-                        break;
-                    case 'account_id':
-                        if ($compare(ifset($response, 'account_id', null), $value, $operator)) {
-                            $found = true;
-                        }
-                        break;
-                    case 'category_id':
-                        if ($compare(ifset($response, 'category_id', null), $value, $operator)) {
-                            $found = true;
-                        }
-                        break;
-                    case 'date':
-                        if ($compare(ifset($response, 'date', null), $value, $operator)) {
-                            $found = true;
-                        }
-                        break;
-                    default:
+                    }
                 }
                 if ($found) {
-                    switch ($rule_action) {
-                        case 'self_update':
-                        case 'self_delete':
-                        case 'create_transaction':
-                        case 'other_update':
-                        case 'send_mail':
-                        case 'action_ss':
-                        default:
-                            cash()->getLogger()->log(['Действие "'.ifset($actions, $rule_action, 'action', 'NULL').'" выполнено', 'RULE' => $rule, 'TRANSACTION' => $response], self::AUTOMATION_LOG);
-                    }
+                    $condition_done++;
                 }
             }
-
-            if ($found) {
-                break;
+            if (count($conditions) === $condition_done || !$found) {
+                cash()->getLogger()->log(['ВСЕ действия "'.implode(', ', array_column($conditions, 'condition_id')).'" выполнены', 'RULE' => $rule, 'TRANSACTION' => $response], self::AUTOMATION_LOG);
             }
         }
 

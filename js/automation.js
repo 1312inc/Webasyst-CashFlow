@@ -8,8 +8,6 @@ $.extend($.automation = $.automation || {}, {
     Init: function (options) {
         let that = this;
         let new_rule_id = -1;
-        let new_condition_id = 0;
-
         let $form = $('#c-automation-rules-form');
         const $table_tbody = $('#c-automation-rules tbody').first();
 
@@ -17,24 +15,26 @@ $.extend($.automation = $.automation || {}, {
         $('#c-automation-add-rule').on('click', function (event) {
             event.preventDefault();
 
-            const tmpl = options.new_automation_rule.replace(/%%RULE_ID%%/g, new_rule_id).replace(/%%CONDITION_KEY%%/g, new_condition_id);
+            const tmpl = options.new_automation_rule
+                .replace(/%%RULE_ID%%/g, new_rule_id);
             $table_tbody.prepend(tmpl);
             new_rule_id--;
-            new_condition_id++;
         });
 
         (function () {
-            $table_tbody.on('change', '.c-condition-selector', function () {
-                let val_cond = $(this).val();
-                let $tr = $(this).closest('tr');
-                let plugin_id = $(this).find('option:selected').data('plugin-id');
+            let new_condition_id = 0;
+            $table_tbody.on('change', '.add-condition-selector', function () {
+                let rule_id = $(this).closest('tr').data('rule-id');
+                const tmpl = options.new_condition
+                    .replace(/%%RULE_ID%%/g, rule_id)
+                    .replace(/%%CONDITION_ID%%/g, new_condition_id)
+                    .replace(/%%RULE_NAME%%/g, $(this).find('option:selected').text());
+                const $new_condition = $(tmpl);
+                $new_condition.find('.'+ $(this).val()).prop('disabled', false).removeClass('hidden');
+                $(this).closest('.wa-select').before($new_condition);
 
-                $tr.find('input').removeClass('hidden');
-                $tr.find('select[data-condition-id]').closest('div').addClass('hidden');
-                $tr.find('select[data-condition-id]').prop('disabled', true);
-                $tr.find('select[data-condition-id="'+ val_cond +'"]').closest('div').removeClass('hidden');
-                $tr.find('select[data-condition-id="'+ val_cond +'"]').prop('disabled', false);
-                $tr.find('.js-app-id-rule').val('cash'+ (plugin_id ? '.'+ plugin_id : ''));
+                $(this).val('');
+                new_condition_id++;
             });
         })();
 
@@ -48,6 +48,13 @@ $.extend($.automation = $.automation || {}, {
             $.post('?module=automationDelete', {rule_id: rule_id}, function () {
                 that.remove();
             });
+        });
+
+        $table_tbody.on('click', '.c-delete-condition', function (event) {
+            event.preventDefault();
+
+            $(this).closest('div.js-condition-block').remove();
+            $('.js-form-submit').removeClass('green').addClass('yellow');
         });
 
         $form.on('change', function (event) {
