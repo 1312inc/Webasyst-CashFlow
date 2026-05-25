@@ -74,7 +74,8 @@ class cashAutomation
                     $operator = ifset($_condition, 'operator', '');
                     switch ($condition_id) {
                         case 'amount':
-                            if ($compare(ifset($response, 'amount', null), $value, $operator)) {
+                            $amount = ifset($response, 'amount', null);
+                            if (isset($amount, $value) && $compare(abs($amount), abs($value), $operator)) {
                                 $found = true;
                             }
                             break;
