@@ -7,6 +7,7 @@ return [
   'vendor' => '--',
   'handlers' => [
         'backend_automation_view' => 'cashEventViewTestautomationHandler',
-        'backend_automation_handle' => 'cashEventTestautomationHandler'
+        'backend_automation_handle' => 'cashEventTestautomationHandler',
+        'backend_automation_is_true' => 'cashIsConditionTrueTestautomationHandler'
     ]
 ];

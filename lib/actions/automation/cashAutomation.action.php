@@ -35,26 +35,12 @@ class cashAutomationAction extends cashViewAction
 
     public static function getConditions()
     {
-        return [
-            ''            => ['name' => _w('Configure...'), 'operators' => []],
-            'amount'      => ['name' => _w('Amount'), 'operators' => ['>', '<', '=']],
-            'description' => ['name' => _w('Description'), 'operators' => ['=', '!=', '%...%']],
-            'account_id'  => ['name' => _w('Account'), 'operators' => ['=', '!=']],
-            'category_id' => ['name' => _w('Category'), 'operators' => ['=', '!=']],
-            'date'        => ['name' => _w('Date'), 'operators' => ['<', '>']],
-        ] + self::getDataPlugin('conditions');
+        return cashAutomation::getConditions() + self::getDataPlugin('conditions');
     }
 
     public static function getActions()
     {
-        return [
-            'self_update'        => ['action' => _w('Обновить эту же операцию (с которой произошло действие)')],
-            'self_delete'        => ['action' => _w('Удалить эту операцию')],
-            'create_transaction' => ['action' => _w('Создать новую операцию')],
-            'other_update'       => ['action' => _w('Обновить другую операцию')],
-            'send_mail'          => ['action' => _w('Отправить письмо')],
-            'action_ss'          => ['action' => _w('Сделать действие с заказом ШС')],
-        ] + self::getDataPlugin('actions');
+        return cashAutomation::getActions() + self::getDataPlugin('actions');
     }
 
     private static function getDataPlugin($name)

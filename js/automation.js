@@ -15,8 +15,7 @@ $.extend($.automation = $.automation || {}, {
         $('#c-automation-add-rule').on('click', function (event) {
             event.preventDefault();
 
-            const tmpl = options.new_automation_rule
-                .replace(/%%RULE_ID%%/g, new_rule_id);
+            const tmpl = options.new_automation_rule.replace(/%%RULE_ID%%/g, new_rule_id);
             $table_tbody.prepend(tmpl);
             new_rule_id--;
         });
@@ -35,6 +34,15 @@ $.extend($.automation = $.automation || {}, {
 
                 $(this).val('');
                 new_condition_id++;
+            });
+
+            $table_tbody.on('change', '.c-action-selector', function () {
+                let plugin_id = $(this).find('option:selected').data('plugin-id');
+                if (plugin_id) {
+                    $(this).closest('td').find('.c-action-plugin-id').prop('disabled', false).val(plugin_id);
+                } else {
+                    $(this).closest('td').find('.c-action-plugin-id').prop('disabled', true).val('');
+                }
             });
         })();
 

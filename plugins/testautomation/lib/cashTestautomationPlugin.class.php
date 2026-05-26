@@ -20,6 +20,11 @@ class cashTestautomationPlugin extends waPlugin
         ];
     }
 
+    /**
+     * Вызывается для встраивания в меню по событию backend_automation_view
+     *
+     * @return array
+     */
     public function cashEventViewTestautomationHandler()
     {
         return [
@@ -29,17 +34,25 @@ class cashTestautomationPlugin extends waPlugin
     }
 
     /**
+     * Вызывается для проверки каждого условия, если условие относится к плагину.
+     * Выполняется ли, сохраненное в таблице автоматизации, предоставленное плагином условие из getConditions()?
+     *
+     * @return false
+     */
+    public function cashIsConditionTrueTestautomationHandler()
+    {
+        return true;
+    }
+
+    /**
+     * Вызывается для выполнения действия после выполнения всех условий
+     * по событию backend_automation_handle для конкретного плагина
+     *
      * @param $params
      * @return bool
      */
     public function cashEventTestautomationHandler($params = [])
     {
-        $conditions = self::getConditions();
-        $condition = ifset($params, 'condition', 'condition_id', '');
-        if (empty($conditions[$condition])) {
-            cash()->getLogger()->log(['В плагине нет такого условия для выполнения', 'PARAMS' => $params], cashAutomation::AUTOMATION_LOG);
-            return false;
-        }
         $actions = self::getActions();
         $action = ifset($params, 'action', '');
         if (empty($actions[$action])) {
@@ -47,7 +60,7 @@ class cashTestautomationPlugin extends waPlugin
             return false;
         }
 
-        cash()->getLogger()->log(['Плагин выполнил: '.$actions[$action].' C условием: '.var_export($conditions[$condition], true), 'PARAMS' => $params], cashAutomation::AUTOMATION_LOG);
+        cash()->getLogger()->log(['Плагин выполнил: '.$actions[$action], 'PARAMS' => $params], cashAutomation::AUTOMATION_LOG);
 
         return true;
     }

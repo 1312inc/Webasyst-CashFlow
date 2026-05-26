@@ -109,13 +109,15 @@
         </td>
         <td class="valign-top">
             {$action = ifset($rule, 'rule_data', 'action', '')}
+            {$plugin_id = ifset($rule, 'rule_data', 'plugin_id', '')}
             <div class="wa-select small">
                 <select name="rules[{$rule_id}][rule_data][action]" class="c-action-selector">
                     {foreach $actions as $_action_id => $_action}
-                    <option value="{$_action_id|escape}"{if $_action_id == $action} selected{/if}>{$_action.action|escape}</option>
+                    <option value="{$_action_id|escape}"{if $_action_id == $action} selected{/if}{if !empty($_action.plugin_id)} data-plugin-id="{$_action.plugin_id}"{/if}>{$_action.action|escape}</option>
                     {/foreach}
                 </select>
             </div>
+            <input type="hidden" name="rules[{$rule_id}][rule_data][plugin_id]" value="{$plugin_id}" class="c-action-plugin-id"{if !$plugin_id} disabled{/if}>
         </td>
         <td class="valign-top">
             <a href="javascript:void(0);" class="c-delete-rule text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
