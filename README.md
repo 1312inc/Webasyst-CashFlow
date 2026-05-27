@@ -10,7 +10,7 @@ https://www.webasyst.com/store/app/cash/
 	* Web Server
 		* e.g. Apache or IIS
 
-	* PHP 7.4+
+	* PHP 8.2+
 		* spl extension
 		* mbstring
 		* iconv
