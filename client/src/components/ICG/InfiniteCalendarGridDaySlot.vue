@@ -278,6 +278,7 @@ function onClick (e) {
 
   @media screen and (max-width: 760px) {
     min-height: 30px;
+    gap: 2px;
   }
 }
 
