@@ -10,10 +10,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div
-    class="align-left nowrap smaller bold"
-    style="display: flex; flex-direction: column; gap: .2rem;"
-  >
+  <div class="icg-day-slot-item-summary align-left nowrap smaller bold">
     <div
       v-for="cur in props.summary.data"
       :key="cur.currency"
@@ -79,3 +76,15 @@ const props = defineProps({
     </div>
   </div>
 </template>
+
+<style>
+.icg-day-slot-item-summary {
+  display: flex; flex-direction: column; gap: .2rem;
+}
+
+@media screen and (max-width: 1024px) {
+  .icg-day-slot-item-summary {
+    display: none;
+  }
+}
+</style>

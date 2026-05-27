@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import { useMediaQuery } from '@vueuse/core'
 import { locale } from '@/plugins/locale'
 import { emitter } from '@/plugins/eventBus'
 import InfiniteCalendarGridDaySlotItem from './InfiniteCalendarGridDaySlotItem.vue'
@@ -32,8 +33,15 @@ const props = defineProps({
   }
 })
 
-const CHART_CIRCLE_MAX_PX = 60
+const CHART_CIRCLE_MAX_PX_DESKTOP = 60
+const CHART_CIRCLE_MAX_PX_MOBILE = 30
 const CHART_CIRCLE_MIN_PX = 6
+const MOBILE_BREAKPOINT = '(max-width: 760px)'
+
+const isMobileViewport = useMediaQuery(MOBILE_BREAKPOINT)
+const chartCircleMaxPx = computed(() =>
+  isMobileViewport.value ? CHART_CIRCLE_MAX_PX_MOBILE : CHART_CIRCLE_MAX_PX_DESKTOP
+)
 
 const router = useRouter()
 const dayRef = ref()
@@ -63,10 +71,11 @@ const chartCircles = computed(() => {
     const dayValue = Number(dayTotals.value[key]) || 0
     const absVal = Math.abs(dayValue)
     const ratio = maxAbs > 0 ? Math.min(1, absVal / maxAbs) : 0
-    const proportional = maxAbs > 0 ? Math.round(ratio * CHART_CIRCLE_MAX_PX) : 0
+    const maxPx = chartCircleMaxPx.value
+    const proportional = maxAbs > 0 ? Math.round(ratio * maxPx) : 0
     const size =
       absVal > 0 && maxAbs > 0
-        ? Math.min(CHART_CIRCLE_MAX_PX, Math.max(CHART_CIRCLE_MIN_PX, proportional))
+        ? Math.min(maxPx, Math.max(CHART_CIRCLE_MIN_PX, proportional))
         : 0
     return { key, ratio, size, absVal }
   }).filter(c => c.absVal > 0 && c.size > 0)
@@ -266,11 +275,9 @@ function onClick (e) {
   gap: 4px;
   min-height: 32px;
   margin-bottom: 6px;
-}
 
-@media screen and (max-width: 760px) {
-  .icg-charts {
-    display: none;
+  @media screen and (max-width: 760px) {
+    min-height: 30px;
   }
 }
 
