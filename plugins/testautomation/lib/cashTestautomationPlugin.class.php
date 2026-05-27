@@ -5,18 +5,20 @@ class cashTestautomationPlugin extends waPlugin
     private static function getConditions()
     {
         return [
-            'by_user' => ['name' => 'Имя пользователя', 'operators' => ['==', '<>', '??']],
-            'by_inn'  => ['name' => 'ИНН', 'operators' => ['^...$', '==', '!=']],
-            'by_bank' => ['name' => 'Банк', 'operators' => ['#...#', '==', '!=']],
+            'by_user'  => ['name' => 'Плагин: Имя пользователя', 'operators' => ['==', '<>', '??']],
+            'by_inn'   => ['name' => 'Плагин: ИНН', 'operators' => ['^...$', '==', '!=']],
+            'by_bank'  => ['name' => 'Плагин: Банк', 'operators' => ['#...#', '==', '!=']],
+            'is_sunny' => ['name' => 'Плагин: Если светит солнце', 'operators' => ['==', '!='], 'select' => ['Ясно', 'Малооблачно', 'Пасмурно']],
         ];
     }
 
     private static function getActions()
     {
         return  [
-            'repeat_transaction' => 'Создавать рекурентную операцию',
-            'send_sms'           => 'Отправить СМС',
-            'create_reminder'    => 'Создать напоминание',
+            'fetch_commission'   => 'Плагин: Получить и сохранить комиссию маркетплейса',
+            'repeat_transaction' => 'Плагин: Создавать рекурентную операцию',
+            'send_sms'           => 'Плагин: Отправить СМС',
+            'create_reminder'    => 'Плагин: Создать напоминание',
         ];
     }
 
@@ -34,12 +36,19 @@ class cashTestautomationPlugin extends waPlugin
     }
 
     /**
-     * Вызывается для проверки каждого условия, если условие относится к плагину.
+     * Этот метод вызывается для проверки каждого условия, если условие относится к плагину.
      * Выполняется ли, сохраненное в таблице автоматизации, предоставленное плагином условие из getConditions()?
+     * $params[
+     *      'action_id'   -> одно из значений transaction_add/transaction_update/transaction_delete
+     *      'action'      -> один из ключей cashAutomation::getActions(), self::getActions() или другого плагина
+     *      'condition'   -> условие для проверки плагином
+     *      'transaction' -> массив с транзакцией
+     * ]
+     * В ответе, метод возвращает true, если условие по мнению плагина истинное
      *
-     * @return false
+     * @return boolean
      */
-    public function cashIsConditionTrueTestautomationHandler()
+    public function cashIsConditionTrueTestautomationHandler($params = [])
     {
         return true;
     }
