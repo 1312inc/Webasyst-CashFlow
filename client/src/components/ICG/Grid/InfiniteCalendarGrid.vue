@@ -183,7 +183,7 @@ watch(daysInCalendar, () => {
 
         <DropdownWaFloating v-if="props.mode === 'summary'">
           <template #toggler>
-            <button class="button light-gray large nowrap">
+            <button class="button light-gray nowrap">
               <strong>{{ filterButtonLabel }}</strong>
               <span class="icon text-light-gray">
                 <i class="fas fa-chevron-down custom-mt-2 custom-ml-4 fa-xs" />
