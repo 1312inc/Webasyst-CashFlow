@@ -210,6 +210,7 @@ function onCategoryChange (id) {
 
           <template v-if="isPromoMode">
             <h5 class="align-center custom-mt-0 custom-mb-12">
+              <i class="fas fa-star small text-yellow"></i>
               {{ $t('detailsTargetDescTitle') }}
             </h5>
             <p class="small gray align-center custom-mx-auto custom-my-12">
