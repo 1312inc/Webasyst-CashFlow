@@ -280,7 +280,7 @@
   "detailsTargetDeviationLabel": "Отклонение",
   "detailsTargetDeviationPercentLabel": "Отклонение, %",
   "allTransactionsProcessed": "На этом всё!",
-  "chartHeaderImaginaryAccountsHint": "Общий баланс наличных на всех расчетных счетах. Виртуальные счета формируют только прогноз и в истории операций в данном представлении не видны.",
+  "chartHeaderImaginaryAccountsHint": "Общий баланс в валюте и история операций показывают только наличные деньги на расчетных счетах. Прогноз будущего учитывает и расчетные, и виртуальные счета.",
   "calendarGrid": {
     "modeSummary": "Наглядно итого",
     "modeOperations": "Подробно",
