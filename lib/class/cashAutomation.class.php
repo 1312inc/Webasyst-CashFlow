@@ -7,24 +7,24 @@ class cashAutomation
     public static function getConditions()
     {
         return [
-            ''            => ['name' => _w('Configure...'), 'operators' => []],
-            'amount'      => ['name' => _w('Amount'), 'operators' => ['>', '<', '=']],
-            'description' => ['name' => _w('Description'), 'operators' => ['=', '!=', '%...%']],
-            'account_id'  => ['name' => _w('Account'), 'operators' => ['=', '!=']],
-            'category_id' => ['name' => _w('Category'), 'operators' => ['=', '!=']],
-            'date'        => ['name' => _w('Date'), 'operators' => ['<', '>']],
+            ''            => ['name' => _w('Any transaction'), 'operators' => []],
+            'amount'      => ['name' => _w('Amount'), 'operators' => ['>=', '<=', '==']],
+            'description' => ['name' => _w('Description'), 'operators' => ['==', '!=', '%...%']],
+            'account_id'  => ['name' => _w('Account'), 'operators' => ['==', '!=']],
+            'category_id' => ['name' => _w('Category'), 'operators' => ['==', '!=']],
+            'date'        => ['name' => _w('Date'), 'operators' => ['<=', '>=']],
         ];
     }
 
     public static function getActions()
     {
         return [
-            'self_update'        => ['action' => _w('Обновить эту же операцию (с которой произошло действие)')],
-            'self_delete'        => ['action' => _w('Удалить эту операцию')],
-            'create_transaction' => ['action' => _w('Создать новую операцию')],
-            'other_update'       => ['action' => _w('Обновить другую операцию')],
-            'send_mail'          => ['action' => _w('Отправить письмо')],
-            'action_ss'          => ['action' => _w('Выполнить действие с заказом ШС')],
+            'self_update'        => ['action' => _w('Update self...')],
+            'other_update'       => ['action' => _w('Update another...')],
+            'self_delete'        => ['action' => _w('Delete self')],
+            'create_transaction' => ['action' => _w('Create new...')],
+            'send_mail'          => ['action' => _w('Send email...')],
+            'action_ss'          => ['action' => _w('Shop-Script...')],
         ];
     }
 

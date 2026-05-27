@@ -100,7 +100,7 @@
                     {/foreach}
                 </select>
             </div>
-            <h6 class="gray small custom-mt-16 custom-mb-8">[`Conditions (AND)`]</h6>
+            <h6 class="gray small custom-mt-16 custom-mb-8">[`AND conditions`]</h6>
             {if $rule && !empty($rule.conditions)}
                 {rule_condition_editor_form _rule_id=$rule_id rule_conditions=$rule.conditions}
             {else}
@@ -136,14 +136,6 @@
             [`Rules are processed one by one in the given order. The first matching rule from the list applies, and the rest is skipped.`] *}
         </p>
 
-        {$_please_be_patient = true}
-        {if $_please_be_patient}
-            <p class="small gray">
-                <i class="fas fa-clock"></i>
-                Боты появятся в одном из ближайших обновлений. Проводим бета-тесты на нагруженных аккаунтах. Пожалуйста, сохраняйте терпение.
-            </p>
-        {/if}
-
         {if !cashHelper::isPremium()}
             <div class="alert warning small">
                 <i class="fas fa-star small"></i>
@@ -152,18 +144,18 @@
             </div>
         {/if}
 
-        <div class="fields" style="{if $_please_be_patient} display: none;{/if}{if !cashHelper::isPremium()} opacity: 0.5;{/if}">
+        <div class="fields" style="{if !cashHelper::isPremium()} opacity: 0.5;{/if}">
             <div class="fields-group">
                 <a href="#/automation/add/" class="button small rounded light-gray" id="c-automation-add-rule">
-                    <i class="fas fa-plus-circle text-green"></i>
-                    [`Add rule`]
+                    <i class="fas fa-robot text-brown custom-mr-4"></i>
+                    [`Add automation bot`]
                 </a>
                 <table id="c-automation-rules">
                     <thead class="header">
                         <tr>
                             <th class="min-width"></th>
-                            <th>[`Event`]</th>
-                            <th>[`Action`]</th>
+                            <th>[`IF event`]</th>
+                            <th>[`THEN action`]</th>
                             <th class="min-width"></th>
                         </tr>
                     </thead>

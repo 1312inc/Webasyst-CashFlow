@@ -63,7 +63,10 @@
     >
       <div class="flexbox middle space-8">
         <div class="c-icon-with-badge">
-          <span class="icon"><i class="fas fa-robot text-light-gray" /></span>
+          <span class="icon"><i
+            class="fas fa-robot"
+            :class="{'text-brown': isPremium, 'text-light-gray': !isPremium}"
+          /></span>
           <span
             v-if="!isPremium"
             class="c-icon-badge"
