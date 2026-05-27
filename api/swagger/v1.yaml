@@ -1848,6 +1848,9 @@ paths:
                   userId:
                     type: integer
                     description: ID пользователя
+                  isPremium:
+                    type: boolean
+                    description: Флаг наличия премиум-версии
                   isShop:
                     type: boolean
                     description: Флаг наличия установленного приложения Shop-Script
