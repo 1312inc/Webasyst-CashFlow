@@ -236,6 +236,19 @@ body.modal {
 }
 
 @media screen and (max-width: 760px) {
+  .sidebar.mobile-friendly {
+    overflow: scroll;
+    max-height: 100vh;
+  }
+
+  .sidebar.mobile-friendly > .sidebar-body.mobileMenuOpen,
+  .sidebar.mobile-friendly > .sidebar-footer.mobileMenuOpen {
+    display: block;
+    flex: none !important;
+  }
+}
+
+@media screen and (max-width: 760px) {
   /* mobile */
   .alert.c-cashgap-prediction-banner { margin-top: 0; }
 }

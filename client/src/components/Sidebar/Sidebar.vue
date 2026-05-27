@@ -16,14 +16,14 @@
       </div>
     </nav>
     <div
-      ref="sidebarBody"
       class="sidebar-body hide-scrollbar"
+      :class="{ 'mobileMenuOpen': mobileMenuOpen }"
     >
       <SearchField />
 
       <!-- Widgets charts block -->
       <SidebarCurrencyWidgets />
-      
+
       <Bricks />
 
       <!-- Accounts list block -->
@@ -48,7 +48,7 @@
         style="cursor: pointer; margin-top: -9px;"
         @click.prevent="showSandbox = !showSandbox"
       >
-        <span class="small custom-ml-4 custom-mr-12 gray"><i class="fas fa-chevron-down"></i></span>
+        <span class="small custom-ml-4 custom-mr-12 gray"><i class="fas fa-chevron-down" /></span>
         <span class="small wide gray">{{ $t("hiddenAccounts") }}</span>
         <span class="smaller badge light-gray">{{ accountsSandbox.length }}</span>
       </div>
@@ -90,8 +90,8 @@
     </div>
 
     <div
-      ref="sidebarFooter"
       class="sidebar-footer shadowed"
+      :class="{ 'mobileMenuOpen': mobileMenuOpen }"
     >
       <SidebarFooter />
     </div>
@@ -160,37 +160,8 @@ export default {
   watch: {
     $route () {
       this.mobileMenuOpen = false
-    },
-    mobileMenuOpen (val) {
-      val ? this.menuOpen() : this.menuClose()
-    }
-  },
-
-  methods: {
-    menuOpen () {
-      ['Body', 'Footer'].forEach(h => {
-        this.$refs[`sidebar${h}`].style['max-height'] =
-          this.$refs[`sidebar${h}`].scrollHeight + 'px'
-      })
-    },
-    menuClose () {
-      ['Body', 'Footer'].forEach(h => {
-        this.$refs[`sidebar${h}`].style['max-height'] = '0px'
-      })
     }
   }
+
 }
 </script>
-
-<style lang="scss">
-@media (max-width: 760px) {
-  .sidebar-body,
-  .sidebar-footer {
-    display: block !important;
-    overflow: hidden;
-    transition: max-height 0.4s ease-out;
-    height: auto;
-    max-height: 0;
-  }
-}
-</style>
