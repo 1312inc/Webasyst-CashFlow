@@ -21,12 +21,11 @@ class cashAutomation
         return [
             ''                   => ['action' => _w('Change ...')],
             'self_update'        => ['action' => _w('Update self...')] + self::getElements('self_update'),
-            'other_update'       => ['action' => _w('Update another...')],
-            'self_delete'        => ['action' => _w('Delete self')],
-            'create_transaction' => ['action' => _w('Create new...')],
+//            'other_update'       => ['action' => _w('Update another...')],
+//            'self_delete'        => ['action' => _w('Delete self')],
+//            'create_transaction' => ['action' => _w('Create new...')],
             'send_mail'          => ['action' => _w('Send email...')] + self::getElements('send_mail'),
-            'action_ss'          => ['action' => _w('Shop-Script...')] + self::getElements('action_ss'),
-        ];
+        ] + (wa()->appExists('shop') ? ['action_ss' => ['action' => _w('Shop-Script...')] + self::getElements('action_ss')] : []);
     }
 
     /**
@@ -186,10 +185,49 @@ class cashAutomation
         $elements = [];
         switch ($type) {
             case 'send_mail':
+                $elements = [
+                    'from' => [
+                        'type' => 'email',
+                        'label' => _w('Кому')
+                    ],
+                    'text' => [
+                        'type' => 'textarea',
+                        'label' => _w('Текст сообщения')
+                    ]
+                ];
                 break;
             case 'self_update':
+                $elements = [
+                    'transaction_property' => [
+                        'type' => 'select',
+                        'label' => _w('Свойство операции'),
+                        'options' => [
+                            'amount' => _w('Сумма'),
+                            'category_id' => _w('Статья'),
+                            'account_id' => _w('Счёт'),
+                            'description' => _w('Описание'),
+                        ]
+                    ],
+                    'property_value' => [
+                        'type' => 'text',
+                    ]
+                ];
                 break;
             case 'action_ss':
+                wa('shop');
+                $workflow = new shopWorkflow();
+                $actions = $workflow->getAvailableActions();
+                $elements = [
+                    'ss_action' => [
+                        'type' => 'select',
+                        'label' => _w('Действие с заказом'),
+                        'options' => array_combine(array_keys($actions), array_column($actions, 'name'))
+                    ],
+                    'hint_ss' => [
+                        'type' => 'hint',
+                        'text' => _w('действиен с заказом выполнится, только если операция с каким-то заказом связана + для этого заказа действие применимо')
+                    ]
+                ];
                 break;
         }
 
