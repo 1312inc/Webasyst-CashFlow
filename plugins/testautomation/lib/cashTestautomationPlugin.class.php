@@ -5,9 +5,6 @@ class cashTestautomationPlugin extends waPlugin
     private static function getConditions()
     {
         return [
-            'by_user'  => ['name' => 'Плагин: Имя пользователя (пустышка, всегда true)', 'operators' => ['==', '<>', '??']],
-            'by_inn'   => ['name' => 'Плагин: ИНН (пустышка, всегда true)', 'operators' => ['^...$', '==', '!=']],
-            'by_bank'  => ['name' => 'Плагин: Банк (пустышка, всегда true)', 'operators' => ['#...#', '==', '!=']],
             'is_sunny' => ['name' => 'Плагин: Если светит солнце', 'operators' => ['==', '!='], 'select' => ['clear' => 'Ясно', 'cloudy' => 'Малооблачно', 'gloomy' => 'Пасмурно']],
         ];
     }
@@ -15,11 +12,8 @@ class cashTestautomationPlugin extends waPlugin
     private static function getActions()
     {
         return [
-            'repeat_transaction' => ['action' => 'Плагин: Создавать рекурентную операцию (нет действия, пустышка)'],
-            'send_sms'           => ['action' => 'Плагин: Отправить СМС (нет действия, пустышка)'],
-            'create_reminder'    => ['action' => 'Плагин: Создать напоминание (нет действия, пустышка)'],
-            'create_ozon'        => ['action' => 'Плагин: Создать новую операцию с тестовой комиссией Ozon'] + self::getElements('create_ozon'),
-            'create_wb'          => ['action' => 'Плагин: Создать новую операцию с тестовой комиссией Wildberries'] + self::getElements('create_wb'),
+            'create_ozon' => ['action' => 'Плагин: Создать новую операцию с тестовой комиссией Ozon'] + self::getElements('create_ozon'),
+            'create_wb'   => ['action' => 'Плагин: Создать новую операцию с тестовой комиссией Wildberries'] + self::getElements('create_wb'),
         ];
     }
 
