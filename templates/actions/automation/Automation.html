@@ -125,6 +125,25 @@
                     {/foreach}
                 </select>
             </div>
+
+            {foreach $actions as $_action_id => $_action}
+                {if !empty($_action.elements)}
+                    <div class="valign-top c-automaton-action{if $action != $_action_id} hidden{/if}" data-action-id="{$_action_id}">
+                        {foreach $_action.elements as $_el_name => $_element}
+                            {$elem_value = ifempty($rule, 'rule_data', $_el_name, '')}
+                            <span>{ifset($_element, 'label', '')}</span>
+                            {if $_element.type == 'select'}
+                                <select name="rules[{$rule_id}][rule_data][{$_el_name}]"{if $action != $_action_id} disabled{/if}>
+                                    {foreach $_element.options as $_select_key => $_select_value}
+                                    <option value="{$_select_key}"{if $_select_key == $elem_value} selected{/if}>{$_select_value|escape}</option>
+                                    {/foreach}
+                                </select>
+                            {/if}
+                        {/foreach}
+                    </div>
+                {/if}
+            {/foreach}
+
             <input type="hidden" name="rules[{$rule_id}][rule_data][plugin_id]" value="{$plugin_id}" class="c-action-plugin-id"{if !$plugin_id} disabled{/if}>
         </td>
         <td class="valign-top">

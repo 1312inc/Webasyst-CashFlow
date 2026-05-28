@@ -38,11 +38,17 @@ $.extend($.automation = $.automation || {}, {
 
             $table_tbody.on('change', '.c-action-selector', function () {
                 let plugin_id = $(this).find('option:selected').data('plugin-id');
+                let action_id = $(this).val();
                 if (plugin_id) {
                     $(this).closest('td').find('.c-action-plugin-id').prop('disabled', false).val(plugin_id);
                 } else {
                     $(this).closest('td').find('.c-action-plugin-id').prop('disabled', true).val('');
                 }
+                $(this).closest('td').find('.c-automaton-action').addClass('hidden');
+                $(this).closest('td').find('[data-action-id="'+ action_id +'"]').removeClass('hidden');
+
+                $(this).closest('td').find('.c-automaton-action input, .c-automaton-action select, .c-automaton-action textarea').prop('disabled', true);
+                $(this).closest('td').find('[data-action-id="'+ action_id +'"] input, [data-action-id="'+ action_id +'"] select, [data-action-id="'+ action_id +'"] textarea').prop('disabled', false);
             });
         })();
 

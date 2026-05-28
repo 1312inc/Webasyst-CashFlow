@@ -19,12 +19,13 @@ class cashAutomation
     public static function getActions()
     {
         return [
-            'self_update'        => ['action' => _w('Update self...')],
+            ''                   => ['action' => _w('Change ...')],
+            'self_update'        => ['action' => _w('Update self...')] + self::getElements('self_update'),
             'other_update'       => ['action' => _w('Update another...')],
             'self_delete'        => ['action' => _w('Delete self')],
             'create_transaction' => ['action' => _w('Create new...')],
-            'send_mail'          => ['action' => _w('Send email...')],
-            'action_ss'          => ['action' => _w('Shop-Script...')],
+            'send_mail'          => ['action' => _w('Send email...')] + self::getElements('send_mail'),
+            'action_ss'          => ['action' => _w('Shop-Script...')] + self::getElements('action_ss'),
         ];
     }
 
@@ -41,6 +42,10 @@ class cashAutomation
                 return $a == $b;
             } elseif ($op === '!=' || $op === '!==' || $op === '<>') {
                 return $a != $b;
+            } elseif ($op === '>=') {
+                return $a >= $b;
+            } elseif ($op === '<=') {
+                return $a <= $b;
             } elseif ($op === '>') {
                 return $a > $b;
             } elseif ($op === '<') {
@@ -81,11 +86,11 @@ class cashAutomation
                     if ($method = ifset($all_enabled_plugins, $plugin_id, 'handlers', cashEventStorage::WA_BACKEND_AUTOMATION_IS_TRUE, null)) {
                         $_condition['condition_id'] = str_replace($plugin_id.'_', '', $condition_id);
                         $params = [
-                            'action_id'   => $action_id,
+                            'event_id'    => $action_id,
                             'condition'   => $_condition,
                             'action'      => str_replace($plugin_id.'_', '', $rule_action),
                             'transaction' => $response
-                        ];
+                        ] + $rule_data;
                         try {
                             if (wa()->getPlugin($plugin_id)->$method($params)) {
                                 $condition_done++;
@@ -133,10 +138,16 @@ class cashAutomation
                     if ($method = ifset($all_enabled_plugins, $rule_data['plugin_id'], 'handlers', cashEventStorage::WA_BACKEND_AUTOMATION_HANDLE, null)) {
                         try {
                             $params = [
-                                'action_id'   => $action_id,
-                                'action'      => str_replace($rule_data['plugin_id'].'_', '', $rule_action),
-                                'transaction' => $response
-                            ];
+                                'event_id'    => $action_id,
+                                'action'      => str_replace($plugin_id.'_', '', $rule_action),
+                                'transaction' => $response,
+                                'conditions'  => array_map(function ($_condition) {
+                                    if (!empty($_condition['plugin_id'])) {
+                                        $_condition['condition_id'] = str_replace($_condition['plugin_id'].'_', '', $_condition['condition_id']);
+                                    }
+                                    return $_condition;
+                                }, $conditions)
+                            ] + $rule_data;
                             if (wa()->getPlugin($rule_data['plugin_id'])->$method($params)) {
                                 cash()->getLogger()->log(['Действие плагином выполнено', 'RULE' => $rule, 'TRANSACTION' => $response], self::AUTOMATION_LOG);
                             }
@@ -164,5 +175,25 @@ class cashAutomation
         }
 
         return [];
+    }
+
+    /**
+     * @param $type
+     * @return array
+     */
+    private static function getElements($type)
+    {
+        $elements = [];
+        switch ($type) {
+            case 'send_mail':
+                break;
+            case 'self_update':
+                break;
+            case 'action_ss':
+                break;
+        }
+
+
+        return ['elements' => $elements];
     }
 }

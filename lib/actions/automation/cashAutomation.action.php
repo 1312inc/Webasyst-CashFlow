@@ -68,10 +68,7 @@ class cashAutomationAction extends cashViewAction
                 }
                 if (isset($_data['actions'])) {
                     foreach ($_data['actions'] as $_action_id => $_action) {
-                        $plugin_actions["{$plugin_id}_$_action_id"] = [
-                            'action' => $_action,
-                            'plugin_id' => $plugin_id,
-                        ];
+                        $plugin_actions["{$plugin_id}_$_action_id"] = ['plugin_id' => $plugin_id] + $_action;
                     }
                 }
             }
