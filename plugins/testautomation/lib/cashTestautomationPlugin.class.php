@@ -94,19 +94,20 @@ class cashTestautomationPlugin extends waPlugin
             $commission = $c[array_rand($c)];
 
             $desc = sprintf(
-                'Коммисия %s %s%% в размере %s от суммы %s',
+                'Комиссия %s %s%% в размере %s от суммы %s. По состоянию на дату: %s. ',
                 $action === 'create_wb' ? 'Wildberries' : 'Ozon',
                 $commission,
                 ($transaction['amount']/100)*$commission,
-                $transaction['amount']
-            );
+                $transaction['amount'],
+                date(ifset($params, $action.'_date_format', 'Y=m=D'))
+            ).ifset($params, $action.'_description', '');
 
             $new_transaction = (cash()->getEntityFactory(cashTransaction::class))->createNew();
             $new_transaction->setAmount(($transaction['amount']/100)*$commission);
             $new_transaction->setDescription($desc);
             $new_transaction->setDate(date('Y-m-d'));
             $new_transaction->setAccountId(ifset($transaction, 'account_id', null));
-            $new_transaction->setCategoryId(ifset($params, 'expense_category', null));
+            $new_transaction->setCategoryId(ifset($params, $action.'_expense_category', null));
 
             $saver = new cashTransactionSaver();
             $saver->addToPersist($new_transaction);
@@ -180,11 +181,33 @@ class cashTestautomationPlugin extends waPlugin
             case 'create_wb':
                 $categories = cash()->getModel(cashCategory::class)->getByTypeForContact(cashCategory::TYPE_EXPENSE);
                 $elements = [
-                    'expense_category' => [
+                    $type.'_expense_category' => [
                         'type' => 'select',
                         'label' => 'Категория для операции',
                         'options' => ['' => 'Выбрать категорию'] + array_combine(array_column($categories, 'id'), array_column($categories, 'name'))
                     ],
+                    $type.'_hint_example' => [
+                        'type' => 'hint',
+                        'text' => 'Пример дополнительного описания'
+                    ],
+                    $type.'_personal' => [
+                        'type' => 'checkbox',
+                        'value' => 'check_personal',
+                        'text' => 'Согласен на обработку персональных данных'
+                    ],
+                    $type.'_date_format' => [
+                        'type' => 'radio',
+                        'text' => 'Формат даты',
+                        'options' => [
+                            'Y-m-d' => 'YYYY-MM-DD',
+                            'd/m/Y' => 'DD/MM/YYYY',
+                            'm/d Y' => 'MM/DD YYYY',
+                        ]
+                    ],
+                    $type.'_description' => [
+                        'type' => 'textarea',
+                        'label' => 'Дополнение к описанию'
+                    ]
                 ];
                 break;
         }

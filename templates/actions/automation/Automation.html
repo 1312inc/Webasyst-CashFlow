@@ -131,26 +131,41 @@
                     <div class="valign-top c-automaton-action{if $action != $_action_id} hidden{/if}" data-action-id="{$_action_id}">
                         {foreach $_action.elements as $_el_name => $_element}
                             {$elem_value = ifempty($rule, 'rule_data', $_el_name, '')}
-                            <label>
-                                {ifset($_element, 'label', '')}
-                                {if $_element.type == 'select'}
+                            {if $_element.type == 'select'}
+                                <label>
+                                    {ifset($_element, 'label', '')}
                                     <select name="rules[{$rule_id}][rule_data][{$_el_name}]"{if $action != $_action_id} disabled{/if}>
                                         {foreach $_element.options as $_select_key => $_select_value}
                                         <option value="{$_select_key}"{if $_select_key == $elem_value} selected{/if}>{$_select_value|escape}</option>
                                         {/foreach}
                                     </select>
-                                {elseif $_element.type == 'textarea'}
+                                </label>
+                            {elseif $_element.type == 'textarea'}
+                                <label>
+                                    {ifset($_element, 'label', '')|escape}
                                     <textarea name="rules[{$rule_id}][rule_data][{$_el_name}]"{if $action != $_action_id} disabled{/if}>{$elem_value}</textarea>
-                                {elseif $_element.type == 'checkbox'}
-
-                                {elseif $_element.type == 'radio'}
-
-                                {elseif $_element.type == 'hint'}
-                                    <p class="hint">{ifset($_element, 'text', '')}</p>
-                                {else}
-                                    <input type="{$_element.type}" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$elem_value}"{if $action != $_action_id} disabled{/if}>
-                                {/if}
-                            </label>
+                                </label>
+                            {elseif $_element.type == 'checkbox'}
+                                <label>
+                                    <input type="checkbox" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{ifset($_element, 'value', '')}"{if $action != $_action_id} disabled{/if}{if $elem_value} checked{/if} />
+                                    {ifset($_element, 'text', '')|escape}
+                                </label>
+                            {elseif $_element.type == 'radio'}
+                                {ifset($_element, 'text', '')}
+                                {foreach $_element.options as $_radio_value => $_radio_text}
+                                <label>
+                                    <input type="radio" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$_radio_value}"{if $action != $_action_id} disabled{/if}{if $_radio_value == $elem_value} checked{/if} />
+                                    {$_radio_text|escape}
+                                </label>
+                                {/foreach}
+                            {elseif $_element.type == 'hint'}
+                                <p class="hint">{ifset($_element, 'text', '')|escape}</p>
+                            {else}
+                                <label>
+                                    {ifset($_element, 'label', '')|escape}
+                                    <input type="{$_element.type}" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$elem_value}"{if $action != $_action_id} disabled{/if} />
+                                </label>
+                            {/if}
                         {/foreach}
                     </div>
                 {/if}
