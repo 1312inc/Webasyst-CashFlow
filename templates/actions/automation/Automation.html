@@ -160,7 +160,7 @@
                                 {/foreach}
                             {elseif $_element.type == 'hint'}
                                 <p class="hint">{ifset($_element, 'text', '')|escape}</p>
-                            {else}
+                            {elseif !in_array($_element.type, ['submit', 'reset', 'file'])}
                                 <label>
                                     {ifset($_element, 'label', '')|escape}
                                     <input type="{$_element.type}" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$elem_value}"{if $action != $_action_id} disabled{/if} />
