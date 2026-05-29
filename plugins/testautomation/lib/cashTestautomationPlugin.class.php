@@ -76,6 +76,17 @@ class cashTestautomationPlugin extends waPlugin
      * Вызывается для выполнения действия после выполнения всех условий
      * по событию backend_automation_handle для конкретного плагина
      *
+     *  $params[
+     *       event_id     -> одно из значений transaction_add/transaction_update/transaction_delete
+     *       action       -> один из ключей cashAutomation::getActions(), self::getActions() или другого плагина
+     *       conditions   -> массив со всеми условиями правила
+     *       transaction  -> массив с транзакцией
+     *       key1 => val1 -> Сохраненные значения дополнительных полей из self::getElements()
+     *       ...
+     *       keyN => valN
+     *  ]
+     *  В ответе, метод возвращает true, если действие плагином выполнено успешно
+     *
      * @param $params
      * @return bool
      * @throws waException
