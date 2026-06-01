@@ -46,6 +46,11 @@ class cashContactRights
     private $canAccessTransfers = false;
 
     /**
+     * @var bool
+     */
+    private $canManageBudget = false;
+
+    /**
      * @var array
      */
     private $rights;
@@ -103,6 +108,11 @@ class cashContactRights
                 case cashRightConfig::RIGHT_SEE_REPORTS:
                     if ($value === cashRightConfig::YES_ACCESS) {
                         $this->canSeeReport = true;
+                    }
+                    break;
+                case cashRightConfig::RIGHT_MANAGE_BUDGET:
+                    if ($value === cashRightConfig::YES_ACCESS) {
+                        $this->canManageBudget = true;
                     }
                     break;
             }
@@ -249,11 +259,20 @@ class cashContactRights
         return $this->canAccessTransfers;
     }
 
+    /**
+     * @return bool
+     */
+    public function canManageBudget(): bool
+    {
+        return $this->canManageBudget;
+    }
+
     private function setupAdminRights(): void
     {
         $this->isAdmin = true;
         $this->canImport = true;
         $this->canSeeReport = true;
         $this->canAccessTransfers = true;
+        $this->canManageBudget = true;
     }
 }

@@ -1095,6 +1095,9 @@ msgstr "Может импортировать операции"
 msgid "Can access transfers"
 msgstr "Может работать с переводами между счетами"
 
+msgid "Can manage budget"
+msgstr "Может редактировать планы и бюджет"
+
 msgid "Cash"
 msgstr "Деньги"
 

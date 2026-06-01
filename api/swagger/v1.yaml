@@ -1700,6 +1700,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.system.getCurrencies:
     get:

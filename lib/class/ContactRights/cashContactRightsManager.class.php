@@ -43,7 +43,8 @@ class cashContactRightsManager
             $contactRights->getAccountIdsGroupedByAccess(),
             $contactRights->canImport(),
             $contactRights->canSeeReport(),
-            $contactRights->canAccessTransfers()
+            $contactRights->canAccessTransfers(),
+            $contactRights->canManageBudget()
         );
     }
 
@@ -132,6 +133,16 @@ class cashContactRightsManager
     public function canAccessTransfers(waContact $contact): bool
     {
         return $this->getContactAccess($contact)->canAccessTransfers();
+    }
+
+    /**
+     * @param waContact $contact
+     *
+     * @return bool
+     */
+    public function canManageBudget(waContact $contact): bool
+    {
+        return $this->getContactAccess($contact)->canManageBudget();
     }
 
     /**

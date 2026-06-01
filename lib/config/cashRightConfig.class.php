@@ -8,6 +8,7 @@ final class cashRightConfig extends waRightConfig
     public const RIGHT_IMPORT_TRANSACTIONS = 'can_import_transactions';
     public const RIGHT_SEE_REPORTS         = 'can_see_reports';
     public const RIGHT_ACCESS_TRANSFERS    = 'can_access_transfers';
+    public const RIGHT_MANAGE_BUDGET       = 'can_manage_budget';
 
     public const ACCOUNT_FULL_ACCESS                                  = 99;
     public const ACCOUNT_ADD_EDIT_VIEW_TRANSACTIONS_CREATED_BY_OTHERS = 2;
@@ -42,6 +43,7 @@ final class cashRightConfig extends waRightConfig
         $this->addItem(self::RIGHT_SEE_REPORTS, _w('Can see reports'), 'checkbox');
         $this->addItem(self::RIGHT_IMPORT_TRANSACTIONS, _w('Can import transactions'), 'checkbox');
         $this->addItem(self::RIGHT_ACCESS_TRANSFERS, _w('Can access transfers'), 'checkbox');
+        $this->addItem(self::RIGHT_MANAGE_BUDGET, _w('Can manage budget'));
 
         $this->addItem(
             self::RIGHT_CAN_ACCESS_ACCOUNT,

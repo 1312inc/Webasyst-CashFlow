@@ -1080,6 +1080,9 @@ msgstr ""
 msgid "Can access transfers"
 msgstr ""
 
+msgid "Can manage budget"
+msgstr ""
+
 msgid "Cash"
 msgstr ""
 
