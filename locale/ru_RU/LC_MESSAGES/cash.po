@@ -1266,6 +1266,9 @@ msgstr "Счета-песочницы в общем отчете о ДДС не 
 msgid "only checking"
 msgstr "только р/с"
 
+msgid "checking + forecast"
+msgstr "р/c + прогноз"
+
 msgid "Cash POS"
 msgstr "Наличные в кассе"
 
