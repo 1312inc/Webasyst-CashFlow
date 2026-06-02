@@ -33,17 +33,30 @@ class cashAutomationAction extends cashViewAction
         ];
     }
 
-    public static function getConditions()
+    /**
+     * @return array
+     * @throws waException
+     */
+    public static function getConditions(): array
     {
         return cashAutomation::getConditions() + self::getDataPlugin('conditions');
     }
 
-    public static function getActions()
+    /**
+     * @return array
+     * @throws waException
+     */
+    public static function getActions(): array
     {
         return cashAutomation::getActions() + self::getDataPlugin('actions');
     }
 
-    private static function getDataPlugin($name)
+    /**
+     * @param $name
+     * @return array
+     * @throws waException
+     */
+    private static function getDataPlugin($name): array
     {
         static $plugin_conditions;
         static $plugin_actions;
@@ -74,7 +87,7 @@ class cashAutomationAction extends cashViewAction
             }
         }
 
-        return ($name === 'conditions' ? $plugin_conditions : $plugin_actions);
+        return (array) ($name === 'conditions' ? $plugin_conditions : $plugin_actions);
     }
 
     private function getRules()
