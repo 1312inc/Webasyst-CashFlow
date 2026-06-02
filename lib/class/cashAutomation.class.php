@@ -204,7 +204,27 @@ class cashAutomation
                         case 'self_delete':
                         case 'create_transaction':
                         case 'other_update':
+                            break;
                         case 'send_mail':
+                            $email_to = ifset($rule_data, 'email_to', null);
+                            $text = ifset($rule_data, 'text', null);
+                            if ($email_to && $text) {
+                                try {
+                                    $subject = _w('Оповещение о срабатывании');
+                                    $message = new waMailMessage($subject, $text);
+                                    $message->setFrom(wa()->getSetting('email', '', 'webasyst'));
+                                    $message->setTo($email_to);
+                                    $done = $message->send();
+                                    if (!$done) {
+                                        cash()->getLogger()->log(['Письмо не отправлено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                                    }
+                                } catch (Exception $ex) {
+                                    cash()->getLogger()->log(['Ошибка во время отправки письма', 'RULE' => $rule, 'TRANSACTION' => $transaction, 'ERROR' => $ex->getMessage()], self::AUTOMATION_LOG);
+                                }
+                            } else {
+                                cash()->getLogger()->log(['Письмо не отправлено, так как не задан адрес и/или текст', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                            }
+                            break;
                         case 'action_ss':
 //                            cash()->getLogger()->log(['Действие "'.ifset($known_actions, $rule_action, 'action', 'NULL').'" выполнено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
                             break;
@@ -223,7 +243,8 @@ class cashAutomation
 
     /**
      * @param $type
-     * @return array
+     * @return array[]
+     * @throws waException
      */
     private static function getElements($type)
     {
@@ -231,7 +252,7 @@ class cashAutomation
         switch ($type) {
             case 'send_mail':
                 $elements = [
-                    'from' => [
+                    'email_to' => [
                         'type' => 'email',
                         'label' => _w('Кому')
                     ],
