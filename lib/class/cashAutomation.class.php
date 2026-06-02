@@ -30,11 +30,11 @@ class cashAutomation
 
     /**
      * @param $action_object waAPIMethod
-     * @param $response array
+     * @param $transaction array
      * @return array|null
      * @throws waException
      */
-    public static function automationEvent($action_object, $response)
+    public static function automationEvent($action_object, $transaction)
     {
         $compare = function ($a, $b, $op) {
             if ($op === '=' || $op === '==' || $op === '===') {
@@ -67,7 +67,7 @@ class cashAutomation
         $action_id = 'transaction_'.$action;
         $automation_model = new cashAutomationModel();
         $rules = $automation_model->getByField('action_id', $action_id, true);
-        $response = (array) (empty($response[0]) ? $response : reset($response));
+        $transaction = (array) (empty($transaction[0]) ? $transaction : reset($transaction));
         $known_actions = cashAutomationAction::getActions();
         $known_conditions = cashAutomationAction::getConditions();
         $all_enabled_plugins = wa('cash')->getConfig()->getPlugins();
@@ -88,7 +88,7 @@ class cashAutomation
                             'event_id'    => $action_id,
                             'condition'   => $_condition,
                             'action'      => str_replace($plugin_id.'_', '', $rule_action),
-                            'transaction' => $response
+                            'transaction' => $transaction
                         ] + $rule_data;
                         try {
                             if (wa()->getPlugin($plugin_id)->$method($params)) {
@@ -103,28 +103,28 @@ class cashAutomation
                     $operator = ifset($_condition, 'operator', '');
                     switch ($condition_id) {
                         case 'amount':
-                            $amount = ifset($response, 'amount', null);
+                            $amount = ifset($transaction, 'amount', null);
                             if (isset($amount, $value) && $compare(abs($amount), abs($value), $operator)) {
                                 $condition_done++;
                             }
                             break;
                         case 'description':
-                            if ($compare(ifset($response, 'description', null), $value, $operator)) {
+                            if ($compare(ifset($transaction, 'description', null), $value, $operator)) {
                                 $condition_done++;
                             }
                             break;
                         case 'account_id':
-                            if ($compare(ifset($response, 'account_id', null), $value, $operator)) {
+                            if ($compare(ifset($transaction, 'account_id', null), $value, $operator)) {
                                 $condition_done++;
                             }
                             break;
                         case 'category_id':
-                            if ($compare(ifset($response, 'category_id', null), $value, $operator)) {
+                            if ($compare(ifset($transaction, 'category_id', null), $value, $operator)) {
                                 $condition_done++;
                             }
                             break;
                         case 'date':
-                            if ($compare(ifset($response, 'date', null), $value, $operator)) {
+                            if ($compare(ifset($transaction, 'date', null), $value, $operator)) {
                                 $condition_done++;
                             }
                             break;
@@ -139,7 +139,7 @@ class cashAutomation
                             $params = [
                                 'event_id'    => $action_id,
                                 'action'      => str_replace($plugin_id.'_', '', $rule_action),
-                                'transaction' => $response,
+                                'transaction' => $transaction,
                                 'conditions'  => array_map(function ($_condition) {
                                     if (!empty($_condition['plugin_id'])) {
                                         $_condition['condition_id'] = str_replace($_condition['plugin_id'].'_', '', $_condition['condition_id']);
@@ -148,26 +148,71 @@ class cashAutomation
                                 }, $conditions)
                             ] + $rule_data;
                             if (wa()->getPlugin($rule_data['plugin_id'])->$method($params)) {
-                                cash()->getLogger()->log(['Действие плагином выполнено', 'RULE' => $rule, 'TRANSACTION' => $response], self::AUTOMATION_LOG);
+                                cash()->getLogger()->log(['Действие плагином выполнено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
                             }
                         } catch (Exception $ex) {
                             cash()->getLogger()->error($ex->getMessage());
                         }
                     } else {
-                        cash()->getLogger()->log(['Плагин и/или его метод не определены', 'RULE' => $rule, 'TRANSACTION' => $response], self::AUTOMATION_LOG);
+                        cash()->getLogger()->log(['Плагин и/или его метод не определены', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
                     }
                 } else {
+                    $done = false;
                     switch ($rule_action) {
                         case 'self_update':
+                            $transaction_property = ifset($rule_data, 'transaction_property', null);
+                            $property_value = ifset($rule_data, 'property_value', null);
+                            /** @var cashTransaction $transaction_obj */
+                            $transaction_obj = cash()->getEntityRepository(cashTransaction::class)->findById($transaction['id']);
+                            if ($transaction_obj && $transaction_property && $property_value) {
+                                switch ($transaction_property) {
+                                    case 'amount':
+                                        $transaction_obj->setAmount($property_value);
+                                        break;
+                                    case 'description':
+                                        $transaction_obj->setDescription($property_value);
+                                        break;
+                                    case 'account_id':
+                                        if ((cash()->getModel(cashAccount::class))->getById($property_value)) {
+                                            $transaction_obj->setAccountId($property_value);
+                                        } else {
+                                            cash()->getLogger()->log(['Счет для редактируемой операции не найден', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                                        }
+                                        break;
+                                    case 'category_id':
+                                        if ((cash()->getModel(cashCategory::class))->getById($property_value)) {
+                                            $transaction_obj->setCategoryId($property_value);
+                                        } else {
+                                            cash()->getLogger()->log(['Статья для редактируемой операции не найдена', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                                        }
+                                        break;
+                                }
+
+                                try {
+                                    $saver = new cashTransactionSaver();
+                                    $saver->addToPersist($transaction_obj);
+                                    if ($saver->persistTransactions()) {
+                                        $done = true;
+                                    }
+                                } catch (Exception $ex) {
+                                    cash()->getLogger()->log(['Ошибка во время обновления операции', 'RULE' => $rule, 'TRANSACTION' => $transaction, 'ERROR' => $ex->getMessage()], self::AUTOMATION_LOG);
+                                }
+                            } else {
+                                cash()->getLogger()->log(['Редактируемая операция не найдена и/или не задано обновляемое свойство и/или его значение', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                            }
+                            break;
                         case 'self_delete':
                         case 'create_transaction':
                         case 'other_update':
                         case 'send_mail':
                         case 'action_ss':
-                            cash()->getLogger()->log(['Действие "'.ifset($known_actions, $rule_action, 'action', 'NULL').'" выполнено', 'RULE' => $rule, 'TRANSACTION' => $response], self::AUTOMATION_LOG);
+//                            cash()->getLogger()->log(['Действие "'.ifset($known_actions, $rule_action, 'action', 'NULL').'" выполнено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
                             break;
                         default:
-                            cash()->getLogger()->log(['Неизвестное действие', 'RULE' => $rule, 'TRANSACTION' => $response], self::AUTOMATION_LOG);
+                            cash()->getLogger()->log(['Неизвестное действие', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                    }
+                    if ($done) {
+                        cash()->getLogger()->log(['Действие "'.ifset($known_actions, $rule_action, 'action', 'NULL').'" выполнено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
                     }
                 }
             }
