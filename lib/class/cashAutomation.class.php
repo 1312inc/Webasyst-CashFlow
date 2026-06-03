@@ -160,70 +160,14 @@ class cashAutomation
                     $done = false;
                     switch ($rule_action) {
                         case 'self_update':
-                            $transaction_property = ifset($rule_data, 'transaction_property', null);
-                            $property_value = ifset($rule_data, 'property_value', null);
-                            /** @var cashTransaction $transaction_obj */
-                            $transaction_obj = cash()->getEntityRepository(cashTransaction::class)->findById($transaction['id']);
-                            if ($transaction_obj && $transaction_property && $property_value) {
-                                switch ($transaction_property) {
-                                    case 'amount':
-                                        $transaction_obj->setAmount($property_value);
-                                        break;
-                                    case 'description':
-                                        $transaction_obj->setDescription($property_value);
-                                        break;
-                                    case 'account_id':
-                                        if ((cash()->getModel(cashAccount::class))->getById($property_value)) {
-                                            $transaction_obj->setAccountId($property_value);
-                                        } else {
-                                            cash()->getLogger()->log(['Счет для редактируемой операции не найден', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
-                                        }
-                                        break;
-                                    case 'category_id':
-                                        if ((cash()->getModel(cashCategory::class))->getById($property_value)) {
-                                            $transaction_obj->setCategoryId($property_value);
-                                        } else {
-                                            cash()->getLogger()->log(['Статья для редактируемой операции не найдена', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
-                                        }
-                                        break;
-                                }
-
-                                try {
-                                    $saver = new cashTransactionSaver();
-                                    $saver->addToPersist($transaction_obj);
-                                    if ($saver->persistTransactions()) {
-                                        $done = true;
-                                    }
-                                } catch (Exception $ex) {
-                                    cash()->getLogger()->log(['Ошибка во время обновления операции', 'RULE' => $rule, 'TRANSACTION' => $transaction, 'ERROR' => $ex->getMessage()], self::AUTOMATION_LOG);
-                                }
-                            } else {
-                                cash()->getLogger()->log(['Редактируемая операция не найдена и/или не задано обновляемое свойство и/или его значение', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
-                            }
+                            $done = self::selfUpdate($rule, $transaction);
                             break;
                         case 'self_delete':
                         case 'create_transaction':
                         case 'other_update':
                             break;
                         case 'send_mail':
-                            $email_to = ifset($rule_data, 'email_to', null);
-                            $text = ifset($rule_data, 'text', null);
-                            if ($email_to && $text) {
-                                try {
-                                    $subject = _w('Оповещение о срабатывании');
-                                    $message = new waMailMessage($subject, $text);
-                                    $message->setFrom(wa()->getSetting('email', '', 'webasyst'));
-                                    $message->setTo($email_to);
-                                    $done = $message->send();
-                                    if (!$done) {
-                                        cash()->getLogger()->log(['Письмо не отправлено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
-                                    }
-                                } catch (Exception $ex) {
-                                    cash()->getLogger()->log(['Ошибка во время отправки письма', 'RULE' => $rule, 'TRANSACTION' => $transaction, 'ERROR' => $ex->getMessage()], self::AUTOMATION_LOG);
-                                }
-                            } else {
-                                cash()->getLogger()->log(['Письмо не отправлено, так как не задан адрес и/или текст', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
-                            }
+                            $done = self::sendMail($rule, $transaction);
                             break;
                         case 'action_ss':
 //                            cash()->getLogger()->log(['Действие "'.ifset($known_actions, $rule_action, 'action', 'NULL').'" выполнено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
@@ -263,20 +207,35 @@ class cashAutomation
                 ];
                 break;
             case 'self_update':
+                $accounts = cash()->getModel(cashAccount::class)->getAllActiveForContact(wa()->getUser());
+                $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
                 $elements = [
-                    'transaction_property' => [
-                        'type' => 'select',
-                        'label' => _w('Свойство операции'),
-                        'options' => [
-                            'amount' => _w('Сумма'),
-                            'category_id' => _w('Статья'),
-                            'account_id' => _w('Счёт'),
-                            'description' => _w('Описание'),
-                        ]
+                    'header' => [
+                        'type' => 'header',
+                        'text' => _w('Свойства операции')
                     ],
-                    'property_value' => [
+                    'property_date' => [
+                        'type' => 'date',
+                        'label' => _w('Дата операции')
+                    ],
+                    'property_account_id' => [
+                        'type' => 'select',
+                        'label' => _w('Счёт'),
+                        'options' => ['' => 'Выбрать счет'] + array_combine(array_column($accounts, 'id'), array_column($accounts, 'name'))
+                    ],
+                    'property_category_id' => [
+                        'type' => 'select',
+                        'label' => _w('Статья'),
+                        'options' => ['' => 'Выбрать статью'] + array_combine(array_column($categories, 'id'), array_column($categories, 'name'))
+                    ],
+                    'property_amount' => [
                         'type' => 'text',
-                    ]
+                        'label' => _w('Сумма')
+                    ],
+                    'property_description' => [
+                        'type' => 'text',
+                        'label' => _w('Комментарий')
+                    ],
                 ];
                 break;
             case 'action_ss':
@@ -287,11 +246,8 @@ class cashAutomation
                     'ss_action' => [
                         'type' => 'select',
                         'label' => _w('Действие с заказом'),
+                        'hint' => _w('действиен с заказом выполнится, только если операция с каким-то заказом связана + для этого заказа действие применимо'),
                         'options' => array_combine(array_keys($actions), array_column($actions, 'name'))
-                    ],
-                    'hint_ss' => [
-                        'type' => 'hint',
-                        'text' => _w('действиен с заказом выполнится, только если операция с каким-то заказом связана + для этого заказа действие применимо')
                     ]
                 ];
                 break;
@@ -299,5 +255,87 @@ class cashAutomation
 
 
         return ['elements' => $elements];
+    }
+
+    private static function selfUpdate($rule, $transaction)
+    {
+        $result = false;
+
+        /** @var cashTransaction $transaction_obj */
+        $transaction_obj = cash()->getEntityRepository(cashTransaction::class)->findById($transaction['id']);
+        if ($transaction_obj) {
+            $properties = ifset($rule, 'rule_data', []);
+            $transaction_obj->setUpdateDatetime(date('Y-m-d H:i:s'));
+            foreach ($properties as $_property_name => $property_value) {
+                $property = str_replace('property_', '', $_property_name);
+                switch ($property) {
+                    case 'date':
+                        $transaction_obj->setDate($property_value);
+                        $transaction_obj->setDatetime($property_value.' 00:00:00');
+                        break;
+                    case 'amount':
+                        $transaction_obj->setAmount($property_value);
+                        break;
+                    case 'description':
+                        $transaction_obj->setDescription($property_value);
+                        break;
+                    case 'account_id':
+                        if ((cash()->getModel(cashAccount::class))->getById($property_value)) {
+                            $transaction_obj->setAccountId($property_value);
+                        } else {
+                            cash()->getLogger()->log(['Счет для редактируемой операции не найден', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                        }
+                        break;
+                    case 'category_id':
+                        if ((cash()->getModel(cashCategory::class))->getById($property_value)) {
+                            $transaction_obj->setCategoryId($property_value);
+                        } else {
+                            cash()->getLogger()->log(['Статья для редактируемой операции не найдена', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                        }
+                        break;
+                }
+            }
+
+            try {
+                $saver = new cashTransactionSaver();
+                $saver->addToPersist($transaction_obj);
+                if ($saver->persistTransactions()) {
+                    $result = true;
+                }
+            } catch (Exception $ex) {
+                cash()->getLogger()->log(['Ошибка во время обновления операции', 'RULE' => $rule, 'TRANSACTION' => $transaction, 'ERROR' => $ex->getMessage()], self::AUTOMATION_LOG);
+            }
+
+
+        } else {
+            cash()->getLogger()->log(['Редактируемая операция не найдена и/или не задано обновляемое свойство и/или его значение', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+        }
+
+        return $result;
+    }
+
+    private static function sendMail($rule, $transaction)
+    {
+        $result = false;
+        $email_to = ifset($rule, 'rule_data', 'email_to', null);
+        $text = ifset($rule, 'rule_data', 'text', null);
+        if ($email_to && $text) {
+            try {
+                $subject = _w('Оповещение о срабатывании');
+                $message = new waMailMessage($subject, $text);
+                $message->setFrom(wa()->getSetting('email', '', 'webasyst'));
+                $message->setTo($email_to);
+                $result = $message->send();
+                if (!$result) {
+                    cash()->getLogger()->log(['Письмо не отправлено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                }
+            } catch (Exception $ex) {
+                cash()->getLogger()->log(['Ошибка во время отправки письма', 'RULE' => $rule, 'TRANSACTION' => $transaction, 'ERROR' => $ex->getMessage()], self::AUTOMATION_LOG);
+            }
+        } else {
+            cash()->getLogger()->log(['Письмо не отправлено, так как не задан адрес и/или текст', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+        }
+
+        return $result;
     }
 }

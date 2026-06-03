@@ -197,12 +197,9 @@ class cashTestautomationPlugin extends waPlugin
                         'label' => 'Категория для операции',
                         'options' => ['' => 'Выбрать категорию'] + array_combine(array_column($categories, 'id'), array_column($categories, 'name'))
                     ],
-                    $type.'_hint_example' => [
-                        'type' => 'hint',
-                        'text' => 'Пример дополнительного описания'
-                    ],
                     $type.'_personal' => [
                         'type' => 'checkbox',
+                        'label' => 'Согласие',
                         'value' => 'check_personal',
                         'text' => 'Согласен на обработку персональных данных'
                     ],
@@ -217,7 +214,8 @@ class cashTestautomationPlugin extends waPlugin
                     ],
                     $type.'_description' => [
                         'type' => 'textarea',
-                        'label' => 'Дополнение к описанию'
+                        'label' => 'Дополнение к описанию',
+                        'hint' => 'Пример дополнительного описания hint'
                     ]
                 ];
                 break;

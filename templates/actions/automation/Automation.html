@@ -128,44 +128,70 @@
 
             {foreach $actions as $_action_id => $_action}
                 {if !empty($_action.elements)}
-                    <div class="valign-top c-automaton-action{if $action != $_action_id} hidden{/if}" data-action-id="{$_action_id}">
+                    <div class="fields c-automaton-action{if $action != $_action_id} hidden{/if}" data-action-id="{$_action_id}" style="border-radius: 0.75em;border: 0.125rem dashed var(--light-gray);">
                         {foreach $_action.elements as $_el_name => $_element}
+                        <div class="field">
                             {$elem_value = ifempty($rule, 'rule_data', $_el_name, '')}
                             {if $_element.type == 'select'}
-                                <label>
+                                <div class="name">
                                     {ifset($_element, 'label', '')}
+                                </div>
+                                <div class="value">
                                     <select name="rules[{$rule_id}][rule_data][{$_el_name}]"{if $action != $_action_id} disabled{/if}>
                                         {foreach $_element.options as $_select_key => $_select_value}
                                         <option value="{$_select_key}"{if $_select_key == $elem_value} selected{/if}>{$_select_value|escape}</option>
                                         {/foreach}
                                     </select>
-                                </label>
+                                    {if !empty($_element.hint)}
+                                    <p class="hint">{$_element.hint|escape}</p>
+                                    {/if}
+                                </div>
                             {elseif $_element.type == 'textarea'}
-                                <label>
+                                <div class="name">
                                     {ifset($_element, 'label', '')|escape}
+                                </div>
+                                <div class="value">
                                     <textarea name="rules[{$rule_id}][rule_data][{$_el_name}]"{if $action != $_action_id} disabled{/if}>{$elem_value}</textarea>
-                                </label>
+                                    {if !empty($_element.hint)}
+                                    <p class="hint">{$_element.hint|escape}</p>
+                                    {/if}
+                                </div>
                             {elseif $_element.type == 'checkbox'}
-                                <label>
-                                    <input type="checkbox" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{ifset($_element, 'value', '')}"{if $action != $_action_id} disabled{/if}{if $elem_value} checked{/if} />
-                                    {ifset($_element, 'text', '')|escape}
-                                </label>
+                                <div class="name">
+                                    {ifset($_element, 'label', '')}
+                                </div>
+                                <div class="value">
+                                    <label>
+                                        <input type="checkbox" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{ifset($_element, 'value', '')}"{if $action != $_action_id} disabled{/if}{if $elem_value} checked{/if} />
+                                        {ifset($_element, 'text', '')|escape}
+                                    </label>
+                                </div>
                             {elseif $_element.type == 'radio'}
-                                {ifset($_element, 'text', '')}
+                                <div class="name">
+                                    {ifset($_element, 'text', '')}
+                                </div>
                                 {foreach $_element.options as $_radio_value => $_radio_text}
-                                <label>
-                                    <input type="radio" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$_radio_value}"{if $action != $_action_id} disabled{/if}{if $_radio_value == $elem_value} checked{/if} />
-                                    {$_radio_text|escape}
-                                </label>
+                                <div class="value">
+                                    <label>
+                                        <input type="radio" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$_radio_value}"{if $action != $_action_id} disabled{/if}{if $_radio_value == $elem_value} checked{/if} />
+                                        {$_radio_text|escape}
+                                    </label>
+                                </div>
                                 {/foreach}
-                            {elseif $_element.type == 'hint'}
-                                <p class="hint">{ifset($_element, 'text', '')|escape}</p>
+                            {elseif $_element.type == 'header'}
+                                <h6 class="heading">{ifset($_element, 'text', '')|escape}</h6>
                             {elseif !in_array($_element.type, ['submit', 'reset', 'file'])}
-                                <label>
+                                <div class="name">
                                     {ifset($_element, 'label', '')|escape}
+                                </div>
+                                <div class="value">
                                     <input type="{$_element.type}" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$elem_value}"{if $action != $_action_id} disabled{/if} />
-                                </label>
+                                    {if !empty($_element.hint)}
+                                    <p class="hint">{$_element.hint|escape}</p>
+                                    {/if}
+                                </div>
                             {/if}
+                        </div>
                         {/foreach}
                     </div>
                 {/if}
