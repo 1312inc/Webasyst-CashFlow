@@ -10,8 +10,8 @@ class cashAutomation
             ''            => ['name' => _w('Any transaction'), 'operators' => []],
             'amount'      => ['name' => _w('Amount'), 'operators' => ['>=', '<=', '==']],
             'description' => ['name' => _w('Description'), 'operators' => ['==', '!=', '%...%']],
-            'account_id'  => ['name' => _w('Account'), 'operators' => ['==', '!=']],
-            'category_id' => ['name' => _w('Category'), 'operators' => ['==', '!=']],
+            'account_id'  => ['name' => _w('Account'), 'operators' => ['==', '!='], 'select' => self::getAccounts()],
+            'category_id' => ['name' => _w('Category'), 'operators' => ['==', '!='], 'select' => self::getCategories()],
             'date'        => ['name' => _w('Date'), 'operators' => ['<=', '>=']],
         ];
     }
@@ -19,13 +19,35 @@ class cashAutomation
     public static function getActions()
     {
         return [
-            ''                   => ['action' => _w('Change ...')],
+            ''                   => ['action' => _w('Выбрать действие')],
             'self_update'        => ['action' => _w('Update self...')] + self::getElements('self_update'),
 //            'other_update'       => ['action' => _w('Update another...')],
 //            'self_delete'        => ['action' => _w('Delete self')],
-//            'create_transaction' => ['action' => _w('Create new...')],
+            'create_transaction' => ['action' => _w('Create new...')] + self::getElements('create_transaction'),
             'send_mail'          => ['action' => _w('Send email...')] + self::getElements('send_mail'),
         ] + (wa()->appExists('shop') ? ['action_ss' => ['action' => _w('Shop-Script...')] + self::getElements('action_ss')] : []);
+    }
+
+    /**
+     * @return array
+     * @throws waException
+     */
+    private static function getCategories(): array
+    {
+        $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
+
+        return array_combine(array_column($categories, 'id'), array_column($categories, 'name'));
+    }
+
+    /**
+     * @return array
+     * @throws waException
+     */
+    private static function getAccounts(): array
+    {
+        $accounts = cash()->getModel(cashAccount::class)->getAllActiveForContact(wa()->getUser());
+
+        return array_combine(array_column($accounts, 'id'), array_column($accounts, 'name'));
     }
 
     /**
@@ -159,12 +181,14 @@ class cashAutomation
                 } else {
                     $done = false;
                     switch ($rule_action) {
+                        case 'self_delete':
+                        case 'other_update':
+                            break;
+                        case 'create_transaction':
+                            $done = self::selfUpdate($rule, $transaction, true);
+                            break;
                         case 'self_update':
                             $done = self::selfUpdate($rule, $transaction);
-                            break;
-                        case 'self_delete':
-                        case 'create_transaction':
-                        case 'other_update':
                             break;
                         case 'send_mail':
                             $done = self::sendMail($rule, $transaction);
@@ -206,33 +230,32 @@ class cashAutomation
                     ]
                 ];
                 break;
+            case 'create_transaction':
             case 'self_update':
-                $accounts = cash()->getModel(cashAccount::class)->getAllActiveForContact(wa()->getUser());
-                $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
                 $elements = [
-                    'header' => [
+                    $type.'_header' => [
                         'type' => 'header',
                         'text' => _w('Свойства операции')
                     ],
-                    'property_date' => [
+                    $type.'_property_date' => [
                         'type' => 'date',
                         'label' => _w('Дата операции')
                     ],
-                    'property_account_id' => [
+                    $type.'_property_account_id' => [
                         'type' => 'select',
                         'label' => _w('Счёт'),
-                        'options' => ['' => 'Выбрать счет'] + array_combine(array_column($accounts, 'id'), array_column($accounts, 'name'))
+                        'options' => ['' => 'Выбрать счет'] + self::getAccounts()
                     ],
-                    'property_category_id' => [
+                    $type.'_property_category_id' => [
                         'type' => 'select',
                         'label' => _w('Статья'),
-                        'options' => ['' => 'Выбрать статью'] + array_combine(array_column($categories, 'id'), array_column($categories, 'name'))
+                        'options' => ['' => 'Выбрать статью'] + self::getCategories()
                     ],
-                    'property_amount' => [
+                    $type.'_property_amount' => [
                         'type' => 'text',
                         'label' => _w('Сумма')
                     ],
-                    'property_description' => [
+                    $type.'_property_description' => [
                         'type' => 'text',
                         'label' => _w('Комментарий')
                     ],
@@ -253,21 +276,28 @@ class cashAutomation
                 break;
         }
 
-
         return ['elements' => $elements];
     }
 
-    private static function selfUpdate($rule, $transaction)
+    /**
+     * @param $rule
+     * @param $transaction
+     * @param $is_new
+     * @return bool
+     * @throws waException
+     */
+    private static function selfUpdate($rule, $transaction, $is_new = false)
     {
         $result = false;
 
         /** @var cashTransaction $transaction_obj */
-        $transaction_obj = cash()->getEntityRepository(cashTransaction::class)->findById($transaction['id']);
+        $transaction_obj = ($is_new ? (cash()->getEntityFactory(cashTransaction::class))->createNew() : cash()->getEntityRepository(cashTransaction::class)->findById($transaction['id']));
         if ($transaction_obj) {
+            $type = ifset($rule, 'rule_data', 'action', '');
             $properties = ifset($rule, 'rule_data', []);
             $transaction_obj->setUpdateDatetime(date('Y-m-d H:i:s'));
             foreach ($properties as $_property_name => $property_value) {
-                $property = str_replace('property_', '', $_property_name);
+                $property = str_replace($type.'_property_', '', $_property_name);
                 switch ($property) {
                     case 'date':
                         $transaction_obj->setDate($property_value);
@@ -283,14 +313,14 @@ class cashAutomation
                         if ((cash()->getModel(cashAccount::class))->getById($property_value)) {
                             $transaction_obj->setAccountId($property_value);
                         } else {
-                            cash()->getLogger()->log(['Счет для редактируемой операции не найден', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                            cash()->getLogger()->log(['Счет для операции не найден', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
                         }
                         break;
                     case 'category_id':
                         if ((cash()->getModel(cashCategory::class))->getById($property_value)) {
                             $transaction_obj->setCategoryId($property_value);
                         } else {
-                            cash()->getLogger()->log(['Статья для редактируемой операции не найдена', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                            cash()->getLogger()->log(['Статья для операции не найдена', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
                         }
                         break;
                 }
