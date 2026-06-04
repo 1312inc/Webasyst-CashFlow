@@ -40,8 +40,12 @@
                             {/foreach}
                         </select>
                     {else}
+                        {$type = ifset($_condition, 'type', 'text')}
+                        {if in_array($type, ['radio', 'checkbox', 'button', 'image', 'submit', 'reset', 'file'])}
+                            {$type = 'text'}
+                        {/if}
                         <input
-                            type="text"
+                            type="{$type}"
                             class="smaller {$_condition_id|escape}{if $rule_name != $_condition_id} hidden{/if}"
                             name="rules[{$_rule_id}][conditions][{$condition_rand}][value]"
                             value="{ifset($condition, 'value', '')|escape}"{if $rule_name != $_condition_id} disabled{/if}
@@ -180,7 +184,7 @@
                                 {/foreach}
                             {elseif $_element.type == 'header'}
                                 <h6 class="heading">{ifset($_element, 'text', '')|escape}</h6>
-                            {elseif !in_array($_element.type, ['submit', 'reset', 'file'])}
+                            {elseif !in_array($_element.type, ['submit', 'reset', 'file', 'button', 'image'])}
                                 <div class="name">
                                     {ifset($_element, 'label', '')|escape}
                                 </div>

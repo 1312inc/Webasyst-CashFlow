@@ -7,12 +7,14 @@ class cashAutomation
     public static function getConditions()
     {
         return [
-            ''            => ['name' => _w('Any transaction'), 'operators' => []],
-            'amount'      => ['name' => _w('Amount'), 'operators' => ['>=', '<=', '==']],
-            'description' => ['name' => _w('Description'), 'operators' => ['==', '!=', '%...%']],
-            'account_id'  => ['name' => _w('Account'), 'operators' => ['==', '!='], 'select' => self::getAccounts()],
-            'category_id' => ['name' => _w('Category'), 'operators' => ['==', '!='], 'select' => self::getCategories()],
-            'date'        => ['name' => _w('Date'), 'operators' => ['<=', '>=']],
+            ''                => ['name' => _w('Any transaction'), 'operators' => []],
+            'amount'          => ['name' => _w('Amount'), 'operators' => ['>=', '<=', '==']],
+            'description'     => ['name' => _w('Description'), 'operators' => ['==', '!=', '%...%']],
+            'account_id'      => ['name' => _w('Account'), 'operators' => ['==', '!='], 'select' => self::getAccounts()],
+            'category_id'     => ['name' => _w('Category'), 'operators' => ['==', '!='], 'select' => self::getCategories()],
+            'date'            => ['name' => _w('Date'), 'operators' => ['<=', '>='], 'type' => 'date'],
+            'external_id'     => ['name' => _w('External ID'), 'operators' => ['==', '!='], 'type' => 'number'],
+            'external_source' => ['name' => _w('External source'), 'operators' => ['==', '!='], 'select' => self::externalSource()],
         ];
     }
 
@@ -48,6 +50,15 @@ class cashAutomation
         $accounts = cash()->getModel(cashAccount::class)->getAllActiveForContact(wa()->getUser());
 
         return array_combine(array_column($accounts, 'id'), array_column($accounts, 'name'));
+    }
+
+    private static function externalSource(): array
+    {
+        $sources = cash()->getModel(cashTransaction::class)
+            ->select('DISTINCT external_source')
+            ->where('external_source IS NOT NULL')->fetchAll();
+
+        return array_combine(array_column($sources, 'external_source'), array_column($sources, 'external_source'));
     }
 
     /**
@@ -150,7 +161,16 @@ class cashAutomation
                                 $condition_done++;
                             }
                             break;
-                        default:
+                        case 'external_id':
+                            if ($compare(ifset($transaction, 'external_id', null), $value, $operator)) {
+                                $condition_done++;
+                            }
+                            break;
+                        case 'external_source':
+                            if ($compare(ifset($transaction, 'external_source', null), $value, $operator)) {
+                                $condition_done++;
+                            }
+                            break;
                     }
                 }
             }
