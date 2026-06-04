@@ -331,7 +331,7 @@ watch(daysInCalendar, () => {
             @click="emit('changeMode', 'operations')"
           >{{ $t('calendarGrid.modeOperations') }}</span>
         </div>
-        <div class="desktop-only">
+        <div>
           <button @click="activeMonth = activeMonth.add(-1, 'M')">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -343,7 +343,10 @@ watch(daysInCalendar, () => {
               />
             </svg>
           </button>
-          <button @click="activeMonth = dayjs()">
+          <button
+            class="desktop-only"
+            @click="activeMonth = dayjs()"
+          >
             {{ props.todayLabel }}
           </button>
           <button @click="activeMonth = activeMonth.add(1, 'M')">
