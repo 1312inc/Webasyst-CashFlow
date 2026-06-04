@@ -276,8 +276,23 @@ class cashAutomation
                         'label' => _w('Сумма')
                     ],
                     $type.'_property_description' => [
-                        'type' => 'text',
-                        'label' => _w('Комментарий')
+                        'type' => 'textarea',
+                        'label' => _w('Комментарий'),
+                        'hint' => _w('Переменные').'<br>
+                            <b>{ID} - </b>'._w('ИД операции').'<br>
+                            <b>{DATE} - </b>'._w('Дата операции').'<br>
+                            <b>{ACCOUNT_ID} - </b>'._w('Счёт операции').'<br>
+                            <b>{CATEGORY_ID} - </b>'._w('Статья операции').'<br>
+                            <b>{AMOUNT} - </b>'._w('Сумма операции').'<br>
+                            <b>{DESCRIPTION} - </b>'._w('Комментарий к операции').'<br>
+                            <b>{CREATE_CONTACT_ID} - </b>'._w('операции').'<br>
+                            <b>{CREATE_DATETIME} - </b>'._w('Дата создания операции').'<br>
+                            <b>{UPDATE_DATETIME} - </b>'._w('Дата обновления операции').'<br>
+                            <b>{IS_ARCHIVED} - </b>'._w('В архиве ли операции').'<br>
+                            <b>{EXTERNAL_SOURCE} - </b>'._w('Источник операции').'<br>
+                            <b>{EXTERNAL_ID} - </b>'._w('ИД источника операции').'<br>
+                            <b>{CONTRACTOR_CONTACT_ID} - </b>'._w('Плательщик операции').'<br>
+                        '
                     ],
                 ];
                 break;
@@ -326,9 +341,6 @@ class cashAutomation
                     case 'amount':
                         $transaction_obj->setAmount($property_value);
                         break;
-                    case 'description':
-                        $transaction_obj->setDescription($property_value);
-                        break;
                     case 'account_id':
                         if ((cash()->getModel(cashAccount::class))->getById($property_value)) {
                             $transaction_obj->setAccountId($property_value);
@@ -342,6 +354,40 @@ class cashAutomation
                         } else {
                             cash()->getLogger()->log(['Статья для операции не найдена', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
                         }
+                        break;
+                    case 'description':
+                        $patterns = [
+                            '#\{ID}#',
+                            '#\{DATE}#',
+                            '#\{ACCOUNT_ID}#',
+                            '#\{CATEGORY_ID}#',
+                            '#\{AMOUNT}#',
+                            '#\{DESCRIPTION}#',
+                            '#\{CREATE_CONTACT_ID}#',
+                            '#\{CREATE_DATETIME}#',
+                            '#\{UPDATE_DATETIME}#',
+                            '#\{IS_ARCHIVED}#',
+                            '#\{EXTERNAL_SOURCE}#',
+                            '#\{EXTERNAL_ID}#',
+                            '#\{CONTRACTOR_CONTACT_ID}#',
+                        ];
+                        $replacements = [
+                            ifset($transaction, 'id', ''),                     //{ID}
+                            ifset($transaction, 'date', ''),                   //{DATE}
+                            ifset($transaction, 'account_id', ''),             //{ACCOUNT_ID}
+                            ifset($transaction, 'category_id', ''),            //{CATEGORY_ID}
+                            ifset($transaction, 'amount', ''),                 //{AMOUNT}
+                            ifset($transaction, 'description', ''),            //{DESCRIPTION}
+                            ifset($transaction, 'create_contact_id', ''),      //{CREATE_CONTACT_ID}
+                            ifset($transaction, 'create_datetime', ''),        //{CREATE_DATETIME}
+                            ifset($transaction, 'update_datetime', ''),        //{UPDATE_DATETIME}
+                            ifset($transaction, 'is_archived', ''),            //{IS_ARCHIVED}
+                            ifset($transaction, 'external_source', ''),        //{EXTERNAL_SOURCE}
+                            ifset($transaction, 'external_id', ''),            //{EXTERNAL_ID}
+                            ifset($transaction, 'contractor_contact_id', ''),  //{CONTRACTOR_CONTACT_ID}
+                        ];
+                        $property_value = preg_replace($patterns, $replacements, $property_value);
+                        $transaction_obj->setDescription($property_value);
                         break;
                 }
             }

@@ -147,7 +147,7 @@
                                         {/foreach}
                                     </select>
                                     {if !empty($_element.hint)}
-                                    <p class="hint">{$_element.hint|escape}</p>
+                                    <p class="hint">{$_element.hint}</p>
                                     {/if}
                                 </div>
                             {elseif $_element.type == 'textarea'}
@@ -157,7 +157,7 @@
                                 <div class="value">
                                     <textarea name="rules[{$rule_id}][rule_data][{$_el_name}]"{if $action != $_action_id} disabled{/if}>{$elem_value}</textarea>
                                     {if !empty($_element.hint)}
-                                    <p class="hint">{$_element.hint|escape}</p>
+                                    <p class="hint">{$_element.hint}</p>
                                     {/if}
                                 </div>
                             {elseif $_element.type == 'checkbox'}
@@ -191,7 +191,7 @@
                                 <div class="value">
                                     <input type="{$_element.type}" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$elem_value}"{if $action != $_action_id} disabled{/if} />
                                     {if !empty($_element.hint)}
-                                    <p class="hint">{$_element.hint|escape}</p>
+                                    <p class="hint">{$_element.hint}</p>
                                     {/if}
                                 </div>
                             {/if}
