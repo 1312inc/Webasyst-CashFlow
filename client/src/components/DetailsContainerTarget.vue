@@ -210,7 +210,7 @@ function onCategoryChange (id) {
 
           <template v-if="isPromoMode">
             <h5 class="align-center custom-mt-0 custom-mb-12">
-              <i class="fas fa-star small text-yellow"></i>
+              <i class="fas fa-star small text-yellow" />
               {{ $t('detailsTargetDescTitle') }}
             </h5>
             <p class="small gray align-center custom-mx-auto custom-my-12">
@@ -232,7 +232,10 @@ function onCategoryChange (id) {
                 class="gray"
               >{{ $t('detailsTargetPlanNotSet') }}</span>
             </h5>
-            <div class="align-center custom-my-16">
+            <div
+              v-if="$permissions.canManageBudget"
+              class="align-center custom-my-16"
+            >
               <a
                 :href="`${$helper.baseUrl}budget/`"
                 class="button small light-gray"

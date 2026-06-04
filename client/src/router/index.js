@@ -129,7 +129,14 @@ const routes = [
   {
     path: '/budget',
     name: 'Plan',
-    component: () => import('../views/Plan.vue')
+    component: () => import('../views/Plan.vue'),
+    beforeEnter: (to, from, next) => {
+      if (!permissions.canManageBudget) {
+        next({ name: 'NotFound' })
+      } else {
+        next()
+      }
+    }
   },
   {
     path: '/report',
