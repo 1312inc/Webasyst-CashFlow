@@ -30,7 +30,7 @@ onMounted(() => {
     ([entry]) => {
       stickyEl.value.classList.toggle('is-sticky', !entry.isIntersecting)
     },
-    { threshold: 1, rootMargin: '60px 0px 0px 0px' }
+    { threshold: 1, rootMargin: '70px 0px 0px 0px' }
   )
 
   if (dummyEl.value) { observer.observe(dummyEl.value) }
