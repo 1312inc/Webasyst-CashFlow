@@ -132,16 +132,15 @@
 
             {foreach $actions as $_action_id => $_action}
                 {if !empty($_action.elements)}
-                    <div class="fields c-automaton-action{if $action != $_action_id} hidden{/if}" data-action-id="{$_action_id}" style="border-radius: 0.75em;border: 0.125rem dashed var(--light-gray);">
+                    {$divs = []}
+                    {$child = 0}
+                    <div class="fields c-automaton-action{if $action != $_action_id} hidden{/if}" data-action-id="{$_action_id}" data-arid="{$_action_id}_{$rule_id}" style="border-radius: 0.75em;border: 0.125rem dashed var(--light-gray);">
                         {foreach $_action.elements as $_el_name => $_element}
-                        <div class="field">
                             {$elem_value = ifempty($rule, 'rule_data', $_el_name, '')}
                             {if $_element.type == 'select'}
-                                <div class="name">
-                                    {ifset($_element, 'label', '')}
-                                </div>
-                                <div class="value">
-                                    <select name="rules[{$rule_id}][rule_data][{$_el_name}]"{if $action != $_action_id} disabled{/if}>
+                                {$name = ifset($_element, 'label', '')}
+                                {capture assign=field_value}
+                                    <select name="rules[{$rule_id}][rule_data][{$_el_name}]" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}>
                                         {foreach $_element.options as $_select_key => $_select_value}
                                         <option value="{$_select_key}"{if $_select_key == $elem_value} selected{/if}>{$_select_value|escape}</option>
                                         {/foreach}
@@ -149,54 +148,86 @@
                                     {if !empty($_element.hint)}
                                     <p class="hint">{$_element.hint}</p>
                                     {/if}
-                                </div>
+                                {/capture}
                             {elseif $_element.type == 'textarea'}
-                                <div class="name">
-                                    {ifset($_element, 'label', '')|escape}
-                                </div>
-                                <div class="value">
-                                    <textarea name="rules[{$rule_id}][rule_data][{$_el_name}]"{if $action != $_action_id} disabled{/if}>{$elem_value}</textarea>
+                                {$name = ifset($_element, 'label', '')|escape}
+                                {capture assign=field_value}
+                                    <textarea name="rules[{$rule_id}][rule_data][{$_el_name}]" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}>{$elem_value}</textarea>
                                     {if !empty($_element.hint)}
                                     <p class="hint">{$_element.hint}</p>
                                     {/if}
-                                </div>
+                                {/capture}
                             {elseif $_element.type == 'checkbox'}
-                                <div class="name">
-                                    {ifset($_element, 'label', '')}
-                                </div>
-                                <div class="value">
+                                {$name = ifset($_element, 'label', '')}
+                                {capture assign=field_value}
                                     <label>
-                                        <input type="checkbox" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{ifset($_element, 'value', '')}"{if $action != $_action_id} disabled{/if}{if $elem_value} checked{/if} />
+                                        <input type="checkbox" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{ifset($_element, 'value', '')}" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}{if $elem_value} checked{/if} />
                                         {ifset($_element, 'text', '')|escape}
                                     </label>
-                                </div>
+                                {/capture}
                             {elseif $_element.type == 'radio'}
-                                <div class="name">
-                                    {ifset($_element, 'text', '')}
-                                </div>
-                                {foreach $_element.options as $_radio_value => $_radio_text}
-                                <div class="value">
-                                    <label>
-                                        <input type="radio" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$_radio_value}"{if $action != $_action_id} disabled{/if}{if $_radio_value == $elem_value} checked{/if} />
-                                        {$_radio_text|escape}
-                                    </label>
-                                </div>
-                                {/foreach}
+                                {$name = ifset($_element, 'text', '')}
+                                {capture assign=field_value}
+                                    {foreach $_element.options as $_radio_value => $_radio_text}
+                                    <div class="value">
+                                        <label>
+                                            <input type="radio" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$_radio_value}" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}{if $_radio_value == $elem_value} checked{/if} />
+                                            {$_radio_text|escape}
+                                        </label>
+                                    </div>
+                                    {/foreach}
+                                {/capture}
                             {elseif $_element.type == 'header'}
-                                <h6 class="heading">{ifset($_element, 'text', '')|escape}</h6>
+                                {capture assign=heading}
+                                    <h6 class="heading">{ifset($_element, 'text', '')|escape}</h6>
+                                {/capture}
+                                {$divs[] = $heading}
+                                {continue}
+                            {elseif $_element.type == 'script'}
+                                <script>
+                                    $('[data-arid="{$_action_id}_{$rule_id}"]').on('change', function (event) {
+                                        event.preventDefault();
+                                        {$_element.script}
+                                    });
+                                </script>
+                                {continue}
                             {elseif !in_array($_element.type, ['submit', 'reset', 'file', 'button', 'image'])}
-                                <div class="name">
-                                    {ifset($_element, 'label', '')|escape}
-                                </div>
-                                <div class="value">
-                                    <input type="{$_element.type}" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$elem_value}"{if $action != $_action_id} disabled{/if} />
+                                {$name = ifset($_element, 'label', '')|escape}
+                                {capture assign=field_value}
+                                    <input
+                                        type="{$_element.type}"
+                                        name="rules[{$rule_id}][rule_data][{$_el_name}]"
+                                        value="{$elem_value}"{if $action != $_action_id} disabled{/if}
+                                        class="{ifset($_element, 'class', '')}"
+                                        placeholder="{ifset($_element, 'placeholder', '')}"
+                                    />
                                     {if !empty($_element.hint)}
                                     <p class="hint">{$_element.hint}</p>
                                     {/if}
-                                </div>
+                                {/capture}
                             {/if}
-                        </div>
+
+                            {if !empty($_element['child'])}
+                                {$child = $_element['child'] + 1}
+                            {/if}
+                            {if empty($child) || !empty($_element['child'])}
+                                {$divs[] = '<div class="field">'}
+                                {$divs[] = '<div class="name">'}
+                                {$divs[] = $name}
+                                {$divs[] = '</div>'}
+                                {$divs[] = '<div class="value">'}
+                            {/if}
+                            {$divs[] = $field_value}
+                            {if empty($child) || $child == 1}
+                                {$divs[] = '</div>'}
+                                {$divs[] = '</div>'}
+                            {/if}
+
+                            {if !empty($child)}
+                                {$child = $child - 1}
+                            {/if}
                         {/foreach}
+                        {implode('', $divs)}
                     </div>
                 {/if}
             {/foreach}

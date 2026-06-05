@@ -271,9 +271,16 @@ class cashAutomation
                         'label' => _w('Статья'),
                         'options' => ['' => 'Выбрать статью'] + self::getCategories()
                     ],
+                    $type.'_property_amount_type' => [
+                        'type' => 'select',
+                        'label' => _w('Сумма'),
+                        'class' => 'amount_type',
+                        'options' => ['amount_fix' => _w('Fix'), 'amount_percent' => _w('Amount * %')],
+                        'child' => 1,
+                    ],
                     $type.'_property_amount' => [
                         'type' => 'text',
-                        'label' => _w('Сумма')
+                        'class' => 'property_amount'
                     ],
                     $type.'_property_description' => [
                         'type' => 'textarea',
@@ -294,6 +301,10 @@ class cashAutomation
                             <b>{CONTRACTOR_CONTACT_ID} - </b>'._w('Плательщик операции').'<br>
                         '
                     ],
+                    $type.'_script' => [
+                        'type' => 'script',
+                        'script' => self::getScript()
+                    ]
                 ];
                 break;
             case 'action_ss':
@@ -328,17 +339,25 @@ class cashAutomation
         /** @var cashTransaction $transaction_obj */
         $transaction_obj = ($is_new ? (cash()->getEntityFactory(cashTransaction::class))->createNew() : cash()->getEntityRepository(cashTransaction::class)->findById($transaction['id']));
         if ($transaction_obj) {
+            $properties = [];
             $type = ifset($rule, 'rule_data', 'action', '');
-            $properties = ifset($rule, 'rule_data', []);
             $transaction_obj->setUpdateDatetime(date('Y-m-d H:i:s'));
+            foreach (ifset($rule, 'rule_data', []) as $_name => $property_value) {
+                $property = str_replace($type.'_property_', '', $_name);
+                $properties[$property] = $property_value;
+            }
+
             foreach ($properties as $_property_name => $property_value) {
-                $property = str_replace($type.'_property_', '', $_property_name);
-                switch ($property) {
+                switch ($_property_name) {
                     case 'date':
                         $transaction_obj->setDate($property_value);
                         $transaction_obj->setDatetime($property_value.' 00:00:00');
                         break;
                     case 'amount':
+                        if (ifset($properties, 'amount_type', 'amount_fix') === 'amount_percent') {
+                            $property_value = min((float) $property_value, 100) / 100;
+                            $property_value = $transaction['amount'] * abs($property_value);
+                        }
                         $transaction_obj->setAmount($property_value);
                         break;
                     case 'account_id':
@@ -433,5 +452,19 @@ class cashAutomation
         }
 
         return $result;
+    }
+
+    private static function getScript()
+    {
+        return <<<SCRIPT
+
+let amount_type = $(this).find('.amount_type').val();
+if (amount_type == 'amount_fix') {
+    $(this).find('.span-desc').remove();
+} else if (amount_type == 'amount_percent') {
+    $(this).find('.property_amount').before('<span class="span-desc">Amount *</span>');
+    $(this).find('.property_amount').after('<span class="span-desc">%</span>');
+}
+SCRIPT;
     }
 }
