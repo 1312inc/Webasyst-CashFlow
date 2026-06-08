@@ -289,7 +289,7 @@ export default {
       })
     },
     isPremium () {
-      return window.appState.isPremium
+      return this.$appState.isPremium
     }
 
   },

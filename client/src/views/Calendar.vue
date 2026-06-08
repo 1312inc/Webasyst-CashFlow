@@ -33,6 +33,7 @@ import { locale } from '@/plugins/locale'
 import { useTitle } from '@vueuse/core'
 import { i18n } from '../plugins/locale'
 import store from '@/store'
+import { appStateService } from '@/services/appState'
 
 const mode = ref('summary')
 const dataDays = ref([])
@@ -42,7 +43,7 @@ let startDate
 let endDate
 let controller
 
-useTitle(`${i18n.t('calendar')} – ${window.appState?.accountName || ''}`)
+useTitle(appStateService.formatTitle(i18n.t('calendar')))
 
 function onChartFilterChange (filter) {
   chartFilterParam.value = filter

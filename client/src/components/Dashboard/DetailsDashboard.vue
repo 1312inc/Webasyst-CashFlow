@@ -55,7 +55,7 @@
               {{ $t("setDates") }}
             </button>
             <ExportButton
-              v-if="!appState.webView"
+              v-if="$appState.isDesktop"
             />
           </div>
         </div>
@@ -83,7 +83,6 @@ import Modal from '@/components/Modal'
 import DetailsDashboardItem from './DetailsDashboardItem.vue'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 import ExportButton from '@/components/Buttons/ExportButton'
-import { appState } from '@/utils/appState'
 import { getIntervalFromLabel } from '@/utils/getDateFromLocalStorage'
 import DetailsDashboardEmpty from '../ContentBlocks/DetailsDashboardEmpty.vue'
 import DropdownWaFloating from '../Inputs/DropdownWaFloating.vue'
@@ -113,7 +112,6 @@ export default {
     return {
       data: [],
       openModal: false,
-      appState,
       isFetching: false,
       rangeLabelFrom: '',
       rangeLabelTo: '',

@@ -2,12 +2,13 @@ import router from '../../router'
 import api from '@/plugins/api'
 import { moment } from '@/plugins/numeralMoment'
 import { i18n } from '@/plugins/locale'
+import { appStateService } from '@/services/appState'
 
 export default {
   namespaced: true,
 
   state: () => ({
-    accounts: window.appState?.accounts || []
+    accounts: appStateService.accounts
   }),
 
   getters: {

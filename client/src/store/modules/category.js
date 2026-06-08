@@ -1,11 +1,12 @@
 import router from '../../router'
 import api from '@/plugins/api'
+import { appStateService } from '@/services/appState'
 
 export default {
   namespaced: true,
 
   state: () => ({
-    categories: window.appState?.categories || []
+    categories: appStateService.categories
   }),
 
   getters: {

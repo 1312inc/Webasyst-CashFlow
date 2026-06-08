@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import AppStatePlugin from '@/services/appState'
 import App from './App.vue'
 import Sidebar from './components/Sidebar/Sidebar'
 import router from './router'
@@ -24,6 +25,7 @@ import * as Sentry from '@sentry/vue'
 Vue.config.productionTip = false
 Vue.prototype.$isSpaMobileMode = false
 
+Vue.use(AppStatePlugin)
 Vue.use(permissions)
 Vue.use(Numeral)
 Vue.use(Errors)

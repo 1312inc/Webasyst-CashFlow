@@ -266,7 +266,7 @@ import {
   useFloating, flip,
   shift
 } from '@floating-ui/vue'
-import { appState } from '@/utils/appState'
+import { appStateService } from '@/services/appState'
 
 const reference = ref(null)
 const floating = ref(null)
@@ -423,7 +423,7 @@ export default {
         this.$emit('toggleCollapseHeader')
       } else if (this.isRepeatingGroup) {
         e.preventDefault()
-      } else if (appState.webView && this.$store.state.multiSelectMode) {
+      } else if (appStateService.webView && this.$store.state.multiSelectMode) {
         this.checkboxSelect()
       } else {
         this.openModal()

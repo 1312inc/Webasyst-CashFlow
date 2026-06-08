@@ -42,6 +42,7 @@ import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import TransactionControls from '../components/TransactionControls.vue'
+import { appStateService } from '@/services/appState'
 
 export default {
   components: {
@@ -64,7 +65,7 @@ export default {
   metaInfo () {
     return {
       title: this.$t('transactions'),
-      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+      titleTemplate: appStateService.titleTemplate
     }
   }
 }

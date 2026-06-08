@@ -11,6 +11,7 @@ import { helpers } from '@/plugins/helpers'
 import { emitter } from '@/plugins/eventBus'
 import DropdownWaFloating from './Inputs/DropdownWaFloating.vue'
 import { i18n } from '@/plugins/locale'
+import { appStateService } from '@/services/appState'
 
 const route = useRoute()
 
@@ -36,7 +37,7 @@ if (cashTargetBlockHidden.value.value && cashTargetBlockHidden.value.expiredAt) 
   }
 }
 
-const isPromoMode = !window.appState.isPremium // TODO: add check for premium
+const isPromoMode = !appStateService.isPremium // TODO: add check for premium
 const isFetching = ref(false)
 const isEmptyMode = ref(false)
 const chartData = shallowRef(null)

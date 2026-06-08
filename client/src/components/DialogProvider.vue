@@ -1,13 +1,16 @@
 <script setup>
 import { useStorage } from '@vueuse/core'
 import Modal from '@/components/Modal'
-import { appState } from '@/utils/appState'
+import { appStateService } from '@/services/appState'
 
-const showSsInstalledInfo = useStorage('cash_show_ss_installed_info', appState.shopscriptInstalled && appState.emptyFlow)
+const showSsInstalledInfo = useStorage(
+  'cash_show_ss_installed_info',
+  appStateService.shopscriptInstalled && appStateService.emptyFlow
+)
 
 function navigateShopSettings () {
   showSsInstalledInfo.value = false
-  window.location.href = `${appState.baseUrl}shop/settings/`
+  window.location.href = `${appStateService.baseUrl}shop/settings/`
 }
 
 </script>
@@ -25,7 +28,7 @@ function navigateShopSettings () {
               style="justify-content: center;"
             >
               <img
-                :src="`${appState.baseStaticUrl}img/shop.svg`"
+                :src="`${appStateService.baseStaticUrl}img/shop.svg`"
                 alt=""
                 style="height: 72px; width: 72px; object-fit: contain;"
               >
@@ -33,7 +36,7 @@ function navigateShopSettings () {
                 <i class="fas fa-arrow-right" />
               </div>
               <img
-                :src="`${appState.baseStaticUrl}img/cash.png`"
+                :src="`${appStateService.baseStaticUrl}img/cash.png`"
                 alt=""
                 style="height: 72px; width: 72px; object-fit: contain;"
               >

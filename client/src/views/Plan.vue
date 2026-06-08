@@ -8,7 +8,7 @@ import api from '@/plugins/api'
 import { locale, i18n } from '@/plugins/locale'
 import store from '@/store'
 import Modal from '@/components/Modal'
-import { appState } from '@/utils/appState'
+import { appState, appStateService } from '@/services/appState'
 import { useRoute, useRouter } from 'vue-router/composables'
 import { moment } from '@/plugins/numeralMoment'
 
@@ -564,7 +564,7 @@ async function updatePlanAmount (categoryId, amount) {
 
 function onClickGoToPremium () {
   openPremiumModal.value = false
-  window.location.href = `${appState.baseUrl}upgrade/`
+  window.location.href = `${appStateService.baseUrl}upgrade/`
 }
 </script>
 

@@ -85,7 +85,9 @@ import BrickCalendar from './BrickCalendar'
 import BrickTransactions from './BrickTransactions'
 import { computed } from 'vue'
 
-const isPremium = computed(() => window.appState?.isPremium)
+import { appStateService } from '@/services/appState'
+
+const isPremium = computed(() => appStateService.isPremium)
 
 </script>
 

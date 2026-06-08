@@ -1,4 +1,5 @@
 import { i18n } from '@/plugins/locale'
+import { appStateService } from '@/services/appState'
 import DropdownWa from './DropdownWa.vue'
 
 export default {
@@ -46,7 +47,7 @@ const Template = (args, { argTypes }) => {
 export const DropdownCats = Template.bind({})
 DropdownCats.args = {
   value: 1,
-  items: window.appState.categories,
+  items: appStateService.categories,
   valuePropName: 'id',
   label: 'Статья',
   rowModificator: obj => {
@@ -61,7 +62,7 @@ DropdownCats.args = {
 export const DropdownAccounts = Template.bind({})
 DropdownAccounts.args = {
   value: null,
-  items: window.appState.accounts,
+  items: appStateService.accounts,
   valuePropName: 'id',
   label: 'На счет',
   rowModificator: obj => {

@@ -1,5 +1,1 @@
-const appState = window.appState
-
-export {
-  appState
-}
+export { appState, appStateService } from '@/services/appState'

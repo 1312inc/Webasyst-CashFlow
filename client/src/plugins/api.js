@@ -2,8 +2,10 @@ import axios from 'axios'
 import store from '../store'
 import { i18n } from './locale'
 
-const baseApiUrl = window.appState?.baseApiUrl || ''
-const accessToken = window.appState?.token || ''
+import { appStateService } from '@/services/appState'
+
+const baseApiUrl = appStateService.baseApiUrl
+const accessToken = appStateService.token
 
 const api = axios.create({
   baseURL: baseApiUrl,
