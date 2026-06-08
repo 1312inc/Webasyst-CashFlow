@@ -37,7 +37,7 @@ if (cashTargetBlockHidden.value.value && cashTargetBlockHidden.value.expiredAt) 
   }
 }
 
-const isPromoMode = !appStateService.isPremium // TODO: add check for premium
+const isPromoMode = !appStateService.isPremium
 const isFetching = ref(false)
 const isEmptyMode = ref(false)
 const chartData = shallowRef(null)
