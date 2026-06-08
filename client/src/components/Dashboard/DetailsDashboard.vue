@@ -25,7 +25,7 @@
                   {{ dates }}
                 </div>
                 <div v-else>
-                  {{ $t(currentPeriod === 'from' ? rangeLabelFrom : rangeLabelTo) }}
+                  {{ rangeDisplayLabel }}
                 </div>
               </div>
 
@@ -35,12 +35,27 @@
                     <span class="icon"><i class="fas fa-ellipsis-v" /></span>
                   </button>
                 </template>
-                <ul class="menu">
+                <ul class="menu custom-mb-0">
                   <li>
                     <a @click.prevent="setPeriod('from')"><span>{{ $t(rangeLabelFrom) }}</span></a>
                   </li>
                   <li>
                     <a @click.prevent="setPeriod('to')"><span>{{ $t(rangeLabelTo) }}</span></a>
+                  </li>
+                </ul>
+                <hr class="custom-m-0">
+                <ul class="menu custom-mt-0">
+                  <li>
+                    <a @click.prevent="setLocalBreakdownPeriod(7)"><span>{{ $t("nextDays", { count: 7 }) }}</span></a>
+                  </li>
+                  <li>
+                    <a @click.prevent="setLocalBreakdownPeriod(30)"><span>{{ $t("nextDays", { count: 30 }) }}</span></a>
+                  </li>
+                  <li>
+                    <a @click.prevent="setLocalBreakdownPeriod(90)"><span>{{ $t("nextDays", { count: 90 }) }}</span></a>
+                  </li>
+                  <li>
+                    <a @click.prevent="setLocalBreakdownPeriod(180)"><span>{{ $t("nextDays", { count: 180 }) }}</span></a>
                   </li>
                 </ul>
               </DropdownWaFloating>
@@ -84,6 +99,11 @@ import DetailsDashboardItem from './DetailsDashboardItem.vue'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 import ExportButton from '@/components/Buttons/ExportButton'
 import { getIntervalFromLabel } from '@/utils/getDateFromLocalStorage'
+import {
+  clearLocalBreakdownToDays,
+  getLocalBreakdownToDays,
+  setLocalBreakdownToDays
+} from '@/utils/breakdownLocalPeriod'
 import DetailsDashboardEmpty from '../ContentBlocks/DetailsDashboardEmpty.vue'
 import DropdownWaFloating from '../Inputs/DropdownWaFloating.vue'
 
@@ -115,7 +135,9 @@ export default {
       isFetching: false,
       rangeLabelFrom: '',
       rangeLabelTo: '',
-      dashboardCurrentPeriod: readCurrentPeriodFromStorage()
+      dashboardCurrentPeriod: readCurrentPeriodFromStorage(),
+      suppressLocalBreakdownClear: false,
+      localBreakdownToDays: getLocalBreakdownToDays()
     }
   },
 
@@ -157,13 +179,35 @@ export default {
       }
     },
 
-    breakdownWatchKey () {
+    breakdownIntervalKey () {
       const { from, to } = this.detailsInterval
-      return `${from}|${to}|${this.queryParams.filter}`
+      return `${from}|${to}`
+    },
+
+    breakdownWatchKey () {
+      return `${this.breakdownIntervalKey}|${this.queryParams.filter}`
+    },
+
+    rangeDisplayLabel () {
+      if (this.currentPeriod === 'from') {
+        return this.$t(this.rangeLabelFrom)
+      }
+      if (this.localBreakdownToDays != null && this.isDefaultRange) {
+        return this.$t('nextDays', { count: this.localBreakdownToDays })
+      }
+      return this.$t(this.rangeLabelTo)
     }
   },
 
   watch: {
+    breakdownIntervalKey (newKey, oldKey) {
+      if (this.suppressLocalBreakdownClear) return
+      if (oldKey != null && newKey !== oldKey) {
+        clearLocalBreakdownToDays()
+        this.localBreakdownToDays = null
+      }
+    },
+
     breakdownWatchKey: {
       handler () {
         this.fetchBreakDown()
@@ -176,12 +220,24 @@ export default {
     fetchBreakDown () {
       this.rangeLabelFrom = getIntervalFromLabel('from')
       this.rangeLabelTo = getIntervalFromLabel('to')
+      this.localBreakdownToDays = getLocalBreakdownToDays()
 
-      const today = new Date()
-      const currentDate = today.toISOString().split('T')[0]
+      const currentDate = this.$moment().format('YYYY-MM-DD')
+      const localToDays = this.localBreakdownToDays
 
-      const from = !this.isDefaultRange ? this.detailsInterval.from : this.currentPeriod === 'from' ? this.detailsInterval.from : currentDate
-      const to = !this.isDefaultRange ? this.detailsInterval.to : this.currentPeriod === 'to' ? this.detailsInterval.to : currentDate
+      let from
+      let to
+
+      if (!this.isDefaultRange) {
+        from = this.detailsInterval.from
+        to = this.detailsInterval.to
+      } else if (localToDays != null) {
+        from = currentDate
+        to = this.$moment().add(localToDays, 'days').format('YYYY-MM-DD')
+      } else {
+        from = this.currentPeriod === 'from' ? this.detailsInterval.from : currentDate
+        to = this.currentPeriod === 'to' ? this.detailsInterval.to : currentDate
+      }
 
       this.isFetching = true
       api
@@ -201,12 +257,29 @@ export default {
     },
 
     setPeriod (period) {
+      clearLocalBreakdownToDays()
+      this.localBreakdownToDays = null
       this.currentPeriod = period
       if (!this.isDefaultRange) {
         this.$store.dispatch('transaction/resetDetailsInterval')
       } else {
         this.fetchBreakDown()
       }
+    },
+
+    setLocalBreakdownPeriod (days) {
+      setLocalBreakdownToDays(days)
+      this.localBreakdownToDays = days
+      this.currentPeriod = 'to'
+      if (!this.isDefaultRange) {
+        this.suppressLocalBreakdownClear = true
+        this.$store.dispatch('transaction/resetDetailsInterval')
+        this.$nextTick(() => {
+          this.suppressLocalBreakdownClear = false
+        })
+        return
+      }
+      this.fetchBreakDown()
     }
 
   }
