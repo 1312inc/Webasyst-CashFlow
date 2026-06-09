@@ -27,8 +27,8 @@
             {foreach $conditions as $_condition_id => $_condition}
                 {if $_condition.operators}
                     <select class="{$_condition_id|escape}{if $rule_name != $_condition_id} hidden{/if}" name="rules[{$_rule_id}][conditions][{$condition_rand}][operator]"{if $rule_name != $_condition_id} disabled{/if}>
-                        {foreach $_condition.operators as $_operator}
-                        <option value="{$_operator}"{if $_operator == $compare_op} selected{/if}>{$_operator|escape}</option>
+                        {foreach $_condition.operators as $_key => $_operator}
+                        <option value="{$_key}"{if $_key == $compare_op} selected{/if}>{$_operator|escape}</option>
                         {/foreach}
                     </select>
                 {/if}

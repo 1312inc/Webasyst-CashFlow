@@ -5,7 +5,7 @@ class cashTestautomationPlugin extends waPlugin
     private static function getConditions()
     {
         return [
-            'is_sunny' => ['name' => 'Плагин: Если светит солнце', 'operators' => ['==', '!='], 'select' => ['clear' => 'Ясно', 'cloudy' => 'Малооблачно', 'gloomy' => 'Пасмурно']],
+            'is_sunny' => ['name' => 'Плагин: Если светит солнце', 'operators' => ['==' => '==', '!=' => '!='], 'select' => ['clear' => 'Ясно', 'cloudy' => 'Малооблачно', 'gloomy' => 'Пасмурно']],
         ];
     }
 
