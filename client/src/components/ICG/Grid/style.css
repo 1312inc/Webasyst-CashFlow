@@ -7,7 +7,7 @@
     display: flex;
     flex-direction: column;
   }
-  
+
   .icg-header {
     flex: none;
     display: flex;
@@ -17,37 +17,38 @@
     justify-content: space-between;
     padding: 1rem 0;
   }
-  
+
   @media screen and (max-width: 760px) {
     .icg-header {
       align-items: center;
+      justify-content: center;
     }
   }
-  
+
   .icg-month {
     text-transform: capitalize;
   }
-  
+
   .icg-controls {
     display: flex;
   }
-  
+
   .icg-controls button {
     background-color: var(--background-color-btn-light-gray);
     color: var(--text-color-input);
     box-shadow: none;
   }
-  
+
   .icg-controls button svg {
     fill: var(--text-color-input);
   }
-  
+
   .icg-weekdays {
     flex: none;
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
   }
-  
+
   .icg-weekdays__cell {
     text-align: right;
     padding-right: 1rem;
@@ -65,23 +66,23 @@
       padding-bottom: .5rem;
     }
   }
-  
+
   .icg-weekdays__cell,
   .icg-months-grid-day {
     border-color: var(--border-color-soft);
   }
-  
+
   .icg-weekdays__cell--weekend {
     color: var(--text-color-hint);
   }
-  
+
   .icg-month {
     font-size: 2rem;
     color: var(--text-color-strongest);
     line-height: 1.2em;
     font-weight: bold;
   }
-  
+
   @media screen and (max-width: 760px) {
     .icg-month {
       font-size: 1.3rem;
@@ -90,12 +91,12 @@
       text-overflow: ellipsis;
     }
   }
-  
+
   .icg-wrapper {
     overflow: hidden;
     height: 100%;
   }
-  
+
   .icg-months-grid {
     transition-duration: 500ms;
     transition-delay: 0ms;
@@ -109,7 +110,7 @@
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
   }
-  
+
   .icg-months-grid-day {
     position: relative;
     overflow: hidden;
@@ -122,23 +123,23 @@
     color: var(--text-color-hint);
     background-color: rgba(0, 20, 80, 0.01);
   }
-  
+
   .icg-months-grid-day:nth-child(7n) {
     border-right: 0;
   }
-  
+
   .icg-months-grid-day--active-month {
     background-color: var(--background-color-blank);
   }
-  
+
   .icg-months-grid-day--weekend {
     background-color: rgba(0, 20, 80, 0.05) !important;
   }
-  
+
   .icg-months-grid-day--weekend.icg-months-grid-day--active-month {
     background-color: rgba(0, 20, 80, 0.01) !important;
   }
 
   .icg-months-grid-day:has(.icg-row--overdue) {
     background-color: var(--highlighted-overdue)  !important;
-  }  
+  }
