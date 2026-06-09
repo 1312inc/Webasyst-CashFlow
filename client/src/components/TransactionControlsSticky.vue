@@ -2,8 +2,7 @@
   <Fragment>
     <div
       ref="stickyEl"
-      class="c-transaction-controls-sticky"
-      :class="{'desktop-and-tablet-only': $helper.isDesktopEnv}"
+      class="c-transaction-controls-sticky desktop-and-tablet-only"
     >
       <BlankBox>
         <div class="custom-px-16">

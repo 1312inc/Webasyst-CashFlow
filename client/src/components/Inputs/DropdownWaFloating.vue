@@ -18,7 +18,9 @@ onMounted(async () => {
 
   tippyInstance.value = tippy(reference.value, {
     content: floating.value,
+    trigger: 'click mouseenter',
     interactive: true,
+    hideOnClick: true,
     placement: 'bottom-start',
     appendTo: () => document.body,
     theme: 'transparent',
