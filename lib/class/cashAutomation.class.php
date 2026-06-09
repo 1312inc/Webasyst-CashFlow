@@ -9,7 +9,7 @@ class cashAutomation
         return [
             ''                => ['name' => _w('Any transaction'), 'operators' => []],
             'amount'          => ['name' => _w('Amount'), 'operators' => ['>=' => '>=', '<=' => '<=', '==' => '==']],
-            'description'     => ['name' => _w('Description'), 'operators' => ['==' => '==', '!=' => '!=', '%...%' => '%...%', 'compare_date' => _w('Извлекать и сравнивать дату')] + (wa()->appExists('shop') ? ['ss_order' => _w('Извлекать и сравнивать № заказа ШС')] : [])],
+            'description'     => ['name' => _w('Description'), 'operators' => ['%%' => _w('содержит'), '!%%' => _w('не содержит')], 'select' => ['compare_date' => _w('дату')] + (wa()->appExists('shop') ? ['ss_order' => _w('номер заказа ШС')] : [])],
             'account_id'      => ['name' => _w('Account'), 'operators' => ['==' => '==', '!=' => '!='], 'select' => self::getAccounts()],
             'category_id'     => ['name' => _w('Category'), 'operators' => ['==' => '==', '!=' => '!='], 'select' => self::getCategories()],
             'date'            => ['name' => _w('Date'), 'operators' => ['<=' => '<=', '>=' => '>='], 'type' => 'date'],
@@ -62,6 +62,32 @@ class cashAutomation
     }
 
     /**
+     * @param $a
+     * @param $b
+     * @param $op
+     * @return bool
+     */
+    private static function compare($a, $b, $op): bool
+    {
+        if ($op === '=' || $op === '==' || $op === '===') {
+            return $a == $b;
+        } elseif ($op === '!=' || $op === '!==' || $op === '<>') {
+            return $a != $b;
+        } elseif ($op === '>=') {
+            return $a >= $b;
+        } elseif ($op === '<=') {
+            return $a <= $b;
+        } elseif ($op === '>') {
+            return $a > $b;
+        } elseif ($op === '<') {
+            return $a < $b;
+        } elseif ($op === '%...%') {
+            return stripos($a, $b) !== false;
+        }
+        return false;
+    }
+
+    /**
      * @param $action_object waAPIMethod
      * @param $transaction array
      * @return array|null
@@ -69,24 +95,6 @@ class cashAutomation
      */
     public static function automationEvent($action_object, $transaction)
     {
-        $compare = function ($a, $b, $op) {
-            if ($op === '=' || $op === '==' || $op === '===') {
-                return $a == $b;
-            } elseif ($op === '!=' || $op === '!==' || $op === '<>') {
-                return $a != $b;
-            } elseif ($op === '>=') {
-                return $a >= $b;
-            } elseif ($op === '<=') {
-                return $a <= $b;
-            } elseif ($op === '>') {
-                return $a > $b;
-            } elseif ($op === '<') {
-                return $a < $b;
-            } elseif ($op === '%...%') {
-                return stripos($a, $b) !== false;
-            }
-            return false;
-        };
         $map = [
             'cashTransactionCreateMethod' => 'add',
             'cashTransactionUpdateMethod' => 'update',
@@ -137,83 +145,81 @@ class cashAutomation
                     switch ($condition_id) {
                         case 'amount':
                             $amount = ifset($transaction, 'amount', null);
-                            if (isset($amount, $value) && $compare(abs($amount), abs($value), $operator)) {
+                            if (isset($amount, $value) && self::compare(abs($amount), abs($value), $operator)) {
                                 $condition_done++;
                             }
                             break;
                         case 'description':
+                            $is_contains = $operator === '%%';
                             $description = (string) ifset($transaction, 'description', '');
-                            if (in_array($operator, ['ss_order', 'compare_date']) && wa()->appExists('shop')) {
-                                if ($operator === 'ss_order') {
-                                    $order_format = mb_strtolower(str_replace('{$order.id}', '', wa('shop')->getConfig()->getOrderFormat()));
-                                    preg_match('#.*?[№\s]*'.preg_quote($order_format).'(?<ss_order>\d+).*#u', mb_strtolower($description), $matches);
-                                    if ($ss_order_id = (int) ifset($matches, 'ss_order', 0)) {
-                                        $transaction['ss_order_id'] = $ss_order_id;
-                                        if (empty($transaction['external_source'])) {
-                                            $transaction['external_source'] = 'shop';
-                                        }
-                                        if (empty($transaction['external_id'])) {
-                                            $transaction['external_id'] = $ss_order_id;
-                                        }
-                                        $condition_done++;
-                                    }
-                                } elseif ($operator === 'compare_date') {
-                                    $months = [
-                                        'января' => 1,
-                                        'февраля' => 2,
-                                        'марта' => 3,
-                                        'апреля' => 4,
-                                        'мая' => 5,
-                                        'июня' => 6,
-                                        'июля' => 7,
-                                        'августа' => 8,
-                                        'сентября' => 9,
-                                        'октября' => 10,
-                                        'ноября' => 11,
-                                        'декабря' => 12,
-                                    ];
 
-                                    preg_match('#.*?(?<date>(?<date_b>\d+)[-./\s]+(?<month>[[:alnum:]]+)[-./\s]+(?<date_e>\d+)).*#u', mb_strtolower($description), $matches);
-                                    if ($date = ifset($matches, 'date', null)) {
-                                        $month = ifset($matches, 'month', null);
-                                        if (!empty($months[$month])) {
-                                            $date = $matches['date_b'].'-'.$months[$month].'-'.$matches['date_e'];
-                                        }
-                                        try {
-                                            $timestamp = strtotime($date);
-                                            $transaction['date_from_description'] = date('Y-m-d', $timestamp);
-                                            $condition_done++;
-                                        } catch (Exception $ex) {
-                                            cash()->getLogger()->error('Не удалось преобразовать дату из описания операции', $ex);
-                                        }
-                                    }
+                            if ($value === 'ss_order' && wa()->appExists('shop')) {
+                                $order_format = mb_strtolower(str_replace('{$order.id}', '', wa('shop')->getConfig()->getOrderFormat()));
+                                preg_match('#.*?[№\s]*'.preg_quote($order_format).'(?<ss_order>\d+).*#u', mb_strtolower($description), $matches);
+                                $ss_order_id = (int) ifset($matches, 'ss_order', 0);
+                                if ($is_contains && $ss_order_id) {
+                                    $transaction['ss_order_id'] = $ss_order_id;
+                                    $condition_done++;
+                                } elseif (!$is_contains && !$ss_order_id) {
+                                    $condition_done++;
                                 }
-                            } elseif ($compare($description, $value, $operator)) {
-                                $condition_done++;
+                            } elseif ($value === 'compare_date') {
+                                $months = [
+                                    'января' => 1,
+                                    'февраля' => 2,
+                                    'марта' => 3,
+                                    'апреля' => 4,
+                                    'мая' => 5,
+                                    'июня' => 6,
+                                    'июля' => 7,
+                                    'августа' => 8,
+                                    'сентября' => 9,
+                                    'октября' => 10,
+                                    'ноября' => 11,
+                                    'декабря' => 12,
+                                ];
+
+                                preg_match('#.*?(?<date>(?<date_b>\d+)[-./\s]+(?<month>[[:alnum:]]+)[-./\s]+(?<date_e>\d+)).*#u', mb_strtolower($description), $matches);
+                                $date = ifset($matches, 'date', null);
+                                if ($is_contains && $date) {
+                                    $month = ifset($matches, 'month', null);
+                                    if (!empty($months[$month])) {
+                                        $date = $matches['date_b'].'-'.$months[$month].'-'.$matches['date_e'];
+                                    }
+                                    try {
+                                        $timestamp = strtotime($date);
+                                        $transaction['date_from_description'] = date('Y-m-d', $timestamp);
+                                        $condition_done++;
+                                    } catch (Exception $ex) {
+                                        cash()->getLogger()->error('Не удалось преобразовать дату из описания операции', $ex);
+                                    }
+                                } elseif (!$is_contains && !$date) {
+                                    $condition_done++;
+                                }
                             }
                             break;
                         case 'account_id':
-                            if ($compare(ifset($transaction, 'account_id', null), $value, $operator)) {
+                            if (self::compare(ifset($transaction, 'account_id', null), $value, $operator)) {
                                 $condition_done++;
                             }
                             break;
                         case 'category_id':
-                            if ($compare(ifset($transaction, 'category_id', null), $value, $operator)) {
+                            if (self::compare(ifset($transaction, 'category_id', null), $value, $operator)) {
                                 $condition_done++;
                             }
                             break;
                         case 'date':
-                            if ($compare(ifset($transaction, 'date', null), $value, $operator)) {
+                            if (self::compare(ifset($transaction, 'date', null), $value, $operator)) {
                                 $condition_done++;
                             }
                             break;
                         case 'external_id':
-                            if ($compare(ifset($transaction, 'external_id', null), $value, $operator)) {
+                            if (self::compare(ifset($transaction, 'external_id', null), $value, $operator)) {
                                 $condition_done++;
                             }
                             break;
                         case 'external_source':
-                            if ($compare(ifset($transaction, 'external_source', null), $value, $operator)) {
+                            if (self::compare(ifset($transaction, 'external_source', null), $value, $operator)) {
                                 $condition_done++;
                             }
                             break;
@@ -363,6 +369,18 @@ class cashAutomation
                         'label' => _w('Действие с заказом'),
                         'hint' => _w('действиен с заказом выполнится, только если операция с каким-то заказом связана + для этого заказа действие применимо'),
                         'options' => array_combine(array_keys($actions), array_column($actions, 'name'))
+                    ],
+                    'ss_amount_compare' => [
+                        'type' => 'checkbox',
+                        'label' => _w('Сумма заказа'),
+                        'value' => '>=',
+                        'text' => _w('при сравнении сумма операции должна быть не меньше суммы заказа')
+                    ],
+                    'ss_customer_compare' => [
+                        'type' => 'checkbox',
+                        'label' => _w('Контрагент'),
+                        'value' => '==',
+                        'text' => _w('дополнительно сравнивать контрагента')
                     ],
                     'ss_email_to' => [
                         'type' => 'email',
@@ -537,12 +555,18 @@ class cashAutomation
                 cash()->getLogger()->error($ex->getMessage());
             }
 
+            $customer_compare = true;
             $amount = ifset($transaction, 'amount', null);
             $date_from_description = ifset($transaction, 'date_from_description', null);
             $date = substr($order->create_datetime, 0, 10);
             $ss_action = ifset($rule, 'rule_data', 'ss_action', null);
+            $operator = ifset($rule, 'rule_data', 'ss_amount_compare', '==');
 
-            if ($ss_action && $date_from_description == $date && $order->total == $amount) {
+            if (ifset($rule, 'rule_data', 'ss_customer_compare', null)) {
+                $customer_compare = ifset($transaction, 'contractor_contact_id', '') === $order->contact_id;
+            }
+
+            if ($ss_action && $date_from_description == $date && self::compare($amount, $order->total, $operator) && $customer_compare) {
                 try {
                     wa('shop', 1);
                     /** @var shopWorkflowAction $action */
