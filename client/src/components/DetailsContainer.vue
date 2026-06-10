@@ -2,12 +2,6 @@
 import DetailsDashboard from '@/components/Dashboard/DetailsDashboard'
 import BlankBox from '../components/BlankBox.vue'
 import DetailsContainerTarget from '@/components/DetailsContainerTarget.vue'
-import { useRoute } from 'vue-router/composables'
-import { computed } from 'vue'
-
-const route = useRoute()
-const isAccountPage = computed(() => route.name === 'Account')
-
 </script>
 
 <template>
@@ -17,6 +11,6 @@ const isAccountPage = computed(() => route.name === 'Account')
         <DetailsDashboard />
       </BlankBox>
     </div>
-    <DetailsContainerTarget v-if="!isAccountPage" />
+    <DetailsContainerTarget />
   </div>
 </template>
