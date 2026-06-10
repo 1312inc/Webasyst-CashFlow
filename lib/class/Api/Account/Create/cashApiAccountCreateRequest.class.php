@@ -43,13 +43,13 @@ class cashApiAccountCreateRequest
             throw new cashValidateException(_w('Unknown is_imaginary'));
         }
         if ($accountable_contact_id) {
-            $contact = cashHelper::getContact($accountable_contact_id);
-            if (!$contact->isExists()) {
+            $contact = new waContact($accountable_contact_id);
+            if (!$contact->exists()) {
                 throw new cashValidateException(_w('Contact not found'));
-            } elseif (!$contact->isUser()) {
+            } elseif (!$contact->get('is_user')) {
                 throw new cashValidateException(_w('Contact is not user'));
             }
-            $icon = wa()->getConfig()->getHostUrl().$contact->getUserPic();
+            $icon = wa()->getConfig()->getHostUrl().$contact->getPhoto();
         }
         if (!empty($icon) && !preg_match('#^(https?://)?(www\.)?.{2,225}\..{2,20}.+$#u', $icon)) {
             $icon = '';
