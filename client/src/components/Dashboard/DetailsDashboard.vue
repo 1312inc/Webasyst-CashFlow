@@ -86,7 +86,7 @@
           </Modal>
         </portal>
       </div>
-      <DetailsDashboardEmpty v-else />
+      <DetailsDashboardEmpty v-else-if="$appState.isDesktop" />
     </template>
   </div>
 </template>
@@ -104,8 +104,8 @@ import {
   getLocalBreakdownToDays,
   setLocalBreakdownToDays
 } from '@/utils/breakdownLocalPeriod'
-import DetailsDashboardEmpty from '../ContentBlocks/DetailsDashboardEmpty.vue'
 import DropdownWaFloating from '../Inputs/DropdownWaFloating.vue'
+import { defineAsyncComponent } from 'vue'
 
 const CURRENT_PERIOD_STORAGE_KEY = 'currentPeriod'
 
@@ -124,7 +124,7 @@ export default {
     DetailsDashboardItem,
     UpdateDetailsInterval,
     ExportButton,
-    DetailsDashboardEmpty,
+    DetailsDashboardEmpty: defineAsyncComponent(() => import('@/components/ContentBlocks/DetailsDashboardEmpty.vue')),
     DropdownWaFloating
   },
 
