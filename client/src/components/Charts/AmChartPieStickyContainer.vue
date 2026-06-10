@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="$helper.isDesktopEnv"
+    v-if="$appState.isDesktop"
     class="c-chart-pie-sticky-container"
   >
     <div class="c-chart-pie-sticky-container__inner">

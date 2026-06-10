@@ -30,7 +30,7 @@
       <div
         v-if="$helper.showMultiSelect() && !isCompactMode"
         class="flex-none"
-        :class="{ 'desktop-only': $helper.isDesktopEnv }"
+        :class="{ 'desktop-only': $appState.isDesktop }"
         style="width: 1rem; height: 1rem;"
       >
         <span

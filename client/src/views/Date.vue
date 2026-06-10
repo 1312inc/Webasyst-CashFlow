@@ -2,7 +2,7 @@
 <template>
   <div>
     <h2
-      v-if="!$helper.isDesktopEnv"
+      v-if="!$appState.isDesktop"
       class="custom-m-12 flexbox space-8"
     >
       <a @click.prevent="$router.push({ name: 'Calendar' })">

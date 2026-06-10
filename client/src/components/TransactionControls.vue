@@ -1,7 +1,7 @@
 <template>
   <div
     class="c-transaction-controls"
-    :class="{'desktop-and-tablet-only': $helper.isDesktopEnv}"
+    :class="{'desktop-and-tablet-only': $appState.isDesktop}"
   >
     <div
       v-if="$store.state.multiSelectMode"
@@ -35,7 +35,7 @@
     </div>
 
     <div
-      v-if="$helper.isDesktopEnv && currentType"
+      v-if="$appState.isDesktop && currentType"
       ref="controlButtons"
       class="flexbox wrap space-12 middle"
     >
