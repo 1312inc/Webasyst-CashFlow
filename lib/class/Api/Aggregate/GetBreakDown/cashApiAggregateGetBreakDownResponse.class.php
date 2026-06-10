@@ -56,7 +56,7 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
                             ];
                         }
                     }
-                    $children_amounts[$_dt['currency']][$_dt['category_parent_id']] += $_dt['amount'];
+                    $children_amounts[$_dt['currency']][$_dt['category_parent_id']] = array_sum([(string) $children_amounts[$_dt['currency']][$_dt['category_parent_id']], (string) $_dt['amount']]);
                 }
             }
         }
