@@ -27,8 +27,6 @@ export const helpers = {
 
   currentDate: moment().format('YYYY-MM-DD'),
 
-  isDesktopEnv: appStateService.isDesktop,
-
   baseUrl: appStateService.baseUrl,
 
   accountName: appStateService.accountName,

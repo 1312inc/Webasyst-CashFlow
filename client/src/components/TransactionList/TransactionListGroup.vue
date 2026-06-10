@@ -13,7 +13,7 @@
           <div class="flexbox middle space-12">
             <div
               v-if="$helper.showMultiSelect()"
-              :class="{ 'desktop-only': $helper.isDesktopEnv }"
+              :class="{ 'desktop-only': $appState.isDesktop }"
               style="min-width: 1rem"
             >
               <span

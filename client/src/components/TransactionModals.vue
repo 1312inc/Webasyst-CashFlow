@@ -31,7 +31,7 @@ function onClick () {
 <template>
   <portal>
     <div
-      v-if="$helper.isDesktopEnv"
+      v-if="$appState.isDesktop"
       class="c-fab-button mobile-only"
     >
       <button
