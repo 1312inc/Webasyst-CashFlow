@@ -49,7 +49,7 @@ const currentCategoryId = ref(null)
 const fetchDate = ref(moment().format('YYYY-MM-DD'))
 const showDetailsContainerTarget = computed(() => {
   if (isAccountPage.value) return false
-  if (!isDesktop.value) return true
+  if (!isDesktop.value) return !isPromoMode.value
   if (isPromoMode.value) return !cashTargetBlockHidden.value.value
   return true
 })
