@@ -10,7 +10,7 @@ const showSsInstalledInfo = useStorage(
 
 function navigateShopSettings () {
   showSsInstalledInfo.value = false
-  window.location.href = `${appStateService.baseUrl}shop/settings/`
+  window.location.href = `${appStateService.baseUrl}shop/settings/?autostart=1`
 }
 
 </script>

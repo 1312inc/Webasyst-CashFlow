@@ -704,3 +704,17 @@
         }
     }())
 </script>
+
+<script>
+    // If the autostart parameter is present, start the import process
+    (function() {
+        var searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.get('autostart') === '1') {
+            var $btn = $('[data-cash-shop-save-button]');
+            if ($btn.length) {
+                $btn.trigger('click');
+            }
+        }
+    })();
+</script>
+

@@ -1,14 +1,16 @@
 <template>
-  <div class="content custom-pb-24 custom-ml-12 custom-mr-24 custom-mr-12-mobile">
+  <DialogProvider class="content custom-pb-24 custom-ml-12 custom-mr-24 custom-mr-12-mobile">
     <router-view />
     <TransactionModals />
-  </div>
+  </DialogProvider>
 </template>
 
 <script>
+import DialogProvider from './components/DialogProvider.vue'
 
 export default {
   components: {
+    DialogProvider,
     TransactionModals: () => import('./components/TransactionModals.vue')
   }
 }
