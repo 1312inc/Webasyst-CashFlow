@@ -68,11 +68,11 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
                 $this->getCategory($graphDatum['detailed'])
             );
             if ($request->children_help_parents && !empty($children_amounts[$graphDatum['currency']][$graphDatum['detailed']])) {
-                $dataInfo->amount += $children_amounts[$graphDatum['currency']][$graphDatum['detailed']];
+                $dataInfo->amount = array_sum([(string) $dataInfo->amount, (string) $children_amounts[$graphDatum['currency']][$graphDatum['detailed']]]);
             }
             $response[$graphDatum['currency']][$categoryType]->data[] = $dataInfo;
             if (!$request->children_help_parents || empty($graphDatum['category_parent_id'])) {
-                $response[$graphDatum['currency']][$categoryType]->totalAmount += $dataInfo->amount;
+                $response[$graphDatum['currency']][$categoryType]->totalAmount = array_sum([(string) $response[$graphDatum['currency']][$categoryType]->totalAmount, (string) $dataInfo->amount]);
             }
         }
 
