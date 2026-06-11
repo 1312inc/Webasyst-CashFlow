@@ -1424,3 +1424,6 @@ msgstr "Этот раздел доступен только в премиум-в
 
 msgid "See all premium features"
 msgstr "Что еще есть в премиум"
+
+msgid "Promocode"
+msgstr "Промокод"
