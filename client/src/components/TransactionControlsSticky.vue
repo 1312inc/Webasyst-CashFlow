@@ -1,5 +1,6 @@
 <template>
   <Fragment>
+    <div ref="dummyEl" />
     <div
       ref="stickyEl"
       class="c-transaction-controls-sticky"
@@ -10,7 +11,6 @@
         </div>
       </BlankBox>
     </div>
-    <div ref="dummyEl" />
   </Fragment>
 </template>
 
