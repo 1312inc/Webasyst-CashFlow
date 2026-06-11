@@ -423,7 +423,7 @@ export default {
         this.$emit('toggleCollapseHeader')
       } else if (this.isRepeatingGroup) {
         e.preventDefault()
-      } else if (appStateService.webView && this.$store.state.multiSelectMode) {
+      } else if (appStateService.webView && this.$helper.showMultiSelect()) {
         this.checkboxSelect()
       } else {
         this.openModal()
