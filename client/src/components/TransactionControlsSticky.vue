@@ -46,14 +46,16 @@ onBeforeUnmount(() => {
   position: sticky;
   top: 4rem;
   z-index: 999;
-  display: none;
+  opacity: 0;
+  pointer-events: none;
 }
 .c-transaction-controls-sticky .box.rounded {
   border-radius: 0;
 }
 
 .c-transaction-controls-sticky.is-sticky {
-  display: block;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .c-mobile-build .c-transaction-controls-sticky {

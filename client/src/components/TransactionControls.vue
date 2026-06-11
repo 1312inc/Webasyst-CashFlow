@@ -204,7 +204,7 @@ export default {
     display: none;
   }
 
-  .is-sticky .c-transaction-controls {
+  .c-transaction-controls-sticky .c-transaction-controls {
     display: flex;
   }
 }
