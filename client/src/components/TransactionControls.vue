@@ -31,7 +31,7 @@
           {{ $t("unselectAll") }}
         </button>
       </div>
-      <div v-else>
+      <div v-else-if="appStateService.isDesktop">
         <button
           class="button light-gray smallest nowrap"
           @click="toggleMultiSelect"
@@ -110,6 +110,7 @@
 import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import TransactionMove from '@/components/Modals/TransactionMove'
+import { appStateService } from '../services/appState'
 
 export default {
 
@@ -121,7 +122,8 @@ export default {
   data () {
     return {
       openMove: false,
-      openAddBulk: false
+      openAddBulk: false,
+      appStateService
     }
   },
 
