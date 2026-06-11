@@ -10,7 +10,6 @@ import entity from './modules/entity'
 import errors from './modules/errors'
 import mediator from './store-mediator'
 import storeEmitter from './store-emitter'
-import { appStateService } from '@/services/appState'
 
 Vue.use(Vuex)
 
@@ -18,7 +17,7 @@ export default new Vuex.Store({
   state: () => ({
     currentType: '',
     currentTypeId: null,
-    multiSelectMode: appStateService.isDesktop
+    multiSelectMode: false
   }),
 
   getters: {

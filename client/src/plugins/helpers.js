@@ -47,6 +47,10 @@ export const helpers = {
     return store.state.multiSelectMode
   },
 
+  hasSelectedTransactions () {
+    return store.state.transactionBulk.selectedTransactionsIds.length > 0
+  },
+
   isHeader () {
     return !!document.querySelector('#wa-header')
   },

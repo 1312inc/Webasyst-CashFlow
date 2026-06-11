@@ -2,7 +2,7 @@
   <Fragment>
     <div
       ref="stickyEl"
-      class="c-transaction-controls-sticky desktop-and-tablet-only"
+      class="c-transaction-controls-sticky"
     >
       <BlankBox>
         <div class="custom-px-16">
