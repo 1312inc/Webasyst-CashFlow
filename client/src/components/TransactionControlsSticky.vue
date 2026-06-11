@@ -5,7 +5,7 @@
       ref="stickyEl"
       class="c-transaction-controls-sticky"
     >
-      <BlankBox>
+      <BlankBox :disable-bottom-margin="true">
         <div class="custom-px-16">
           <TransactionControls />
         </div>
@@ -47,6 +47,7 @@ onBeforeUnmount(() => {
   top: 4rem;
   z-index: 999;
   display: none;
+  margin-bottom: -60px;
 }
 .c-transaction-controls-sticky .box.rounded {
   border-radius: 0;
