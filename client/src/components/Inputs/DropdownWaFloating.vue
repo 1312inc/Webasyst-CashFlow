@@ -31,7 +31,6 @@ onMounted(async () => {
   tippyInstance.value = tippy(reference.value, {
     content: floating.value,
     trigger: isWebView ? 'manual' : 'click mouseenter',
-    touch: !isWebView,
     interactive: true,
     hideOnClick: true,
     placement: 'bottom-start',
