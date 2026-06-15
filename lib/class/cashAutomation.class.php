@@ -62,6 +62,19 @@ class cashAutomation
     }
 
     /**
+     * @return cashAutomationLogModel
+     */
+    private static function getLog(): cashAutomationLogModel
+    {
+        static $log_model;
+        if (empty($log_model)) {
+            $log_model = new cashAutomationLogModel();
+        }
+
+        return $log_model;
+    }
+
+    /**
      * @param $a
      * @param $b
      * @param $op
@@ -136,7 +149,7 @@ class cashAutomation
                                 $condition_done++;
                             }
                         } catch (Exception $ex) {
-                            cash()->getLogger()->error($ex->getMessage());
+                            self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
                         }
                     }
                 } elseif (!empty($known_conditions[$condition_id]) && !empty($known_actions[$rule_action])) {
@@ -191,7 +204,7 @@ class cashAutomation
                                         $transaction['date_from_description'] = date('Y-m-d', $timestamp);
                                         $condition_done++;
                                     } catch (Exception $ex) {
-                                        cash()->getLogger()->error('Не удалось преобразовать дату из описания операции', $ex);
+                                        self::getLog()->add($rule, $transaction, 'Не удалось преобразовать дату из описания операции. '.$ex->getMessage(), 'error');
                                     }
                                 } elseif (!$is_contains && !$date) {
                                     $condition_done++;
@@ -232,7 +245,7 @@ class cashAutomation
                         try {
                             $params = [
                                 'event_id'    => $action_id,
-                                'action'      => str_replace($plugin_id.'_', '', $rule_action),
+                                'action'      => str_replace($rule_data['plugin_id'].'_', '', $rule_action),
                                 'transaction' => $transaction,
                                 'conditions'  => array_map(function ($_condition) {
                                     if (!empty($_condition['plugin_id'])) {
@@ -242,13 +255,17 @@ class cashAutomation
                                 }, $conditions)
                             ] + $rule_data;
                             if (wa()->getPlugin($rule_data['plugin_id'])->$method($params)) {
-                                cash()->getLogger()->log(['Действие плагином выполнено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                                if ($method = ifset($all_enabled_plugins, $rule_data['plugin_id'], 'handlers', cashEventStorage::WA_BACKEND_AUTOMATION_VIEW, null)) {
+                                    $plugin_view = wa()->getPlugin($rule_data['plugin_id'])->$method();
+                                    $plugin_view = ifset($plugin_view, 'actions', $params['action'], 'action', null);
+                                }
+                                self::getLog()->add($rule, $transaction, 'Действие '.(empty($plugin_view) ? '' : "\"$plugin_view\" ").'плагином выполнено');
                             }
                         } catch (Exception $ex) {
-                            cash()->getLogger()->error($ex->getMessage());
+                            self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
                         }
                     } else {
-                        cash()->getLogger()->log(['Плагин и/или его метод не определены', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                        self::getLog()->add($rule, $transaction, 'Плагин и/или его метод не определены', 'warning');
                     }
                 } else {
                     $done = false;
@@ -269,10 +286,10 @@ class cashAutomation
                             $done = self::actionSS($rule, $transaction);
                             break;
                         default:
-                            cash()->getLogger()->log(['Неизвестное действие', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                            self::getLog()->add($rule, $transaction, 'Неизвестное действие');
                     }
                     if ($done) {
-                        cash()->getLogger()->log(['Действие "'.ifset($known_actions, $rule_action, 'action', 'NULL').'" выполнено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                        self::getLog()->add($rule, $transaction, 'Действие "'.ifset($known_actions, $rule_action, 'action', 'NULL').'" выполнено');
                     }
                 }
             }
@@ -433,14 +450,14 @@ class cashAutomation
                         if ((cash()->getModel(cashAccount::class))->getById($property_value)) {
                             $transaction_obj->setAccountId($property_value);
                         } else {
-                            cash()->getLogger()->log(['Счет для операции не найден', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                            self::getLog()->add($rule, $transaction, 'Счет для операции не найден', 'notice');
                         }
                         break;
                     case 'category_id':
                         if ((cash()->getModel(cashCategory::class))->getById($property_value)) {
                             $transaction_obj->setCategoryId($property_value);
                         } else {
-                            cash()->getLogger()->log(['Статья для операции не найдена', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                            self::getLog()->add($rule, $transaction, 'Статья для операции не найдена', 'notice');
                         }
                         break;
                     case 'description':
@@ -487,12 +504,10 @@ class cashAutomation
                     $result = true;
                 }
             } catch (Exception $ex) {
-                cash()->getLogger()->log(['Ошибка во время обновления операции', 'RULE' => $rule, 'TRANSACTION' => $transaction, 'ERROR' => $ex->getMessage()], self::AUTOMATION_LOG);
+                self::getLog()->add($rule, $transaction, 'Ошибка во время обновления операции.'.$ex->getMessage(), 'error');
             }
-
-
         } else {
-            cash()->getLogger()->log(['Редактируемая операция не найдена и/или не задано обновляемое свойство и/или его значение', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+            self::getLog()->add($rule, $transaction, 'Редактируемая операция не найдена и/или не задано обновляемое свойство и/или его значение', 'notice');
         }
 
         return $result;
@@ -516,13 +531,13 @@ class cashAutomation
                 $message->setTo($email_to);
                 $result = $message->send();
                 if (!$result) {
-                    cash()->getLogger()->log(['Письмо не отправлено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                    self::getLog()->add($rule, $transaction, 'Письмо не отправлено', 'notice');
                 }
             } catch (Exception $ex) {
-                cash()->getLogger()->log(['Ошибка во время отправки письма', 'RULE' => $rule, 'TRANSACTION' => $transaction, 'ERROR' => $ex->getMessage()], self::AUTOMATION_LOG);
+                self::getLog()->add($rule, $transaction, 'Ошибка во время отправки письма.'.$ex->getMessage(), 'error');
             }
         } else {
-            cash()->getLogger()->log(['Письмо не отправлено, так как не задан адрес и/или текст', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+            self::getLog()->add($rule, $transaction, 'Письмо не отправлено, так как не задан адрес и/или текст', 'notice');
         }
 
         return $result;
@@ -537,11 +552,11 @@ class cashAutomation
     {
         try {
             if (!wa()->appExists('shop')) {
-                cash()->getLogger()->log(['Приложение ШС не активно/не установлено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                self::getLog()->add($rule, $transaction, 'Приложение ШС не активно/не установлено', 'notice');
                 return false;
             }
         } catch (Exception $ex) {
-            cash()->getLogger()->error($ex->getMessage());
+            self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
         }
 
         $result = false;
@@ -549,10 +564,10 @@ class cashAutomation
             try {
                 $order = new shopOrder($order_id);
                 if (!$order->getId()) {
-                    cash()->getLogger()->log(['Заказ ШС не был найден', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                    self::getLog()->add($rule, $transaction, 'Заказ ШС не был найден', 'notice');
                 }
             } catch (Exception $ex) {
-                cash()->getLogger()->error($ex->getMessage());
+                self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
             }
 
             $customer_compare = true;
@@ -577,11 +592,11 @@ class cashAutomation
                         $action = $workflow->getActionById($ss_action);
                         $result = $action->run($order_id);
                     } else {
-                        cash()->getLogger()->log(['Для текущего статуса заказа действие не разрешено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                        self::getLog()->add($rule, $transaction, 'Для текущего статуса заказа действие не разрешено', 'notice');
                     }
                     wa('cash', 1);
                 } catch (Exception $exception) {
-                    cash()->getLogger()->error('Возникла ошибка во время выполнения действия с заказом', $exception);
+                    self::getLog()->add($rule, $transaction, 'Возникла ошибка во время выполнения действия с заказом.'.$ex->getMessage(), 'error');
                 }
             } elseif ($email_to = ifset($rule, 'rule_data', 'ss_email_to', null)) {
                 try {
@@ -592,10 +607,10 @@ class cashAutomation
                     $message->setTo($email_to);
                     $result = $message->send();
                     if (!$result) {
-                        cash()->getLogger()->log(['Письмо не отправлено', 'RULE' => $rule, 'TRANSACTION' => $transaction], self::AUTOMATION_LOG);
+                        self::getLog()->add($rule, $transaction, 'Письмо не отправлено', 'notice');
                     }
                 } catch (Exception $ex) {
-                    cash()->getLogger()->log(['Ошибка во время отправки письма', 'RULE' => $rule, 'TRANSACTION' => $transaction, 'ERROR' => $ex->getMessage()], self::AUTOMATION_LOG);
+                    self::getLog()->add($rule, $transaction, 'Ошибка во время отправки письма.'.$ex->getMessage(), 'error');
                 }
             }
         }
@@ -606,7 +621,6 @@ class cashAutomation
     private static function getScript()
     {
         return <<<SCRIPT
-
 let amount_type = $(this).find('.amount_type').val();
 if (amount_type == 'amount_fix') {
     $(this).find('.span-desc').remove();

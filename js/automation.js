@@ -52,6 +52,43 @@ $.extend($.automation = $.automation || {}, {
             });
         })();
 
+        $table_tbody.on('click', '.c-log-rule', function (event) {
+            event.preventDefault();
+
+            let that = $(this).closest('tr');
+            let rule_id = that.data('rule-id');
+            $.post('?module=automationLog', {rule_id: rule_id}, function (data) {
+                let $new_dialog_log = $(options.dialog_log);
+                if (data.status !== 'ok') {
+                    console.warn('get automation log fail', data);
+                } else if (data.data) {
+                    if (data.data.length) {
+                        $new_dialog_log.find('.js-empty-log').remove();
+                    }
+                    data.data.forEach((_automation, _index, _array) => {
+                        $new_dialog_log.find('table tbody').append(
+                            '<tr>' +
+                            '<td>'+ _automation.datetime +'</td>' +
+                            '<td>'+ _automation.type +'</td>' +
+                            '<td>'+ _automation.automation_action +'</td>' +
+                            '<td>'+ _automation.description +'</td>' +
+                            '<td>'+ (_automation.plugin_id ? _automation.plugin_id : '') +'</td>' +
+                            '</tr>'
+                        );
+                    });
+                }
+
+                $.waDialog({
+                    html: $new_dialog_log,
+                    onOpen: function($dialog, dialog_instance) {
+                        $dialog.find('.dialog-body').css('top', '3%');
+                        $dialog.find('.dialog-body').css('left', '20%');
+                        $dialog.find('.dialog-body').css('width', '70%');
+                        $dialog.find('.dialog-content').css('height', '75vh');
+                    }
+                });
+            });
+        });
 
         // Link to delete a row
         $table_tbody.on('click', '.c-delete-rule', function (event) {

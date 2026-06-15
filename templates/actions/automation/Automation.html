@@ -2,6 +2,37 @@
 
 <script src="{$wa_app_static_url}js/automation.js?{$wa->version()}"></script>
 
+{capture 'dialog_log'}
+    {strip}
+        <div class="dialog">
+            <div class="dialog-background"></div>
+            <div class="dialog-body">
+                <a href="#" class="dialog-close js-close-dialog"><i class="fas fa-times"></i></a>
+                <header class="dialog-header"><h1>[`Журнал выполнения`]</h1></header>
+                <div class="dialog-content">
+                    <table class="bordered">
+                        <thead>
+                            <tr>
+                                <th>[`Дата выполнения`]</th>
+                                <th>[`Тип лога`]</th>
+                                <th>[`Событие`]</th>
+                                <th>[`Описание действия`]</th>
+                                <th>[`Плагин`]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="js-empty-log"><td colspan="5" class="align-center">[`Нет записей лога`]</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <footer class="dialog-footer">
+                    <button class="js-close-dialog button light-gray">[`Close`]</button>
+                </footer>
+            </div>
+        </div>
+    {/strip}
+{/capture}
+
 {function condition_block __rule_id=null condition=null}
     {$rule_name = ''}
     {$_rule_id = ifempty($__rule_id, '%%RULE_ID%%')}
@@ -235,6 +266,9 @@
             <input type="hidden" name="rules[{$rule_id}][rule_data][plugin_id]" value="{$plugin_id}" class="c-action-plugin-id"{if !$plugin_id} disabled{/if}>
         </td>
         <td class="valign-top">
+            <a href="javascript:void(0);" class="c-log-rule" title="[`Log`]"><i class="fas fa-file-alt large"></i></a>
+        </td>
+        <td class="valign-top">
             <a href="javascript:void(0);" class="c-delete-rule text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
         </td>
     </tr>
@@ -272,6 +306,7 @@
                             <th>[`IF event`]</th>
                             <th>[`THEN action`]</th>
                             <th class="min-width"></th>
+                            <th class="min-width"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -303,6 +338,7 @@
     document.title = {$_page_title|json_encode} +" — "+ {json_encode($wa->accountName(false))};
 
     $.automation.Init({
+        dialog_log: {json_encode($smarty.capture.dialog_log)},
         new_condition: {json_encode($smarty.capture.new_condition)},
         new_automation_rule: {json_encode($smarty.capture.new_automation_rule)}
     });
