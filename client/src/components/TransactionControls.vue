@@ -31,13 +31,13 @@
           {{ $t("unselectAll") }}
         </button>
       </div>
-      <div v-else-if="appStateService.isDesktop">
+      <div v-else>
         <button
           class="button light-gray smallest nowrap"
           @click="toggleMultiSelect"
         >
-          <i class="fas fa-list-ul" />
-          <span class="custom-ml-8 black">Сразу много</span>
+          <i class="fas fa-tasks" />
+          <span class="custom-ml-8 black">{{ $t("selectMany") }}</span>
         </button>
       </div>
     </div>

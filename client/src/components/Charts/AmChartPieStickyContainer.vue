@@ -44,6 +44,10 @@ export default {
   top: 4rem;
   align-self: flex-start;
 
+  .wa-no-header & {
+    top: 0;
+  }
+
   &__inner {
     margin: 0 auto;
   }

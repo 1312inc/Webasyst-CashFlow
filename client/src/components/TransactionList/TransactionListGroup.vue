@@ -397,6 +397,16 @@ export default {
   top: 4rem;
 }
 
+.wa-no-header .c-sticky-header-group,
+.c-mobile-build.c-multi-select-mode .c-sticky-header-group {
+  top: 60px;
+}
+
+.wa-no-header .no-sticky-controls .c-sticky-header-group,
+.c-mobile-build .c-sticky-header-group {
+  top: 0;
+}
+
 .c-sticky-header-group:hover {
   z-index: 999;
 }

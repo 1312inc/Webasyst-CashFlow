@@ -49,6 +49,11 @@ onBeforeUnmount(() => {
   display: none;
   margin-bottom: -60px;
 }
+
+.wa-no-header .c-transaction-controls-sticky {
+  top: 0;
+}
+
 .c-transaction-controls-sticky .box.rounded {
   border-radius: 0;
 }
@@ -58,7 +63,12 @@ onBeforeUnmount(() => {
 }
 
 .c-mobile-build .c-transaction-controls-sticky {
+  display: none;
   top: 0;
+}
+
+.c-mobile-build.c-multi-select-mode  .c-transaction-controls-sticky {
+  display: block !important;
 }
 
 </style>

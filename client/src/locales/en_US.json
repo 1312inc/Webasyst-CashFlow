@@ -121,6 +121,7 @@
   "bulkMoveWarning": "Please be sure to select the right account and the right category type applicable to all selected transactions to avoid wrong currency conversion effects.",
   "dontChange": "Don’t change",
   "noCategory": "No category",
+  "selectMany": "Select many",
   "unselectAll": "Unselect all",
   "other": "Other",
   "transfer": "Transfer",
