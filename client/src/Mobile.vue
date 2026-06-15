@@ -2,7 +2,7 @@
   <div
     id="wa-app"
     class="c-mobile-build"
-    :class="{ 'c-multi-select-mode': $helpers.hasSelectedTransactions() }"
+    :class="{ 'c-multi-select-mode': $helper.hasSelectedTransactions() }"
   >
     <div v-if="!$IsOnline.online">
       <span
