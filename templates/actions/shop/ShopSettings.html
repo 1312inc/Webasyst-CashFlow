@@ -686,9 +686,10 @@
                                         $progressCounts.text(r.passed_orders + ' / ' + r.total_orders)
                                     },
                                     onReady: function (r) {
+                                        let account_id = (r.account_id ? r.account_id : $ssform.find('[name="shopscript_settings[accountId]"]').val());
                                         $progressSuccess.show().siblings().hide();
                                         progressInstance.set({ percentage: Math.round(r.progress) });
-                                        window.location = window.appState.baseUrl + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val() + '?show_ss_import_hint=1';
+                                        window.location = window.appState.baseUrl +'account/'+ account_id +'?show_ss_import_hint=1';
                                     },
                                     onError: function (r) {
                                         $progressError.show().siblings().hide();
@@ -699,7 +700,12 @@
                             });
                         }
                     });
-                })
+                });
+
+                const url_params = new URLSearchParams(window.location.search);
+                if (url_params.get('autostart')) {
+                    $welcome.trigger('click');
+                }
             }
         }
     }())

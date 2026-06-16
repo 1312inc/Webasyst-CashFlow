@@ -1226,3 +1226,9 @@ msgstr ""
 
 msgid "Cash POS"
 msgstr ""
+
+msgid "New account..."
+msgstr ""
+
+msgid "Online store"
+msgstr ""

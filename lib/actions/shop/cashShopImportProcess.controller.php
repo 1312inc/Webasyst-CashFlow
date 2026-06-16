@@ -51,12 +51,13 @@ class cashShopImportProcessController extends waLongActionController
             $info->period === 'all' ? null : $info->periodAfter
         );
 
-        $account = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
-        if (!$account) {
+        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
+        if (!$accounts) {
             throw new kmwaRuntimeException('No Cash accounts');
         }
         /** @var cashAccount $account */
-        $account = reset($account);
+        $account = reset($accounts);
+        $info->account_id = $account->getId();
 
         $categories = cash()->getEntityRepository(cashCategory::class)->findAllIncomeForContact();
         if (!$categories) {

@@ -24,6 +24,28 @@ final class cashShopIntegrationManager
             if ($settingsData && !$settings->validate($settingsData)) {
                 return false;
             }
+            if ($settings->getAccountId() < 0) {
+                $currencies = (array) wa('shop')->getConfig()->getCurrencies();
+                foreach ($currencies as $currency) {
+                    if (ifset($currency, 'is_primary', null)) {
+                        break;
+                    }
+                }
+                if (empty($currency)) {
+                    $currency = reset($currencies);
+                }
+
+                /** @var cashAccount $account */
+                $account = cash()->getEntityFactory(cashAccount::class)->createNew();
+                $account->setName(_wp('Online store'))
+                    ->setCurrency(ifset($currency, 'code', ''))
+                    ->setDescription('')
+                    ->setIcon('')
+                    ->setIsImaginary(1)
+                    ->setCustomerContactId(wa()->getUser()->getId());
+                cash()->getEntityPersister()->save($account);
+                $settings->setAccountId($account->getId());
+            }
 
             $settings->save();
 

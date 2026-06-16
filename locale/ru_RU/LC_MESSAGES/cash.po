@@ -1427,3 +1427,9 @@ msgstr "Что еще есть в премиум"
 
 msgid "Promocode"
 msgstr "Промокод"
+
+msgid "New account..."
+msgstr "Создать счет..."
+
+msgid "Online store"
+msgstr "Интернет-магазин"
