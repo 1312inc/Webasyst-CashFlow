@@ -53,8 +53,9 @@
                         <div class="wa-select">
                             <select name="shopscript_settings[accountId]" class="bold">
                                 {foreach $accounts as $account}
-                                <option value="{$account->id}"
-                                        {if $shopScriptSettings->getAccountId() == $account->id || ($shopScriptSettings->isFirstTime() && $wa->accountName()|strstr:$account->name)}selected {/if}
+                                <option
+                                    value="{$account->id}"
+                                    {if $shopScriptSettings->getAccountId() == $account->id || ($shopScriptSettings->isFirstTime() && ($account->id < 0 || $wa->accountName()|strstr:$account->name))} selected{/if}
                                 >
                                     {$account->currency->getCode()|escape} - {$account->name|escape|truncate:32} ({$account->currency->getSign()|escape})
                                 </option>
@@ -710,17 +711,3 @@
         }
     }())
 </script>
-
-<script>
-    // If the autostart parameter is present, start the import process
-    (function() {
-        var searchParams = new URLSearchParams(window.location.search);
-        if (searchParams.get('autostart') === '1') {
-            var $btn = $('[data-cash-shop-save-button]');
-            if ($btn.length) {
-                $btn.trigger('click');
-            }
-        }
-    })();
-</script>
-
