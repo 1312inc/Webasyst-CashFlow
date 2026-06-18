@@ -53,10 +53,7 @@
                         <div class="wa-select">
                             <select name="shopscript_settings[accountId]" class="bold">
                                 {foreach $accounts as $account}
-                                <option
-                                    value="{$account->id}"
-                                    {if $shopScriptSettings->getAccountId() == $account->id || ($shopScriptSettings->isFirstTime() && ($account->id < 0 || $wa->accountName()|strstr:$account->name))} selected{/if}
-                                >
+                                <option value="{$account->id}"{if $shopScriptSettings->getAccountId() == $account->id || ($shopScriptSettings->isFirstTime() && $account->id < 0)} selected{/if}>
                                     {$account->currency->getCode()|escape} - {$account->name|escape|truncate:32} ({$account->currency->getSign()|escape})
                                 </option>
                                 {/foreach}
