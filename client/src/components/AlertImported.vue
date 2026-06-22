@@ -48,25 +48,25 @@ onMounted(() => {
         <div v-if="message['show_ss_import_hint']">
           <template v-if="$i18n.locale === 'ru_RU'">
             <p>
-              Столько наличных <i>было бы</i> в кассе прямо сейчас, если бы у бизнеса были только доходы
-              (продажи) и никаких расходов, таких как зарплаты, аренда, маркетинг, дивиденды и так далее.
+              Таким был бы баланс в кассе интернет-магазина прямо сейчас, если бы были только доходы (продажи)
+              и никаких расходов, таких как зарплаты, аренда, маркетинг, дивиденды и так далее.
             </p>
             <p>
-              <strong>Теперь добавьте вручную или импортируйте расходные операции</strong>, и тогда
-              финансовая модель бизнеса и прогноз будут построены автоматически.
+              <strong>Счет интернет-магазина — виртуальный (пассивный).</strong> В рамках этого счета доступен
+              полноценный учет, но история операций по счету на общий баланс реальных денег на сегодня не влияет.
+              При этом в прогнозе будущего запланированные операции — считаются и показывают картину в целом.
             </p>
           </template>
           <template v-else>
             <p>
-              This is how much cash you <i>would</i> have on hand right now if there were only sales
+              This is how much cash you would have on hand right now if there were only sales
               (income), but no business expenses such as salaries, office rent, marketing, purchase &
               supplies, dividends, and so on.
             </p>
             <p>
-              <strong>Add manually or import your historical expenses now</strong> to get your real cash
-              on hand forecast.
-              Both income &amp; expense transactions together will show you the real picture on how your
-              business finances work.
+              <strong>Online store is a virtual (passive) account.</strong> All accounting features
+              are available within the account, but its transactions won’t affect the overall balance
+              for today, while planned future transactions will still form the forecast.
             </p>
           </template>
         </div>
