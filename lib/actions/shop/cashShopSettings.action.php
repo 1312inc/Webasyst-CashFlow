@@ -41,7 +41,7 @@ class cashShopSettingsAction extends cashViewAction
         }
         $new_account = cash()->getEntityRepository(cashAccount::class)->generateWithData([
             'id' => -1,
-            'name' => _w('New account...'),
+            'name' => _w('Online store'),
             'currency' => ifset($currency, 'code', ''),
         ]);
         array_unshift($accounts, $new_account);
