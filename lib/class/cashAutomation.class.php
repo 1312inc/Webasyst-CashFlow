@@ -47,7 +47,10 @@ class cashAutomation
      */
     private static function getAccounts(): array
     {
-        $accounts = cash()->getModel(cashAccount::class)->getAllActiveForContact(wa()->getUser());
+        static $accounts = [];
+        if (empty($accounts)) {
+            $accounts = cash()->getModel(cashAccount::class)->getAllActiveForContact(wa()->getUser());
+        }
 
         return array_combine(array_column($accounts, 'id'), array_column($accounts, 'name'));
     }
@@ -125,6 +128,8 @@ class cashAutomation
         $known_actions = cashAutomationAction::getActions();
         $known_conditions = cashAutomationAction::getConditions();
         $all_enabled_plugins = wa('cash')->getConfig()->getPlugins();
+        $accounts = self::getAccounts();
+        $transaction['account_name'] = ifset($accounts, $transaction['account_id'], null);
 
         foreach ($rules as $rule) {
             $condition_done = 0;
@@ -298,6 +303,63 @@ class cashAutomation
         return [];
     }
 
+    private static function getTextVariables()
+    {
+        return _w('Переменные').'<br>
+            <b>{ID} - </b>'._w('ИД операции').'<br>
+            <b>{DATE} - </b>'._w('Дата операции').'<br>
+            <b>{ACCOUNT_ID} - </b>'._w('Счёт операции').'<br>
+            <b>{CATEGORY_ID} - </b>'._w('Статья операции').'<br>
+            <b>{AMOUNT} - </b>'._w('Сумма операции').'<br>
+            <b>{DESCRIPTION} - </b>'._w('Комментарий к операции').'<br>
+            <b>{CREATE_CONTACT_ID} - </b>'._w('операции').'<br>
+            <b>{CREATE_DATETIME} - </b>'._w('Дата создания операции').'<br>
+            <b>{UPDATE_DATETIME} - </b>'._w('Дата обновления операции').'<br>
+            <b>{IS_ARCHIVED} - </b>'._w('В архиве ли операции').'<br>
+            <b>{EXTERNAL_SOURCE} - </b>'._w('Источник операции').'<br>
+            <b>{EXTERNAL_ID} - </b>'._w('ИД источника операции').'<br>
+            <b>{CONTRACTOR_CONTACT_ID} - </b>'._w('Плательщик операции').'<br>
+        ';
+    }
+
+    private static function replaceVariables($text = '', $transaction = [])
+    {
+        static $patterns = [
+            '#\{ID}#',
+            '#\{DATE}#',
+            '#\{ACCOUNT_ID}#',
+            '#\{ACCOUNT_NAME}#',
+            '#\{CATEGORY_ID}#',
+            '#\{AMOUNT}#',
+            '#\{DESCRIPTION}#',
+            '#\{CREATE_CONTACT_ID}#',
+            '#\{CREATE_DATETIME}#',
+            '#\{UPDATE_DATETIME}#',
+            '#\{IS_ARCHIVED}#',
+            '#\{EXTERNAL_SOURCE}#',
+            '#\{EXTERNAL_ID}#',
+            '#\{CONTRACTOR_CONTACT_ID}#',
+        ];
+        $replacements = [
+            ifset($transaction, 'id', ''),                     //{ID}
+            ifset($transaction, 'date', ''),                   //{DATE}
+            ifset($transaction, 'account_id', ''),             //{ACCOUNT_ID}
+            ifset($transaction, 'account_name', ''),           //{ACCOUNT_NAME}
+            ifset($transaction, 'category_id', ''),            //{CATEGORY_ID}
+            ifset($transaction, 'amount', ''),                 //{AMOUNT}
+            ifset($transaction, 'description', ''),            //{DESCRIPTION}
+            ifset($transaction, 'create_contact_id', ''),      //{CREATE_CONTACT_ID}
+            ifset($transaction, 'create_datetime', ''),        //{CREATE_DATETIME}
+            ifset($transaction, 'update_datetime', ''),        //{UPDATE_DATETIME}
+            ifset($transaction, 'is_archived', ''),            //{IS_ARCHIVED}
+            ifset($transaction, 'external_source', ''),        //{EXTERNAL_SOURCE}
+            ifset($transaction, 'external_id', ''),            //{EXTERNAL_ID}
+            ifset($transaction, 'contractor_contact_id', ''),  //{CONTRACTOR_CONTACT_ID}
+        ];
+
+        return preg_replace($patterns, $replacements, $text);
+    }
+
     /**
      * @param $type
      * @return array[]
@@ -315,7 +377,8 @@ class cashAutomation
                     ],
                     'text' => [
                         'type' => 'textarea',
-                        'label' => _w('Текст сообщения')
+                        'label' => _w('Текст сообщения'),
+                        'hint' => self::getTextVariables()
                     ]
                 ];
                 break;
@@ -354,21 +417,7 @@ class cashAutomation
                     $type.'_property_description' => [
                         'type' => 'textarea',
                         'label' => _w('Комментарий'),
-                        'hint' => _w('Переменные').'<br>
-                            <b>{ID} - </b>'._w('ИД операции').'<br>
-                            <b>{DATE} - </b>'._w('Дата операции').'<br>
-                            <b>{ACCOUNT_ID} - </b>'._w('Счёт операции').'<br>
-                            <b>{CATEGORY_ID} - </b>'._w('Статья операции').'<br>
-                            <b>{AMOUNT} - </b>'._w('Сумма операции').'<br>
-                            <b>{DESCRIPTION} - </b>'._w('Комментарий к операции').'<br>
-                            <b>{CREATE_CONTACT_ID} - </b>'._w('операции').'<br>
-                            <b>{CREATE_DATETIME} - </b>'._w('Дата создания операции').'<br>
-                            <b>{UPDATE_DATETIME} - </b>'._w('Дата обновления операции').'<br>
-                            <b>{IS_ARCHIVED} - </b>'._w('В архиве ли операции').'<br>
-                            <b>{EXTERNAL_SOURCE} - </b>'._w('Источник операции').'<br>
-                            <b>{EXTERNAL_ID} - </b>'._w('ИД источника операции').'<br>
-                            <b>{CONTRACTOR_CONTACT_ID} - </b>'._w('Плательщик операции').'<br>
-                        '
+                        'hint' => self::getTextVariables()
                     ],
                     $type.'_script' => [
                         'type' => 'script',
@@ -461,37 +510,7 @@ class cashAutomation
                         }
                         break;
                     case 'description':
-                        $patterns = [
-                            '#\{ID}#',
-                            '#\{DATE}#',
-                            '#\{ACCOUNT_ID}#',
-                            '#\{CATEGORY_ID}#',
-                            '#\{AMOUNT}#',
-                            '#\{DESCRIPTION}#',
-                            '#\{CREATE_CONTACT_ID}#',
-                            '#\{CREATE_DATETIME}#',
-                            '#\{UPDATE_DATETIME}#',
-                            '#\{IS_ARCHIVED}#',
-                            '#\{EXTERNAL_SOURCE}#',
-                            '#\{EXTERNAL_ID}#',
-                            '#\{CONTRACTOR_CONTACT_ID}#',
-                        ];
-                        $replacements = [
-                            ifset($transaction, 'id', ''),                     //{ID}
-                            ifset($transaction, 'date', ''),                   //{DATE}
-                            ifset($transaction, 'account_id', ''),             //{ACCOUNT_ID}
-                            ifset($transaction, 'category_id', ''),            //{CATEGORY_ID}
-                            ifset($transaction, 'amount', ''),                 //{AMOUNT}
-                            ifset($transaction, 'description', ''),            //{DESCRIPTION}
-                            ifset($transaction, 'create_contact_id', ''),      //{CREATE_CONTACT_ID}
-                            ifset($transaction, 'create_datetime', ''),        //{CREATE_DATETIME}
-                            ifset($transaction, 'update_datetime', ''),        //{UPDATE_DATETIME}
-                            ifset($transaction, 'is_archived', ''),            //{IS_ARCHIVED}
-                            ifset($transaction, 'external_source', ''),        //{EXTERNAL_SOURCE}
-                            ifset($transaction, 'external_id', ''),            //{EXTERNAL_ID}
-                            ifset($transaction, 'contractor_contact_id', ''),  //{CONTRACTOR_CONTACT_ID}
-                        ];
-                        $property_value = preg_replace($patterns, $replacements, $property_value);
+                        $property_value = self::replaceVariables($property_value, $transaction);
                         $transaction_obj->setDescription($property_value);
                         break;
                 }
@@ -524,6 +543,7 @@ class cashAutomation
         $email_to = ifset($rule, 'rule_data', 'email_to', null);
         $text = ifset($rule, 'rule_data', 'text', null);
         if ($email_to && $text) {
+            $text = self::replaceVariables($text, $transaction);
             try {
                 $subject = _w('Оповещение о срабатывании');
                 $message = new waMailMessage($subject, $text);
