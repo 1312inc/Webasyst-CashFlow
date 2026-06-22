@@ -371,11 +371,16 @@ class cashAutomation
         switch ($type) {
             case 'send_mail':
                 $elements = [
-                    'email_to' => [
+                    $type.'_email_to' => [
                         'type' => 'email',
                         'label' => _w('Кому')
                     ],
-                    'text' => [
+                    $type.'_email_subject' => [
+                        'type' => 'text',
+                        'label' => _w('Тема письма'),
+                        'hint' => _w('С поддержкой переменных')
+                    ],
+                    $type.'_text' => [
                         'type' => 'textarea',
                         'label' => _w('Текст сообщения'),
                         'hint' => self::getTextVariables()
@@ -540,12 +545,14 @@ class cashAutomation
     private static function sendMail($rule, $transaction): bool
     {
         $result = false;
-        $email_to = ifset($rule, 'rule_data', 'email_to', null);
-        $text = ifset($rule, 'rule_data', 'text', null);
+        $type = ifset($rule, 'rule_data', 'action', '');
+        $email_to = ifset($rule, 'rule_data', $type.'_email_to', null);
+        $text = ifset($rule, 'rule_data', $type.'_text', null);
+        $subject = ifset($rule, 'rule_data', $type.'_email_subject', _w('Оповещение о срабатывании'));
         if ($email_to && $text) {
+            $subject = self::replaceVariables($subject, $transaction);
             $text = self::replaceVariables($text, $transaction);
             try {
-                $subject = _w('Оповещение о срабатывании');
                 $message = new waMailMessage($subject, $text);
                 $message->setFrom(wa()->getSetting('email', '', 'webasyst'));
                 $message->setTo($email_to);
