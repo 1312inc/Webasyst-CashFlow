@@ -65,7 +65,7 @@
         <div class="c-icon-with-badge">
           <span class="icon"><i
             class="fas fa-robot"
-            :class="{'text-brown': isPremium, 'text-light-gray': !isPremium}"
+            :class="{'text-dark-gray': isPremium, 'text-light-gray': !isPremium}"
           /></span>
           <span
             v-if="!isPremium"
