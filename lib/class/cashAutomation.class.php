@@ -398,10 +398,6 @@ class cashAutomation
                         'type' => 'header',
                         'text' => _w('Свойства операции')
                     ],
-                    $type.'_property_date' => [
-                        'type' => 'date',
-                        'label' => _w('Дата операции')
-                    ],
                     $type.'_property_account_id' => [
                         'type' => 'select',
                         'label' => _w('Счёт'),
@@ -485,7 +481,14 @@ class cashAutomation
         if ($transaction_obj) {
             $properties = [];
             $type = ifset($rule, 'rule_data', 'action', '');
-            $transaction_obj->setUpdateDatetime(date('Y-m-d H:i:s'));
+            if (!$is_new) {
+                $transaction_obj->setUpdateDatetime(date('Y-m-d H:i:s'));
+            }
+
+            $date = ifempty($transaction, 'date', date('Y-m-d'));
+            $transaction_obj->setDate($date);
+            $transaction_obj->setDatetime($date.' 00:00:00');
+
             foreach (ifset($rule, 'rule_data', []) as $_name => $property_value) {
                 $property = str_replace($type.'_property_', '', $_name);
                 $properties[$property] = $property_value;
@@ -493,10 +496,6 @@ class cashAutomation
 
             foreach ($properties as $_property_name => $property_value) {
                 switch ($_property_name) {
-                    case 'date':
-                        $transaction_obj->setDate($property_value);
-                        $transaction_obj->setDatetime($property_value.' 00:00:00');
-                        break;
                     case 'amount':
                         if (ifset($properties, 'amount_type', 'amount_fix') === 'amount_percent') {
                             $property_value = min((float) $property_value, 100) / 100;
