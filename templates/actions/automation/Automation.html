@@ -221,6 +221,9 @@
                                         event.preventDefault();
                                         {$_element.script}
                                     });
+                                    $(document).ready(function () {
+                                        $('[data-arid="{$_action_id}_{$rule_id}"]').trigger('change');
+                                    });
                                 </script>
                                 {continue}
                             {elseif !in_array($_element.type, ['submit', 'reset', 'file', 'button', 'image'])}

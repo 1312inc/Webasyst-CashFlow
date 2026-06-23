@@ -412,7 +412,7 @@ class cashAutomation
                         'type' => 'select',
                         'label' => _w('Сумма'),
                         'class' => 'amount_type',
-                        'options' => ['amount_fix' => _w('Fix'), 'amount_percent' => _w('Amount * %')],
+                        'options' => ['amount_fix' => _w('Fix'), 'amount_percent' => _w('Amount').' * %'],
                         'child' => 1,
                     ],
                     $type.'_property_amount' => [
@@ -498,8 +498,13 @@ class cashAutomation
                 switch ($_property_name) {
                     case 'amount':
                         if (ifset($properties, 'amount_type', 'amount_fix') === 'amount_percent') {
-                            $property_value = min((float) $property_value, 100) / 100;
-                            $property_value = $transaction['amount'] * abs($property_value);
+                            $property_value = (float) $property_value / 100;
+                            $property_value = $transaction['amount'] * $property_value;
+                        }
+                        $category_id = ifset($properties, 'category_id', $transaction['category_id']);
+                        $category = (cash()->getModel(cashCategory::class))->getById($category_id);
+                        if (!empty($category['type'])) {
+                            $property_value = ($category['type'] === cashCategory::TYPE_INCOME ?: abs($property_value) * -1);
                         }
                         $transaction_obj->setAmount($property_value);
                         break;
@@ -671,12 +676,14 @@ class cashAutomation
 
     private static function getScript()
     {
+        $amount = _w('Amount');
+
         return <<<SCRIPT
 let amount_type = $(this).find('.amount_type').val();
-if (amount_type == 'amount_fix') {
-    $(this).find('.span-desc').remove();
-} else if (amount_type == 'amount_percent') {
-    $(this).find('.property_amount').before('<span class="span-desc">Amount *</span>');
+
+$(this).find('.span-desc').remove();
+if (amount_type == 'amount_percent') {
+    $(this).find('.property_amount').before('<span class="span-desc">$amount *</span>');
     $(this).find('.property_amount').after('<span class="span-desc">%</span>');
 }
 SCRIPT;
