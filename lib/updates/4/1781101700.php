@@ -13,6 +13,7 @@ try {
             `transaction_id` int NOT NULL,
             `type` enum('normal', 'notice', 'warning', 'error') NOT NULL DEFAULT 'normal',
             `plugin_id` varchar(63) NULL,
+            `automation_event` varchar(255) NULL,
             `automation_action` varchar(255) NULL,
             `description` varchar(4095) NULL,
             `automation_rule_json` text,

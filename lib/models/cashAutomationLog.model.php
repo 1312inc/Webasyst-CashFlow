@@ -29,7 +29,8 @@ class cashAutomationLogModel extends cashModel
             'transaction_id' => $transaction['id'],
             'type' => in_array($type, self::TYPE) ? $type : 'normal',
             'plugin_id' => ifset($rule, 'rule_data', 'plugin_id', null),
-            'automation_action' => $rule['action_id'],
+            'automation_event' => $rule['action_id'],
+            'automation_action' => ifset($rule, 'rule_data', 'action', null),
             'description' => $description,
             'automation_rule_json' => waUtils::jsonEncode($rule, JSON_UNESCAPED_UNICODE),
             'transaction_json' => waUtils::jsonEncode($transaction, JSON_UNESCAPED_UNICODE)
@@ -43,7 +44,7 @@ class cashAutomationLogModel extends cashModel
      */
     public function getLogs(int $automation_id, int $limit = 5): array
     {
-        return $this->select('datetime, automation_id, transaction_id, type, plugin_id, automation_action, description')
+        return $this->select('datetime, automation_id, transaction_id, type, plugin_id, automation_event, automation_action, description')
             ->where('automation_id = ?', $automation_id)
             ->order('datetime DESC')
             ->limit($limit)

@@ -70,6 +70,7 @@ $.extend($.automation = $.automation || {}, {
                             '<tr>' +
                             '<td>'+ _automation.datetime +'</td>' +
                             '<td>'+ _automation.type +'</td>' +
+                            '<td>'+ _automation.automation_event +'</td>' +
                             '<td>'+ _automation.automation_action +'</td>' +
                             '<td>'+ _automation.description +'</td>' +
                             '<td>'+ (_automation.plugin_id ? _automation.plugin_id : '') +'</td>' +

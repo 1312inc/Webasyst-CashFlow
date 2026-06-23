@@ -36,6 +36,7 @@ return array(
         'transaction_id' => array('int', 11),
         'type' => array('enum', "'normal', 'notice', 'warning', 'error'", 'null' => 0, 'default' => 'normal'),
         'plugin_id' => array('varchar', 63),
+        'automation_event' => array('varchar', 255),
         'automation_action' => array('varchar', 255),
         'description' => array('varchar', 4095),
         'automation_rule_json' => array('text'),

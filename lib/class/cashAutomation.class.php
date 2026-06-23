@@ -171,17 +171,21 @@ class cashAutomation
                             $is_contains = $operator === '%%';
                             $description = (string) ifset($transaction, 'description', '');
 
-                            if ($value === 'ss_order' && wa()->appExists('shop')) {
-                                $order_format = mb_strtolower(str_replace('{$order.id}', '', wa('shop')->getConfig()->getOrderFormat()));
-                                preg_match('#.*?[№\s]*'.preg_quote($order_format).'(?<ss_order>\d+).*#u', mb_strtolower($description), $matches);
-                                $ss_order_id = (int) ifset($matches, 'ss_order', 0);
-                                if ($is_contains && $ss_order_id) {
-                                    $transaction['ss_order_id'] = $ss_order_id;
-                                    $condition_done++;
-                                } elseif (!$is_contains && !$ss_order_id) {
-                                    $condition_done++;
+                            if ($value === 'ss_order') {
+                                $transaction['ss_order_id'] = 0;
+                                if (wa()->appExists('shop')) {
+                                    $order_format = mb_strtolower(str_replace('{$order.id}', '', wa('shop')->getConfig()->getOrderFormat()));
+                                    preg_match('#.*?[№\#\s]*'.preg_quote($order_format).'(?<ss_order>\d+).*#u', mb_strtolower($description), $matches);
+                                    $ss_order_id = (int) ifset($matches, 'ss_order', 0);
+                                    if ($is_contains && $ss_order_id) {
+                                        $transaction['ss_order_id'] = $ss_order_id;
+                                        $condition_done++;
+                                    } elseif (!$is_contains && !$ss_order_id) {
+                                        $condition_done++;
+                                    }
                                 }
                             } elseif ($value === 'compare_date') {
+                                $transaction['date_from_description'] = '';
                                 $months = [
                                     'января' => 1,
                                     'февраля' => 2,
@@ -209,7 +213,7 @@ class cashAutomation
                                         $transaction['date_from_description'] = date('Y-m-d', $timestamp);
                                         $condition_done++;
                                     } catch (Exception $ex) {
-                                        self::getLog()->add($rule, $transaction, 'Не удалось преобразовать дату из описания операции. '.$ex->getMessage(), 'error');
+                                        self::getLog()->add($rule, $transaction, _w('Не удалось преобразовать дату из описания операции.').$ex->getMessage(), 'error');
                                     }
                                 } elseif (!$is_contains && !$date) {
                                     $condition_done++;
@@ -264,13 +268,13 @@ class cashAutomation
                                     $plugin_view = wa()->getPlugin($rule_data['plugin_id'])->$method();
                                     $plugin_view = ifset($plugin_view, 'actions', $params['action'], 'action', null);
                                 }
-                                self::getLog()->add($rule, $transaction, 'Действие '.(empty($plugin_view) ? '' : "\"$plugin_view\" ").'плагином выполнено');
+                                self::getLog()->add($rule, $transaction, sprintf_wp('Действие %s плагином выполнено', (empty($plugin_view) ? '' : $plugin_view)));
                             }
                         } catch (Exception $ex) {
                             self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
                         }
                     } else {
-                        self::getLog()->add($rule, $transaction, 'Плагин и/или его метод не определены', 'warning');
+                        self::getLog()->add($rule, $transaction, _w('Плагин и/или его метод не определены'), 'warning');
                     }
                 } else {
                     $done = false;
@@ -291,10 +295,10 @@ class cashAutomation
                             $done = self::actionSS($rule, $transaction);
                             break;
                         default:
-                            self::getLog()->add($rule, $transaction, 'Неизвестное действие');
+                            self::getLog()->add($rule, $transaction, _w('Неизвестное действие'));
                     }
                     if ($done) {
-                        self::getLog()->add($rule, $transaction, 'Действие "'.ifset($known_actions, $rule_action, 'action', 'NULL').'" выполнено');
+                        self::getLog()->add($rule, $transaction, sprintf_wp('Действие "%s" выполнено', ifset($known_actions, $rule_action, 'action', _w('Неизвестное действие'))));
                     }
                 }
             }
@@ -504,14 +508,14 @@ class cashAutomation
                         if ((cash()->getModel(cashAccount::class))->getById($property_value)) {
                             $transaction_obj->setAccountId($property_value);
                         } else {
-                            self::getLog()->add($rule, $transaction, 'Счет для операции не найден', 'notice');
+                            self::getLog()->add($rule, $transaction, _w('Счет для операции не найден'), 'notice');
                         }
                         break;
                     case 'category_id':
                         if ((cash()->getModel(cashCategory::class))->getById($property_value)) {
                             $transaction_obj->setCategoryId($property_value);
                         } else {
-                            self::getLog()->add($rule, $transaction, 'Статья для операции не найдена', 'notice');
+                            self::getLog()->add($rule, $transaction, _w('Статья для операции не найдена'), 'notice');
                         }
                         break;
                     case 'description':
@@ -528,10 +532,10 @@ class cashAutomation
                     $result = true;
                 }
             } catch (Exception $ex) {
-                self::getLog()->add($rule, $transaction, 'Ошибка во время обновления операции.'.$ex->getMessage(), 'error');
+                self::getLog()->add($rule, $transaction, _w('Ошибка во время обновления операции.').$ex->getMessage(), 'error');
             }
         } else {
-            self::getLog()->add($rule, $transaction, 'Редактируемая операция не найдена и/или не задано обновляемое свойство и/или его значение', 'notice');
+            self::getLog()->add($rule, $transaction, _w('Редактируемая операция не найдена и/или не задано обновляемое свойство и/или его значение'), 'notice');
         }
 
         return $result;
@@ -558,13 +562,13 @@ class cashAutomation
                 $message->setTo($email_to);
                 $result = $message->send();
                 if (!$result) {
-                    self::getLog()->add($rule, $transaction, 'Письмо не отправлено', 'notice');
+                    self::getLog()->add($rule, $transaction, _w('Письмо не отправлено'), 'notice');
                 }
             } catch (Exception $ex) {
-                self::getLog()->add($rule, $transaction, 'Ошибка во время отправки письма.'.$ex->getMessage(), 'error');
+                self::getLog()->add($rule, $transaction, _w('Ошибка во время отправки письма.').$ex->getMessage(), 'error');
             }
         } else {
-            self::getLog()->add($rule, $transaction, 'Письмо не отправлено, так как не задан адрес и/или текст', 'notice');
+            self::getLog()->add($rule, $transaction, _w('Письмо не отправлено, так как не задан адрес и/или текст'), 'notice');
         }
 
         return $result;
@@ -579,11 +583,12 @@ class cashAutomation
     {
         try {
             if (!wa()->appExists('shop')) {
-                self::getLog()->add($rule, $transaction, 'Приложение ШС не активно/не установлено', 'notice');
+                self::getLog()->add($rule, $transaction, _w('Приложение ШС не активно/не установлено'), 'notice');
                 return false;
             }
         } catch (Exception $ex) {
             self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
+            return false;
         }
 
         $result = false;
@@ -591,24 +596,28 @@ class cashAutomation
             try {
                 $order = new shopOrder($order_id);
                 if (!$order->getId()) {
-                    self::getLog()->add($rule, $transaction, 'Заказ ШС не был найден', 'notice');
+                    self::getLog()->add($rule, $transaction, _w('Заказ ШС не был найден'), 'notice');
                 }
             } catch (Exception $ex) {
                 self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
+                return false;
             }
 
+            $date_compare = true;
             $customer_compare = true;
-            $amount = ifset($transaction, 'amount', null);
-            $date_from_description = ifset($transaction, 'date_from_description', null);
-            $date = substr($order->create_datetime, 0, 10);
             $ss_action = ifset($rule, 'rule_data', 'ss_action', null);
+            $amount = ifset($transaction, 'amount', null);
             $operator = ifset($rule, 'rule_data', 'ss_amount_compare', '==');
+            $amount_compare = self::compare($amount, $order->total, $operator);
 
             if (ifset($rule, 'rule_data', 'ss_customer_compare', null)) {
                 $customer_compare = ifset($transaction, 'contractor_contact_id', '') === $order->contact_id;
             }
-
-            if ($ss_action && $date_from_description == $date && self::compare($amount, $order->total, $operator) && $customer_compare) {
+            if (isset($transaction['date_from_description'])) {
+                $date = substr($order->create_datetime, 0, 10);
+                $date_compare = ifset($transaction, 'date_from_description', '') == $date;
+            }
+            if ($ss_action && $amount_compare && $date_compare && $customer_compare) {
                 try {
                     wa('shop', 1);
                     /** @var shopWorkflowAction $action */
@@ -619,27 +628,43 @@ class cashAutomation
                         $action = $workflow->getActionById($ss_action);
                         $result = $action->run($order_id);
                     } else {
-                        self::getLog()->add($rule, $transaction, 'Для текущего статуса заказа действие не разрешено', 'notice');
+                        self::getLog()->add($rule, $transaction, _w('Для текущего статуса заказа действие не разрешено'), 'notice');
                     }
                     wa('cash', 1);
-                } catch (Exception $exception) {
-                    self::getLog()->add($rule, $transaction, 'Возникла ошибка во время выполнения действия с заказом.'.$ex->getMessage(), 'error');
+                } catch (Exception $ex) {
+                    self::getLog()->add($rule, $transaction, _w('Возникла ошибка во время выполнения действия с заказом.').$ex->getMessage(), 'error');
                 }
             } elseif ($email_to = ifset($rule, 'rule_data', 'ss_email_to', null)) {
+                $notice = [];
+                if (!$amount_compare) {
+                    $notice[] = _w('Не совпала сумма операции с суммой заказа');
+                }
+                if (!$date_compare) {
+                    $notice[] = _w('Не совпала дата в описании операции с датой заказа');
+                }
+                if (!$customer_compare) {
+                    $notice[] = _w('Не совпал контрагент');
+                }
                 try {
                     $subject = _w('Оповещение о срабатывании');
-                    $text = 'Пришла операция, хотели обновить связанный заказ, но не стали, так как не нашли заказ. Данные операции такие — '.var_export($transaction, true);
+                    $text = sprintf_wp(
+                        'Пришла операция, хотели обновить связанный заказ, но не стали, так как: %s. Данные операции такие — %s',
+                        implode(', ', $notice),
+                        var_export($transaction, true)
+                    );
                     $message = new waMailMessage($subject, $text);
                     $message->setFrom(wa()->getSetting('email', '', 'webasyst'));
                     $message->setTo($email_to);
                     $result = $message->send();
                     if (!$result) {
-                        self::getLog()->add($rule, $transaction, 'Письмо не отправлено', 'notice');
+                        self::getLog()->add($rule, $transaction, _w('Письмо не отправлено'), 'notice');
                     }
                 } catch (Exception $ex) {
-                    self::getLog()->add($rule, $transaction, 'Ошибка во время отправки письма.'.$ex->getMessage(), 'error');
+                    self::getLog()->add($rule, $transaction, _w('Ошибка во время отправки письма.').$ex->getMessage(), 'error');
                 }
             }
+        } else {
+            self::getLog()->add($rule, $transaction, _w('Номер заказа ШС не указан/распознан.'), 'notice');
         }
 
         return !!$result;
