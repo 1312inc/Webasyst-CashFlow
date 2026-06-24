@@ -504,7 +504,7 @@ class cashAutomation
                         $category_id = ifset($properties, 'category_id', $transaction['category_id']);
                         $category = (cash()->getModel(cashCategory::class))->getById($category_id);
                         if (!empty($category['type'])) {
-                            $property_value = ($category['type'] === cashCategory::TYPE_INCOME ?: abs($property_value) * -1);
+                            $property_value = abs($property_value) * ($category['type'] === cashCategory::TYPE_INCOME ? 1 : -1);
                         }
                         $transaction_obj->setAmount($property_value);
                         break;
