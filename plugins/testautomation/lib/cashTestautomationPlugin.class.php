@@ -5,7 +5,19 @@ class cashTestautomationPlugin extends waPlugin
     private static function getConditions()
     {
         return [
-            'is_sunny' => ['name' => 'Плагин: Если светит солнце', 'operators' => ['==' => '==', '!=' => '!='], 'select' => ['clear' => 'Ясно', 'cloudy' => 'Малооблачно', 'gloomy' => 'Пасмурно']],
+            'is_sunny' => [
+                'name' => 'Плагин: Если светит солнце',
+                'elements' => [
+                    'operator' => [
+                        'type' => 'select',
+                        'options' => ['==' => '==', '!=' => '!=']
+                    ],
+                    'weather' => [
+                        'type' => 'select',
+                        'options' => ['clear' => 'Ясно', 'cloudy' => 'Малооблачно', 'gloomy' => 'Пасмурно']
+                    ]
+                ]
+            ]
         ];
     }
 
@@ -52,7 +64,7 @@ class cashTestautomationPlugin extends waPlugin
         $conditions = self::getConditions();
         $condition_id = ifset($params, 'condition', 'condition_id', null);
         $operator = ifset($params, 'condition', 'operator', null);
-        $value = ifset($params, 'condition', 'value', null);
+        $value = ifset($params, 'condition', 'weather', null);
         $transaction = ifset($params, 'transaction', []);
         if (empty($conditions[$condition_id])) {
             return false;

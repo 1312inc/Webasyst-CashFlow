@@ -7,14 +7,14 @@ class cashAutomation
     public static function getConditions()
     {
         return [
-            ''                => ['name' => _w('Any transaction'), 'operators' => []],
-            'amount'          => ['name' => _w('Amount'), 'operators' => ['>=' => '>=', '<=' => '<=', '==' => '==']],
-            'description'     => ['name' => _w('Description'), 'operators' => ['%%' => _w('содержит'), '!%%' => _w('не содержит')], 'select' => ['compare_date' => _w('дату')] + (wa()->appExists('shop') ? ['ss_order' => _w('номер заказа ШС')] : [])],
-            'account_id'      => ['name' => _w('Account'), 'operators' => ['==' => '==', '!=' => '!='], 'select' => self::getAccounts()],
-            'category_id'     => ['name' => _w('Category'), 'operators' => ['==' => '==', '!=' => '!='], 'select' => self::getCategories()],
-            'date'            => ['name' => _w('Date'), 'operators' => ['<=' => '<=', '>=' => '>='], 'type' => 'date'],
-            'external_id'     => ['name' => _w('External ID'), 'operators' => ['==' => '==', '!=' => '!='], 'type' => 'number'],
-            'external_source' => ['name' => _w('External source'), 'operators' => ['==' => '==', '!=' => '!='], 'select' => self::externalSource()],
+            ''                => ['name' => _w('Any transaction')] + self::getElements(),
+            'amount'          => ['name' => _w('Amount')] + self::getElements('amount'),
+            'description'     => ['name' => _w('Description')] + self::getElements('description'),
+            'account_id'      => ['name' => _w('Account')] + self::getElements('account_id'),
+            'category_id'     => ['name' => _w('Category')] + self::getElements('category_id'),
+            'date'            => ['name' => _w('Date')] + self::getElements('date'),
+            'external_id'     => ['name' => _w('External ID')] + self::getElements('external_id'),
+            'external_source' => ['name' => _w('External source')] + self::getElements('external_source'),
         ];
     }
 
@@ -183,6 +183,10 @@ class cashAutomation
                                     } elseif (!$is_contains && !$ss_order_id) {
                                         $condition_done++;
                                     }
+                                }
+                            } elseif ($value === 'custom_text') {
+                                if (preg_match('#\b'.preg_quote(ifset($_condition,'custom_text', '')).'\b#u', $description)) {
+                                    $condition_done++;
                                 }
                             } elseif ($value === 'compare_date') {
                                 $transaction['date_from_description'] = '';
@@ -365,11 +369,11 @@ class cashAutomation
     }
 
     /**
-     * @param $type
+     * @param string $type
      * @return array[]
      * @throws waException
      */
-    private static function getElements($type)
+    private static function getElements($type = '')
     {
         $elements = [];
         switch ($type) {
@@ -426,7 +430,7 @@ class cashAutomation
                     ],
                     $type.'_script' => [
                         'type' => 'script',
-                        'script' => self::getScript()
+                        'script' => self::getScript('self_update')
                     ]
                 ];
                 break;
@@ -458,6 +462,97 @@ class cashAutomation
                         'label' => _w('Кому'),
                         'hint' => _w('При не совпадении, сообщить на e-mail')
                     ],
+                ];
+                break;
+            case 'description':
+                $elements = [
+                    'operator' => [
+                        'type' => 'select',
+                        'options' => ['%%' => _w('содержит'), '!%%' => _w('не содержит')],
+                    ],
+                    'value' => [
+                        'type' => 'select',
+                        'options' => [
+                            'compare_date' => _w('дату'),
+                            'custom_text' => _w('произвольный текст')
+                        ] + (wa()->appExists('shop') ? ['ss_order' => _w('номер заказа ШС')] : [])
+                    ],
+                    'custom_text' => [
+                        'type' => 'text',
+                    ],
+                    $type.'_script' => [
+                        'type' => 'script',
+                        'script' => self::getScript('description')
+                    ]
+                ];
+                break;
+            case 'amount':
+                $elements = [
+                    'operator' => [
+                        'type' => 'select',
+                        'options' => ['>=' => '>=', '<=' => '<=', '==' => '==']
+                    ],
+                    'value' => [
+                        'type' => 'text',
+                    ]
+                ];
+                break;
+            case 'account_id':
+                $elements = [
+                    'operator' => [
+                        'type' => 'select',
+                        'options' => ['==' => '==', '!=' => '!=']
+                    ],
+                    'value' => [
+                        'type' => 'select',
+                        'options' => self::getAccounts()
+                    ]
+                ];
+                break;
+            case 'category_id':
+                $elements = [
+                    'operator' => [
+                        'type' => 'select',
+                        'options' => ['==' => '==', '!=' => '!=']
+                    ],
+                    'value' => [
+                        'type' => 'select',
+                        'options' => self::getCategories()
+                    ]
+                ];
+                break;
+            case 'date':
+                $elements = [
+                    'operator' => [
+                        'type' => 'select',
+                        'options' => ['<=' => '<=', '>=' => '>=']
+                    ],
+                    'value' => [
+                        'type' => 'date',
+                    ]
+                ];
+                break;
+            case 'external_id':
+                $elements = [
+                    'operator' => [
+                        'type' => 'select',
+                        'options' => ['==' => '==', '!=' => '!=']
+                    ],
+                    'value' => [
+                        'type' => 'number',
+                    ]
+                ];
+                break;
+            case 'external_source':
+                $elements = [
+                    'operator' => [
+                        'type' => 'select',
+                        'options' => ['==' => '==', '!=' => '!=']
+                    ],
+                    'value' => [
+                        'type' => 'select',
+                        'options' => self::externalSource()
+                    ]
                 ];
                 break;
         }
@@ -674,11 +769,17 @@ class cashAutomation
         return !!$result;
     }
 
-    private static function getScript()
+    /**
+     * @param string $code
+     * @return string
+     */
+    private static function getScript($code = '')
     {
-        $amount = _w('Amount');
-
-        return <<<SCRIPT
+        $script = '';
+        switch ($code) {
+            case 'self_update':
+                $amount = _w('Amount');
+                $script = <<<SCRIPT
 let amount_type = $(this).find('.amount_type').val();
 
 $(this).find('.span-desc').remove();
@@ -687,5 +788,19 @@ if (amount_type == 'amount_percent') {
     $(this).find('.property_amount').after('<span class="span-desc">%</span>');
 }
 SCRIPT;
+                break;
+            case 'description':
+                $script = <<<SCRIPT
+let description_condition = $(this).find('.description[name$="[value]"]').val();
+
+$(this).find('[name$="[custom_text]"]').addClass('hidden');   
+if (description_condition == 'custom_text') {
+    $(this).find('[name$="[custom_text]"]').removeClass('hidden');
+}
+SCRIPT;
+                break;
+        }
+
+        return $script;
     }
 }
