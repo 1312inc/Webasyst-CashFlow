@@ -31,28 +31,41 @@ class cashAutomation
     }
 
     /**
+     * @param $id
      * @return array
      * @throws waException
      */
-    private static function getCategories(): array
+    private static function getCategories($id = null): array
     {
-        $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
+        static $categories = [];
+        if (empty($categories)) {
+            $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
+            $categories = array_combine(array_column($categories, 'id'), $categories);
+        }
+        if ($id) {
+            return ifset($categories, $id, []);
+        }
 
-        return array_combine(array_column($categories, 'id'), array_column($categories, 'name'));
+        return array_combine(array_keys($categories), array_column($categories, 'name'));
     }
 
     /**
+     * @param $id
      * @return array
      * @throws waException
      */
-    private static function getAccounts(): array
+    private static function getAccounts($id = null): array
     {
         static $accounts = [];
         if (empty($accounts)) {
             $accounts = cash()->getModel(cashAccount::class)->getAllActiveForContact(wa()->getUser());
+            $accounts = array_combine(array_column($accounts, 'id'), $accounts);
+        }
+        if ($id) {
+            return ifset($accounts, $id, []);
         }
 
-        return array_combine(array_column($accounts, 'id'), array_column($accounts, 'name'));
+        return array_combine(array_keys($accounts), array_column($accounts, 'name'));
     }
 
     private static function externalSource(): array
@@ -128,8 +141,17 @@ class cashAutomation
         $known_actions = cashAutomationAction::getActions();
         $known_conditions = cashAutomationAction::getConditions();
         $all_enabled_plugins = wa('cash')->getConfig()->getPlugins();
-        $accounts = self::getAccounts();
-        $transaction['account_name'] = ifset($accounts, $transaction['account_id'], null);
+
+        $account = self::getAccounts($transaction['account_id']);
+        $transaction['account_name'] = ifset($account, 'name', null);
+        $transaction['currency'] = ifset($account, 'currency', null);
+        $category = self::getCategories($transaction['category_id']);
+        $transaction['category_name'] = ifset($category, 'name', null);
+
+        if (!empty($transaction['contractor_contact_id'])) {
+            $contractor_contact = new waContact($transaction['contractor_contact_id']);
+            $transaction['contractor_name'] = $contractor_contact->getName();
+        }
 
         foreach ($rules as $rule) {
             $condition_done = 0;
@@ -315,18 +337,22 @@ class cashAutomation
     {
         return _w('Переменные').'<br>
             <b>{ID} - </b>'._w('ИД операции').'<br>
-            <b>{DATE} - </b>'._w('Дата операции').'<br>
-            <b>{ACCOUNT_ID} - </b>'._w('Счёт операции').'<br>
-            <b>{CATEGORY_ID} - </b>'._w('Статья операции').'<br>
-            <b>{AMOUNT} - </b>'._w('Сумма операции').'<br>
-            <b>{DESCRIPTION} - </b>'._w('Комментарий к операции').'<br>
-            <b>{CREATE_CONTACT_ID} - </b>'._w('операции').'<br>
-            <b>{CREATE_DATETIME} - </b>'._w('Дата создания операции').'<br>
-            <b>{UPDATE_DATETIME} - </b>'._w('Дата обновления операции').'<br>
-            <b>{IS_ARCHIVED} - </b>'._w('В архиве ли операции').'<br>
-            <b>{EXTERNAL_SOURCE} - </b>'._w('Источник операции').'<br>
+            <b>{DATE} - </b>'._w('дата операции').'<br>
+            <b>{ACCOUNT_ID} - </b>'._w('ИД счёта операции').'<br>
+            <b>{ACCOUNT_NAME} - </b>'._w('название счета').'<br>
+            <b>{CATEGORY_ID} - </b>'._w('ИД статьи операции').'<br>
+            <b>{CATEGORY_NAME} - </b>'._w('название статьи').'<br>
+            <b>{AMOUNT} - </b>'._w('сумма операции').'<br>
+            <b>{CURRENCY} - </b>'._w('ISO3-код валюты операции').'<br>
+            <b>{DESCRIPTION} - </b>'._w('комментарий к операции').'<br>
+            <b>{CREATE_CONTACT_ID} - </b>'._w('ИД контакта создателя операции').'<br>
+            <b>{CREATE_DATETIME} - </b>'._w('дата создания операции').'<br>
+            <b>{UPDATE_DATETIME} - </b>'._w('дата обновления операции').'<br>
+            <b>{CONTRACTOR_CONTACT_ID} - </b>'._w('ИД плательщика операции').'<br>
+            <b>{CONTRACTOR_NAME} - </b>'._w('полное имя плательщика операции').'<br>
+            <b>{IS_ARCHIVED} - </b>'._w('в архиве ли операции').'<br>
+            <b>{EXTERNAL_SOURCE} - </b>'._w('источник операции').'<br>
             <b>{EXTERNAL_ID} - </b>'._w('ИД источника операции').'<br>
-            <b>{CONTRACTOR_CONTACT_ID} - </b>'._w('Плательщик операции').'<br>
         ';
     }
 
@@ -338,15 +364,18 @@ class cashAutomation
             '#\{ACCOUNT_ID}#',
             '#\{ACCOUNT_NAME}#',
             '#\{CATEGORY_ID}#',
+            '#\{CATEGORY_NAME}#',
             '#\{AMOUNT}#',
+            '#\{CURRENCY}#',
             '#\{DESCRIPTION}#',
             '#\{CREATE_CONTACT_ID}#',
             '#\{CREATE_DATETIME}#',
             '#\{UPDATE_DATETIME}#',
+            '#\{CONTRACTOR_CONTACT_ID}#',
+            '#\{CONTRACTOR_NAME}#',
             '#\{IS_ARCHIVED}#',
             '#\{EXTERNAL_SOURCE}#',
             '#\{EXTERNAL_ID}#',
-            '#\{CONTRACTOR_CONTACT_ID}#',
         ];
         $replacements = [
             ifset($transaction, 'id', ''),                     //{ID}
@@ -354,15 +383,18 @@ class cashAutomation
             ifset($transaction, 'account_id', ''),             //{ACCOUNT_ID}
             ifset($transaction, 'account_name', ''),           //{ACCOUNT_NAME}
             ifset($transaction, 'category_id', ''),            //{CATEGORY_ID}
+            ifset($transaction, 'category_name', ''),          //{CATEGORY_NAME}
             ifset($transaction, 'amount', ''),                 //{AMOUNT}
+            ifset($transaction, 'currency', ''),               //{CURRENCY}
             ifset($transaction, 'description', ''),            //{DESCRIPTION}
             ifset($transaction, 'create_contact_id', ''),      //{CREATE_CONTACT_ID}
             ifset($transaction, 'create_datetime', ''),        //{CREATE_DATETIME}
             ifset($transaction, 'update_datetime', ''),        //{UPDATE_DATETIME}
+            ifset($transaction, 'contractor_contact_id', ''),  //{CONTRACTOR_CONTACT_ID}
+            ifset($transaction, 'contractor_name', ''),        //{CONTRACTOR_NAME}
             ifset($transaction, 'is_archived', ''),            //{IS_ARCHIVED}
             ifset($transaction, 'external_source', ''),        //{EXTERNAL_SOURCE}
             ifset($transaction, 'external_id', ''),            //{EXTERNAL_ID}
-            ifset($transaction, 'contractor_contact_id', ''),  //{CONTRACTOR_CONTACT_ID}
         ];
 
         return preg_replace($patterns, $replacements, $text);
