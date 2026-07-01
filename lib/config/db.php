@@ -63,6 +63,14 @@ return array(
             'cash_category_category_parent_id_index' => 'category_parent_id',
         ),
     ),
+    'cash_company' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'name' => array('varchar', 32, 'default' => ''),
+        'sort' => array('int', 11, 'default' => '0'),
+        ':keys' => array(
+            'PRIMARY' => 'id',
+        ),
+    ),
     'cash_transaction_data' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
         'transaction_id' => array('bigint', 20, 'null' => 0),
