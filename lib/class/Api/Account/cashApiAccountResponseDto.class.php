@@ -33,6 +33,11 @@ class cashApiAccountResponseDto
     /**
      * @var int
      */
+    public $company_id;
+
+    /**
+     * @var int
+     */
     public $customer_contact_id;
 
     /**
@@ -83,6 +88,7 @@ class cashApiAccountResponseDto
         $dto->description = $account->getDescription();
         $dto->icon = $account->getIcon();
         $dto->currency = $account->getCurrency();
+        $dto->company_id = $account->getCompanyId();
         $dto->customer_contact_id = $account->getCustomerContactId() ? (int) $account->getCustomerContactId() : null;
         $dto->accountable_contact_id = $account->getAccountableContactId() ? (int) $account->getAccountableContactId() : null;
         $dto->is_archived = $account->getIsArchived() ? true : false;

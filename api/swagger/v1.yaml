@@ -623,6 +623,12 @@ paths:
         - Счета
       security:
         - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
       responses:
         200:
           description: Список счетов.
@@ -2324,6 +2330,9 @@ components:
         currency:
           type: string
           description: 3-буквенный код валюты
+        company_id:
+          type: integer
+          description: ID компании
         customer_contact_id:
           type: integer
           description: ID клиента
