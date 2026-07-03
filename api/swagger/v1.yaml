@@ -1465,6 +1465,160 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /cash.company.create:
+    post:
+      externalDocs:
+        description: cash.company.create
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.company.create/
+      summary: Создает новую компанию.
+      tags:
+        - Компании
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Название компании
+                sort:
+                  type: integer
+                  default: 0
+                  description: Значение сортировки
+              required:
+                - name
+      responses:
+        200:
+          description: Свойства созданной компании.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyInfo'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.company.delete:
+    post:
+      externalDocs:
+        description: cash.company.delete
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.company.delete/
+      summary: Удаляет компанию.
+      tags:
+        - Компании
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: ID компании
+              required:
+                - id
+      responses:
+        204:
+          description: Ответ в случаи удаления компании.
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.company.getList:
+    get:
+      externalDocs:
+        description: cash.company.getList
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.company.getList/
+      summary: Возвращает список всех доступных компаний.
+      tags:
+        - Компании
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        200:
+          description: Список компаний.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyList'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.company.update:
+    post:
+      externalDocs:
+        description: cash.company.update
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.company.update/
+      summary: Обновляет свойства компании.
+      tags:
+        - Компании
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: ID компании
+                name:
+                  type: string
+                  description: Название компании
+                sort:
+                  type: integer
+                  default: 0
+                  description: Значение сортировки
+              required:
+                - id
+      responses:
+        200:
+          description: Свойства обновленной компании.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyInfo'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.contact.search:
     get:
       externalDocs:
@@ -2289,6 +2443,24 @@ components:
           default: null
           description: Имена CSS-классов для отображения иконки Font Awesome
 
+    CompanyInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID компании
+        name:
+          type: string
+          description: Название компании
+        sort:
+          type: integer
+          description: Значение сортировки
+
+    CompanyList:
+      type: array
+      items:
+        $ref: '#/components/schemas/CompanyInfo'
+
     TransactionInfo:
       type: object
       properties:
@@ -2594,6 +2766,7 @@ components:
         - date
         - account_id
         - category_id
+
     TransactionUpdateRequest:
       type: object
       properties:
