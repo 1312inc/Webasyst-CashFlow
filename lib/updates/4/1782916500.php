@@ -14,3 +14,9 @@ try {
         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8
     ");
 }
+
+try {
+    $model->query("SELECT company_id FROM `cash_account`");
+} catch (waException $e) {
+    $model->exec('ALTER TABLE cash_account ADD company_id int NULL AFTER currency');
+}
