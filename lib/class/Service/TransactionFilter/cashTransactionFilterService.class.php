@@ -124,6 +124,13 @@ final class cashTransactionFilterService
         return !$dto->returnIterator ? $sqlParts->query()->fetchAll() : $sqlParts->query()->getIterator();
     }
 
+
+    private function makeBaseSqlForCompanyFilter(cashTransactionFilterParamsDto $dto, cashSelectQueryParts $select_query_parts)
+    {
+        $select_query_parts->addAndWhere('cmp.id = i:company_id')
+            ->addParam('company_id', $dto->filter->getCompanyId());
+    }
+
     /**
      * @param cashTransactionFilterParamsDto $dto
      * @param cashSelectQueryParts           $selectQueryParts
@@ -292,27 +299,24 @@ final class cashTransactionFilterService
 
         $sqlParts->select(['ct.*'])
             ->from('cash_transaction', 'ct')
-            ->join(
-                [
-                    'join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0',
-                    'left join cash_category cc on ct.category_id = cc.id',
-                ]
-            )
-            ->andWhere(
-                [
-                    'dateBetween' => 'ct.date between s:startDate and s:endDate',
-                    'isArchived' => 'ct.is_archived = 0',
-                    'accountAccessSql' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
-                        $dto->contact,
-                        $dto->filter->getAccountId()
-                    ),
-                    'categoryAccessSql' => cash()->getContactRights()->getSqlForCategoryJoin(
-                        $dto->contact,
-                        'ct',
-                        'category_id'
-                    ),
-                ]
-            );
+            ->join([
+                'join cash_account ca on ct.account_id = ca.id and ca.is_archived = 0',
+                'left join cash_category cc on ct.category_id = cc.id',
+                'left join cash_company cmp on ca.company_id = cmp.id'
+            ])
+            ->andWhere([
+                'dateBetween' => 'ct.date between s:startDate and s:endDate',
+                'isArchived' => 'ct.is_archived = 0',
+                'accountAccessSql' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+                    $dto->contact,
+                    $dto->filter->getAccountId()
+                ),
+                'categoryAccessSql' => cash()->getContactRights()->getSqlForCategoryJoin(
+                    $dto->contact,
+                    'ct',
+                    'category_id'
+                ),
+            ]);
 
         if ($dto->start !== null && $dto->limit !== null) {
             $sqlParts->limit($dto->limit)
@@ -335,46 +339,33 @@ final class cashTransactionFilterService
         );
 
         switch (true) {
+            case null !== $dto->filter->getCompanyId():
+                $this->makeBaseSqlForCompanyFilter($dto, $sqlParts);
+                break;
             case null !== $dto->filter->getAccountId():
                 $this->makeBaseSqlForAccountFilter($dto, $sqlParts);
-
                 break;
-
             case null !== $dto->filter->getCategoryId():
                 $this->makeBaseSqlForCategoryFilter($dto, $sqlParts);
-
                 break;
-
             case null !== $dto->filter->getCurrency():
                 $this->makeBaseSqlForCurrencyFilter($dto, $sqlParts);
-
                 break;
-
             case null !== $dto->filter->getContractorId():
                 $this->makeBaseSqlForContractorFilter($dto, $sqlParts);
-
                 break;
-
             case null !== $dto->filter->getImportId():
                 $this->makeBaseSqlForImportFilter($dto, $sqlParts);
-
                 break;
-
             case null !== $dto->filter->getSearch():
                 $this->makeBaseSqlForSearchFilter($dto, $sqlParts);
-
                 break;
-
             case null !== $dto->filter->getTrash():
                 $this->makeBaseSqlForTrashFilter($dto, $sqlParts);
-
                 break;
-
             case null !== $dto->filter->getExternalId() && null !== $dto->filter->getExternalSource():
                 $this->makeBaseSqlForExternalFilter($dto, $sqlParts);
-
                 break;
-
             default:
                 $this->makeImaginaryFilter($sqlParts, true);
         }

@@ -3,6 +3,7 @@
 final class cashAggregateFilter
 {
     public const FILTER_ALL        = 'all';
+    public const FILTER_COMPANY    = 'company';
     public const FILTER_ACCOUNT    = 'account';
     public const FILTER_CATEGORY   = 'category';
     public const FILTER_CONTRACTOR = 'contractor';
@@ -15,6 +16,7 @@ final class cashAggregateFilter
 
     private const FILTERS = [
         self::FILTER_ALL,
+        self::FILTER_COMPANY,
         self::FILTER_ACCOUNT,
         self::FILTER_CATEGORY,
         self::FILTER_CONTRACTOR,
@@ -30,6 +32,11 @@ final class cashAggregateFilter
      * @var null
      */
     private $all;
+
+    /**
+     * @var int|null
+     */
+    private $company;
 
     /**
      * @var int|null
@@ -108,6 +115,7 @@ final class cashAggregateFilter
                 $self->$filter = in_array(
                     $filter,
                     [
+                        self::FILTER_COMPANY,
                         self::FILTER_ACCOUNT,
                         self::FILTER_CATEGORY,
                         self::FILTER_CONTRACTOR,
@@ -120,6 +128,11 @@ final class cashAggregateFilter
         }
 
         return $self;
+    }
+
+    public function getCompanyId(): ?int
+    {
+        return $this->company;
     }
 
     public function getAccountId(): ?int

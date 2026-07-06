@@ -13,7 +13,8 @@ class cashApiAccountGetListHandler implements cashApiHandlerInterface
     public function handle($request): array
     {
         $contact = wa()->getUser();
-        if ($request->getCompanyId() && !$contact->isAdmin()) {
+        $company_id = ($request ? $request->getCompanyId() : 0);
+        if ($company_id && !$contact->isAdmin()) {
             return [];
         }
 
@@ -29,7 +30,7 @@ class cashApiAccountGetListHandler implements cashApiHandlerInterface
 
         $response = [];
         foreach ($accounts as $account) {
-            if ($request->getCompanyId() && $request->getCompanyId() != $account->getCompanyId()) {
+            if ($company_id && $company_id != $account->getCompanyId()) {
                 continue;
             }
             $accountResponse = cashApiAccountResponseDto::fromAccount($account);
