@@ -813,6 +813,7 @@ class cashGraphService
             ->join([
                 'join cash_account ca on ct.account_id = ca.id',
                 'join cash_category cc on ct.category_id = cc.id',
+                'left join cash_company cmp on ca.company_id = cmp.id',
             ])
             ->andWhere([
                 'ct.date between s:from and s:to',
@@ -831,6 +832,10 @@ class cashGraphService
             ->orderBy(['cc.sort'])
             ->params(['from' => $paramsDto->from->format('Y-m-d'), 'to' => $paramsDto->to->format('Y-m-d')]);
 
+        if ($paramsDto->filter->getCompanyId()) {
+            $sqlParts->addAndWhere('cmp.id = i:company_id')
+                ->addParam('company_id', $paramsDto->filter->getCompanyId());
+        }
         if (!$paramsDto->filter->getAccountId()) {
             if (null !== $paramsDto->filter->getCurrency() && empty($request->imaginary_past_force_add)) {
                 $sqlParts->addAndWhere('
