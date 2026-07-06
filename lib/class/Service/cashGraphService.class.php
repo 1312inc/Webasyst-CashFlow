@@ -496,6 +496,7 @@ class cashGraphService
             ->join([
                 'join cash_account ca on ct.account_id = ca.id',
                 'join cash_category cc on ct.category_id = cc.id',
+                'left join cash_company cmp on ca.company_id = cmp.id',
             ])
             ->andWhere([
                 'account_access' => cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
@@ -514,9 +515,11 @@ class cashGraphService
         switch (true) {
             case $paramsDto->filter->isFilterByCalendar():
                 $sqlParts->addAndWhere('ct.category_id <> -1312');
-
                 break;
-
+            case null !== $paramsDto->filter->getCompanyId():
+                $sqlParts->addAndWhere('cmp.id = i:company_id')
+                    ->addParam('company_id', $paramsDto->filter->getCompanyId());
+                break;
             case null !== $paramsDto->filter->getAccountId():
                 $sqlParts->addAndWhere('ct.account_id = i:account_id')
                     ->addParam('account_id', $paramsDto->filter->getAccountId());
@@ -526,12 +529,9 @@ class cashGraphService
                 )) {
                     $calculateBalance = true;
                 }
-
                 break;
-
             case null !== $paramsDto->filter->getCategoryId():
                 $childIds = cash()->getModel(cashCategory::class)->getChildIds($paramsDto->filter->getCategoryId());
-
                 $sqlParts->addAndWhere('ct.category_id in (i:category_ids)')
                     ->addSelect(
                         "sum(if(concat(if(ct.amount < 0, 'exp', 'inc'), '|', cc.is_profit) = 'exp|0', ct.amount, null)) expenseAmount",
@@ -548,13 +548,11 @@ class cashGraphService
                     ->addParam('category_ids', array_merge([$paramsDto->filter->getCategoryId()], $childIds));
 
                 break;
-
             case null !== $paramsDto->filter->getContractorId():
                 $sqlParts->addAndWhere('ct.contractor_contact_id = i:contractor_contact_id')
                     ->addParam('contractor_contact_id', $paramsDto->filter->getContractorId());
 
                 break;
-
             case null !== $paramsDto->filter->getCurrency():
                 $sqlParts->addAndWhere('ca.currency = s:currency')
                     ->addParam('currency', $paramsDto->filter->getCurrency());
