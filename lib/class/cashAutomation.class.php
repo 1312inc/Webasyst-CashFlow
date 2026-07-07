@@ -295,6 +295,7 @@ class cashAutomation
                                     $plugin_view = ifset($plugin_view, 'actions', $params['action'], 'action', null);
                                 }
                                 self::getLog()->add($rule, $transaction, sprintf_wp('Действие %s плагином выполнено', (empty($plugin_view) ? '' : $plugin_view)));
+                                break;
                             }
                         } catch (Exception $ex) {
                             self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
@@ -325,6 +326,7 @@ class cashAutomation
                     }
                     if ($done) {
                         self::getLog()->add($rule, $transaction, sprintf_wp('Действие "%s" выполнено', ifset($known_actions, $rule_action, 'action', _w('Неизвестное действие'))));
+                        break;
                     }
                 }
             }
