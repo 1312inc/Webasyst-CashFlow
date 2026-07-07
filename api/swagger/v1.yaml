@@ -936,6 +936,11 @@ paths:
               - day
               - month
               - year
+        - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
       responses:
         200:
           description: Информация об изменении баланса.
@@ -1016,7 +1021,8 @@ paths:
           description: |
             Хеш-строка для фильтрации списка финансовых операций
             Примеры:
-            + **account/1**: операции для счета, ID которого — 1
+            + **company/1**: операции для компании, ID которой — 1
+            + **account/2**: операции для счета, ID которого — 2
             + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
           schema:
             type: string

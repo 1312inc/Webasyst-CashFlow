@@ -698,11 +698,14 @@ class cashGraphService
                     END'
                 ]
             )
-            ->join(
-                [
-                    'join cash_account ca on ct.account_id = ca.id',
-                ]
-            );
+            ->join([
+                'join cash_account ca on ct.account_id = ca.id',
+                'left join cash_company cmp on ca.company_id = cmp.id'
+            ]);
+        if ($paramsDto->filter->getCompanyId()) {
+            $sqlParts->addAndWhere('cmp.id = i:company_id')
+                ->addParam('company_id', $paramsDto->filter->getCompanyId());
+        }
 
         $initialBalanceSql = clone $sqlParts;
         $initialBalanceSql->select(['ca.currency currency, sum(ct.amount) balance'])
@@ -716,13 +719,11 @@ class cashGraphService
         $format = $this->getGroupingDateFormat($paramsDto);
 
         $sqlParts->addAndWhere(sprintf('%s between s:from and s:to', $grouping))
-            ->select(
-                [
-                    'ca.currency currency',
-                    "{$grouping} period",
-                    'sum(ct.amount) amount',
-                ]
-            )
+            ->select([
+                'ca.currency currency',
+                "{$grouping} period",
+                'sum(ct.amount) amount',
+            ])
             ->addParam('from', $paramsDto->from->format($format))
             ->addParam('to', $paramsDto->to->format($format))
             ->groupBy(['currency', 'period'])
