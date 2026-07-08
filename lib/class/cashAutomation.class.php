@@ -450,7 +450,7 @@ class cashAutomation
                         'type' => 'select',
                         'label' => _w('Сумма'),
                         'class' => 'amount_type',
-                        'options' => ['amount_fix' => _w('Fix'), 'amount_percent' => _w('Amount').' * %'],
+                        'options' => ['amount_not_touch' => _w("Don't touch"), 'amount_fix' => _w('Fix'), 'amount_percent' => _w('Amount').' * %'],
                         'child' => 1,
                     ],
                     $type.'_property_amount' => [
@@ -626,9 +626,12 @@ class cashAutomation
             foreach ($properties as $_property_name => $property_value) {
                 switch ($_property_name) {
                     case 'amount':
-                        if (ifset($properties, 'amount_type', 'amount_fix') === 'amount_percent') {
+                        $amount_type = ifset($properties, 'amount_type', 'amount_not_touch');
+                        if ($amount_type === 'amount_percent') {
                             $property_value = (float) $property_value / 100;
                             $property_value = $transaction['amount'] * $property_value;
+                        } elseif ($amount_type === 'amount_not_touch') {
+                            $property_value = $transaction['amount'];
                         }
                         $category_id = ifset($properties, 'category_id', $transaction['category_id']);
                         $category = (cash()->getModel(cashCategory::class))->getById($category_id);
@@ -817,9 +820,12 @@ class cashAutomation
 let amount_type = $(this).find('.amount_type').val();
 
 $(this).find('.span-desc').remove();
+$(this).find('.property_amount').removeClass('hidden');
 if (amount_type == 'amount_percent') {
     $(this).find('.property_amount').before('<span class="span-desc">$amount *</span>');
     $(this).find('.property_amount').after('<span class="span-desc">%</span>');
+} else if (amount_type == 'amount_not_touch') {
+    $(this).find('.property_amount').addClass('hidden');
 }
 SCRIPT;
                 break;

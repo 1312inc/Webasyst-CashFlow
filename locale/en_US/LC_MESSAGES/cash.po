@@ -1232,3 +1232,6 @@ msgstr ""
 
 msgid "Online store"
 msgstr ""
+
+msgid "Don't touch"
+msgstr ""

@@ -1433,3 +1433,6 @@ msgstr "Создать счет..."
 
 msgid "Online store"
 msgstr "Интернет-магазин"
+
+msgid "Don't touch"
+msgstr "Не трогать"
