@@ -1707,6 +1707,172 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /cash.scenario.create:
+    post:
+      externalDocs:
+        description: cash.scenario.create
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.scenario.create/
+      summary: Создает новый сценарий.
+      tags:
+        - Сценарии
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Название сценария
+                color:
+                  type: string
+                  description: HTML-обозначение цвета
+                sort:
+                  type: integer
+                  default: 0
+                  description: Значение сортировки
+              required:
+                - name
+      responses:
+        200:
+          description: Свойства созданной компании.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioInfo'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.scenario.delete:
+    post:
+      externalDocs:
+        description: cash.scenario.delete
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.scenario.delete/
+      summary: Удаляет сценарий.
+      tags:
+        - Сценарии
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: ID сценария
+              required:
+                - id
+      responses:
+        204:
+          description: Ответ в случаи удаления сценария.
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.scenario.getList:
+    get:
+      externalDocs:
+        description: cash.scenario.getList
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.scenario.getList/
+      summary: Возвращает список всех доступных сценариев.
+      tags:
+        - Сценарии
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        200:
+          description: Список сценариев.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioList'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.scenario.update:
+    post:
+      externalDocs:
+        description: cash.scenario.update
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.scenario.update/
+      summary: Обновляет свойства сценария.
+      tags:
+        - Сценарии
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: ID сценария
+                name:
+                  type: string
+                  description: Название сценария
+                color:
+                  type: string
+                  description: HTML-обозначение цвета
+                sort:
+                  type: integer
+                  default: 0
+                  description: Значение сортировки
+              required:
+                - id
+      responses:
+        200:
+          description: Свойства обновленного сценария.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioInfo'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Не найдено.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.system.getCurrencies:
     get:
       externalDocs:
@@ -2288,6 +2454,27 @@ components:
           nullable: true
           default: null
           description: Имена CSS-классов для отображения иконки Font Awesome
+
+    ScenarioInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID сценария
+        name:
+          type: string
+          description: Название сценария
+        color:
+          type: string
+          description: HTML-обозначение цвета
+        sort:
+          type: integer
+          description: Значение сортировки
+
+    ScenarioList:
+      type: array
+      items:
+        $ref: '#/components/schemas/ScenarioInfo'
 
     TransactionInfo:
       type: object
