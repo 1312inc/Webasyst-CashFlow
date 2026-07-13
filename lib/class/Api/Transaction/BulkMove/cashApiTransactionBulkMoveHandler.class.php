@@ -34,10 +34,7 @@ final class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
             return [];
         }
 
-        $saver = new cashTransactionSaver();
         $updateData = [];
-
-        $account = null;
         if ($request->getAccountId()) {
             /** @var cashAccount $account */
             $account = cash()->getEntityRepository(cashAccount::class)->findById($request->getAccountId());
@@ -61,6 +58,13 @@ final class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
 
             $updateData['category_id'] = $category->getId();
         }
+        if ($request->getScenarioId()) {
+            $scenario = cash()->getModel('cashScenario')->getById($request->getScenarioId());
+            if (!$scenario) {
+                throw new kmwaNotFoundException(_w('Scenario not found'));
+            }
+            $updateData['scenario_id'] = $request->getScenarioId();
+        }
 
         if ($request->getContractorContactId()) {
             $contractorContact = new waContact($request->getContractorContactId());
@@ -74,8 +78,9 @@ final class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
             $updateData['contractor_contact_id'] = $newContractor->getId();
         }
 
-        $fields = cash()->getModel(cashTransaction::class)->getMetadata();
+        $saver = new cashTransactionSaver();
         $params = new cashTransactionSaveParamsDto();
+        $fields = cash()->getModel(cashTransaction::class)->getMetadata();
         foreach ($transactions as $transaction) {
             if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
                 throw new kmwaForbiddenException(_w('You are not allowed to edit this transaction'));

@@ -278,6 +278,12 @@ final class cashTransactionFilterService
             ');
     }
 
+    private function makeBaseSqlForScenarioFilter( cashTransactionFilterParamsDto $dto, cashSelectQueryParts $selectQueryParts)
+    {
+        $selectQueryParts->addAndWhere('ct.scenario_id = i:scenario_id')
+            ->addParam('scenario_id', $dto->filter->getScenarioId());
+    }
+
     /**
      * @param cashTransactionFilterParamsDto $dto
      *
@@ -374,7 +380,9 @@ final class cashTransactionFilterService
                 $this->makeBaseSqlForExternalFilter($dto, $sqlParts);
 
                 break;
-
+            case null !== $dto->filter->getScenarioId():
+                $this->makeBaseSqlForScenarioFilter($dto, $sqlParts);
+                break;
             default:
                 $this->makeImaginaryFilter($sqlParts, true);
         }

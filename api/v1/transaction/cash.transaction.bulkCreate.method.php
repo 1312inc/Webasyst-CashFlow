@@ -94,6 +94,7 @@ final class cashTransactionBulkCreateMethod extends cashApiNewAbstractMethod
             $this->fromArray($data, 'date', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d'),
             $this->fromArray($data, 'account_id', true, ApiParamsCaster::CAST_INT),
             $this->fromArray($data, 'category_id', true, ApiParamsCaster::CAST_INT),
+            $this->fromArray($data, 'scenario_id', false, ApiParamsCaster::CAST_INT),
             $this->fromArray($data, 'contractor_contact_id', false, ApiParamsCaster::CAST_INT),
             $this->fromArray($data, 'contractor', false, ApiParamsCaster::CAST_STRING_TRIM),
             $this->fromArray($data, 'description', false, ApiParamsCaster::CAST_STRING_TRIM),

@@ -15,3 +15,9 @@ try {
         ) ENGINE=MyISAM  DEFAULT CHARSET=utf8
     ");
 }
+
+try {
+    $model->query("SELECT scenario_id FROM `cash_transaction`");
+} catch (waException $e) {
+    $model->exec('ALTER TABLE cash_transaction ADD scenario_id int NULL AFTER repeating_id');
+}

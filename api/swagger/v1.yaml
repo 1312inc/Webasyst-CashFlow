@@ -99,6 +99,10 @@ paths:
                   minimum: 1
                   default: null
                   description: ID счета, на который нужно перенести указанные операции
+                scenario_id:
+                  type: integer
+                  default: null
+                  description: ID сценария
                 contractor_contact_id:
                   type: integer
                   minimum: 1
@@ -312,6 +316,7 @@ paths:
             + **contractor/3**: операции, связанных с контактом, ID которого — 3
             + **import/4**: операции, добавленных в рамках сессии импорта, ID которой — 4
             + **external/shop.5**: операции, связанные с заказом Shop-Script, ID которого — 5
+            + **scenario/6**: операции, связанные со сценарием, ID которого — 6
             + **currency/RUB**: операции, идентификатор валюты которых — RUB
             + **search/qwerty**: операции, в комментариях к которым содержится строка «qwerty»
             + **trash**: только удаленные операции
@@ -391,6 +396,7 @@ paths:
             + **contractor/3**: операции, связанных с контактом, ID которого — 3
             + **import/4**: операции, добавленных в рамках сессии импорта, ID которой — 4
             + **external/shop.5**: операции, связанные с заказом Shop-Script, ID которого — 5
+            + **scenario/6**: операции, связанные со сценарием, ID которого — 6
             + **currency/RUB**: операции, идентификатор валюты которых — RUB
             + **search/qwerty**: операции, в комментариях к которым содержится строка «qwerty»
             + **trash**: только удаленные операции
@@ -2518,6 +2524,10 @@ components:
           type: integer
           nullable: true
           description: Идентификатор исходной повторяющейся операции
+        scenario_id:
+          type: integer
+          nullable: true
+          description: Идентификатор сценария
         repeating_data:
           type: object
           nullable: true
@@ -2679,6 +2689,10 @@ components:
         category_id:
           type: integer
           description: ID статьи доходов или расходов
+        scenario_id:
+          type: integer
+          nullable: true
+          description: ID сценария
         contractor_contact_id:
           type: integer
           minimum: 0
@@ -2811,6 +2825,10 @@ components:
         category_id:
           type: integer
           description: ID статьи доходов или расходов
+        scenario_id:
+          type: integer
+          nullable: true
+          description: ID сценария
         contractor_contact_id:
           type: integer
           minimum: 0

@@ -12,6 +12,7 @@ final class cashAggregateFilter
     public const FILTER_SEARCH     = 'search';
     public const FILTER_EXTERNAL   = 'external';
     public const FILTER_CALENDAR   = 'calendar';
+    public const FILTER_SCENARIO   = 'scenario';
 
     private const FILTERS = [
         self::FILTER_ALL,
@@ -24,6 +25,7 @@ final class cashAggregateFilter
         self::FILTER_SEARCH,
         self::FILTER_EXTERNAL,
         self::FILTER_CALENDAR,
+        self::FILTER_SCENARIO,
     ];
 
     /**
@@ -81,6 +83,11 @@ final class cashAggregateFilter
      */
     private $calendar;
 
+    /**
+     * @var int|null
+     */
+    private $scenario;
+
     public static function createFromHash(?string $hash): cashAggregateFilter
     {
         $self = new self;
@@ -113,6 +120,7 @@ final class cashAggregateFilter
                         self::FILTER_CONTRACTOR,
                         self::FILTER_IMPORT,
                         self::FILTER_TRASH,
+                        self::FILTER_SCENARIO,
                     ],
                     true
                 ) ? (int) $identifier : (string) $identifier;
@@ -185,5 +193,10 @@ final class cashAggregateFilter
     public function isFilterByCalendar(): bool
     {
         return !empty($this->calendar);
+    }
+
+    public function getScenarioId(): ?int
+    {
+        return $this->scenario;
     }
 }
