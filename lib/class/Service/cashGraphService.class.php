@@ -574,6 +574,10 @@ class cashGraphService
                 }
 
                 break;
+            case null !== $paramsDto->filter->getScenarioId():
+                $sqlParts->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
+                    ->addParam('scenario_id', $paramsDto->filter->getScenarioId());
+                break;
         }
         if (!$paramsDto->filter->getAccountId()) {
             if (null !== $paramsDto->filter->getCurrency()) {
@@ -705,6 +709,11 @@ class cashGraphService
                     'join cash_account ca on ct.account_id = ca.id',
                 ]
             );
+
+        if ($paramsDto->filter->getScenarioId()) {
+            $sqlParts->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
+                ->addParam('scenario_id', $paramsDto->filter->getScenarioId());
+        }
 
         $initialBalanceSql = clone $sqlParts;
         $initialBalanceSql->select(['ca.currency currency, sum(ct.amount) balance'])
@@ -845,6 +854,10 @@ class cashGraphService
             } else {
                 $sqlParts->addAndWhere('IF (ca.is_imaginary = -1, NULL, true)');
             }
+        }
+        if ($paramsDto->filter->getScenarioId()) {
+            $sqlParts->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
+                ->addParam('scenario_id', $paramsDto->filter->getScenarioId());
         }
 
         return $this->filterSqlForAggregateBreakDown($sqlParts, $paramsDto)->query()->fetchAll();

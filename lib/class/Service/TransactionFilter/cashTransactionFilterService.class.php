@@ -280,7 +280,7 @@ final class cashTransactionFilterService
 
     private function makeBaseSqlForScenarioFilter( cashTransactionFilterParamsDto $dto, cashSelectQueryParts $selectQueryParts)
     {
-        $selectQueryParts->addAndWhere('ct.scenario_id = i:scenario_id')
+        $selectQueryParts->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
             ->addParam('scenario_id', $dto->filter->getScenarioId());
     }
 

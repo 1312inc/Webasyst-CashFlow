@@ -16,4 +16,9 @@ final class cashApiAggregateGetBalanceFlowRequest
      * @var string
      */
     public $group_by = cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY;
+
+    /**
+     * @var int|null
+     */
+    public $scenario_id;
 }
