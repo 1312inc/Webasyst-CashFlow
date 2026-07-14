@@ -7,7 +7,7 @@ class cashAutomation
     public static function getConditions()
     {
         return [
-            ''                => ['name' => _w('Any transaction')] + self::getElements(),
+            ''                => ['name' => _w('Add IF condition...')] + self::getElements(),
             'amount'          => ['name' => _w('Amount')] + self::getElements('amount'),
             'description'     => ['name' => _w('Description')] + self::getElements('description'),
             'account_id'      => ['name' => _w('Account')] + self::getElements('account_id'),
@@ -21,12 +21,12 @@ class cashAutomation
     public static function getActions()
     {
         return [
-            ''                   => ['action' => _w('Выбрать действие')],
-            'self_update'        => ['action' => _w('Update self...')] + self::getElements('self_update'),
+            ''                   => ['action' => _w('')],
+            'self_update'        => ['action' => _w('Update self')] + self::getElements('self_update'),
 //            'other_update'       => ['action' => _w('Update another...')],
 //            'self_delete'        => ['action' => _w('Delete self')],
-            'create_transaction' => ['action' => _w('Create new...')] + self::getElements('create_transaction'),
-            'send_mail'          => ['action' => _w('Send email...')] + self::getElements('send_mail'),
+            'create_transaction' => ['action' => _w('Create new transaction')] + self::getElements('create_transaction'),
+            'send_mail'          => ['action' => _w('Send email')] + self::getElements('send_mail'),
         ] + (wa()->appExists('shop') ? ['action_ss' => ['action' => _w('Shop-Script...')] + self::getElements('action_ss')] : []);
     }
 
@@ -335,24 +335,20 @@ class cashAutomation
 
     private static function getTextVariables()
     {
-        return _w('Переменные').'<br>
-            <b>{ID} - </b>'._w('ИД операции').'<br>
-            <b>{DATE} - </b>'._w('дата операции').'<br>
-            <b>{ACCOUNT_ID} - </b>'._w('ИД счёта операции').'<br>
-            <b>{ACCOUNT_NAME} - </b>'._w('название счета').'<br>
-            <b>{CATEGORY_ID} - </b>'._w('ИД статьи операции').'<br>
-            <b>{CATEGORY_NAME} - </b>'._w('название статьи').'<br>
-            <b>{AMOUNT} - </b>'._w('сумма операции').'<br>
-            <b>{CURRENCY} - </b>'._w('ISO3-код валюты операции').'<br>
-            <b>{DESCRIPTION} - </b>'._w('комментарий к операции').'<br>
-            <b>{CREATE_CONTACT_ID} - </b>'._w('ИД контакта создателя операции').'<br>
-            <b>{CREATE_DATETIME} - </b>'._w('дата создания операции').'<br>
-            <b>{UPDATE_DATETIME} - </b>'._w('дата обновления операции').'<br>
-            <b>{CONTRACTOR_CONTACT_ID} - </b>'._w('ИД плательщика операции').'<br>
-            <b>{CONTRACTOR_NAME} - </b>'._w('полное имя плательщика операции').'<br>
-            <b>{IS_ARCHIVED} - </b>'._w('в архиве ли операции').'<br>
-            <b>{EXTERNAL_SOURCE} - </b>'._w('источник операции').'<br>
-            <b>{EXTERNAL_ID} - </b>'._w('ИД источника операции').'<br>
+        return _w('Origin transaction values:').'<br>
+            <b>{ID}</b> — '._w('Transaction ID').'<br>
+            <b>{DATE}</b> — '._w('Transaction date').'<br>
+            <b>{AMOUNT}</b> — '._w('Transaction amount').'<br>
+            <b>{CURRENCY}</b> — '._w('Currency').'<br>
+            <b>{DESCRIPTION}</b> — '._w('Comment').'<br>
+            <b>{ACCOUNT_ID}</b> — '._w('Account ID').'<br>
+            <b>{ACCOUNT_NAME}</b> — '._w('Account name').'<br>
+            <b>{CATEGORY_ID}</b> — '._w('Category ID').'<br>
+            <b>{CATEGORY_NAME}</b> — '._w('Category name').'<br>
+            <b>{CONTRACTOR_CONTACT_ID}</b> — '._w('Contractor contact ID').'<br>
+            <b>{CONTRACTOR_NAME}</b> — '._w('Contractor name').'<br>
+            <b>{EXTERNAL_SOURCE}</b> — '._w('External origin app name (for transactions imported from an external source or app)').'<br>
+            <b>{EXTERNAL_ID}</b> — '._w('External entity ID (for transactions imported from an external source or app)').'<br>
         ';
     }
 
@@ -413,16 +409,20 @@ class cashAutomation
                 $elements = [
                     $type.'_email_to' => [
                         'type' => 'email',
-                        'label' => _w('Кому')
+                        'label' => _w('To'),
+                        'class' => 'bold long',
+                        'hint' => _w('Recipient email address')
                     ],
                     $type.'_email_subject' => [
                         'type' => 'text',
-                        'label' => _w('Тема письма'),
-                        'hint' => _w('С поддержкой переменных')
+                        'label' => _w('Subject'),
+                        'class' => 'long',
+                        'hint' => _w('Use vars from the list below')
                     ],
                     $type.'_text' => [
                         'type' => 'textarea',
-                        'label' => _w('Текст сообщения'),
+                        'class' => 'width-100',
+                        'label' => _w('Body'),
                         'hint' => self::getTextVariables()
                     ]
                 ];
@@ -430,34 +430,34 @@ class cashAutomation
             case 'create_transaction':
             case 'self_update':
                 $elements = [
-                    $type.'_header' => [
-                        'type' => 'header',
-                        'text' => _w('Свойства операции')
-                    ],
+                    // $type.'_header' => [
+                    //     'type' => 'header',
+                    //     'text' => _w('Свойства операции')
+                    // ],
                     $type.'_property_account_id' => [
                         'type' => 'select',
-                        'label' => _w('Счёт'),
-                        'options' => ['' => 'Выбрать счет'] + self::getAccounts()
+                        'label' => _w('Account'),
+                        'options' => ['' => ''] + self::getAccounts()
                     ],
                     $type.'_property_category_id' => [
                         'type' => 'select',
-                        'label' => _w('Статья'),
-                        'options' => ['' => 'Выбрать статью'] + self::getCategories()
+                        'label' => _w('Category'),
+                        'options' => ['' => ''] + self::getCategories()
                     ],
                     $type.'_property_amount_type' => [
                         'type' => 'select',
-                        'label' => _w('Сумма'),
+                        'label' => _w('Amount'),
                         'class' => 'amount_type',
-                        'options' => ['amount_not_touch' => _w("Don't touch"), 'amount_fix' => _w('Fix'), 'amount_percent' => _w('Amount').' * %'],
+                        'options' => ['amount_not_touch' => _w(''), 'amount_fix' => _w('='), 'amount_percent' => '%'],
                         'child' => 1,
                     ],
                     $type.'_property_amount' => [
                         'type' => 'text',
-                        'class' => 'property_amount'
+                        'class' => 'property_amount number shorter'
                     ],
                     $type.'_property_description' => [
                         'type' => 'textarea',
-                        'label' => _w('Комментарий'),
+                        'label' => _w('Comment'),
                         'hint' => self::getTextVariables()
                     ],
                     $type.'_script' => [
@@ -471,28 +471,33 @@ class cashAutomation
                 $workflow = new shopWorkflow();
                 $actions = $workflow->getAvailableActions();
                 $elements = [
+                    'ss_order_id_hint' => [
+                        'type' => 'header',
+                        'text' => _w('№ заказа возьмем из исходной операции !! описать как это')
+                    ],
                     'ss_action' => [
                         'type' => 'select',
-                        'label' => _w('Действие с заказом'),
+                        'label' => _w('Perform action'),
                         'hint' => _w('действиен с заказом выполнится, только если операция с каким-то заказом связана + для этого заказа действие применимо'),
                         'options' => array_combine(array_keys($actions), array_column($actions, 'name'))
                     ],
                     'ss_amount_compare' => [
                         'type' => 'checkbox',
-                        'label' => _w('Сумма заказа'),
+                        'label' => _w('Amount'),
                         'value' => '>=',
-                        'text' => _w('при сравнении сумма операции должна быть не меньше суммы заказа')
+                        'text' => _w('Force check if transaction amount if >= actual Shop-Script order amount')
                     ],
                     'ss_customer_compare' => [
                         'type' => 'checkbox',
-                        'label' => _w('Контрагент'),
+                        'label' => _w('Customer'),
                         'value' => '==',
-                        'text' => _w('дополнительно сравнивать контрагента')
+                        'text' => _w('Force check transaction contractor to match Shop-Script order customer')
                     ],
                     'ss_email_to' => [
                         'type' => 'email',
-                        'label' => _w('Кому'),
-                        'hint' => _w('При не совпадении, сообщить на e-mail')
+                        'label' => _w('Failover alert'),
+                        'class' => 'long',
+                        'hint' => _w('If something did not match with the order, but IF conditions were met, an @-alert will be sent to this email')
                     ],
                 ];
                 break;
@@ -500,14 +505,14 @@ class cashAutomation
                 $elements = [
                     'operator' => [
                         'type' => 'select',
-                        'options' => ['%%' => _w('содержит'), '!%%' => _w('не содержит')],
+                        'options' => ['%%' => _w('contains'), '!%%' => _w('does not contain')],
                     ],
                     'value' => [
                         'type' => 'select',
                         'options' => [
-                            'compare_date' => _w('дату'),
-                            'custom_text' => _w('произвольный текст')
-                        ] + (wa()->appExists('shop') ? ['ss_order' => _w('номер заказа ШС')] : [])
+                            'compare_date' => _w('Date'),
+                            'custom_text' => _w('Text...')
+                        ] + (wa()->appExists('shop') ? ['ss_order' => _w('Order ID')] : [])
                     ],
                     'custom_text' => [
                         'type' => 'text',
@@ -522,7 +527,7 @@ class cashAutomation
                 $elements = [
                     'operator' => [
                         'type' => 'select',
-                        'options' => ['>=' => '>=', '<=' => '<=', '==' => '==']
+                        'options' => ['>=' => '≥', '<=' => '≤', '==' => '=']
                     ],
                     'value' => [
                         'type' => 'text',
@@ -533,7 +538,7 @@ class cashAutomation
                 $elements = [
                     'operator' => [
                         'type' => 'select',
-                        'options' => ['==' => '==', '!=' => '!=']
+                        'options' => ['==' => '=', '!=' => '≠']
                     ],
                     'value' => [
                         'type' => 'select',
@@ -545,7 +550,7 @@ class cashAutomation
                 $elements = [
                     'operator' => [
                         'type' => 'select',
-                        'options' => ['==' => '==', '!=' => '!=']
+                        'options' => ['==' => '=', '!=' => '≠']
                     ],
                     'value' => [
                         'type' => 'select',
@@ -557,7 +562,7 @@ class cashAutomation
                 $elements = [
                     'operator' => [
                         'type' => 'select',
-                        'options' => ['<=' => '<=', '>=' => '>=']
+                        'options' => ['<=' => '≤', '>=' => '≥']
                     ],
                     'value' => [
                         'type' => 'date',
@@ -568,7 +573,7 @@ class cashAutomation
                 $elements = [
                     'operator' => [
                         'type' => 'select',
-                        'options' => ['==' => '==', '!=' => '!=']
+                        'options' => ['==' => '=', '!=' => '≠']
                     ],
                     'value' => [
                         'type' => 'number',
@@ -579,7 +584,7 @@ class cashAutomation
                 $elements = [
                     'operator' => [
                         'type' => 'select',
-                        'options' => ['==' => '==', '!=' => '!=']
+                        'options' => ['==' => '=', '!=' => '≠']
                     ],
                     'value' => [
                         'type' => 'select',
@@ -820,7 +825,7 @@ let amount_type = $(this).find('.amount_type').val();
 $(this).find('.span-desc').remove();
 $(this).find('.property_amount').removeClass('hidden');
 if (amount_type == 'amount_percent') {
-    $(this).find('.property_amount').before('<span class="span-desc">$amount *</span>');
+    $(this).find('.property_amount').before('<span class="span-desc">$amount * </span>');
     $(this).find('.property_amount').after('<span class="span-desc">%</span>');
 } else if (amount_type == 'amount_not_touch') {
     $(this).find('.property_amount').addClass('hidden');
@@ -831,7 +836,7 @@ SCRIPT;
                 $script = <<<SCRIPT
 let description_condition = $(this).find('.description[name$="[value]"]').val();
 
-$(this).find('[name$="[custom_text]"]').addClass('hidden');   
+$(this).find('[name$="[custom_text]"]').addClass('hidden');
 if (description_condition == 'custom_text') {
     $(this).find('[name$="[custom_text]"]').removeClass('hidden');
 }

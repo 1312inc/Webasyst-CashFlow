@@ -61,11 +61,13 @@
                     {foreach $_condition.elements as $_el_name => $_element}
                         {$elem_value = ifempty($condition, $_el_name, '')}
                         {if $_element.type == 'select'}
-                            <select name="rules[{$_rule_id}][conditions][{$condition_rand}][{$_el_name}]" class="{$_condition_id|escape}{if !empty($_element.class)} {$_element.class|escape}{/if}{if $rule_name != $_condition_id} hidden{/if}"{if $rule_name != $_condition_id} disabled{/if}>
-                                {foreach $_element.options as $_select_key => $_select_value}
-                                <option value="{$_select_key}"{if in_array($elem_value, [$_select_key, $_select_value])} selected{/if}>{$_select_value|escape}</option>
-                                {/foreach}
-                            </select>
+
+                                <select name="rules[{$_rule_id}][conditions][{$condition_rand}][{$_el_name}]" class="{$_condition_id|escape}{if !empty($_element.class)} {$_element.class|escape}{/if}{if $rule_name != $_condition_id} hidden{/if}"{if $rule_name != $_condition_id} disabled{/if}>
+                                    {foreach $_element.options as $_select_key => $_select_value}
+                                    <option value="{$_select_key}"{if in_array($elem_value, [$_select_key, $_select_value])} selected{/if}>{$_select_value|escape}</option>
+                                    {/foreach}
+                                </select>
+
                             {continue}
                         {elseif $_element.type == 'script'}
                             <script>
@@ -150,7 +152,7 @@
                     {/foreach}
                 </select>
             </div>
-            <h6 class="gray small custom-mt-16 custom-mb-8">[`AND conditions`]</h6>
+            <h6 class="gray small custom-mt-16 custom-mb-8">[`Conditions (AND)`]</h6>
             {if $rule && !empty($rule.conditions)}
                 {rule_condition_editor_form _rule_id=$rule_id rule_conditions=$rule.conditions}
             {else}
@@ -161,7 +163,7 @@
             {$action = ifset($rule, 'rule_data', 'action', '')}
             {$plugin_id = ifset($rule, 'rule_data', 'plugin_id', '')}
             <div class="wa-select small">
-                <select name="rules[{$rule_id}][rule_data][action]" class="c-action-selector">
+                <select name="rules[{$rule_id}][rule_data][action]" class="c-action-selector bold">
                     {foreach $actions as $_action_id => $_action}
                     <option value="{$_action_id|escape}"{if $_action_id == $action} selected{/if}{if !empty($_action.plugin_id)} data-plugin-id="{$_action.plugin_id}"{/if}>{$_action.action|escape}</option>
                     {/foreach}
@@ -172,17 +174,19 @@
                 {if !empty($_action.elements)}
                     {$divs = []}
                     {$child = 0}
-                    <div class="fields c-automaton-action{if $action != $_action_id} hidden{/if}" data-action-id="{$_action_id}" data-arid="{$_action_id}_{$rule_id}" style="border-radius: 0.75em;border: 0.125rem dashed var(--light-gray);">
+                    <div class="custom-mt-16 fields c-automaton-action{if $action != $_action_id} hidden{/if}" data-action-id="{$_action_id}" data-arid="{$_action_id}_{$rule_id}">
                         {foreach $_action.elements as $_el_name => $_element}
                             {$elem_value = ifempty($rule, 'rule_data', $_el_name, '')}
                             {if $_element.type == 'select'}
                                 {$name = ifset($_element, 'label', '')}
                                 {capture assign=field_value}
-                                    <select name="rules[{$rule_id}][rule_data][{$_el_name}]" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}>
-                                        {foreach $_element.options as $_select_key => $_select_value}
-                                        <option value="{$_select_key}"{if $_select_key == $elem_value} selected{/if}>{$_select_value|escape}</option>
-                                        {/foreach}
-                                    </select>
+                                    <div class="wa-select small">
+                                        <select name="rules[{$rule_id}][rule_data][{$_el_name}]" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}>
+                                            {foreach $_element.options as $_select_key => $_select_value}
+                                            <option value="{$_select_key}"{if $_select_key == $elem_value} selected{/if}>{$_select_value|escape}</option>
+                                            {/foreach}
+                                        </select>
+                                    </div>
                                     {if !empty($_element.hint)}
                                     <p class="hint">{$_element.hint}</p>
                                     {/if}
@@ -292,7 +296,7 @@
         <h1>[`Automation bots`]</h1>
         <p class="small">
             [`Bots track all events occurring in the app and help you automate routine accounting operations such as adding new and updating existing transactions.`]
-            [`All matching rules will apply one by one in the given order.`]
+            [`To run several THEN actions on one event, simply create multiple bots with simiar IF conditions. All matching bots will run one by one in the given order.`]
         </p>
 
         {if !cashHelper::isPremium()}
@@ -313,7 +317,7 @@
                     <thead class="header">
                         <tr>
                             <th class="min-width"></th>
-                            <th>[`IF event`]</th>
+                            <th>[`IF transaction was`]</th>
                             <th>[`THEN action`]</th>
                             <th class="min-width"></th>
                             <th class="min-width"></th>
