@@ -1,7 +1,7 @@
 import axios from 'axios'
 import store from '../store'
 import { i18n } from './locale'
-
+import { companyContextService } from '@/services/companyContext'
 import { appStateService } from '@/services/appState'
 
 const baseApiUrl = appStateService.baseApiUrl
@@ -15,6 +15,23 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json'
   }
+})
+
+const companyScopedMethods = /^cash\.(account\.getList|transaction\.getList|aggregate\.)/
+
+api.interceptors.request.use((config) => {
+  const companyId = companyContextService.companyId
+  if (!companyId) return config
+
+  const method = config.url?.split('?')[0]
+  if (!method || !companyScopedMethods.test(method)) return config
+
+  config.params = {
+    ...config.params,
+    company_id: companyId
+  }
+
+  return config
 })
 
 api.interceptors.response.use((response) => {

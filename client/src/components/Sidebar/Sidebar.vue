@@ -15,11 +15,19 @@
           }}</a>
       </div>
     </nav>
+
     <div
       class="sidebar-body hide-scrollbar"
       :class="{ 'mobileMenuOpen': mobileMenuOpen }"
     >
       <SearchField />
+
+      <div
+        v-if="$appState.isPremium"
+        class="custom-mx-12 custom-mb-12"
+      >
+        <CompaniesList />
+      </div>
 
       <!-- Widgets charts block -->
       <SidebarCurrencyWidgets />
@@ -110,6 +118,7 @@ import SidebarCurrencyWidgets from './SidebarCurrencyWidgets'
 import ContactsList from '@/components/ContactsList/ContactsList'
 import Toggler from '@/components/Toggler/Toggler'
 import Bricks from '@/components/Bricks/Bricks'
+import CompaniesList from '@/components/CompaniesList.vue'
 
 export default {
   components: {
@@ -122,7 +131,8 @@ export default {
     SidebarCurrencyWidgets,
     Bricks,
     ContactsList,
-    Toggler
+    Toggler,
+    CompaniesList
   },
 
   data () {
