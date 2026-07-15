@@ -297,6 +297,7 @@
         <p class="small">
             [`Bots track all events occurring in the app and help you automate routine accounting operations such as adding new and updating existing transactions.`]
             [`To run several THEN actions on one event, simply create multiple bots with similar IF conditions. All matching bots will run one by one in the given order.`]
+            [`Cascade execution is disabled to avoid recursion (one bot won’t trigger another).`]
         </p>
 
         {if !cashHelper::isPremium()}

@@ -1797,3 +1797,6 @@ msgstr "Неизвестное действие бота"
 
 msgid "Bot action executed: %s"
 msgstr "Действие бота выполнено: %s"
+
+msgid "Cascade execution is disabled to avoid recursion (one bot won’t trigger another)."
+msgstr "Каскадное выполнение отключено, чтобы избежать рекурсии (один бот не будет запускать другого)."
