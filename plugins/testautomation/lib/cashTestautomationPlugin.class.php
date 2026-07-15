@@ -6,7 +6,7 @@ class cashTestautomationPlugin extends waPlugin
     {
         return [
             'is_sunny' => [
-                'name' => 'Плагин: Если светит солнце',
+                'name' => '(плагин) Погода',
                 'elements' => [
                     'operator' => [
                         'type' => 'select',
@@ -24,8 +24,8 @@ class cashTestautomationPlugin extends waPlugin
     private static function getActions()
     {
         return [
-            'create_ozon' => ['action' => 'Плагин: Создать новую операцию с тестовой комиссией Ozon'] + self::getElements('create_ozon'),
-            'create_wb'   => ['action' => 'Плагин: Создать новую операцию с тестовой комиссией Wildberries'] + self::getElements('create_wb'),
+            'create_ozon' => ['action' => '(плагин) Создать новую операцию с рандомной комиссией OZON'] + self::getElements('create_ozon'),
+            'create_wb'   => ['action' => '(плагин) Создать новую операцию с рандомной комиссией Wildberries'] + self::getElements('create_wb'),
         ];
     }
 
@@ -118,7 +118,7 @@ class cashTestautomationPlugin extends waPlugin
 
             $desc = sprintf(
                 'Комиссия %s %s%% в размере %s от суммы %s. По состоянию на дату: %s. ',
-                $action === 'create_wb' ? 'Wildberries' : 'Ozon',
+                $action === 'create_wb' ? 'Wildberries' : 'OZON',
                 $commission,
                 ($transaction['amount']/100)*$commission,
                 $transaction['amount'],

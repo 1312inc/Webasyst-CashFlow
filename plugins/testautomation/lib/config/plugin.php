@@ -1,7 +1,7 @@
 <?php
 
 return [
-  'name' => 'Test Auto',
+  'name' => 'Test Automation Bot',
   'img' => 'img/testautomation.gif',
   'version' => '0.1.0',
   'vendor' => '--',
