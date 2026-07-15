@@ -1233,5 +1233,5 @@ msgstr ""
 msgid "Online store"
 msgstr ""
 
-msgid "Don't touch"
+msgid "Bot will be deleted permanently. Are you sure?"
 msgstr ""
