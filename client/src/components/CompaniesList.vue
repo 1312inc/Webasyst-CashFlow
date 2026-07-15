@@ -1,5 +1,5 @@
 <template>
-  <DropdownWaFloating>
+  <DropdownWaFloating v-if="items.length > 1">
     <template #toggler>
       <button class="button light-gray">
         {{ selectedCompany?.name }}
@@ -14,7 +14,7 @@
             selected: company.id === companyContextService.companyId
           }"
         >
-          <a @click.prevent="companyContextService.companyId = company.id">{{ company.name }} </a>
+          <a @click.prevent="onCompanyClick(company)">{{ company.name }} </a>
         </li>
       </ul>
     </template>
@@ -43,6 +43,11 @@ const items = computed(() => {
     ...companies.value
   ].sort((a, b) => a.sort - b.sort)
 })
+
+const onCompanyClick = (company) => {
+  companyContextService.companyId = company.id
+  window.location.reload()
+}
 
 onMounted(async () => {
   const { data } = await api.get(
