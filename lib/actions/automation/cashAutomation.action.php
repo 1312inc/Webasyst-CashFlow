@@ -27,9 +27,9 @@ class cashAutomationAction extends cashViewAction
     private function getEvents()
     {
         return [
-            'transaction_add'    => _w('Added...'),
-            'transaction_update' => _w('Edited...'),
-            'transaction_delete' => _w('Deleted...'),
+            'transaction_add'    => _w('Added'),
+            'transaction_update' => _w('Edited'),
+            'transaction_delete' => _w('Deleted'),
         ];
     }
 

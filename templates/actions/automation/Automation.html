@@ -152,7 +152,7 @@
                     {/foreach}
                 </select>
             </div>
-            <h6 class="gray small custom-mt-16 custom-mb-8">[`Conditions (AND)`]</h6>
+            <h6 class="gray small custom-mt-16 custom-mb-8">[`IF conditions (AND)`]</h6>
             {if $rule && !empty($rule.conditions)}
                 {rule_condition_editor_form _rule_id=$rule_id rule_conditions=$rule.conditions}
             {else}
@@ -317,8 +317,8 @@
                     <thead class="header">
                         <tr>
                             <th class="min-width"></th>
-                            <th>[`IF transaction was`]</th>
-                            <th>[`THEN action`]</th>
+                            <th>[`Event with transaction`]</th>
+                            <th>[`Action`]</th>
                             <th class="min-width"></th>
                             <th class="min-width"></th>
                         </tr>

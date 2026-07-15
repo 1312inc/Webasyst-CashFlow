@@ -7,13 +7,13 @@ class cashAutomation
     public static function getConditions()
     {
         return [
-            ''                  => ['name' => _w('Add IF condition...')] + self::getElements(),
+            ''                  => ['name' => _w('Add condition...')] + self::getElements(),
             'amount'            => ['name' => _w('Amount')] + self::getElements('amount'),
             'description'       => ['name' => _w('Description')] + self::getElements('description'),
             'account_id'        => ['name' => _w('Account')] + self::getElements('account_id'),
             'category_id'       => ['name' => _w('Category')] + self::getElements('category_id'),
             'date'              => ['name' => _w('Date')] + self::getElements('date'),
-            'create_contact_id' => ['name' => _w('Создатель операции')] + self::getElements('create_contact_id'),
+            'create_contact_id' => ['name' => _w('User')] + self::getElements('create_contact_id'),
             'external_id'       => ['name' => _w('External ID')] + self::getElements('external_id'),
             'external_source'   => ['name' => _w('External source')] + self::getElements('external_source'),
         ];
@@ -23,10 +23,10 @@ class cashAutomation
     {
         return [
             ''                   => ['action' => _w('')],
-            'self_update'        => ['action' => _w('Update self')] + self::getElements('self_update'),
-//            'other_update'       => ['action' => _w('Update another...')],
-//            'self_delete'        => ['action' => _w('Delete self')],
             'create_transaction' => ['action' => _w('Create new transaction')] + self::getElements('create_transaction'),
+            'self_update'        => ['action' => _w('Update self')] + self::getElements('self_update'),
+            //            'self_delete'        => ['action' => _w('Delete self')],
+            //            'other_update'       => ['action' => _w('Update another transaction...')], // which one?
             'send_mail'          => ['action' => _w('Send email')] + self::getElements('send_mail'),
         ] + (wa()->appExists('shop') ? ['action_ss' => ['action' => _w('Shop-Script...')] + self::getElements('action_ss')] : []);
     }
@@ -423,7 +423,7 @@ class cashAutomation
                         'type' => 'text',
                         'label' => _w('Subject'),
                         'class' => 'long',
-                        'hint' => _w('Use vars from the list below')
+                        'hint' => _w('Variables from the body field are supported')
                     ],
                     $type.'_text' => [
                         'type' => 'textarea',
@@ -475,31 +475,31 @@ class cashAutomation
                 $elements = [
                     'ss_order_id_hint' => [
                         'type' => 'header',
-                        'text' => _w('№ заказа возьмем из исходной операции !! описать как это')
+                        'text' => _w('Order ID is always fetched from the original transaction description. Make sure to have IF condition set for the transaction description field to contain Order ID.')
                     ],
                     'ss_action' => [
                         'type' => 'select',
                         'label' => _w('Perform action'),
-                        'hint' => _w('действиен с заказом выполнится, только если операция с каким-то заказом связана + для этого заказа действие применимо'),
+                        'hint' => _w('Order action will apply only if Order ID is known, and in the selected action is allowed for the order in Shop-Script workflow settings. Otherwise, an email alert will be sent to the failover email specified below.'),
                         'options' => array_combine(array_keys($actions), array_column($actions, 'name'))
                     ],
                     'ss_amount_compare' => [
                         'type' => 'checkbox',
                         'label' => _w('Amount'),
                         'value' => '>=',
-                        'text' => _w('Force check if transaction amount if >= actual Shop-Script order amount')
+                        'text' => _w('Require transaction amount to be not less than the actual Shop-Script order amount')
                     ],
                     'ss_customer_compare' => [
                         'type' => 'checkbox',
                         'label' => _w('Customer'),
                         'value' => '==',
-                        'text' => _w('Force check transaction contractor to match Shop-Script order customer')
+                        'text' => _w('Require transaction contractor to match Shop-Script order customer')
                     ],
                     'ss_email_to' => [
                         'type' => 'email',
-                        'label' => _w('Failover alert'),
+                        'label' => _w('Failover email'),
                         'class' => 'long',
-                        'hint' => _w('If something did not match with the order, but IF conditions were met, an @-alert will be sent to this email')
+                        'hint' => _w('If bot conditions were met, but something did not match for the order action to run, an @-alert will be sent to this email.')
                     ],
                 ];
                 break;
@@ -664,14 +664,14 @@ class cashAutomation
                         if ((cash()->getModel(cashAccount::class))->getById($property_value)) {
                             $transaction_obj->setAccountId($property_value);
                         } else {
-                            self::getLog()->add($rule, $transaction, _w('Счет для операции не найден'), 'notice');
+                            self::getLog()->add($rule, $transaction, _w('Account not found'), 'notice');
                         }
                         break;
                     case 'category_id':
                         if ((cash()->getModel(cashCategory::class))->getById($property_value)) {
                             $transaction_obj->setCategoryId($property_value);
                         } else {
-                            self::getLog()->add($rule, $transaction, _w('Статья для операции не найдена'), 'notice');
+                            self::getLog()->add($rule, $transaction, _w('Category not found'), 'notice');
                         }
                         break;
                     case 'description':
@@ -688,10 +688,10 @@ class cashAutomation
                     $result = true;
                 }
             } catch (Exception $ex) {
-                self::getLog()->add($rule, $transaction, _w('Ошибка во время обновления операции.').$ex->getMessage(), 'error');
+                self::getLog()->add($rule, $transaction, _w('Could not update transaction:').' '.$ex->getMessage(), 'error');
             }
         } else {
-            self::getLog()->add($rule, $transaction, _w('Редактируемая операция не найдена и/или не задано обновляемое свойство и/или его значение'), 'notice');
+            self::getLog()->add($rule, $transaction, _w('Could not update transaction: either transaction or one of its fields not found'), 'notice');
         }
 
         return $result;
@@ -708,7 +708,7 @@ class cashAutomation
         $type = ifset($rule, 'rule_data', 'action', '');
         $email_to = ifset($rule, 'rule_data', $type.'_email_to', null);
         $text = ifset($rule, 'rule_data', $type.'_text', null);
-        $subject = ifset($rule, 'rule_data', $type.'_email_subject', _w('Оповещение о срабатывании'));
+        $subject = ifset($rule, 'rule_data', $type.'_email_subject', _w('Cash Flow alert'));
         if ($email_to && $text) {
             $subject = self::replaceVariables($subject, $transaction);
             $text = self::replaceVariables($text, $transaction);
@@ -718,13 +718,13 @@ class cashAutomation
                 $message->setTo($email_to);
                 $result = $message->send();
                 if (!$result) {
-                    self::getLog()->add($rule, $transaction, _w('Письмо не отправлено'), 'notice');
+                    self::getLog()->add($rule, $transaction, _w('Email not sent'), 'notice');
                 }
             } catch (Exception $ex) {
-                self::getLog()->add($rule, $transaction, _w('Ошибка во время отправки письма.').$ex->getMessage(), 'error');
+                self::getLog()->add($rule, $transaction, _w('Email not sent:').' '.$ex->getMessage(), 'error');
             }
         } else {
-            self::getLog()->add($rule, $transaction, _w('Письмо не отправлено, так как не задан адрес и/или текст'), 'notice');
+            self::getLog()->add($rule, $transaction, _w('Email not sent: either recipient or email content are empty'), 'notice');
         }
 
         return $result;
@@ -739,7 +739,7 @@ class cashAutomation
     {
         try {
             if (!wa()->appExists('shop')) {
-                self::getLog()->add($rule, $transaction, _w('Приложение ШС не активно/не установлено'), 'notice');
+                self::getLog()->add($rule, $transaction, _w('Shop-Script app is not enabled'), 'notice');
                 return false;
             }
         } catch (Exception $ex) {
@@ -752,7 +752,7 @@ class cashAutomation
             try {
                 $order = new shopOrder($order_id);
                 if (!$order->getId()) {
-                    self::getLog()->add($rule, $transaction, _w('Заказ ШС не был найден'), 'notice');
+                    self::getLog()->add($rule, $transaction, _w('No Shop-Script order found with the specified ID'), 'notice');
                 }
             } catch (Exception $ex) {
                 self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
@@ -784,27 +784,27 @@ class cashAutomation
                         $action = $workflow->getActionById($ss_action);
                         $result = $action->run($order_id);
                     } else {
-                        self::getLog()->add($rule, $transaction, _w('Для текущего статуса заказа действие не разрешено'), 'notice');
+                        self::getLog()->add($rule, $transaction, _w('Action is forbidden by Shop-Script workfow for the order').' '.$order_id, 'notice');
                     }
                     wa('cash', 1);
                 } catch (Exception $ex) {
-                    self::getLog()->add($rule, $transaction, _w('Возникла ошибка во время выполнения действия с заказом.').$ex->getMessage(), 'error');
+                    self::getLog()->add($rule, $transaction, _w('Shop-Script order action failed:').' '.$ex->getMessage(), 'error');
                 }
             } elseif ($email_to = ifset($rule, 'rule_data', 'ss_email_to', null)) {
                 $notice = [];
                 if (!$amount_compare) {
-                    $notice[] = _w('Не совпала сумма операции с суммой заказа');
+                    $notice[] = _w('Shop-Script order amount and Cash Flow transaction amount won’t match');
                 }
                 if (!$date_compare) {
-                    $notice[] = _w('Не совпала дата в описании операции с датой заказа');
+                    $notice[] = _w('Shop-Script order date and Cash Flow transaction date won’t match');
                 }
                 if (!$customer_compare) {
-                    $notice[] = _w('Не совпал контрагент');
+                    $notice[] = _w('Shop-Script order customer and Cash Flow transaction contractor won’t match');
                 }
                 try {
-                    $subject = _w('Оповещение о срабатывании');
+                    $subject = _w('Cash Flow -> Shop-Script alert');
                     $text = sprintf_wp(
-                        'Пришла операция, хотели обновить связанный заказ, но не стали, так как: %s. Данные операции такие — %s',
+                        'Cash Flow bot is here! Shop-Script order action failed: <b>%s</b>.<br><br> Origin transaction:<br> %s',
                         implode(', ', $notice),
                         var_export($transaction, true)
                     );
@@ -813,14 +813,14 @@ class cashAutomation
                     $message->setTo($email_to);
                     $result = $message->send();
                     if (!$result) {
-                        self::getLog()->add($rule, $transaction, _w('Письмо не отправлено'), 'notice');
+                        self::getLog()->add($rule, $transaction, _w('Email not sent'), 'notice');
                     }
                 } catch (Exception $ex) {
-                    self::getLog()->add($rule, $transaction, _w('Ошибка во время отправки письма.').$ex->getMessage(), 'error');
+                    self::getLog()->add($rule, $transaction, _w('Email not sent:').' '.$ex->getMessage(), 'error');
                 }
             }
         } else {
-            self::getLog()->add($rule, $transaction, _w('Номер заказа ШС не указан/распознан.'), 'notice');
+            self::getLog()->add($rule, $transaction, _w('Shop-Script order ID is unknown'), 'notice');
         }
 
         return !!$result;
