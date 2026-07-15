@@ -499,7 +499,7 @@ class cashAutomation
                         'type' => 'email',
                         'label' => _w('Failover email'),
                         'class' => 'long',
-                        'hint' => _w('If bot conditions were met, but something did not match for the order action to run, an @-alert will be sent to this email.')
+                        'hint' => _w('If bot conditions were met, but something did not match for the order action to run, an alert with details will be sent to the specified email.')
                     ],
                 ];
                 break;

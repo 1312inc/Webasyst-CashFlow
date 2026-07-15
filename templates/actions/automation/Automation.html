@@ -162,7 +162,7 @@
         <td class="valign-top">
             {$action = ifset($rule, 'rule_data', 'action', '')}
             {$plugin_id = ifset($rule, 'rule_data', 'plugin_id', '')}
-            <div class="wa-select small">
+            <div class="wa-select small" style="max-width: 400px;">
                 <select name="rules[{$rule_id}][rule_data][action]" class="c-action-selector bold">
                     {foreach $actions as $_action_id => $_action}
                     <option value="{$_action_id|escape}"{if $_action_id == $action} selected{/if}{if !empty($_action.plugin_id)} data-plugin-id="{$_action.plugin_id}"{/if}>{$_action.action|escape}</option>

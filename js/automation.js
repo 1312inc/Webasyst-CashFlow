@@ -99,8 +99,8 @@ $.extend($.automation = $.automation || {}, {
             let rule_id = that.data('rule-id');
 
             $.waDialog.confirm({
-                title: '<i class="fas fa-exclamation-triangle smaller state-error"></i>'+ options.confirm,
-                text: options.confirmation_deletion,
+                title: options.confirm,
+                text: '<i class="fas fa-exclamation-triangle fa-xs state-error"></i> '+ options.confirmation_deletion,
                 success_button_class: 'danger',
                 success_button_title: options.confirm,
                 cancel_button_title: options.cancel,

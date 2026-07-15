@@ -28,7 +28,7 @@ class cashAutomationAction extends cashViewAction
     {
         return [
             'transaction_add'    => _w('Added'),
-            'transaction_update' => _w('Edited'),
+            'transaction_update' => _w('Updated'),
             'transaction_delete' => _w('Deleted'),
         ];
     }
