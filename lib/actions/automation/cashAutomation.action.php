@@ -92,8 +92,17 @@ class cashAutomationAction extends cashViewAction
 
     private function getRules()
     {
-        $automation_model = new cashAutomationModel();
+        $automation_rules = (new cashAutomationModel())->getRules();
+        if ($automation_rules) {
+            $logs_info = (new cashAutomationLogModel())->getInfoLogs(array_keys($automation_rules));
+            foreach ($automation_rules as $_automation_id => $_automation_rule) {
+                $automation_rules[$_automation_id] += [
+                    'count_log' => (int) ifempty($logs_info, $_automation_id, 'count_log', 0),
+                    'last_date_log' => cashHelper::convertDateToISO8601(ifempty($logs_info, $_automation_id, 'last_date_log', null)),
+                ];
+            }
+        }
 
-        return $automation_model->getRules();
+        return $automation_rules;
     }
 }

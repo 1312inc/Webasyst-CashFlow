@@ -50,4 +50,21 @@ class cashAutomationLogModel extends cashModel
             ->limit($limit)
             ->fetchAll();
     }
+
+    /**
+     * @param array $automation_ids
+     * @return array
+     * @throws waDbException
+     */
+    public function getInfoLogs(array $automation_ids): array
+    {
+        return $this->query("
+            SELECT automation_id, MAX(`datetime`) last_date_log, COUNT(id) count_log FROM cash_automation_log
+            WHERE automation_id IN (:automation_ids)
+            GROUP BY automation_id
+            ORDER BY automation_id DESC
+        ", [
+            'automation_ids' => $automation_ids
+        ])->fetchAll('automation_id');
+    }
 }

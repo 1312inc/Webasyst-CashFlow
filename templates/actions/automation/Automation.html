@@ -281,6 +281,8 @@
             <input type="hidden" name="rules[{$rule_id}][rule_data][plugin_id]" value="{$plugin_id}" class="c-action-plugin-id"{if !$plugin_id} disabled{/if}>
         </td>
         <td class="valign-top">
+            [`Число записей лога`]: {ifset($rule, 'count_log', 0)}<br>
+            [`Последняя запись`]: {ifset($rule, 'last_date_log', '')}
             <a href="javascript:void(0);" class="c-log-rule" title="[`Log`]"><i class="fas fa-file-alt large"></i></a>
         </td>
         <td class="valign-top">
