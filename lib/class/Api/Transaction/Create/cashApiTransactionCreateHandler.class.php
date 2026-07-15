@@ -113,7 +113,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
 
             if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transferTransaction)) {
                 throw new kmwaForbiddenException(
-                    _w('You are now allowed to add/edit transfer transactions with the specified set of parameters')
+                    _w('You are not allowed to add/edit transfer transactions with the specified set of parameters')
                 );
             }
 
@@ -124,7 +124,7 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
 
         if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
             throw new kmwaForbiddenException(
-                _w('You are now allowed to add/edit transactions with the specified set of parameters')
+                _w('You are not allowed to add/edit transactions with the specified set of parameters')
             );
         }
 

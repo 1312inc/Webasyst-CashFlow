@@ -784,7 +784,7 @@ class cashAutomation
                         $action = $workflow->getActionById($ss_action);
                         $result = $action->run($order_id);
                     } else {
-                        self::getLog()->add($rule, $transaction, _w('Action is forbidden by Shop-Script workfow for the order').' '.$order_id, 'notice');
+                        self::getLog()->add($rule, $transaction, _w('Action is forbidden by Shop-Script workflow for the order').' '.$order_id, 'notice');
                     }
                     wa('cash', 1);
                 } catch (Exception $ex) {
