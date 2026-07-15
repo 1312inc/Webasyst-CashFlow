@@ -7,14 +7,15 @@ class cashAutomation
     public static function getConditions()
     {
         return [
-            ''                => ['name' => _w('Add IF condition...')] + self::getElements(),
-            'amount'          => ['name' => _w('Amount')] + self::getElements('amount'),
-            'description'     => ['name' => _w('Description')] + self::getElements('description'),
-            'account_id'      => ['name' => _w('Account')] + self::getElements('account_id'),
-            'category_id'     => ['name' => _w('Category')] + self::getElements('category_id'),
-            'date'            => ['name' => _w('Date')] + self::getElements('date'),
-            'external_id'     => ['name' => _w('External ID')] + self::getElements('external_id'),
-            'external_source' => ['name' => _w('External source')] + self::getElements('external_source'),
+            ''                  => ['name' => _w('Add IF condition...')] + self::getElements(),
+            'amount'            => ['name' => _w('Amount')] + self::getElements('amount'),
+            'description'       => ['name' => _w('Description')] + self::getElements('description'),
+            'account_id'        => ['name' => _w('Account')] + self::getElements('account_id'),
+            'category_id'       => ['name' => _w('Category')] + self::getElements('category_id'),
+            'date'              => ['name' => _w('Date')] + self::getElements('date'),
+            'create_contact_id' => ['name' => _w('Создатель операции')] + self::getElements('create_contact_id'),
+            'external_id'       => ['name' => _w('External ID')] + self::getElements('external_id'),
+            'external_source'   => ['name' => _w('External source')] + self::getElements('external_source'),
         ];
     }
 
@@ -261,6 +262,11 @@ class cashAutomation
                                 $condition_done++;
                             }
                             break;
+                        case 'create_contact_id':
+                            if (self::compare(ifset($transaction, 'create_contact_id', null), $value, $operator)) {
+                                $condition_done++;
+                            }
+                            break;
                         case 'external_id':
                             if (self::compare(ifset($transaction, 'external_id', null), $value, $operator)) {
                                 $condition_done++;
@@ -430,10 +436,6 @@ class cashAutomation
             case 'create_transaction':
             case 'self_update':
                 $elements = [
-                    // $type.'_header' => [
-                    //     'type' => 'header',
-                    //     'text' => _w('Свойства операции')
-                    // ],
                     $type.'_property_account_id' => [
                         'type' => 'select',
                         'label' => _w('Account'),
@@ -566,6 +568,21 @@ class cashAutomation
                     ],
                     'value' => [
                         'type' => 'date',
+                    ]
+                ];
+                break;
+            case 'create_contact_id':
+                $users = waUser::getUsers('cash');
+                unset($users[wa()->getUser()->getId()]);
+                $users[''] = '';
+                $elements = [
+                    'operator' => [
+                        'type' => 'select',
+                        'options' => ['=' => '=', '!=' => '!=']
+                    ],
+                    'value' => [
+                        'type' => 'select',
+                        'options' => $users
                     ]
                 ];
                 break;
