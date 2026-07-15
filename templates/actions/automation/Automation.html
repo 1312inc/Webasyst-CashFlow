@@ -10,7 +10,7 @@
                 <a href="#" class="dialog-close js-close-dialog"><i class="fas fa-times"></i></a>
                 <header class="dialog-header"><h1>[`Bot execution log`]</h1></header>
                 <div class="dialog-content">
-                    <table class="zebra">
+                    <table class="zebra bigdata">
                         <thead>
                             <tr>
                                 <th>[`Time`]</th>
@@ -22,7 +22,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="js-empty-log"><td colspan="5" class="align-center">[`Log is empty`]</td></tr>
+                            <tr class="js-empty-log"><td colspan="6" class="align-center">[`Log is empty`]</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -280,13 +280,11 @@
 
             <input type="hidden" name="rules[{$rule_id}][rule_data][plugin_id]" value="{$plugin_id}" class="c-action-plugin-id"{if !$plugin_id} disabled{/if}>
         </td>
-        <td class="valign-top">
-            [`Число записей лога`]: {ifset($rule, 'count_log', 0)}<br>
-            [`Последняя запись`]: {ifset($rule, 'last_date_log', '')}
-            <a href="javascript:void(0);" class="c-log-rule" title="[`Log`]"><i class="fas fa-file-alt large"></i></a>
+        <td class="valign-top align-right">
+            <a href="javascript:void(0);" class="c-log-rule button smaller nowrap light-gray rounded"><i class="fas fa-file-alt text-blue"></i> [`Log`] <span class="badge gray smaller bold">{ifset($rule, 'count_log', 0)}</span> <span class="hint">{ifset($rule, 'last_date_log', '')|wa_datetime:'humandatetime'}</span></a>
         </td>
         <td class="valign-top">
-            <a href="javascript:void(0);" class="c-delete-rule text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
+            <a href="javascript:void(0);" class="c-delete-rule button nobutton rounded smaller text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
         </td>
     </tr>
 {/function}
@@ -310,41 +308,41 @@
         {/if}
 
         <div class="fields" style="{if !cashHelper::isPremium()} opacity: 0.5;{/if}">
-            <div class="fields-group">
-                <a href="#/automation/add/" class="button small rounded light-gray" id="c-automation-add-rule">
-                    <i class="fas fa-robot text-dark-gray custom-mr-4"></i>
-                    [`Add automation bot`]
-                </a>
-                <table id="c-automation-rules">
-                    <thead class="header">
-                        <tr>
-                            <th class="min-width"></th>
-                            <th>[`Event with transaction`]</th>
-                            <th>[`Action`]</th>
-                            <th class="min-width"></th>
-                            <th class="min-width"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {foreach $automation_rules as $rule}
-                            {automation_rule rule=$rule}
-                        {/foreach}
-                        {capture 'new_automation_rule'}
-                            {strip}
-                                {automation_rule}
-                            {/strip}
-                        {/capture}
-                    </tbody>
-                </table>
 
-                {if cashHelper::isPremium()}
-                    {$wa->csrf()}
-                    <button type="submit" name="save" data-automation class="button green js-form-submit">
-                        [`Save`]
-                        <span class="hidden s-msg-after-button"><i class="fas fa-check-circle after-submit"></i></span>
-                    </button>
-                {/if}
-            </div>
+            <a href="#/automation/add/" class="button small rounded light-gray" id="c-automation-add-rule">
+                <i class="fas fa-robot text-dark-gray custom-mr-4"></i>
+                [`Add automation bot`]
+            </a>
+            <table id="c-automation-rules">
+                <thead class="header">
+                    <tr>
+                        <th class="min-width"></th>
+                        <th>[`Event with transaction`]</th>
+                        <th>[`Action`]</th>
+                        <th class="min-width"></th>
+                        <th class="min-width"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach $automation_rules as $rule}
+                        {automation_rule rule=$rule}
+                    {/foreach}
+                    {capture 'new_automation_rule'}
+                        {strip}
+                            {automation_rule}
+                        {/strip}
+                    {/capture}
+                </tbody>
+            </table>
+
+            {if cashHelper::isPremium()}
+                {$wa->csrf()}
+                <button type="submit" name="save" data-automation class="button green js-form-submit">
+                    [`Save`]
+                    <span class="hidden s-msg-after-button"><i class="fas fa-check-circle after-submit"></i></span>
+                </button>
+            {/if}
+
         </div>
     </div>
 </form>
