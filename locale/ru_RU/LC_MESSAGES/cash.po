@@ -1434,5 +1434,5 @@ msgstr "Создать счет..."
 msgid "Online store"
 msgstr "Интернет-магазин"
 
-msgid "Don't touch"
-msgstr "Не трогать"
+msgid "Bot will be deleted permanently. Are you sure?"
+msgstr "Бот будет удалён навсегда. Вы уверены?"

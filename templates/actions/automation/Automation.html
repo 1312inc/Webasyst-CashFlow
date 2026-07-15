@@ -352,6 +352,9 @@
     document.title = {$_page_title|json_encode} +" — "+ {json_encode($wa->accountName(false))};
 
     $.automation.Init({
+        confirm: '[`Confirm`]',
+        cancel: '[`Cancel`]',
+        confirmation_deletion: '[`Bot will be deleted permanently. Are you sure?`]',
         dialog_log: {json_encode($smarty.capture.dialog_log)},
         new_condition: {json_encode($smarty.capture.new_condition)},
         new_automation_rule: {json_encode($smarty.capture.new_automation_rule)}
