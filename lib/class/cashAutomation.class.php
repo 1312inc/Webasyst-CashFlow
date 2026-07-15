@@ -327,10 +327,10 @@ class cashAutomation
                             $done = self::actionSS($rule, $transaction);
                             break;
                         default:
-                            self::getLog()->add($rule, $transaction, _w('Неизвестное действие'));
+                            self::getLog()->add($rule, $transaction, _w('Unknown bot action'));
                     }
                     if ($done) {
-                        self::getLog()->add($rule, $transaction, sprintf_wp('Действие "%s" выполнено', ifset($known_actions, $rule_action, 'action', _w('Неизвестное действие'))));
+                        self::getLog()->add($rule, $transaction, sprintf_wp('Bot action executed: %s', ifset($known_actions, $rule_action, 'action', _w('Unknown bot action'))));
                     }
                 }
             }

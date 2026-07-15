@@ -1431,3 +1431,369 @@ msgstr "Интернет-магазин"
 
 msgid "Bot will be deleted permanently. Are you sure?"
 msgstr "Бот будет удалён навсегда. Вы уверены?"
+
+msgid "Transactions related to this contractor"
+msgstr ""
+
+msgid "Bot execution log"
+msgstr ""
+
+msgid "Time"
+msgstr ""
+
+msgid "Event"
+msgstr ""
+
+msgid "Action"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "Plugin"
+msgstr ""
+
+msgid "Log is empty"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "IF conditions (AND)"
+msgstr ""
+
+msgid "Log"
+msgstr ""
+
+msgid "To run several THEN actions on one event, simply create multiple bots with similar IF conditions. All matching bots will run one by one in the given order."
+msgstr ""
+
+msgid "Add automation bot"
+msgstr ""
+
+msgid "Event with transaction"
+msgstr ""
+
+msgid "Confirm"
+msgstr ""
+
+msgid "Cash automation"
+msgstr ""
+
+msgid "CSV (Excel)"
+msgstr ""
+
+msgid "Excel (CSV)"
+msgstr ""
+
+msgid "You are not allowed to access this import"
+msgstr ""
+
+msgid "Plugin settings page"
+msgstr ""
+
+msgid "Added"
+msgstr ""
+
+msgid "Updated"
+msgstr ""
+
+msgid "Deleted"
+msgstr ""
+
+msgid "Currency not found"
+msgstr ""
+
+msgid "Imported on %s"
+msgstr ""
+
+msgid "Add condition..."
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "External ID"
+msgstr ""
+
+msgid "External source"
+msgstr ""
+
+msgid "Create new transaction"
+msgstr ""
+
+msgid "Update self"
+msgstr ""
+
+msgid "Delete self"
+msgstr ""
+
+msgid "Update another transaction..."
+msgstr ""
+
+msgid "Send email"
+msgstr ""
+
+msgid "Shop-Script..."
+msgstr ""
+
+msgid "Could not fetch date from the transaction description."
+msgstr ""
+
+msgid "Unknown plugin action"
+msgstr ""
+
+msgid "Origin transaction values:"
+msgstr ""
+
+msgid "Transaction ID"
+msgstr ""
+
+msgid "Transaction date"
+msgstr ""
+
+msgid "Transaction amount"
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgid "Account ID"
+msgstr ""
+
+msgid "Category ID"
+msgstr ""
+
+msgid "Contractor contact ID"
+msgstr ""
+
+msgid "Contractor name"
+msgstr ""
+
+msgid "External origin app name (for transactions imported from an external source or app)"
+msgstr ""
+
+msgid "External entity ID (for transactions imported from an external source or app)"
+msgstr ""
+
+msgid "Recipient email address"
+msgstr ""
+
+msgid "Subject"
+msgstr ""
+
+msgid "Variables from the body field are supported"
+msgstr ""
+
+msgid "Body"
+msgstr ""
+
+msgid "="
+msgstr ""
+
+msgid "Order ID is always fetched from the original transaction description. Make sure to have IF condition set for the transaction description field to contain Order ID."
+msgstr ""
+
+msgid "Perform action"
+msgstr ""
+
+msgid "Order action will apply only if Order ID is known, and in the selected action is allowed for the order in Shop-Script workflow settings. Otherwise, an email alert will be sent to the failover email specified below."
+msgstr ""
+
+msgid "Require transaction amount to be not less than the actual Shop-Script order amount"
+msgstr ""
+
+msgid "Customer"
+msgstr ""
+
+msgid "Require transaction contractor to match Shop-Script order customer"
+msgstr ""
+
+msgid "Failover email"
+msgstr ""
+
+msgid "If bot conditions were met, but something did not match for the order action to run, an alert with details will be sent to the specified email."
+msgstr ""
+
+msgid "contains"
+msgstr ""
+
+msgid "does not contain"
+msgstr ""
+
+msgid "Text..."
+msgstr ""
+
+msgid "Order ID"
+msgstr ""
+
+msgid "Could not update transaction:"
+msgstr ""
+
+msgid "Could not update transaction: either transaction or one of its fields not found"
+msgstr ""
+
+msgid "Cash Flow alert"
+msgstr ""
+
+msgid "Email not sent"
+msgstr ""
+
+msgid "Email not sent:"
+msgstr ""
+
+msgid "Email not sent: either recipient or email content are empty"
+msgstr ""
+
+msgid "Shop-Script app is not enabled"
+msgstr ""
+
+msgid "No Shop-Script order found with the specified ID"
+msgstr ""
+
+msgid "Action is forbidden by Shop-Script workfow for the order"
+msgstr ""
+
+msgid "Shop-Script order action failed:"
+msgstr ""
+
+msgid "Shop-Script order amount and Cash Flow transaction amount won’t match"
+msgstr ""
+
+msgid "Shop-Script order date and Cash Flow transaction date won’t match"
+msgstr ""
+
+msgid "Shop-Script order customer and Cash Flow transaction contractor won’t match"
+msgstr ""
+
+msgid "Cash Flow -> Shop-Script alert"
+msgstr ""
+
+msgid "Shop-Script order ID is unknown"
+msgstr ""
+
+msgid "Plugin action completed: %s"
+msgstr ""
+
+msgid "Cash Flow bot is here! Shop-Script order action failed: <b>%s</b>.<br><br> Origin transaction:<br> %s"
+msgstr ""
+
+msgid "Come on, all of the world's money is less than the amount entered!"
+msgstr ""
+
+msgid "No transaction"
+msgstr ""
+
+msgid "You can not edit transaction"
+msgstr ""
+
+msgid "You can not delete this transaction"
+msgstr ""
+
+msgid "No repeating transaction"
+msgstr ""
+
+msgid "You are not allowed to edit this transaction (ID %s, %s)"
+msgstr ""
+
+msgid "Too many transactions to move. Max limit is %d"
+msgstr ""
+
+msgid "You can view this transaction"
+msgstr ""
+
+msgid "You are not allowed to delete restore transactions"
+msgstr ""
+
+msgid "You are not allowed to create transfer transactions"
+msgstr ""
+
+msgid "You are now allowed to add/edit transfer transactions with the specified set of parameters"
+msgstr ""
+
+msgid "You are now allowed to add/edit transactions with the specified set of parameters"
+msgstr ""
+
+msgid "You are not allowed to restore transactions"
+msgstr ""
+
+msgid "You are not allowed to delete this transaction"
+msgstr ""
+
+msgid "You have no access to this account"
+msgstr ""
+
+msgid "You have no access to this category"
+msgstr ""
+
+msgid "Nothing to move. No params"
+msgstr ""
+
+msgid "You cannot sort categories"
+msgstr ""
+
+msgid "You can not create any category at all"
+msgstr ""
+
+msgid "Plan has not been saved"
+msgstr ""
+
+msgid "Id should be over 0"
+msgstr ""
+
+msgid "Unknown is_imaginary"
+msgstr ""
+
+msgid "You can sort accounts"
+msgstr ""
+
+msgid "Contact not found"
+msgstr ""
+
+msgid "Contact is not user"
+msgstr ""
+
+msgid "You can not create any account"
+msgstr ""
+
+msgid "%d transactions created in the Cash Flow app:"
+msgstr ""
+
+msgid "You have no access to this contractor"
+msgstr ""
+
+msgid "You have no access to this import"
+msgstr ""
+
+msgid "No amount column selected"
+msgstr ""
+
+msgid "No account column selected"
+msgstr ""
+
+msgid "No date column selected"
+msgstr ""
+
+msgid "Too many transactions to purge. Max limit is %d"
+msgstr ""
+
+msgid "Too many transactions to delete. Max limit is %d"
+msgstr ""
+
+msgid "Too many transactions to restore. Max limit is %d"
+msgstr ""
+
+msgid "You can not get contact list"
+msgstr ""
+
+msgid "For %s+ days, only \"%s\" & \"%s\" grouping is available"
+msgstr ""
+
+msgid "Unknown bot action"
+msgstr ""
+
+msgid "Bot action executed: %s"
+msgstr ""

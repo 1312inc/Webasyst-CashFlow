@@ -148,7 +148,7 @@
             <div class="wa-select small">
                 <select name="rules[{$rule_id}][action_id]" class="bold">
                     {foreach $events as $_event_id => $_event}
-                    <option value="{$_event_id}"{if $rule && $rule.action_id == $_event_id} selected{/if}>[`{$_event}`]</option>
+                    <option value="{$_event_id}"{if $rule && $rule.action_id == $_event_id} selected{/if}>{$_event}</option>
                     {/foreach}
                 </select>
             </div>
@@ -296,7 +296,7 @@
         <h1>[`Automation bots`]</h1>
         <p class="small">
             [`Bots track all events occurring in the app and help you automate routine accounting operations such as adding new and updating existing transactions.`]
-            [`To run several THEN actions on one event, simply create multiple bots with simiar IF conditions. All matching bots will run one by one in the given order.`]
+            [`To run several THEN actions on one event, simply create multiple bots with similar IF conditions. All matching bots will run one by one in the given order.`]
         </p>
 
         {if !cashHelper::isPremium()}
