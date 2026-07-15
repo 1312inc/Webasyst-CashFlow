@@ -8,21 +8,21 @@
             <div class="dialog-background"></div>
             <div class="dialog-body">
                 <a href="#" class="dialog-close js-close-dialog"><i class="fas fa-times"></i></a>
-                <header class="dialog-header"><h1>[`Журнал выполнения`]</h1></header>
+                <header class="dialog-header"><h1>[`Bot execution log`]</h1></header>
                 <div class="dialog-content">
-                    <table class="bordered">
+                    <table class="zebra">
                         <thead>
                             <tr>
-                                <th>[`Дата выполнения`]</th>
-                                <th>[`Тип лога`]</th>
-                                <th>[`Событие`]</th>
-                                <th>[`Действие`]</th>
-                                <th>[`Описание действия`]</th>
-                                <th>[`Плагин`]</th>
+                                <th>[`Time`]</th>
+                                <th>[`Type`]</th>
+                                <th>[`Event`]</th>
+                                <th>[`Action`]</th>
+                                <th>[`Details`]</th>
+                                <th>[`Plugin`]</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="js-empty-log"><td colspan="5" class="align-center">[`Нет записей лога`]</td></tr>
+                            <tr class="js-empty-log"><td colspan="5" class="align-center">[`Log is empty`]</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -87,7 +87,7 @@
                                 class="smaller {$_condition_id|escape}{if !empty($_element.class)} {$_element.class|escape}{/if}{if $rule_name != $_condition_id} hidden{/if}"
                                 name="rules[{$_rule_id}][conditions][{$condition_rand}][{$_el_name}]"
                                 value="{$elem_value|escape}"{if $rule_name != $_condition_id} disabled{/if}
-                                placeholder="[`Значение`]"
+                                placeholder="[`Value`]"
                             >
                         {/if}
                     {/foreach}

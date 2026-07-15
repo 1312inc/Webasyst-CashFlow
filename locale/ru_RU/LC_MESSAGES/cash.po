@@ -1009,11 +1009,6 @@ msgstr "Ура! <strong>Создали %d доходных и %d расходн�
 msgid "<strong class=\"highlighted\">%s</strong> (see above) — this is how much cash you <i>would</i> have on hand right now if there were only sales (income), but no business expenses such as salaries, office rent, marketing, purchase & supplies, and so on."
 msgstr "<strong class=\"highlighted\">%s</strong> (см. баланс счета выше) — это та сумма наличных в кассе, которая <i>была бы</i> у вас прямо сейчас, если бы у бизнеса были только поступления (доходы) и никаких расходов, таких как зарплаты, аренда, маркетинг, закупки и так далее."
 
-msgid ""
-"<strong>Add (or import from a CSV file) your historical expenses now</strong> to get to know your real cash on hand forecast. It’s easy — try clicking on %s button below.<br>\n"
-"                Only both income &amp; expense transactions together will show you the real picture of how your business finances work."
-msgstr "<strong>Теперь добавьте расходы,</strong> чтобы построить полную финансовую модель бизнеса и получить прогноз прибыли и баланса. Все очень просто — добавьте расходные операции %s вручную или импортируйте все операции разом из CSV-файла."
-
 msgid "Ok, got that!"
 msgstr "Ок, понятно!"
 

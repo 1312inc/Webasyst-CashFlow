@@ -240,7 +240,7 @@ class cashAutomation
                                         $transaction['date_from_description'] = date('Y-m-d', $timestamp);
                                         $condition_done++;
                                     } catch (Exception $ex) {
-                                        self::getLog()->add($rule, $transaction, _w('Не удалось преобразовать дату из описания операции.').$ex->getMessage(), 'error');
+                                        self::getLog()->add($rule, $transaction, _w('Could not fetch date from the transaction description.').$ex->getMessage(), 'error');
                                     }
                                 } elseif (!$is_contains && !$date) {
                                     $condition_done++;
@@ -300,13 +300,13 @@ class cashAutomation
                                     $plugin_view = wa()->getPlugin($rule_data['plugin_id'])->$method();
                                     $plugin_view = ifset($plugin_view, 'actions', $params['action'], 'action', null);
                                 }
-                                self::getLog()->add($rule, $transaction, sprintf_wp('Действие %s плагином выполнено', (empty($plugin_view) ? '' : $plugin_view)));
+                                self::getLog()->add($rule, $transaction, sprintf_wp('Plugin action completed: %s', (empty($plugin_view) ? '' : $plugin_view)));
                             }
                         } catch (Exception $ex) {
                             self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
                         }
                     } else {
-                        self::getLog()->add($rule, $transaction, _w('Плагин и/или его метод не определены'), 'warning');
+                        self::getLog()->add($rule, $transaction, _w('Unknown plugin action'), 'warning');
                     }
                 } else {
                     $done = false;
