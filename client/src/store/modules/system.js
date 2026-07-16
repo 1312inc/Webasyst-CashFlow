@@ -5,7 +5,8 @@ export default {
   namespaced: true,
 
   state: () => ({
-    currencies: appStateService.currencies
+    currencies: appStateService.currencies,
+    companies: []
   }),
 
   getters: {
@@ -17,6 +18,10 @@ export default {
   mutations: {
     setCurrencies (state, data) {
       state.currencies = data
+    },
+
+    setCompanies (state, data) {
+      state.companies = data
     }
   },
 
@@ -29,6 +34,20 @@ export default {
         } catch (_) {
           return false
         }
+      }
+    },
+
+    async getCompanies ({ commit, state }) {
+      if (!appStateService.isPremium) {
+        return false
+      }
+      try {
+        const { data } = await api.get('cash.company.getList')
+        if (Array.isArray(data)) {
+          commit('setCompanies', data.sort((a, b) => a.sort - b.sort))
+        }
+      } catch (_) {
+        return false
       }
     }
   }

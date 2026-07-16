@@ -22,13 +22,15 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import DropdownWaFloating from './Inputs/DropdownWaFloating.vue'
-import api from '@/plugins/api'
 import { i18n } from '@/plugins/locale'
 import { companyContextService } from '../services/companyContext'
+import { useStore } from '../composables/useStore'
 
-const companies = ref([])
+const store = useStore()
+
+const companies = computed(() => store.state.system.companies)
 const selectedCompany = computed(() => {
   return items.value.find(company => company.id === companyContextService.companyId)
 })
@@ -41,7 +43,7 @@ const items = computed(() => {
       sort: -1
     },
     ...companies.value
-  ].sort((a, b) => a.sort - b.sort)
+  ]
 })
 
 const onCompanyClick = (company) => {
@@ -50,11 +52,6 @@ const onCompanyClick = (company) => {
 }
 
 onMounted(async () => {
-  const { data } = await api.get(
-    'cash.company.getList'
-  )
-  if (Array.isArray(data)) {
-    companies.value = data
-  }
+  await store.dispatch('system/getCompanies')
 })
 </script>

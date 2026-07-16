@@ -57,6 +57,34 @@
           </div>
         </div>
 
+        <div
+          v-if="companies.length"
+          class="field"
+        >
+          <div class="name for-input">
+            {{ $t("company") }}
+          </div>
+          <div class="value">
+            <div class="wa-select solid">
+              <select
+                v-model="model.company_id"
+                class="width-50"
+              >
+                <option value="">
+                  &nbsp;
+                </option>
+                <option
+                  v-for="c in companies"
+                  :key="c.id"
+                  :value="c.id"
+                >
+                  {{ c.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <div class="field">
           <div class="name for-checkbox">
             {{ $t("accountType.name") }}
@@ -241,6 +269,7 @@ import updateEntityMixin from '@/mixins/updateEntityMixin'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import IconUploader from '@/components/Inputs/IconUploader'
 import AddAccountAccountable from '@/components/Modals/AddAccountAccountable'
+import { mapState, mapActions } from 'vuex'
 
 export default {
 
@@ -260,6 +289,7 @@ export default {
         id: null,
         name: '',
         currency: '',
+        company_id: '',
         is_imaginary: '0',
         starting_balance: '',
         icon: '',
@@ -281,6 +311,7 @@ export default {
   },
 
   computed: {
+    ...mapState('system', ['companies']),
     sortedCurrencies () {
       return [...this.$store.state.system.currencies].sort((a, b) => {
         if (a.code < b.code) { return -1 }
@@ -296,9 +327,11 @@ export default {
 
   mounted () {
     this.$refs.focus.focus()
+    this.getCompanies()
   },
 
   methods: {
+    ...mapActions('system', ['getCompanies']),
     setIcon (url) {
       this.model.icon = url
     }
