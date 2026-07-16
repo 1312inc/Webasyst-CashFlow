@@ -16,6 +16,9 @@
         >
           <a @click.prevent="onCompanyClick(company)">{{ company.name }} </a>
         </li>
+        <li>
+          <a @click.prevent="onConfigureCompanies">{{ $t('configureCompanies') }}</a>
+        </li>
       </ul>
     </template>
   </DropdownWaFloating>
@@ -27,10 +30,12 @@ import DropdownWaFloating from './Inputs/DropdownWaFloating.vue'
 import { i18n } from '@/plugins/locale'
 import { companyContextService } from '../services/companyContext'
 import { useStore } from '../composables/useStore'
+import { useRouter } from 'vue-router/composables'
 
+const router = useRouter()
 const store = useStore()
 
-const companies = computed(() => store.state.system.companies)
+const companies = computed(() => store.getters['company/sortedCompanies'])
 const selectedCompany = computed(() => {
   return items.value.find(company => company.id === companyContextService.companyId)
 })
@@ -51,7 +56,11 @@ const onCompanyClick = (company) => {
   window.location.reload()
 }
 
+const onConfigureCompanies = () => {
+  router.push({ name: 'Companies' })
+}
+
 onMounted(async () => {
-  await store.dispatch('system/getCompanies')
+  await store.dispatch('company/getList')
 })
 </script>

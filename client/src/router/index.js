@@ -140,6 +140,14 @@ const routes = [
     }
   },
   {
+    path: '/companies',
+    name: 'Companies',
+    component: () => import('../views/Companies.vue'),
+    meta: {
+      requiresAdminRights: true
+    }
+  },
+  {
     path: '/report',
     alias: SSR_MODE_PAGE_URL_ALIASES
   },
@@ -169,6 +177,7 @@ router.beforeEach((to, from, next) => {
       next({
         name: 'Home'
       })
+      return
     }
   }
 

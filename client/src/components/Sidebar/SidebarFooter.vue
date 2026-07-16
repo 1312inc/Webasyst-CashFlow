@@ -4,6 +4,12 @@
 <template>
   <ul class="menu">
     <li v-if="$permissions.isAdmin">
+      <router-link to="/companies">
+        <i class="fas fa-building" />
+        <span>{{ $t("companies") }}</span>
+      </router-link>
+    </li>
+    <li v-if="$permissions.isAdmin">
       <router-link to="/trash">
         <i class="fas fa-trash-alt" />
         <span>{{ $t("trash") }}</span>

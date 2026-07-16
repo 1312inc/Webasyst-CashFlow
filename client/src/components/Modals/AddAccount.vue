@@ -65,6 +65,7 @@
             {{ $t("company") }}
           </div>
           <div class="value">
+            {{ model.company_id }}
             <div class="wa-select solid">
               <select
                 v-model="model.company_id"
@@ -269,7 +270,7 @@ import updateEntityMixin from '@/mixins/updateEntityMixin'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import IconUploader from '@/components/Inputs/IconUploader'
 import AddAccountAccountable from '@/components/Modals/AddAccountAccountable'
-import { mapState, mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
 
@@ -311,7 +312,9 @@ export default {
   },
 
   computed: {
-    ...mapState('system', ['companies']),
+    ...mapGetters('company', {
+      companies: 'sortedCompanies'
+    }),
     sortedCurrencies () {
       return [...this.$store.state.system.currencies].sort((a, b) => {
         if (a.code < b.code) { return -1 }
@@ -327,11 +330,11 @@ export default {
 
   mounted () {
     this.$refs.focus.focus()
-    this.getCompanies()
+    this.getList()
   },
 
   methods: {
-    ...mapActions('system', ['getCompanies']),
+    ...mapActions('company', ['getList']),
     setIcon (url) {
       this.model.icon = url
     }
