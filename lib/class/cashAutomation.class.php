@@ -876,6 +876,19 @@ if (description_condition == 'custom_text') {
 }
 SCRIPT;
                 break;
+            case 'date_transaction':
+                $script = <<<SCRIPT
+let condition_id = $(this).data('condition-id');
+let date_condition = $(this).find('.date_transaction[name$="[conditions]['+ condition_id +'][operator]"]').val();
+
+if (!$(this).find('.date_transaction[name$="[conditions]['+ condition_id +'][value]"]').prop('disabled')) {
+    $(this).find('.date_transaction[name$="[conditions]['+ condition_id +'][value]"]').removeClass('hidden');
+    if (['is_today', 'is_future', 'is_past'].includes(date_condition)) {
+        $(this).find('.date_transaction[name$="[conditions]['+ condition_id +'][value]"]').addClass('hidden');
+   }
+}
+SCRIPT;
+                break;
         }
 
         return $script;
