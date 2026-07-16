@@ -40,14 +40,27 @@ class cashAutomation
     {
         static $categories = [];
         if (empty($categories)) {
-            $categories = cash()->getModel(cashCategory::class)->getAllActiveForContact();
-            $categories = array_combine(array_column($categories, 'id'), $categories);
+            $categories = [
+                cashCategory::TYPE_INCOME => [],
+                cashCategory::TYPE_EXPENSE => [],
+            ];
+            foreach (cash()->getModel(cashCategory::class)->getAllActiveForContact() as $_category) {
+                if ($_category['type'] === cashCategory::TYPE_INCOME) {
+                    $categories[cashCategory::TYPE_INCOME][$_category['id']] = ifempty($_category, 'name', '');
+                } else {
+                    $categories[cashCategory::TYPE_EXPENSE][$_category['id']] = ifempty($_category, 'name', '');
+                }
+            }
         }
         if ($id) {
-            return ifset($categories, $id, []);
+            $c = $categories[cashCategory::TYPE_INCOME] + $categories[cashCategory::TYPE_EXPENSE];
+            return ifset($c, $id, []);
         }
 
-        return array_combine(array_keys($categories), array_column($categories, 'name'));
+        return [
+            _w('Income') => $categories[cashCategory::TYPE_INCOME],
+            _w('Expense') => $categories[cashCategory::TYPE_EXPENSE]
+        ];
     }
 
     /**

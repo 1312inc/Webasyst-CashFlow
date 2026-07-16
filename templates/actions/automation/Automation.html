@@ -64,7 +64,15 @@
 
                                 <select name="rules[{$_rule_id}][conditions][{$condition_rand}][{$_el_name}]" class="{$_condition_id|escape}{if !empty($_element.class)} {$_element.class|escape}{/if}{if $rule_name != $_condition_id} hidden{/if}"{if $rule_name != $_condition_id} disabled{/if}>
                                     {foreach $_element.options as $_select_key => $_select_value}
-                                    <option value="{$_select_key}"{if in_array($elem_value, [$_select_key, $_select_value])} selected{/if}>{$_select_value|escape}</option>
+                                        {if is_array($_select_value)}
+                                        <optgroup label="{$_select_key|escape}">
+                                            {foreach $_select_value as $_gr_key => $_gr_value}
+                                            <option value="{$_gr_key}"{if in_array($elem_value, [$_gr_key, $_gr_value])} selected{/if}>{$_gr_value|escape}</option>
+                                            {/foreach}
+                                        </optgroup>
+                                        {else}
+                                        <option value="{$_select_key}"{if in_array($elem_value, [$_select_key, $_select_value])} selected{/if}>{$_select_value|escape}</option>
+                                        {/if}
                                     {/foreach}
                                 </select>
 
@@ -183,7 +191,15 @@
                                     <div class="wa-select small">
                                         <select name="rules[{$rule_id}][rule_data][{$_el_name}]" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}>
                                             {foreach $_element.options as $_select_key => $_select_value}
-                                            <option value="{$_select_key}"{if $_select_key == $elem_value} selected{/if}>{$_select_value|escape}</option>
+                                                {if is_array($_select_value)}
+                                                <optgroup label="{$_select_key|escape}">
+                                                    {foreach $_select_value as $_gr_key => $_gr_value}
+                                                    <option value="{$_gr_key}"{if in_array($elem_value, [$_gr_key, $_gr_value])} selected{/if}>{$_gr_value|escape}</option>
+                                                    {/foreach}
+                                                </optgroup>
+                                                {else}
+                                                <option value="{$_select_key}"{if $_select_key == $elem_value} selected{/if}>{$_select_value|escape}</option>
+                                                {/if}
                                             {/foreach}
                                         </select>
                                     </div>
