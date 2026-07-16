@@ -12,7 +12,7 @@ class cashAutomation
             'description'       => ['name' => _w('Description')] + self::getElements('description'),
             'account_id'        => ['name' => _w('Account')] + self::getElements('account_id'),
             'category_id'       => ['name' => _w('Category')] + self::getElements('category_id'),
-            'date'              => ['name' => _w('Date')] + self::getElements('date'),
+            'date_transaction'  => ['name' => _w('Date')] + self::getElements('date_transaction'),
             'create_contact_id' => ['name' => _w('User')] + self::getElements('create_contact_id'),
             'external_id'       => ['name' => _w('External ID')] + self::getElements('external_id'),
             'external_source'   => ['name' => _w('External source')] + self::getElements('external_source'),
@@ -257,8 +257,15 @@ class cashAutomation
                                 $condition_done++;
                             }
                             break;
-                        case 'date':
-                            if (self::compare(ifset($transaction, 'date', null), $value, $operator)) {
+                        case 'date_transaction':
+                            $today = date('Y-m-d');
+                            $date = ifset($transaction, 'date', null);
+                            if (
+                                ($operator === 'is_today' && self::compare($date, $today, '=='))
+                                || ($operator === 'is_future' && self::compare($date, $today, '>'))
+                                || ($operator === 'is_past' && self::compare($date, $today, '<'))
+                                || self::compare($date, $value, $operator)
+                            ) {
                                 $condition_done++;
                             }
                             break;
@@ -560,14 +567,24 @@ class cashAutomation
                     ]
                 ];
                 break;
-            case 'date':
+            case 'date_transaction':
                 $elements = [
                     'operator' => [
                         'type' => 'select',
-                        'options' => ['<=' => '≤', '>=' => '≥']
+                        'options' => [
+                            'is_today' => _w('is today'),
+                            'is_future' => _w('is in the future'),
+                            'is_past' => _w('is in the past'),
+                            '<=' => '≤',
+                            '>=' => '≥'
+                        ]
                     ],
                     'value' => [
                         'type' => 'date',
+                    ],
+                    $type.'_script' => [
+                        'type' => 'script',
+                        'script' => self::getScript('date_transaction')
                     ]
                 ];
                 break;
