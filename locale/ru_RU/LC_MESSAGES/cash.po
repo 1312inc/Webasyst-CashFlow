@@ -1800,3 +1800,12 @@ msgstr "Действие бота выполнено: %s"
 
 msgid "Cascade execution is disabled to avoid recursion (one bot won’t trigger another)."
 msgstr "Каскадное выполнение отключено, чтобы избежать рекурсии (один бот не будет запускать другого)."
+
+msgid "is today"
+msgstr "сегодня"
+
+msgid "is in the future"
+msgstr "в будущем"
+
+msgid "is in the past"
+msgstr "в прошлом"
