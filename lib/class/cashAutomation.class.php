@@ -47,19 +47,22 @@ class cashAutomation
             foreach (cash()->getModel(cashCategory::class)->getAllActiveForContact() as $_category) {
                 if ($_category['type'] === cashCategory::TYPE_INCOME) {
                     $categories[cashCategory::TYPE_INCOME][$_category['id']] = ifempty($_category, 'name', '');
-                } else {
+                } elseif ($_category['type'] === cashCategory::TYPE_EXPENSE) {
                     $categories[cashCategory::TYPE_EXPENSE][$_category['id']] = ifempty($_category, 'name', '');
+                } else {
+                    $categories[cashCategory::TYPE_TRANSFER][$_category['id']] = ifempty($_category, 'name', '');
                 }
             }
         }
         if ($id) {
-            $c = $categories[cashCategory::TYPE_INCOME] + $categories[cashCategory::TYPE_EXPENSE];
+            $c = $categories[cashCategory::TYPE_INCOME] + $categories[cashCategory::TYPE_EXPENSE] + $categories[cashCategory::TYPE_TRANSFER];
             return ifset($c, $id, []);
         }
 
         return [
             _w('Income') => $categories[cashCategory::TYPE_INCOME],
-            _w('Expense') => $categories[cashCategory::TYPE_EXPENSE]
+            _w('Expense') => $categories[cashCategory::TYPE_EXPENSE],
+            _w('Transfer') => $categories[cashCategory::TYPE_TRANSFER]
         ];
     }
 
