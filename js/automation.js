@@ -52,6 +52,15 @@ $.extend($.automation = $.automation || {}, {
             });
         })();
 
+        $table_tbody.on('click', '.c-show-rule', function (event) {
+            event.preventDefault();
+
+            let that = $(this).closest('tr');
+            let rule_id = that.data('rule-id');
+            that.addClass('hidden');
+            $(this).closest('table').find('.c-long-rule-'+ rule_id).removeClass('hidden');
+        });
+
         $table_tbody.on('click', '.c-log-rule', function (event) {
             event.preventDefault();
 
