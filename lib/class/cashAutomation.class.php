@@ -32,11 +32,11 @@ class cashAutomation
     }
 
     /**
-     * @param $id
-     * @return array
+     * @param int|null $id
+     * @return array|string
      * @throws waException
      */
-    private static function getCategories($id = null): array
+    private static function getCategories($id = null)
     {
         static $categories = [];
         if (empty($categories)) {
@@ -162,8 +162,7 @@ class cashAutomation
         $account = self::getAccounts($transaction['account_id']);
         $transaction['account_name'] = ifset($account, 'name', null);
         $transaction['currency'] = ifset($account, 'currency', null);
-        $category = self::getCategories($transaction['category_id']);
-        $transaction['category_name'] = ifset($category, 'name', null);
+        $transaction['category_name'] = self::getCategories($transaction['category_id']);
 
         if (!empty($transaction['contractor_contact_id'])) {
             $contractor_contact = new waContact($transaction['contractor_contact_id']);
@@ -432,6 +431,7 @@ class cashAutomation
      */
     private static function getElements($type = '')
     {
+        static $contacts = [];
         $elements = [];
         switch ($type) {
             case 'send_mail':
@@ -458,6 +458,15 @@ class cashAutomation
                 break;
             case 'create_transaction':
             case 'self_update':
+                if (empty($contacts)) {
+                    $request = new cashApiContactGetListRequest(0,cashApiContactGetListRequest::MAX_LIMIT);
+                    list($total, $data) = (new cashApiContactGetListHandler())->handle($request);
+
+                    /** $_contact cashApiContactGetListDto */
+                    foreach ((array) $data as $_contact) {
+                        $contacts[$_contact->getId()] = ($_contact->getName() ?: _w('Contact ID: ').$_contact->getId());
+                    }
+                }
                 $elements = [
                     $type.'_property_account_id' => [
                         'type' => 'select',
@@ -468,6 +477,17 @@ class cashAutomation
                         'type' => 'select',
                         'label' => _w('Category'),
                         'options' => ['' => ''] + self::getCategories()
+                    ],
+                    $type.'_property_contractor' => [
+                        'type' => 'select',
+                        'label' => _w('Контрагент'),
+                        'class' => 'contractor_type',
+                        'options' => ['' => '', 'contractor_id' => _w('Ввести ID контакта...')] + $contacts,
+                        'child' => 1
+                    ],
+                    $type.'_property_contractor_id' => [
+                        'type' => 'text',
+                        'class' => 'property_contractor_id number shorter',
                     ],
                     $type.'_property_amount_type' => [
                         'type' => 'select',
@@ -711,6 +731,15 @@ class cashAutomation
                         $property_value = self::replaceVariables($property_value, $transaction);
                         $transaction_obj->setDescription($property_value);
                         break;
+                    case 'contractor':
+                        if ($property_value === 'contractor_id') {
+                            $property_value = ifset($properties, 'contractor_id', 0);
+                        }
+                        $contractor = new waContact($property_value);
+                        if ($contractor->exists()) {
+                            $transaction_obj->setContractorContactId((int) $property_value);
+                        }
+                        break;
                 }
             }
 
@@ -871,14 +900,20 @@ class cashAutomation
                 $amount = _w('Amount');
                 $script = <<<SCRIPT
 let amount_type = $(this).find('.amount_type').val();
+let contractor_type = $(this).find('.contractor_type').val();
 
 $(this).find('.span-desc').remove();
 $(this).find('.property_amount').removeClass('hidden');
+$(this).find('.property_contractor_id').addClass('hidden');
 if (amount_type == 'amount_percent') {
     $(this).find('.property_amount').before('<span class="span-desc">$amount * </span>');
     $(this).find('.property_amount').after('<span class="span-desc">%</span>');
 } else if (amount_type == 'amount_not_touch') {
     $(this).find('.property_amount').addClass('hidden');
+}
+
+if (contractor_type == 'contractor_id') {
+    $(this).find('.property_contractor_id').removeClass('hidden');
 }
 SCRIPT;
                 break;
