@@ -480,9 +480,9 @@ class cashAutomation
                     ],
                     $type.'_property_contractor' => [
                         'type' => 'select',
-                        'label' => _w('Контрагент'),
+                        'label' => _w('Contractor'),
                         'class' => 'contractor_type',
-                        'options' => ['' => '', 'contractor_id' => _w('Ввести ID контакта...')] + $contacts,
+                        'options' => ['' => '', 'contractor_id' => _w('Custom contact ID...')] + $contacts,
                         'child' => 1
                     ],
                     $type.'_property_contractor_id' => [

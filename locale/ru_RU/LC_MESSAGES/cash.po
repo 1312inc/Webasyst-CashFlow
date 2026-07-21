@@ -1809,3 +1809,12 @@ msgstr "в будущем"
 
 msgid "is in the past"
 msgstr "в прошлом"
+
+msgid "Edit"
+msgstr "Редактировать"
+
+msgid "Contact ID: "
+msgstr "ID контакта: "
+
+msgid "Custom contact ID..."
+msgstr "Ввести ID контакта..."
