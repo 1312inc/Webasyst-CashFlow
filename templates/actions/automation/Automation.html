@@ -147,6 +147,7 @@
 {function automation_rule rule=null}
     {$rule_id = ifset($rule, 'id', '%%RULE_ID%%')}
     {$action = ifset($rule, 'rule_data', 'action', '')}
+    {$conditions = cashAutomationAction::getConditions()}
     <tr data-rule-id="{$rule_id}" class="short-rule{if !$rule} hidden{/if}">
         <td class="c-automation-sort-handle">
             <i class="fas fa-grip-vertical text-light-gray cursor-pointer automation-rows-handle"></i>
@@ -157,8 +158,12 @@
             {foreach $events as $_event_id => $_event}
                 {if $rule && $rule.action_id == $_event_id}
                     <div class="bold">
-                        {_wd('shop', $_event)}
-                        {if $rule && !empty($rule.conditions)}{foreach $rule.conditions as $_ => $_c}<span class="badge light-gray smaller semibold text-black custom-mr-4">{$_c.condition_id}</span>{/foreach}{/if}
+                        {$_event|escape}
+                        {if $rule && !empty($rule.conditions)}
+                            {foreach $rule.conditions as $_ => $_c}
+                                <span class="badge light-gray smaller semibold text-black custom-mr-4">{ifset($conditions, $_c.condition_id, 'name', '')}</span>
+                            {/foreach}
+                        {/if}
                     </div>
                     {break}
                 {/if}
@@ -191,7 +196,7 @@
             <div class="wa-select small">
                 <select name="rules[{$rule_id}][action_id]" class="bold">
                     {foreach $events as $_event_id => $_event}
-                    <option value="{$_event_id}"{if $rule && $rule.action_id == $_event_id} selected{/if}>{$_event}</option>
+                    <option value="{$_event_id}"{if $rule && $rule.action_id == $_event_id} selected{/if}>{$_event|escape}</option>
                     {/foreach}
                 </select>
             </div>
