@@ -148,41 +148,42 @@
     {$rule_id = ifset($rule, 'id', '%%RULE_ID%%')}
     {$action = ifset($rule, 'rule_data', 'action', '')}
     <tr data-rule-id="{$rule_id}" class="short-rule{if !$rule} hidden{/if}">
-        <td class="valign-top c-automation-sort-handle">
+        <td class="c-automation-sort-handle">
             <i class="fas fa-grip-vertical text-light-gray cursor-pointer automation-rows-handle"></i>
             <input type="hidden" name="rules[{$rule_id}][app_id]" value="{$rule.app_id|default:cashConfig::APP_ID|escape}" class="js-app-id-rule">
             <input type="hidden" name="rules[{$rule_id}][sort]" value="{$rule.sort|default:'0'|escape}" class="js-sort-rule">
         </td>
-        <td class="valign-top">
+        <td>
             {foreach $events as $_event_id => $_event}
                 {if $rule && $rule.action_id == $_event_id}
-                    <div class="bold">{_wd('shop', $_event)}</div>
+                    <div class="bold">
+                        {_wd('shop', $_event)}
+                        {if $rule && !empty($rule.conditions)}{foreach $rule.conditions as $_ => $_c}<span class="badge light-gray smaller semibold text-black custom-mr-4">{$_c.condition_id}</span>{/foreach}{/if}
+                    </div>
                     {break}
                 {/if}
             {/foreach}
         </td>
-        <td class="valign-top inlinebox">
+        <td class="inlinebox">
             {foreach $actions as $_action_id => $_action}
                 {if $_action_id == $action}
                     <div class="width-80 bold">{$_action.action|escape}</div>
                     {break}
                 {/if}
             {/foreach}
-            <div class="align-right">
-                <a href="javascript:void(0);" class="c-show-rule button">[`Edit`]</a>
-            </div>
         </td>
-        <td class="valign-top align-right">
-            <a href="javascript:void(0);" class="c-log-rule button smaller nowrap light-gray rounded"><i class="fas fa-file-alt text-blue"></i> [`Log`] <span class="badge gray smaller bold">{ifset($rule, 'count_log', 0)}</span> <span class="hint">{ifset($rule, 'last_date_log', '')|wa_datetime:'humandatetime'}</span></a>
+        <td class="align-right nowrap">
+            <a href="javascript:void(0);" class="c-show-rule button rounded light-gray smaller"><i class="fas fa-edit text-blue"></i> <span class="desktop-only">[`Edit`]</span></a>
+            <a href="javascript:void(0);" class="c-log-rule button smaller nowrap light-gray rounded"><span class="badge gray small bold">{ifset($rule, 'count_log', 0)}</span> [`Log`] <span class="hint desktop-only">{ifset($rule, 'last_date_log', '')|wa_datetime:'humandatetime'}</span></a>
         </td>
-        <td class="valign-top">
+        <td>
             <a href="javascript:void(0);" class="c-delete-rule button nobutton rounded smaller text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
         </td>
     </tr>
 
     <tr data-rule-id="{$rule_id}" class="c-long-rule-{$rule_id}{if $rule} hidden{/if}">
         <td class="valign-top c-automation-sort-handle">
-            <i class="fas fa-grip-vertical text-light-gray cursor-pointer automation-rows-handle"></i>
+            <i class="fas fa-grip-vertical text-light-gray cursor-pointer automation-rows-handle custom-mt-6"></i>
             <input type="hidden" name="rules[{$rule_id}][app_id]" value="{$rule.app_id|default:cashConfig::APP_ID|escape}" class="js-app-id-rule">
             <input type="hidden" name="rules[{$rule_id}][sort]" value="{$rule.sort|default:'0'|escape}" class="js-sort-rule">
         </td>
