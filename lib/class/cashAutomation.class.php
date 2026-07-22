@@ -513,8 +513,11 @@ class cashAutomation
                 break;
             case 'action_ss':
                 wa('shop');
+                $actions = [];
                 $workflow = new shopWorkflow();
-                $actions = $workflow->getAvailableActions();
+                foreach ($workflow->getAvailableActions() as $id => $_action) {
+                    $actions[$id] = _wd('shop', $_action['name']);
+                }
                 $elements = [
                     'ss_order_id_hint' => [
                         'type' => 'header',
@@ -524,7 +527,7 @@ class cashAutomation
                         'type' => 'select',
                         'label' => _w('Perform action'),
                         'hint' => _w('Order action will apply only if Order ID is known, and in the selected action is allowed for the order in Shop-Script workflow settings. Otherwise, an email alert will be sent to the failover email specified below.'),
-                        'options' => array_combine(array_keys($actions), array_column($actions, 'name'))
+                        'options' => $actions
                     ],
                     'ss_amount_compare' => [
                         'type' => 'checkbox',
