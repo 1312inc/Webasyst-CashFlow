@@ -1818,3 +1818,9 @@ msgstr "ID контакта: "
 
 msgid "Custom contact ID..."
 msgstr "Ввести ID контакта..."
+
+msgid "View transaction"
+msgstr "Посмотреть операцию"
+
+msgid "Raw source"
+msgstr "Исходные данные"

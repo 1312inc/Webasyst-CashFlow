@@ -78,9 +78,9 @@ $.extend($.automation = $.automation || {}, {
                         let goto = '';
                         let detailed = '';
                         if (_automation.detailed) {
-                            detailed += "<a href=\"javascript:$('div.js-log-id-"+ _automation.id +"').removeClass('hidden');\">["+ options.detailed +']</a><div class="js-log-id-'+_automation.id +' hidden">'
+                            detailed += "<a href=\"javascript:$('div.js-log-id-"+ _automation.id +"').removeClass('hidden');\">"+ options.detailed +'</a><div class="js-log-id-'+_automation.id +' hidden">'
                             if (_automation.detailed.transaction.date) {
-                                goto += ' <a href="../date/'+ _automation.detailed.transaction.date +'">'+ options.goto +' &gt;&gt;</a>';
+                                goto += ' <a href="../date/'+ _automation.detailed.transaction.date +'">'+ options.goto +'</a>';
                             }
                             for (let _i in _automation.detailed) {
                                 detailed += '<b>'+ _i +'</b>:<br>'
