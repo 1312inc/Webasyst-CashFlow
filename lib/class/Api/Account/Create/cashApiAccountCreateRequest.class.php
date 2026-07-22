@@ -15,6 +15,11 @@ class cashApiAccountCreateRequest
     /**
      * @var int
      */
+    private $company_id;
+
+    /**
+     * @var int
+     */
     private $accountable_contact_id;
 
     /**
@@ -32,7 +37,7 @@ class cashApiAccountCreateRequest
      */
     private $description;
 
-    public function __construct(string $name, string $currency, ?int $accountable_contact_id, ?string $icon, int $is_imaginary, ?string $description)
+    public function __construct(string $name, string $currency, ?int $company_id, ?int $accountable_contact_id, ?string $icon, int $is_imaginary, ?string $description)
     {
         $name = trim($name);
         if (empty($name)) {
@@ -41,6 +46,11 @@ class cashApiAccountCreateRequest
             throw new cashValidateException(_w('No account currency'));
         } elseif (!in_array($is_imaginary, [0, 1, -1])) {
             throw new cashValidateException(_w('Unknown is_imaginary'));
+        }
+        if ($company_id) {
+            if (!(new cashCompanyModel())->getById($company_id)) {
+                throw new cashValidateException(_w('The company cannot create accounts'));
+            }
         }
         if ($accountable_contact_id) {
             $contact = new waContact($accountable_contact_id);
@@ -57,6 +67,7 @@ class cashApiAccountCreateRequest
 
         $this->name = $name;
         $this->currency = $currency;
+        $this->company_id = $company_id;
         $this->accountable_contact_id = $accountable_contact_id;
         $this->icon = (string) $icon;
         $this->is_imaginary = $is_imaginary;
@@ -71,6 +82,11 @@ class cashApiAccountCreateRequest
     public function getCurrency(): string
     {
         return $this->currency;
+    }
+
+    public function getCompanyId(): ?int
+    {
+        return $this->company_id;
     }
 
     public function getAccountableContactId(): ?int

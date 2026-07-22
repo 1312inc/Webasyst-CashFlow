@@ -701,6 +701,9 @@ paths:
                   type: string
                   minLength: 3
                   description: 3-буквенный код валюты
+                company_id:
+                  type: integer
+                  description: ID компании
                 accountable_contact_id:
                   type: integer
                   description: ID пользователя привязанного к подотчету
@@ -811,6 +814,9 @@ paths:
                   type: string
                   minLength: 3
                   description: 3-буквенный код валюты
+                company_id:
+                  type: integer
+                  description: ID компании
                 accountable_contact_id:
                   type: integer
                   description: ID пользователя привязанного к подотчету

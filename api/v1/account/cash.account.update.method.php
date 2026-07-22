@@ -26,6 +26,7 @@ final class cashAccountUpdateMethod extends cashApiNewAbstractMethod
             $this->fromPost('id', true, ApiParamsCaster::CAST_STRING_TRIM),
             $this->fromPost('name', true, ApiParamsCaster::CAST_STRING_TRIM),
             $this->fromPost('currency', true, ApiParamsCaster::CAST_STRING_TRIM),
+            $this->fromPost('company_id', false, ApiParamsCaster::CAST_INT),
             $this->fromPost('accountable_contact_id', false, ApiParamsCaster::CAST_INT),
             $this->fromPost('icon', false, ApiParamsCaster::CAST_STRING_TRIM) ?: null,
             $this->fromPost('is_imaginary', false, ApiParamsCaster::CAST_INT) ?: 0,
