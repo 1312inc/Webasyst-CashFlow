@@ -75,14 +75,26 @@ $.extend($.automation = $.automation || {}, {
                         $new_dialog_log.find('.js-empty-log').remove();
                     }
                     data.data.forEach((_automation, _index, _array) => {
+                        let detailed = '';
+                        if (_automation.detailed) {
+                            detailed += "<a href=\"javascript:$('div.js-log-id-"+ _automation.id +"').removeClass('hidden');\">["+ options.detailed +']</a><div class="js-log-id-'+_automation.id +' hidden">'
+                            for (let _i in _automation.detailed) {
+                                detailed += '<b>'+ _i +'</b>:<br>'
+                                for (let _k in _automation.detailed[_i]) {
+                                    detailed += _k + ' = '+ _automation.detailed[_i][_k] +'<br>';
+                                }
+                                detailed += '<br>';
+                            }
+                            detailed += '</div>'
+                        }
                         $new_dialog_log.find('table tbody').append(
                             '<tr>' +
-                            '<td>'+ _automation.datetime +'</td>' +
-                            '<td>'+ _automation.type +'</td>' +
-                            '<td>'+ _automation.automation_event +'</td>' +
-                            '<td>'+ _automation.automation_action +'</td>' +
-                            '<td>'+ _automation.description +'</td>' +
-                            '<td>'+ (_automation.plugin_id ? _automation.plugin_id : '') +'</td>' +
+                            '<td class="valign-top">'+ _automation.datetime +'</td>' +
+                            '<td class="valign-top">'+ _automation.type +'</td>' +
+                            '<td class="valign-top">'+ _automation.automation_event +'</td>' +
+                            '<td class="valign-top">'+ _automation.automation_action +'</td>' +
+                            '<td class="valign-top">'+ _automation.description +'<div class="hint">'+ detailed +'</div></td>' +
+                            '<td class="valign-top">'+ (_automation.plugin_id ? _automation.plugin_id : '') +'</td>' +
                             '</tr>'
                         );
                     });
