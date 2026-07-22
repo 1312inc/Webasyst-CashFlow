@@ -75,9 +75,13 @@ $.extend($.automation = $.automation || {}, {
                         $new_dialog_log.find('.js-empty-log').remove();
                     }
                     data.data.forEach((_automation, _index, _array) => {
+                        let goto = '';
                         let detailed = '';
                         if (_automation.detailed) {
                             detailed += "<a href=\"javascript:$('div.js-log-id-"+ _automation.id +"').removeClass('hidden');\">["+ options.detailed +']</a><div class="js-log-id-'+_automation.id +' hidden">'
+                            if (_automation.detailed.transaction.date) {
+                                goto += ' <a href="../date/'+ _automation.detailed.transaction.date +'">'+ options.goto +' &gt;&gt;</a>';
+                            }
                             for (let _i in _automation.detailed) {
                                 detailed += '<b>'+ _i +'</b>:<br>'
                                 for (let _k in _automation.detailed[_i]) {
@@ -93,7 +97,7 @@ $.extend($.automation = $.automation || {}, {
                             '<td class="valign-top">'+ _automation.type +'</td>' +
                             '<td class="valign-top">'+ _automation.automation_event +'</td>' +
                             '<td class="valign-top">'+ _automation.automation_action +'</td>' +
-                            '<td class="valign-top">'+ _automation.description +'<div class="hint">'+ detailed +'</div></td>' +
+                            '<td class="valign-top">'+ _automation.description + goto +'<div class="hint">'+ detailed +'</div></td>' +
                             '<td class="valign-top">'+ (_automation.plugin_id ? _automation.plugin_id : '') +'</td>' +
                             '</tr>'
                         );
