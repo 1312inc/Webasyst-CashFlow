@@ -468,6 +468,10 @@ class cashAutomation
                     }
                 }
                 $elements = [
+                    $type.'_property_empty_hint' => [
+                        'type' => 'header',
+                        'text' => _w('To keep the original value, simply leave the action setting empty.')
+                    ],
                     $type.'_property_account_id' => [
                         'type' => 'select',
                         'label' => _w('Account'),
