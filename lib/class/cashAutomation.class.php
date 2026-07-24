@@ -303,57 +303,61 @@ class cashAutomation
                 }
             }
             if (count($conditions) === $condition_done) {
-                if (!empty($rule_data['plugin_id'])) {
-                    if ($method = ifset($all_enabled_plugins, $rule_data['plugin_id'], 'handlers', cashEventStorage::WA_BACKEND_AUTOMATION_HANDLE, null)) {
-                        try {
-                            $params = [
-                                'event_id'    => $action_id,
-                                'action'      => str_replace($rule_data['plugin_id'].'_', '', $rule_action),
-                                'transaction' => $transaction,
-                                'conditions'  => array_map(function ($_condition) {
-                                    if (!empty($_condition['plugin_id'])) {
-                                        $_condition['condition_id'] = str_replace($_condition['plugin_id'].'_', '', $_condition['condition_id']);
+                if (cashHelper::isPremium()) {
+                    if (!empty($rule_data['plugin_id'])) {
+                        if ($method = ifset($all_enabled_plugins, $rule_data['plugin_id'], 'handlers', cashEventStorage::WA_BACKEND_AUTOMATION_HANDLE, null)) {
+                            try {
+                                $params = [
+                                    'event_id'    => $action_id,
+                                    'action'      => str_replace($rule_data['plugin_id'].'_', '', $rule_action),
+                                    'transaction' => $transaction,
+                                    'conditions'  => array_map(function ($_condition) {
+                                        if (!empty($_condition['plugin_id'])) {
+                                            $_condition['condition_id'] = str_replace($_condition['plugin_id'].'_', '', $_condition['condition_id']);
+                                        }
+                                        return $_condition;
+                                    }, $conditions)
+                                ] + $rule_data;
+                                if (wa()->getPlugin($rule_data['plugin_id'])->$method($params)) {
+                                    if ($method = ifset($all_enabled_plugins, $rule_data['plugin_id'], 'handlers', cashEventStorage::WA_BACKEND_AUTOMATION_VIEW, null)) {
+                                        $plugin_view = wa()->getPlugin($rule_data['plugin_id'])->$method();
+                                        $plugin_view = ifset($plugin_view, 'actions', $params['action'], 'action', null);
                                     }
-                                    return $_condition;
-                                }, $conditions)
-                            ] + $rule_data;
-                            if (wa()->getPlugin($rule_data['plugin_id'])->$method($params)) {
-                                if ($method = ifset($all_enabled_plugins, $rule_data['plugin_id'], 'handlers', cashEventStorage::WA_BACKEND_AUTOMATION_VIEW, null)) {
-                                    $plugin_view = wa()->getPlugin($rule_data['plugin_id'])->$method();
-                                    $plugin_view = ifset($plugin_view, 'actions', $params['action'], 'action', null);
+                                    self::getLog()->add($rule, $transaction, sprintf_wp('Plugin action completed: %s', (empty($plugin_view) ? '' : $plugin_view)));
                                 }
-                                self::getLog()->add($rule, $transaction, sprintf_wp('Plugin action completed: %s', (empty($plugin_view) ? '' : $plugin_view)));
+                            } catch (Exception $ex) {
+                                self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
                             }
-                        } catch (Exception $ex) {
-                            self::getLog()->add($rule, $transaction, $ex->getMessage(), 'error');
+                        } else {
+                            self::getLog()->add($rule, $transaction, _w('Unknown plugin action'), 'warning');
                         }
                     } else {
-                        self::getLog()->add($rule, $transaction, _w('Unknown plugin action'), 'warning');
+                        $done = false;
+                        switch ($rule_action) {
+                            case 'self_delete':
+                            case 'other_update':
+                                break;
+                            case 'create_transaction':
+                                $done = self::selfUpdate($rule, $transaction, true);
+                                break;
+                            case 'self_update':
+                                $done = self::selfUpdate($rule, $transaction);
+                                break;
+                            case 'send_mail':
+                                $done = self::sendMail($rule, $transaction);
+                                break;
+                            case 'action_ss':
+                                $done = self::actionSS($rule, $transaction);
+                                break;
+                            default:
+                                self::getLog()->add($rule, $transaction, _w('Unknown bot action'));
+                        }
+                        if ($done) {
+                            self::getLog()->add($rule, $transaction, sprintf_wp('Bot action executed: %s', ifset($known_actions, $rule_action, 'action', _w('Unknown bot action'))));
+                        }
                     }
                 } else {
-                    $done = false;
-                    switch ($rule_action) {
-                        case 'self_delete':
-                        case 'other_update':
-                            break;
-                        case 'create_transaction':
-                            $done = self::selfUpdate($rule, $transaction, true);
-                            break;
-                        case 'self_update':
-                            $done = self::selfUpdate($rule, $transaction);
-                            break;
-                        case 'send_mail':
-                            $done = self::sendMail($rule, $transaction);
-                            break;
-                        case 'action_ss':
-                            $done = self::actionSS($rule, $transaction);
-                            break;
-                        default:
-                            self::getLog()->add($rule, $transaction, _w('Unknown bot action'));
-                    }
-                    if ($done) {
-                        self::getLog()->add($rule, $transaction, sprintf_wp('Bot action executed: %s', ifset($known_actions, $rule_action, 'action', _w('Unknown bot action'))));
-                    }
+                    self::getLog()->add($rule, $transaction, _w('Bot action skipped: premium required'));
                 }
             }
         }
