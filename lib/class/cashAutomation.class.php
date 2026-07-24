@@ -506,7 +506,8 @@ class cashAutomation
                     ],
                     $type.'_property_amount' => [
                         'type' => 'text',
-                        'class' => 'property_amount number shorter'
+                        'class' => 'property_amount number shorter',
+                        'hint' => ''
                     ],
                     $type.'_property_description' => [
                         'type' => 'textarea',
@@ -909,16 +910,22 @@ class cashAutomation
         switch ($code) {
             case 'self_update':
                 $amount = _w('Amount');
+                $hint_fix = _w('Set fix amount in the account currency.');
+                $hint_percent = _w('Calculate based on the original transaction amount.');
                 $script = <<<SCRIPT
 let amount_type = $(this).find('.amount_type').val();
 let contractor_type = $(this).find('.contractor_type').val();
 
 $(this).find('.span-desc').remove();
+$(this).find('p.hint').html('');
 $(this).find('.property_amount').removeClass('hidden');
 $(this).find('.property_contractor_id').addClass('hidden');
 if (amount_type == 'amount_percent') {
     $(this).find('.property_amount').before('<span class="span-desc">$amount * </span>');
     $(this).find('.property_amount').after('<span class="span-desc">%</span>');
+    $(this).find('p.hint').html('$hint_percent');
+} else if (amount_type == 'amount_fix') {
+    $(this).find('p.hint').html('$hint_fix');
 } else if (amount_type == 'amount_not_touch') {
     $(this).find('.property_amount').addClass('hidden');
 }

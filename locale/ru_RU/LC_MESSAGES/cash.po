@@ -1833,3 +1833,9 @@ msgstr "Исходные данные"
 
 msgid "To keep the original value, simply leave the action setting empty."
 msgstr "Чтобы сохранить исходное значение, просто оставьте настройку пустой."
+
+msgid "Set fix amount in the account currency."
+msgstr "Установить фиксированную сумму в валюте счета."
+
+msgid "Calculate based on the original transaction amount."
+msgstr "Расчитать от суммы исходной операции."

@@ -242,7 +242,7 @@
                                             {/foreach}
                                         </select>
                                     </div>
-                                    {if !empty($_element.hint)}
+                                    {if isset($_element.hint)}
                                     <p class="hint">{$_element.hint}</p>
                                     {/if}
                                 {/capture}
@@ -250,7 +250,7 @@
                                 {$name = ifset($_element, 'label', '')|escape}
                                 {capture assign=field_value}
                                     <textarea name="rules[{$rule_id}][rule_data][{$_el_name}]" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}>{$elem_value}</textarea>
-                                    {if !empty($_element.hint)}
+                                    {if isset($_element.hint)}
                                     <p class="hint">{$_element.hint}</p>
                                     {/if}
                                 {/capture}
@@ -302,7 +302,7 @@
                                         class="{ifset($_element, 'class', '')}"
                                         placeholder="{ifset($_element, 'placeholder', '')}"
                                     />
-                                    {if !empty($_element.hint)}
+                                    {if isset($_element.hint)}
                                     <p class="hint">{$_element.hint}</p>
                                     {/if}
                                 {/capture}
