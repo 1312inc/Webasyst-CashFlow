@@ -94,11 +94,9 @@ final class cashReportDdsAccountDataProvider implements cashReportDdsDataProvide
                 || 1 === (int) $datum['is_imaginary'] && $datum['month'] > $current_month
             ) {
                 $rawData[$catType][$categoryTypeKey][$month][$currency]['per_month'] += (float) $perMonth;
+                $rawData[$catType][$categoryTypeKey]['total'][$currency]['per_month'] += (float) $perMonth;
             } else {
                 $rawData[$catType][$categoryTypeKey][$month][$currency]['imaginary'] = (int) $datum['is_imaginary'];
-            }
-            if (0 === (int) $datum['is_imaginary']) {
-                $rawData[$catType][$categoryTypeKey]['total'][$currency]['per_month'] += (float) $perMonth;
             }
         }
 
