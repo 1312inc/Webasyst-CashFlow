@@ -1,5 +1,14 @@
 {** @var $info cashShopBackendOrderDto **}
 
+{function getIcon _data = []}
+    {if $_data.glyph}
+        <i class="{$_data.glyph}" style="color:{$_data.color};"></i>
+    {else}
+        <i class="fas fa-circle" style="color:{$_data.color};"></i>
+    {/if}
+    &nbsp;
+{/function}
+
 {if !$wa->isSingleAppMode()}
 <div class="s-block">
     <h5 class="heading custom-mx-0 custom-mb-8">
@@ -11,48 +20,57 @@
 
     <div class="full-width bold">
         {$_smthngshwn = 0}
-        {if $info->incomeCount || $info->upcoming_income_count}
+        {$locale = $wa->locale()}
+        {if $info->income_transactions}
             {$_smthngshwn = 1}
             <div>
-                {if $info->incomeCount}
-                    <span title="{if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}" class="text-green">{implode(' ', $info->income)} ({$info->incomeCount})</span>
-                {/if}
-                {if $info->upcoming_income_count}
-                    <span title="{if $wa->locale() == 'ru_RU'}Запланированный доход{else}Planned income{/if}" class="text-green opacity-40">{implode(' ', $info->income_upcoming)} ({$info->upcoming_income_count})</span>
-                {/if}
+                {foreach $info->income_transactions as $_income}
+                <div class="{if $_income.upcoming}opacity-40{/if}">
+                    {getIcon _data=$_income}
+                    <span title="{if $locale == 'ru_RU'}{if $_income.upcoming}Запланированный доход{else}Доход{/if}{else}{if $_income.upcoming}Planned income{else}Income{/if}{/if}" class="text-green">{$_income.name|escape} &plus; {$_income.amount|wa_format_number:false} {$_income.currency|escape}</span>
+                </div>
+                {/foreach}
             </div>
         {/if}
-        {if $info->expenseCount || $info->upcoming_expense_count}
+        {if $info->expense_transactions}
             {$_smthngshwn = 1}
             <div>
-                {if $info->expenseCount}
-                    <span title="{if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}" class="text-red">{implode(' ', $info->expense)} ({$info->expenseCount})</span>
-                {/if}
-                {if $info->upcoming_expense_count}
-                    <span title="{if $wa->locale() == 'ru_RU'}Запланированный расход{else}Planned expense{/if}" class="text-red opacity-40">{implode(' ', $info->expense_upcoming)} ({$info->upcoming_expense_count})</span>
-                {/if}
+                {foreach $info->expense_transactions as $_expense}
+                <div class="{if $_expense.upcoming}opacity-40{/if}">
+                    {getIcon _data=$_expense}
+                    <span title="{if $locale == 'ru_RU'}{if $_expense.upcoming}Запланированный расход{else}Расход{/if}{else}{if $_expense.upcoming}Planned expense{else}Expense{/if}{/if}" class="text-red">{$_expense.name|escape} {$_expense.amount|wa_format_number:false} {$_expense.currency|escape}</span>
+                </div>
+                {/foreach}
             </div>
         {/if}
-        {if $info->profitCount || $info->upcoming_profit_count}
+        {if $info->profit_transactions}
             {$_smthngshwn = 1}
             <div>
-                {if $info->profitCount}
-                    <span title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}" class="text-blue">{implode(' ', $info->profit)} ({$info->profitCount})</span>
-                {/if}
-                {if $info->upcoming_profit_count}
-                    <span title="{if $wa->locale() == 'ru_RU'}Запланированная прибыль{else}Planned profit{/if}" class="text-blue opacity-40">{implode(' ', $info->upcoming_profit)} ({$info->upcoming_profit_count})</span>
-                {/if}
+                {foreach $info->profit_transactions as $_profit}
+                <div class="{if $_profit.upcoming}opacity-40{/if}">
+                    {getIcon _data=$_profit}
+                    <span title="{if $locale == 'ru_RU'}{if $_profit.upcoming}Запланированная прибыль{else}Прибыль{/if}{else}{if $_profit.upcoming}Planned profit{else}Profit{/if}{/if}" class="text-blue">{$_profit.name|escape} {$_profit.amount|wa_format_number:false} {$_profit.currency|escape}</span>
+                </div>
+                {/foreach}
             </div>
         {/if}
-        {if $info->delta || $info->upcoming_delta}
+
+        {if $info->delta}
             {$_smthngshwn = 1}
             <div class="bordered-top custom-mt-8 custom-pt-8">
-                <span title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}" class="text-blue">
-                  {if $wa->locale() == 'ru_RU'}Итого{else}Total{/if} {implode(' ', $info->delta)}
-                </span>
-                <span title="{if $wa->locale() == 'ru_RU'}Дельта прогноз{else}Delta forecasted{/if}" class="text-blue opacity-40">
-                    {implode(' ', $info->upcoming_delta)}
-                </span>
+                <span class="text-blue">{if $locale == 'ru_RU'}Итого{else}Total{/if}:</span>
+                {foreach $info->delta as $_currency => $_amount}
+                    <span title="{if $locale == 'ru_RU'}Дельта{else}Delta{/if}" class="text-blue">
+                      {ifset($_amount, '0', '0.0')|wa_format_number:false} {$_currency|escape}
+                    </span>
+                {/foreach}
+                {foreach $info->delta as $_currency => $_amount}
+                    {if ifset($_amount, '1', null)}
+                    <span title="{if $locale == 'ru_RU'}Дельта прогноз{else}Delta forecasted{/if}" class="text-blue opacity-40">
+                      {$_amount['1']|wa_format_number:false} {$_currency|escape}
+                    </span>
+                    {/if}
+                {/foreach}
             </div>
         {/if}
 
@@ -60,18 +78,18 @@
 
     {if !$_smthngshwn}
         <p class="gray align-center custom-mt-0">
-            {if $wa->locale() == 'ru_RU'}С заказом еще не связано ни одной денежной операции.{else}No transactions are linked with the order yet.{/if}
+            {if $locale == 'ru_RU'}С заказом еще не связано ни одной денежной операции.{else}No transactions are linked with the order yet.{/if}
         </p>
     {/if}
 
     <div class="align-center box custom-pt-4">
         <div class="custom-mb-8">
-            <a href="{$info->link}?addtransaction=income" target="_blank" class="badge green text-white custom-mr-4 nowrap"><i class="fas fa-plus"></i> {if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}</a>
-            <a href="{$info->link}?addtransaction=expense" target="_blank" class="badge orange text-white nowrap"><i class="fas fa-minus"></i> {if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}</a>
+            <a href="{$info->link}?addtransaction=income" target="_blank" class="badge green text-white custom-mr-4 nowrap"><i class="fas fa-plus"></i> {if $locale == 'ru_RU'}Доход{else}Income{/if}</a>
+            <a href="{$info->link}?addtransaction=expense" target="_blank" class="badge orange text-white nowrap"><i class="fas fa-minus"></i> {if $locale == 'ru_RU'}Расход{else}Expense{/if}</a>
         </div>
         <a href="{$info->link}" target="_blank">
-            {if $wa->locale() == 'ru_RU'}Все операции{else}View transactions{/if}
-            ({$info->incomeCount + $info->expenseCount + $info->profitCount + $info->upcoming_income_count + $info->upcoming_expense_count + $info->upcoming_profit_count})
+            {if $locale == 'ru_RU'}Все операции{else}View transactions{/if}
+            ({count($info->income_transactions) + count($info->expense_transactions) + count($info->profit_transactions)})
             <i class="fas fa-external-link-alt fa-xs opacity-40"></i>
         </a>
     </div>
