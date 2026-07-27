@@ -127,7 +127,7 @@ class cashTransaction extends cashAbstractEntity
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      *
      * @return cashTransaction
      */

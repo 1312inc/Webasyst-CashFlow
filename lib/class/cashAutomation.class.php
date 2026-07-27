@@ -682,26 +682,25 @@ class cashAutomation
     /**
      * @param $rule
      * @param $transaction
-     * @param $is_new
+     * @param $is_create
      * @return bool
      * @throws waException
      */
-    private static function selfUpdate($rule, $transaction, $is_new = false): bool
+    private static function selfUpdate($rule, $transaction, $is_create = false): bool
     {
         $result = false;
 
         /** @var cashTransaction $transaction_obj */
-        $transaction_obj = ($is_new ? (cash()->getEntityFactory(cashTransaction::class))->createNew() : cash()->getEntityRepository(cashTransaction::class)->findById($transaction['id']));
+        $transaction_obj = cash()->getEntityRepository(cashTransaction::class)->findById($transaction['id']);
         if ($transaction_obj) {
             $properties = [];
             $type = ifset($rule, 'rule_data', 'action', '');
-            if (!$is_new) {
+            if ($is_create) {
+                $transaction_obj = clone $transaction_obj;
+                $transaction_obj->setId(null);
+            } else {
                 $transaction_obj->setUpdateDatetime(date('Y-m-d H:i:s'));
             }
-
-            $date = ifempty($transaction, 'date', date('Y-m-d'));
-            $transaction_obj->setDate($date);
-            $transaction_obj->setDatetime($date.' 00:00:00');
 
             foreach (ifset($rule, 'rule_data', []) as $_name => $property_value) {
                 $property = str_replace($type.'_property_', '', $_name);
@@ -726,17 +725,21 @@ class cashAutomation
                         $transaction_obj->setAmount($property_value);
                         break;
                     case 'account_id':
-                        if ((cash()->getModel(cashAccount::class))->getById($property_value)) {
-                            $transaction_obj->setAccountId($property_value);
-                        } else {
-                            self::getLog()->add($rule, $transaction, _w('Account not found'), 'notice');
+                        if ($property_value) {
+                            if ((cash()->getModel(cashAccount::class))->getById($property_value)) {
+                                $transaction_obj->setAccountId($property_value);
+                            } else {
+                                self::getLog()->add($rule, $transaction, _w('Account not found'), 'notice');
+                            }
                         }
                         break;
                     case 'category_id':
-                        if ((cash()->getModel(cashCategory::class))->getById($property_value)) {
-                            $transaction_obj->setCategoryId($property_value);
-                        } else {
-                            self::getLog()->add($rule, $transaction, _w('Category not found'), 'notice');
+                        if ($property_value) {
+                            if ((cash()->getModel(cashCategory::class))->getById($property_value)) {
+                                $transaction_obj->setCategoryId($property_value);
+                            } else {
+                                self::getLog()->add($rule, $transaction, _w('Category not found'), 'notice');
+                            }
                         }
                         break;
                     case 'description':
