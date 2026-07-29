@@ -30,6 +30,7 @@ import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyConta
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import TransactionControls from '../components/TransactionControls.vue'
 import TransactionControlsSticky from '../components/TransactionControlsSticky.vue'
+import { appStateService } from '@/services/appState'
 
 export default {
 
@@ -55,7 +56,7 @@ export default {
   metaInfo () {
     return {
       title: this.$t('history'),
-      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+      titleTemplate: appStateService.titleTemplate
     }
   }
 }

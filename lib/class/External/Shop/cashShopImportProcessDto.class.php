@@ -22,6 +22,8 @@ final class cashShopImportProcessDto implements JsonSerializable
 
     public $period = 'all';
 
+    public $account_id = null;
+
     /**
      * @var DateTime|null
      */
@@ -44,6 +46,7 @@ final class cashShopImportProcessDto implements JsonSerializable
     public function jsonSerialize()
     {
         return [
+            'account_id' => $this->account_id,
             'total_orders' => $this->totalOrders,
             'passed_orders' => $this->passedOrders,
             'time' => $this->time,

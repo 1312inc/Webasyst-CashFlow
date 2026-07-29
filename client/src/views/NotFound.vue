@@ -6,11 +6,13 @@
 </template>
 
 <script>
+import { appStateService } from '@/services/appState'
+
 export default {
   metaInfo () {
     return {
       title: this.$t('404.title'),
-      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+      titleTemplate: appStateService.titleTemplate
     }
   }
 }

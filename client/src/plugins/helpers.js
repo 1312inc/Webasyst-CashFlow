@@ -1,5 +1,6 @@
 import store from '../store'
 import { numeral, moment } from '../plugins/numeralMoment'
+import { appStateService } from '@/services/appState'
 
 export const helpers = {
   toCurrency: function (userOptions = {}) {
@@ -26,11 +27,9 @@ export const helpers = {
 
   currentDate: moment().format('YYYY-MM-DD'),
 
-  isDesktopEnv: !window.appState.webView,
+  baseUrl: appStateService.baseUrl,
 
-  baseUrl: window.appState.baseUrl || '/',
-
-  accountName: window.appState.accountName || '',
+  accountName: appStateService.accountName,
 
   isValidHttpUrl: string => {
     let url
@@ -46,6 +45,10 @@ export const helpers = {
 
   showMultiSelect () {
     return store.state.multiSelectMode
+  },
+
+  hasSelectedTransactions () {
+    return store.state.transactionBulk.selectedTransactionsIds.length > 0
   },
 
   isHeader () {

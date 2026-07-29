@@ -63,6 +63,7 @@ import TransactionControls from '../components/TransactionControls.vue'
 import TransactionControlsSticky from '../components/TransactionControlsSticky.vue'
 import api from '@/plugins/api'
 import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
+import { appStateService } from '@/services/appState'
 
 export default {
 
@@ -93,7 +94,7 @@ export default {
   metaInfo () {
     return {
       title: this.entity?.entity_name || '',
-      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+      titleTemplate: appStateService.titleTemplate
     }
   },
 

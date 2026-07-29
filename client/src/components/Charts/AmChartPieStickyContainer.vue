@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="$helper.isDesktopEnv"
+    v-if="$appState.isDesktop"
     class="c-chart-pie-sticky-container"
   >
     <div class="c-chart-pie-sticky-container__inner">
@@ -43,6 +43,10 @@ export default {
   position: sticky;
   top: 4rem;
   align-self: flex-start;
+
+  .wa-no-header & {
+    top: 0;
+  }
 
   &__inner {
     margin: 0 auto;

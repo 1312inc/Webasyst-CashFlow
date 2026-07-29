@@ -56,6 +56,16 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
             $where['account_id'] = 'account_id = i:account_id';
         }
 
+        if (!cash()->getUser()->isAdmin()) {
+            $ids = cash()->getContactRights()->getCategoryIdsForContact(wa()->getUser());
+            $where['category_id'] = 'category_id IN (i:category_id)';
+            if (isset($request->category_id)) {
+                $request->category_id = (in_array($request->category_id, $ids) ? $request->category_id : null);
+            } else {
+                $request->category_id = $ids;
+            }
+        }
+
         $plans = $model->query("
             SELECT *, NULL `from`, NULL `to`, NULL amount_fact
             FROM cash_plan

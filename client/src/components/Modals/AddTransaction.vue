@@ -614,7 +614,6 @@
 </template>
 
 <script setup>
-import { appState } from '@/utils/appState'
 import AddTransactionBulk2 from './AddTransactionBulk2.vue'
 </script>
 
@@ -633,6 +632,7 @@ import TransitionCollapseHeight from '@/components/Transitions/TransitionCollaps
 import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 import entityPageMixin from '@/mixins/entityPageMixin'
 import api from '../../plugins/api'
+import { appState } from '@/services/appState'
 
 export default {
 
@@ -667,6 +667,7 @@ export default {
 
   data () {
     return {
+      appState,
       transactionType: '',
       model: {
         id: null,

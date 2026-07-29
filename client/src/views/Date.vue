@@ -2,7 +2,7 @@
 <template>
   <div>
     <h2
-      v-if="!$helper.isDesktopEnv"
+      v-if="!$appState.isDesktop"
       class="custom-m-12 flexbox space-8"
     >
       <a @click.prevent="$router.push({ name: 'Calendar' })">
@@ -42,6 +42,7 @@ import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import TransactionControls from '../components/TransactionControls.vue'
+import { appStateService } from '@/services/appState'
 
 export default {
   components: {
@@ -64,7 +65,7 @@ export default {
   metaInfo () {
     return {
       title: this.$t('transactions'),
-      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+      titleTemplate: appStateService.titleTemplate
     }
   }
 }

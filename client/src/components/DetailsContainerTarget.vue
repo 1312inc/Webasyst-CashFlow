@@ -11,6 +11,7 @@ import { helpers } from '@/plugins/helpers'
 import { emitter } from '@/plugins/eventBus'
 import DropdownWaFloating from './Inputs/DropdownWaFloating.vue'
 import { i18n } from '@/plugins/locale'
+import { appStateService } from '@/services/appState'
 
 const route = useRoute()
 
@@ -27,21 +28,31 @@ const activeCurrencyParams = computed(() => {
 })
 
 const cashTargetBlockHidden = useStorage('cashTargetBlockHidden', { value: false, expiredAt: '' }, localStorage)
+const isAccountPage = computed(() => route.name === 'Account')
+const isPromoMode = computed(() => !appStateService.isPremium)
+const isDesktop = computed(() => appStateService.isDesktop)
 
 // Сбросить флаг, если прошло 30 дней
-if (cashTargetBlockHidden.value.value && cashTargetBlockHidden.value.expiredAt) {
+if (isPromoMode.value && cashTargetBlockHidden.value.value && cashTargetBlockHidden.value.expiredAt) {
   if (new Date(cashTargetBlockHidden.value.expiredAt) < new Date()) {
     cashTargetBlockHidden.value.value = false
     cashTargetBlockHidden.value.expiredAt = ''
   }
+} else {
+  cashTargetBlockHidden.value.value = false
 }
 
-const isPromoMode = !window.appState.isPremium // TODO: add check for premium
 const isFetching = ref(false)
 const isEmptyMode = ref(false)
 const chartData = shallowRef(null)
 const currentCategoryId = ref(null)
 const fetchDate = ref(moment().format('YYYY-MM-DD'))
+const showDetailsContainerTarget = computed(() => {
+  if (isAccountPage.value) return false
+  if (!isDesktop.value) return !isPromoMode.value
+  if (isPromoMode.value) return !cashTargetBlockHidden.value.value
+  return true
+})
 
 const currentMonthLabel = computed(() => {
   return moment(fetchDate.value).format('MMMM YYYY')
@@ -79,8 +90,8 @@ const currentCategory = computed(() => {
 const chartState = computed(() => ({
   isPromoMode,
   isEmptyMode: isEmptyMode.value,
-  amount: currentCategory.value?.amount ?? (isPromoMode ? 50 : 0),
-  amountFact: currentCategory.value?.amountFact ?? (isPromoMode ? 50 : 0),
+  amount: currentCategory.value?.amount ?? (isPromoMode.value ? 50 : 0),
+  amountFact: currentCategory.value?.amountFact ?? (isPromoMode.value ? 50 : 0),
   currencyCode: currentCategory.value?.currency ?? '',
   color: currentCategory.value?.color ?? ''
 }))
@@ -134,7 +145,7 @@ emitter.on('hitOnChartBalance', (event) => {
 
 function fetchTarget (params) {
   if (cashTargetBlockHidden.value.value) return
-  if (isPromoMode) return
+  if (isPromoMode.value) return
   const token = ++fetchToken
   isFetching.value = true
   api
@@ -174,7 +185,7 @@ function onCategoryChange (id) {
 
 <template>
   <div
-    v-if="!(cashTargetBlockHidden.value && isPromoMode)"
+    v-if="showDetailsContainerTarget"
     class="c-details-container__target"
   >
     <BlankBox
@@ -192,7 +203,7 @@ function onCategoryChange (id) {
         class="custom-mx-auto"
       >
         <a
-          v-if="isPromoMode"
+          v-if="isPromoMode && isDesktop"
           href="#"
           class="c-details-container__target__close"
           @click.prevent="closeTarget"
@@ -210,6 +221,7 @@ function onCategoryChange (id) {
 
           <template v-if="isPromoMode">
             <h5 class="align-center custom-mt-0 custom-mb-12">
+              <i class="fas fa-star small text-yellow" />
               {{ $t('detailsTargetDescTitle') }}
             </h5>
             <p class="small gray align-center custom-mx-auto custom-my-12">
@@ -231,7 +243,10 @@ function onCategoryChange (id) {
                 class="gray"
               >{{ $t('detailsTargetPlanNotSet') }}</span>
             </h5>
-            <div class="align-center custom-my-16">
+            <div
+              v-if="$permissions.canManageBudget"
+              class="align-center custom-my-16"
+            >
               <a
                 :href="`${$helper.baseUrl}budget/`"
                 class="button small light-gray"

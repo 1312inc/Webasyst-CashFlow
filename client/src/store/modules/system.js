@@ -1,10 +1,11 @@
 import api from '@/plugins/api'
+import { appStateService } from '@/services/appState'
 
 export default {
   namespaced: true,
 
   state: () => ({
-    currencies: window.appState?.currencies || []
+    currencies: appStateService.currencies
   }),
 
   getters: {

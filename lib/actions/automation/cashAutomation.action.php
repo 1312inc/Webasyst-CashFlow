@@ -5,9 +5,6 @@
  */
 class cashAutomationAction extends cashViewAction
 {
-    private $plugin_conditions = [];
-    private $plugin_actions = [];
-
     public function preExecute()
     {
         if (wa()->whichUI() === '2.0') {
@@ -19,37 +16,10 @@ class cashAutomationAction extends cashViewAction
 
     public function runAction($params = null)
     {
-        /**
-         * @event backend_automation_view
-         * @since 4.0.0
-         *
-         * @return cashEvent
-         */
-        $event = new cashEvent(cashEventStorage::WA_BACKEND_AUTOMATION_VIEW);
-        $event_result = cash()->waDispatchEvent($event);
-
-        foreach ($event_result as $plugin_id => $_data) {
-            $plugin_id = preg_replace('#-plugin$#', '', $plugin_id);
-            if (isset($_data['conditions'])) {
-                foreach ($_data['conditions'] as $_condition_id => $_condition) {
-                    $_condition['plugin_id'] = $plugin_id;
-                    $this->plugin_conditions["{$plugin_id}_$_condition_id"] = $_condition;
-                }
-            }
-            if (isset($_data['actions'])) {
-                foreach ($_data['actions'] as $_action_id => $_action) {
-                    $this->plugin_actions["{$plugin_id}_$_action_id"] = [
-                        'action' => $_action,
-                        'plugin_id' => $plugin_id,
-                    ];
-                }
-            }
-        }
-
         $this->view->assign([
             'events'           => $this->getEvents(),
-            'conditions'       => self::getConditions() + ($this->plugin_conditions ?: []),
-            'actions'          => self::getActions() + ($this->plugin_actions ?: []),
+            'conditions'       => self::getConditions(),
+            'actions'          => self::getActions(),
             'automation_rules' => $this->getRules(),
         ]);
     }
@@ -57,40 +27,82 @@ class cashAutomationAction extends cashViewAction
     private function getEvents()
     {
         return [
-            'transaction_add'    => _w('New transaction created'),
-            'transaction_update' => _w('Exising transaction edited'),
-            'transaction_delete' => _w('Transaction deleted'),
+            'transaction_add'    => _w('Added'),
+            'transaction_update' => _w('Updated'),
+            'transaction_delete' => _w('Deleted'),
         ];
     }
 
-    public static function getConditions()
+    /**
+     * @return array
+     * @throws waException
+     */
+    public static function getConditions(): array
     {
-        return [
-            ''            => ['name' => _w('Configure...'), 'operators' => []],
-            'amount'      => ['name' => _w('Amount'), 'operators' => ['>', '<', '=']],
-            'description' => ['name' => _w('Description'), 'operators' => ['=', '!=', '%...%']],
-            'account_id'  => ['name' => _w('Account'), 'operators' => ['=', '!=']],
-            'category_id' => ['name' => _w('Category'), 'operators' => ['=', '!=']],
-            'date'        => ['name' => _w('Date'), 'operators' => ['<', '>']],
-        ];
+        return cashAutomation::getConditions() + self::getDataPlugin('conditions');
     }
 
-    public static function getActions()
+    /**
+     * @return array
+     * @throws waException
+     */
+    public static function getActions(): array
     {
-        return [
-            'self_update'        => ['action' => _w('Обновить эту же операцию (с которой произошло действие)')],
-            'self_delete'        => ['action' => _w('Удалить эту операцию')],
-            'create_transaction' => ['action' => _w('Создать новую операцию')],
-            'other_update'       => ['action' => _w('Обновить другую операцию')],
-            'send_mail'          => ['action' => _w('Отправить письмо')],
-            'action_ss'          => ['action' => _w('Сделать действие с заказом ШС')],
-        ];
+        return cashAutomation::getActions() + self::getDataPlugin('actions');
+    }
+
+    /**
+     * @param $name
+     * @return array
+     * @throws waException
+     */
+    private static function getDataPlugin($name): array
+    {
+        static $plugin_conditions;
+        static $plugin_actions;
+
+        if (empty($plugin_conditions) || empty($plugin_actions)) {
+            /**
+             * @event backend_automation_view
+             * @since 4.0.0
+             *
+             * @return cashEvent
+             */
+            $event = new cashEvent(cashEventStorage::WA_BACKEND_AUTOMATION_VIEW);
+            $event_result = cash()->waDispatchEvent($event);
+
+            foreach ($event_result as $plugin_id => $_data) {
+                $plugin_id = preg_replace('#-plugin$#', '', $plugin_id);
+                if (isset($_data['conditions'])) {
+                    foreach ($_data['conditions'] as $_condition_id => $_condition) {
+                        $_condition['plugin_id'] = $plugin_id;
+                        $plugin_conditions["{$plugin_id}_$_condition_id"] = $_condition;
+                    }
+                }
+                if (isset($_data['actions'])) {
+                    foreach ($_data['actions'] as $_action_id => $_action) {
+                        $plugin_actions["{$plugin_id}_$_action_id"] = ['plugin_id' => $plugin_id] + $_action;
+                    }
+                }
+            }
+        }
+
+        return (array) ($name === 'conditions' ? $plugin_conditions : $plugin_actions);
     }
 
     private function getRules()
     {
-        $automation_model = new cashAutomationModel();
+        $automation_rules = (new cashAutomationModel())->getRules();
+        if ($automation_rules) {
+            $logs_info = (new cashAutomationLogModel())->getInfoLogs(array_keys($automation_rules));
+            foreach ($automation_rules as $_automation_id => $_automation_rule) {
+                $automation_rules[$_automation_id] += [
+                    'count_log' => (int) ifempty($logs_info, $_automation_id, 'count_log', 0),
+                    'last_date_log' => cashHelper::convertDateToISO8601(ifempty($logs_info, $_automation_id, 'last_date_log', null)),
+                ];
+            }
+        }
 
-        return $automation_model->getRules();
+        return $automation_rules;
     }
 }

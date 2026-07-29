@@ -1,22 +1,359 @@
 {$_page_title = _w("Cash automation")}
 
 <script src="{$wa_app_static_url}js/automation.js?{$wa->version()}"></script>
+
+{capture 'dialog_log'}
+    {strip}
+        <div class="dialog">
+            <div class="dialog-background"></div>
+            <div class="dialog-body">
+                <a href="#" class="dialog-close js-close-dialog"><i class="fas fa-times"></i></a>
+                <header class="dialog-header"><h1>[`Bot execution log`]</h1></header>
+                <div class="dialog-content">
+                    <table class="zebra bigdata">
+                        <thead>
+                            <tr>
+                                <th>[`Time`]</th>
+                                <th>[`Type`]</th>
+                                <th>[`Event`]</th>
+                                <th>[`Action`]</th>
+                                <th>[`Details`]</th>
+                                <th>[`Plugin`]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="js-empty-log"><td colspan="6" class="align-center">[`Log is empty`]</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <footer class="dialog-footer">
+                    <button class="js-close-dialog button light-gray">[`Close`]</button>
+                </footer>
+            </div>
+        </div>
+    {/strip}
+{/capture}
+
+{function condition_block __rule_id=null condition=null}
+    {$rule_name = ''}
+    {$_rule_id = ifempty($__rule_id, '%%RULE_ID%%')}
+    {$condition_name = '%%RULE_NAME%%'}
+    {$compare_op = ifset($condition, 'operator', null)}
+    {if $condition}
+        {$condition_rand = mt_rand(1000, 10000)}
+
+        {foreach cashAutomationAction::getConditions() as $_name => $_rule_name}
+            {if $condition['condition_id'] == $_name}
+                {$rule_name = $_name}
+                {$condition_name = $_rule_name.name}
+                {break}
+            {/if}
+        {/foreach}
+    {else}
+        {$condition_rand = '%%CONDITION_ID%%'}
+    {/if}
+
+    <div class="js-condition-block box uploadbox rounded custom-mb-12 custom-p-8 flexbox space-8 middle" data-condition-id="{$condition_rand}" style="text-align: left;">
+        <span class="c-condition-name small">{$condition_name}</span>
+        <div class="nowrap wide">
+            {foreach $conditions as $_condition_id => $_condition}
+                {if !empty($_condition.elements)}
+                    {foreach $_condition.elements as $_el_name => $_element}
+                        {$elem_value = ifempty($condition, $_el_name, '')}
+                        {if $_element.type == 'select'}
+
+                                <select name="rules[{$_rule_id}][conditions][{$condition_rand}][{$_el_name}]" class="{$_condition_id|escape}{if !empty($_element.class)} {$_element.class|escape}{/if}{if $rule_name != $_condition_id} hidden{/if}"{if $rule_name != $_condition_id} disabled{/if}>
+                                    {foreach $_element.options as $_select_key => $_select_value}
+                                        {if is_array($_select_value)}
+                                        <optgroup label="{$_select_key|escape}">
+                                            {foreach $_select_value as $_gr_key => $_gr_value}
+                                            <option value="{$_gr_key}"{if in_array($elem_value, [$_gr_key, $_gr_value])} selected{/if}>{$_gr_value|escape}</option>
+                                            {/foreach}
+                                        </optgroup>
+                                        {else}
+                                        <option value="{$_select_key}"{if in_array($elem_value, [$_select_key, $_select_value])} selected{/if}>{$_select_value|escape}</option>
+                                        {/if}
+                                    {/foreach}
+                                </select>
+
+                            {continue}
+                        {elseif $_element.type == 'script'}
+                            <script>
+                                $('[data-condition-id="{$condition_rand}"]').on('change', function (event) {
+                                    event.preventDefault();
+                                    {$_element.script}
+                                });
+                                $(document).ready(function () {
+                                    $('[data-condition-id="{$condition_rand}"]').trigger('change');
+                                    $('.js-form-submit').removeClass('yellow').addClass('green');
+                                });
+                            </script>
+                            {continue}
+                        {elseif !in_array($_element.type, ['radio', 'checkbox', 'submit', 'reset', 'file', 'button', 'image'])}
+                            <input
+                                type="{$_element.type}"
+                                class="smaller {$_condition_id|escape}{if !empty($_element.class)} {$_element.class|escape}{/if}{if $rule_name != $_condition_id} hidden{/if}"
+                                name="rules[{$_rule_id}][conditions][{$condition_rand}][{$_el_name}]"
+                                value="{$elem_value|escape}"{if $rule_name != $_condition_id} disabled{/if}
+                                placeholder="[`Value`]"
+                            >
+                        {/if}
+                    {/foreach}
+
+                    <input
+                        type="hidden"
+                        class="{$_condition_id|escape}"
+                        name="rules[{$_rule_id}][conditions][{$condition_rand}][condition_id]"
+                        value="{$_condition_id|default:''|escape}"{if $rule_name != $_condition_id} disabled{/if}
+                    >
+                    {if !empty($_condition.plugin_id)}
+                        <input
+                            type="hidden"
+                            class="{$_condition_id|escape}"
+                            name="rules[{$_rule_id}][conditions][{$condition_rand}][plugin_id]"
+                            value="{$_condition.plugin_id|escape}"{if $rule_name != $_condition_id} disabled{/if}
+                        >
+                    {/if}
+                {/if}
+            {/foreach}
+        </div>
+        <span class="custom-ml-8 align-right">
+            <a href="#" title="[`Delete`]" class="c-delete-condition text-blue"><i class="fas fa-times-circle text-gray"></i></a>
+        </span>
+    </div>
+{/function}
+
+{capture 'new_condition'}
+    {strip}
+        {condition_block}
+    {/strip}
+{/capture}
+
+{function rule_condition_editor_form _rule_id=null rule_conditions=null}
+    {if $rule_conditions}
+        {foreach $rule_conditions as $_condition}
+            {condition_block __rule_id=$_rule_id condition=$_condition}
+        {/foreach}
+    {/if}
+    <div class="wa-select smaller">
+        <select class="add-condition-selector">
+            {foreach $conditions as $name => $_condition}
+            <option value="{$name}">{$_condition.name|escape}</option>
+            {/foreach}
+        </select>
+    </div>
+{/function}
+
+{function automation_rule rule=null}
+    {$rule_id = ifset($rule, 'id', '%%RULE_ID%%')}
+    {$action = ifset($rule, 'rule_data', 'action', '')}
+    {$conditions = cashAutomationAction::getConditions()}
+    <tr data-rule-id="{$rule_id}" class="short-rule{if !$rule} hidden{/if}">
+        <td class="c-automation-sort-handle">
+            <i class="fas fa-grip-vertical text-light-gray cursor-pointer automation-rows-handle"></i>
+            <input type="hidden" name="rules[{$rule_id}][app_id]" value="{$rule.app_id|default:cashConfig::APP_ID|escape}" class="js-app-id-rule">
+            <input type="hidden" name="rules[{$rule_id}][sort]" value="{$rule.sort|default:'0'|escape}" class="js-sort-rule">
+        </td>
+        <td>
+            {foreach $events as $_event_id => $_event}
+                {if $rule && $rule.action_id == $_event_id}
+                    <div class="bold">
+                        {$_event|escape}
+                        {if $rule && !empty($rule.conditions)}
+                            {foreach $rule.conditions as $_ => $_c}
+                                <span class="badge light-gray smaller semibold text-black custom-mr-4">{ifset($conditions, $_c.condition_id, 'name', '')}</span>
+                            {/foreach}
+                        {/if}
+                    </div>
+                    {break}
+                {/if}
+            {/foreach}
+        </td>
+        <td class="inlinebox">
+            {foreach $actions as $_action_id => $_action}
+                {if $_action_id == $action}
+                    <div class="width-80 bold">{$_action.action|escape}</div>
+                    {break}
+                {/if}
+            {/foreach}
+        </td>
+        <td class="align-right nowrap">
+            <a href="javascript:void(0);" class="c-show-rule button rounded light-gray smaller"><i class="fas fa-edit text-blue"></i> <span class="desktop-only">[`Edit`]</span></a>
+            <a href="javascript:void(0);" class="c-log-rule button smaller nowrap light-gray rounded"><span class="badge gray small bold">{ifset($rule, 'count_log', 0)}</span> [`Log`] <span class="hint desktop-only">{ifset($rule, 'last_date_log', '')|wa_datetime:'humandatetime'}</span></a>
+        </td>
+        <td>
+            <a href="javascript:void(0);" class="c-delete-rule button nobutton rounded smaller text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
+        </td>
+    </tr>
+
+    <tr data-rule-id="{$rule_id}" class="c-long-rule-{$rule_id}{if $rule} hidden{/if}">
+        <td class="valign-top c-automation-sort-handle">
+            <i class="fas fa-grip-vertical text-light-gray cursor-pointer automation-rows-handle custom-mt-6"></i>
+            <input type="hidden" name="rules[{$rule_id}][app_id]" value="{$rule.app_id|default:cashConfig::APP_ID|escape}" class="js-app-id-rule">
+            <input type="hidden" name="rules[{$rule_id}][sort]" value="{$rule.sort|default:'0'|escape}" class="js-sort-rule">
+        </td>
+        <td class="valign-top">
+            <div class="wa-select small">
+                <select name="rules[{$rule_id}][action_id]" class="bold">
+                    {foreach $events as $_event_id => $_event}
+                    <option value="{$_event_id}"{if $rule && $rule.action_id == $_event_id} selected{/if}>{$_event|escape}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <h6 class="gray small custom-mt-16 custom-mb-8">[`IF conditions (AND)`]</h6>
+            {if $rule && !empty($rule.conditions)}
+                {rule_condition_editor_form _rule_id=$rule_id rule_conditions=$rule.conditions}
+            {else}
+                {rule_condition_editor_form}
+            {/if}
+        </td>
+        <td class="valign-top">
+            {$plugin_id = ifset($rule, 'rule_data', 'plugin_id', '')}
+            <div class="wa-select small" style="max-width: 400px;">
+                <select name="rules[{$rule_id}][rule_data][action]" class="c-action-selector bold">
+                    {foreach $actions as $_action_id => $_action}
+                    <option value="{$_action_id|escape}"{if $_action_id == $action} selected{/if}{if !empty($_action.plugin_id)} data-plugin-id="{$_action.plugin_id}"{/if}>{$_action.action|escape}</option>
+                    {/foreach}
+                </select>
+            </div>
+
+            {foreach $actions as $_action_id => $_action}
+                {if !empty($_action.elements)}
+                    {$divs = []}
+                    {$child = 0}
+                    <div class="custom-mt-16 fields c-automaton-action{if $action != $_action_id} hidden{/if}" data-action-id="{$_action_id}" data-arid="{$_action_id}_{$rule_id}">
+                        {foreach $_action.elements as $_el_name => $_element}
+                            {$elem_value = ifempty($rule, 'rule_data', $_el_name, '')}
+                            {if $_element.type == 'select'}
+                                {$name = ifset($_element, 'label', '')}
+                                {capture assign=field_value}
+                                    <div class="wa-select small">
+                                        <select name="rules[{$rule_id}][rule_data][{$_el_name}]" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}>
+                                            {foreach $_element.options as $_select_key => $_select_value}
+                                                {if is_array($_select_value)}
+                                                <optgroup label="{$_select_key|escape}">
+                                                    {foreach $_select_value as $_gr_key => $_gr_value}
+                                                    <option value="{$_gr_key}"{if in_array($elem_value, [$_gr_key, $_gr_value])} selected{/if}>{$_gr_value|escape}</option>
+                                                    {/foreach}
+                                                </optgroup>
+                                                {else}
+                                                <option value="{$_select_key}"{if $_select_key == $elem_value} selected{/if}>{$_select_value|escape}</option>
+                                                {/if}
+                                            {/foreach}
+                                        </select>
+                                    </div>
+                                    {if isset($_element.hint)}
+                                    <p class="hint">{$_element.hint}</p>
+                                    {/if}
+                                {/capture}
+                            {elseif $_element.type == 'textarea'}
+                                {$name = ifset($_element, 'label', '')|escape}
+                                {capture assign=field_value}
+                                    <textarea name="rules[{$rule_id}][rule_data][{$_el_name}]" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}>{$elem_value}</textarea>
+                                    {if isset($_element.hint)}
+                                    <p class="hint">{$_element.hint}</p>
+                                    {/if}
+                                {/capture}
+                            {elseif $_element.type == 'checkbox'}
+                                {$name = ifset($_element, 'label', '')}
+                                {capture assign=field_value}
+                                    <label>
+                                        <input type="checkbox" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{ifset($_element, 'value', '')}" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}{if $elem_value} checked{/if} />
+                                        {ifset($_element, 'text', '')|escape}
+                                    </label>
+                                {/capture}
+                            {elseif $_element.type == 'radio'}
+                                {$name = ifset($_element, 'text', '')}
+                                {capture assign=field_value}
+                                    {foreach $_element.options as $_radio_value => $_radio_text}
+                                    <div class="value">
+                                        <label>
+                                            <input type="radio" name="rules[{$rule_id}][rule_data][{$_el_name}]" value="{$_radio_value}" class="{ifset($_element, 'class', '')}"{if $action != $_action_id} disabled{/if}{if $_radio_value == $elem_value} checked{/if} />
+                                            {$_radio_text|escape}
+                                        </label>
+                                    </div>
+                                    {/foreach}
+                                {/capture}
+                            {elseif $_element.type == 'header'}
+                                {capture assign=heading}
+                                    <h6 class="heading">{ifset($_element, 'text', '')|escape}</h6>
+                                {/capture}
+                                {$divs[] = $heading}
+                                {continue}
+                            {elseif $_element.type == 'script'}
+                                <script>
+                                    $('[data-arid="{$_action_id}_{$rule_id}"]').on('change', function (event) {
+                                        event.preventDefault();
+                                        {$_element.script}
+                                    });
+                                    $(document).ready(function () {
+                                        $('[data-arid="{$_action_id}_{$rule_id}"]').trigger('change');
+                                        $('.js-form-submit').removeClass('yellow').addClass('green');
+                                    });
+                                </script>
+                                {continue}
+                            {elseif !in_array($_element.type, ['submit', 'reset', 'file', 'button', 'image'])}
+                                {$name = ifset($_element, 'label', '')|escape}
+                                {capture assign=field_value}
+                                    <input
+                                        type="{$_element.type}"
+                                        name="rules[{$rule_id}][rule_data][{$_el_name}]"
+                                        value="{$elem_value}"{if $action != $_action_id} disabled{/if}
+                                        class="{ifset($_element, 'class', '')}"
+                                        placeholder="{ifset($_element, 'placeholder', '')}"
+                                    />
+                                    {if isset($_element.hint)}
+                                    <p class="hint">{$_element.hint}</p>
+                                    {/if}
+                                {/capture}
+                            {/if}
+
+                            {if !empty($_element['child'])}
+                                {$child = $_element['child'] + 1}
+                            {/if}
+                            {if empty($child) || !empty($_element['child'])}
+                                {$divs[] = '<div class="field">'}
+                                {$divs[] = '<div class="name">'}
+                                {$divs[] = $name}
+                                {$divs[] = '</div>'}
+                                {$divs[] = '<div class="value">'}
+                            {/if}
+                            {$divs[] = $field_value}
+                            {if empty($child) || $child == 1}
+                                {$divs[] = '</div>'}
+                                {$divs[] = '</div>'}
+                            {/if}
+
+                            {if !empty($child)}
+                                {$child = $child - 1}
+                            {/if}
+                        {/foreach}
+                        {implode('', $divs)}
+                    </div>
+                {/if}
+            {/foreach}
+
+            <input type="hidden" name="rules[{$rule_id}][rule_data][plugin_id]" value="{$plugin_id}" class="c-action-plugin-id"{if !$plugin_id} disabled{/if}>
+        </td>
+        <td class="valign-top align-right">
+            <a href="javascript:void(0);" class="c-log-rule button smaller nowrap light-gray rounded"><i class="fas fa-file-alt text-blue"></i> [`Log`] <span class="badge gray smaller bold">{ifset($rule, 'count_log', 0)}</span> <span class="hint">{ifset($rule, 'last_date_log', '')|wa_datetime:'humandatetime'}</span></a>
+        </td>
+        <td class="valign-top">
+            <a href="javascript:void(0);" class="c-delete-rule button nobutton rounded smaller text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
+        </td>
+    </tr>
+{/function}
+
+
+
 <form method="post" action="?module=automationSave" id="c-automation-rules-form" autocomplete="off">
     <div class="c-automatoin-form box contentbox">
         <h1>[`Automation bots`]</h1>
         <p class="small">
             [`Bots track all events occurring in the app and help you automate routine accounting operations such as adding new and updating existing transactions.`]
-            {* <br>
-            [`Rules are processed one by one in the given order. The first matching rule from the list applies, and the rest is skipped.`] *}
+            [`To run several THEN actions on one event, simply create multiple bots with similar IF conditions. All matching bots will run one by one in the given order.`]
+            [`Cascade execution is disabled to avoid recursion (one bot won’t trigger another).`]
         </p>
-
-        {$_please_be_patient = true}
-        {if $_please_be_patient}
-            <p class="small gray">
-                <i class="fas fa-clock"></i>
-                Боты появятся в одном из ближайших обновлений. Проводим бета-тесты на нагруженных аккаунтах. Пожалуйста, сохраняйте терпение.
-            </p>
-        {/if}
 
         {if !cashHelper::isPremium()}
             <div class="alert warning small">
@@ -26,42 +363,42 @@
             </div>
         {/if}
 
-        <div class="fields" style="{if $_please_be_patient} display: none;{/if}{if !cashHelper::isPremium()} opacity: 0.5;{/if}">
-            <div class="fields-group">
-                <a href="#/automation/add/" class="button small rounded light-gray" id="c-automation-add-rule">
-                    <i class="fas fa-plus-circle text-green"></i>
-                    [`Add rule`]
-                </a>
-                <table id="c-automation-rules">
-                    <thead class="header">
-                        <tr>
-                            <th class="min-width"></th>
-                            <th>[`Event`]</th>
-                            <th>[`Condition`]</th>
-                            <th>[`Action`]</th>
-                            <th class="min-width"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {capture 'new_automation_rule'}
-                            {strip}
-                                {include file="templates/actions/automation/Automation.include.html" rule=[] inline}
-                            {/strip}
-                        {/capture}
-                        {foreach $automation_rules as $rule}
-                            {include file="templates/actions/automation/Automation.include.html" inline}
-                        {/foreach}
-                    </tbody>
-                </table>
+        <div class="fields" style="{if !cashHelper::isPremium()} opacity: 0.5;{/if}">
 
-                {if cashHelper::isPremium()}
-                    {$wa->csrf()}
-                    <button type="submit" name="save" data-automation class="button green js-form-submit">
-                        [`Save`]
-                        <span class="hidden s-msg-after-button"><i class="fas fa-check-circle after-submit"></i></span>
-                    </button>
-                {/if}
-            </div>
+            <a href="#/automation/add/" class="button small rounded light-gray" id="c-automation-add-rule">
+                <i class="fas fa-robot text-dark-gray custom-mr-4"></i>
+                [`Add automation bot`]
+            </a>
+            <table id="c-automation-rules">
+                <thead class="header">
+                    <tr>
+                        <th class="min-width"></th>
+                        <th>[`Event with transaction`]</th>
+                        <th>[`Action`]</th>
+                        <th class="min-width"></th>
+                        <th class="min-width"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach $automation_rules as $rule}
+                        {automation_rule rule=$rule}
+                    {/foreach}
+                    {capture 'new_automation_rule'}
+                        {strip}
+                            {automation_rule}
+                        {/strip}
+                    {/capture}
+                </tbody>
+            </table>
+
+            {if cashHelper::isPremium()}
+                {$wa->csrf()}
+                <button type="submit" name="save" data-automation class="button green js-form-submit">
+                    [`Save`]
+                    <span class="hidden s-msg-after-button"><i class="fas fa-check-circle after-submit"></i></span>
+                </button>
+            {/if}
+
         </div>
     </div>
 </form>
@@ -71,6 +408,13 @@
     document.title = {$_page_title|json_encode} +" — "+ {json_encode($wa->accountName(false))};
 
     $.automation.Init({
+        confirm: '[`Confirm`]',
+        cancel: '[`Cancel`]',
+        goto: '[`View transaction`]',
+        detailed: '[`Raw source`]',
+        confirmation_deletion: '[`Bot will be deleted permanently. Are you sure?`]',
+        dialog_log: {json_encode($smarty.capture.dialog_log)},
+        new_condition: {json_encode($smarty.capture.new_condition)},
         new_automation_rule: {json_encode($smarty.capture.new_automation_rule)}
     });
 </script>

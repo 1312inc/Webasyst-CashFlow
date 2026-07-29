@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import AppStatePlugin from '@/services/appState'
 import { useDark } from '@vueuse/core'
 import App from './Mobile.vue'
 import router from './router'
@@ -18,6 +19,7 @@ import './assets/styles/styles.css'
 Vue.config.productionTip = false
 Vue.prototype.$isSpaMobileMode = true
 
+Vue.use(AppStatePlugin)
 Vue.use(permissions)
 Vue.use(Numeral)
 Vue.use(Errors)

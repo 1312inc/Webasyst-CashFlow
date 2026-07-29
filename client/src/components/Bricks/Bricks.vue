@@ -30,7 +30,7 @@
       </div>
     </a>
     <router-link
-      v-if="$permissions.isAdmin"
+      v-if="$permissions.canManageBudget"
       to="/budget"
       class="brick custom-pt-8"
       :class="{
@@ -63,12 +63,15 @@
     >
       <div class="flexbox middle space-8">
         <div class="c-icon-with-badge">
-          <span class="icon"><i class="fas fa-robot text-light-gray" /></span>
+          <span class="icon"><i
+            class="fas fa-robot"
+            :class="{'text-dark-gray': isPremium, 'text-light-gray': !isPremium}"
+          /></span>
           <span
             v-if="!isPremium"
             class="c-icon-badge"
           >
-            <i class="fas fa-star text-light-gray" />
+            <i class="fas fa-star text-yellow" />
           </span>
         </div>
         <span>{{ $t("bots") }}</span>
@@ -82,7 +85,9 @@ import BrickCalendar from './BrickCalendar'
 import BrickTransactions from './BrickTransactions'
 import { computed } from 'vue'
 
-const isPremium = computed(() => window.appState?.isPremium)
+import { appStateService } from '@/services/appState'
+
+const isPremium = computed(() => appStateService.isPremium)
 
 </script>
 

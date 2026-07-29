@@ -32,7 +32,7 @@ class cashApiTransactionGetHandler implements cashApiHandlerInterface
         }
 
         if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
-            throw new kmwaForbiddenException(_w('You can view this transaction'));
+            throw new kmwaForbiddenException(_w('You can not view this transaction'));
         }
 
         $dto = $this->transactionResponseDtoAssembler->generateResponseFromEntity($transaction);

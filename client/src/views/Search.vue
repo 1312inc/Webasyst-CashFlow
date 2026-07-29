@@ -29,6 +29,7 @@ import ChartHeader from '@/components/ChartHeader'
 import TransactionList from '@/components/TransactionList/TransactionList'
 import AmChartPieStickyContainer from '@/components/Charts/AmChartPieStickyContainer'
 import routerTransitionMixin from '@/mixins/routerTransitionMixin'
+import { appStateService } from '@/services/appState'
 
 export default {
 
@@ -71,7 +72,7 @@ export default {
   metaInfo () {
     return {
       title: this.$t('search.label'),
-      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+      titleTemplate: appStateService.titleTemplate
     }
   }
 }

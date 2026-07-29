@@ -1,12 +1,13 @@
 <?php
 
 return [
-  'name' => 'Test Auto',
+  'name' => 'Test Automation Bot',
   'img' => 'img/testautomation.gif',
   'version' => '0.1.0',
   'vendor' => '--',
   'handlers' => [
         'backend_automation_view' => 'cashEventViewTestautomationHandler',
-        'backend_automation_handle' => 'cashEventTestautomationHandler'
+        'backend_automation_handle' => 'cashEventTestautomationHandler',
+        'backend_automation_is_true' => 'cashIsConditionTrueTestautomationHandler'
     ]
 ];

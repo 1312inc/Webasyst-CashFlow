@@ -31,6 +31,7 @@ import routerTransitionMixin from '@/mixins/routerTransitionMixin'
 import TransactionControls from '../components/TransactionControls.vue'
 import TransactionControlsSticky from '../components/TransactionControlsSticky.vue'
 import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
+import { appStateService } from '@/services/appState'
 
 export default {
 
@@ -55,7 +56,7 @@ export default {
   metaInfo () {
     return {
       title: this.$t('transactions'),
-      titleTemplate: `%s – ${window.appState?.accountName || ''}`
+      titleTemplate: appStateService.titleTemplate
     }
   }
 }

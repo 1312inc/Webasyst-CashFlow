@@ -56,7 +56,7 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
                             ];
                         }
                     }
-                    $children_amounts[$_dt['currency']][$_dt['category_parent_id']] += $_dt['amount'];
+                    $children_amounts[$_dt['currency']][$_dt['category_parent_id']] = array_sum([(string) $children_amounts[$_dt['currency']][$_dt['category_parent_id']], (string) $_dt['amount']]);
                 }
             }
         }
@@ -68,11 +68,11 @@ final class cashApiAggregateGetBreakDownResponse extends cashApiAbstractResponse
                 $this->getCategory($graphDatum['detailed'])
             );
             if ($request->children_help_parents && !empty($children_amounts[$graphDatum['currency']][$graphDatum['detailed']])) {
-                $dataInfo->amount += $children_amounts[$graphDatum['currency']][$graphDatum['detailed']];
+                $dataInfo->amount = array_sum([(string) $dataInfo->amount, (string) $children_amounts[$graphDatum['currency']][$graphDatum['detailed']]]);
             }
             $response[$graphDatum['currency']][$categoryType]->data[] = $dataInfo;
             if (!$request->children_help_parents || empty($graphDatum['category_parent_id'])) {
-                $response[$graphDatum['currency']][$categoryType]->totalAmount += $dataInfo->amount;
+                $response[$graphDatum['currency']][$categoryType]->totalAmount = array_sum([(string) $response[$graphDatum['currency']][$categoryType]->totalAmount, (string) $dataInfo->amount]);
             }
         }
 

@@ -32,6 +32,19 @@ class cashShopSettingsAction extends cashViewAction
     public function runAction($params = null)
     {
         $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
+
+        $currencies = (array) wa('shop')->getConfig()->getCurrencies();
+        foreach ($currencies as $currency) {
+            if (ifset($currency, 'is_primary', null)) {
+                break;
+            }
+        }
+        $new_account = cash()->getEntityRepository(cashAccount::class)->generateWithData([
+            'id' => -1,
+            'name' => _w('Online store'),
+            'currency' => ifset($currency, 'code', ''),
+        ]);
+        array_unshift($accounts, $new_account);
         $accountDtos = cashDtoFromEntityFactory::fromEntities(cashAccountDto::class, $accounts);
 
         $incomes = cash()->getEntityRepository(cashCategory::class)->findAllByTypeForContact(cashCategory::TYPE_INCOME);
@@ -84,24 +97,22 @@ class cashShopSettingsAction extends cashViewAction
             ? cashCurrencyVO::fromWaCurrency($account->getCurrency())
             : cashCurrencyVO::fromWaCurrency(wa()->getLocale() === 'en_US' ? 'USD' : 'RUB');
 
-        $this->view->assign(
-            [
-                'incomes' => $incomeDtos,
-                'expenses' => $expenseDtos,
-                'accounts' => $accountDtos,
-                'shopScriptSettings' => $settings,
-                'storefronts' => $storefronts,
-                'actions' => $actions,
-                'shopIsOld' => $shopIntegration->shopIsOld(),
-                'avg' => sprintf('%s%s', $avg, $accountCurrency->getSignHtml()),
-                'accountCurrencySign' => $accountCurrency->getSignHtml(),
-                'shopCurrencyExists' => $shopCurrencyExists,
-                'ordersToImportCount' => $shopIntegration->countOrdersToProcess(),
-                'hasErrors' => !empty($settings->getErrors()),
-                'errors' => $settings->getErrors(),
-                'shopOrderDateBounds' => $dateBounds,
-                'paymentMethods' => $paymentMethods,
-            ]
-        );
+        $this->view->assign([
+            'incomes' => $incomeDtos,
+            'expenses' => $expenseDtos,
+            'accounts' => $accountDtos,
+            'shopScriptSettings' => $settings,
+            'storefronts' => $storefronts,
+            'actions' => $actions,
+            'shopIsOld' => $shopIntegration->shopIsOld(),
+            'avg' => sprintf('%s%s', $avg, $accountCurrency->getSignHtml()),
+            'accountCurrencySign' => $accountCurrency->getSignHtml(),
+            'shopCurrencyExists' => $shopCurrencyExists,
+            'ordersToImportCount' => $shopIntegration->countOrdersToProcess(),
+            'hasErrors' => !empty($settings->getErrors()),
+            'errors' => $settings->getErrors(),
+            'shopOrderDateBounds' => $dateBounds,
+            'paymentMethods' => $paymentMethods,
+        ]);
     }
 }

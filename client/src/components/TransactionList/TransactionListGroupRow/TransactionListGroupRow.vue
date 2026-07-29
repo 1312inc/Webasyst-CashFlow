@@ -23,18 +23,15 @@
 
     <div
       class="flexbox middle space-12"
-      @mouseover="isHover = true"
-      @mouseleave="isHover = false"
       @click="handleClick"
     >
       <div
-        v-if="$helper.showMultiSelect() && !isCompactMode"
-        class="flex-none"
-        :class="{ 'desktop-only': $helper.isDesktopEnv }"
-        style="width: 1rem; height: 1rem;"
+        v-if="!isCompactMode"
+        class="c-item-checkbox flex-none"
+        :class="{'desktop-and-tablet-only': !$helper.showMultiSelect()}"
       >
         <span
-          v-show="isHoverComputed && !isRepeatingGroup"
+          v-show="!isRepeatingGroup"
           class="wa-checkbox"
           @click.stop="checkboxSelect"
         >
@@ -266,7 +263,7 @@ import {
   useFloating, flip,
   shift
 } from '@floating-ui/vue'
-import { appState } from '@/utils/appState'
+import { appStateService } from '@/services/appState'
 
 const reference = ref(null)
 const floating = ref(null)
@@ -331,7 +328,6 @@ export default {
   data () {
     return {
       open: false,
-      isHover: false,
       offBadgeInTransactionModal: false
     }
   },
@@ -368,13 +364,6 @@ export default {
       return this.$store.getters['transactionBulk/isSelected'](
         this.transaction.id
       )
-    },
-
-    isHoverComputed () {
-      if (this.$isSpaMobileMode || this.visibleSelectCheckbox) {
-        return true
-      }
-      return this.showChecker ? true : this.isHover
     },
 
     isOverdue () {
@@ -423,7 +412,7 @@ export default {
         this.$emit('toggleCollapseHeader')
       } else if (this.isRepeatingGroup) {
         e.preventDefault()
-      } else if (appState.webView && this.$store.state.multiSelectMode) {
+      } else if (appStateService.webView && this.$helper.showMultiSelect()) {
         this.checkboxSelect()
       } else {
         this.openModal()

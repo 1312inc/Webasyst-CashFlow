@@ -53,9 +53,7 @@
                         <div class="wa-select">
                             <select name="shopscript_settings[accountId]" class="bold">
                                 {foreach $accounts as $account}
-                                <option value="{$account->id}"
-                                        {if $shopScriptSettings->getAccountId() == $account->id || ($shopScriptSettings->isFirstTime() && $wa->accountName()|strstr:$account->name)}selected {/if}
-                                >
+                                <option value="{$account->id}"{if $shopScriptSettings->getAccountId() == $account->id || ($shopScriptSettings->isFirstTime() && $account->id < 0)} selected{/if}>
                                     {$account->currency->getCode()|escape} - {$account->name|escape|truncate:32} ({$account->currency->getSign()|escape})
                                 </option>
                                 {/foreach}
@@ -359,7 +357,7 @@
                 </div>
 
                 {if $shopScriptSettings->isFirstTime()}
-                <div class="field">
+                <div class="field"{if $wa->get('autostart')} style="display: none;"{/if}>
                     <div class="name">
                         [`Import orders`]
                     </div>
@@ -394,7 +392,7 @@
                 </section>
 
                 {if $shopScriptSettings->isFirstTime()}
-                <div class="firstTimeHiddenBlock">
+                <div class="firstTimeHiddenBlock"{if $wa->get('autostart')} style="display: none;"{/if}>
                     <div class="custom-my-24">
                         <hr class="custom-m-0">
                     </div>
@@ -686,9 +684,12 @@
                                         $progressCounts.text(r.passed_orders + ' / ' + r.total_orders)
                                     },
                                     onReady: function (r) {
+                                        let account_id = (r.account_id ? r.account_id : $ssform.find('[name="shopscript_settings[accountId]"]').val());
                                         $progressSuccess.show().siblings().hide();
                                         progressInstance.set({ percentage: Math.round(r.progress) });
-                                        window.location = window.appState.baseUrl + 'account/' + $ssform.find('[name="shopscript_settings[accountId]"]').val() + '?show_ss_import_hint=1';
+                                        setTimeout(function () {
+                                            window.location = window.appState.baseUrl +'account/'+ account_id +'?show_ss_import_hint=1';
+                                        }, 131.2);
                                     },
                                     onError: function (r) {
                                         $progressError.show().siblings().hide();
@@ -699,7 +700,12 @@
                             });
                         }
                     });
-                })
+                });
+
+                const url_params = new URLSearchParams(window.location.search);
+                if (url_params.get('autostart')) {
+                    $welcome.trigger('click');
+                }
             }
         }
     }())

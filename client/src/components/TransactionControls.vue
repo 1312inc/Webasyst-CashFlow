@@ -1,43 +1,51 @@
 <template>
-  <div
-    class="c-transaction-controls"
-    :class="{'desktop-and-tablet-only': $helper.isDesktopEnv}"
-  >
-    <div
-      v-if="$store.state.multiSelectMode"
-      class="c-transaction-controls-check flexbox middle"
-    >
-      <button
-        class="button blue nowrap"
-        :disabled="!checkedRows.length"
-        @click="openMove = true"
+  <div class="c-transaction-controls hide-scrollbar">
+    <div class="mobile-only">
+      <div
+        v-if="$helper.hasSelectedTransactions()"
+        class="flexbox middle"
       >
-        <i class="fas fa-coins" /> {{ $t("move") }} ({{
-          checkedRows.length
-        }})
-      </button>
-      <button
-        class="button red nowrap"
-        :disabled="!checkedRows.length"
-        @click="bulkDelete"
-      >
-        <i class="fas fa-trash-alt" /> {{ $t("delete") }} ({{
-          checkedRows.length
-        }})
-      </button>
-      <button
-        class="button nobutton smaller nowrap"
-        :disabled="!checkedRows.length"
-        @click="unselectAll"
-      >
-        {{ $t("unselectAll") }}
-      </button>
+        <button
+          class="button blue smallest nowrap"
+          :disabled="!checkedRows.length"
+          @click="openMove = true"
+        >
+          <i class="fas fa-coins" /> {{ $t("move") }} ({{
+            checkedRows.length
+          }})
+        </button>
+        <button
+          class="button red smallest nowrap"
+          :disabled="!checkedRows.length"
+          @click="bulkDelete"
+        >
+          <i class="fas fa-trash-alt" /> {{ $t("delete") }} ({{
+            checkedRows.length
+          }})
+        </button>
+        <button
+          class="button nobutton smallest nowrap"
+          :disabled="!checkedRows.length"
+          @click="unselectAll"
+        >
+          {{ $t("unselectAll") }}
+        </button>
+      </div>
+      <div v-else>
+        <button
+          class="button light-gray smallest nowrap"
+          @click="toggleMultiSelect"
+        >
+          <i class="fas fa-tasks" />
+          <span class="custom-ml-8 black">{{ $t("selectMany") }}</span>
+        </button>
+      </div>
     </div>
 
     <div
-      v-if="$helper.isDesktopEnv && currentType"
+      v-if="currentType"
       ref="controlButtons"
-      class="flexbox wrap space-12 middle"
+      class="desktop-and-tablet-only flexbox wrap space-12 middle"
     >
       <div v-show="currentType.type !== 'expense'">
         <button
@@ -102,6 +110,7 @@
 import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import TransactionMove from '@/components/Modals/TransactionMove'
+import { appStateService } from '../services/appState'
 
 export default {
 
@@ -113,7 +122,8 @@ export default {
   data () {
     return {
       openMove: false,
-      openAddBulk: false
+      openAddBulk: false,
+      appStateService
     }
   },
 
@@ -172,6 +182,10 @@ export default {
       this.open = false
       await this.$nextTick()
       this.open = true
+    },
+
+    toggleMultiSelect () {
+      this.$store.commit('setMultiSelectMode', !this.$store.state.multiSelectMode)
     }
   }
 }
@@ -183,11 +197,18 @@ export default {
   display: flex;
   align-items: center;
   height: 60px;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
-@media screen and (min-width: 760px) {
-  .c-transaction-controls-check {
+@media screen and (max-width: 760px) {
+  .c-transaction-controls {
     display: none;
   }
+
+  .c-transaction-controls-sticky .c-transaction-controls {
+    display: flex;
+  }
 }
+
 </style>

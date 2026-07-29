@@ -17,7 +17,7 @@ export default new Vuex.Store({
   state: () => ({
     currentType: '',
     currentTypeId: null,
-    multiSelectMode: !window.appState.webView
+    multiSelectMode: false
   }),
 
   getters: {

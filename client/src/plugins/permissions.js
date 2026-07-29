@@ -1,4 +1,6 @@
-const permissions = window.appState?.api_settings?.rights || {}
+import { appStateService } from '@/services/appState'
+
+const permissions = appStateService.rights
 
 export { permissions }
 

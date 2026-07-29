@@ -1009,11 +1009,6 @@ msgstr "Ура! <strong>Создали %d доходных и %d расходн�
 msgid "<strong class=\"highlighted\">%s</strong> (see above) — this is how much cash you <i>would</i> have on hand right now if there were only sales (income), but no business expenses such as salaries, office rent, marketing, purchase & supplies, and so on."
 msgstr "<strong class=\"highlighted\">%s</strong> (см. баланс счета выше) — это та сумма наличных в кассе, которая <i>была бы</i> у вас прямо сейчас, если бы у бизнеса были только поступления (доходы) и никаких расходов, таких как зарплаты, аренда, маркетинг, закупки и так далее."
 
-msgid ""
-"<strong>Add (or import from a CSV file) your historical expenses now</strong> to get to know your real cash on hand forecast. It’s easy — try clicking on %s button below.<br>\n"
-"                Only both income &amp; expense transactions together will show you the real picture of how your business finances work."
-msgstr "<strong>Теперь добавьте расходы,</strong> чтобы построить полную финансовую модель бизнеса и получить прогноз прибыли и баланса. Все очень просто — добавьте расходные операции %s вручную или импортируйте все операции разом из CSV-файла."
-
 msgid "Ok, got that!"
 msgstr "Ок, понятно!"
 
@@ -1094,6 +1089,9 @@ msgstr "Может импортировать операции"
 
 msgid "Can access transfers"
 msgstr "Может работать с переводами между счетами"
+
+msgid "Can manage budget"
+msgstr "Может редактировать планы и бюджет"
 
 msgid "Cash"
 msgstr "Деньги"
@@ -1263,6 +1261,9 @@ msgstr "Счета-песочницы в общем отчете о ДДС не 
 msgid "only checking"
 msgstr "только р/с"
 
+msgid "checking + forecast"
+msgstr "р/c + прогноз"
+
 msgid "Cash POS"
 msgstr "Наличные в кассе"
 
@@ -1327,7 +1328,7 @@ msgid "Assign accounts to specific users on your team. Know whom is accountable 
 msgstr "Закрепляйте счета за сотрудниками. Контролируйте, у кого сколько на руках в подотчете."
 
 msgid "Automation / bots"
-msgstr "Автоматизация и роботы-помощники"
+msgstr "Автоматизация и боты-помощники"
 
 msgid "Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>"
 msgstr "Настраивайте правила в формате <code>событие &rarr; действие</code>. Правила работают как боты, которые следят за событиями в системе и автоматизируют создание и корректировку операций.<br><br> Пример: <code>Поступление от АРТИКУС на СЧЕТ_Т_БАНК</code> &rarr; <code>Создать 2 операции ПРОДАЖИ +30% & КОМИССИЯ -30% в СЧЕТ_ПРОЕКТА</code>"
@@ -1343,6 +1344,9 @@ msgstr "Позже"
 
 msgid "Scenarios"
 msgstr "Сценарии"
+
+msgid "Financial scenarios"
+msgstr "Финансовые сценарии"
 
 msgid "Exclude individual transactions from the primary cash flow scenario, and include them into specific scenarios such as <em>Optimistic, Pessimistic, Gonna take a loan, What if there is a fire, What if it works out</em>, or any custom scenario."
 msgstr "Исключайте отдельные операции из основного учета и прикрепляйте их к кастомным финансовым сценариям: <em>Оптимистический, Пессимистический, Если взять кредит, Если вдруг пожар, Если все сработает</em> — любой сценарий, который сами создадите."
@@ -1390,7 +1394,7 @@ msgid "https://www.webasyst.com/store/app/cash/"
 msgstr "https://www.webasyst.ru/store/app/cash/"
 
 msgid "Bigger money needs to be better accounted"
-msgstr "Большие деньги там, где правильный учет"
+msgstr "Автоматизируйте учет финансов"
 
 msgid "%d features available now, +%d more to come shortly."
 msgstr "%d премиум-функций доступно сейчас, еще %s на подходе."
@@ -1418,3 +1422,420 @@ msgstr "Этот раздел доступен только в премиум-в
 
 msgid "See all premium features"
 msgstr "Что еще есть в премиум"
+
+msgid "Promocode"
+msgstr "Промокод"
+
+msgid "New account..."
+msgstr "Создать счет..."
+
+msgid "Online store"
+msgstr "Интернет-магазин"
+
+msgid "Bot will be deleted permanently. Are you sure?"
+msgstr "Бот будет удален навсегда. Вы уверены?"
+
+msgid "Transactions related to this contractor"
+msgstr "Операции, связанные с этим контрагентом"
+
+msgid "Bot execution log"
+msgstr "Журнал выполнения бота"
+
+msgid "Time"
+msgstr "Время"
+
+msgid "Event"
+msgstr "Событие"
+
+msgid "Action"
+msgstr "Действие"
+
+msgid "Details"
+msgstr "Подробности"
+
+msgid "Plugin"
+msgstr "Плагин"
+
+msgid "Log is empty"
+msgstr "В журнале пусто"
+
+msgid "Close"
+msgstr "Закрыть"
+
+msgid "Value"
+msgstr "Значение"
+
+msgid "IF conditions (AND)"
+msgstr "Условия IF (AND)"
+
+msgid "Log"
+msgstr "Журнал"
+
+msgid "To run several THEN actions on one event, simply create multiple bots with similar IF conditions. All matching bots will run one by one in the given order."
+msgstr "Чтобы выполнить несколько действий для одного события, просто создайте несколько ботов с похожими условиями IF. Все подходящие боты будут запускаться по очереди в заданном порядке."
+
+msgid "Add automation bot"
+msgstr "Создать бот"
+
+msgid "Event with transaction"
+msgstr "Событие с операцией"
+
+msgid "Confirm"
+msgstr "Подтвердить"
+
+msgid "Cash automation"
+msgstr "Автоматизация учета денег"
+
+msgid "CSV (Excel)"
+msgstr "CSV (Excel)"
+
+msgid "Excel (CSV)"
+msgstr "Excel (CSV)"
+
+msgid "You are not allowed to access this import"
+msgstr "У вас нет доступа к этому импорту"
+
+msgid "Plugin settings page"
+msgstr "Страница настроек плагина"
+
+msgid "Added"
+msgstr "Добавлена"
+
+msgid "Updated"
+msgstr "Обновлена"
+
+msgid "Deleted"
+msgstr "Удалена"
+
+msgid "Currency not found"
+msgstr "Валюта не найдена"
+
+msgid "Imported on %s"
+msgstr "Импортировано %s"
+
+msgid "Add condition..."
+msgstr "Добавить условие..."
+
+msgid "User"
+msgstr "Пользователь"
+
+msgid "External ID"
+msgstr "Внешний ID"
+
+msgid "External source"
+msgstr "Внешний источник"
+
+msgid "Create new transaction"
+msgstr "Создать новую операцию"
+
+msgid "Update self"
+msgstr "Обновить текущую операцию"
+
+msgid "Delete self"
+msgstr "Удалить текущую операцию"
+
+msgid "Update another transaction..."
+msgstr "Обновить другую операцию..."
+
+msgid "Send email"
+msgstr "Отправить email-письмо"
+
+msgid "Shop-Script..."
+msgstr "Shop-Script..."
+
+msgid "Could not fetch date from the transaction description."
+msgstr "Не удалось извлечь дату из описания операции."
+
+msgid "Unknown plugin action"
+msgstr "Неизвестное действие плагина"
+
+msgid "Origin transaction values:"
+msgstr "Значения исходной операции, по которой сработали условия бота:"
+
+msgid "Transaction ID"
+msgstr "ID операции"
+
+msgid "Transaction date"
+msgstr "Дата операции"
+
+msgid "Transaction amount"
+msgstr "Сумма операции"
+
+msgid "Comment"
+msgstr "Комментарий"
+
+msgid "Account ID"
+msgstr "ID счета"
+
+msgid "Category ID"
+msgstr "ID категории"
+
+msgid "Contractor contact ID"
+msgstr "ID контрагента"
+
+msgid "Contractor name"
+msgstr "Имя контрагента"
+
+msgid "External origin app name (for transactions imported from an external source or app)"
+msgstr "Название исходного источника (для операций, импортированных или созданных внешними источниками/приложениями)"
+
+msgid "External entity ID (for transactions imported from an external source or app)"
+msgstr "ID внешней связанной сущности (для операций, импортированных из внешнего источника или приложения)"
+
+msgid "Recipient email address"
+msgstr "Адрес электронной почты получателя"
+
+msgid "Subject"
+msgstr "Тема"
+
+msgid "Variables from the body field are supported"
+msgstr "Поддерживаются переменные из поля тела сообщения"
+
+msgid "Body"
+msgstr "Текст"
+
+msgid "="
+msgstr "="
+
+msgid "Order ID is always fetched from the original transaction description. Make sure to have IF condition set for the transaction description field to contain Order ID."
+msgstr "ID заказа всегда извлекается из исходного описания операции. Убедитесь, что в условии IF задано, что поле описания операции содержит ID заказа."
+
+msgid "Perform action"
+msgstr "Выполнить действие"
+
+msgid "Order action will apply only if Order ID is known, and in the selected action is allowed for the order in Shop-Script workflow settings. Otherwise, an email alert will be sent to the failover email specified below."
+msgstr "Действие для заказа применится только если известен ID заказа, и выбранное действие разрешено для заказа в настройках обработки заказов Shop-Script. В противном случае на указанный ниже email-адрес будет отправлено уведомление."
+
+msgid "Require transaction amount to be not less than the actual Shop-Script order amount"
+msgstr "Требовать, чтобы сумма операции была не меньше фактической суммы заказа в Shop-Script"
+
+msgid "Customer"
+msgstr "Клиент"
+
+msgid "Require transaction contractor to match Shop-Script order customer"
+msgstr "Требовать соответствия контрагента операции клиенту заказа в Shop-Script"
+
+msgid "Failover email"
+msgstr "Email на случай ошибок"
+
+msgid "If bot conditions were met, but something did not match for the order action to run, an alert with details will be sent to the specified email."
+msgstr "Если условия бота были выполнены, но что‑то не совпало для запуска действия по заказу Shop-Script, на указанный адрес электронной почты будет отправлено уведомление с подробностями."
+
+msgid "contains"
+msgstr "содержит"
+
+msgid "does not contain"
+msgstr "не содержит"
+
+msgid "Text..."
+msgstr "Текст..."
+
+msgid "Order ID"
+msgstr "ID заказа"
+
+msgid "Could not update transaction:"
+msgstr "Не удалось обновить операцию:"
+
+msgid "Could not update transaction: either transaction or one of its fields not found"
+msgstr "Не удалось обновить операцию: либо операция, либо одно из ее полей не найдено"
+
+msgid "Cash Flow alert"
+msgstr "Бот Webasyst Деньги"
+
+msgid "Email not sent"
+msgstr "Электронное письмо не отправлено"
+
+msgid "Email not sent:"
+msgstr "Электронное письмо не отправлено:"
+
+msgid "Email not sent: either recipient or email content are empty"
+msgstr "Электронное письмо не отправлено: либо получатель, либо содержимое письма пусты"
+
+msgid "Shop-Script app is not enabled"
+msgstr "Приложение Shop-Script отключено"
+
+msgid "No Shop-Script order found with the specified ID"
+msgstr "Заказ Shop-Script с указанным ID не найден"
+
+msgid "Action is forbidden by Shop-Script workflow for the order"
+msgstr "Для этого заказа действие запрещено настройками обработки заказов Shop-Script"
+
+msgid "Shop-Script order action failed:"
+msgstr "Не удалось выполнить действие для заказа в Shop-Script:"
+
+msgid "Shop-Script order amount and Cash Flow transaction amount won’t match"
+msgstr "Сумма заказа в Shop‑Script и сумма операции не совпадают"
+
+msgid "Shop-Script order date and Cash Flow transaction date won’t match"
+msgstr "Дата заказа в Shop‑Script и дата операции не совпадают"
+
+msgid "Shop-Script order customer and Cash Flow transaction contractor won’t match"
+msgstr "Клиент заказа в Shop‑Script и контрагент операции не совпадают"
+
+msgid "Cash Flow -> Shop-Script alert"
+msgstr "Бот «Деньги» → Shop‑Script"
+
+msgid "Shop-Script order ID is unknown"
+msgstr "ID заказа в Shop‑Script неизвестен"
+
+msgid "Plugin action completed: %s"
+msgstr "Действие плагина выполнено: %s"
+
+msgid "Cash Flow bot is here! Shop-Script order action failed: <b>%s</b>.<br><br> Origin transaction:<br> %s"
+msgstr "Привет, это бот Webasyst Деньги! Не удалось выполнить действие для заказа Shop‑Script: <b>%s</b>.<br><br> Исходная операция:<br> %s"
+
+msgid "Come on, all of the world's money is less than the amount entered!"
+msgstr "Да ладно, всех денег в мире меньше, чем введенная сумма!"
+
+msgid "No transaction"
+msgstr "Нет операции"
+
+msgid "You can not edit transaction"
+msgstr "Вы не можете редактировать эту операцию"
+
+msgid "You can not delete this transaction"
+msgstr "Вы не можете удалить эту операцию"
+
+msgid "No repeating transaction"
+msgstr "Нет повторяющейся операции"
+
+msgid "You are not allowed to edit this transaction (ID %s, %s)"
+msgstr "Вам не разрешено редактировать эту операцию (ID %s, %s)"
+
+msgid "Too many transactions to move. Max limit is %d"
+msgstr "Слишком много операций для перемещения. Максимальный лимит — %d"
+
+msgid "You can not view this transaction"
+msgstr "Вам не разрешено видеть эту операцию"
+
+msgid "You are not allowed to delete restore transactions"
+msgstr "Вам не разрешено удалять восстановленные операции"
+
+msgid "You are not allowed to create transfer transactions"
+msgstr "Вам не разрешено создавать операции перевода"
+
+msgid "You are not allowed to add/edit transfer transactions with the specified set of parameters"
+msgstr "Вам не разрешено добавлять/редактировать операции перевода с указанным набором параметров"
+
+msgid "You are not allowed to add/edit transactions with the specified set of parameters"
+msgstr "Вам не разрешено добавлять/редактировать операции с указанным набором параметров"
+
+msgid "You are not allowed to restore transactions"
+msgstr "Вам не разрешено восстанавливать операции"
+
+msgid "You are not allowed to delete this transaction"
+msgstr "Вам не разрешено удалять эту операцию"
+
+msgid "You have no access to this account"
+msgstr "У вас нет доступа к этому счету"
+
+msgid "You have no access to this category"
+msgstr "У вас нет доступа к этой категории"
+
+msgid "Nothing to move. No params"
+msgstr "Нечего перемещать. Нет параметров"
+
+msgid "You cannot sort categories"
+msgstr "Вы не можете сортировать категории"
+
+msgid "You can not create any category at all"
+msgstr "Вы вообще не можете создавать категории"
+
+msgid "Plan has not been saved"
+msgstr "План не был сохранен"
+
+msgid "Id should be over 0"
+msgstr "ID должен быть больше 0"
+
+msgid "Unknown is_imaginary"
+msgstr "Неизвестное значение is_imaginary"
+
+msgid "You can sort accounts"
+msgstr "Вы можете сортировать счета"
+
+msgid "Contact not found"
+msgstr "Контакт не найден"
+
+msgid "Contact is not user"
+msgstr "Контакт не является пользователем"
+
+msgid "You can not create any account"
+msgstr "Вы не можете создавать счета"
+
+msgid "%d transactions created in the Cash Flow app:"
+msgstr "%d операций создано в приложении «Деньги»:"
+
+msgid "You have no access to this contractor"
+msgstr "У вас нет доступа к этому подрядчику"
+
+msgid "You have no access to this import"
+msgstr "У вас нет доступа к этому импорту"
+
+msgid "No amount column selected"
+msgstr "Не выбрана колонка суммы"
+
+msgid "No account column selected"
+msgstr "Не выбрана колонка счета"
+
+msgid "No date column selected"
+msgstr "Не выбрана колонка даты"
+
+msgid "Too many transactions to purge. Max limit is %d"
+msgstr "Слишком много операций для очистки. Максимальный лимит — %d"
+
+msgid "Too many transactions to delete. Max limit is %d"
+msgstr "Слишком много операций для удаления. Максимальный лимит — %d"
+
+msgid "Too many transactions to restore. Max limit is %d"
+msgstr "Слишком много операций для восстановления. Максимальный лимит — %d"
+
+msgid "You can not get contact list"
+msgstr "Вы не можете получить список контактов"
+
+msgid "For %s+ days, only \"%s\" & \"%s\" grouping is available"
+msgstr "Для периода %s+ дней доступна только группировка «%s» и «%s»"
+
+msgid "Unknown bot action"
+msgstr "Неизвестное действие бота"
+
+msgid "Bot action executed: %s"
+msgstr "Действие бота выполнено: %s"
+
+msgid "Bot action skipped: premium required"
+msgstr "Действие бота не выполнено: нужен премиум"
+
+msgid "Cascade execution is disabled to avoid recursion (one bot won’t trigger another)."
+msgstr "Каскадное выполнение отключено, чтобы избежать рекурсии (один бот не будет запускать другого)."
+
+msgid "is today"
+msgstr "сегодня"
+
+msgid "is in the future"
+msgstr "в будущем"
+
+msgid "is in the past"
+msgstr "в прошлом"
+
+msgid "Edit"
+msgstr "Редактировать"
+
+msgid "Contact ID: "
+msgstr "ID контакта: "
+
+msgid "Custom contact ID..."
+msgstr "Ввести ID контакта..."
+
+msgid "View transaction"
+msgstr "Посмотреть операцию"
+
+msgid "Raw source"
+msgstr "Исходные данные"
+
+msgid "To keep the original value, simply leave the action setting empty."
+msgstr "Чтобы сохранить исходное значение, просто оставьте настройку пустой."
+
+msgid "Set fix amount in the account currency."
+msgstr "Установить фиксированную сумму в валюте счета."
+
+msgid "Calculate based on the original transaction amount."
+msgstr "Расчитать от суммы исходной операции."

@@ -117,13 +117,13 @@ export default {
       const searchedCategories = this.searchCategories(searchString)
 
       let searchedOrder
-      if (window.appState.shopscriptInstalled && /^\d+$/.test(this.queryText)) {
+      if (this.$appState.shopscriptInstalled && /^\d+$/.test(this.queryText)) {
         searchedOrder = {
           routeName: 'Order',
           routeParams: { params: { id: this.queryText } },
           entity: {
             name: `${this.$t('Order')} ${this.queryText}`,
-            photo_url_absolute: `${window.appState.baseStaticUrl}img/shop.svg`
+            photo_url_absolute: `${this.$appState.baseStaticUrl}img/shop.svg`
           }
         }
       }

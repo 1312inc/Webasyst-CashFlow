@@ -1,17 +1,16 @@
 <template>
   <Fragment>
+    <div ref="dummyEl" />
     <div
       ref="stickyEl"
       class="c-transaction-controls-sticky"
-      :class="{'desktop-and-tablet-only': $helper.isDesktopEnv}"
     >
-      <BlankBox>
+      <BlankBox :disable-bottom-margin="true">
         <div class="custom-px-16">
           <TransactionControls />
         </div>
       </BlankBox>
     </div>
-    <div ref="dummyEl" />
   </Fragment>
 </template>
 
@@ -30,7 +29,7 @@ onMounted(() => {
     ([entry]) => {
       stickyEl.value.classList.toggle('is-sticky', !entry.isIntersecting)
     },
-    { threshold: 1, rootMargin: '60px 0px 0px 0px' }
+    { threshold: 1, rootMargin: '70px 0px 0px 0px' }
   )
 
   if (dummyEl.value) { observer.observe(dummyEl.value) }
@@ -48,7 +47,13 @@ onBeforeUnmount(() => {
   top: 4rem;
   z-index: 999;
   display: none;
+  margin-bottom: -60px;
 }
+
+.wa-no-header .c-transaction-controls-sticky {
+  top: 0;
+}
+
 .c-transaction-controls-sticky .box.rounded {
   border-radius: 0;
 }
@@ -58,7 +63,12 @@ onBeforeUnmount(() => {
 }
 
 .c-mobile-build .c-transaction-controls-sticky {
+  display: none;
   top: 0;
+}
+
+.c-mobile-build.c-multi-select-mode  .c-transaction-controls-sticky {
+  display: block !important;
 }
 
 </style>

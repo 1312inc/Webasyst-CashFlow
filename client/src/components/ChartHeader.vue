@@ -3,7 +3,7 @@
     <div class="c-header flexbox wrap">
       <div class="wide">
         <slot
-          v-if="$helper.isDesktopEnv"
+          v-if="$appState.isDesktop"
           name="title"
         />
       </div>

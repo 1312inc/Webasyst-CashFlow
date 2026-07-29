@@ -15,6 +15,7 @@ class cashApiSystemGetSettingsHandler implements cashApiHandlerInterface
     {
         return new cashSystemSettingsDto(
             (int) wa()->getUser()->getId(),
+            cashHelper::isPremium(),
             cash()->getContactRights()->createContactRightsDto(wa()->getUser())
         );
     }

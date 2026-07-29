@@ -1,14 +1,26 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { waitForTippy } from '@/utils/waiters'
+import { appStateService } from '@/services/appState'
 
 const floating = ref(null)
 const reference = ref(null)
 const tippyInstance = ref(null)
 const isInitialized = ref(false)
+const isWebView = appStateService.webView
 
 function hide () {
   tippyInstance.value?.hide()
+}
+
+function toggle () {
+  if (!isWebView || !tippyInstance.value) return
+
+  if (tippyInstance.value.state.isVisible) {
+    tippyInstance.value.hide()
+  } else {
+    tippyInstance.value.show()
+  }
 }
 
 onMounted(async () => {
@@ -18,7 +30,9 @@ onMounted(async () => {
 
   tippyInstance.value = tippy(reference.value, {
     content: floating.value,
+    trigger: isWebView ? 'manual' : 'click mouseenter',
     interactive: true,
+    hideOnClick: true,
     placement: 'bottom-start',
     appendTo: () => document.body,
     theme: 'transparent',
@@ -38,7 +52,10 @@ onBeforeUnmount(() => {
 
 <template>
   <div>
-    <div ref="reference">
+    <div
+      ref="reference"
+      @click="toggle"
+    >
       <slot name="toggler" />
     </div>
     <div

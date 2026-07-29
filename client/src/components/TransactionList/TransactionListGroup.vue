@@ -1,10 +1,6 @@
 <template>
   <div class="c-transaction-section">
-    <div
-      ref="el"
-      @mouseover="isHover = true"
-      @mouseleave="isHover = false"
-    >
+    <div ref="el">
       <div
         class="c-sticky-header-group"
         :class="{'c-sticky-header-group--offset': $store.state.transactionBulk.selectedTransactionsIds.length}"
@@ -12,12 +8,11 @@
         <div class="flexbox middle space-12 wrap-mobile justify-between custom-px-8 custom-py-12">
           <div class="flexbox middle space-12">
             <div
-              v-if="$helper.showMultiSelect()"
-              :class="{ 'desktop-only': $helper.isDesktopEnv }"
-              style="min-width: 1rem"
+              class="c-item-checkbox flex-none"
+              :class="{'desktop-and-tablet-only': !$helper.showMultiSelect()}"
             >
               <span
-                v-show="isHoverComputed && filteredTransactions.length"
+                v-show="filteredTransactions.length"
                 class="wa-checkbox"
                 @click="checkAll(filteredTransactions)"
               >
@@ -209,7 +204,6 @@ export default {
 
   data () {
     return {
-      isHover: false,
       сollapseGroups: {},
       activeCollapseExternalSourceIDs: [],
       localStorage: (() => {
@@ -231,11 +225,6 @@ export default {
       return this.filteredTransactions.some(e =>
         this.$store.state.transactionBulk.selectedTransactionsIds.includes(e.id)
       )
-    },
-
-    isHoverComputed () {
-      if (this.$isSpaMobileMode || this.visibleSelectCheckbox) return true
-      return this.isShowChecker ? true : this.isHover
     },
 
     featurePeriod () {
@@ -408,6 +397,16 @@ export default {
   top: 4rem;
 }
 
+.wa-no-header .c-sticky-header-group,
+.c-mobile-build.c-multi-select-mode .c-sticky-header-group {
+  top: 60px;
+}
+
+.wa-no-header .no-sticky-controls .c-sticky-header-group,
+.c-mobile-build .c-sticky-header-group {
+  top: 0;
+}
+
 .c-sticky-header-group:hover {
   z-index: 999;
 }
@@ -420,18 +419,6 @@ export default {
 
 .c-transaction-section:hover .button.circle {
   opacity: 1;
-}
-
-@media screen and (max-width: 760px) {
-  .c-sticky-header-group {
-    top: 4rem;
-  }
-  .c-mobile-build .c-sticky-header-group {
-    top: 0px;
-  }
-  .c-mobile-build .c-sticky-header-group--offset {
-    top: 60px;
-  }
 }
 
 </style>

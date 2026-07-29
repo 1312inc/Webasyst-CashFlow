@@ -235,6 +235,7 @@ class cashTransactionRepository extends cashBaseRepository
     }
 
     /**
+     * @deprecated
      * @param string $source
      * @param int    $id
      *

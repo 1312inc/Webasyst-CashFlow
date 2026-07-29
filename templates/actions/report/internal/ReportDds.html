@@ -10,12 +10,13 @@
     <div class="c-report-dds-inner">
 
         {$currenciesTotals = $data[0]->valuesPerPeriods['max']|default:[]}
+        {$is_only_checking = []}
         <table class="small">
             <thead>
                 <tr>
                     <th class="c-column-sticky-left"></th>
                     {foreach $grouping as $group}
-                        <th class="align-right">[`{$group->name|escape}`]</th>
+                        <th class="align-right">{$group->name|escape}</th>
                     {/foreach}
                     <th class="align-right bold c-column-sticky-right-totals">[`Total`]</th>
                 </tr>
@@ -51,7 +52,11 @@
                                     {/if}
                                     {if $value.per_month<0}&minus;{/if} {round(abs($value.per_month),2)|wa_format_number:false} {$datum->currencies[$currency]->getSign()}
                                     {if in_array($datum->entity->getId(), [cashReportDdsService::ALL_INCOME_KEY, cashReportDdsService::ALL_EXPENSE_KEY, cashReportDdsService::SALDO_KEY]) && ifset($value, 'imaginary', false)}
+                                        {$is_only_checking[$datum->currencies[$currency]->getCode()] = 1}
                                         <br><span class="hint">[`only checking`]</span>
+                                    {/if}
+                                    {if $smarty.foreach.foreach_month_columns.iteration == 13 && $datum->entity->isHeader() && ifset($is_only_checking[$datum->currencies[$currency]->getCode()])}
+                                        <br><span class="hint">[`checking + forecast`]</span>
                                     {/if}
                                 </div>
                             {/foreach}

@@ -8,8 +8,6 @@ $.extend($.automation = $.automation || {}, {
     Init: function (options) {
         let that = this;
         let new_rule_id = -1;
-        let new_condition_id = 0;
-
         let $form = $('#c-automation-rules-form');
         const $table_tbody = $('#c-automation-rules tbody').first();
 
@@ -17,27 +15,106 @@ $.extend($.automation = $.automation || {}, {
         $('#c-automation-add-rule').on('click', function (event) {
             event.preventDefault();
 
-            const tmpl = options.new_automation_rule.replace(/%%RULE_ID%%/g, new_rule_id).replace(/%%CONDITION_KEY%%/g, new_condition_id);
+            const tmpl = options.new_automation_rule.replace(/%%RULE_ID%%/g, new_rule_id);
             $table_tbody.prepend(tmpl);
             new_rule_id--;
-            new_condition_id++;
         });
 
         (function () {
-            $table_tbody.on('change', '.c-condition-selector', function () {
-                let val_cond = $(this).val();
-                let $tr = $(this).closest('tr');
-                let plugin_id = $(this).find('option:selected').data('plugin-id');
+            let new_condition_id = 0;
+            $table_tbody.on('change', '.add-condition-selector', function () {
+                let rule_id = $(this).closest('tr').data('rule-id');
+                const tmpl = options.new_condition
+                    .replace(/%%RULE_ID%%/g, rule_id)
+                    .replace(/%%CONDITION_ID%%/g, new_condition_id)
+                    .replace(/%%RULE_NAME%%/g, $(this).find('option:selected').text());
+                const $new_condition = $(tmpl);
+                $new_condition.find('.'+ $(this).val()).prop('disabled', false).removeClass('hidden');
+                $(this).closest('.wa-select').before($new_condition);
 
-                $tr.find('input').removeClass('hidden');
-                $tr.find('select[data-condition-id]').closest('div').addClass('hidden');
-                $tr.find('select[data-condition-id]').prop('disabled', true);
-                $tr.find('select[data-condition-id="'+ val_cond +'"]').closest('div').removeClass('hidden');
-                $tr.find('select[data-condition-id="'+ val_cond +'"]').prop('disabled', false);
-                $tr.find('.js-app-id-rule').val('cash'+ (plugin_id ? '.'+ plugin_id : ''));
+                $(this).val('');
+                new_condition_id++;
+            });
+
+            $table_tbody.on('change', '.c-action-selector', function () {
+                let plugin_id = $(this).find('option:selected').data('plugin-id');
+                let action_id = $(this).val();
+                if (plugin_id) {
+                    $(this).closest('td').find('.c-action-plugin-id').prop('disabled', false).val(plugin_id);
+                } else {
+                    $(this).closest('td').find('.c-action-plugin-id').prop('disabled', true).val('');
+                }
+                $(this).closest('td').find('.c-automaton-action').addClass('hidden');
+                $(this).closest('td').find('[data-action-id="'+ action_id +'"]').removeClass('hidden');
+
+                $(this).closest('td').find('.c-automaton-action input, .c-automaton-action select, .c-automaton-action textarea').prop('disabled', true);
+                $(this).closest('td').find('[data-action-id="'+ action_id +'"] input, [data-action-id="'+ action_id +'"] select, [data-action-id="'+ action_id +'"] textarea').prop('disabled', false);
             });
         })();
 
+        $table_tbody.on('click', '.c-show-rule', function (event) {
+            event.preventDefault();
+
+            let that = $(this).closest('tr');
+            let rule_id = that.data('rule-id');
+            that.addClass('hidden');
+            $(this).closest('table').find('.c-long-rule-'+ rule_id).removeClass('hidden');
+        });
+
+        $table_tbody.on('click', '.c-log-rule', function (event) {
+            event.preventDefault();
+
+            let that = $(this).closest('tr');
+            let rule_id = that.data('rule-id');
+            $.post('?module=automationLog', {rule_id: rule_id}, function (data) {
+                let $new_dialog_log = $(options.dialog_log);
+                if (data.status !== 'ok') {
+                    console.warn('get automation log fail', data);
+                } else if (data.data) {
+                    if (data.data.length) {
+                        $new_dialog_log.find('.js-empty-log').remove();
+                    }
+                    data.data.forEach((_automation, _index, _array) => {
+                        let goto = '';
+                        let detailed = '';
+                        if (_automation.detailed) {
+                            detailed += "<a href=\"javascript:$('div.js-log-id-"+ _automation.id +"').removeClass('hidden');\">"+ options.detailed +'</a><div class="js-log-id-'+_automation.id +' hidden">'
+                            if (_automation.detailed.transaction.date) {
+                                goto += ' <a href="../date/'+ _automation.detailed.transaction.date +'">'+ options.goto +'</a>';
+                            }
+                            for (let _i in _automation.detailed) {
+                                detailed += '<b>'+ _i +'</b>:<br>'
+                                for (let _k in _automation.detailed[_i]) {
+                                    detailed += _k + ' = '+ _automation.detailed[_i][_k] +'<br>';
+                                }
+                                detailed += '<br>';
+                            }
+                            detailed += '</div>'
+                        }
+                        $new_dialog_log.find('table tbody').append(
+                            '<tr>' +
+                            '<td class="valign-top">'+ _automation.datetime +'</td>' +
+                            '<td class="valign-top">'+ _automation.type +'</td>' +
+                            '<td class="valign-top">'+ _automation.automation_event +'</td>' +
+                            '<td class="valign-top">'+ _automation.automation_action +'</td>' +
+                            '<td class="valign-top">'+ _automation.description + goto +'<div class="hint">'+ detailed +'</div></td>' +
+                            '<td class="valign-top">'+ (_automation.plugin_id ? _automation.plugin_id : '') +'</td>' +
+                            '</tr>'
+                        );
+                    });
+                }
+
+                $.waDialog({
+                    html: $new_dialog_log,
+                    onOpen: function($dialog, dialog_instance) {
+                        $dialog.find('.dialog-body').css('top', '3%');
+                        $dialog.find('.dialog-body').css('left', '20%');
+                        $dialog.find('.dialog-body').css('width', '70%');
+                        $dialog.find('.dialog-content').css('height', '75vh');
+                    }
+                });
+            });
+        });
 
         // Link to delete a row
         $table_tbody.on('click', '.c-delete-rule', function (event) {
@@ -45,9 +122,26 @@ $.extend($.automation = $.automation || {}, {
 
             let that = $(this).closest('tr');
             let rule_id = that.data('rule-id');
-            $.post('?module=automationDelete', {rule_id: rule_id}, function () {
-                that.remove();
+
+            $.waDialog.confirm({
+                title: options.confirm,
+                text: '<i class="fas fa-exclamation-triangle fa-xs state-error"></i> '+ options.confirmation_deletion,
+                success_button_class: 'danger',
+                success_button_title: options.confirm,
+                cancel_button_title: options.cancel,
+                onSuccess: function () {
+                    $.post('?module=automationDelete', {rule_id: rule_id}, function () {
+                        that.remove();
+                    });
+                }
             });
+        });
+
+        $table_tbody.on('click', '.c-delete-condition', function (event) {
+            event.preventDefault();
+
+            $(this).closest('div.js-condition-block').remove();
+            $('.js-form-submit').removeClass('green').addClass('yellow');
         });
 
         $form.on('change', function (event) {

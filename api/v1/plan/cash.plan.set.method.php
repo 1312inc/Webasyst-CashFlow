@@ -12,6 +12,9 @@ class cashPlanSetMethod extends cashApiAbstractMethod
         if (!cashHelper::isPremium()) {
             return new cashApiErrorResponse('payment_required', 'Payment premium version required', 402);
         }
+        if (!cash()->getContactRights()->canManageBudget(wa()->getUser())) {
+            throw new kmwaForbiddenException('Access denied', 403);
+        }
 
         /** @var cashApiPlanSetRequest $request */
         $request = $this->fillRequestWithParams(new cashApiPlanSetRequest());

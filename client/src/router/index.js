@@ -14,12 +14,13 @@ import Calendar from '../views/Calendar.vue'
 import FormAdd from '../views/FormAdd.vue'
 import { permissions } from '../plugins/permissions'
 import { moment } from '@/plugins/numeralMoment.js'
+import { appStateService } from '@/services/appState'
 
 const SSR_MODE_PAGE_URL_ALIASES = ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins', '/upgrade', '/automation']
 
 Vue.use(VueRouter)
 
-const baseUrl = window.appState?.baseUrl || '/'
+const baseUrl = appStateService.baseUrl
 
 const routes = [
   {
@@ -129,7 +130,14 @@ const routes = [
   {
     path: '/budget',
     name: 'Plan',
-    component: () => import('../views/Plan.vue')
+    component: () => import('../views/Plan.vue'),
+    beforeEnter: (to, from, next) => {
+      if (!permissions.canManageBudget) {
+        next({ name: 'NotFound' })
+      } else {
+        next()
+      }
+    }
   },
   {
     path: '/report',
@@ -144,7 +152,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: !window.appState.webView ? 'history' : 'hash',
+  mode: appStateService.isDesktop ? 'history' : 'hash',
   base: baseUrl,
   routes,
   scrollBehavior () {

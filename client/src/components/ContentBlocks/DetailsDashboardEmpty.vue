@@ -1,5 +1,5 @@
 <script setup>
-import { appState } from '@/utils/appState'
+import { appStateService } from '@/services/appState'
 </script>
 
 <template>
@@ -68,7 +68,7 @@ import { appState } from '@/utils/appState'
         target="_blank"
       >
         <img
-          :src="`${appState.baseStaticUrl}img/badge-appstore${$i18n.locale === 'ru_RU' ? '-ru' : ''}.png`"
+          :src="`${appStateService.baseStaticUrl}img/badge-appstore${$i18n.locale === 'ru_RU' ? '-ru' : ''}.png`"
           class="c-app-inline-badge"
           style="height: 50px;"
           alt="App Store"
@@ -79,7 +79,7 @@ import { appState } from '@/utils/appState'
         target="_blank"
       >
         <img
-          :src="`${appState.baseStaticUrl}img/badge-googleplay${$i18n.locale === 'ru_RU' ? '-ru' : ''}.png`"
+          :src="`${appStateService.baseStaticUrl}img/badge-googleplay${$i18n.locale === 'ru_RU' ? '-ru' : ''}.png`"
           class="c-app-inline-badge"
           style="height: 50px;"
           alt="Google Play"
@@ -91,7 +91,7 @@ import { appState } from '@/utils/appState'
           target="_blank"
         >
           <img
-            :src="`${appState.baseStaticUrl}img/badge-rustore.svg`"
+            :src="`${appStateService.baseStaticUrl}img/badge-rustore.svg`"
             class="c-app-inline-badge"
             style="height: 50px;"
             alt="RuStore"

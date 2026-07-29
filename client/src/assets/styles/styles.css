@@ -91,7 +91,7 @@ body.modal {
   color: var(--accent-color) !important;
 }
 
-.alert.c-cashgap-prediction-banner { border: none; padding: 1rem; margin: 1rem 0 0; font-size: 0.9375rem; }
+.alert.c-cashgap-prediction-banner { border: none; padding: 1rem; margin: 1rem 0 0; }
 
 .c-button-add-income { background: #16d15f; }
 .c-button-add-expense { background: #f7623a; }
@@ -102,7 +102,6 @@ body.modal {
   border: none;
   padding: 0 0.6125rem;
   border-radius: 0.25rem;
-  font-size: 0.9375rem;
 }
 .c-list .c-item:hover { background: var(--background-color-table-row-hover); }
 .c-list .c-item.selected { background: var(--background-color-table-row-selected); }
@@ -121,6 +120,16 @@ body.modal {
 .c-list .c-item.c-transaction-group .c-grouped-transaction-description { color: var(--gray); }
 .c-list .c-item.c-transaction-group .userpic { position: relative; z-index: 1; }
 .c-list .c-item .c-unfold-helper-icon { opacity: 0; }
+.c-list .c-item .c-item-checkbox,
+.c-transaction-section .c-sticky-header-group .c-item-checkbox { width: 1rem; transition: opacity 0.3s; }
+@media screen and (min-width: 760px) {
+  .c-list .c-item .c-item-checkbox,
+  .c-transaction-section .c-sticky-header-group .c-item-checkbox { opacity: 0; }
+  .c-list .c-item:hover .c-item-checkbox,
+  .c-list .c-item.c-item-selected .c-item-checkbox,
+  .c-transaction-section:hover .c-sticky-header-group .c-item-checkbox,
+  .c-transaction-section .c-sticky-header-group .c-item-checkbox:has(input[type="checkbox"]:checked) { opacity: 1; }
+}
 .c-list .c-item .c-item-border { border-top: 1px solid var(--border-color-soft); padding: 0.6125rem 0; }
 .c-list .c-item:first-child .c-item-border { border: none; }
 .c-list .c-item:hover .c-unfold-helper-icon { opacity: 1; }
@@ -232,6 +241,19 @@ body.modal {
   .sidebar-body,
   .sidebar-footer {
     max-height: initial !important;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .sidebar.mobile-friendly {
+    overflow: scroll;
+    max-height: 100vh;
+  }
+
+  .sidebar.mobile-friendly > .sidebar-body.mobileMenuOpen,
+  .sidebar.mobile-friendly > .sidebar-footer.mobileMenuOpen {
+    display: block;
+    flex: none !important;
   }
 }
 
