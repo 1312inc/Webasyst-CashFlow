@@ -61,12 +61,14 @@
                 <span class="text-blue">{if $locale == 'ru_RU'}Итого{else}Total{/if}:</span>
                 {foreach $info->delta as $_currency => $_amount}
                     <span title="{if $locale == 'ru_RU'}Дельта{else}Delta{/if}" class="text-blue">
+                      {if !empty($_amount) && $_amount > 0}&plus; {/if}
                       {ifset($_amount, '0', '0.0')|wa_format_number:false} {$_currency|escape}
                     </span>
                 {/foreach}
                 {foreach $info->delta as $_currency => $_amount}
                     {if ifset($_amount, '1', null)}
                     <span title="{if $locale == 'ru_RU'}Дельта прогноз{else}Delta forecasted{/if}" class="text-blue opacity-40">
+                      {if !empty($_amount) && $_amount > 0}&plus; {/if}
                       {$_amount['1']|wa_format_number:false} {$_currency|escape}
                     </span>
                     {/if}
