@@ -65,7 +65,6 @@
             {{ $t("company") }}
           </div>
           <div class="value">
-            {{ model.company_id }}
             <div class="wa-select solid">
               <select
                 v-model="model.company_id"
