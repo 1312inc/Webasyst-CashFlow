@@ -1585,12 +1585,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CompanyList'
-        403:
-          description: Доступ запрещен.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
   /cash.company.update:
     post:
