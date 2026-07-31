@@ -1,4 +1,4 @@
-import appStateService from './appState'
+import { appStateService } from './appState'
 
 export const companyContextService = {
   get companyId () {
