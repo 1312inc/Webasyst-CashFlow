@@ -9,11 +9,11 @@ class cashCompanyGetListMethod extends cashApiAbstractMethod
 
     function run(): cashApiResponseInterface
     {
-        if (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
-            throw new kmwaForbiddenException('Access denied', 403);
+        if (cash()->getContactRights()->isAdmin(wa()->getUser())) {
+            $companies = (new cashApiCompanyGetListHandler())->handle(null);
+        } else {
+            $companies = [];
         }
-
-        $companies = (new cashApiCompanyGetListHandler())->handle(null);
 
         return new cashApiCompanyGetListResponse($companies);
     }
