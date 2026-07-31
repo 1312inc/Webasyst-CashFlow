@@ -1,5 +1,11 @@
 {
   "accounts": "Accounts",
+  "allCompanies": "All companies",
+  "company": "Company",
+  "addCompany": "Add company",
+  "configureCompanies": "Configure companies...",
+  "companyName": "Name",
+  "noCompanies": "No companies yet",
   "hiddenAccounts": "Hidden accounts",
   "categories": "Categories",
   "expense": "Expense",
@@ -111,7 +117,8 @@
   "justCreated": "Just now",
   "deleteWarning": {
     "account": "DANGER: This will permanently delete the entire Account and ALL TRANSACTIONS without the ability to restore. Are you sure?",
-    "category": "DANGER: This will permanently delete the entire Category and ALL TRANSACTIONS without the ability to restore. Are you sure?"
+    "category": "DANGER: This will permanently delete the entire Category and ALL TRANSACTIONS without the ability to restore. Are you sure?",
+    "company": "Delete this company?"
   },
   "offlineMessage": "No Internet connection",
   "bulkDeleteWarning": "This will delete all selected transactions. Are you sure?",
@@ -209,6 +216,9 @@
     "normal": "Created by {username} on {createDate}",
     "edited": "@:(createdBy.normal). Last edited on {updateDate}."
   },
+  "403": {
+    "title": "Access denied"
+  },
   "404": {
     "title": "Not Found"
   },
@@ -228,6 +238,7 @@
   "allTransactions": "All transactions",
   "change": "Change",
   "trash": "Trash",
+  "companies": "Companies",
   "trashInfo": "Deleted transactions are not counted in any cash flow and balance reports and are visible to the app admins only. Purge or restore transactions from here.",
   "restore": "Restore",
   "restoreInfo": "Editing is disabled for deleted transactions. Select this transaction and restore it first.",

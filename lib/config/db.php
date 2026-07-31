@@ -6,6 +6,7 @@ return array(
         'description' => array('text'),
         'icon' => array('varchar', 255),
         'currency' => array('varchar', 3, 'null' => 0),
+        'company_id' => array('int', 11),
         'customer_contact_id' => array('int', 11),
         'accountable_contact_id' => array('int', 11),
         'is_archived' => array('tinyint', 4, 'default' => '0'),
@@ -61,6 +62,14 @@ return array(
         ':keys' => array(
             'PRIMARY' => 'id',
             'cash_category_category_parent_id_index' => 'category_parent_id',
+        ),
+    ),
+    'cash_company' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'name' => array('varchar', 32, 'default' => ''),
+        'sort' => array('int', 11, 'default' => '0'),
+        ':keys' => array(
+            'PRIMARY' => 'id',
         ),
     ),
     'cash_transaction_data' => array(

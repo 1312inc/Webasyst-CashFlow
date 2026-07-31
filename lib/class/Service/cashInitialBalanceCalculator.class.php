@@ -11,45 +11,41 @@ final class cashInitialBalanceCalculator
         $initialBalanceSql = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
             ->select(['ca.currency currency, sum(ct.amount) balance'])
             ->from('cash_transaction', 'ct')
-            ->andWhere(
-                [
-                    'ct.date <= s:from',
-                    'account_access' => cash()->getContactRights()
-                        ->getSqlForAccountJoinWithFullAccess($paramsDto->contact),
-                    'ct.is_archived = 0',
-                    'ca.is_archived = 0',
-                    'CASE
-                        WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
-                        WHEN ca.is_imaginary = -1 THEN NULL
-                        ELSE ca.is_imaginary = 0
-                    END'
-                ]
-            )
-            ->join(
-                [
-                    'join cash_account ca on ct.account_id = ca.id',
-                ]
-            )
+            ->andWhere([
+                'ct.date <= s:from',
+                'account_access' => cash()->getContactRights()
+                    ->getSqlForAccountJoinWithFullAccess($paramsDto->contact),
+                'ct.is_archived = 0',
+                'ca.is_archived = 0',
+                'CASE
+                    WHEN ca.is_imaginary = 1 THEN ct.date > NOW()
+                    WHEN ca.is_imaginary = -1 THEN NULL
+                    ELSE ca.is_imaginary = 0
+                END'
+            ])
+            ->join([
+                'join cash_account ca on ct.account_id = ca.id',
+                'left join cash_company cmp on ca.company_id = cmp.id',
+            ])
             ->addParam('from', $date->format('Y-m-d H:i:s'))
             ->groupBy(['ca.currency']);
 
         switch (true) {
+            case null !== $paramsDto->filter->getCompanyId():
+                $initialBalanceSql->addAndWhere('cmp.id = i:company_id')
+                    ->addParam('company_id', $paramsDto->filter->getCompanyId());
+                break;
             case null !== $paramsDto->filter->getAccountId():
                 $initialBalanceSql->addAndWhere('ct.account_id = i:account_id')
                     ->addParam('account_id', $paramsDto->filter->getAccountId());
-
                 break;
-
             case null !== $paramsDto->filter->getCurrency():
                 $initialBalanceSql->addAndWhere('ca.currency = s:currency')
                     ->addParam('currency', $paramsDto->filter->getCurrency());
-
                 break;
-
             case null !== $paramsDto->filter->getCategoryId():
             case null !== $paramsDto->filter->getContractorId():
                 $initialBalanceSql->addAndWhere('0');
-
                 break;
         }
 
