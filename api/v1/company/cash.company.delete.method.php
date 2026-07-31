@@ -9,7 +9,9 @@ class cashCompanyDeleteMethod extends cashApiAbstractMethod
 
     function run(): cashApiResponseInterface
     {
-        if (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
+        if (!cashHelper::isPremium()) {
+            return new cashApiErrorResponse('payment_required', 'Payment premium version required', 402);
+        } elseif (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
             throw new kmwaForbiddenException('Access denied', 403);
         }
 

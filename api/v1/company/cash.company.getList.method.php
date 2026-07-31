@@ -9,7 +9,7 @@ class cashCompanyGetListMethod extends cashApiAbstractMethod
 
     function run(): cashApiResponseInterface
     {
-        if (cash()->getContactRights()->isAdmin(wa()->getUser())) {
+        if (cash()->getContactRights()->isAdmin(wa()->getUser()) && cashHelper::isPremium()) {
             $companies = (new cashApiCompanyGetListHandler())->handle(null);
         } else {
             $companies = [];
