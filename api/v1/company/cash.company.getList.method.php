@@ -9,7 +9,11 @@ class cashCompanyGetListMethod extends cashApiAbstractMethod
 
     function run(): cashApiResponseInterface
     {
-        $companies = (new cashApiCompanyGetListHandler())->handle(null);
+        if (cash()->getContactRights()->isAdmin(wa()->getUser())) {
+            $companies = (new cashApiCompanyGetListHandler())->handle(null);
+        } else {
+            $companies = [];
+        }
 
         return new cashApiCompanyGetListResponse($companies);
     }
