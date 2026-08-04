@@ -10,13 +10,6 @@ final class cashReportDdsHandler implements cashReportHandlerInterface
     public function handle(array $params): string
     {
         $reportService = new cashReportDdsService();
-
-        $year = $params['year'] ?? 0;
-        if (empty($year)) {
-            $year = date('Y');
-        }
-        $currentPeriod = cashReportPeriod::createForYear($year);
-
         $ddsTypes = $reportService->getTypes();
         /** @var cashReportDdsTypeDto|string $type */
         $type = $params['type'] ?? cashReportDdsService::TYPE_CATEGORY;
@@ -26,9 +19,14 @@ final class cashReportDdsHandler implements cashReportHandlerInterface
             throw new waException(sprintf('Unknown report type: %s', $type));
         }
 
-        $periods = (new cashReportPeriodsFactory())->getPeriodsByYear();
-
-        $data = $reportService->getDataForTypeAndPeriod($type, $currentPeriod);
+        $year = $params['year'] ?? 0;
+        if (empty($year)) {
+            $year = date('Y');
+        }
+        $current_company_id = $params['company'] ?? 0;
+        $companies = [['id' => 0, 'name' => _w('Все компании')]] + cash()->getModel('cashCompany')->getAll('id');
+        $currentPeriod = cashReportPeriod::createForYear($year);
+        $data = $reportService->getDataForTypeAndPeriod($current_company_id, $type, $currentPeriod);
         $chartData = $reportService->formatDataForPie($data, $type, $currentPeriod);
 
         $type = array_reduce($data, static function ($type, cashReportDdsStatDto $dto) {
@@ -46,10 +44,12 @@ final class cashReportDdsHandler implements cashReportHandlerInterface
             wa()->getAppPath('templates/actions/report/internal/ReportDds.html'),
             [
                 'currentPeriod' => $currentPeriod,
-                'reportPeriods' => $periods,
+                'reportPeriods' => (new cashReportPeriodsFactory())->getPeriodsByYear(),
                 'ddsTypes' => $ddsTypes,
                 'type' => $type,
                 'data' => $data,
+                'companies' => $companies,
+                'current_company_id' => $current_company_id,
                 'grouping' => $currentPeriod->getGrouping(),
                 'chartData' => json_encode($chartData, JSON_UNESCAPED_UNICODE),
                 'is_imaginary' => in_array(true, array_unique(array_column($data, 'is_imaginary')), true)

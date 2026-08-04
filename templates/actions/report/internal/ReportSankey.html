@@ -14,8 +14,32 @@
     <h1 class="custom-mb-24">[`Sankey`]</h1>
 
     <div class="flexbox wrap middle space-16">
+        {$company_id = null}
+        {$company_view = cashHelper::isPremium() && count($companies) > 1}
+        {if $company_view}
+        {$company_id = ifempty($companies, $current_company_id, 'id', null)}
+        <div class="dropdown light-gray custom-mb-12" id="c-sankey-company-dropdown">
+            <button class="dropdown-toggle light-gray">{if !empty($companies[$current_company_id]['name'])}{$companies[$current_company_id]['name']|escape}{/if}</button>
+            <div class="dropdown-body">
+                <ul class="menu">
+                    {foreach $companies as $_company}
+                    <li>
+                        <a href="{$wa_app_url}report/sankey/from={$from}&to={$to}&company={$_company.id}">
+                            {$_company.name|escape}
+                        </a>
+                    </li>
+                    {/foreach}
+                </ul>
+            </div>
+        </div>
+        <script>
+            (function ($) {
+                $("#c-sankey-company-dropdown").waDropdown();
+            })(jQuery);
+        </script>
+        {/if}
         <div class="currencies-container toggle custom-mb-12" style="display: none;"></div>
-        {include file='../includes/DateRange.html' from=$from to=$to withButton=true withYears=false withNextRange=true}
+        {include file='../includes/DateRange.html' from=$from to=$to withButton=true withYears=false withNextRange=true company_id=$company_id}
     </div>
 
     {if $data === '[]'}

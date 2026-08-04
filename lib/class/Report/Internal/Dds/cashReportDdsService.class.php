@@ -11,28 +11,25 @@ final class cashReportDdsService
     public const SALDO_KEY = 'saldo';
 
     /**
+     * @param int $company_id
+     * @param cashReportDdsTypeDto $type
+     * @param cashReportPeriod $period
      * @return cashReportDdsStatDto[]
-     * @throws waException
      * @throws kmwaRuntimeException
+     * @throws waException
      */
-    public function getDataForTypeAndPeriod(cashReportDdsTypeDto $type, cashReportPeriod $period): array
+    public function getDataForTypeAndPeriod(int $company_id, cashReportDdsTypeDto $type, cashReportPeriod $period): array
     {
         switch ($type->id) {
             case self::TYPE_CATEGORY:
-                $data = (new cashReportDdsCategoryDataProvider())->getDataForPeriod($period);
-
+                $data = (new cashReportDdsCategoryDataProvider())->getDataForPeriod($company_id, $period);
                 break;
-
             case self::TYPE_ACCOUNT:
-                $data = (new cashReportDdsAccountDataProvider())->getDataForPeriod($period);
-
+                $data = (new cashReportDdsAccountDataProvider())->getDataForPeriod($company_id, $period);
                 break;
-
             case self::TYPE_CONTRACTOR:
-                $data = (new cashReportDdsContractorDataProvider())->getDataForPeriod($period);
-
+                $data = (new cashReportDdsContractorDataProvider())->getDataForPeriod($company_id, $period);
                 break;
-
             default:
                 throw new kmwaRuntimeException(sprintf('Wrong dds report type %s', $type->id));
         }
