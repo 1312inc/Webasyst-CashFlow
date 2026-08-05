@@ -9,19 +9,17 @@ final class cashReportDdsCategoriesHandler implements cashReportHandlerInterface
 
     public function handle(array $params): string
     {
-        $reportService = new cashReportDdsService();
-
         $year = $params['year'] ?? 0;
         if (empty($year)) {
             $year = date('Y');
         }
         $currentPeriod = cashReportPeriod::createForYear($year);
-
+        $current_company_id = $params['company'] ?? 0;
+        $companies = [['id' => 0, 'name' => _w('Все компании')]] + cash()->getModel('cashCompany')->getAll('id');
         $type = new cashReportDdsTypeDto(cashReportDdsService::TYPE_CATEGORY, _w('Categories'), true);
 
-        $periods = (new cashReportPeriodsFactory())->getPeriodsByYear();
-
-        $data = $reportService->getDataForTypeAndPeriod($type, $currentPeriod);
+        $reportService = new cashReportDdsService();
+        $data = $reportService->getDataForTypeAndPeriod($current_company_id, $type, $currentPeriod);
         $chartData = $reportService->formatDataForPie($data, $type, $currentPeriod);
 
         $type = array_reduce($data, static function ($type, cashReportDdsStatDto $dto) {
@@ -41,9 +39,11 @@ final class cashReportDdsCategoriesHandler implements cashReportHandlerInterface
         return wa()->getView()->renderTemplate(
             wa()->getAppPath('templates/actions/report/internal/ReportDdsCategories.html'),
             [
+                'companies' => $companies,
+                'current_company_id' => $current_company_id,
                 'categories' => $categories,
                 'currentPeriod' => $currentPeriod,
-                'reportPeriods' => $periods,
+                'reportPeriods' => (new cashReportPeriodsFactory())->getPeriodsByYear(),
                 'type' => $type,
                 'data' => $data,
                 'grouping' => $currentPeriod->getGrouping(),
