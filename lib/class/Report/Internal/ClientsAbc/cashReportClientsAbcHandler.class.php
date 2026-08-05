@@ -9,8 +9,6 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
 
     public function handle(array $params): string
     {
-        $reportService = new cashReportClientsAbcService();
-
         $from = DateTimeImmutable::createFromFormat('Y-m-d', $params['from'] ?? date('Y-m-d', strtotime('-365 days')));
         if ($from === false) {
             throw new cashValidateException('Wrong from');
@@ -27,9 +25,11 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
             $params['currency'] = $account->getCurrency();
         }
 
-        $data = $reportService->getDataForPeriodAndCurrency($from, $to, $params['currency']);
+        $current_company_id = $params['company'] ?? 0;
+        $companies = [['id' => 0, 'name' => _w('Все компании')]] + cash()->getModel('cashCompany')->getAll('id');
 
-        $total = array_sum($data);
+        $reportService = new cashReportClientsAbcService();
+        $data = $reportService->getDataForPeriodAndCurrency($current_company_id, $from, $to, $params['currency']);
 
         $a = $params['a'] ?? 80;
         $b = $params['b'] ?? 15;
@@ -42,7 +42,7 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
         ];
 
         $clients = [];
-
+        $total = array_sum($data);
         foreach ($data as $contractorId => $value) {
             $client = new waContact($contractorId);
             if (!$client->exists()) {
@@ -85,8 +85,7 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
         }
 
         /** @var array<cashAccount> $accounts */
-        $accounts = cash()->getEntityRepository(cashAccount::class)
-            ->findAllActiveForContact();
+        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
         $currencies = [];
         foreach ($accounts as $account) {
             if (!isset($currencies[$account->getCurrency()])) {
@@ -97,6 +96,8 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
         return wa()->getView()->renderTemplate(
             wa()->getAppPath('templates/actions/report/internal/ReportClientsAbc.html'),
             [
+                'companies' => $companies,
+                'current_company_id' => $current_company_id,
                 'tableData' => $tableData,
                 'a' => $a,
                 'b' => $b,

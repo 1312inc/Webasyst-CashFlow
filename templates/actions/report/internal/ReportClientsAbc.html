@@ -8,6 +8,26 @@
 
             <div class="fields">
                 <div class="custom-mb-16">
+                    {$company_view = cashHelper::isPremium() && count($companies) > 1}
+                    {if $company_view}
+                    <div class="field">
+                        <div class="name for-input">
+                            [`Company`]
+                        </div>
+                        <div class="value">
+                            <div class="wa-select solid">
+                                <select name="company">
+                                    {foreach $companies as $_company}
+                                    <option value="{$_company.id}"{if $_company.id == $current_company_id} selected{/if}>
+                                        {$_company.name|escape}
+                                    </option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    {/if}
+
                     <div class="field">
                         <div class="name for-input large">
                             [`Currency`]
