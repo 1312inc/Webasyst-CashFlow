@@ -15,7 +15,7 @@ final class cashReportDdsCategoriesHandler implements cashReportHandlerInterface
         }
         $currentPeriod = cashReportPeriod::createForYear($year);
         $current_company_id = $params['company'] ?? 0;
-        $companies = [['id' => 0, 'name' => _w('Все компании')]] + cash()->getModel('cashCompany')->getAll('id');
+        $companies = [['id' => 0, 'name' => _w('All companies')]] + cash()->getModel('cashCompany')->getAll('id');
         $type = new cashReportDdsTypeDto(cashReportDdsService::TYPE_CATEGORY, _w('Categories'), true);
 
         $reportService = new cashReportDdsService();

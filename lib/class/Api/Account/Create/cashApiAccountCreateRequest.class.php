@@ -49,7 +49,7 @@ class cashApiAccountCreateRequest
         }
         if ($company_id) {
             if (!(new cashCompanyModel())->getById($company_id)) {
-                throw new cashValidateException(_w('The company cannot create accounts'));
+                throw new cashValidateException(_w('Invalid company_id value'));
             }
         }
         if ($accountable_contact_id) {

@@ -92,7 +92,7 @@
             {if $company_view}
             <li>
                 <div class="dropdown" id="c-dds-company-dropdown">
-                    <button class="dropdown-toggle custom-mr-16">{if !empty($companies[$current_company_id]['name'])}{$companies[$current_company_id]['name']|escape}{/if}</button>
+                    <button class="dropdown-toggle button outlined custom-mr-16">{if !empty($companies[$current_company_id]['name'])}{$companies[$current_company_id]['name']|escape}{/if}</button>
                     <div class="dropdown-body">
                         <ul class="menu">
                             {foreach $companies as $_company}

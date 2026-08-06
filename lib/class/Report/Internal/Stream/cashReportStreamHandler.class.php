@@ -19,7 +19,7 @@ final class cashReportStreamHandler implements cashReportHandlerInterface
         }
 
         $current_company_id = $params['company'] ?? 0;
-        $companies = [['id' => 0, 'name' => _w('Все компании')]] + cash()->getModel('cashCompany')->getAll('id');
+        $companies = [['id' => 0, 'name' => _w('All companies')]] + cash()->getModel('cashCompany')->getAll('id');
         $reportService = new cashReportStreamService();
         $data = $reportService->getDataForPeriod($current_company_id, $dateFrom, $dateTo);
 

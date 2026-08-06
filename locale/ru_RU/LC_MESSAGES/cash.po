@@ -1839,3 +1839,21 @@ msgstr "Установить фиксированную сумму в валют
 
 msgid "Calculate based on the original transaction amount."
 msgstr "Расчитать от суммы исходной операции."
+
+msgid "Company"
+msgstr "Компания"
+
+msgid "Invalid company_id value"
+msgstr "Неверное значение ид компании"
+
+msgid "Company has not been updated"
+msgstr "Компания не сохранена"
+
+msgid "Company has not been deleted yet"
+msgstr "Компания не удалена"
+
+msgid "Company has not been saved"
+msgstr "Компания не сохранена"
+
+msgid "All companies"
+msgstr "Все компании"
