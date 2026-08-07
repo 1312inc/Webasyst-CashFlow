@@ -56,7 +56,7 @@
         </div>
         <div>
             {if empty($_p.eta)}
-                <span class="nowrap badge purple"><i class="fas fa-check"></i> {if !$_is_free_feature}{if $_is_premium_license}[`Enabled`]{else}[`Available now`]{/if}{/if}</span>
+                <span class="nowrap badge purple"><i class="fas fa-check"></i> {if !$_is_free_feature}[`Available now`]{/if}</span>
             {elseif trim($_p.eta)}
                 <span class="nowrap badge {$_p.eta_class|default:'light-gray'}"><i class="fas fa-clock"></i> {$_p.eta}</span>
             {/if}
@@ -93,9 +93,7 @@
 
             {$_premium_stuff[] = [
               'title' => '[`Multiple companies`]',
-              'body' => '[`Split accounting across different entities such as LLCs, personal, etc.`]',
-              'eta_class' => 'yellow',
-              'eta' => '[`Arriving`]'
+              'body' => '[`Split accounting across different entities such as LLCs, personal, etc.`]'
             ]}
 
             {$_premium_stuff[] = [
