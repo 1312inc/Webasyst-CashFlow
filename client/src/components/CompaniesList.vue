@@ -1,8 +1,8 @@
 <template>
-  <DropdownWaFloating v-if="items.length > 1">
+  <DropdownWaFloating>
     <template #toggler>
-      <button class="button light-gray">
-        {{ selectedCompany?.name }}
+      <button class="c-dropdown-toggle-custom button light-gray width-100">
+        {{ selectedCompany?.name || $t('companies') }}
       </button>
     </template>
     <template #default>
@@ -42,11 +42,13 @@ const selectedCompany = computed(() => {
 
 const items = computed(() => {
   return [
-    {
-      id: 0,
-      name: i18n.t('allCompanies'),
-      sort: -1
-    },
+    ...(companies.value.length
+      ? [{
+          id: 0,
+          name: i18n.t('allCompanies'),
+          sort: -1
+        }]
+      : []),
     ...companies.value
   ]
 })

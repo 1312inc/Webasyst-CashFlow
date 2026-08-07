@@ -6,6 +6,7 @@
   "configureCompanies": "Настроить компании...",
   "companyName": "Название",
   "noCompanies": "Компании не добавлены",
+  "companyAccountsHint": "Связь счетов с компаниями настраивается индивидуально в свойствах каждого счета.",
   "hiddenAccounts": "Скрытые счета",
   "categories": "Статьи",
   "expense": "Расходы",

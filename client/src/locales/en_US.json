@@ -6,6 +6,7 @@
   "configureCompanies": "Configure companies...",
   "companyName": "Name",
   "noCompanies": "No companies yet",
+  "companyAccountsHint": "Accounts are linked with companies in each account individual settings.",
   "hiddenAccounts": "Hidden accounts",
   "categories": "Categories",
   "expense": "Expense",

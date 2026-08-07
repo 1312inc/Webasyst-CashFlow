@@ -23,7 +23,7 @@
       <SearchField />
 
       <div
-        v-if="$appState.isPremium"
+        v-if="$appState.isPremium && $permissions.isAdmin"
         class="custom-mx-12 custom-mb-12"
       >
         <CompaniesList />
@@ -119,6 +119,7 @@ import ContactsList from '@/components/ContactsList/ContactsList'
 import Toggler from '@/components/Toggler/Toggler'
 import Bricks from '@/components/Bricks/Bricks'
 import CompaniesList from '@/components/CompaniesList.vue'
+import { companyContextService } from '@/services/companyContext'
 
 export default {
   components: {
@@ -153,16 +154,22 @@ export default {
       return this.categoriesByType('transfer')
     },
 
+    accountsForCompany () {
+      const companyId = companyContextService.companyId
+      if (!companyId) return this.accounts
+      return this.accounts.filter(account => +account.company_id === companyId)
+    },
+
     accountsSandbox () {
-      return this.accounts.filter(account => account.is_imaginary === -1)
+      return this.accountsForCompany.filter(account => account.is_imaginary === -1)
     },
 
     accountWithoutSandbox () {
-      return this.accounts.filter(account => account.is_imaginary !== -1)
+      return this.accountsForCompany.filter(account => account.is_imaginary !== -1)
     },
 
     accountsList () {
-      return this.showSandbox ? this.accounts : this.accountWithoutSandbox
+      return this.showSandbox ? this.accountsForCompany : this.accountWithoutSandbox
     }
 
   },

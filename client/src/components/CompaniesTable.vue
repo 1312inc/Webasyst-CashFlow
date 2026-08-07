@@ -18,7 +18,15 @@
       </button>
     </div>
 
+    <div
+      v-if="!isLoading && localCompanies.length"
+      class="hint"
+    >
+      {{ $t('companyAccountsHint') }}
+    </div>
+
     <table
+      v-if="!isLoading && localCompanies.length"
       class="bigdata companies-table"
       :class="{ loading: isLoading }"
     >
