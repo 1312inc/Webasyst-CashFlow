@@ -57,12 +57,16 @@ final class cashInitialBalanceCalculator
     public function getOnDateForCurrency(
         cashCurrencyVO $currencyVO,
         DateTimeImmutable $date,
-        waContact $contact
+        waContact $contact,
+        ?int $company_id
     ): ?float {
         $initialBalanceSql = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
             ->select(['sum(ct.amount) balance'])
             ->from('cash_transaction', 'ct')
-            ->join(['join cash_account ca on ct.account_id = ca.id'])
+            ->join([
+                'join cash_account ca on ct.account_id = ca.id',
+                'left join cash_company cmp on ca.company_id = cmp.id'
+            ])
             ->andWhere([
                 'ct.date <= s:from',
                 'account_access' => cash()->getContactRights()->getSqlForAccountJoinWithFullAccess($contact),
@@ -77,6 +81,11 @@ final class cashInitialBalanceCalculator
             ])
             ->addParam('from', $date->format('Y-m-d H:i:s'))
             ->addParam('currency', $currencyVO->getCode());
+
+        if ($company_id) {
+            $initialBalanceSql->addAndWhere('cmp.id = i:company_id')
+                ->addParam('company_id', $company_id);
+        }
 
         $data = $initialBalanceSql->query()->fetchField();
 

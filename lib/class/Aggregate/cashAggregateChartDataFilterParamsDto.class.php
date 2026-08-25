@@ -35,20 +35,27 @@ final class cashAggregateChartDataFilterParamsDto
     public $contact;
 
     /**
+     * @var null|int
+     */
+    public $company_id;
+
+    /**
      * cashAggregateChartDataFilterParamsDto constructor.
      *
      * @param                     $contact
      * @param                     $from
      * @param                     $to
      * @param                     $groupBy
+     * @param int                 $company_id
      * @param cashAggregateFilter $filter
      */
-    public function __construct($contact, $from, $to, $groupBy, cashAggregateFilter $filter)
+    public function __construct($contact, $from, $to, $groupBy, cashAggregateFilter $filter, $company_id = null)
     {
         $this->from = $from;
         $this->to = $to;
         $this->groupBy = $groupBy;
         $this->contact = $contact;
         $this->filter = $filter;
+        $this->company_id = $company_id;
     }
 }

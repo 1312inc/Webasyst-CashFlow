@@ -516,10 +516,6 @@ class cashGraphService
             case $paramsDto->filter->isFilterByCalendar():
                 $sqlParts->addAndWhere('ct.category_id <> -1312');
                 break;
-            case null !== $paramsDto->filter->getCompanyId():
-                $sqlParts->addAndWhere('cmp.id = i:company_id')
-                    ->addParam('company_id', $paramsDto->filter->getCompanyId());
-                break;
             case null !== $paramsDto->filter->getAccountId():
                 $sqlParts->addAndWhere('ct.account_id = i:account_id')
                     ->addParam('account_id', $paramsDto->filter->getAccountId());
@@ -573,6 +569,15 @@ class cashGraphService
 
                 break;
         }
+
+        if (null !== $paramsDto->filter->getCompanyId()) {
+            $sqlParts->addAndWhere('cmp.id = i:company_id')
+                ->addParam('company_id', $paramsDto->filter->getCompanyId());
+        } elseif ($paramsDto->company_id) {
+            $sqlParts->addAndWhere('cmp.id = i:company_id')
+                ->addParam('company_id', $paramsDto->company_id);
+        }
+
         if (!$paramsDto->filter->getAccountId()) {
             if (null !== $paramsDto->filter->getCurrency()) {
                 $sqlParts->addAndWhere('
@@ -705,6 +710,9 @@ class cashGraphService
         if ($paramsDto->filter->getCompanyId()) {
             $sqlParts->addAndWhere('cmp.id = i:company_id')
                 ->addParam('company_id', $paramsDto->filter->getCompanyId());
+        } elseif ($paramsDto->company_id) {
+            $sqlParts->addAndWhere('cmp.id = i:company_id')
+                ->addParam('company_id', $paramsDto->company_id);
         }
 
         $initialBalanceSql = clone $sqlParts;
@@ -836,6 +844,9 @@ class cashGraphService
         if ($paramsDto->filter->getCompanyId()) {
             $sqlParts->addAndWhere('cmp.id = i:company_id')
                 ->addParam('company_id', $paramsDto->filter->getCompanyId());
+        } elseif ($paramsDto->company_id) {
+            $sqlParts->addAndWhere('cmp.id = i:company_id')
+                ->addParam('company_id', $paramsDto->company_id);
         }
         if (!$paramsDto->filter->getAccountId()) {
             if (null !== $paramsDto->filter->getCurrency() && empty($request->imaginary_past_force_add)) {

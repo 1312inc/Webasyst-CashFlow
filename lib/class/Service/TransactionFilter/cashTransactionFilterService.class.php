@@ -124,13 +124,6 @@ final class cashTransactionFilterService
         return !$dto->returnIterator ? $sqlParts->query()->fetchAll() : $sqlParts->query()->getIterator();
     }
 
-
-    private function makeBaseSqlForCompanyFilter(cashTransactionFilterParamsDto $dto, cashSelectQueryParts $select_query_parts)
-    {
-        $select_query_parts->addAndWhere('cmp.id = i:company_id')
-            ->addParam('company_id', $dto->filter->getCompanyId());
-    }
-
     /**
      * @param cashTransactionFilterParamsDto $dto
      * @param cashSelectQueryParts           $selectQueryParts
@@ -318,6 +311,21 @@ final class cashTransactionFilterService
                 ),
             ]);
 
+        $sqlParts->params([
+            'startDate' => $dto->startDate->format('Y-m-d H:i:s'),
+            'endDate' => $dto->endDate->format('Y-m-d H:i:s'),
+            'start' => $dto->start,
+            'limit' => $dto->limit,
+        ]);
+
+        if (null !== $dto->filter->getCompanyId()) {
+            $sqlParts->addAndWhere('cmp.id = i:company_id')
+                ->addParam('company_id', $dto->filter->getCompanyId());
+        } elseif ($dto->company_id) {
+            $sqlParts->addAndWhere('cmp.id = i:company_id')
+                ->addParam('company_id', $dto->company_id);
+        }
+
         if ($dto->start !== null && $dto->limit !== null) {
             $sqlParts->limit($dto->limit)
                 ->offset($dto->start);
@@ -329,19 +337,7 @@ final class cashTransactionFilterService
             $sqlParts->orderBy(['ct.date', 'ct.id']);
         }
 
-        $sqlParts->params(
-            [
-                'startDate' => $dto->startDate->format('Y-m-d H:i:s'),
-                'endDate' => $dto->endDate->format('Y-m-d H:i:s'),
-                'start' => $dto->start,
-                'limit' => $dto->limit,
-            ]
-        );
-
         switch (true) {
-            case null !== $dto->filter->getCompanyId():
-                $this->makeBaseSqlForCompanyFilter($dto, $sqlParts);
-                break;
             case null !== $dto->filter->getAccountId():
                 $this->makeBaseSqlForAccountFilter($dto, $sqlParts);
                 break;

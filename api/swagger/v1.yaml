@@ -319,6 +319,11 @@ paths:
           schema:
             type: string
         - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
+        - in: query
           name: offset
           required: false
           description: Смещение относительно начала отфильтрованного списка операций
@@ -1088,6 +1093,11 @@ paths:
             type: string
             minLength: 1
         - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
+        - in: query
           name: children_help_parents
           description: Включить вложенные операции
           schema:
@@ -1175,6 +1185,11 @@ paths:
           schema:
             type: string
             minLength: 1
+        - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
       responses:
         200:
           description: Набор данных для каждой из валют счетов.
