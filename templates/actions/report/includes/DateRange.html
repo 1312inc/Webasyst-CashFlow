@@ -8,7 +8,12 @@
             function updateDates () {
                 const from = $('.range-container [name="from"]').val();
                 const to = $('.range-container [name="to"]').val();
-                window.location = 'from=' + from + '&to=' + to;
+
+                let params = ['from='+ from, 'to='+ to];
+                {if $company_id}
+                params.push('company={$company_id}');
+                {/if}
+                window.location = params.join('&');
             }
         });
     {else}

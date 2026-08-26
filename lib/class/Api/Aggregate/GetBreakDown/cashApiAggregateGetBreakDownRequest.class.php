@@ -23,6 +23,11 @@ final class cashApiAggregateGetBreakDownRequest
     /**
      * @var int
      */
+    public $company_id;
+
+    /**
+     * @var int
+     */
     public $children_help_parents;
 
     /**

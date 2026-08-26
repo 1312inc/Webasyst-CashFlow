@@ -33,12 +33,18 @@ final class cashApiTransactionGetListRequest
      */
     private $filter;
 
+    /**
+     * @var null|int
+     */
+    private $company_id;
+
     public function __construct(
         ?DateTimeImmutable $from,
         ?DateTimeImmutable $to,
         ?int $offset,
         ?int $limit,
         ?string $filter,
+        ?int $company_id,
         ?int $reverse
     ) {
         if (!$limit || $limit > 500 || $limit < 0) {
@@ -63,6 +69,7 @@ final class cashApiTransactionGetListRequest
         $this->limit = $limit;
         $this->reverse = $reverse;
         $this->filter = $filter;
+        $this->company_id = $company_id;
     }
 
     public function getFrom(): DateTimeImmutable
@@ -88,6 +95,11 @@ final class cashApiTransactionGetListRequest
     public function getFilter(): ?string
     {
         return $this->filter;
+    }
+
+    public function getCompanyId(): ?int
+    {
+        return $this->company_id;
     }
 
     public function getReverse(): bool

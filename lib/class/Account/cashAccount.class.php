@@ -33,6 +33,11 @@ class cashAccount extends cashAbstractEntity
     private $currency;
 
     /**
+     * @var int|null
+     */
+    private $company_id;
+
+    /**
      * @var int
      */
     private $customer_contact_id;
@@ -173,6 +178,26 @@ class cashAccount extends cashAbstractEntity
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCompanyId()
+    {
+        return $this->company_id;
+    }
+
+    /**
+     * @param $company_id
+     *
+     * @return cashAccount
+     */
+    public function setCompanyId($company_id)
+    {
+        $this->company_id = $company_id;
 
         return $this;
     }

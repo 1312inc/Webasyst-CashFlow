@@ -46,12 +46,18 @@ class cashTransactionFilterParamsDto
     public $filter;
 
     /**
+     * @var null|int
+     */
+    public $company_id;
+
+    /**
      * cashTransactionFilterParamsDto constructor.
      *
      * @param cashAggregateFilter    $filter
      * @param DateTimeImmutable|null $startDate
      * @param DateTimeImmutable|null $endDate
      * @param waContact|null         $contact
+     * @param int|null               $company_id
      * @param int|null               $start
      * @param int|null               $limit
      * @param bool                   $returnIterator
@@ -65,7 +71,8 @@ class cashTransactionFilterParamsDto
         int $start = null,
         int $limit = null,
         bool $returnIterator = true,
-        bool $reverse = true
+        bool $reverse = true,
+        ?int $company_id = null,
     ) {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
@@ -75,5 +82,6 @@ class cashTransactionFilterParamsDto
         $this->limit = $limit;
         $this->reverse = $reverse;
         $this->filter = $filter;
+        $this->company_id = $company_id;
     }
 }

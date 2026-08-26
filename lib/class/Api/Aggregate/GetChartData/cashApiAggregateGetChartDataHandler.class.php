@@ -18,7 +18,8 @@ final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterfa
             $request->getFrom(),
             $request->getTo(),
             $request->getGroupBy(),
-            cashAggregateFilter::createFromHash($request->getFilter())
+            cashAggregateFilter::createFromHash($request->getFilter()),
+            $request->getCompanyId()
         );
 
         $graphService = new cashGraphService();
@@ -74,7 +75,8 @@ final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterfa
                         $balance = $initialBalanceCalculator->getOnDateForCurrency(
                             $currency,
                             $paramsDto->from,
-                            wa()->getUser()
+                            wa()->getUser(),
+                            $paramsDto->company_id
                         );
                         if ($balance) {
                             $firstDayPrepend = [

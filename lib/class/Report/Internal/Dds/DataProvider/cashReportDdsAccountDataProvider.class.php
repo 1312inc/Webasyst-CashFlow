@@ -19,23 +19,27 @@ final class cashReportDdsAccountDataProvider implements cashReportDdsDataProvide
     }
 
     /**
+     * @param int $company_id
+     * @param cashReportPeriod $period
      * @return cashReportDdsStatDto[]
+     * @throws waDbException
      * @throws waException
      */
-    public function getDataForPeriod(cashReportPeriod $period): array
+    public function getDataForPeriod(int $company_id, cashReportPeriod $period): array
     {
         $data = $this->transactionModel->query("
             SELECT ct.account_id account, IF(ct.amount < 0, s:cat_ex, s:cat_in) category_type, ca.currency currency, MONTH(ct.date) month, SUM(ct.amount) per_month, ca.is_imaginary
             FROM cash_transaction ct
             JOIN cash_account ca ON ct.account_id = ca.id
             JOIN cash_category cc ON ct.category_id = cc.id
-            WHERE ct.date >= s:start AND ct.date < s:end
+            WHERE ".($company_id ? 'ca.company_id = i:company_id AND ' : '')."ct.date >= s:start AND ct.date < s:end
                 AND ct.category_id <> -1312
                 AND ca.is_archived = 0
                 AND ct.is_archived = 0
                 AND IF (ca.is_imaginary = -1, NULL, true) 
             GROUP BY category_type, ct.account_id, ca.currency, MONTH(ct.date)
         ", [
+            'company_id' => $company_id,
             'cat_ex' => cashCategory::TYPE_EXPENSE,
             'cat_in' => cashCategory::TYPE_INCOME,
             'start'  => $period->getStart()->format('Y-m-d'),

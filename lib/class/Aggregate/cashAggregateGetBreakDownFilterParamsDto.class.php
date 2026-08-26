@@ -33,6 +33,11 @@ final class cashAggregateGetBreakDownFilterParamsDto
     public $contact;
 
     /**
+     * @var null|int
+     */
+    public $company_id;
+
+    /**
      * @var string
      */
     public $detailsBy = self::DETAILS_BY_CATEGORY;
@@ -49,6 +54,7 @@ final class cashAggregateGetBreakDownFilterParamsDto
      * @param                     $from
      * @param                     $to
      * @param cashAggregateFilter $filter
+     * @param int                 $company_id
      * @param string              $detailsBy
      *
      * @throws kmwaRuntimeException
@@ -58,6 +64,7 @@ final class cashAggregateGetBreakDownFilterParamsDto
         $from,
         $to,
         cashAggregateFilter $filter,
+        $company_id = null,
         $detailsBy = self::DETAILS_BY_CATEGORY
     ) {
         $this->from = $from;
@@ -70,5 +77,6 @@ final class cashAggregateGetBreakDownFilterParamsDto
         }
         $this->detailsBy = $detailsBy;
         $this->filter = $filter;
+        $this->company_id = $company_id;
     }
 }

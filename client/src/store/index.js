@@ -6,6 +6,7 @@ import transactionBulk from './modules/transactionBulk'
 import category from './modules/category'
 import account from './modules/account'
 import system from './modules/system'
+import company from './modules/company'
 import entity from './modules/entity'
 import errors from './modules/errors'
 import mediator from './store-mediator'
@@ -61,6 +62,7 @@ export default new Vuex.Store({
     category,
     account,
     system,
+    company,
     entity,
     errors
   },

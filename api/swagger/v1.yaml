@@ -307,16 +307,22 @@ paths:
           description: |
             Хеш-строка с параметрами фильтрации операций.
             Примеры:
-            + **account/1**: операции со счета, ID которого — 1
-            + **category/2**: операции статьи доходов или расходов, ID которой — 2
-            + **contractor/3**: операции, связанных с контактом, ID которого — 3
-            + **import/4**: операции, добавленных в рамках сессии импорта, ID которой — 4
-            + **external/shop.5**: операции, связанные с заказом Shop-Script, ID которого — 5
+            + **company/1**: операции компании, ID которой — 1
+            + **account/2**: операции со счета, ID которого — 2
+            + **category/3**: операции статьи доходов или расходов, ID которой — 3
+            + **contractor/4**: операции, связанных с контактом, ID которого — 4
+            + **import/5**: операции, добавленных в рамках сессии импорта, ID которой — 5
+            + **external/shop.6**: операции, связанные с заказом Shop-Script, ID которого — 6
             + **currency/RUB**: операции, идентификатор валюты которых — RUB
             + **search/qwerty**: операции, в комментариях к которым содержится строка «qwerty»
             + **trash**: только удаленные операции
           schema:
             type: string
+        - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
         - in: query
           name: offset
           required: false
@@ -623,6 +629,12 @@ paths:
         - Счета
       security:
         - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
       responses:
         200:
           description: Список счетов.
@@ -694,6 +706,9 @@ paths:
                   type: string
                   minLength: 3
                   description: 3-буквенный код валюты
+                company_id:
+                  type: integer
+                  description: ID компании
                 accountable_contact_id:
                   type: integer
                   description: ID пользователя привязанного к подотчету
@@ -804,6 +819,9 @@ paths:
                   type: string
                   minLength: 3
                   description: 3-буквенный код валюты
+                company_id:
+                  type: integer
+                  description: ID компании
                 accountable_contact_id:
                   type: integer
                   description: ID пользователя привязанного к подотчету
@@ -929,6 +947,11 @@ paths:
               - day
               - month
               - year
+        - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
       responses:
         200:
           description: Информация об изменении баланса.
@@ -1009,7 +1032,8 @@ paths:
           description: |
             Хеш-строка для фильтрации списка финансовых операций
             Примеры:
-            + **account/1**: операции для счета, ID которого — 1
+            + **company/1**: операции для компании, ID которой — 1
+            + **account/2**: операции для счета, ID которого — 2
             + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
           schema:
             type: string
@@ -1061,12 +1085,18 @@ paths:
           description: |
             Хеш-строка для фильтрации списка финансовых операций
             Примеры:
-            + **account/1**: операции для счета с ID = 1
+            + **company/1**: операции для компании, ID которой = 1
+            + **account/2**: операции для счета с ID = 2
             + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
           required: true
           schema:
             type: string
             minLength: 1
+        - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
         - in: query
           name: children_help_parents
           description: Включить вложенные операции
@@ -1149,11 +1179,17 @@ paths:
             Хеш-строка для фильтрации списка финансовых операций
             Примеры:
             + **all**: все операции
-            + **account/1**: операции для счета, ID которого — 1
+            + **company/1**: операции для компании, ID которой — 1
+            + **account/2**: операции для счета, ID которого — 2
             + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
           schema:
             type: string
             minLength: 1
+        - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
       responses:
         200:
           description: Набор данных для каждой из валют счетов.
@@ -1460,6 +1496,154 @@ paths:
           description: Успешное выполнение запроса.
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.company.create:
+    post:
+      externalDocs:
+        description: cash.company.create
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.company.create/
+      summary: Создает новую компанию.
+      tags:
+        - Компании
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Название компании
+                sort:
+                  type: integer
+                  default: 0
+                  description: Значение сортировки
+              required:
+                - name
+      responses:
+        200:
+          description: Свойства созданной компании.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyInfo'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.company.delete:
+    post:
+      externalDocs:
+        description: cash.company.delete
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.company.delete/
+      summary: Удаляет компанию.
+      tags:
+        - Компании
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: ID компании
+              required:
+                - id
+      responses:
+        204:
+          description: Ответ в случаи удаления компании.
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.company.getList:
+    get:
+      externalDocs:
+        description: cash.company.getList
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.company.getList/
+      summary: Возвращает список всех доступных компаний.
+      tags:
+        - Компании
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        200:
+          description: Список компаний.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyList'
+
+  /cash.company.update:
+    post:
+      externalDocs:
+        description: cash.company.update
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.company.update/
+      summary: Обновляет свойства компании.
+      tags:
+        - Компании
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: ID компании
+                name:
+                  type: string
+                  description: Название компании
+                sort:
+                  type: integer
+                  default: 0
+                  description: Значение сортировки
+              required:
+                - id
+      responses:
+        200:
+          description: Свойства обновленной компании.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyInfo'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
           content:
             application/json:
               schema:
@@ -2170,6 +2354,9 @@ components:
         currency:
           type: string
           description: 3-буквенный код валюты
+        company_id:
+          type: integer
+          description: ID компании
         customer_contact_id:
           type: integer
           description: ID клиента
@@ -2288,6 +2475,24 @@ components:
           nullable: true
           default: null
           description: Имена CSS-классов для отображения иконки Font Awesome
+
+    CompanyInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID компании
+        name:
+          type: string
+          description: Название компании
+        sort:
+          type: integer
+          description: Значение сортировки
+
+    CompanyList:
+      type: array
+      items:
+        $ref: '#/components/schemas/CompanyInfo'
 
     TransactionInfo:
       type: object
@@ -2594,6 +2799,7 @@ components:
         - date
         - account_id
         - category_id
+
     TransactionUpdateRequest:
       type: object
       properties:

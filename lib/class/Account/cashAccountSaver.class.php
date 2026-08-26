@@ -47,6 +47,7 @@ class cashAccountSaver extends cashEntitySaver
                 ->setName($request->getName())
                 ->setIcon($request->getIcon())
                 ->setCurrency($request->getCurrency())
+                ->setCompanyId($request->getCompanyId())
                 ->setIsImaginary($request->getImaginary())
                 ->setCustomerContactId(wa()->getUser()->getId())
                 ->setAccountableContactId($request->getAccountableContactId());

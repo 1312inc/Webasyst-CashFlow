@@ -13,7 +13,10 @@ class cashAccountGetListMethod extends cashApiAbstractMethod
      */
     public function run(): cashApiResponseInterface
     {
-        $response = (new cashApiAccountGetListHandler())->handle(null);
+        $request = new cashApiAccountGetListRequest(
+            $this->get('company_id')
+        );
+        $response = (new cashApiAccountGetListHandler())->handle($request);
 
         return new cashApiAccountGetListResponse($response);
     }
