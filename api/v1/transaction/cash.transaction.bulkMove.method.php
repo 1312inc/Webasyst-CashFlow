@@ -32,6 +32,7 @@ final class cashTransactionBulkMoveMethod extends cashApiNewAbstractMethod
             $this->fromPost('ids', true, ApiParamsCaster::CAST_ARRAY),
             $this->fromPost('category_id', false, ApiParamsCaster::CAST_INT),
             $this->fromPost('account_id', false, ApiParamsCaster::CAST_INT),
+            $this->fromPost('scenario_id', false, ApiParamsCaster::CAST_INT),
             $this->fromPost('contractor_contact_id', false, ApiParamsCaster::CAST_INT),
             $this->fromPost('contractor_contact', false, ApiParamsCaster::CAST_STRING_TRIM)
         );

@@ -47,6 +47,10 @@ final class cashInitialBalanceCalculator
             case null !== $paramsDto->filter->getContractorId():
                 $initialBalanceSql->addAndWhere('0');
                 break;
+            case null !== $paramsDto->filter->getScenarioId():
+                $initialBalanceSql->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
+                    ->addParam('scenario_id', $paramsDto->filter->getScenarioId());
+                break;
         }
 
         $data = $initialBalanceSql->query()->fetchAll('currency', 1);

@@ -40,6 +40,11 @@ class cashApiTransactionUpdateRequest
     /**
      * @var int|null
      */
+    private $scenario_id;
+
+    /**
+     * @var int|null
+     */
     private $contractorContactId;
 
     /**
@@ -124,6 +129,7 @@ class cashApiTransactionUpdateRequest
         DateTimeImmutable $date,
         int $accountId,
         int $categoryId,
+        ?int $scenario_id,
         ?int $contractorContactId,
         ?string $contractor,
         ?string $description,
@@ -143,6 +149,7 @@ class cashApiTransactionUpdateRequest
         $this->date = $date;
         $this->accountId = $accountId;
         $this->categoryId = $categoryId;
+        $this->scenario_id = $scenario_id;
         $this->contractorContactId = $contractorContactId;
         $this->contractor = $contractor;
         $this->description = $description;
@@ -179,6 +186,11 @@ class cashApiTransactionUpdateRequest
     public function getCategoryId(): int
     {
         return $this->categoryId;
+    }
+
+    public function getScenarioId(): ?int
+    {
+        return $this->scenario_id;
     }
 
     public function getContractorContactId(): ?int

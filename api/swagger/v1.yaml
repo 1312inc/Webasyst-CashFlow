@@ -99,6 +99,10 @@ paths:
                   minimum: 1
                   default: null
                   description: ID счета, на который нужно перенести указанные операции
+                scenario_id:
+                  type: integer
+                  default: null
+                  description: ID сценария
                 contractor_contact_id:
                   type: integer
                   minimum: 1
@@ -313,6 +317,7 @@ paths:
             + **contractor/4**: операции, связанных с контактом, ID которого — 4
             + **import/5**: операции, добавленных в рамках сессии импорта, ID которой — 5
             + **external/shop.6**: операции, связанные с заказом Shop-Script, ID которого — 6
+            + **scenario/7**: операции, связанные со сценарием, ID которого — 7
             + **currency/RUB**: операции, идентификатор валюты которых — RUB
             + **search/qwerty**: операции, в комментариях к которым содержится строка «qwerty»
             + **trash**: только удаленные операции
@@ -397,6 +402,7 @@ paths:
             + **contractor/3**: операции, связанных с контактом, ID которого — 3
             + **import/4**: операции, добавленных в рамках сессии импорта, ID которой — 4
             + **external/shop.5**: операции, связанные с заказом Shop-Script, ID которого — 5
+            + **scenario/6**: операции, связанные со сценарием, ID которого — 6
             + **currency/RUB**: операции, идентификатор валюты которых — RUB
             + **search/qwerty**: операции, в комментариях к которым содержится строка «qwerty»
             + **trash**: только удаленные операции
@@ -952,6 +958,11 @@ paths:
           description: ID компании
           schema:
             type: integer
+        - in: query
+          name: scenario_id
+          description: ID сценария
+          schema:
+            type: integer
       responses:
         200:
           description: Информация об изменении баланса.
@@ -1034,6 +1045,7 @@ paths:
             Примеры:
             + **company/1**: операции для компании, ID которой — 1
             + **account/2**: операции для счета, ID которого — 2
+            + **scenario/3**: операции, связанные со сценарием, ID которого — 3
             + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
           schema:
             type: string
@@ -1087,6 +1099,7 @@ paths:
             Примеры:
             + **company/1**: операции для компании, ID которой = 1
             + **account/2**: операции для счета с ID = 2
+            + **scenario/3**: операции, связанные со сценарием, ID которого — 3
             + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
           required: true
           schema:
@@ -1181,6 +1194,7 @@ paths:
             + **all**: все операции
             + **company/1**: операции для компании, ID которой — 1
             + **account/2**: операции для счета, ID которого — 2
+            + **scenario/3**: операции, связанные со сценарием, ID которого — 3
             + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
           schema:
             type: string
@@ -1891,6 +1905,172 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /cash.scenario.create:
+    post:
+      externalDocs:
+        description: cash.scenario.create
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.scenario.create/
+      summary: Создает новый сценарий.
+      tags:
+        - Сценарии
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Название сценария
+                color:
+                  type: string
+                  description: HTML-обозначение цвета
+                sort:
+                  type: integer
+                  default: 0
+                  description: Значение сортировки
+              required:
+                - name
+      responses:
+        200:
+          description: Свойства созданной компании.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioInfo'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.scenario.delete:
+    post:
+      externalDocs:
+        description: cash.scenario.delete
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.scenario.delete/
+      summary: Удаляет сценарий.
+      tags:
+        - Сценарии
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: ID сценария
+              required:
+                - id
+      responses:
+        204:
+          description: Ответ в случаи удаления сценария.
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.scenario.getList:
+    get:
+      externalDocs:
+        description: cash.scenario.getList
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.scenario.getList/
+      summary: Возвращает список всех доступных сценариев.
+      tags:
+        - Сценарии
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        200:
+          description: Список сценариев.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioList'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cash.scenario.update:
+    post:
+      externalDocs:
+        description: cash.scenario.update
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.scenario.update/
+      summary: Обновляет свойства сценария.
+      tags:
+        - Сценарии
+      security:
+        - ApiKeyAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: ID сценария
+                name:
+                  type: string
+                  description: Название сценария
+                color:
+                  type: string
+                  description: HTML-обозначение цвета
+                sort:
+                  type: integer
+                  default: 0
+                  description: Значение сортировки
+              required:
+                - id
+      responses:
+        200:
+          description: Свойства обновленного сценария.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScenarioInfo'
+        400:
+          description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Доступ запрещен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Не найдено.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /cash.system.getCurrencies:
     get:
       externalDocs:
@@ -2494,6 +2674,27 @@ components:
       items:
         $ref: '#/components/schemas/CompanyInfo'
 
+    ScenarioInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID сценария
+        name:
+          type: string
+          description: Название сценария
+        color:
+          type: string
+          description: HTML-обозначение цвета
+        sort:
+          type: integer
+          description: Значение сортировки
+
+    ScenarioList:
+      type: array
+      items:
+        $ref: '#/components/schemas/ScenarioInfo'
+
     TransactionInfo:
       type: object
       properties:
@@ -2536,6 +2737,10 @@ components:
           type: integer
           nullable: true
           description: Идентификатор исходной повторяющейся операции
+        scenario_id:
+          type: integer
+          nullable: true
+          description: Идентификатор сценария
         repeating_data:
           type: object
           nullable: true
@@ -2697,6 +2902,10 @@ components:
         category_id:
           type: integer
           description: ID статьи доходов или расходов
+        scenario_id:
+          type: integer
+          nullable: true
+          description: ID сценария
         contractor_contact_id:
           type: integer
           minimum: 0
@@ -2830,6 +3039,10 @@ components:
         category_id:
           type: integer
           description: ID статьи доходов или расходов
+        scenario_id:
+          type: integer
+          nullable: true
+          description: ID сценария
         contractor_contact_id:
           type: integer
           minimum: 0

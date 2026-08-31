@@ -21,4 +21,9 @@ final class cashApiAggregateGetBalanceFlowRequest
      * @var int|null
      */
     public $company_id = null;
+
+    /**
+     * @var int|null
+     */
+    public $scenario_id;
 }

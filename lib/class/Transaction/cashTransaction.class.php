@@ -51,6 +51,11 @@ class cashTransaction extends cashAbstractEntity
     /**
      * @var int|null
      */
+    private $scenario_id;
+
+    /**
+     * @var int|null
+     */
     protected $create_contact_id;
 
     /**
@@ -279,6 +284,26 @@ class cashTransaction extends cashAbstractEntity
     public function setRepeatingId($repeatingId)
     {
         $this->repeating_id = $repeatingId;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getScenarioId()
+    {
+        return $this->scenario_id;
+    }
+
+    /**
+     * @param $scenario_id
+     *
+     * @return cashTransaction
+     */
+    public function setScenarioId($scenario_id)
+    {
+        $this->scenario_id = $scenario_id;
 
         return $this;
     }
