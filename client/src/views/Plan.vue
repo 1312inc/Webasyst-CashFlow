@@ -71,10 +71,15 @@ const detailsTargetFactForecastLabel = computed(() => {
   }
 })
 
+const isDisplayMonthSelected = computed(() => {
+  return typeof route.query.month === 'string' && MONTH_QUERY_RE.test(route.query.month)
+})
+
 const isEmptyCurrentMonth = computed(() => {
   return planData.value.every(plan => typeof plan.amount !== 'number') &&
     !isTotalPlanMode.value &&
-    !isFetching.value
+    !isFetching.value &&
+    !isDisplayMonthSelected.value
 })
 
 function formatSignedNumber (value) {
