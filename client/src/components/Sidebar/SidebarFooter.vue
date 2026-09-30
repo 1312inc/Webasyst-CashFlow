@@ -3,7 +3,7 @@
 
 <template>
   <ul class="menu">
-    <li v-if="$permissions.isAdmin">
+    <li v-if="$appState.isPremium && $permissions.isAdmin">
       <router-link to="/companies">
         <i class="fas fa-building" />
         <span>{{ $t("companies") }}</span>
