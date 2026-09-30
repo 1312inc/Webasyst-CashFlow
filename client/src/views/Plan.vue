@@ -470,6 +470,11 @@ function getFactAmount (categoryId) {
   return amount === null ? '' : amount
 }
 
+function getFactAmountDisplay (categoryId) {
+  const amount = getFactAmount(categoryId)
+  return amount === '' || amount == null ? 0 : amount
+}
+
 function categoryHasPlan (categoryId) {
   const plan = getPlanAmount(categoryId)
   return plan !== '' && !Number.isNaN(Number(plan))
@@ -757,7 +762,7 @@ function onClickGoToPremium () {
               >
             </td>
             <td class="amount-cell">
-              {{ dashCondition(getFactAmount(category.id)) }}
+              {{ getFactAmountDisplay(category.id) }}
             </td>
             <td
               class="amount-cell bold"
@@ -852,7 +857,7 @@ function onClickGoToPremium () {
               >
             </td>
             <td class="amount-cell">
-              {{ dashCondition(getFactAmount(category.id)) }}
+              {{ getFactAmountDisplay(category.id) }}
             </td>
             <td
               class="amount-cell bold"
