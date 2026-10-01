@@ -78,12 +78,11 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
         ])->fetchAll();
 
         foreach ($plans as &$plan) {
-            $plan['from'] = (is_null($plan['month']) ? null : $date_from);
-            $plan['to'] = (is_null($plan['month']) ? null : $date_to);
+            $is_default = is_null($plan['month']) && empty($request->date);
+            $plan['from'] = ($is_default ? null : $date_from);
+            $plan['to'] = ($is_default ? null : $date_to);
 
-            if (is_null($plan['month'])) {
-                /** для общего типа плана */
-            } else {
+            if (!$is_default) {
                 $plan['amount_fact'] = 0;
                 foreach ($total_facts as $_fact) {
                     $is_currency_type = $plan['currency'] == $_fact['currency'] && $plan['category_id'] == $_fact['category_id'];
