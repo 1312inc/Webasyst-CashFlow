@@ -103,6 +103,7 @@ return array(
     'cash_plan' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
         'currency' => array('varchar', 3, 'null' => 0),
+        'company_id' => array('int', 11),
         'account_id' => array('int', 11),
         'category_id' => array('int', 11, 'null' => 0),
         'month' => array('date'),

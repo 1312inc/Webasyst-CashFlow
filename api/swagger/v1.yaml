@@ -1790,6 +1790,11 @@ paths:
             type: string
             format: date
         - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
+        - in: query
           name: account_id
           description: Фильтр по счету
           schema:
@@ -1809,6 +1814,8 @@ paths:
                       type: integer
                     currency:
                       type: string
+                    company_id:
+                      type: integer
                     account_id:
                       type: integer
                     category_id:
@@ -1856,6 +1863,9 @@ paths:
                   format: date
                   default: null
                   description: Дата плана в формате «гггг-мм-дд» (отсутствие даты = каждый месяц)
+                company_id:
+                  type: integer
+                  description: ID компании
                 account_id:
                   type: integer
                   description: ID счета
@@ -1872,6 +1882,8 @@ paths:
                 properties:
                   currency:
                     type: string
+                  company_id:
+                    type: integer
                   account_id:
                     type: integer
                   category_id:

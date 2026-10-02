@@ -29,4 +29,10 @@ final class cashApiPlanSetRequest
      * @var int
      */
     public $account_id;
+
+    /**
+     * @var int
+     */
+    public $company_id;
+
 }
