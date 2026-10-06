@@ -1766,6 +1766,11 @@ paths:
           schema:
             type: integer
             default: null
+        - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
       responses:
         200:
           description: Список планов (целей)
@@ -1806,6 +1811,12 @@ paths:
         - План
       security:
         - ApiKeyAuth: [ ]
+      parameters:
+        - in: query
+          name: company_id
+          description: ID компании
+          schema:
+            type: integer
       requestBody:
         content:
           application/json:

@@ -17,7 +17,7 @@ const api = axios.create({
   }
 })
 
-const companyScopedMethods = /^cash\.(account\.getList|transaction\.getList|aggregate\.)/
+const companyScopedMethods = /^cash\.(account\.getList|transaction\.getList|aggregate\.|plan\.(get|set)$)/
 
 api.interceptors.request.use((config) => {
   const companyId = companyContextService.companyId
