@@ -66,7 +66,7 @@
           </div>
           <div class="value">
             <a
-              href="/upgrade/"
+              :href="`${$helper.baseUrl}upgrade/`"
               target="_blank"
             >
               <i class="fas fa-star text-yellow" />
