@@ -5,7 +5,7 @@
   <ul class="menu">
     <li v-if="$appState.isPremium && $permissions.isAdmin">
       <router-link to="/companies">
-        <i class="fas fa-building" />
+        <i class="fas fa-university" />
         <span>{{ $t("companies") }}</span>
       </router-link>
     </li>
