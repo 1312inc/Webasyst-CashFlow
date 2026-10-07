@@ -21,12 +21,9 @@
         <span>{{ $t("plugins") }}</span>
       </a>
     </li>
-    <li v-if="$permissions.isAdmin">
+    <li v-if="$permissions.isAdmin && !$appState.isPremium">
       <a :href="`${$helper.baseUrl}upgrade/`">
-        <i
-          class="fas fa-star"
-          :class="{'text-yellow': !$appState.isPremium}"
-        />
+        <i class="fas fa-star text-yellow" />
         <span>{{ $t("premium") }}</span>
       </a>
     </li>

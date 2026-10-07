@@ -58,7 +58,25 @@
         </div>
 
         <div
-          v-if="companies.length"
+          v-if="!isPremium"
+          class="field"
+        >
+          <div class="name">
+            {{ $t("company") }}
+          </div>
+          <div class="value">
+            <a
+              href="/upgrade/"
+              target="_blank"
+            >
+              <i class="fas fa-star text-yellow" />
+              <span class="hint text-yellow bold custom-ml-8">{{ $t("premiumOnly") }}</span>
+            </a>
+          </div>
+        </div>
+
+        <div
+          v-else-if="companies.length"
           class="field"
         >
           <div class="name for-input">
