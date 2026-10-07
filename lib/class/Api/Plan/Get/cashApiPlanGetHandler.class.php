@@ -57,6 +57,8 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
         }
         if (isset($request->company_id)) {
             $where['company_id'] = 'company_id = i:company_id';
+        } else {
+            $where['company_id'] = 'company_id IS NULL';
         }
 
         if (!cash()->getUser()->isAdmin()) {
