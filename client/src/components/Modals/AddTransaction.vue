@@ -545,7 +545,37 @@
                 </div>
               </div>
             </TransitionCollapseHeight>
-          <!-- End endRepeat Date section -->
+            <!-- End endRepeat Date section -->
+
+            <div
+              v-if="showScenarioField"
+              class="custom-mt-16"
+            >
+              <div
+                v-if="showScenarioSelect"
+                class="wa-select small solid"
+              >
+                <select v-model="model.scenario_id">
+                  <option :value="null">
+                    {{ $t('defaultScenario') }}
+                  </option>
+                  <option
+                    v-for="scenario in scenarios"
+                    :key="scenario.id"
+                    :value="scenario.id"
+                  >
+                    {{ scenario.name }}
+                  </option>
+                </select>
+              </div>
+              <div
+                v-else
+                class="small"
+              >
+                {{ $t('specifyScenario') }}
+                <a @click.prevent="showScenarioSelect = true">{{ $t('scenario') }}</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -633,6 +663,7 @@ import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 import entityPageMixin from '@/mixins/entityPageMixin'
 import api from '../../plugins/api'
 import { appState } from '@/services/appState'
+import { scenarioContextService } from '@/services/scenarioContext'
 
 export default {
 
@@ -693,11 +724,13 @@ export default {
         transfer_account_id: null,
         transfer_incoming_amount: null,
         apply_to_all_in_future: false,
-        is_self_destruct_when_due: false
+        is_self_destruct_when_due: false,
+        scenario_id: null
       },
       custom_interval: 'month',
       controlsDisabled: false,
-      showContractorInput: false
+      showContractorInput: false,
+      showScenarioSelect: false
     }
   },
 
@@ -748,8 +781,13 @@ export default {
     ...mapGetters({
       getAccountById: 'account/getById',
       getCategoryById: 'category/getById',
-      getCategoryByType: 'category/getByType'
+      getCategoryByType: 'category/getByType',
+      scenarios: 'scenario/sortedScenarios'
     }),
+
+    showScenarioField () {
+      return this.$appState.isPremium && this.$permissions.isAdmin && this.scenarios.length
+    },
 
     accountsTransfer () {
       return this.accounts.filter(a => a.id !== this.model.account_id)
@@ -850,6 +888,18 @@ export default {
       this.model.amount = `${Math.abs(this.model.amount)}`
     }
 
+    const contextScenarioId = scenarioContextService.scenarioId
+    if (this.model.scenario_id) {
+      this.showScenarioSelect = true
+    } else if (contextScenarioId) {
+      this.model.scenario_id = contextScenarioId
+      this.showScenarioSelect = true
+    }
+
+    if (this.$appState.isPremium && this.$permissions.isAdmin) {
+      this.$store.dispatch('scenario/getList')
+    }
+
     this.transactionType =
       this.selectedCategory?.type || this.defaultCategoryType
 
@@ -894,6 +944,11 @@ export default {
       this.controlsDisabled = true
 
       const model = { ...this.model }
+      if (!this.showScenarioField || !this.showScenarioSelect) {
+        delete model.scenario_id
+      } else if (!model.scenario_id) {
+        model.scenario_id = null
+      }
       if (model.repeating_interval === 'custom') {
         model.repeating_interval = this.custom_interval
       }

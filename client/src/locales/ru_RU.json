@@ -243,6 +243,8 @@
   "companies": "Компании",
   "scenarios": "Сценарии",
   "defaultScenario": "Базовый сценарий",
+  "specifyScenario": "Указать",
+  "scenario": "сценарий",
   "addScenario": "Добавить сценарий",
   "scenarioName": "Название",
   "noScenarios": "Сценарии не добавлены",
