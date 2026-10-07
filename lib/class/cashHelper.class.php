@@ -83,14 +83,14 @@ final class cashHelper
         {
             $pricing = array(
               'compare_price' => '24 999',
-              'price' => '5 999 <span class="ruble">₽</span>/год'
+              'price' => '6 999 <span class="ruble">₽</span>/год'
             );
         }
         else
         {
             $pricing = array(
               'compare_price' => '$399',
-              'price' => '$99/yr'
+              'price' => '$115/yr'
             );
         }
 
