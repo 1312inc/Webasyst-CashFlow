@@ -82,26 +82,22 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
         ])->fetchAll();
 
         foreach ($plans as &$plan) {
-            $is_default = is_null($plan['month']) && empty($request->date);
-            $plan['from'] = ($is_default ? null : $date_from);
-            $plan['to'] = ($is_default ? null : $date_to);
+            $plan['from'] = (is_null($plan['month']) ? null : $date_from);
+            $plan['to'] = (is_null($plan['month']) ? null : $date_to);
+            $plan['amount_fact'] = 0;
+            foreach ($total_facts as $_fact) {
+                $is_currency_type = $plan['currency'] == $_fact['currency'] && $plan['category_id'] == $_fact['category_id'];
+                if ($is_currency_type && $plan['account_id'] == $_fact['account_id']) {
+                    /** для месячного плана конкретного счета */
+                    $plan['amount_fact'] = $_fact['amount_fact'];
+                    break;
+                } elseif ($is_currency_type) {
+                    /** для месячного плана конкретного счета */
+                    $plan['amount_fact'] += $_fact['amount_fact'];
+                }
 
-            if (!$is_default) {
-                $plan['amount_fact'] = 0;
-                foreach ($total_facts as $_fact) {
-                    $is_currency_type = $plan['currency'] == $_fact['currency'] && $plan['category_id'] == $_fact['category_id'];
-                    if ($is_currency_type && $plan['account_id'] == $_fact['account_id']) {
-                        /** для месячного плана конкретного счета */
-                        $plan['amount_fact'] = $_fact['amount_fact'];
-                        break;
-                    } elseif ($is_currency_type) {
-                        /** для месячного плана конкретного счета */
-                        $plan['amount_fact'] += $_fact['amount_fact'];
-                    }
-
-                    if (ifempty($_fact, 'category_parent_id', null) == $plan['category_id']) {
-                        $plan['amount_fact'] += $_fact['amount_fact'];
-                    }
+                if (ifempty($_fact, 'category_parent_id', null) == $plan['category_id']) {
+                    $plan['amount_fact'] += $_fact['amount_fact'];
                 }
             }
         }
