@@ -573,7 +573,7 @@
                 class="small"
               >
                 {{ $t('specifyScenario') }}
-                <a @click.prevent="showScenarioSelect = true">{{ $t('scenario') }}</a>
+                <a @click.prevent="openScenarioSelect">{{ $t('scenario') }}</a>
               </div>
             </div>
           </div>
@@ -730,7 +730,9 @@ export default {
       custom_interval: 'month',
       controlsDisabled: false,
       showContractorInput: false,
-      showScenarioSelect: false
+      showScenarioSelect: false,
+      scenarioSelectOpenedManually: false,
+      scenarioContextOnOpen: 0
     }
   },
 
@@ -861,6 +863,10 @@ export default {
       if ((new Date(val)).getTime() <= new Date().getTime()) {
         this.model.is_self_destruct_when_due = false
       }
+    },
+    'model.scenario_id' (id) {
+      if (this.isModeUpdate || !this.scenarioSelectOpenedManually) return
+      scenarioContextService.scenarioId = id || 0
     }
   },
 
@@ -889,6 +895,7 @@ export default {
     }
 
     const contextScenarioId = scenarioContextService.scenarioId
+    this.scenarioContextOnOpen = contextScenarioId
     if (this.model.scenario_id) {
       this.showScenarioSelect = true
     } else if (contextScenarioId) {
@@ -979,6 +986,10 @@ export default {
       this.$store
         .dispatch('transaction/update', model)
         .then(() => {
+          if (!this.isModeUpdate && this.scenarioSelectOpenedManually && scenarioContextService.scenarioId) {
+            window.location.reload()
+            return
+          }
           if (event.shiftKey) {
             this.$parent.$emit('reOpen')
           } else {
@@ -1015,7 +1026,15 @@ export default {
       }
     },
 
+    openScenarioSelect () {
+      this.scenarioSelectOpenedManually = !this.isModeUpdate
+      this.showScenarioSelect = true
+    },
+
     close () {
+      if (this.scenarioSelectOpenedManually) {
+        scenarioContextService.scenarioId = this.scenarioContextOnOpen
+      }
       this.$parent.$emit('close')
     }
   }
