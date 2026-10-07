@@ -148,6 +148,14 @@ const routes = [
     }
   },
   {
+    path: '/scenarios',
+    name: 'Scenarios',
+    component: () => import('../views/Scenarios.vue'),
+    meta: {
+      requiresAdminRights: true
+    }
+  },
+  {
     path: '/report',
     alias: SSR_MODE_PAGE_URL_ALIASES
   },

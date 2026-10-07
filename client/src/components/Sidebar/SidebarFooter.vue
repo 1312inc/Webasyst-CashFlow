@@ -9,6 +9,12 @@
         <span>{{ $t("companies") }}</span>
       </router-link>
     </li>
+    <li v-if="$appState.isPremium && $permissions.isAdmin">
+      <router-link to="/scenarios">
+        <i class="fas fa-project-diagram" />
+        <span>{{ $t("scenarios") }}</span>
+      </router-link>
+    </li>
     <li v-if="$permissions.isAdmin">
       <router-link to="/trash">
         <i class="fas fa-trash-alt" />

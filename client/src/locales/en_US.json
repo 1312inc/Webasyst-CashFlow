@@ -119,7 +119,8 @@
   "deleteWarning": {
     "account": "DANGER: This will permanently delete the entire Account and ALL TRANSACTIONS without the ability to restore. Are you sure?",
     "category": "DANGER: This will permanently delete the entire Category and ALL TRANSACTIONS without the ability to restore. Are you sure?",
-    "company": "Delete this company?"
+    "company": "Delete this company?",
+    "scenario": "Delete this scenario?"
   },
   "offlineMessage": "No Internet connection",
   "bulkDeleteWarning": "This will delete all selected transactions. Are you sure?",
@@ -240,6 +241,10 @@
   "change": "Change",
   "trash": "Trash",
   "companies": "Companies",
+  "scenarios": "Scenarios",
+  "addScenario": "Add scenario",
+  "scenarioName": "Name",
+  "noScenarios": "No scenarios yet",
   "trashInfo": "Deleted transactions are not counted in any cash flow and balance reports and are visible to the app admins only. Purge or restore transactions from here.",
   "restore": "Restore",
   "restoreInfo": "Editing is disabled for deleted transactions. Select this transaction and restore it first.",
