@@ -242,6 +242,7 @@
   "trash": "Корзина",
   "companies": "Компании",
   "scenarios": "Сценарии",
+  "defaultScenario": "Базовый сценарий",
   "addScenario": "Добавить сценарий",
   "scenarioName": "Название",
   "noScenarios": "Сценарии не добавлены",

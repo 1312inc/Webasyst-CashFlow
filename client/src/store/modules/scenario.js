@@ -1,5 +1,6 @@
 import api from '@/plugins/api'
 import { appStateService } from '@/services/appState'
+import { scenarioContextService } from '@/services/scenarioContext'
 
 export default {
   namespaced: true,
@@ -97,6 +98,9 @@ export default {
       try {
         await api.post('cash.scenario.delete', { id })
         commit('removeScenario', id)
+        if (scenarioContextService.scenarioId === id) {
+          scenarioContextService.scenarioId = 0
+        }
       } catch (_) {
         return false
       }

@@ -2,6 +2,7 @@ import axios from 'axios'
 import store from '../store'
 import { i18n } from './locale'
 import { companyContextService } from '@/services/companyContext'
+import { scenarioContextService } from '@/services/scenarioContext'
 import { appStateService } from '@/services/appState'
 
 const baseApiUrl = appStateService.baseApiUrl
@@ -21,24 +22,32 @@ const companyQueryMethods = /^cash\.(account\.getList|transaction\.getList|aggre
 const companyBodyMethods = /^cash\.plan\.set$/
 
 api.interceptors.request.use((config) => {
+  const methodName = config.url?.split('?')[0]
   const companyId = companyContextService.companyId
-  if (!companyId) return config
 
-  const method = config.url?.split('?')[0]
-  if (!method) return config
+  if (companyId && methodName) {
+    if (companyQueryMethods.test(methodName)) {
+      config.params = {
+        ...config.params,
+        company_id: companyId
+      }
+    }
 
-  if (companyQueryMethods.test(method)) {
-    config.params = {
-      ...config.params,
-      company_id: companyId
+    if (companyBodyMethods.test(methodName)) {
+      const data = typeof config.data === 'string' ? JSON.parse(config.data) : (config.data || {})
+      config.data = {
+        ...data,
+        company_id: companyId
+      }
     }
   }
 
-  if (companyBodyMethods.test(method)) {
-    const data = typeof config.data === 'string' ? JSON.parse(config.data) : (config.data || {})
-    config.data = {
-      ...data,
-      company_id: companyId
+  const scenarioId = scenarioContextService.scenarioId
+  const httpMethod = (config.method || 'get').toLowerCase()
+  if (scenarioId && httpMethod === 'get') {
+    config.params = {
+      ...config.params,
+      scenario_id: scenarioId
     }
   }
 

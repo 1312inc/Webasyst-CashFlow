@@ -242,6 +242,7 @@
   "trash": "Trash",
   "companies": "Companies",
   "scenarios": "Scenarios",
+  "defaultScenario": "Default scenario",
   "addScenario": "Add scenario",
   "scenarioName": "Name",
   "noScenarios": "No scenarios yet",
