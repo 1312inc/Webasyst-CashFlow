@@ -9,6 +9,7 @@ import { locale, i18n } from '@/plugins/locale'
 import store from '@/store'
 import Modal from '@/components/Modal'
 import { appState, appStateService } from '@/services/appState'
+import { companyContextService } from '@/services/companyContext'
 import { useRoute, useRouter } from 'vue-router/composables'
 import { moment } from '@/plugins/numeralMoment'
 
@@ -48,6 +49,13 @@ let isSyncingUrl = false
 const isTotalPlanMode = computed(() => currentMonthFirstDay.value == null)
 
 const currencies = computed(() => store.getters['account/currenciesInAccounts'] || [])
+const companies = computed(() => store.getters['company/sortedCompanies'] || [])
+const selectedCompanyName = computed(() => {
+  if (!companies.value.length) return ''
+  const companyId = companyContextService.companyId
+  if (!companyId) return i18n.t('allCompanies')
+  return companies.value.find(company => company.id === companyId)?.name || ''
+})
 const filteredPlanData = computed(() => {
   if (!selectedCurrency.value) return planData.value
   return planData.value.filter(plan => plan.currency === selectedCurrency.value)
@@ -609,7 +617,19 @@ function onClickGoToPremium () {
 
 <template>
   <div class="box custom-p-16">
-    <h1>{{ $t('planView.title') }}</h1>
+    <div class="flexbox middle space-16 custom-mb-16">
+      <div>
+        <h1 class="custom-m-0">
+          {{ $t('planView.title') }}
+        </h1>
+      </div>
+      <div
+        v-if="selectedCompanyName"
+        class="hint"
+      >
+        {{ selectedCompanyName }}
+      </div>
+    </div>
     <div class="flexbox vertical-mobile space-16">
       <div class="flexbox middle space-16 wide">
         <div class="flexbox middle space-8">
