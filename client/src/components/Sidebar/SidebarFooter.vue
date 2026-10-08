@@ -11,7 +11,7 @@
     </li>
     <li v-if="$appState.isPremium && $permissions.isAdmin">
       <router-link to="/scenarios">
-        <i class="fas fa-project-diagram" />
+        <i class="fas fa-code-branch" />
         <span>{{ $t("scenarios") }}</span>
       </router-link>
     </li>
