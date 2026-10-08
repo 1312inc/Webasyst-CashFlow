@@ -1,7 +1,10 @@
 <template>
-  <DropdownWaFloating>
+  <DropdownWaFloating v-if="companies.length">
     <template #toggler>
-      <button class="c-dropdown-toggle-custom button light-gray width-100">
+      <button
+        class="c-dropdown-toggle-custom button width-100"
+        :class="{ 'light-gray': !selectedCompany?.id }"
+      >
         {{ selectedCompany?.name || $t('companies') }}
       </button>
     </template>
@@ -16,9 +19,6 @@
         >
           <a @click.prevent="onCompanyClick(company)">{{ company.name }} </a>
         </li>
-        <li>
-          <a @click.prevent="onConfigureCompanies">{{ $t('configureCompanies') }}</a>
-        </li>
       </ul>
     </template>
   </DropdownWaFloating>
@@ -30,9 +30,7 @@ import DropdownWaFloating from './Inputs/DropdownWaFloating.vue'
 import { i18n } from '@/plugins/locale'
 import { companyContextService } from '../services/companyContext'
 import { useStore } from '../composables/useStore'
-import { useRouter } from 'vue-router/composables'
 
-const router = useRouter()
 const store = useStore()
 
 const companies = computed(() => store.getters['company/sortedCompanies'])
@@ -56,10 +54,6 @@ const items = computed(() => {
 const onCompanyClick = (company) => {
   companyContextService.companyId = company.id
   window.location.reload()
-}
-
-const onConfigureCompanies = () => {
-  router.push({ name: 'Companies' })
 }
 
 onMounted(async () => {

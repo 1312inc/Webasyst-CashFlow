@@ -36,8 +36,9 @@ final class cashRightConfig extends waRightConfig
         }
 
         $items = [];
+        $company_names = cash()->getModel('cashCompany')->select('id, name')->fetchAll('id', true);
         foreach (cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact() as $account) {
-            $items[$account->getId()] = $account->getName();
+            $items[$account->getId()] = ($account->getCompanyId() ? ifset($company_names, $account->getCompanyId(), '').' > ' : '').$account->getName();
         }
 
         $this->addItem(self::RIGHT_SEE_REPORTS, _w('Can see reports'), 'checkbox');

@@ -55,6 +55,11 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
         if (isset($request->account_id)) {
             $where['account_id'] = 'account_id = i:account_id';
         }
+        if (isset($request->company_id)) {
+            $where['company_id'] = 'company_id = i:company_id';
+        } else {
+            $where['company_id'] = 'company_id IS NULL';
+        }
 
         if (!cash()->getUser()->isAdmin()) {
             $ids = cash()->getContactRights()->getCategoryIdsForContact(wa()->getUser());
@@ -70,35 +75,31 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
             SELECT *, NULL `from`, NULL `to`, NULL amount_fact
             FROM cash_plan
             WHERE ".implode(' AND ', $where)."
-            ORDER BY currency, account_id, category_id, `month` DESC
+            ORDER BY currency, company_id, account_id, category_id, `month` DESC
         ", [
             'currency'    => $request->currency,
             'category_id' => $request->category_id,
             'account_id'  => $request->account_id,
+            'company_id'  => $request->company_id,
         ])->fetchAll();
 
         foreach ($plans as &$plan) {
             $plan['from'] = (is_null($plan['month']) ? null : $date_from);
             $plan['to'] = (is_null($plan['month']) ? null : $date_to);
+            $plan['amount_fact'] = 0;
+            foreach ($total_facts as $_fact) {
+                $is_currency_type = $plan['currency'] == $_fact['currency'] && $plan['category_id'] == $_fact['category_id'];
+                if ($is_currency_type && $plan['account_id'] == $_fact['account_id']) {
+                    /** для месячного плана конкретного счета */
+                    $plan['amount_fact'] = $_fact['amount_fact'];
+                    break;
+                } elseif ($is_currency_type) {
+                    /** для месячного плана конкретного счета */
+                    $plan['amount_fact'] += $_fact['amount_fact'];
+                }
 
-            if (is_null($plan['month'])) {
-                /** для общего типа плана */
-            } else {
-                $plan['amount_fact'] = 0;
-                foreach ($total_facts as $_fact) {
-                    $is_currency_type = $plan['currency'] == $_fact['currency'] && $plan['category_id'] == $_fact['category_id'];
-                    if ($is_currency_type && $plan['account_id'] == $_fact['account_id']) {
-                        /** для месячного плана конкретного счета */
-                        $plan['amount_fact'] = $_fact['amount_fact'];
-                        break;
-                    } elseif ($is_currency_type) {
-                        /** для месячного плана конкретного счета */
-                        $plan['amount_fact'] += $_fact['amount_fact'];
-                    }
-
-                    if (ifempty($_fact, 'category_parent_id', null) == $plan['category_id']) {
-                        $plan['amount_fact'] += $_fact['amount_fact'];
-                    }
+                if (ifempty($_fact, 'category_parent_id', null) == $plan['category_id']) {
+                    $plan['amount_fact'] += $_fact['amount_fact'];
                 }
             }
         }

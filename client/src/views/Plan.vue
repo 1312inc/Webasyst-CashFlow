@@ -36,6 +36,7 @@ function parseCurrencyFromQuery (rawValue) {
 const incomeCategories = computed(() => store.getters['category/getByType']('income'))
 const expenseCategories = computed(() => store.getters['category/getByType']('expense'))
 const planData = ref([])
+const defaultPlanRows = ref([])
 const selectedCurrency = ref(parseCurrencyFromQuery(route.query.currency))
 const currentMonthFirstDay = ref(parseMonthFromQuery(route.query.month))
 const monthPickerEl = ref(null)
@@ -70,10 +71,15 @@ const detailsTargetFactForecastLabel = computed(() => {
   }
 })
 
+const isDisplayMonthSelected = computed(() => {
+  return typeof route.query.month === 'string' && MONTH_QUERY_RE.test(route.query.month)
+})
+
 const isEmptyCurrentMonth = computed(() => {
   return planData.value.every(plan => typeof plan.amount !== 'number') &&
     !isTotalPlanMode.value &&
-    !isFetching.value
+    !isFetching.value &&
+    !isDisplayMonthSelected.value
 })
 
 function formatSignedNumber (value) {
@@ -326,6 +332,7 @@ async function fetchData () {
   isFetching.value = true
   try {
     let nextPlanData
+    let nextDefaultPlanRows = []
     if (isTotalPlanMode.value) {
       nextPlanData = await requestPlanData()
     } else {
@@ -333,10 +340,12 @@ async function fetchData () {
         requestPlanData(),
         requestBreakDownData()
       ])
+      nextDefaultPlanRows = planRows.filter(plan => isPlanMissingMonthRange(plan))
       nextPlanData = mergePlanWithBreakdownFacts(planRows, breakdownData)
     }
     if (token !== fetchToken) return
     planData.value = nextPlanData
+    defaultPlanRows.value = nextDefaultPlanRows
     syncSelectedCurrencyWithAccounts()
   } catch (_) {
   } finally {
@@ -401,6 +410,31 @@ function getPlanAmount (categoryId) {
   return amount === null ? '' : amount
 }
 
+const defaultPlanAmountByCategoryId = computed(() => {
+  const result = {}
+  const rows = !selectedCurrency.value
+    ? defaultPlanRows.value
+    : defaultPlanRows.value.filter(plan => plan.currency === selectedCurrency.value)
+  for (const plan of rows) {
+    if (!plan?.category_id) continue
+    const amount = plan.amount
+    if (amount === null || typeof amount === 'undefined' || amount === '') continue
+    result[plan.category_id] = Number(amount)
+  }
+  return result
+})
+
+function hasDefaultPlanAmount (categoryId) {
+  const defaultAmount = defaultPlanAmountByCategoryId.value[categoryId]
+  return typeof defaultAmount !== 'undefined' && !Number.isNaN(defaultAmount)
+}
+
+function getPlanInputPlaceholder (categoryId) {
+  if (hasDefaultPlanAmount(categoryId)) return defaultPlanAmountByCategoryId.value[categoryId]
+  if (ghostAmounts.value.has(categoryId)) return getPlanAmount(categoryId)
+  return ''
+}
+
 function getOwnFactAmount (categoryId) {
   const raw = planByCategoryId.value[categoryId]?.amount_fact
   if (raw === null || typeof raw === 'undefined' || raw === '') return null
@@ -434,6 +468,11 @@ function getFactAmount (categoryId) {
   if (isTotalPlanMode.value) return ''
   const amount = getComputedFactAmount(categoryId)
   return amount === null ? '' : amount
+}
+
+function getFactAmountDisplay (categoryId) {
+  const amount = getFactAmount(categoryId)
+  return amount === '' || amount == null ? 0 : amount
 }
 
 function categoryHasPlan (categoryId) {
@@ -711,19 +750,19 @@ function onClickGoToPremium () {
             </td>
             <td
               class="amount-cell"
-              :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
+              :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) || hasDefaultPlanAmount(category.id) }"
             >
               <input
                 class="amount-input bold"
                 type="number"
                 :value="ghostAmounts.has(category.id) ? '' : getPlanAmount(category.id)"
-                :placeholder="ghostAmounts.has(category.id) ? getPlanAmount(category.id) : ''"
+                :placeholder="getPlanInputPlaceholder(category.id)"
                 :disabled="isFetching"
                 @change="updatePlanAmount(category.id, $event.target.value)"
               >
             </td>
             <td class="amount-cell">
-              {{ dashCondition(getFactAmount(category.id)) }}
+              {{ getFactAmountDisplay(category.id) }}
             </td>
             <td
               class="amount-cell bold"
@@ -806,19 +845,19 @@ function onClickGoToPremium () {
             </td>
             <td
               class="amount-cell"
-              :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) }"
+              :class="{ 'is-ghost-amount': ghostAmounts.has(category.id) || hasDefaultPlanAmount(category.id) }"
             >
               <input
                 class="amount-input bold"
                 type="number"
                 :value="ghostAmounts.has(category.id) ? '' : getPlanAmount(category.id)"
-                :placeholder="ghostAmounts.has(category.id) ? getPlanAmount(category.id) : ''"
+                :placeholder="getPlanInputPlaceholder(category.id)"
                 :disabled="isFetching"
                 @change="updatePlanAmount(category.id, $event.target.value)"
               >
             </td>
             <td class="amount-cell">
-              {{ dashCondition(getFactAmount(category.id)) }}
+              {{ getFactAmountDisplay(category.id) }}
             </td>
             <td
               class="amount-cell bold"

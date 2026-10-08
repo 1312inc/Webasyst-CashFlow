@@ -51,6 +51,7 @@ class cashTransactionCreateMethod extends cashApiNewAbstractMethod
             $this->fromPost('date', true, ApiParamsCaster::CAST_DATETIME, 'Y-m-d'),
             $this->fromPost('account_id', true, ApiParamsCaster::CAST_INT),
             $this->fromPost('category_id', true, ApiParamsCaster::CAST_INT),
+            $this->fromPost('scenario_id', false, ApiParamsCaster::CAST_INT),
             $this->fromPost('contractor_contact_id', false, ApiParamsCaster::CAST_INT),
             $this->fromPost('contractor', false, ApiParamsCaster::CAST_STRING_TRIM),
             $this->fromPost('description', false, ApiParamsCaster::CAST_STRING_TRIM),

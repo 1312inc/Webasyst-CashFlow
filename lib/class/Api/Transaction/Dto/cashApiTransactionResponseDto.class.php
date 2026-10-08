@@ -86,6 +86,11 @@ class cashApiTransactionResponseDto extends cashAbstractDto
     public $account_id;
 
     /**
+     * @var int|null
+     */
+    public $scenario_id;
+
+    /**
      * @var bool
      */
     public $planned;
@@ -164,7 +169,7 @@ class cashApiTransactionResponseDto extends cashAbstractDto
         $this->create_contact_id = (int) $this->create_contact_id;
         $this->category_id = (int) $this->category_id;
         $this->account_id = (int) $this->account_id;
-        $this->account_id = (int) $this->account_id;
+        $this->scenario_id = $this->scenario_id ? (int) $this->scenario_id : null;
         $this->is_archived = (bool) $this->is_archived;
         $this->is_onbadge = (bool) $this->is_onbadge;
         $this->is_onbadge = (bool) $this->is_onbadge;

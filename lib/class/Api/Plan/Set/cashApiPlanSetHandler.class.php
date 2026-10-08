@@ -15,6 +15,7 @@ class cashApiPlanSetHandler implements cashApiHandlerInterface
     {
         $data = [
             'currency'    => $request->currency,
+            'company_id'  => $request->company_id,
             'account_id'  => $request->account_id,
             'category_id' => $request->category_id,
             'month'       => ($request->date ? date('Y-m', strtotime($request->date)).'-01' : null),

@@ -57,11 +57,11 @@ class cashTransactionFilterParamsDto
      * @param DateTimeImmutable|null $startDate
      * @param DateTimeImmutable|null $endDate
      * @param waContact|null         $contact
-     * @param int|null               $company_id
      * @param int|null               $start
      * @param int|null               $limit
      * @param bool                   $returnIterator
      * @param bool                   $reverse
+     * @param int|null               $company_id
      */
     public function __construct(
         cashAggregateFilter $filter,
@@ -72,7 +72,7 @@ class cashTransactionFilterParamsDto
         int $limit = null,
         bool $returnIterator = true,
         bool $reverse = true,
-        ?int $company_id = null,
+        ?int $company_id = null
     ) {
         $this->startDate = $startDate;
         $this->endDate = $endDate;

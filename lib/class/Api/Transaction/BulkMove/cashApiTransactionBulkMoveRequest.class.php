@@ -20,6 +20,11 @@ final class cashApiTransactionBulkMoveRequest
     private $accountId;
 
     /**
+     * @var int|null
+     */
+    private $scenario_id;
+
+    /**
      * @var null|int
      */
     private $contractorContactId;
@@ -36,10 +41,17 @@ final class cashApiTransactionBulkMoveRequest
         array $ids,
         ?int $categoryId,
         ?int $accountId,
+        ?int $scenario_id,
         ?int $contractorContactId,
         ?string $contractorName
     ) {
-        if (empty($categoryId) && empty($accountId) && empty($contractorContactId) && empty($contractorName)) {
+        if (
+            empty($categoryId)
+            && empty($accountId)
+            && empty($scenario_id)
+            && empty($contractorContactId)
+            && empty($contractorName)
+        ) {
             throw new cashValidateException(_w('Nothing to move. No params'));
         }
 
@@ -57,6 +69,7 @@ final class cashApiTransactionBulkMoveRequest
         $this->ids = $ids;
         $this->categoryId = $categoryId;
         $this->accountId = $accountId;
+        $this->scenario_id = $scenario_id;
         $this->contractorContactId = $contractorContactId;
         $this->contractorName = $contractorName;
     }
@@ -77,6 +90,11 @@ final class cashApiTransactionBulkMoveRequest
     public function getAccountId(): ?int
     {
         return $this->accountId;
+    }
+
+    public function getScenarioId(): ?int
+    {
+        return $this->scenario_id;
     }
 
     public function getContractorContactId(): ?int

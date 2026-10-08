@@ -67,14 +67,12 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
         }
 
         /** @var cashCategory $category */
-        $category = cash()->getEntityRepository(cashCategory::class)
-            ->findById($request->getCategoryId());
+        $category = cash()->getEntityRepository(cashCategory::class)->findById($request->getCategoryId());
         if (!$category) {
             throw new kmwaNotFoundException(_w('Category not found'));
         }
 
-        $account = cash()->getEntityRepository(cashAccount::class)
-            ->findById($request->getAccountId());
+        $account = cash()->getEntityRepository(cashAccount::class)->findById($request->getAccountId());
         if (!$account) {
             throw new kmwaNotFoundException(_w('Account not found'));
         }
@@ -87,12 +85,19 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
             $newContractor->save();
             $request->setContractorContactId($newContractor->getId());
         }
+        if ($request->getScenarioId()) {
+            $scenario = cash()->getModel('cashScenario')->getById($request->getScenarioId());
+            if (!$scenario) {
+                throw new kmwaNotFoundException(_w('Scenario not found'));
+            }
+        }
 
         $data = [
             'amount' => $request->getAmount(),
             'date' => $request->getDate()->format('Y-m-d'),
             'account_id' => $request->getAccountId(),
             'category_id' => $request->getCategoryId(),
+            'scenario_id' => $request->getScenarioId(),
             'contractor_contact_id' => $request->getContractorContactId(),
             'contractor' => $request->getContractor(),
             'is_repeating' => $request->getIsRepeating(),

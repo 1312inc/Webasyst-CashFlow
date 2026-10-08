@@ -2,7 +2,7 @@
 import BlankBox from '../components/BlankBox.vue'
 import AmChartTarget from './Charts/AmChartTarget.vue'
 import { useStorage } from '@vueuse/core'
-import { computed, ref, shallowRef, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
 import api from '@/plugins/api'
 import moment from 'moment'
 import { useRoute } from 'vue-router/composables'
@@ -138,9 +138,15 @@ watch(activeCurrencyParams, (value) => {
   fetchTarget(value)
 }, { immediate: true })
 
-emitter.on('hitOnChartBalance', (event) => {
+function onHitOnChartBalance (event) {
   fetchDate.value = event.date
   fetchTarget(activeCurrencyParams.value)
+}
+
+emitter.on('hitOnChartBalance', onHitOnChartBalance)
+
+onBeforeUnmount(() => {
+  emitter.off('hitOnChartBalance', onHitOnChartBalance)
 })
 
 function fetchTarget (params) {

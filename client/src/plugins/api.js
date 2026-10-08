@@ -17,18 +17,29 @@ const api = axios.create({
   }
 })
 
-const companyScopedMethods = /^cash\.(account\.getList|transaction\.getList|aggregate\.)/
+const companyQueryMethods = /^cash\.(account\.getList|transaction\.getList|aggregate\.|plan\.get$)/
+const companyBodyMethods = /^cash\.plan\.set$/
 
 api.interceptors.request.use((config) => {
   const companyId = companyContextService.companyId
   if (!companyId) return config
 
   const method = config.url?.split('?')[0]
-  if (!method || !companyScopedMethods.test(method)) return config
+  if (!method) return config
 
-  config.params = {
-    ...config.params,
-    company_id: companyId
+  if (companyQueryMethods.test(method)) {
+    config.params = {
+      ...config.params,
+      company_id: companyId
+    }
+  }
+
+  if (companyBodyMethods.test(method)) {
+    const data = typeof config.data === 'string' ? JSON.parse(config.data) : (config.data || {})
+    config.data = {
+      ...data,
+      company_id: companyId
+    }
   }
 
   return config

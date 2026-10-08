@@ -11,16 +11,19 @@ final class cashApiAggregateGetBalanceFlowHandler implements cashApiHandlerInter
     public function handle($request)
     {
         if ($request->company_id && wa()->getUser()->isAdmin()) {
-            $filter = cashAggregateFilter::createFromHash('company/'.$request->company_id);
+            $aggregate_filter = cashAggregateFilter::createFromHash('company/'.$request->company_id);
+        } elseif ($request->scenario_id) {
+            $aggregate_filter = cashAggregateFilter::createFromHash('scenario/'.$request->scenario_id);
         } else {
-            $filter = new cashAggregateFilter();
+            $aggregate_filter = new cashAggregateFilter();
         }
+
         $paramsDto = new cashAggregateChartDataFilterParamsDto(
             wa()->getUser(),
             $request->from,
             $request->to,
             $request->group_by,
-            $filter
+            $aggregate_filter
         );
 
         $graphService = new cashGraphService();

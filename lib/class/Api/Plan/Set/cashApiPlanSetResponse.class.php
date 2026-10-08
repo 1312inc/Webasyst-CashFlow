@@ -15,9 +15,10 @@ class cashApiPlanSetResponse extends cashApiAbstractResponse
 
         $this->response = $this->singleFilterFields(
             $plan,
-            ['id', 'currency', 'account_id', 'category_id', 'from', 'to', 'amount', 'amount_fact'],
+            ['id', 'currency', 'company_id', 'account_id', 'category_id', 'from', 'to', 'amount', 'amount_fact'],
             [
                 'id' => 'int',
+                'company_id' => 'int',
                 'account_id' => 'int',
                 'category_id' => 'int',
                 'amount' => 'float',

@@ -19,40 +19,63 @@
         <i class="icon16" style="background-image: url('{$wa_url}wa-apps/cash/img/cash48.png'); background-size: 16px 16px; margin-left: -2px;"></i> {if $wa->locale() == 'ru_RU'}Деньги{else}Cash Flow{/if}
     </h5>
 
-    <ul class="bold" style="list-style: none; padding: 0; font-size: 15px;">
+    <ul class="bold" style="list-style: none; padding: 0; font-size: 12px;">
         {$_smthngshwn = 0}
-        {if $info->incomeCount}
+        {$locale = $wa->locale()}
+        {if $info->income_transactions}
             {$_smthngshwn = 1}
-            <li style="padding: 2px 0;" title="{if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}"><span style="color: #22d13d;">{implode(' ', $info->income)} ({$info->incomeCount})</span></li>
+            {foreach $info->income_transactions as $_income}
+            <li style="padding: 2px 0;" title="{if $locale == 'ru_RU'}Доход{else}Income{/if}">
+                <span title="{if $locale == 'ru_RU'}{if $_income.upcoming}Запланированный доход{else}Доход{/if}{else}{if $_income.upcoming}Planned income{else}Income{/if}{/if}" style="color: #22d13d;">{$_income.name|escape} &plus; {$_income.amount|wa_format_number:false} {$_income.currency|escape}</span>
+            </li>
+            {/foreach}
         {/if}
-        {if $info->expenseCount}
+        {if $info->expense_transactions}
             {$_smthngshwn = 1}
-            <li style="padding: 2px 0;" title="{if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}"><span style="color: #ff421a;">{implode(' ', $info->expense)} ({$info->expenseCount})</span></li>
+            {foreach $info->expense_transactions as $_expense}
+            <li style="padding: 2px 0;" title="{if $locale == 'ru_RU'}Расход{else}Expense{/if}">
+                <span title="{if $locale == 'ru_RU'}{if $_expense.upcoming}Запланированный расход{else}Расход{/if}{else}{if $_expense.upcoming}Planned expense{else}Expense{/if}{/if}" style="color: #ff421a;">{$_expense.name|escape} {$_expense.amount|wa_format_number:false} {$_expense.currency|escape}</span>
+            </li>
+            {/foreach}
         {/if}
-        {if $info->profitCount}
+        {if $info->profit_transactions}
             {$_smthngshwn = 1}
-            <li style="padding: 2px 0;" title="{if $wa->locale() == 'ru_RU'}Прибыль{else}Profit{/if}"><span style="color: #1a9afe;">{implode(' ', $info->profit)}  ({$info->profitCount})</span></li>
+            {foreach $info->profit_transactions as $_profit}
+            <li style="padding: 2px 0;" title="{if $locale == 'ru_RU'}Прибыль{else}Profit{/if}">
+                <span title="{if $locale == 'ru_RU'}{if $_profit.upcoming}Запланированная прибыль{else}Прибыль{/if}{else}{if $_profit.upcoming}Planned profit{else}Profit{/if}{/if}" style="color: #1a9afe;">{$_profit.name|escape} {$_profit.amount|wa_format_number:false} {$_profit.currency|escape}</span>
+            </li>
+            {/foreach}
         {/if}
         {if $info->delta}
             {$_smthngshwn = 1}
-            <li style="padding: 10px 0 0; border-top: 1px solid #ddd; margin-top: 10px;" title="{if $wa->locale() == 'ru_RU'}Дельта{else}Delta{/if}"><span style="color: #1a9afe;">{if $wa->locale() == 'ru_RU'}Итого{else}Total{/if} {implode(' ', $info->delta)}</span></li>
+            <li style="padding: 10px 0 0; color: #1a9afe; border-top: 1px solid #ddd; margin-top: 10px;">
+                <span class="text-blue">{if $locale == 'ru_RU'}Итого{else}Total{/if}:</span>
+                {foreach $info->delta as $_currency => $_amount}
+                    <span title="{if $locale == 'ru_RU'}Дельта{else}Delta{/if}">{if !empty($_amount) && $_amount > 0}&plus; {/if}{ifset($_amount, '0', '0.0')|wa_format_number:false} {$_currency|escape}</span>
+                {/foreach}
+                {foreach $info->delta as $_currency => $_amount}
+                    {if ifset($_amount, '1', null)}
+                        <span title="{if $locale == 'ru_RU'}Дельта прогноз{else}Delta forecasted{/if}">{if !empty($_amount) && $_amount > 0}&plus; {/if}{$_amount['1']|wa_format_number:false} {$_currency|escape}</span>
+                    {/if}
+                {/foreach}
+            </li>
         {/if}
     </ul>
     {if !$_smthngshwn}
         <p class="gray align-center" style="line-height: 1.3; margin-bottom: 8px;">
-            {if $wa->locale() == 'ru_RU'}С заказом еще не связано ни одной денежной операции.{else}No transactions are linked with the order yet.{/if}
+            {if $locale == 'ru_RU'}С заказом еще не связано ни одной денежной операции.{else}No transactions are linked with the order yet.{/if}
         </p>
     {/if}
 
     <div class="align-center block" style="margin-top: 0;">
         <div class="custom-mb-8">
-            <a href="{$info->link}?addtransaction=income" target="_blank" class="s-cash-app-badge green nowrap">&plus; {if $wa->locale() == 'ru_RU'}Доход{else}Income{/if}</a>
-            <a href="{$info->link}?addtransaction=expense" target="_blank" class="s-cash-app-badge nowrap">&minus; {if $wa->locale() == 'ru_RU'}Расход{else}Expense{/if}</a>
+            <a href="{$info->link}?addtransaction=income" target="_blank" class="s-cash-app-badge green nowrap">&plus; {if $locale == 'ru_RU'}Доход{else}Income{/if}</a>
+            <a href="{$info->link}?addtransaction=expense" target="_blank" class="s-cash-app-badge nowrap">&minus; {if $locale == 'ru_RU'}Расход{else}Expense{/if}</a>
         </div>
         <br>
         <a href="{$info->link}" target="_blank">
-            {if $wa->locale() == 'ru_RU'}Все операции{else}View transactions{/if}
-            ({$info->incomeCount + $info->expenseCount + $info->profitCount})
+            {if $locale == 'ru_RU'}Все операции{else}View transactions{/if}
+            ({count($info->income_transactions) + count($info->expense_transactions) + count($info->profit_transactions)})
             <i class="icon10 new-window"></i>
         </a>
     </div>

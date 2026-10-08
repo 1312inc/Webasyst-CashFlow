@@ -82,15 +82,15 @@ final class cashHelper
         if (wa()->getLocale() == 'ru_RU')
         {
             $pricing = array(
-              'compare_price' => '34 999',
-              'price' => '9 999 <span class="ruble">₽</span>/год'
+              'compare_price' => '24 999',
+              'price' => '6 999 <span class="ruble">₽</span>/год'
             );
         }
         else
         {
             $pricing = array(
-              'compare_price' => '$599',
-              'price' => '$169/yr'
+              'compare_price' => '$399',
+              'price' => '$115/yr'
             );
         }
 

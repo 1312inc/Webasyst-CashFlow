@@ -103,6 +103,7 @@ return array(
     'cash_plan' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
         'currency' => array('varchar', 3, 'null' => 0),
+        'company_id' => array('int', 11),
         'account_id' => array('int', 11),
         'category_id' => array('int', 11, 'null' => 0),
         'month' => array('date'),
@@ -140,6 +141,15 @@ return array(
             'cash_transaction_external_source_index' => 'external_source',
         ),
     ),
+    'cash_scenario' => array(
+        'id' => array('bigint', 20, 'null' => 0, 'autoincrement' => 1),
+        'name' => array('varchar', 32, 'null' => 0),
+        'color' => array('varchar', 6),
+        'sort' => array('int', 11, 'null' => 0, 'default' => '0'),
+        ':keys' => array(
+            'PRIMARY' => 'id',
+        ),
+    ),
     'cash_transaction' => array(
         'id' => array('bigint', 20, 'null' => 0, 'autoincrement' => 1),
         'date' => array('date', 'null' => 0),
@@ -149,6 +159,7 @@ return array(
         'amount' => array('decimal', "18,4", 'default' => '0.0000'),
         'description' => array('text'),
         'repeating_id' => array('int', 11),
+        'scenario_id' => array('int', 11),
         'create_contact_id' => array('int', 11),
         'create_datetime' => array('datetime', 'null' => 0),
         'update_datetime' => array('datetime'),
