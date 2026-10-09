@@ -144,7 +144,7 @@ return array(
     'cash_scenario' => array(
         'id' => array('bigint', 20, 'null' => 0, 'autoincrement' => 1),
         'name' => array('varchar', 32, 'null' => 0),
-        'color' => array('varchar', 6),
+        'color' => array('varchar', 7),
         'sort' => array('int', 11, 'null' => 0, 'default' => '0'),
         ':keys' => array(
             'PRIMARY' => 'id',
