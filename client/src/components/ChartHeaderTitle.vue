@@ -43,21 +43,6 @@
           </button>
         </div>
       </div>
-      <ul
-        v-if="showScenarioChips"
-        class="chips custom-mt-8 custom-mb-0"
-      >
-        <li :class="{ accented: !scenarioId }">
-          <a @click.prevent="onScenarioClick(0)">{{ $t('defaultScenario') }}</a>
-        </li>
-        <li
-          v-for="scenario in scenarios"
-          :key="scenario.id"
-          :class="{ accented: scenario.id === scenarioId }"
-        >
-          <a @click.prevent="onScenarioClick(scenario.id)">{{ scenario.name }}</a>
-        </li>
-      </ul>
       <p
         v-if="isShowImaginaryMessage"
         class="small custom-mt-12"
@@ -93,7 +78,6 @@ import Modal from '@/components/Modal'
 import Account from '@/components/Modals/AddAccount'
 import Category from '@/components/Modals/AddCategory'
 import ChartHeaderTitleAverage from './ChartHeaderTitleAverage.vue'
-import { scenarioContextService } from '@/services/scenarioContext'
 export default {
   components: {
     Modal,
@@ -111,10 +95,6 @@ export default {
   },
 
   computed: {
-    isPremium () {
-      return this.$appState.isPremium
-    },
-
     currentEntity () {
       if (
         this.$store.state.currentType === 'account' ||
@@ -139,33 +119,8 @@ export default {
       if (!currency) return false
       return this.$route.name === 'Currency' &&
         this.$store.state.account.accounts.some(account => account.is_imaginary === 1 && account.currency === currency)
-    },
-
-    scenarios () {
-      return this.$store.getters['scenario/sortedScenarios']
-    },
-
-    scenarioId () {
-      return scenarioContextService.scenarioId
-    },
-
-    showScenarioChips () {
-      return this.isPremium && this.$permissions.isAdmin && this.scenarios.length
     }
 
-  },
-
-  async mounted () {
-    if (!this.isPremium || !this.$permissions.isAdmin) return
-    const loaded = await this.$store.dispatch('scenario/getList')
-    if (loaded === false) return
-    const scenarioId = scenarioContextService.scenarioId
-    if (!scenarioId) return
-    const exists = this.scenarios.some(scenario => scenario.id === scenarioId)
-    if (!exists) {
-      scenarioContextService.scenarioId = 0
-      window.location.reload()
-    }
   },
 
   methods: {
@@ -178,12 +133,6 @@ export default {
     close () {
       this.open = false
       this.currentComponentInModal = ''
-    },
-
-    onScenarioClick (id) {
-      if (id === scenarioContextService.scenarioId) return
-      scenarioContextService.scenarioId = id
-      window.location.reload()
     }
   }
 }

@@ -294,6 +294,10 @@ body.modal {
 
 .c-dropdown-toggle-custom {
   position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 2em;
 }
 
 .c-dropdown-toggle-custom:after {
