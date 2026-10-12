@@ -621,13 +621,13 @@ function onClickGoToPremium () {
       <div class="flexbox middle space-16">
         <h1 class="custom-m-0">
           {{ $t('planView.title') }}
+          <span
+            v-if="selectedCompanyName"
+            class="hint"
+          >
+            {{ selectedCompanyName }}
+          </span>
         </h1>
-        <div
-          v-if="selectedCompanyName"
-          class="text-gray"
-        >
-          {{ selectedCompanyName }}
-        </div>
       </div>
     </div>
     <div class="flexbox vertical-mobile space-16">
