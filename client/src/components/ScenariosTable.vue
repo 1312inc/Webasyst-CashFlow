@@ -1,35 +1,8 @@
 <template>
-  <div class="scenarios-table-wrap custom-px-24 custom-ml-4 custom-px-12-mobile">
-    <div class="flexbox middle space-12 custom-mb-16">
-      <ColorPicker
-        v-if="editingId === null"
-        v-model="newColor"
-      />
-      <span
-        v-else
-        class="scenario-color"
-        :style="{ backgroundColor: newColor }"
-      />
-      <input
-        v-model="newName"
-        class="bold"
-        type="text"
-        :placeholder="$t('addScenario')"
-        :disabled="isBusy"
-        @keyup.enter="onCreate"
-      >
-      <button
-        class="button green"
-        :disabled="isBusy || !newName.trim()"
-        @click="onCreate"
-      >
-        {{ $t('add') }}
-      </button>
-    </div>
-
+  <div class="settings-table-wrap custom-px-24 custom-ml-4 custom-px-12-mobile">
     <table
-      v-if="!isLoading && localScenarios.length"
-      class="bigdata scenarios-table"
+      v-if="!isLoading"
+      class="bigdata settings-table"
       :class="{ loading: isLoading }"
     >
       <thead>
@@ -42,10 +15,24 @@
           <th class="actions-cell" />
         </tr>
       </thead>
+      <tr>
+        <td class="handle-cell" />
+        <td class="color-cell" />
+        <td />
+        <td class="actions-cell" />
+      </tr>
+      <tr>
+        <td class="handle-cell" />
+        <td class="color-cell" />
+        <td class="default-scenario">
+          {{ $t('defaultScenario') }}
+        </td>
+        <td class="actions-cell" />
+      </tr>
       <draggable
         :list="localScenarios"
         tag="tbody"
-        handle=".scenario-sort-handle"
+        handle=".sort-handle"
         ghost-class="ghost"
         :disabled="isBusy || editingId !== null"
         @end="onSortEnd"
@@ -56,7 +43,7 @@
           :class="{ 'is-editing': editingId === scenario.id }"
         >
           <td class="handle-cell">
-            <span class="scenario-sort-handle">
+            <span class="sort-handle">
               <i class="fas fa-grip-vertical" />
             </span>
           </td>
@@ -88,7 +75,7 @@
             >
             <span
               v-else
-              class="scenario-name"
+              class="row-name"
               @click="startEdit(scenario)"
             >{{ scenario.name }}</span>
           </td>
@@ -115,14 +102,49 @@
           </td>
         </tr>
       </draggable>
+      <tbody>
+        <tr>
+          <td class="handle-cell">
+            <span class="add-handle">
+              <i class="fas fa-plus" />
+            </span>
+          </td>
+          <td
+            class="color-cell"
+            @mousedown="onColorMouseDown"
+          >
+            <ColorPicker
+              v-if="editingId === null"
+              v-model="newColor"
+            />
+            <span
+              v-else
+              class="scenario-color"
+              :style="{ backgroundColor: newColor }"
+            />
+          </td>
+          <td>
+            <input
+              v-model="newName"
+              class="bold full-width"
+              type="text"
+              :placeholder="$t('addScenario')"
+              :disabled="isBusy"
+              @keyup.enter="onCreate"
+            >
+          </td>
+          <td class="actions-cell">
+            <button
+              class="button green small"
+              :disabled="isBusy || !newName.trim()"
+              @click="onCreate"
+            >
+              {{ $t('add') }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
     </table>
-
-    <p
-      v-if="!isLoading && !localScenarios.length"
-      class="gray custom-mt-16"
-    >
-      {{ $t('noScenarios') }}
-    </p>
   </div>
 </template>
 
@@ -273,38 +295,16 @@ onMounted(async () => {
 })
 </script>
 
+<style src="@/assets/styles/settings-table.css"></style>
+
 <style scoped>
-.scenarios-table-wrap {
-  max-width: 800px;
-}
-
-.scenarios-table .handle-cell {
-  width: 2rem;
-}
-
-.scenarios-table .color-cell {
+.color-cell {
   width: 4rem;
 }
 
-.scenarios-table .actions-cell {
-  width: 6rem;
-  text-align: right;
-}
-
-.scenario-sort-handle {
-  cursor: grab;
-  color: var(--gray);
-  user-select: none;
-  display: inline-flex;
-  padding: 0.25rem;
-}
-
-.scenario-sort-handle:active {
-  cursor: grabbing;
-}
-
-.scenario-name {
-  cursor: pointer;
+.default-scenario {
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
 }
 
 .scenario-color {
@@ -313,13 +313,5 @@ onMounted(async () => {
   height: 30px;
   border-radius: 0.25rem;
   border: 2px solid rgba(0, 0, 0, 0.2);
-}
-
-.scenarios-table tbody tr.ghost {
-  opacity: 0.4;
-}
-
-.scenarios-table tbody tr.is-editing {
-  background: var(--background-color-editable, rgba(0, 0, 0, 0.03));
 }
 </style>

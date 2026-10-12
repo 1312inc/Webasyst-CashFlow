@@ -1,0 +1,43 @@
+.settings-table-wrap {
+  max-width: 800px;
+}
+
+.settings-table .handle-cell {
+  width: 2rem;
+}
+
+.settings-table .actions-cell {
+  width: 8rem;
+  white-space: nowrap;
+}
+
+.sort-handle {
+  cursor: grab;
+  color: var(--gray);
+  user-select: none;
+  display: inline-flex;
+  padding: 0.25rem;
+}
+
+.sort-handle:active {
+  cursor: grabbing;
+}
+
+.add-handle {
+  color: var(--gray);
+  user-select: none;
+  display: inline-flex;
+  padding: 0.25rem;
+}
+
+.row-name {
+  cursor: pointer;
+}
+
+.settings-table tbody tr.ghost {
+  opacity: 0.4;
+}
+
+.settings-table tbody tr.is-editing {
+  background: var(--background-color-editable, rgba(0, 0, 0, 0.03));
+}

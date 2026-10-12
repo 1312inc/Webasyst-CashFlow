@@ -1,23 +1,5 @@
 <template>
-  <div class="companies-table-wrap custom-px-24 custom-ml-4 custom-px-12-mobile">
-    <div class="flexbox middle space-12 custom-mb-16">
-      <input
-        v-model="newName"
-        class="bold"
-        type="text"
-        :placeholder="$t('addCompany')"
-        :disabled="isBusy"
-        @keyup.enter="onCreate"
-      >
-      <button
-        class="button green"
-        :disabled="isBusy || !newName.trim()"
-        @click="onCreate"
-      >
-        {{ $t('add') }}
-      </button>
-    </div>
-
+  <div class="settings-table-wrap custom-px-24 custom-ml-4 custom-px-12-mobile">
     <div
       v-if="!isLoading && localCompanies.length"
       class="hint"
@@ -26,8 +8,8 @@
     </div>
 
     <table
-      v-if="!isLoading && localCompanies.length"
-      class="bigdata companies-table"
+      v-if="!isLoading"
+      class="bigdata settings-table"
       :class="{ loading: isLoading }"
     >
       <thead>
@@ -40,7 +22,7 @@
       <draggable
         :list="localCompanies"
         tag="tbody"
-        handle=".company-sort-handle"
+        handle=".sort-handle"
         ghost-class="ghost"
         :disabled="isBusy || editingId !== null"
         @end="onSortEnd"
@@ -51,7 +33,7 @@
           :class="{ 'is-editing': editingId === company.id }"
         >
           <td class="handle-cell">
-            <span class="company-sort-handle">
+            <span class="sort-handle">
               <i class="fas fa-grip-vertical" />
             </span>
           </td>
@@ -69,7 +51,7 @@
             >
             <template v-else>
               <span
-                class="company-name"
+                class="row-name"
                 @click="startEdit(company)"
               >{{ company.name }}</span>
               <div
@@ -121,14 +103,35 @@
           </td>
         </tr>
       </draggable>
+      <tbody>
+        <tr>
+          <td class="handle-cell">
+            <span class="add-handle">
+              <i class="fas fa-plus" />
+            </span>
+          </td>
+          <td>
+            <input
+              v-model="newName"
+              class="bold full-width"
+              type="text"
+              :placeholder="$t('addCompany')"
+              :disabled="isBusy"
+              @keyup.enter="onCreate"
+            >
+          </td>
+          <td class="actions-cell">
+            <button
+              class="button green small"
+              :disabled="isBusy || !newName.trim()"
+              @click="onCreate"
+            >
+              {{ $t('add') }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
     </table>
-
-    <p
-      v-if="!isLoading && !localCompanies.length"
-      class="gray custom-mt-16"
-    >
-      {{ $t('noCompanies') }}
-    </p>
   </div>
 </template>
 
@@ -274,36 +277,9 @@ onMounted(async () => {
 })
 </script>
 
+<style src="@/assets/styles/settings-table.css"></style>
+
 <style scoped>
-.companies-table-wrap {
-  max-width: 800px;
-}
-
-.companies-table .handle-cell {
-  width: 2rem;
-}
-
-.companies-table .actions-cell {
-  width: 6rem;
-  text-align: right;
-}
-
-.company-sort-handle {
-  cursor: grab;
-  color: var(--gray);
-  user-select: none;
-  display: inline-flex;
-  padding: 0.25rem;
-}
-
-.company-sort-handle:active {
-  cursor: grabbing;
-}
-
-.company-name {
-  cursor: pointer;
-}
-
 .company-accounts {
   gap: 0.35rem;
   margin-top: 0.4rem;
@@ -325,13 +301,5 @@ onMounted(async () => {
   flex-shrink: 0;
   object-fit: cover;
   font-size: 0.7em;
-}
-
-.companies-table tbody tr.ghost {
-  opacity: 0.4;
-}
-
-.companies-table tbody tr.is-editing {
-  background: var(--background-color-editable, rgba(0, 0, 0, 0.03));
 }
 </style>
