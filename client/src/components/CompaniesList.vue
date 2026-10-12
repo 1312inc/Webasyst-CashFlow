@@ -36,8 +36,7 @@
             <a @click.prevent="onScenarioClick(0)">
               <span class="icon">
                 <i
-                  class="fas fa-circle"
-                  style="color: var(--light-gray);"
+                  class="fas fa-code-branch"
                 />
               </span>
               <span>{{ $t('defaultScenario') }}</span>
@@ -51,7 +50,7 @@
             <a @click.prevent="onScenarioClick(scenario.id)">
               <span class="icon">
                 <i
-                  class="fas fa-circle"
+                  class="fas fa-code-branch"
                   :style="{ color: scenario.color }"
                 />
               </span>

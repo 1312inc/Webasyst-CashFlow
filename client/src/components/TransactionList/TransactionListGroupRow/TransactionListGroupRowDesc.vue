@@ -11,7 +11,7 @@
     <div
       v-if="scenario"
       :style="`color:${scenario.color}`"
-      class="text-ellipsis nowrap"
+      class="text-ellipsis nowrap custom-ml-4 small"
     >
       <i class="fas fa-code-branch" />
       {{ scenario.name }}
