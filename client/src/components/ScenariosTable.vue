@@ -105,6 +105,14 @@
                 v-if="editingId !== scenario.id"
                 class="button light-gray small"
                 :disabled="isBusy"
+                @click="onView(scenario)"
+              >
+                {{ $t('viewScenario') }}
+              </button>
+              <button
+                v-if="editingId !== scenario.id"
+                class="button light-gray small"
+                :disabled="isBusy"
                 :title="$t('update')"
                 @click="startEdit(scenario)"
               >
@@ -171,13 +179,16 @@
 <script setup>
 import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import draggable from 'vuedraggable'
+import { useRouter } from 'vue-router/composables'
 import { useStore } from '@/composables/useStore'
 import { i18n } from '@/plugins/locale'
+import { scenarioContextService } from '@/services/scenarioContext'
 import ColorPicker from '@/components/Inputs/ColorPicker.vue'
 
 const DEFAULT_COLOR = '#1a9afe'
 
 const store = useStore()
+const router = useRouter()
 
 const newName = ref('')
 const newColor = ref(DEFAULT_COLOR)
@@ -273,6 +284,12 @@ const onCreate = async () => {
   }
 }
 
+const onView = (scenario) => {
+  if (isBusy.value) return
+  scenarioContextService.scenarioId = scenario.id
+  window.location.href = router.resolve({ name: 'Home' }).href
+}
+
 const onDelete = async (scenario) => {
   if (isBusy.value) return
   if (!confirm(i18n.t('deleteWarning.scenario'))) return
@@ -325,6 +342,10 @@ onMounted(async () => {
 .default-scenario {
   padding-top: 0.8rem;
   padding-bottom: 0.8rem;
+}
+
+.settings-table .actions-cell {
+  width: auto;
 }
 
 .scenario-color {

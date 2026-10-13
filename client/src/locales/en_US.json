@@ -247,6 +247,7 @@
   "specifyScenario": "Specify",
   "scenario": "scenario",
   "addScenario": "Add scenario",
+  "viewScenario": "View",
   "scenarioName": "Name",
   "noScenarios": "No scenarios yet",
   "trashInfo": "Deleted transactions are not counted in any cash flow and balance reports and are visible to the app admins only. Purge or restore transactions from here.",
