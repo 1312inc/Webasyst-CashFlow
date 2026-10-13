@@ -85,7 +85,7 @@
                 :title="$t('update')"
                 @click="startEdit(company)"
               >
-                <i class="fas fa-pencil-alt" />
+                <i class="fas fa-pencil-alt text-blue" />
               </button>
               <button
                 class="button light-gray small"
@@ -93,7 +93,7 @@
                 :title="$t('delete')"
                 @click="onDelete(company)"
               >
-                <i class="fas fa-trash-alt" />
+                <i class="fas fa-trash-alt text-red" />
               </button>
             </div>
           </td>
@@ -118,7 +118,7 @@
           </td>
           <td class="actions-cell">
             <button
-              class="button green small"
+              class="button small"
               :disabled="isBusy || !newName.trim()"
               @click="onCreate"
             >
@@ -128,6 +128,13 @@
         </tr>
       </tbody>
     </table>
+
+    <p
+      v-if="!isLoading"
+      class="small"
+    >
+      {{ $t('companyAccountsOneMoreHint') }}
+    </p>
   </div>
 </template>
 

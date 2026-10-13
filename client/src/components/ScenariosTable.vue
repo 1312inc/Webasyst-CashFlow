@@ -6,12 +6,6 @@
     >
       {{ $t('scenariosHint') }}
     </p>
-    <p
-      v-if="!isLoading"
-      class="small"
-    >
-      {{ $t('scenariosHintDelete') }}
-    </p>
 
     <table
       v-if="!isLoading"
@@ -116,7 +110,7 @@
                 :title="$t('update')"
                 @click="startEdit(scenario)"
               >
-                <i class="fas fa-pencil-alt" />
+                <i class="fas fa-pencil-alt text-blue" />
               </button>
               <button
                 class="button light-gray small"
@@ -124,7 +118,7 @@
                 :title="$t('delete')"
                 @click="onDelete(scenario)"
               >
-                <i class="fas fa-trash-alt" />
+                <i class="fas fa-trash-alt text-red" />
               </button>
             </div>
           </td>
@@ -163,8 +157,9 @@
           </td>
           <td class="actions-cell">
             <button
-              class="button green small"
+              class="button small"
               :disabled="isBusy || !newName.trim()"
+              :style="{ backgroundColor: newColor }"
               @click="onCreate"
             >
               {{ $t('add') }}
@@ -173,6 +168,14 @@
         </tr>
       </tbody>
     </table>
+
+    <p
+      v-if="!isLoading"
+      class="small"
+    >
+      {{ $t('scenariosHintDelete') }}
+    </p>
+
   </div>
 </template>
 

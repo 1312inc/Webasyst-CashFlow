@@ -6,7 +6,8 @@
   "configureCompanies": "Configure companies...",
   "companyName": "Name",
   "noCompanies": "No companies yet",
-  "companyAccountsHint": "Companies allow you to group accounts and keep financial records independently within each group. Accounts are linked with companies in each account individual settings.",
+  "companyAccountsHint": "Companies allow you to group accounts and keep financial records and analyze cash flow independently within each group (company). E.g. an LLC, a project, a group of private cashing accounts.",
+  "companyAccountsOneMoreHint": "Accounts are linked with companies in each account individual settings.",
   "hiddenAccounts": "Hidden accounts",
   "categories": "Categories",
   "expense": "Expense",
@@ -117,10 +118,10 @@
   "tomorrow": "Tomorrow",
   "justCreated": "Just now",
   "deleteWarning": {
-    "account": "DANGER: This will permanently delete the entire Account and ALL TRANSACTIONS without the ability to restore. Are you sure?",
-    "category": "DANGER: This will permanently delete the entire Category and ALL TRANSACTIONS without the ability to restore. Are you sure?",
-    "company": "Delete this company?",
-    "scenario": "Delete this scenario?"
+    "account": "Danger: This will permanently DELETE the entire account and ALL TRANSACTIONS without the ability to restore. Delete the account?",
+    "category": "Danger: This will permanently DELETE the entire category and ALL TRANSACTIONS without the ability to restore. Delete the category?",
+    "company": "This will only delete the company from the list, but all its linked accounts and transactions will remain safe. Delete the company?",
+    "scenario": "Danger: This will permanently DELETE the entire scenario and ALL TRANSACTIONS without the ability to restore (the basic scenario will remain untouched). Delete the scenario?"
   },
   "offlineMessage": "No Internet connection",
   "bulkDeleteWarning": "This will delete all selected transactions. Are you sure?",
@@ -243,6 +244,7 @@
   "companies": "Companies",
   "scenarios": "Scenarios",
   "scenariosHint": "The basic scenario includes a general narrative and an operations plan, while custom scenarios allow you to supplement it with operations that will only be visible when those scenarios are selected — but will never appear in the basic one. This allows you to model and compare different cash flows without affecting the core financial model.",
+  "scenariosHintDelete": "Easily create new scenarios and name them however you like, e.g. “If we are in” or “If there’s a fire”. When a scenario is no longer needed, simply delete it — all the scenario’s operations will be automatically removed and won’t interfere with creating new scenarios.",
   "defaultScenario": "Basic scenario",
   "specifyScenario": "Specify",
   "scenario": "scenario",
