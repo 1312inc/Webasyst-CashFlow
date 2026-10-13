@@ -1,24 +1,17 @@
 <template>
   <div class="settings-table-wrap custom-px-24 custom-ml-4 custom-px-12-mobile">
-    <div
-      v-if="!isLoading && localCompanies.length"
-      class="hint"
+    <p
+      v-if="!isLoading"
+      class="small"
     >
       {{ $t('companyAccountsHint') }}
-    </div>
+    </p>
 
     <table
       v-if="!isLoading"
       class="bigdata settings-table"
       :class="{ loading: isLoading }"
     >
-      <thead>
-        <tr>
-          <th class="handle-cell" />
-          <th>{{ $t('companyName') }}</th>
-          <th class="actions-cell" />
-        </tr>
-      </thead>
       <draggable
         :list="localCompanies"
         tag="tbody"
@@ -51,9 +44,12 @@
             >
             <template v-else>
               <span
-                class="row-name"
+                class="row-name semibold"
                 @click="startEdit(company)"
-              >{{ company.name }}</span>
+              >
+                <i class="fas fa-university custom-mr-8 text-light-gray"></i>
+                {{ company.name }}
+              </span>
               <div
                 v-if="accountsByCompanyId(company.id).length"
                 class="company-accounts flexbox wrap"

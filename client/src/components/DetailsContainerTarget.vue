@@ -236,7 +236,7 @@ function onCategoryChange (id) {
             <div class="align-center custom-my-16">
               <a
                 :href="`${$helper.baseUrl}upgrade/`"
-                class="button small yellow"
+                class="button small purple"
               >{{ $t('detailsTargetDescLink') }}</a>
             </div>
           </template>

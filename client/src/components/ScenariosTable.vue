@@ -1,5 +1,18 @@
 <template>
   <div class="settings-table-wrap custom-px-24 custom-ml-4 custom-px-12-mobile">
+    <p
+      v-if="!isLoading"
+      class="small"
+    >
+      {{ $t('scenariosHint') }}
+    </p>
+    <p
+      v-if="!isLoading"
+      class="small"
+    >
+      {{ $t('scenariosHintDelete') }}
+    </p>
+
     <table
       v-if="!isLoading"
       class="bigdata settings-table"
@@ -75,9 +88,16 @@
             >
             <span
               v-else
-              class="row-name"
+              class="row-name semibold"
               @click="startEdit(scenario)"
-            >{{ scenario.name }}</span>
+              :style="{ color: scenario.color }"
+            >
+              <i
+                class="fas fa-code-branch custom-mr-8"
+                :style="{ color: scenario.color }"
+              ></i>
+              {{ scenario.name }}
+            </span>
           </td>
           <td class="actions-cell">
             <div class="flexbox middle space-8">
