@@ -19,7 +19,8 @@ final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterfa
             $request->getTo(),
             $request->getGroupBy(),
             cashAggregateFilter::createFromHash($request->getFilter()),
-            $request->getCompanyId()
+            $request->getCompanyId(),
+            $request->getScenarioId()
         );
 
         $graphService = new cashGraphService();

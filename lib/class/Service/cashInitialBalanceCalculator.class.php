@@ -30,10 +30,22 @@ final class cashInitialBalanceCalculator
             ->addParam('from', $date->format('Y-m-d H:i:s'))
             ->groupBy(['ca.currency']);
 
+        if (null !== $paramsDto->filter->getScenarioId()) {
+            $initialBalanceSql->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
+                ->addParam('scenario_id', $paramsDto->filter->getScenarioId());
+        } elseif ($paramsDto->scenario_id) {
+            $initialBalanceSql->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
+                ->addParam('scenario_id', $paramsDto->scenario_id);
+        }
+
         switch (true) {
             case null !== $paramsDto->filter->getCompanyId():
                 $initialBalanceSql->addAndWhere('cmp.id = i:company_id')
                     ->addParam('company_id', $paramsDto->filter->getCompanyId());
+                break;
+            case null !== $paramsDto->company_id:
+                $initialBalanceSql->addAndWhere('cmp.id = i:company_id')
+                    ->addParam('company_id', $paramsDto->company_id);
                 break;
             case null !== $paramsDto->filter->getAccountId():
                 $initialBalanceSql->addAndWhere('ct.account_id = i:account_id')
@@ -46,10 +58,6 @@ final class cashInitialBalanceCalculator
             case null !== $paramsDto->filter->getCategoryId():
             case null !== $paramsDto->filter->getContractorId():
                 $initialBalanceSql->addAndWhere('0');
-                break;
-            case null !== $paramsDto->filter->getScenarioId():
-                $initialBalanceSql->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
-                    ->addParam('scenario_id', $paramsDto->filter->getScenarioId());
                 break;
         }
 

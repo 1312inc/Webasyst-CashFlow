@@ -32,7 +32,8 @@ final class cashApiTransactionGetListHandler implements cashApiHandlerInterface
             $request->getLimit(),
             true,
             $request->getReverse(),
-            $request->getCompanyId()
+            $request->getCompanyId(),
+            $request->getScenarioId()
         );
 
         $transactionFilter = new cashTransactionFilterService();

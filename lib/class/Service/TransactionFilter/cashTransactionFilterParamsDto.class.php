@@ -51,6 +51,11 @@ class cashTransactionFilterParamsDto
     public $company_id;
 
     /**
+     * @var int|null
+     */
+    public $scenario_id;
+
+    /**
      * cashTransactionFilterParamsDto constructor.
      *
      * @param cashAggregateFilter    $filter
@@ -62,6 +67,7 @@ class cashTransactionFilterParamsDto
      * @param bool                   $returnIterator
      * @param bool                   $reverse
      * @param int|null               $company_id
+     * @param int|null               $scenario_id
      */
     public function __construct(
         cashAggregateFilter $filter,
@@ -72,7 +78,8 @@ class cashTransactionFilterParamsDto
         int $limit = null,
         bool $returnIterator = true,
         bool $reverse = true,
-        ?int $company_id = null
+        ?int $company_id = null,
+        ?int $scenario_id = null
     ) {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
@@ -83,5 +90,6 @@ class cashTransactionFilterParamsDto
         $this->reverse = $reverse;
         $this->filter = $filter;
         $this->company_id = $company_id;
+        $this->scenario_id = $scenario_id;
     }
 }

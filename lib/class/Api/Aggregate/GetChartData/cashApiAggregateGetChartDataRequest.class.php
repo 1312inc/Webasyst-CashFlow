@@ -30,13 +30,25 @@ final class cashApiAggregateGetChartDataRequest
      */
     private $company_id;
 
-    public function __construct(DateTimeImmutable $from, DateTimeImmutable $to, string $groupBy, string $filter, $company_id = null)
-    {
+    /**
+     * @var null|int
+     */
+    private $scenario_id;
+
+    public function __construct(
+        DateTimeImmutable $from,
+        DateTimeImmutable $to,
+        string $groupBy,
+        string $filter,
+        $company_id = null,
+        $scenario_id = null
+    ) {
         $this->from = $from;
         $this->to = $to;
         $this->groupBy = $groupBy;
         $this->filter = $filter;
         $this->company_id = $company_id;
+        $this->scenario_id = $scenario_id;
     }
 
     public function getFrom(): DateTimeImmutable
@@ -62,5 +74,10 @@ final class cashApiAggregateGetChartDataRequest
     public function getCompanyId(): ?int
     {
         return $this->company_id;
+    }
+
+    public function getScenarioId(): ?int
+    {
+        return $this->scenario_id;
     }
 }

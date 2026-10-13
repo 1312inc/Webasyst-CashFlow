@@ -20,7 +20,8 @@ final class cashApiAggregateGetBreakDownHandler implements cashApiHandlerInterfa
             $request->from,
             $request->to,
             cashAggregateFilter::createFromHash($request->filter),
-            $request->company_id
+            $request->company_id,
+            $request->scenario_id
         );
 
         $graphService = new cashGraphService();

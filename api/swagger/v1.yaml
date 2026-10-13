@@ -329,6 +329,11 @@ paths:
           schema:
             type: integer
         - in: query
+          name: scenario_id
+          description: ID сценария
+          schema:
+            type: integer
+        - in: query
           name: offset
           required: false
           description: Смещение относительно начала отфильтрованного списка операций
@@ -1049,6 +1054,11 @@ paths:
             + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
           schema:
             type: string
+        - in: query
+          name: scenario_id
+          description: ID сценария
+          schema:
+            type: integer
       responses:
         200:
           description: Информация о балансе.
@@ -1108,6 +1118,11 @@ paths:
         - in: query
           name: company_id
           description: ID компании
+          schema:
+            type: integer
+        - in: query
+          name: scenario_id
+          description: ID сценария
           schema:
             type: integer
         - in: query
@@ -1202,6 +1217,11 @@ paths:
         - in: query
           name: company_id
           description: ID компании
+          schema:
+            type: integer
+        - in: query
+          name: scenario_id
+          description: ID сценария
           schema:
             type: integer
       responses:
