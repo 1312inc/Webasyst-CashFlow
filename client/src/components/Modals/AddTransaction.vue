@@ -899,7 +899,9 @@ export default {
     if (this.model.scenario_id) {
       this.showScenarioSelect = true
     } else if (contextScenarioId) {
-      this.model.scenario_id = contextScenarioId
+      if (!this.isModeUpdate) {
+        this.model.scenario_id = contextScenarioId
+      }
       this.showScenarioSelect = true
     }
 
