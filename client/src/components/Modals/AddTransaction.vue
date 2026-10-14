@@ -592,6 +592,13 @@
                   </ul>
                 </template>
               </DropdownWaFloating>
+              <div
+                v-if="showBasicScenarioDetachHint"
+                class="state-caution-hint custom-mt-8 custom-mb-0"
+              >
+                <i class="fas fa-exclamation-triangle" />
+                {{ $t('basicScenarioDetachHint') }}
+              </div>
             </div>
           </div>
         </div>
@@ -804,6 +811,13 @@ export default {
 
     showScenarioField () {
       return this.$appState.isPremium && this.$permissions.isAdmin && this.scenarios.length
+    },
+
+    showBasicScenarioDetachHint () {
+      return this.isModeUpdate
+        && this.model.id
+        && !this.transaction.scenario_id
+        && !!this.model.scenario_id
     },
 
     selectedScenario () {
