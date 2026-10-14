@@ -551,30 +551,47 @@
               v-if="showScenarioField"
               class="custom-mt-16"
             >
-              <div
-                v-if="showScenarioSelect"
-                class="wa-select small solid"
-              >
-                <select v-model="model.scenario_id">
-                  <option :value="null">
-                    {{ $t('defaultScenario') }}
-                  </option>
-                  <option
-                    v-for="scenario in scenarios"
-                    :key="scenario.id"
-                    :value="scenario.id"
+              <DropdownWaFloating>
+                <template #toggler>
+                  <button
+                    class="c-dropdown-toggle-custom button "
+                    :class="{ 'light-gray': !selectedScenario }"
+                    :style="selectedScenario ? { backgroundColor: selectedScenario.color, color: '#fff' } : null"
                   >
-                    {{ scenario.name }}
-                  </option>
-                </select>
-              </div>
-              <div
-                v-else
-                class="small"
-              >
-                {{ $t('specifyScenario') }}
-                <a @click.prevent="openScenarioSelect">{{ $t('scenario') }}</a>
-              </div>
+                    <span class="icon">
+                      <i class="fas fa-code-branch" />
+                    </span>
+                    {{ selectedScenario ? selectedScenario.name : $t('defaultScenario') }}
+                  </button>
+                </template>
+                <template #default="{ close }">
+                  <ul class="menu">
+                    <li :class="{ selected: !model.scenario_id }">
+                      <a @click.prevent="selectScenario(null, close)">
+                        <span class="icon">
+                          <i class="fas fa-code-branch" />
+                        </span>
+                        <span>{{ $t('defaultScenario') }}</span>
+                      </a>
+                    </li>
+                    <li
+                      v-for="scenario in scenarios"
+                      :key="scenario.id"
+                      :class="{ selected: scenario.id === model.scenario_id }"
+                    >
+                      <a @click.prevent="selectScenario(scenario.id, close)">
+                        <span class="icon">
+                          <i
+                            class="fas fa-code-branch"
+                            :style="{ color: scenario.color }"
+                          />
+                        </span>
+                        <span>{{ scenario.name }}</span>
+                      </a>
+                    </li>
+                  </ul>
+                </template>
+              </DropdownWaFloating>
             </div>
           </div>
         </div>
@@ -658,12 +675,12 @@ import InputCurrency from '@/components/Inputs/InputCurrency'
 import InputContractor from '@/components/Inputs/InputContractor'
 import DateField from '@/components/Inputs/InputDate'
 import DropdownWa from '@/components/Inputs/DropdownWa'
+import DropdownWaFloating from '@/components/Inputs/DropdownWaFloating'
 import TransitionCollapseHeight from '@/components/Transitions/TransitionCollapseHeight'
 import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 import entityPageMixin from '@/mixins/entityPageMixin'
 import api from '../../plugins/api'
 import { appState } from '@/services/appState'
-import { scenarioContextService } from '@/services/scenarioContext'
 
 export default {
 
@@ -672,6 +689,7 @@ export default {
     InputContractor,
     DateField,
     DropdownWa,
+    DropdownWaFloating,
     TransitionCollapseHeight
   },
 
@@ -729,10 +747,7 @@ export default {
       },
       custom_interval: 'month',
       controlsDisabled: false,
-      showContractorInput: false,
-      showScenarioSelect: false,
-      scenarioSelectOpenedManually: false,
-      scenarioContextOnOpen: 0
+      showContractorInput: false
     }
   },
 
@@ -789,6 +804,11 @@ export default {
 
     showScenarioField () {
       return this.$appState.isPremium && this.$permissions.isAdmin && this.scenarios.length
+    },
+
+    selectedScenario () {
+      if (!this.model.scenario_id) return null
+      return this.scenarios.find(scenario => scenario.id === this.model.scenario_id) || null
     },
 
     accountsTransfer () {
@@ -863,10 +883,6 @@ export default {
       if ((new Date(val)).getTime() <= new Date().getTime()) {
         this.model.is_self_destruct_when_due = false
       }
-    },
-    'model.scenario_id' (id) {
-      if (this.isModeUpdate || !this.scenarioSelectOpenedManually) return
-      scenarioContextService.scenarioId = id || 0
     }
   },
 
@@ -892,17 +908,6 @@ export default {
         }
       }
       this.model.amount = `${Math.abs(this.model.amount)}`
-    }
-
-    const contextScenarioId = scenarioContextService.scenarioId
-    this.scenarioContextOnOpen = contextScenarioId
-    if (this.model.scenario_id) {
-      this.showScenarioSelect = true
-    } else if (contextScenarioId) {
-      if (!this.isModeUpdate) {
-        this.model.scenario_id = contextScenarioId
-      }
-      this.showScenarioSelect = true
     }
 
     if (this.$appState.isPremium && this.$permissions.isAdmin) {
@@ -946,6 +951,11 @@ export default {
   },
 
   methods: {
+    selectScenario (id, close) {
+      this.model.scenario_id = id || null
+      close()
+    },
+
     async submit (event) {
       this.$v.$touch()
       if (this.$v.$invalid) return
@@ -953,7 +963,7 @@ export default {
       this.controlsDisabled = true
 
       const model = { ...this.model }
-      if (!this.showScenarioField || !this.showScenarioSelect) {
+      if (!this.showScenarioField) {
         delete model.scenario_id
       } else if (!model.scenario_id) {
         model.scenario_id = null
@@ -988,10 +998,6 @@ export default {
       this.$store
         .dispatch('transaction/update', model)
         .then(() => {
-          if (!this.isModeUpdate && this.scenarioSelectOpenedManually && scenarioContextService.scenarioId) {
-            window.location.reload()
-            return
-          }
           if (event.shiftKey) {
             this.$parent.$emit('reOpen')
           } else {
@@ -1028,15 +1034,7 @@ export default {
       }
     },
 
-    openScenarioSelect () {
-      this.scenarioSelectOpenedManually = !this.isModeUpdate
-      this.showScenarioSelect = true
-    },
-
     close () {
-      if (this.scenarioSelectOpenedManually) {
-        scenarioContextService.scenarioId = this.scenarioContextOnOpen
-      }
       this.$parent.$emit('close')
     }
   }

@@ -38,6 +38,7 @@ onMounted(async () => {
     theme: 'transparent',
     arrow: false,
     offset: [0, 0],
+    zIndex: 999999999,
     onCreate () {
       isInitialized.value = true
     }
