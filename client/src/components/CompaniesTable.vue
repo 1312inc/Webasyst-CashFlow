@@ -82,6 +82,14 @@
                 v-if="editingId !== company.id"
                 class="button light-gray small"
                 :disabled="isBusy"
+                @click="onView(company)"
+              >
+                {{ $t('viewScenario') }}
+              </button>
+              <button
+                v-if="editingId !== company.id"
+                class="button light-gray small"
+                :disabled="isBusy"
                 :title="$t('update')"
                 @click="startEdit(company)"
               >
@@ -141,11 +149,14 @@
 <script setup>
 import { ref, computed, watch, nextTick, onMounted, getCurrentInstance } from 'vue'
 import draggable from 'vuedraggable'
+import { useRouter } from 'vue-router/composables'
 import { useStore } from '@/composables/useStore'
 import { i18n } from '@/plugins/locale'
+import { companyContextService } from '@/services/companyContext'
 import currencyIcons from '@/utils/currencyIcons'
 
 const store = useStore()
+const router = useRouter()
 const { proxy } = getCurrentInstance()
 
 const newName = ref('')
@@ -238,6 +249,12 @@ const onCreate = async () => {
   }
 }
 
+const onView = (company) => {
+  if (isBusy.value) return
+  companyContextService.companyId = company.id
+  window.location.href = router.resolve({ name: 'Home' }).href
+}
+
 const onDelete = async (company) => {
   if (isBusy.value) return
   if (!confirm(i18n.t('deleteWarning.company'))) return
@@ -283,6 +300,10 @@ onMounted(async () => {
 <style src="@/assets/styles/settings-table.css"></style>
 
 <style scoped>
+.settings-table .actions-cell {
+  width: auto;
+}
+
 .company-accounts {
   gap: 0.35rem;
   margin-top: 0.4rem;

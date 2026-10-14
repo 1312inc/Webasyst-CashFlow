@@ -12,7 +12,7 @@
       class="bigdata settings-table"
       :class="{ loading: isLoading }"
     >
-      <thead>
+      <!-- <thead>
         <tr>
           <th class="handle-cell" />
           <th class="color-cell">
@@ -21,20 +21,21 @@
           <th>{{ $t('scenarioName') }}</th>
           <th class="actions-cell" />
         </tr>
-      </thead>
-      <tr>
-        <td class="handle-cell" />
-        <td class="color-cell" />
-        <td />
-        <td class="actions-cell" />
-      </tr>
+      </thead> -->
       <tr>
         <td class="handle-cell" />
         <td class="color-cell" />
         <td class="default-scenario">
           {{ $t('defaultScenario') }}
         </td>
-        <td class="actions-cell" />
+        <td class="actions-cell">
+          <button
+            class="button light-gray small"
+            @click="onView()"
+          >
+            {{ $t('viewScenario') }}
+          </button>
+        </td>
       </tr>
       <draggable
         :list="localScenarios"
@@ -83,13 +84,13 @@
             <span
               v-else
               class="row-name semibold"
-              @click="startEdit(scenario)"
               :style="{ color: scenario.color }"
+              @click="startEdit(scenario)"
             >
               <i
                 class="fas fa-code-branch custom-mr-8"
                 :style="{ color: scenario.color }"
-              ></i>
+              />
               {{ scenario.name }}
             </span>
           </td>
@@ -175,7 +176,6 @@
     >
       {{ $t('scenariosHintDelete') }}
     </p>
-
   </div>
 </template>
 
@@ -287,9 +287,9 @@ const onCreate = async () => {
   }
 }
 
-const onView = (scenario) => {
+const onView = (scenario = null) => {
   if (isBusy.value) return
-  scenarioContextService.scenarioId = scenario.id
+  scenarioContextService.scenarioId = scenario ? scenario.id : null
   window.location.href = router.resolve({ name: 'Home' }).href
 }
 
