@@ -113,7 +113,7 @@
         <DropdownWaFloating>
           <template #toggler>
             <button
-              class="c-dropdown-toggle-custom button "
+              class="c-dropdown-toggle-custom button small"
               :class="{ 'light-gray': !selectedScenario }"
               :style="selectedScenario ? { backgroundColor: selectedScenario.color, color: '#fff' } : null"
             >
