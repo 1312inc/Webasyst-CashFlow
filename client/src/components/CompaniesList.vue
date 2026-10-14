@@ -21,13 +21,23 @@
             selected: company.id === companyContextService.companyId
           }"
         >
-          <a @click.prevent="onCompanyClick(company)">{{ company.name }} </a>
+          <a @click.prevent="onCompanyClick(company)">
+            <span
+              v-if="company.id"
+              class="icon"
+            >
+              <i
+                class="fas fa-university"
+              />
+            </span>
+            <span>{{ company.name }}</span>
+          </a>
         </li>
       </ul>
       <template v-if="scenarios.length">
         <h5
-          class="heading"
-          :class="{ 'custom-mt-16': companies.length }"
+          v-if="companies.length > 0"
+          class="heading custom-mt-16"
         >
           {{ $t('scenarios') }}
         </h5>
@@ -106,6 +116,7 @@ const toggleLabel = computed(() => {
   }
   if (selectedScenario.value) return selectedScenario.value.name
   if (companyName) return companyName
+  if (!companies.value.length) return i18n.t('defaultScenario')
   return i18n.t('allCompanies')
 })
 
