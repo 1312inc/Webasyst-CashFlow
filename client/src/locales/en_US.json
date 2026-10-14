@@ -9,6 +9,7 @@
   "companyAccountsHint": "Companies allow you to group accounts and keep financial records and analyze cash flow independently within each group (company). E.g. an LLC, a project, a group of private cashing accounts.",
   "companyAccountsOneMoreHint": "Accounts are linked with companies in each account individual settings.",
   "hiddenAccounts": "Hidden accounts",
+  "noAccountsHint": "No accounts here yet. Create an account to start managing your cash flow.",
   "categories": "Categories",
   "expense": "Expense",
   "income": "Income",
