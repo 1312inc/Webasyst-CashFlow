@@ -51,7 +51,7 @@ class cashTransaction extends cashAbstractEntity
     /**
      * @var int|null
      */
-    private $scenario_id;
+    protected $scenario_id;
 
     /**
      * @var int|null

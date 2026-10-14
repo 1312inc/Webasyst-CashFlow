@@ -125,6 +125,7 @@ return array(
         'date' => array('date', 'null' => 0),
         'account_id' => array('int', 11, 'null' => 0),
         'category_id' => array('int', 11),
+        'scenario_id' => array('int', 11),
         'amount' => array('decimal', "18,4", 'null' => 0),
         'description' => array('text'),
         'create_datetime' => array('datetime', 'null' => 0),

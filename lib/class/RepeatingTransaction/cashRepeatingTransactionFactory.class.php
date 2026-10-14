@@ -25,6 +25,7 @@ class cashRepeatingTransactionFactory extends cashBaseFactory
         $tx
             ->setAccountId($transaction->getAccountId())
             ->setCategoryId($transaction->getCategoryId())
+            ->setScenarioId($transaction->getScenarioId())
             ->setCreateContactId($transaction->getCreateContactId())
             ->setContractorContactId($transaction->getContractorContactId())
             ->setAmount($transaction->getAmount())

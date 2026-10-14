@@ -135,6 +135,7 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
                 $repeatingTransaction
                     ->setAccountId($transaction->getAccountId())
                     ->setCategoryId($transaction->getCategoryId())
+                    ->setScenarioId($transaction->getScenarioId())
                     ->setDescription($transaction->getDescription())
                     ->setAmount($transaction->getAmount())
                     ->setContractorContactId($transaction->getContractorContactId())
@@ -149,6 +150,7 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
                 foreach ($transactions as $t) {
                     $t->setAccountId($transaction->getAccountId())
                         ->setCategoryId($transaction->getCategoryId())
+                        ->setScenarioId($transaction->getScenarioId())
                         ->setDescription($transaction->getDescription())
                         ->setAmount($transaction->getAmount())
                         ->setContractorContactId($transaction->getContractorContactId())
