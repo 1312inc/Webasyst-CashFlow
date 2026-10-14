@@ -325,12 +325,12 @@ paths:
             type: string
         - in: query
           name: company_id
-          description: ID компании
+          description: ID компании. Фильтрует по группе счетов, связанных с компанией. Отсеевает все, что не относится к компании.
           schema:
             type: integer
         - in: query
           name: scenario_id
-          description: ID сценария
+          description: ID сценария. Добавляет к базовому сценарию также и данные указанного сценария N (условие scenario_id == null OR scenario_id == N).
           schema:
             type: integer
         - in: query
@@ -960,12 +960,12 @@ paths:
               - year
         - in: query
           name: company_id
-          description: ID компании
+          description: ID компании. Фильтрует по группе счетов, связанных с компанией. Отсеевает все, что не относится к компании.
           schema:
             type: integer
         - in: query
           name: scenario_id
-          description: ID сценария
+          description: ID сценария. Добавляет к базовому сценарию также и данные указанного сценария N (условие scenario_id == null OR scenario_id == N).
           schema:
             type: integer
       responses:
@@ -1056,7 +1056,7 @@ paths:
             type: string
         - in: query
           name: scenario_id
-          description: ID сценария
+          description: ID сценария. Добавляет к базовому сценарию также и данные указанного сценария N (условие scenario_id == null OR scenario_id == N).
           schema:
             type: integer
       responses:
@@ -1117,12 +1117,12 @@ paths:
             minLength: 1
         - in: query
           name: company_id
-          description: ID компании
+          description: ID компании. Фильтрует по группе счетов, связанных с компанией. Отсеевает все, что не относится к компании.
           schema:
             type: integer
         - in: query
           name: scenario_id
-          description: ID сценария
+          description: ID сценария. Добавляет к базовому сценарию также и данные указанного сценария N (условие scenario_id == null OR scenario_id == N).
           schema:
             type: integer
         - in: query
@@ -1216,12 +1216,12 @@ paths:
             minLength: 1
         - in: query
           name: company_id
-          description: ID компании
+          description: ID компании. Фильтрует по группе счетов, связанных с компанией. Отсеевает все, что не относится к компании.
           schema:
             type: integer
         - in: query
           name: scenario_id
-          description: ID сценария
+          description: ID сценария. Добавляет к базовому сценарию также и данные указанного сценария N (условие scenario_id == null OR scenario_id == N).
           schema:
             type: integer
       responses:
