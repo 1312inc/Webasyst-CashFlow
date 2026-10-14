@@ -583,6 +583,8 @@ class cashGraphService
         } elseif ($paramsDto->scenario_id) {
             $sqlParts->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
                 ->addParam('scenario_id', $paramsDto->scenario_id);
+        } else {
+            $sqlParts->addAndWhere('ct.scenario_id IS NULL');
         }
 
         if (!$paramsDto->filter->getAccountId()) {
@@ -728,6 +730,8 @@ class cashGraphService
         } elseif ($paramsDto->scenario_id) {
             $sqlParts->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
                 ->addParam('scenario_id', $paramsDto->scenario_id);
+        } else {
+            $sqlParts->addAndWhere('ct.scenario_id IS NULL');
         }
 
         $initialBalanceSql = clone $sqlParts;
@@ -869,6 +873,8 @@ class cashGraphService
         } elseif ($paramsDto->scenario_id) {
             $sqlParts->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
                 ->addParam('scenario_id', $paramsDto->scenario_id);
+        } else {
+            $sqlParts->addAndWhere('ct.scenario_id IS NULL');
         }
 
         if (!$paramsDto->filter->getAccountId()) {

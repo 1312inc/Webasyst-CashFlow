@@ -36,6 +36,8 @@ final class cashInitialBalanceCalculator
         } elseif ($paramsDto->scenario_id) {
             $initialBalanceSql->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
                 ->addParam('scenario_id', $paramsDto->scenario_id);
+        } else {
+            $initialBalanceSql->addAndWhere('ct.scenario_id IS NULL');
         }
 
         switch (true) {
