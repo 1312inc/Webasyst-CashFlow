@@ -38,7 +38,16 @@
       <SidebarHeading updating-entity-name="Account">
         {{ $t("accounts") }}
       </SidebarHeading>
+
+      <div
+        v-if="!accountsList.length"
+        class="state-caution-hint custom-m-16 custom-mt-24"
+      >
+        {{ $t('noAccountsHint') }}
+      </div>
+
       <SortableList
+        v-if="accountsList.length"
         :items="accountsList"
         sorting-target="account"
         :group="{name: 'accounts', pull: false}"

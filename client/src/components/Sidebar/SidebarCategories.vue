@@ -1,12 +1,5 @@
 <template>
   <div>
-    <div
-      v-if="!categoriesIncome.length && !categoriesExpense.length"
-      class="state-caution-hint custom-m-16"
-    >
-      {{ $t('noAccountsHint') }}
-    </div>
-
     <!-- Categories list block -->
     <SidebarHeading
       class="custom-mt-24"
