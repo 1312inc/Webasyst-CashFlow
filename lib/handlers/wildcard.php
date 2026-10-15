@@ -61,4 +61,10 @@ return [
         'class' => 'cashReportInternalHandlerListener',
         'method' => ['handle'],
     ],
+    [
+        'event_app_id' => 'cash',
+        'event' => 'on_count',
+        'class' => 'cashTransactionRepeater',
+        'method' => ['cashProlongationRepeat'],
+    ]
 ];
