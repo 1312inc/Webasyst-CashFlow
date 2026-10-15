@@ -29,7 +29,7 @@ class cashApiScenarioUpdateHandler implements cashApiHandlerInterface
         if ($request->getColor()) {
             $scenario['color'] = $request->getColor();
         }
-        if ($request->getSort()) {
+        if ($request->getSort() >= 0) {
             $scenario['sort'] = $request->getSort();
         }
         if (!$model->updateById($request->getId(), $scenario)) {
