@@ -41,7 +41,7 @@
 
       <div
         v-if="!accountsList.length"
-        class="state-caution-hint custom-m-16 custom-mt-24"
+        class="state-caution-hint custom-m-16 custom-mt-24 align-center"
       >
         {{ $t('noAccountsHint') }}
       </div>
