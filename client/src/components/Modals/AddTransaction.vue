@@ -596,7 +596,7 @@
                 v-if="showBasicScenarioDetachHint"
                 class="state-caution-hint custom-mt-8 custom-mb-0"
               >
-                <i class="fas fa-exclamation-triangle" />
+                <i class="fas fa-exclamation-triangle fa-xs" />
                 {{ $t('basicScenarioDetachHint') }}
               </div>
             </div>
