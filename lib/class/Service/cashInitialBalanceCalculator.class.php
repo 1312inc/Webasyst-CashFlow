@@ -72,7 +72,8 @@ final class cashInitialBalanceCalculator
         cashCurrencyVO $currencyVO,
         DateTimeImmutable $date,
         waContact $contact,
-        ?int $company_id
+        ?int $company_id,
+        ?int $scenario_id
     ): ?float {
         $initialBalanceSql = (new cashSelectQueryParts(cash()->getModel(cashTransaction::class)))
             ->select(['sum(ct.amount) balance'])
@@ -99,6 +100,12 @@ final class cashInitialBalanceCalculator
         if ($company_id) {
             $initialBalanceSql->addAndWhere('cmp.id = i:company_id')
                 ->addParam('company_id', $company_id);
+        }
+        if ($scenario_id) {
+            $initialBalanceSql->addAndWhere('ct.scenario_id = i:scenario_id')
+                ->addParam('scenario_id', $scenario_id);
+        } else {
+            $initialBalanceSql->addAndWhere('ct.scenario_id IS NULL');
         }
 
         $data = $initialBalanceSql->query()->fetchField();

@@ -77,7 +77,8 @@ final class cashApiAggregateGetChartDataHandler implements cashApiHandlerInterfa
                             $currency,
                             $paramsDto->from,
                             wa()->getUser(),
-                            $paramsDto->company_id
+                            $paramsDto->company_id,
+                            $paramsDto->scenario_id
                         );
                         if ($balance) {
                             $firstDayPrepend = [
