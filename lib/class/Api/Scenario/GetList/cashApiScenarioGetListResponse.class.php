@@ -11,10 +11,11 @@ class cashApiScenarioGetListResponse extends cashApiAbstractResponse
 
         $this->response = $this->filterFields(
             $scenarios,
-            ['id', 'name', 'color', 'sort'],
+            ['id', 'name', 'color', 'sort', 'count_transaction'],
             [
                 'id' => 'int',
                 'sort' => 'int',
+                'count_transaction' => 'int'
             ]
         );
     }

@@ -2725,7 +2725,13 @@ components:
     ScenarioList:
       type: array
       items:
-        $ref: '#/components/schemas/ScenarioInfo'
+        allOf:
+        - $ref: '#/components/schemas/ScenarioInfo'
+        - type: object
+          properties:
+            count_transaction:
+              type: integer
+              description: Количество операций сценария
 
     TransactionInfo:
       type: object
