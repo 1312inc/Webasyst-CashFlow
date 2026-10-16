@@ -14,4 +14,14 @@ class cashScenarioModel extends cashModel
             ORDER BY sort ASC, id DESC"
         )->fetchAll($key, $normalize);
     }
+
+    public function deleteById($value)
+    {
+        if (parent::deleteById($value)) {
+            (new cashRepeatingTransactionModel())->deleteByField('scenario_id', $value);
+            return (new cashTransactionModel())->deleteByField('scenario_id', $value);
+        }
+
+        return false;
+    }
 }
