@@ -1573,6 +1573,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         403:
           description: Доступ запрещен.
           content:
@@ -1606,6 +1612,12 @@ paths:
           description: Ответ в случаи удаления компании.
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
           content:
             application/json:
               schema:
@@ -1672,6 +1684,12 @@ paths:
                 $ref: '#/components/schemas/CompanyInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
           content:
             application/json:
               schema:
@@ -1978,6 +1996,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         403:
           description: Доступ запрещен.
           content:
@@ -2011,6 +2035,12 @@ paths:
           description: Ответ в случаи удаления сценария.
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
           content:
             application/json:
               schema:
@@ -2086,6 +2116,12 @@ paths:
                 $ref: '#/components/schemas/ScenarioInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
           content:
             application/json:
               schema:
