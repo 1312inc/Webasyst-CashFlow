@@ -14,11 +14,11 @@ class cashScenarioGetListMethod extends cashApiAbstractMethod
      */
     function run(): cashApiResponseInterface
     {
-        if (!cash()->getContactRights()->isAdmin(wa()->getUser())) {
-            throw new kmwaForbiddenException('Access denied', 403);
+        if (cash()->getContactRights()->isAdmin(wa()->getUser()) && cashHelper::isPremium()) {
+            $scenarios = (new cashApiScenarioGetListHandler())->handle(null);
+        } else {
+            $scenarios = [];
         }
-
-        $scenarios = (new cashApiScenarioGetListHandler())->handle(null);
 
         return new cashApiScenarioGetListResponse($scenarios);
     }
