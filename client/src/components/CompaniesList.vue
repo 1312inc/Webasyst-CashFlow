@@ -6,6 +6,14 @@
         :class="{ 'light-gray': !selectedCompany?.id && !selectedScenario }"
         :style="selectedScenario ? { backgroundColor: selectedScenario.color, color: '#fff' } : null"
       >
+        <span
+          v-if="selectedScenario"
+          class="icon"
+        >
+          <i
+            class="fas fa-code-branch"
+          />
+        </span>
         {{ toggleLabel }}
       </button>
     </template>
