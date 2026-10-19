@@ -7,7 +7,7 @@
         :style="selectedScenario ? { backgroundColor: selectedScenario.color, color: '#fff' } : null"
       >
         <span
-          v-if="selectedScenario"
+          v-if="scenarios.length"
           class="icon"
         >
           <i
