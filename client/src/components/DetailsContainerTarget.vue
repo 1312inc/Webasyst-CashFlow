@@ -268,7 +268,7 @@ function onCategoryChange (id) {
                 class="flexbox"
                 style="justify-content: center;"
               >
-                <component :is="categories.length > 1 ? DropdownWaFloating : 'div'">
+                <component :is="categories.length > 0 ? DropdownWaFloating : 'div'">
                   <template #toggler>
                     <span class="gray">{{ currentCategory.name }} </span>
                     <i
