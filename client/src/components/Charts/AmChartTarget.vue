@@ -108,14 +108,47 @@ function createChart () {
     return
   }
 
+  const plan = displayAmount.value
+  const fact = displayAmountFact.value
+  const hasPositiveDeviation = props.amountFact - props.amount > 0
+  const fill = props.isPromoMode ? '#22d13d' : props.color
+
   const range0 = axis2.axisRanges.create()
   range0.value = 0
-  range0.endValue = displayAmount.value
-  range0.axisFill.fillOpacity = 1
-  range0.axisFill.fill = props.isPromoMode ? '#22d13d' : props.color
+  range0.axisFill.fill = fill
+
+  let coloredEnd = plan
+
+  if (hasPositiveDeviation && fact > plan) {
+    range0.endValue = plan
+    range0.axisFill.fillOpacity = 0.5
+
+    const rangeDeviation = axis2.axisRanges.create()
+    rangeDeviation.value = plan
+    rangeDeviation.endValue = fact
+    rangeDeviation.axisFill.fillOpacity = 1
+    rangeDeviation.axisFill.fill = fill
+
+    coloredEnd = fact
+  } else if (hasPositiveDeviation && fact < plan) {
+    range0.endValue = fact
+    range0.axisFill.fillOpacity = 0.5
+
+    const rangeDeviation = axis2.axisRanges.create()
+    rangeDeviation.value = fact
+    rangeDeviation.endValue = plan
+    rangeDeviation.axisFill.fillOpacity = 1
+    rangeDeviation.axisFill.fill = fill
+
+    coloredEnd = plan
+  } else {
+    coloredEnd = Math.min(fact, plan)
+    range0.endValue = coloredEnd
+    range0.axisFill.fillOpacity = 1
+  }
 
   const range1 = axis2.axisRanges.create()
-  range1.value = displayAmount.value
+  range1.value = coloredEnd
   range1.endValue = maxAmount.value
   range1.axisFill.fillOpacity = 1
   range1.axisFill.fill = props.isPromoMode ? '#ed2509' : '#EEEEEE'
@@ -141,8 +174,6 @@ function createChart () {
  * Hand
  */
 
-  if (!props.amountFact) return
-
   const hand = chart.hands.push(new am4charts.ClockHand())
   hand.axis = axis2
   hand.innerRadius = am4core.percent(20)
@@ -157,7 +188,7 @@ function createChart () {
     if (!hand || hand.isDisposed()) return
     new am4core.Animation(hand, {
       property: 'value',
-      to: displayAmountFact.value
+      to: displayAmount.value
     }, handAppearDuration, handAppearEase).start()
   }, 0)
 
