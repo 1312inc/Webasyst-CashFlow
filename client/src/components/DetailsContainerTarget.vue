@@ -268,16 +268,16 @@ function onCategoryChange (id) {
                 class="flexbox"
                 style="justify-content: center;"
               >
-                <component :is="categories.length > 0 ? DropdownWaFloating : 'div'">
+                <component :is="categories.length ? DropdownWaFloating : 'div'">
                   <template #toggler>
                     <span class="gray">{{ currentCategory.name }} </span>
                     <i
-                      v-if="categories.length > 1"
+                      v-if="categories.length"
                       class="fas fa-chevron-down text-light-gray"
                     />
                   </template>
                   <ul
-                    v-if="categories.length > 1"
+                    v-if="categories.length"
                     class="menu"
                   >
                     <li
