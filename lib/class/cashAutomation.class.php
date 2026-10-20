@@ -1,6 +1,6 @@
 <?php
 
-class cashAutomation
+final class cashAutomation
 {
     const AUTOMATION_LOG = 'automation';
 
@@ -134,30 +134,83 @@ class cashAutomation
     }
 
     /**
-     * @param $action_object waAPIMethod
-     * @param $transaction array
+     * @param object $action_object
+     * @param array $data
+     * @param $plugin_action null|string ['add', 'update', 'delete']
      * @return array|null
      * @throws waException
      */
-    public static function automationEvent($action_object, $transaction)
+    public static function automationEvent(object $action_object, array $data, ?string $plugin_action = null)
     {
         $map = [
-            'cashTransactionCreateMethod' => 'add',
-            'cashTransactionUpdateMethod' => 'update',
-            'cashTransactionDeleteMethod' => 'delete'
+            'add' => ['cashTransactionCreateMethod', 'cashTransactionBulkCreateMethod', 'cashImportCsv'],
+            'update' => ['cashTransactionUpdateMethod'],
+            'delete' => ['cashTransactionDeleteMethod', 'cashTransactionBulkDeleteMethod'],
         ];
+        $action = null;
         $class = get_class($action_object);
-        $action = ifset($map, $class, null);
-        if (!$action) {
+        if ($plugin_action) {
+            if (!($action_object instanceof cashBusinessPlugin) || empty($map[$plugin_action])) {
+                return null;
+            }
+            $action = $plugin_action;
+        } else {
+            foreach ($map as $_action => $_map) {
+                if (in_array($class, $_map)) {
+                    $action = $_action;
+                    break;
+                }
+            }
+        }
+        if (!$action || !$data) {
             return null;
         }
         $action_id = 'transaction_'.$action;
         $automation_model = new cashAutomationModel();
         $rules = $automation_model->getByField('action_id', $action_id, true);
-        $transaction = (array) (empty($transaction[0]) ? $transaction : reset($transaction));
-        $known_actions = cashAutomationAction::getActions();
-        $known_conditions = cashAutomationAction::getConditions();
-        $all_enabled_plugins = wa('cash')->getConfig()->getPlugins();
+        if (empty($rules)) {
+            return null;
+        }
+
+        $transaction_ids = [];
+        if ($data[0] instanceof cashApiTransactionResponseDto) {
+            /** @var cashApiTransactionResponseDto $transaction_data */
+            foreach ($data as $transaction_data) {
+                $transaction_ids[] = $transaction_data->id;
+            }
+        } else {
+            $transaction_ids = waUtils::toIntArray($data);
+        }
+
+        $transactions = cash()->getModel(cashTransaction::class)->getById($transaction_ids);
+        foreach ($transactions as $_transaction) {
+            self::automationAction($action_id, (array) $_transaction, $rules);
+        }
+
+        return [];
+    }
+
+    /**
+     * @param $action_id
+     * @param $transaction
+     * @param $rules
+     * @return array
+     * @throws waException
+     */
+    private static function automationAction($action_id, $transaction, $rules)
+    {
+        static $known_actions;
+        static $known_conditions;
+        static $all_enabled_plugins;
+        if (!$known_actions) {
+            $known_actions= cashAutomationAction::getActions();
+        }
+        if (!$known_conditions) {
+            $known_conditions = cashAutomationAction::getConditions();
+        }
+        if (!$all_enabled_plugins) {
+            $all_enabled_plugins = wa('cash')->getConfig()->getPlugins();
+        }
 
         $account = self::getAccounts($transaction['account_id']);
         $transaction['account_name'] = ifset($account, 'name', null);
@@ -361,8 +414,6 @@ class cashAutomation
                 }
             }
         }
-
-        return [];
     }
 
     private static function getTextVariables()

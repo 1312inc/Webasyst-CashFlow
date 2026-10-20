@@ -42,11 +42,11 @@ class cashAutomationLogModel extends cashModel
      * @param int $limit
      * @return array
      */
-    public function getLogs(int $automation_id, int $limit = 5): array
+    public function getLogs(int $automation_id, int $limit = 20): array
     {
         $logs = $this->select('id, datetime, automation_id, transaction_id, type, plugin_id, automation_event, automation_action, description, automation_rule_json automation_rule, transaction_json transaction')
             ->where('automation_id = ?', $automation_id)
-            ->order('datetime DESC')
+            ->order('id DESC')
             ->limit($limit)
             ->fetchAll();
         foreach ($logs as &$_log) {

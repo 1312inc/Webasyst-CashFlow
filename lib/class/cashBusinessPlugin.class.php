@@ -69,7 +69,7 @@ abstract class cashBusinessPlugin extends waPlugin
      *     'description'    => 'abracadabra',
      *     'hash'           => '64be58f9-c7fc-0027-96ba-774ec55a1111',
      *     'contractor_id'  => 45,
-     *     ''import_id'     => 2,
+     *     'import_id'      => 2,
      *     'external_data'  => [],
      *     'data'           => [],
      * ]
@@ -129,19 +129,23 @@ abstract class cashBusinessPlugin extends waPlugin
 
             if (!empty($add_transactions)) {
                 $db_result = $transaction_model->multipleInsert($add_transactions);
-                if ($db_result->getResult() && $data) {
-                    $transaction_data = [];
+                if ($db_result->getResult()) {
                     $transaction_ids = $transaction_model->select('external_hash, id')
                         ->where('external_source = ?', $external_source)
                         ->where('external_hash IN (:hash)', ['hash' => array_keys($data)])
                         ->where('is_archived = 0')
                         ->fetchAll('external_hash');
-                    foreach ($data as $_external_hash => $_data) {
-                        if ($transaction_id = ifempty($transaction_ids, $_external_hash, 'id', null)) {
-                            $transaction_data[$transaction_id] = $_data;
+
+                    cashAutomation::automationEvent($this, array_column($transaction_ids, 'id'), 'add');
+                    if ($data) {
+                        $transaction_data = [];
+                        foreach ($data as $_external_hash => $_data) {
+                            if ($transaction_id = ifempty($transaction_ids, $_external_hash, 'id', null)) {
+                                $transaction_data[$transaction_id] = $_data;
+                            }
                         }
+                        $data_model->multipleInsertData($transaction_data);
                     }
-                    $data_model->multipleInsertData($transaction_data);
                 }
             }
 

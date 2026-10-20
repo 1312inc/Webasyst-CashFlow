@@ -454,6 +454,10 @@ final class cashImportCsv
                 $model->commit();
                 $infoDto->ok++;
 
+                if ($transaction->getId()) {
+                    cashAutomation::automationEvent($this, (array) $transaction->getId());
+                }
+
                 return true;
             } catch (Exception $ex) {
                 $model->rollback();
@@ -517,7 +521,7 @@ final class cashImportCsv
         }
         $t = false;
         foreach ($a as $v) {
-            if (trim($v)) {
+            if (trim((string) $v)) {
                 return true;
             }
         }

@@ -541,7 +541,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getTransactionsListResponse'
+                type: array
+                items:
+                  description: ID удаленных операций.
+                  type: integer
         400:
           description: Ошибка.
           content:
