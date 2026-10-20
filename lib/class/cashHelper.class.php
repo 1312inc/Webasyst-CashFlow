@@ -65,6 +65,15 @@ final class cashHelper
 
     /**
      * @return bool
+     * @throws waException
+     */
+    public static function hasLicense()
+    {
+        return waLicensing::check(cashConfig::APP_ID)->hasLicense();
+    }
+
+    /**
+     * @return bool
      */
     public static function isCloud()
     {
