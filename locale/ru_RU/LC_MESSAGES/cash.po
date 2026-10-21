@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Basepath: utf-8\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.9\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .\n"
 
@@ -1271,25 +1271,28 @@ msgid "https://www.webasyst.com/my/buy/upgrade-to-premium/cash/"
 msgstr "https://www.webasyst.ru/my/buy/upgrade-to-premium/cash/"
 
 msgid "Upgrade to premium"
-msgstr "Хочу большие деньги!"
+msgstr "Хочу все это!"
 
 msgid "All inclusive in the cloud"
 msgstr "В облаке все включено"
 
+msgid "Upgrade to the premium plan"
+msgstr "Переходите на премиум-тариф"
+
 msgid "In Webasyst Cloud, simply upgrade to the <b>Premium</b> plan and get all premium features at once with no extra purchase."
-msgstr "Просто смените тариф на <b>Премиум</b> и пользуйтесь всеми функциями премиум-версии «Большие деньги» без покупки лицензий и апгрейдов."
+msgstr "Просто смените тариф на <b>Премиум</b> и пользуйтесь всеми функциями премиум-версии без покупки лицензий и апгрейдов."
 
 msgid "Or get <a href=\"%s\" target=\"_blank\">new license</a> for the Custom plan."
 msgstr "Или <a href=\"%s\" target=\"_blank\">подключите лицензию</a> на тарифе «Кастом»."
 
-msgid "Early launch offer gets you the best premium upgrade conditions possible."
-msgstr "«Большие деньги» — это премиум-версия приложения с максимальными возможностями для учета, планирования финансов и прогнозирования движения средств."
+msgid "Upgrade to the premium version and get the best accounting tools the app has to offer."
+msgstr "Премиум-версия приложения с максимальными возможностями для учета, планирования финансов и прогнозирования движения средств."
 
 msgid "Per-server license for the entire company. Unlimited users, all the premium features, and free updates forever."
-msgstr "Лицензия на один сервер и всю компанию. Сколько угодно пользователей, все функции, бесплатные обновления."
+msgstr "Безлимит на один сервер и всю компанию. Сколько угодно пользователей, все функции, бесплатные обновления."
 
 msgid "upgrade basic &rarr; premium"
-msgstr "апгрейд деньги &rarr; большие деньги"
+msgstr "апгрейд деньги &rarr; премиум"
 
 msgid "new premium license"
 msgstr "новая премиум-лицензия"
@@ -1307,22 +1310,16 @@ msgid "Available now"
 msgstr "Уже здесь"
 
 msgid "Goals & budgets"
-msgstr "Планы, цели, бюджет"
+msgstr "Планы, цели, бюджеты"
 
 msgid "Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast).<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>."
 msgstr "Задавайте финансовые цели и бюджеты в формате <code>статья &rarr; когда &rarr; сколько</code>, и приложение в <code>%</code> покажет, насколько вы отклоняетесь от траектории. Цели работают как дополнительный слой поверх запланированных операций (прогноза).<br><br> Примеры: <code>Продажи &rarr; Июнь &rarr; 1.5М</code>, <code>Реклама &rarr; (каждый месяц) &rarr; 50К</code>."
-
-msgid "May 2026"
-msgstr "Май 2026"
-
-msgid "June 2026"
-msgstr "Июнь 2026"
 
 msgid "Arriving"
 msgstr "На подходе"
 
 msgid "Teammate accounts"
-msgstr "Подотчеты"
+msgstr "Подотчеты сотрудников"
 
 msgid "Assign accounts to specific users on your team. Know whom is accountable for and how much."
 msgstr "Закрепляйте счета за сотрудниками. Контролируйте, у кого сколько на руках в подотчете."
@@ -1370,7 +1367,7 @@ msgid "Evaluating either we need this feature in the app. <b>Yes or no? <a href=
 msgstr "Пока думаем, нужно ли добавлять фичу. <b>Да или нет? <a href=\"%s\" target=\"_blank\">Голосуйте здесь!</a></b>"
 
 msgid "https://support.webasyst.com/forum/ideas/"
-msgstr "https://support.webasyst.ru/forum/ideas/"
+msgstr "https://support.webasyst.ru/forum/48639/prilozhenie-dengi-pozhelaniya-po-premium-ficham-2026-/"
 
 msgid "Maybe"
 msgstr "Возможно"
@@ -1385,7 +1382,7 @@ msgid "You are all set!"
 msgstr "Все подключено!"
 
 msgid "Thank you for being a premium user and for supporting the project."
-msgstr "Спасибо за покупку премиум-версии и поддержку проекта!"
+msgstr "Спасибо за премиум-подписку и поддержку проекта!"
 
 msgid "With premium, you are among the first to have access to all features."
 msgstr "У вас приоритетный доступ ко всем новым функциям и обновлениям."
@@ -1394,7 +1391,7 @@ msgid "https://www.webasyst.com/store/app/cash/"
 msgstr "https://www.webasyst.ru/store/app/cash/"
 
 msgid "Bigger money needs to be better accounted"
-msgstr "Автоматизируйте учет финансов"
+msgstr "Для тех, кто считает деньги бизнеса"
 
 msgid "%d features available now, +%d more to come shortly."
 msgstr "%d премиум-функций доступно сейчас, еще %s на подходе."
@@ -1403,7 +1400,7 @@ msgid "All scheduled features will be delivered as free updates via Installer."
 msgstr "Все обновления будут доступны в Инсталлере бесплатно."
 
 msgid "Premium"
-msgstr "Большие деньги"
+msgstr "Премиум"
 
 msgid "Cancel"
 msgstr "Отмена"
@@ -1417,8 +1414,8 @@ msgstr "Боты и автоматизация"
 msgid "Bots track all events occurring in the app and help you automate routine accounting operations such as adding new and updating existing transactions."
 msgstr "Боты следят за событиями в приложении и помогают автоматизировать все рутинные операции по учету на основе заданных вами правил: создают новые операции, обновляют параметры существующих и т.д."
 
-msgid "Available only in the Big Cash app premium version."
-msgstr "Этот раздел доступен только в премиум-версии «Большие деньги»."
+msgid "Available only in the premium version."
+msgstr "Этот раздел доступен только в премиум-версии."
 
 msgid "See all premium features"
 msgstr "Что еще есть в премиум"
@@ -1857,3 +1854,9 @@ msgstr "Компания не сохранена"
 
 msgid "All companies"
 msgstr "Все компании"
+
+msgid "extra discount for the basic license owners"
+msgstr "скидка на апгрейд владельцам базовой лицензии"
+
+msgid "welcome discount for new users"
+msgstr "приветственная скидка новым пользователям"

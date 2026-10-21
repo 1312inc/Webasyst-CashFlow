@@ -73,6 +73,30 @@ final class cashHelper
     }
 
     /**
+     * @return date (string) or null
+     * @throws waException
+     */
+    public static function licenseExpirationDate()
+    {
+        if (!wa()->appExists('installer'))
+            return null;
+
+        wa('installer');
+        $license = installerHelper::checkLicense('cash');
+
+        if (empty($license['status'])) {
+            // no license, no expiration date
+            return null;
+        } elseif (isset($license['expire_date'])) {
+            // YYYY-MM-DD format
+            return $license['expire_date'];
+        } else {
+            // lifetime license, no expireation date
+            return null;
+        }
+    }
+
+    /**
      * @return bool
      */
     public static function isCloud()
@@ -85,21 +109,20 @@ final class cashHelper
      */
     public static function getPremiumPricing()
     {
-        // vofka says sorry for such a hard code
-        // we were young and needed the money
-
         if (wa()->getLocale() == 'ru_RU')
         {
             $pricing = array(
               'compare_price' => '24 999',
-              'price' => '6 999 <span class="ruble">₽</span>/год'
+              'price' => '7 199 <span class="ruble">₽</span>/год',
+              'upgrade' => '16 999 <span class="ruble">₽</span> / апгрейд навсегда'
             );
         }
         else
         {
             $pricing = array(
               'compare_price' => '$399',
-              'price' => '$115/yr'
+              'price' => '$119/yr',
+              'upgrade' => '$289 / lifetime upgrade'
             );
         }
 
