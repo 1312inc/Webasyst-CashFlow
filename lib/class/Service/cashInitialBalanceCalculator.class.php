@@ -31,7 +31,7 @@ final class cashInitialBalanceCalculator
             ->groupBy(['ca.currency']);
 
         if (null !== $paramsDto->filter->getScenarioId()) {
-            $initialBalanceSql->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
+            $initialBalanceSql->addAndWhere('ct.scenario_id = i:scenario_id')
                 ->addParam('scenario_id', $paramsDto->filter->getScenarioId());
         } elseif ($paramsDto->scenario_id) {
             $initialBalanceSql->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')

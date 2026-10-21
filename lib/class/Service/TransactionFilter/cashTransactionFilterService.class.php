@@ -327,7 +327,7 @@ final class cashTransactionFilterService
         }
 
         if (null !== $dto->filter->getScenarioId()) {
-            $sqlParts->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
+            $sqlParts->addAndWhere('ct.scenario_id = i:scenario_id')
                 ->addParam('scenario_id', $dto->filter->getScenarioId());
         } elseif ($dto->scenario_id) {
             $sqlParts->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
