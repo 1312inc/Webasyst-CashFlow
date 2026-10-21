@@ -112,8 +112,62 @@
       </div>
 
       <div v-if="upcomingBlockOpened">
+        <div
+          v-if="isTableLayout && filteredTransactions.length"
+          class="c-transactions-table-wrap"
+        >
+          <table class="bigdata c-transactions-table">
+            <colgroup>
+              <col class="c-transactions-table__col-check">
+              <col class="c-transactions-table__col-date">
+              <col class="c-transactions-table__col-category">
+              <col class="c-transactions-table__col-contractor">
+              <col class="c-transactions-table__col-description">
+              <col class="c-transactions-table__col-amount">
+              <col class="c-transactions-table__col-account">
+              <col
+                v-if="showBalanceColumn"
+                class="c-transactions-table__col-balance"
+              >
+              <col class="c-transactions-table__col-action">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="c-transactions-table__check" />
+                <th>{{ $t('date') }}</th>
+                <th>{{ $t('category') }}</th>
+                <th>{{ $t('contractor') }}</th>
+                <th>{{ $t('operationDescription') }}</th>
+                <th>{{ $t('amount') }}</th>
+                <th>{{ $t('account') }}</th>
+                <th
+                  v-if="showBalanceColumn"
+                  :title="$t('accountBalanceTransactionListHint')"
+                >
+                  {{ $t('balance') }}
+                </th>
+                <th class="c-transactions-table__action" />
+              </tr>
+            </thead>
+            <tbody>
+              <TransactionListGroupRow
+                v-for="(transaction, i) in filteredTransactions"
+                v-show="isShown(transaction)"
+                :key="transaction.id"
+                table-layout
+                :show-balance="showBalanceColumn"
+                :transaction="transaction"
+                :show-checker="isShowChecker"
+                :collapse-header-data="collapseHeaderData(transaction)"
+                :show-date="i === 0 ? true : filteredTransactions[i].date !== filteredTransactions[i - 1].date"
+                :visible-select-checkbox="visibleSelectCheckbox"
+                @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
+              />
+            </tbody>
+          </table>
+        </div>
         <ul
-          v-if="filteredTransactions.length"
+          v-else-if="filteredTransactions.length"
           class="c-list list"
           :class="{'c-list--compact': compactModeForFutureList}"
         >
@@ -170,6 +224,7 @@ import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPe
 import TransactionListGroupRow from './TransactionListGroupRow/TransactionListGroupRow'
 import AmountForGroup from '@/components/PeriodAmount/AmountForGroup'
 import SkeletonTransaction from './SkeletonTransaction'
+import { transactionsViewMode } from '@/utils/transactionsView'
 
 const listCompactMode = useStorage('list_compact_mode', true)
 
@@ -219,6 +274,17 @@ export default {
   computed: {
     compactModeForFutureList () {
       return this.type === 'future' && listCompactMode.value
+    },
+
+    isTableLayout () {
+      return this.$appState.isDesktop &&
+        !this.$isSpaMobileMode &&
+        transactionsViewMode.value === 'table' &&
+        this.type !== 'future'
+    },
+
+    showBalanceColumn () {
+      return this.$route.name === 'Account'
     },
 
     isShowChecker () {

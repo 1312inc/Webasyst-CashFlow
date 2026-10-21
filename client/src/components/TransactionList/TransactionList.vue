@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @copy="onTransactionsCopy">
     <BlankBox v-if="$store.state.transaction.loading">
       <SkeletonTransaction />
     </BlankBox>
@@ -71,6 +71,7 @@ import TransactionListGroup from './TransactionListGroup'
 import SkeletonTransaction from './SkeletonTransaction'
 import Observer from './Observer'
 import BlankBox from '../BlankBox.vue'
+import { copyTransactionsTable } from '@/utils/transactionsView'
 
 const PRIMARY_GROUP_NAMES = ['overdue', 'future', 'tomorrow', 'today', 'yesterday']
 
@@ -311,6 +312,10 @@ export default {
   },
 
   methods: {
+    onTransactionsCopy (event) {
+      copyTransactionsTable(event)
+    },
+
     handleObserverCallback () {
       const offset = this.isSplitFetchMode ? this.pastTransactionsOffset : this.transactions.data.length
       this.observerCallback(offset)

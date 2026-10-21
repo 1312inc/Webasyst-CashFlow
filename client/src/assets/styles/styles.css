@@ -166,6 +166,69 @@ body.modal {
   border: 0;
 }
 
+.c-transactions-table-wrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.c-transactions-table {
+  width: 100%;
+  min-width: 64rem;
+  table-layout: fixed;
+}
+.c-transactions-table__col-check { width: 2.25rem; }
+.c-transactions-table__col-date { width: 8.5rem; }
+.c-transactions-table__col-category { width: 14%; }
+.c-transactions-table__col-contractor { width: 14%; }
+.c-transactions-table__col-amount { width: 9rem; }
+.c-transactions-table__col-account { width: 14%; }
+.c-transactions-table__col-balance { width: 8.5rem; }
+.c-transactions-table__col-action { width: 9rem; }
+.c-transactions-table th,
+.c-transactions-table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+.c-transactions-table .c-transactions-table__check,
+.c-transactions-table .c-transactions-table__action {
+  overflow: visible;
+  text-overflow: clip;
+  user-select: none;
+}
+.c-transactions-table__repeat {
+  color: var(--text-color);
+  opacity: 0.5;
+}
+.c-transactions-table td[data-copy] {
+  user-select: text;
+  cursor: text;
+}
+.c-transactions-table tbody tr {
+  cursor: pointer;
+}
+.c-transactions-table tbody tr:hover {
+  background: var(--background-color-table-row-hover);
+}
+.c-transactions-table tbody tr.c-item-overdue {
+  background: var(--highlighted-overdue);
+}
+.c-transactions-table tbody tr.c-item-selected,
+.c-transactions-table tbody tr.c-item-selected td {
+  background: var(--accent-color);
+  color: var(--white) !important;
+}
+@media screen and (min-width: 760px) {
+  .c-transactions-table .c-item-checkbox {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .c-transactions-table tr:hover .c-item-checkbox,
+  .c-transactions-table tr.c-item-selected .c-item-checkbox {
+    opacity: 1;
+  }
+}
+
 .c-transaction-section .c-transaction-section__header {
   margin: 0;
 }

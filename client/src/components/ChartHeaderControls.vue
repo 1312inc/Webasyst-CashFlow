@@ -9,6 +9,7 @@
           <i class="fas fa-print" />
         </button>
       </div>
+      <TransactionsViewToggle />
       <CurrencyToggler />
       <div class="c-period-dropdowns flexbox fixed space-12 width-100-mobile">
         <div>
@@ -32,6 +33,7 @@
 
 <script setup>
 import CurrencyToggler from '@/components/CurrencyToggler'
+import TransactionsViewToggle from '@/components/TransactionsViewToggle'
 import Dropdown from '@/components/Inputs/Dropdown'
 import AmountForPeriod from '@/components/PeriodAmount/AmountForPeriod'
 
