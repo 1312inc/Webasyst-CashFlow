@@ -13,17 +13,15 @@ class cashRepeatTransactionRepeater extends waEventHandler
      */
     public function afterTransactionPagePreExecute($event)
     {
-cash()->getLogger()->debug('START cashRepeatTransactionRepeater::afterTransactionPagePreExecute()'); //temp
         if (cash()->getCache()->get('cash_prolongation_repeat')) {
             return;
         }
-        cash()->getCache()->set('cash_prolongation_repeat', 1, 3600);
+        cash()->getCache()->set('cash_prolongation_repeat', 1, 3600*12);
 
         /** @var DateTime $endDate */
         $endDate = $event->getObject();
 
         $repeatingTransactions = cash()->getEntityRepository(cashRepeatingTransaction::class)->findNeverEndingAfterDate($endDate);
-cash()->getLogger()->debug('$repeatingTransactions: '.var_export($repeatingTransactions, true)); //tems
         if (!$repeatingTransactions) {
             return;
         }
