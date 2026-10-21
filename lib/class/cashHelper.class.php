@@ -60,7 +60,7 @@ final class cashHelper
      */
     public static function isPremium()
     {
-        return waLicensing::check(cashConfig::APP_ID)->isPremium();
+        return cashLicensing::check(cashConfig::APP_ID)->isPremium();
     }
 
     /**
@@ -73,27 +73,12 @@ final class cashHelper
     }
 
     /**
-     * @return date (string) or null
+     * @return bool|string
      * @throws waException
      */
     public static function licenseExpirationDate()
     {
-        if (!wa()->appExists('installer'))
-            return null;
-
-        wa('installer');
-        $license = installerHelper::checkLicense('cash');
-
-        if (empty($license['status'])) {
-            // no license, no expiration date
-            return null;
-        } elseif (isset($license['expire_date'])) {
-            // YYYY-MM-DD format
-            return $license['expire_date'];
-        } else {
-            // lifetime license, no expireation date
-            return null;
-        }
+        return waLicensing::check(cashConfig::APP_ID)->licenseExpiration();
     }
 
     /**
