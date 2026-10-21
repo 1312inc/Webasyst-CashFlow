@@ -13,9 +13,15 @@
 </style>
 
 {$_is_premium = cashHelper::isPremium()}
+{$_has_license = cashHelper::hasLicense()}
+{$_license_expires = cashHelper::licenseExpirationDate()}
 {$_is_cloud = cashHelper::isCloud()}
 {$_premium_pricing = cashHelper::getPremiumPricing()}
-{$_upgrade_url = '[`https://www.webasyst.com/my/buy/upgrade-to-premium/cash/`]'|cat:'?domain='|cat:str_replace('http://','',str_replace('https://','',$wa->domainUrl()))}
+{if !$_is_cloud && $_has_license && !$_license_expires}
+    {$_upgrade_url = '[`https://www.webasyst.com/my/buy/upgrade-to-premium/cash/`]'|cat:'?domain='|cat:str_replace('http://','',str_replace('https://','',$wa->domainUrl()))}
+{else}
+    {$_upgrade_url = '[`https://www.webasyst.com/store/app/cash/`]'}
+{/if}
 
 {capture "getpremiumbutton"}
 {if !$_is_premium}
@@ -24,9 +30,13 @@
     <h4>
         {if !empty($_premium_pricing.compare_price)}<strike class="gray">{$_premium_pricing.compare_price}</strike>{/if}
         {if $_is_cloud}
-            [`All inclusive in the cloud`]
+            [`Upgrade to the premium plan`]
         {else}
-            {$_premium_pricing.price}
+            {if $_has_license && !$_license_expires}
+                {$_premium_pricing.upgrade}
+            {else}
+                {$_premium_pricing.price}
+            {/if}
         {/if}
     </h4>
     <p class="width-60 width-100-mobile custom-mx-auto small">
@@ -36,9 +46,18 @@
         {else}
             [`Per-server license for the entire company. Unlimited users, all the premium features, and free updates forever.`]
         {/if}
-        {if !$_is_cloud && date('Y-m-d') <= '2026-08-31'}
+        {if !$_is_cloud && date('Y-m-d') <= '2028-08-31'}
             <br><br>
-            [`Promocode`] <code><b>SUMMER26</b></code> <strong class="text-red">-15% / {date('Y.m')}</strong>
+            [`Promocode`] <code class="badge squared yellow text-black"><b>{if $_has_license && !$_license_expires}43CGGN755S{else}BIGCASH{/if}</b></code> <strong class="text-red">-15% / {date('Y.m')}</strong>
+            <br>
+            <strong class="text-black">
+                {if $_has_license && !$_license_expires}
+                    [`extra discount for the basic license owners`]
+                {else}
+                    [`welcome discount for new users`]
+                {/if}
+            </strong>
+
         {/if}
     </p>
 </figure>
@@ -56,7 +75,7 @@
         </div>
         <div>
             {if empty($_p.eta)}
-                <span class="nowrap badge purple"><i class="fas fa-check"></i> {if !$_is_free_feature}[`Available now`]{/if}</span>
+                <span class="nowrap badge purple"><i class="fas fa-check"></i> {if !$_is_free_feature}[`Premium`]{/if}</span>
             {elseif trim($_p.eta)}
                 <span class="nowrap badge {$_p.eta_class|default:'light-gray'}"><i class="fas fa-clock"></i> {$_p.eta}</span>
             {/if}
@@ -82,13 +101,8 @@
             ]}
 
             {$_premium_stuff[] = [
-              'title' => '[`Teammate accounts`]',
-              'body' => '[`Assign accounts to specific users on your team. Know whom is accountable for and how much.`]'
-            ]}
-
-            {$_premium_stuff[] = [
-              'title' => '[`Automation / bots`]',
-              'body' => '[`Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>`]'
+              'title' => '[`Financial scenarios`]',
+              'body' => '[`Exclude individual transactions from the primary cash flow scenario, and include them into specific scenarios such as <em>Optimistic, Pessimistic, Gonna take a loan, What if there is a fire, What if it works out</em>, or any custom scenario.`]'
             ]}
 
             {$_premium_stuff[] = [
@@ -97,8 +111,13 @@
             ]}
 
             {$_premium_stuff[] = [
-              'title' => '[`Financial scenarios`]',
-              'body' => '[`Exclude individual transactions from the primary cash flow scenario, and include them into specific scenarios such as <em>Optimistic, Pessimistic, Gonna take a loan, What if there is a fire, What if it works out</em>, or any custom scenario.`]'
+              'title' => '[`Automation / bots`]',
+              'body' => '[`Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>`]'
+            ]}
+
+            {$_premium_stuff[] = [
+              'title' => '[`Teammate accounts`]',
+              'body' => '[`Assign accounts to specific users on your team. Know whom is accountable for and how much.`]'
             ]}
 
             {$_premium_stuff[] = [
@@ -159,12 +178,12 @@
 
             {else}
 
-                <h1 class="top-padded align-center width-70 custom-mx-auto custom-mb-24 width-100-mobile">
+                <h1 class="top-padded align-center width-50 custom-mx-auto custom-mb-24 width-100-mobile">
                     [`Bigger money needs to be better accounted`]
                 </h1>
 
-                <p class="small align-center custom-mb-24 width-90 custom-mx-auto">
-                    [`Early launch offer gets you the best premium upgrade conditions possible.`]
+                <p class="small align-center custom-mb-24 width-80 custom-mx-auto">
+                    [`Upgrade to the premium version and get the best accounting tools the app has to offer.`]
                     <br>
                     <a class="bold" href="[`https://www.webasyst.com/store/app/cash/`]" target="_blank">[`https://www.webasyst.com/store/app/cash/`]</a>
                     {* <br>
@@ -172,6 +191,7 @@
                 </p>
 
             {/if}
+            {$smarty.capture.getpremiumbutton}
 
             <div class="flexbox wrap-mobile middle space-12" style="justify-content: center;">
 
@@ -189,13 +209,9 @@
 
             </div>
 
-
-            {$smarty.capture.getpremiumbutton}
-
             {foreach $_premium_stuff as $_p}
                 {_render_feature _p=$_p _is_premium_license=$_is_premium}
             {/foreach}
-            <p class="align-center gray small">[`All scheduled features will be delivered as free updates via Installer.`]</p>
 
             {$smarty.capture.getpremiumbutton}
 
