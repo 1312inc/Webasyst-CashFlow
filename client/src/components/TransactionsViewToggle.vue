@@ -4,18 +4,18 @@
     class="toggle c-transactions-view-toggle"
   >
     <span
-      :class="{ selected: transactionsViewMode === 'table' }"
-      :title="$t('transactionsViewTable')"
-      @click="transactionsViewMode = 'table'"
-    >
-      <i class="fas fa-table" />
-    </span>
-    <span
       :class="{ selected: transactionsViewMode === 'list' }"
       :title="$t('transactionsViewList')"
       @click="transactionsViewMode = 'list'"
     >
       <i class="fas fa-list" />
+    </span>
+    <span
+      :class="{ selected: transactionsViewMode === 'table' }"
+      :title="$t('transactionsViewTable')"
+      @click="transactionsViewMode = 'table'"
+    >
+      <i class="fas fa-columns" />
     </span>
   </div>
 </template>
