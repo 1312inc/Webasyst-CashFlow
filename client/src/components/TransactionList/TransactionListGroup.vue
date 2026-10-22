@@ -137,11 +137,16 @@
                 <th>{{ $t('date') }}</th>
                 <th>{{ $t('category') }}</th>
                 <th>{{ $t('contractor') }}</th>
-                <th>{{ $t('operationDescription') }}</th>
-                <th>{{ $t('amount') }}</th>
+                <th class="c-transactions-table__desc">
+                  {{ $t('operationDescription') }}
+                </th>
+                <th class="align-right">
+                  {{ $t('amount') }}
+                </th>
                 <th>{{ $t('account') }}</th>
                 <th
                   v-if="showBalanceColumn"
+                  class="align-right"
                   :title="$t('accountBalanceTransactionListHint')"
                 >
                   {{ $t('balance') }}
@@ -183,31 +188,31 @@
             :visible-select-checkbox="visibleSelectCheckbox"
             @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
-          <li
-            v-if="type === 'future' && $store.state.transaction.showFutureTransactionsMoreLink[featurePeriod]"
-            class="flexbox middle"
-          >
-            <button
-              class="button light-gray"
-              style="margin: 1rem auto;"
-              @click.prevent="() => $store.dispatch('transaction/fetchTransactionsFuture')"
-            >
-              <span
-                v-show="$store.state.transaction.loadingFuture"
-                class="custom-mr-8"
-              >
-                <i class="fas fa-spinner wa-animation-spin speed-1000" />
-              </span>
-              <span>{{ $t('showMore') }}</span>
-            </button>
-          </li>
         </ul>
+        <div
+          v-if="type === 'future' && filteredTransactions.length && $store.state.transaction.showFutureTransactionsMoreLink[featurePeriod]"
+          class="flexbox middle"
+        >
+          <button
+            class="button light-gray"
+            style="margin: 1rem auto;"
+            @click.prevent="() => $store.dispatch('transaction/fetchTransactionsFuture')"
+          >
+            <span
+              v-show="$store.state.transaction.loadingFuture"
+              class="custom-mr-8"
+            >
+              <i class="fas fa-spinner wa-animation-spin speed-1000" />
+            </span>
+            <span>{{ $t('showMore') }}</span>
+          </button>
+        </div>
         <SkeletonTransaction
-          v-else-if="(type === 'future' || type === 'tomorrow') && $store.state.transaction.loadingFuture && !$store.getters['transaction/getFutureTransactions'].length"
+          v-if="!filteredTransactions.length && (type === 'future' || type === 'tomorrow') && $store.state.transaction.loadingFuture && !$store.getters['transaction/getFutureTransactions'].length"
           :lines="1"
         />
         <div
-          v-else
+          v-else-if="!filteredTransactions.length"
           class="align-center small custom-py-24"
         >
           {{ $t("emptyList") }}
@@ -280,7 +285,7 @@ export default {
       return this.$appState.isDesktop &&
         !this.$isSpaMobileMode &&
         transactionsViewMode.value === 'table' &&
-        this.type !== 'future'
+        !this.compactModeForFutureList
     },
 
     showBalanceColumn () {
@@ -392,6 +397,7 @@ export default {
 
   methods: {
     isShown (transaction) {
+      if (this.isTableLayout) return true
       const key = `${transaction.category_id}|${transaction.date}|${transaction.external_source}`
       if (
         !this.сollapseGroups[key] ||
@@ -403,6 +409,7 @@ export default {
     },
 
     collapseHeaderData (transaction) {
+      if (this.isTableLayout) return null
       const key = `${transaction.category_id}|${transaction.date}|${transaction.external_source}`
       if (
         this.isShown(transaction) &&

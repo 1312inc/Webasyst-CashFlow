@@ -34,7 +34,14 @@
         data-copy-role="date"
         :data-copy="dateLabel"
       >
-        {{ dateLabel }}
+        {{ dateMain }}
+        <span
+          v-if="dateWeekday"
+          class="gray"
+        >{{ dateWeekday }}</span>
+        <template v-else>
+          {{ dateYear }}
+        </template>
       </td>
       <td
         data-copy-role="category"
@@ -43,12 +50,6 @@
         :style="category && category.color ? `color: ${category.color}` : null"
       >
         {{ categoryLabel }}
-        <span
-          v-if="isCollapseHeader"
-          class="hint custom-ml-4"
-        >
-          × {{ collapseHeaderData.ids.length }}
-        </span>
       </td>
       <td
         data-copy-role="contractor"
@@ -522,11 +523,23 @@ export default {
       )
     },
 
-    dateLabel () {
+    dateMain () {
       const date = this.$moment(this.transaction.date)
-      const main = date.format(this.$moment.locale() === 'ru' ? 'D MMM' : 'MMM D')
-      const extra = date.year() === this.$moment().year() ? date.format('dddd') : date.format('YYYY')
-      return `${main} ${extra}`
+      return date.format(this.$moment.locale() === 'ru' ? 'D MMM' : 'MMM D')
+    },
+
+    dateWeekday () {
+      const date = this.$moment(this.transaction.date)
+      if (date.year() !== this.$moment().year()) return ''
+      return date.format('dddd')
+    },
+
+    dateYear () {
+      return this.$moment(this.transaction.date).format('YYYY')
+    },
+
+    dateLabel () {
+      return `${this.dateMain} ${this.dateWeekday || this.dateYear}`
     },
 
     categoryLabel () {

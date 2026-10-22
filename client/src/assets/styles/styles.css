@@ -179,10 +179,11 @@ body.modal {
 .c-transactions-table__col-date { width: 8.5rem; }
 .c-transactions-table__col-category { width: 14%; }
 .c-transactions-table__col-contractor { width: 14%; }
+.c-transactions-table__col-description { width: 18%; }
 .c-transactions-table__col-amount { width: 9rem; }
 .c-transactions-table__col-account { width: 14%; }
 .c-transactions-table__col-balance { width: 8.5rem; }
-.c-transactions-table__col-action { width: 9rem; }
+.c-transactions-table__col-action { width: 3rem; }
 .c-transactions-table th,
 .c-transactions-table td {
   white-space: nowrap;
@@ -190,11 +191,16 @@ body.modal {
   text-overflow: ellipsis;
   vertical-align: middle;
 }
+.c-transactions-table .c-transactions-table__desc {
+  min-width: 150px;
+}
 .c-transactions-table .c-transactions-table__check,
 .c-transactions-table .c-transactions-table__action {
-  overflow: visible;
   text-overflow: clip;
   user-select: none;
+}
+.c-transactions-table .c-transactions-table__action .desktop-only {
+  display: none;
 }
 .c-transactions-table__repeat {
   color: var(--text-color);
@@ -210,7 +216,10 @@ body.modal {
 .c-transactions-table tbody tr:hover {
   background: var(--background-color-table-row-hover);
 }
-.c-transactions-table tbody tr.c-item-overdue {
+.c-transactions-table tbody tr.c-item-overdue td {
+  background: var(--highlighted-overdue);
+}
+.c-transactions-table tbody tr.c-item-overdue:hover td {
   background: var(--highlighted-overdue);
 }
 .c-transactions-table tbody tr.c-item-selected,
