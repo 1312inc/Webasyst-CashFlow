@@ -174,7 +174,7 @@
         <div
           v-if="!isCompactMode"
           class="desktop-and-tablet-only flex-none"
-          style="width: 4rem;"
+          style="width: 6rem;"
         >
           <template v-if="showDate">
             <div class="custom-mb-4 bold nowrap c-group-date text-ellipsis">
