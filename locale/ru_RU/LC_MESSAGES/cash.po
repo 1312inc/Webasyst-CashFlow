@@ -1855,8 +1855,11 @@ msgstr "Компания не сохранена"
 msgid "All companies"
 msgstr "Все компании"
 
-msgid "extra discount for the basic license owners"
-msgstr "скидка на апгрейд владельцам базовой лицензии"
+msgid "extra promocode for the basic license owners"
+msgstr "промокод на апгрейд владельцам базовой лицензии"
 
-msgid "welcome discount for new users"
-msgstr "приветственная скидка новым пользователям"
+msgid "welcome promocode for new users"
+msgstr "приветственный промокод новым пользователям"
+
+msgid "https://www.webasyst.com/my/hosting/"
+msgstr "https://www.webasyst.ru/my/hosting/"

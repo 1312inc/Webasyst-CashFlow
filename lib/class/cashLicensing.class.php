@@ -19,7 +19,7 @@ class cashLicensing extends waLicensing
             $result = (string) $license['expire_date'];
         } else {
             // lifetime license, no expiration date
-            $result = true;
+            $result = false;
         }
 
         return $result;

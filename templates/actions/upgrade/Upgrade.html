@@ -17,7 +17,10 @@
 {$_license_expires = cashHelper::licenseExpirationDate()}
 {$_is_cloud = cashHelper::isCloud()}
 {$_premium_pricing = cashHelper::getPremiumPricing()}
-{if !$_is_cloud && $_has_license && !$_license_expires}
+
+{if $_is_cloud}
+    {$_upgrade_url = '[`https://www.webasyst.com/my/hosting/`]'}
+{elseif $_has_license && (!$_license_expires || $_license_expires >= date('Y-m-d'))}
     {$_upgrade_url = '[`https://www.webasyst.com/my/buy/upgrade-to-premium/cash/`]'|cat:'?domain='|cat:str_replace('http://','',str_replace('https://','',$wa->domainUrl()))}
 {else}
     {$_upgrade_url = '[`https://www.webasyst.com/store/app/cash/`]'}
@@ -50,11 +53,11 @@
             <br><br>
             [`Promocode`] <code class="badge squared yellow text-black"><b>{if $_has_license && !$_license_expires}43CGGN755S{else}BIGCASH{/if}</b></code> <strong class="text-red">-15% / {date('Y.m')}</strong>
             <br>
-            <strong class="text-black">
+            <strong class="text-red">
                 {if $_has_license && !$_license_expires}
-                    [`extra discount for the basic license owners`]
+                    [`extra promocode for the basic license owners`]
                 {else}
-                    [`welcome discount for new users`]
+                    [`welcome promocode for new users`]
                 {/if}
             </strong>
 
