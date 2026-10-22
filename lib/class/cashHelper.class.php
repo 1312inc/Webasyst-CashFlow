@@ -99,7 +99,7 @@ final class cashHelper
             $pricing = array(
               'compare_price' => '24 999',
               'price' => '7 199 <span class="ruble">₽</span>/год',
-              'upgrade' => '16 999 <span class="ruble">₽</span> / апгрейд навсегда'
+              'upgrade' => '17 999 <span class="ruble">₽</span> / апгрейд навсегда'
             );
         }
         else
@@ -107,7 +107,7 @@ final class cashHelper
             $pricing = array(
               'compare_price' => '$399',
               'price' => '$119/yr',
-              'upgrade' => '$289 / lifetime upgrade'
+              'upgrade' => '$299 / lifetime upgrade'
             );
         }
 
