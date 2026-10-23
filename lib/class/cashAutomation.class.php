@@ -694,7 +694,7 @@ final class cashAutomation
                 $elements = [
                     'operator' => [
                         'type' => 'select',
-                        'options' => ['=' => '=', '!=' => '!=']
+                        'options' => ['=' => '=', '!=' => '≠']
                     ],
                     'value' => [
                         'type' => 'select',

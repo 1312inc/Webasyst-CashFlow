@@ -161,7 +161,9 @@
                         {$_event|escape}
                         {if $rule && !empty($rule.conditions)}
                             {foreach $rule.conditions as $_ => $_c}
-                                <span class="badge light-gray smaller semibold text-black custom-mr-4">{ifset($conditions, $_c.condition_id, 'name', '')}</span>
+                                <span class="badge light-gray smaller semibold text-black custom-mr-4">
+                                    {ifset($_c, 'badge', '')}
+                                </span>
                             {/foreach}
                         {/if}
                     </div>

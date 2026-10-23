@@ -16,11 +16,32 @@ class cashAutomationAction extends cashViewAction
 
     public function runAction($params = null)
     {
+        $automation_rules = $this->getRules();
+        $conditions = self::getConditions();
+
+        foreach ($automation_rules as &$rule) {
+            if (!empty($rule['conditions'])) {
+                foreach ($rule['conditions'] as &$rule_condition) {
+                    $rule_condition['badge'] = '';
+                    if ($condition_data = ifset($conditions[$rule_condition['condition_id']])) {
+                        $operator = ifset($condition_data, 'elements', 'operator', 'options', $rule_condition['operator'], '');
+                        $value = ifset($rule_condition, 'value', 'k');
+                        $sub_value = ifset($rule_condition, $value, '');
+                        if (empty($sub_value)) {
+                            $sub_value = ifset($condition_data, 'elements', 'value', 'options', $value, '');
+                        }
+                        $rule_condition['badge'] = ifset($condition_data, 'name', '').' '.$operator.' '.($sub_value ?: $value);
+                    }
+                }
+            }
+        }
+        unset($rule, $rule_condition);
+
         $this->view->assign([
             'events'           => $this->getEvents(),
-            'conditions'       => self::getConditions(),
+            'conditions'       => $conditions,
             'actions'          => self::getActions(),
-            'automation_rules' => $this->getRules(),
+            'automation_rules' => $automation_rules,
         ]);
     }
 
