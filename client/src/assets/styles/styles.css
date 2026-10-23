@@ -392,3 +392,25 @@ body.modal {
   border-left: 0.3em solid transparent;
   transform: translate(50%, -50%);
 }
+
+.c-autocomplete-menu {
+  position: absolute;
+  background: var(--background-color-blank) !important;
+  box-shadow: 0 0.5rem 1rem -0.5rem var(--dialog-shadow-color);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 99;
+}
+
+.c-autocomplete-menu__item {
+  cursor: pointer;
+}
+
+.c-autocomplete-menu__item:focus,
+.c-autocomplete-menu__item:hover,
+.c-autocomplete-menu__item.active {
+  outline: none;
+  background-color: var(--accent-color);
+  color: white;
+}

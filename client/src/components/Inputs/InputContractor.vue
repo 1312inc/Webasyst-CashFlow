@@ -270,23 +270,4 @@ export default {
 input {
   transition: none;
 }
-
-.c-autocomplete-menu {
-  background: var(--background-color-blank) !important;
-  position: absolute;
-  list-style: none;
-  box-shadow: 0 0.5rem 1rem -0.5rem var(--dialog-shadow-color);
-
-  &__item {
-    cursor: pointer;
-
-    &:focus,
-    &:hover,
-    &.active {
-      outline: none;
-      background-color: var(--accent-color);
-      color: white;
-    }
-  }
-}
 </style>
