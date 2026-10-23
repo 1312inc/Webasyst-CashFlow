@@ -175,11 +175,11 @@ body.modal {
   min-width: 64rem;
   table-layout: fixed;
 }
-.c-transactions-table__col-check { width: 2.25rem; }
+.c-transactions-table__col-check { width: 1.5625rem; }
 .c-transactions-table__col-date { width: 8.5rem; }
 .c-transactions-table__col-category { width: 14%; }
 .c-transactions-table__col-contractor { width: 14%; }
-.c-transactions-table__col-description { width: 18%; }
+.c-transactions-table__col-description { width: auto; }
 .c-transactions-table__col-amount { width: 9rem; }
 .c-transactions-table__col-account { width: 14%; }
 .c-transactions-table__col-balance { width: 8.5rem; }
@@ -198,6 +198,14 @@ body.modal {
 .c-transactions-table .c-transactions-table__action {
   text-overflow: clip;
   user-select: none;
+}
+.c-transactions-table .c-transactions-table__check {
+  width: 1.5625rem;
+  min-width: 1.5625rem;
+  max-width: 1.5625rem;
+  padding-left: 0.5rem;
+  padding-right: 0;
+  box-sizing: border-box;
 }
 .c-transactions-table .c-transactions-table__action .desktop-only {
   display: none;
