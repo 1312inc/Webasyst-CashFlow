@@ -11,6 +11,7 @@
       <BlankBox
         v-for="(group, index) in primaryGroups"
         :key="group.name"
+        :transparent="group.name === 'future' || group.name === 'tomorrow'"
       >
         <TransactionListGroup
           :group="group.items"

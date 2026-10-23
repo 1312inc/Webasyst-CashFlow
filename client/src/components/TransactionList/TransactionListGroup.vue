@@ -463,7 +463,11 @@ export default {
   position: sticky;
   top: calc(4rem + 60px);
   z-index: 99;
-  background-color: var(--background-color-blank);
+  background: var(--background-color);
+}
+
+.blank .c-sticky-header-group {
+  background: var(--background-color-blank);
 }
 
 .no-sticky-controls .c-sticky-header-group {
