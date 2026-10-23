@@ -649,6 +649,12 @@ paths:
           description: ID компании
           schema:
             type: integer
+        - in: query
+          name: scenario_id
+          description: ID сценария
+          schema:
+            type: integer
+            default: null
       responses:
         200:
           description: Список счетов.
