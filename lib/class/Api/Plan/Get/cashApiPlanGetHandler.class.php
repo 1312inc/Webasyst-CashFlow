@@ -29,6 +29,9 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
                 'IF(ca.is_imaginary = -1, NULL, true)',
                 'ct.date >= s:date_from AND ct.date < DATE_ADD(s:date_to, INTERVAL 1 DAY)'
             ];
+            if ($request->scenario_id) {
+                $_where[] = '(ct.scenario_id = i:scenario_id OR ct.scenario_id IS NULL)';
+            }
             $total_facts = $model->query("
                 SELECT ct.account_id, ca.currency, ct.category_id, cc.category_parent_id, SUM(ct.amount) amount_fact
                 FROM cash_transaction ct
@@ -40,6 +43,7 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
             ", [
                 'date_from' => $date_from,
                 'date_to'   => $date_to,
+                'scenario_id' => $request->scenario_id
             ])->fetchAll();
             $where['month'] = "(`month` IS NULL OR `month` = '$date_from')";
         } else {

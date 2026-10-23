@@ -1841,6 +1841,12 @@ paths:
           schema:
             type: integer
             default: null
+        - in: query
+          name: scenario_id
+          description: ID сценария.
+          schema:
+            type: integer
+            default: null
       responses:
         200:
           description: Список планов (целей)
@@ -1910,6 +1916,10 @@ paths:
                 account_id:
                   type: integer
                   description: ID счета
+                scenario_id:
+                  type: integer
+                  description: ID сценария
+                  default: null
               required:
                 - category_id
                 - currency
