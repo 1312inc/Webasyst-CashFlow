@@ -29,7 +29,14 @@
       class="dropdown-body"
     >
       <div
+        v-if="typeaheadQuery"
+        class="smaller gray custom-px-16 custom-py-8"
+      >
+        {{ typeaheadQuery }}
+      </div>
+      <div
         v-for="(group, i) in itemsGroups"
+        v-show="!typeaheadMatches || group.some(isTypeaheadMatch)"
         :key="i"
       >
         <div
@@ -41,15 +48,14 @@
         <ul class="menu custom-m-0">
           <li
             v-for="(item, j) in group"
+            v-show="!typeaheadMatches || isTypeaheadMatch(item)"
             :key="j"
+            :class="{ selected: item === typeaheadActiveItem }"
           >
             <a
               v-if="item.name"
               href="#"
-              @click.prevent="
-                $emit('input', item[valuePropName]);
-                open = false;
-              "
+              @click.prevent="select(item)"
               v-html="rowModificator(item)"
             />
           </li>
@@ -61,6 +67,7 @@
 
 <script>
 import ClickOutside from 'vue-click-outside'
+import { createTypeaheadBuffer, matchesQuery } from '@/utils/dropdownTypeahead'
 
 export default {
 
@@ -114,12 +121,17 @@ export default {
     error: {
       type: Boolean,
       default: false
+    },
+    typeahead: {
+      type: Boolean,
+      default: false
     }
   },
 
   data () {
     return {
-      open: false
+      open: false,
+      typeaheadQuery: ''
     }
   },
 
@@ -147,6 +159,58 @@ export default {
       return (
         flated.find(i => i[this.valuePropName] === this.value) || flated[0]
       )
+    },
+
+    typeaheadMatches () {
+      if (!this.typeaheadQuery) return null
+      return this.itemsGroups.flat().filter(item => item.name && matchesQuery(item.name, this.typeaheadQuery))
+    },
+
+    typeaheadActiveItem () {
+      return this.typeaheadMatches ? this.typeaheadMatches[0] || null : null
+    }
+  },
+
+  watch: {
+    open (isOpen) {
+      if (!this.typeahead) return
+      if (isOpen) window.addEventListener('keydown', this.typeaheadBuffer.onKeydown)
+      else this.detachTypeahead()
+    },
+
+    typeaheadActiveItem () {
+      this.$nextTick(() => {
+        this.$el.querySelector('.menu > li.selected')?.scrollIntoView({ block: 'nearest' })
+      })
+    }
+  },
+
+  created () {
+    this.typeaheadBuffer = createTypeaheadBuffer({
+      onChange: query => { this.typeaheadQuery = query },
+      onEnter: () => {
+        if (this.typeaheadActiveItem) this.select(this.typeaheadActiveItem)
+      }
+    })
+  },
+
+  beforeDestroy () {
+    this.detachTypeahead()
+  },
+
+  methods: {
+    select (item) {
+      this.$emit('input', item[this.valuePropName])
+      this.open = false
+    },
+
+    isTypeaheadMatch (item) {
+      return this.typeaheadMatches.includes(item)
+    },
+
+    detachTypeahead () {
+      window.removeEventListener('keydown', this.typeaheadBuffer.onKeydown)
+      this.typeaheadBuffer.reset()
     }
   }
 }

@@ -162,6 +162,7 @@
                   value-prop-name="id"
                   :row-modificator="$_rowModificatorMixin_rowModificator_category"
                   :max-height="200"
+                  typeahead
                   class="width-100"
                 />
               </div>
@@ -196,6 +197,7 @@
                   :row-modificator="$_rowModificatorMixin_rowModificator_account"
                   :is-right="transactionType !== 'transfer'"
                   :max-height="200"
+                  typeahead
                   class="width-100"
                 />
               </div>
@@ -847,10 +849,10 @@ export default {
     },
 
     showBasicScenarioDetachHint () {
-      return this.isModeUpdate
-        && this.model.id
-        && !this.transaction.scenario_id
-        && !!this.model.scenario_id
+      return this.isModeUpdate &&
+        this.model.id &&
+        !this.transaction.scenario_id &&
+        !!this.model.scenario_id
     },
 
     selectedScenario () {
@@ -968,8 +970,8 @@ export default {
       this.$store.dispatch('scenario/getList').then(() => {
         if (this.isModeUpdate) return
         if (
-          this.model.scenario_id
-          && !this.scenarios.some(scenario => scenario.id === this.model.scenario_id)
+          this.model.scenario_id &&
+          !this.scenarios.some(scenario => scenario.id === this.model.scenario_id)
         ) {
           this.model.scenario_id = null
         }
