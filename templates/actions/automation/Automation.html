@@ -161,7 +161,7 @@
                         {$_event|escape}
                         {if $rule && !empty($rule.conditions)}
                             {foreach $rule.conditions as $_ => $_c}
-                                <span class="badge light-gray smaller semibold text-black custom-mr-4">
+                                <span class="badge brown smaller semibold custom-mr-4">
                                     {ifset($_c, 'badge', '')}
                                 </span>
                             {/foreach}
@@ -180,8 +180,8 @@
             {/foreach}
         </td>
         <td class="align-right nowrap">
+            <a href="javascript:void(0);" class="c-log-rule button smaller nowrap light-gray rounded"><span class="badge brown small bold">{ifset($rule, 'count_log', 0)}</span> [`Log`] <span class="hint desktop-only">{ifset($rule, 'last_date_log', '')|wa_datetime:'humandatetime'}</span></a>
             <a href="javascript:void(0);" class="c-show-rule button rounded light-gray smaller"><i class="fas fa-edit text-blue"></i> <span class="desktop-only">[`Edit`]</span></a>
-            <a href="javascript:void(0);" class="c-log-rule button smaller nowrap light-gray rounded"><span class="badge gray small bold">{ifset($rule, 'count_log', 0)}</span> [`Log`] <span class="hint desktop-only">{ifset($rule, 'last_date_log', '')|wa_datetime:'humandatetime'}</span></a>
         </td>
         <td>
             <a href="javascript:void(0);" class="c-delete-rule button nobutton rounded smaller text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
@@ -368,7 +368,7 @@
         <div class="fields" style="{if !cashHelper::isPremium()} opacity: 0.5;{/if}">
 
             <a href="#/automation/add/" class="button small rounded light-gray" id="c-automation-add-rule">
-                <i class="fas fa-robot text-dark-gray custom-mr-4"></i>
+                <i class="fas fa-robot text-brown custom-mr-4"></i>
                 [`Add automation bot`]
             </a>
             <table id="c-automation-rules">

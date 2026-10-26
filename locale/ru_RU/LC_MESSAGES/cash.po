@@ -1472,7 +1472,7 @@ msgid "To run several THEN actions on one event, simply create multiple bots wit
 msgstr "Чтобы выполнить несколько действий для одного события, просто создайте несколько ботов с похожими условиями IF. Все подходящие боты будут запускаться по очереди в заданном порядке."
 
 msgid "Add automation bot"
-msgstr "Создать бот"
+msgstr "Создать бота"
 
 msgid "Event with transaction"
 msgstr "Событие с операцией"

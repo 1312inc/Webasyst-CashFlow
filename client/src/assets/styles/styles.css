@@ -93,8 +93,8 @@ body.modal {
 
 .alert.c-cashgap-prediction-banner { border: none; padding: 1rem; margin: 1rem 0 0; }
 
-.c-button-add-income { background: #16d15f; }
-.c-button-add-expense { background: #f7623a; }
+.c-button-add-income { background: #06d35f; }
+.c-button-add-expense { background: #f3423a; }
 
 .c-list { margin-top: 0; }
 .c-list .c-item {
