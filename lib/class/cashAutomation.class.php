@@ -254,7 +254,7 @@ final class cashAutomation
                     switch ($condition_id) {
                         case 'amount':
                             $amount = ifset($transaction, 'amount', null);
-                            if (isset($amount, $value) && $value !== '' && self::compare(abs($amount), abs($value), $operator)) {
+                            if (isset($amount, $value) && $value !== '' && self::compare($amount, $value, $operator)) {
                                 $condition_done++;
                             }
                             break;

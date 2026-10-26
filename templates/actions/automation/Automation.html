@@ -59,7 +59,7 @@
             {foreach $conditions as $_condition_id => $_condition}
                 {if !empty($_condition.elements)}
                     {foreach $_condition.elements as $_el_name => $_element}
-                        {$elem_value = ifempty($condition, $_el_name, '')}
+                        {$elem_value = ifset($condition, $_el_name, '')}
                         {if $_element.type == 'select'}
 
                                 <select name="rules[{$_rule_id}][conditions][{$condition_rand}][{$_el_name}]" class="{$_condition_id|escape}{if !empty($_element.class)} {$_element.class|escape}{/if}{if $rule_name != $_condition_id} hidden{/if}"{if $rule_name != $_condition_id} disabled{/if}>
