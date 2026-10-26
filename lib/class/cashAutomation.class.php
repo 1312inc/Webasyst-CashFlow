@@ -43,6 +43,7 @@ final class cashAutomation
             $categories = [
                 cashCategory::TYPE_INCOME => [],
                 cashCategory::TYPE_EXPENSE => [],
+                cashCategory::TYPE_TRANSFER => [],
             ];
             foreach (cash()->getModel(cashCategory::class)->getAllActiveForContact() as $_category) {
                 if ($_category['type'] === cashCategory::TYPE_INCOME) {
