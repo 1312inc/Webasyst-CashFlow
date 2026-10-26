@@ -2885,6 +2885,10 @@ components:
         is_archived:
           type: boolean
           description: Признак удаленной операции
+        external_hash:
+          type: string
+          nullable: true
+          description: Hash в системе внешнего приложения
         external_source_info:
           nullable: true
           $ref: '#/components/schemas/TransactionExternalData'
@@ -2893,6 +2897,10 @@ components:
           nullable: true
           description: Идентификатор другого приложения
           example: "shop"
+        external_id:
+          type: integer
+          nullable: true
+          description: Идентификатор в системе внешнего приложения
         contractor_contact_id:
           type: integer
           nullable: true

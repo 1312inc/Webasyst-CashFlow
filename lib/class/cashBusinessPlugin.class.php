@@ -85,15 +85,6 @@ abstract class cashBusinessPlugin extends waPlugin
             $data_model = cash()->getModel('cashTransactionData');
         }
 
-//<<<< temp log
-$t_log = $data_model->query("
-    SELECT * FROM cash_transaction ct 
-    WHERE ct.external_source = 'api_tinkoff' 
-    AND ct.create_datetime > '2026-10-21 00:00:00' AND ct.create_datetime < '2026-10-21 23:59:59'
-")->fetchAll();
-cash()->getLogger()->log($t_log, 'api_tinkoff_2026_10_21');
-// >>>>>
-
         if (!empty($transactions) && is_array($transactions)) {
             $data = [];
             $add_transactions = [];
