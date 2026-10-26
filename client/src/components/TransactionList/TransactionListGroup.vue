@@ -122,8 +122,8 @@
               <col class="c-transactions-table__col-date">
               <col class="c-transactions-table__col-category">
               <col class="c-transactions-table__col-contractor">
-              <col class="c-transactions-table__col-description">
               <col class="c-transactions-table__col-amount">
+              <col class="c-transactions-table__col-description">
               <col class="c-transactions-table__col-account">
               <col
                 v-if="showBalanceColumn"
@@ -137,11 +137,11 @@
                 <th>{{ $t('date') }}</th>
                 <th>{{ $t('category') }}</th>
                 <th>{{ $t('contractor') }}</th>
+                <th class="align-right c-transactions-table__amount">
+                  {{ $t('amount') }}
+                </th>
                 <th class="c-transactions-table__desc">
                   {{ $t('operationDescription') }}
-                </th>
-                <th class="align-right">
-                  {{ $t('amount') }}
                 </th>
                 <th>{{ $t('account') }}</th>
                 <th

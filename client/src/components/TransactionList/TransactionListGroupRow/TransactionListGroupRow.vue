@@ -59,16 +59,9 @@
         {{ contractorName }}
       </td>
       <td
-        data-copy-role="description"
-        :data-copy="descriptionText"
-        class="c-transactions-table__desc text-ellipsis"
-      >
-        <span v-if="descriptionText">{{ descriptionText }}</span>
-      </td>
-      <td
         data-copy-role="amount"
         :data-copy="copyAmount"
-        class="bold nowrap align-right"
+        class="c-transactions-table__amount bold nowrap align-right"
         :style="category && category.color ? `color: ${category.color}` : null"
       >
         {{
@@ -83,6 +76,13 @@
           class="fas fa-redo c-transactions-table__repeat custom-ml-4"
           :title="repeatingTitle"
         />
+      </td>
+      <td
+        data-copy-role="description"
+        :data-copy="descriptionText"
+        class="c-transactions-table__desc text-ellipsis"
+      >
+        <span v-if="descriptionText">{{ descriptionText }}</span>
       </td>
       <td
         data-copy-role="account"
