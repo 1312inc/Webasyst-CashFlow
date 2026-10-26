@@ -87,28 +87,21 @@ abstract class cashBusinessPlugin extends waPlugin
 
         if (!empty($transactions) && is_array($transactions)) {
             $data = [];
+            $add_ids = [];
+            $update_ids = [];
             $add_transactions = [];
             $now = date('Y-m-d H:i:s');
             $transaction_model = cash()->getModel(cashTransaction::class);
             $create_contact_id = wa()->getUser()->getId();
             $external_source = $this->getExternalSource();
-            $hashes = [array_column($transactions, 'hash')];
-            $transaction_in_db = $transaction_model
-                ->where('account_id = ?', $this->cash_account_id)
-                ->where('external_hash IN (?)', $hashes)
-                ->where('external_source = ?', $external_source)
-                ->where('is_archived = 0')->fetchAll();
-            $skip_hashes = array_column($transaction_in_db, 'external_hash');
             $transactions = $this->autoMappingPilot($transactions);
             foreach ($transactions as $_transaction) {
+                $transaction_in_db = [];
                 $external_hash = ifset($_transaction, 'hash', null);
-                if (in_array($external_hash, $skip_hashes)) {
-                    continue;
-                }
                 $amount = (float) ifset($_transaction, 'amount', 0);
                 $is_credit = $amount > 0;
                 $date_operation = strtotime(ifset($_transaction, 'date_operation', $now));
-                $add_transactions[] = [
+                $add_transaction = [
                     'date'              => date('Y-m-d', $date_operation),
                     'datetime'          => date('Y-m-d H:i:s', $date_operation),
                     'account_id'        => $this->cash_account_id,
@@ -123,31 +116,54 @@ abstract class cashBusinessPlugin extends waPlugin
                     'external_data'     => empty($_transaction['external_data']) ? null : json_encode((array) $_transaction['external_data']),
                     'contractor_contact_id' => ifset($_transaction, 'contractor_id', null)
                 ];
-                if ($_data = ifset($_transaction, 'data', null)) {
-                    $data[$external_hash] = $_data;
+
+                if ($external_hash) {
+                    $transaction_in_db = $transaction_model->getByField([
+                        'external_hash' => $external_hash,
+                        'external_source' => $external_source
+                    ]);
                 }
-            }
-
-            if (!empty($add_transactions)) {
-                $db_result = $transaction_model->multipleInsert($add_transactions);
-                if ($db_result->getResult()) {
-                    $transaction_ids = $transaction_model->select('external_hash, id')
-                        ->where('external_source = ?', $external_source)
-                        ->where('external_hash IN (:hash)', ['hash' => array_keys($data)])
-                        ->where('is_archived = 0')
-                        ->fetchAll('external_hash');
-
-                    cashAutomation::automationEvent($this, array_column($transaction_ids, 'id'), 'add');
-                    if ($data) {
-                        $transaction_data = [];
-                        foreach ($data as $_external_hash => $_data) {
-                            if ($transaction_id = ifempty($transaction_ids, $_external_hash, 'id', null)) {
-                                $transaction_data[$transaction_id] = $_data;
-                            }
+                if ($transaction_in_db) {
+                    // UPDATE
+                    try {
+                        if ($transaction_model->updateById($transaction_in_db['id'], $add_transaction)) {
+                            $update_ids[] = $transaction_in_db['id'];
+                            $add_transaction['id'] = $transaction_in_db['id'];
                         }
-                        $data_model->multipleInsertData($transaction_data);
+                    } catch (Exception $e) {
+                        cash()->getLogger()->error('Error update business transaction', $e);
+                    }
+                } else {
+                    // INSERT
+                    try {
+                        $db_result = $transaction_model->insert($add_transaction);
+                        if (is_int($db_result)) {
+                            $add_ids[] = $db_result;
+                            $add_transaction['id'] = $db_result;
+                        }
+                    } catch (Exception $e) {
+                        cash()->getLogger()->error('Error insert business transaction', $e);
                     }
                 }
+
+                if ($add_transaction['id']) {
+                    $add_transactions[] = $add_transaction;
+                    if ($_data = ifset($_transaction, 'data', null)) {
+                        $data[$add_transaction['id']] = $_data;
+                    }
+                }
+
+            }
+
+            if ($update_ids) {
+                cashAutomation::automationEvent($this, array_column($update_ids, 'id'), 'update');
+            }
+            if ($add_ids) {
+                cashAutomation::automationEvent($this, array_column($add_ids, 'id'), 'add');
+            }
+
+            if ($data) {
+                $data_model->multipleInsertData($data);
             }
 
             return $add_transactions;
