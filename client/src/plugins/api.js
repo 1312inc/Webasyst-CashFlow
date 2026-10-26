@@ -44,9 +44,17 @@ api.interceptors.request.use((config) => {
 
   const scenarioId = scenarioContextService.scenarioId
   const httpMethod = (config.method || 'get').toLowerCase()
+  const isPlanMethod = methodName && /^cash\.plan\./.test(methodName)
   if (scenarioId && httpMethod === 'get') {
     config.params = {
       ...config.params,
+      scenario_id: scenarioId
+    }
+  }
+  if (scenarioId && isPlanMethod && httpMethod !== 'get') {
+    const data = typeof config.data === 'string' ? JSON.parse(config.data) : (config.data || {})
+    config.data = {
+      ...data,
       scenario_id: scenarioId
     }
   }
