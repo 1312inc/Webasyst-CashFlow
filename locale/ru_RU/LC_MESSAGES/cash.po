@@ -1863,3 +1863,9 @@ msgstr "приветственный промокод новым пользов�
 
 msgid "https://www.webasyst.com/my/hosting/"
 msgstr "https://www.webasyst.ru/my/hosting/"
+
+msgid "Passcode lock"
+msgstr "Защита кодом-паролем"
+
+msgid "Secure access to your data with an additional password that will be required for you and your teammates to launch the app."
+msgstr "Закройте доступ к приложению с помощью дополнительного кода-пароля, который будет требоваться при каждом запуске приложения и для вас, и для ваших сотрудников."

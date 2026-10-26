@@ -1,6 +1,6 @@
 <style>
 
-    .c-premium-appicon { position: relative; z-index: 10; height: 9rem; background: url('{$wa_url}wa-apps/cash/img/cash.png') no-repeat center / 8rem; }
+    .c-premium-appicon { position: relative; z-index: 10; height: 13rem; background: url('{$wa_url}wa-apps/cash/img/cash.png') no-repeat center / 12rem; }
     .c-premium-feature { border-radius: 0.75rem; background: var(--background-color-blank); margin-bottom: 1.5rem; padding: 1.5rem 2rem; }
     .c-premium-feature.halfwidth { width: 40%; margin-bottom: 0; padding-bottom: 0.5rem; }
     .c-premium-feature.halfwidth h3 { fonc-size: 1.25rem; }
@@ -121,6 +121,13 @@
             {$_premium_stuff[] = [
               'title' => '[`Teammate accounts`]',
               'body' => '[`Assign accounts to specific users on your team. Know whom is accountable for and how much.`]'
+            ]}
+
+            {$_premium_stuff[] = [
+              'title' => '[`Passcode lock`]',
+              'body' => '[`Secure access to your data with an additional password that will be required for you and your teammates to launch the app.`]',
+              'eta_class' => 'light-gray',
+              'eta' => '[`Later`]'
             ]}
 
             {$_premium_stuff[] = [
