@@ -69,7 +69,7 @@ final class cashHelper
      */
     public static function hasLicense()
     {
-        return waLicensing::check(cashConfig::APP_ID)->hasLicense();
+        return cashLicensing::check(cashConfig::APP_ID)->hasLicense();
     }
 
     /**
@@ -78,7 +78,7 @@ final class cashHelper
      */
     public static function licenseExpirationDate()
     {
-        return waLicensing::check(cashConfig::APP_ID)->licenseExpiration();
+        return cashLicensing::check(cashConfig::APP_ID)->licenseExpiration();
     }
 
     /**
