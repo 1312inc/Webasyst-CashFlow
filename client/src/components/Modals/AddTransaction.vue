@@ -716,6 +716,7 @@ import entityPageMixin from '@/mixins/entityPageMixin'
 import api from '../../plugins/api'
 import { debounce } from '@/utils/debounce'
 import { appState } from '@/services/appState'
+import { scenarioContextService } from '@/services/scenarioContext'
 
 export default {
 
@@ -956,8 +957,23 @@ export default {
       this.model.amount = `${Math.abs(this.model.amount)}`
     }
 
+    if (!this.isModeUpdate) {
+      const scenarioId = scenarioContextService.scenarioId
+      if (scenarioId) {
+        this.model.scenario_id = scenarioId
+      }
+    }
+
     if (this.$appState.isPremium && this.$permissions.isAdmin) {
-      this.$store.dispatch('scenario/getList')
+      this.$store.dispatch('scenario/getList').then(() => {
+        if (this.isModeUpdate) return
+        if (
+          this.model.scenario_id
+          && !this.scenarios.some(scenario => scenario.id === this.model.scenario_id)
+        ) {
+          this.model.scenario_id = null
+        }
+      })
     }
 
     this.transactionType =
