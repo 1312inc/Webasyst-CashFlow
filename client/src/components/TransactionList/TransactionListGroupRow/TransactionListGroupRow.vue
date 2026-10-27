@@ -46,10 +46,21 @@
       <td
         data-copy-role="category"
         :data-copy="categoryLabel"
-        class="semibold text-ellipsis"
-        :style="category && category.color ? `color: ${category.color}` : null"
+        class="c-transactions-table__category semibold"
       >
-        {{ categoryLabel }}
+        <span
+          class="text-ellipsis"
+          :style="category && category.color ? `color: ${category.color}` : null"
+        >{{ categoryLabel }}</span>
+        <span
+          v-if="scenario"
+          class="badge squared text-ellipsis nowrap small"
+          :style="{ backgroundColor: scenario.color }"
+          :title="scenario.name"
+        >
+          <i class="fas fa-code-branch" />
+          {{ scenario.name }}
+        </span>
       </td>
       <td
         data-copy-role="contractor"
@@ -490,6 +501,12 @@ export default {
       return this.$store.getters['category/getById'](
         this.transaction.category_id
       )
+    },
+
+    scenario () {
+      const id = this.transaction?.scenario_id
+      if (!id) return null
+      return this.$store.getters['scenario/getById'](id) || null
     },
 
     isCollapseHeader () {
