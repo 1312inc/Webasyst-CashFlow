@@ -63,11 +63,11 @@
         </span>
       </td>
       <td
-        data-copy-role="contractor"
-        :data-copy="contractorName"
-        class="text-ellipsis"
+        data-copy-role="description"
+        :data-copy="descriptionText"
+        class="c-transactions-table__desc text-ellipsis"
       >
-        {{ contractorName }}
+        <span v-if="descriptionText">{{ descriptionText }}</span>
       </td>
       <td
         data-copy-role="amount"
@@ -89,11 +89,11 @@
         />
       </td>
       <td
-        data-copy-role="description"
-        :data-copy="descriptionText"
-        class="c-transactions-table__desc text-ellipsis"
+        data-copy-role="contractor"
+        :data-copy="contractorName"
+        class="text-ellipsis"
       >
-        <span v-if="descriptionText">{{ descriptionText }}</span>
+        {{ contractorName }}
       </td>
       <td
         data-copy-role="account"
