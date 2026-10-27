@@ -31,6 +31,8 @@ class cashApiPlanGetHandler implements cashApiHandlerInterface
             ];
             if ($request->scenario_id) {
                 $_where[] = '(ct.scenario_id = i:scenario_id OR ct.scenario_id IS NULL)';
+            } else {
+                $_where[] = 'ct.scenario_id IS NULL';
             }
             $total_facts = $model->query("
                 SELECT ct.account_id, ca.currency, ct.category_id, cc.category_parent_id, SUM(ct.amount) amount_fact
