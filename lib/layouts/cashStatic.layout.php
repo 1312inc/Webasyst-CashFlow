@@ -7,9 +7,13 @@ class cashStaticLayout extends waLayout
 {
     public function execute()
     {
+        $accounts_request = new cashApiAccountGetListRequest(
+            waRequest::cookie('cashCompanyId', 0, waRequest::TYPE_INT),
+            waRequest::cookie('cashScenarioId', 0, waRequest::TYPE_INT),
+        );
         $currencies = (new cashApiSystemGetCurrenciesHandler())->handle(null);
         $categories = (new cashApiCategoryGetListHandler())->handle(null);
-        $accounts = (new cashApiAccountGetListHandler())->handle(null);
+        $accounts = (new cashApiAccountGetListHandler())->handle($accounts_request);
         $token = (new cashApiToken())->retrieveToken(cash()->getUser()->getContact());
         $apiSettings = (new cashApiSystemGetSettingsHandler())->handle(null);
 
@@ -21,7 +25,6 @@ class cashStaticLayout extends waLayout
         $this->view->assign(
             [
                 'token' => $token,
-//                'content' => '<i class="icon16 loading"></i>',
                 'isAdmin' => (int) cash()->getUser()->canImport(),
                 'contextUser' => cash()->getUser(),
                 'userId' => (int) wa()->getUser()->getId(),

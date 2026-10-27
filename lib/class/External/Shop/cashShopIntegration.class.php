@@ -111,10 +111,7 @@ final class cashShopIntegration
      */
     public function enableForecast(): bool
     {
-        cash()->getLogger()->debug('enable forecast', 'forecast');
-
         $this->deleteFutureForecastTransactions();
-        cash()->getLogger()->debug('delete future transaction', 'forecast');
 
         /** @var cashAccount $account */
         $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
@@ -127,8 +124,6 @@ final class cashShopIntegration
         $amount = $this->settings->isAutoForecast()
             ? $this->getShopAvgAmount($account->getCurrency())
             : $this->settings->getManualForecast();
-
-        cash()->getLogger()->debug(sprintf('amount to plan %s', $amount), 'forecast');
 
         $category = cash()->getEntityRepository(cashCategory::class)->findById($this->settings->getCategoryIncomeId());
         if (!$category) {
@@ -169,12 +164,8 @@ final class cashShopIntegration
      */
     public function changeForecastType(): void
     {
-        cash()->getLogger()->debug('change forecast type', 'forecast');
-
         $transaction = $this->getForecastRepeatingTransaction();
         if (!$transaction instanceof cashRepeatingTransaction) {
-            cash()->getLogger()->debug('no forecast repeating transaction, enable forecast', 'forecast');
-
             $this->enableForecast();
         } else {
             $amount = $this->settings->isAutoForecast()
@@ -182,11 +173,7 @@ final class cashShopIntegration
                 : $this->settings->getManualForecast();
 
             if ($amount) {
-                cash()->getLogger()->debug(sprintf('amount to plan %s', $amount), 'forecast');
-
                 if ($amount == $transaction->getAmount()) {
-                    cash()->getLogger()->debug('amount not changed, skip update', 'forecast');
-
                     return;
                 }
 
@@ -200,8 +187,6 @@ final class cashShopIntegration
                 cash()->getEntityPersister()->update($transaction);
 
                 $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);
-            } else {
-                cash()->getLogger()->debug('no amount to update', 'forecast');
             }
         }
     }
@@ -287,8 +272,6 @@ SQL;
 
             return;
         }
-
-        cash()->getLogger()->debug('actualize forecast amount', 'forecast');
 
         $this->changeForecastType();
     }
