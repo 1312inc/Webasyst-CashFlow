@@ -146,7 +146,7 @@ abstract class cashBusinessPlugin extends waPlugin
                     }
                 }
 
-                if ($add_transaction['id']) {
+                if (isset($add_transaction['id'])) {
                     $add_transactions[] = $add_transaction;
                     if ($_data = ifset($_transaction, 'data', null)) {
                         $data[$add_transaction['id']] = $_data;
