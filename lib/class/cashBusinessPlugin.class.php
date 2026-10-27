@@ -156,10 +156,10 @@ abstract class cashBusinessPlugin extends waPlugin
             }
 
             if ($update_ids) {
-                cashAutomation::automationEvent($this, array_column($update_ids, 'id'), 'update');
+                cashAutomation::automationEvent($this, $update_ids, 'update');
             }
             if ($add_ids) {
-                cashAutomation::automationEvent($this, array_column($add_ids, 'id'), 'add');
+                cashAutomation::automationEvent($this, $add_ids, 'add');
             }
 
             if ($data) {
