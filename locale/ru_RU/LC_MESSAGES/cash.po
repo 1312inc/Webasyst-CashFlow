@@ -1312,8 +1312,8 @@ msgstr "Уже здесь"
 msgid "Goals & budgets"
 msgstr "Планы, цели, бюджеты"
 
-msgid "Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast).<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>."
-msgstr "Задавайте финансовые цели и бюджеты в формате <code>статья &rarr; когда &rarr; сколько</code>, и приложение в <code>%</code> покажет, насколько вы отклоняетесь от траектории. Цели работают как дополнительный слой поверх запланированных операций (прогноза).<br><br> Примеры: <code>Продажи &rarr; Июнь &rarr; 1.5М</code>, <code>Реклама &rarr; (каждый месяц) &rarr; 50К</code>."
+msgid "Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast) and gather the entire plan-fact analysis in a unified budget table.<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>."
+msgstr "Задавайте финансовые цели и бюджеты в формате <code>статья &rarr; когда &rarr; сколько</code>, и приложение в <code>%</code> покажет, насколько вы отклоняетесь от траектории. Цели работают как дополнительный слой поверх запланированных операций (прогноза) и формируют общую картину план-факт-анализа на странице «Бюджет».<br><br> Примеры: <code>Продажи &rarr; Июнь &rarr; 1.5М</code>, <code>Реклама &rarr; (каждый месяц) &rarr; 50К</code>."
 
 msgid "Arriving"
 msgstr "На подходе"
@@ -1325,7 +1325,7 @@ msgid "Assign accounts to specific users on your team. Know whom is accountable 
 msgstr "Закрепляйте счета за сотрудниками. Контролируйте, у кого сколько на руках в подотчете."
 
 msgid "Automation / bots"
-msgstr "Автоматизация и боты-помощники"
+msgstr "Автоматизация и боты"
 
 msgid "Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>"
 msgstr "Настраивайте правила в формате <code>событие &rarr; действие</code>. Правила работают как боты, которые следят за событиями в системе и автоматизируют создание и корректировку операций.<br><br> Пример: <code>Поступление от АРТИКУС на СЧЕТ_Т_БАНК</code> &rarr; <code>Создать 2 операции ПРОДАЖИ +30% & КОМИССИЯ -30% в СЧЕТ_ПРОЕКТА</code>"
@@ -1333,8 +1333,8 @@ msgstr "Настраивайте правила в формате <code>собы
 msgid "Multiple companies"
 msgstr "Несколько компаний"
 
-msgid "Split accounting across different entities such as LLCs, personal, etc."
-msgstr "Ведите независимый учет и прогноз по разным юрлицам, ООО, ИП."
+msgid "Split accounting across different entities such as LLCs, personal, etc. Each company has its own bundle of accounts which makes cash flow forecasts and analytics more versatile."
+msgstr "Ведите независимый учет и прогноз по разным юрлицам, ООО, ИП. План статей у компаний общий, но счета, прогноз, бюджет, аналитика и права доступа в рамках каждой компании разные."
 
 msgid "Later"
 msgstr "Позже"
@@ -1869,3 +1869,6 @@ msgstr "Защита кодом-паролем"
 
 msgid "Secure access to your data with an additional password that will be required for you and your teammates to launch the app."
 msgstr "Закройте доступ к приложению с помощью дополнительного кода-пароля, который будет требоваться при каждом запуске приложения и для вас, и для ваших сотрудников."
+
+msgid "Make up different projections <a href=\"https://support.webasyst.com/48969/cash-flow-scenarios/\" target=_blank>with scenarios</a>."
+msgstr "Моделируйте разные варианты развития событий <a href=\"https://support.webasyst.ru/48968/cash-flow-scenarios/\" target=_blank>с помощью сценариев</a>."

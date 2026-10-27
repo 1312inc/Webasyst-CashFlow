@@ -1,13 +1,15 @@
 <style>
 
     .c-premium-appicon { position: relative; z-index: 10; height: 13rem; background: url('{$wa_url}wa-apps/cash/img/cash.png') no-repeat center / 12rem; }
-    .c-premium-feature { border-radius: 0.75rem; background: var(--background-color-blank); margin-bottom: 1.5rem; padding: 1.5rem 2rem; }
+    .c-premium-feature { border-radius: 0.75rem; background: var(--background-color-blank); margin-bottom: 1.5rem; padding: 1.5rem; }
     .c-premium-feature.halfwidth { width: 40%; margin-bottom: 0; padding-bottom: 0.5rem; }
     .c-premium-feature.halfwidth h3 { fonc-size: 1.25rem; }
+    .c-premium-feature img { max-width: 300px; margin-right: 1.25rem; }
     .c-app-inline-badge { max-height: 50px; width: auto; margin-bottom: 0.5rem; }
 
     @media screen and (max-width: 760px) {
         .c-premium-feature.halfwidth { width: 100%; }
+        .c-premium-feature img { max-width: 100%; margin-right: 0; margin-bottom: 1.25rem; }
     }
 
 </style>
@@ -69,26 +71,31 @@
 
 {function name="_render_feature" _p=[] _is_premium_license=false _halfwidth=false _is_free_feature=false}
 <div class="card c-premium-feature{if $_halfwidth} halfwidth{/if}">
-    <div class="flexbox space-12 wrap-mobile">
+    <div class="flexbox wrap-mobile">
+        {if !empty($_p.image) && $wa->locale() == 'ru_RU'}<img src="{$wa_app_static_url}img/upgrade/ru/{$_p.image}" alt="{$_p.title}" />{/if}
         <div class="wide">
-            <h3 class="custom-mb-8{if !empty($_p.grayedout)} gray{/if}">
-                {if !$_is_free_feature && empty($_p.grayedout)}<i class="fas fa-star text-yellow small custom-mr-2" style="position: relative: top: -4px;"></i>{/if}
-                {$_p.title}
-            </h3>
-        </div>
-        <div>
-            {if empty($_p.eta)}
-                <span class="nowrap badge purple"><i class="fas fa-check"></i> {if !$_is_free_feature}[`Premium`]{/if}</span>
-            {elseif trim($_p.eta)}
-                <span class="nowrap badge {$_p.eta_class|default:'light-gray'}"><i class="fas fa-clock"></i> {$_p.eta}</span>
-            {/if}
+            <div class="flexbox space-12 wrap-mobile">
+                <div class="wide">
+                    <h3 class="custom-mb-8{if !empty($_p.grayedout)} gray{/if}">
+                        {if !$_is_free_feature && empty($_p.grayedout)}<i class="fas fa-star text-yellow small custom-mr-2" style="position: relative: top: -4px;"></i>{/if}
+                        {$_p.title}
+                    </h3>
+                </div>
+                <div class="custom-pt-4">
+                    {if empty($_p.eta)}
+                        <span class="nowrap badge purple"><i class="fas fa-check"></i> {if !$_is_free_feature}[`Premium`]{/if}</span>
+                    {elseif trim($_p.eta)}
+                        <span class="nowrap badge {$_p.eta_class|default:'light-gray'}"><i class="fas fa-clock"></i> {$_p.eta}</span>
+                    {/if}
+                </div>
+            </div>
+            <p class="small custom-mt-12{if $_is_premium} hidden{/if}">{if !empty($_p.body)}{$_p.body}{/if}</p>
         </div>
     </div>
-    <div class="small custom-mc-16{if $_is_premium} hidden{/if}">{if !empty($_p.body)}{$_p.body}{/if}</div>
 </div>
 {/function}
 
-<div class="article">
+<div class="article wide">
 
     <main class="article-body">
 
@@ -100,27 +107,32 @@
 
             {$_premium_stuff[] = [
               'title' => '[`Goals & budgets`]',
-              'body' => '[`Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast).<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>.`]'
+              'body' => '[`Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast) and gather the entire plan-fact analysis in a unified budget table.<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>.`]',
+              'image' => 'gauge.jpg'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Financial scenarios`]',
-              'body' => '[`Exclude individual transactions from the primary cash flow scenario, and include them into specific scenarios such as <em>Optimistic, Pessimistic, Gonna take a loan, What if there is a fire, What if it works out</em>, or any custom scenario.`]'
+              'body' => '[`Make up different projections <a href="https://support.webasyst.com/48969/cash-flow-scenarios/" target=_blank>with scenarios</a>.`]'|cat:' <br><br>[`Exclude individual transactions from the primary cash flow scenario, and include them into specific scenarios such as <em>Optimistic, Pessimistic, Gonna take a loan, What if there is a fire, What if it works out</em>, or any custom scenario.`]',
+              'image' => 'scenarios.jpg'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Multiple companies`]',
-              'body' => '[`Split accounting across different entities such as LLCs, personal, etc.`]'
+              'body' => '[`Split accounting across different entities such as LLCs, personal, etc. Each company has its own bundle of accounts which makes cash flow forecasts and analytics more versatile.`]',
+              'image' => 'companies.jpg'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Automation / bots`]',
-              'body' => '[`Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>`]'
+              'body' => '[`Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>`]',
+              'image' => 'bot.jpg'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Teammate accounts`]',
-              'body' => '[`Assign accounts to specific users on your team. Know whom is accountable for and how much.`]'
+              'body' => '[`Assign accounts to specific users on your team. Know whom is accountable for and how much.`]',
+              'image' => 'subconto.jpg'
             ]}
 
             {$_premium_stuff[] = [
@@ -203,7 +215,7 @@
             {/if}
             {$smarty.capture.getpremiumbutton}
 
-            <div class="flexbox wrap-mobile middle space-12" style="justify-content: center;">
+            <div class="flexbox wrap-mobile middle space-12 custom-mb-24" style="justify-content: center;">
 
                 <a href="https://apps.apple.com/{if $wa->locale() == 'ru_RU'}ru{else}us{/if}/app/webasyst-cash-flow/id6450029747" target="_blank">
                     <img src="{$wa_app_static_url}img/badge-appstore{if $wa->locale() == 'ru_RU'}-ru{/if}.png" class="c-app-inline-badge" alt="App Store">
