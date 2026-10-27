@@ -20,6 +20,13 @@
         <i class="fas fa-star small" />
         {{ $t("planView.premiumAlert") }}
       </div>
+      <p class="small">
+        <a
+          :href="$t('scenariosHelpUrl')"
+          target="_blank"
+          rel="noopener noreferrer"
+        >{{ $t('scenariosHelp') }}</a>
+      </p>
     </div>
     <ScenariosTable v-else />
   </div>

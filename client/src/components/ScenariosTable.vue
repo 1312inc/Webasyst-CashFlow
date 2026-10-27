@@ -176,6 +176,16 @@
     >
       {{ $t('scenariosHintDelete') }}
     </p>
+    <p
+      v-if="!isLoading"
+      class="small"
+    >
+      <a
+        :href="$t('scenariosHelpUrl')"
+        target="_blank"
+        rel="noopener noreferrer"
+      >{{ $t('scenariosHelp') }}</a>
+    </p>
   </div>
 </template>
 

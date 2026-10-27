@@ -249,6 +249,8 @@
   "scenarios": "Scenarios",
   "scenariosHint": "The basic scenario includes a general narrative and an operations plan, while custom scenarios allow you to supplement it with operations that will only be visible when those scenarios are selected — but will never appear in the basic one. This allows you to model and compare different cash flows without affecting the core financial model.",
   "scenariosHintDelete": "Easily create new scenarios and name them however you like, e.g. “If we are in” or “If there’s a fire”. When a scenario is no longer needed, simply delete it — all the scenario’s operations will be automatically removed and won’t interfere with creating new scenarios.",
+  "scenariosHelp": "How scenarios work ›",
+  "scenariosHelpUrl": "https://support.webasyst.com/48969/cash-flow-scenarios",
   "defaultScenario": "Basic scenario",
   "basicScenarioDetachHint": "An advice — it is better to create a new transaction exclusively within a custom scenario instead of modifying the existing transaction. Otherwise, sticking the existing transaction to a custom scenario will make it disappear from the basic one.",
   "specifyScenario": "Specify",
