@@ -91,7 +91,7 @@ class cashAccountModel extends cashModel
             $accounts
         );
         if ($scenario_id) {
-            $where[] = 'ct.scenario_id = i:scenario_id';
+            $where[] = '(ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id)';
         } else {
             $where[] = 'ct.scenario_id IS NULL';
         }
