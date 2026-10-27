@@ -72,22 +72,23 @@ api.interceptors.response.use((response) => {
   }
   return response
 }, (error) => {
-  if (!error.response) {
+  if (!error.response || error.response.status === 402) {
     return Promise.reject(error)
   }
-  // show premium modal
-  if (error.response.status === 402) {
-    return Promise.reject(error)
-  }
-  if (!error.response.headers['content-type']?.includes('application/json')) {
+  if (error.response.status === 500) {
+    store.commit('errors/error', {
+      title: 'error.http',
+      method: error.response.config.url,
+      message: error.response.data
+    })
+  } else if (!error.response.headers['content-type']?.includes('application/json')) {
     store.commit('errors/error', {
       title: 'error.api',
       method: error.response.config.url,
-      message: i18n.t('error.nonJsonTitle')
+      message: i18n.t('error.nonJsonTitle'),
+      data: error.response.data
     })
-    return Promise.reject(error)
-  }
-  if (error.response.data?.error_description) {
+  } else if (error.response.data?.error_description) {
     store.commit('errors/error', {
       title: 'error.api',
       method: error.response.config.url,

@@ -184,7 +184,8 @@
     "http": "Request failed",
     "api": "API error",
     "nonJsonTitle": "Something’s wrong with the API (api.php). Not a JSON response",
-    "nonJsonText": "Please contact your hosting provider or admin who had been configuring Webasyst on your server"
+    "nonJsonText": "Please contact your hosting provider or admin who had been configuring Webasyst on your server",
+    "viewResponse": "View response"
   },
   "arrow": {
     "up": "Going out of cash gap on",
