@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class cashBackendImportListener
+ * Class cashRepeatTransactionRepeater
  */
 class cashRepeatTransactionRepeater extends waEventHandler
 {
@@ -13,6 +13,11 @@ class cashRepeatTransactionRepeater extends waEventHandler
      */
     public function afterTransactionPagePreExecute($event)
     {
+        if (cash()->getCache()->get('cash_prolongation_repeat')) {
+            return;
+        }
+        cash()->getCache()->set('cash_prolongation_repeat', 1, 3600*12);
+
         /** @var DateTime $endDate */
         $endDate = $event->getObject();
 

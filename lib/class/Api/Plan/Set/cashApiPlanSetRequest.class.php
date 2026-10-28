@@ -35,4 +35,9 @@ final class cashApiPlanSetRequest
      */
     public $company_id;
 
+    /**
+     * @var int
+     */
+    public $scenario_id;
+
 }

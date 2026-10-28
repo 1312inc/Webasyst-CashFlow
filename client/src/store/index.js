@@ -7,6 +7,7 @@ import category from './modules/category'
 import account from './modules/account'
 import system from './modules/system'
 import company from './modules/company'
+import scenario from './modules/scenario'
 import entity from './modules/entity'
 import errors from './modules/errors'
 import mediator from './store-mediator'
@@ -63,6 +64,7 @@ export default new Vuex.Store({
     account,
     system,
     company,
+    scenario,
     entity,
     errors
   },

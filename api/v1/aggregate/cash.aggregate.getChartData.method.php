@@ -35,7 +35,8 @@ final class cashAggregateGetChartDataMethod extends cashApiNewAbstractMethod
                 ]
             ),
             $this->fromGet('filter', true, ApiParamsCaster::CAST_STRING),
-            $this->fromGet('company_id')
+            $this->fromGet('company_id'),
+            $this->fromGet('scenario_id')
         );
 
         if ($request->getGroupBy() === cashAggregateChartDataFilterParamsDto::GROUP_BY_DAY

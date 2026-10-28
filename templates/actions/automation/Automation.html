@@ -59,7 +59,7 @@
             {foreach $conditions as $_condition_id => $_condition}
                 {if !empty($_condition.elements)}
                     {foreach $_condition.elements as $_el_name => $_element}
-                        {$elem_value = ifempty($condition, $_el_name, '')}
+                        {$elem_value = ifset($condition, $_el_name, '')}
                         {if $_element.type == 'select'}
 
                                 <select name="rules[{$_rule_id}][conditions][{$condition_rand}][{$_el_name}]" class="{$_condition_id|escape}{if !empty($_element.class)} {$_element.class|escape}{/if}{if $rule_name != $_condition_id} hidden{/if}"{if $rule_name != $_condition_id} disabled{/if}>
@@ -161,7 +161,9 @@
                         {$_event|escape}
                         {if $rule && !empty($rule.conditions)}
                             {foreach $rule.conditions as $_ => $_c}
-                                <span class="badge light-gray smaller semibold text-black custom-mr-4">{ifset($conditions, $_c.condition_id, 'name', '')}</span>
+                                <span class="badge brown smaller semibold custom-mr-4">
+                                    {ifset($_c, 'badge', '')}
+                                </span>
                             {/foreach}
                         {/if}
                     </div>
@@ -178,8 +180,8 @@
             {/foreach}
         </td>
         <td class="align-right nowrap">
+            <a href="javascript:void(0);" class="c-log-rule button smaller nowrap light-gray rounded"><span class="badge brown small bold">{ifset($rule, 'count_log', 0)}</span> [`Log`] <span class="hint desktop-only">{ifset($rule, 'last_date_log', '')|wa_datetime:'humandatetime'}</span></a>
             <a href="javascript:void(0);" class="c-show-rule button rounded light-gray smaller"><i class="fas fa-edit text-blue"></i> <span class="desktop-only">[`Edit`]</span></a>
-            <a href="javascript:void(0);" class="c-log-rule button smaller nowrap light-gray rounded"><span class="badge gray small bold">{ifset($rule, 'count_log', 0)}</span> [`Log`] <span class="hint desktop-only">{ifset($rule, 'last_date_log', '')|wa_datetime:'humandatetime'}</span></a>
         </td>
         <td>
             <a href="javascript:void(0);" class="c-delete-rule button nobutton rounded smaller text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
@@ -358,7 +360,7 @@
         {if !cashHelper::isPremium()}
             <div class="alert warning small">
                 <i class="fas fa-star small"></i>
-                [`Available only in the Big Cash app premium version.`]
+                [`Available only in the premium version.`]
                 <a href="{$wa_app_url}upgrade/" class="bold">[`See all premium features`] &rsaquo;</a>
             </div>
         {/if}
@@ -366,7 +368,7 @@
         <div class="fields" style="{if !cashHelper::isPremium()} opacity: 0.5;{/if}">
 
             <a href="#/automation/add/" class="button small rounded light-gray" id="c-automation-add-rule">
-                <i class="fas fa-robot text-dark-gray custom-mr-4"></i>
+                <i class="fas fa-robot text-brown custom-mr-4"></i>
                 [`Add automation bot`]
             </a>
             <table id="c-automation-rules">

@@ -18,27 +18,40 @@ final class cashReportDdsContractorDataProvider implements cashReportDdsDataProv
     }
 
     /**
-     * @param int $company_id
+     * @param int|null $company_id
+     * @param int|null $scenario_id
      * @param cashReportPeriod $period
-     * @return cashReportDdsStatDto[]
+     * @return array|cashReportDdsStatDto[]
      * @throws waDbException
      * @throws waException
      */
-    public function getDataForPeriod(int $company_id, cashReportPeriod $period): array
+    public function getDataForPeriod(?int $company_id, ?int $scenario_id, cashReportPeriod $period): array
     {
+        $where = [
+            'ct.date BETWEEN s:start AND s:end',
+            'ct.category_id <> -1312',
+            'ca.is_archived = 0',
+            'ct.is_archived = 0',
+            'ct.contractor_contact_id is NOT NULL',
+        ];
+        if ($company_id) {
+            array_unshift($where, 'ca.company_id = i:company_id');
+        }
+        if ($scenario_id) {
+            array_unshift($where, 'ca.company_id = i:company_id');
+        } else {
+            array_unshift($where, 'ct.scenario_id IS NULL');
+        }
         $data = $this->transactionModel->query("
             SELECT ct.contractor_contact_id id, IF (ct.amount < 0, '%s', '%s') type, ca.currency currency, MONTH(ct.date) month, SUM(ct.amount) per_month
             FROM from cash_transaction ct
             JOIN cash_account ca ON ct.account_id = ca.id
             JOIN cash_category cc ON ct.category_id = cc.id
-            WHERE ".($company_id ? 'ca.company_id = i:company_id AND ' : '')."ct.date BETWEEN s:start AND s:end
-            AND ct.category_id <> -1312
-            AND ca.is_archived = 0
-            AND ct.is_archived = 0
-            AND ct.contractor_contact_id is NOT NULL
+            WHERE ".implode(' AND ', $where)."
             GROUP BY cc.type, ct.contractor_contact_id, ca.currency, MONTH(ct.date)
         ", [
             'company_id' => $company_id,
+            'scenario_id' => $scenario_id,
             'start' => $period->getStart()->format('Y-m-d'),
             'end' => $period->getEnd()->format('Y-m-d'),
         ])->fetchAll();

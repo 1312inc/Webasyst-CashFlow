@@ -13,29 +13,43 @@ final class cashReportStreamService
     }
 
     /**
-     * @param int $company_id
+     * @param int|null $company_id
+     * @param int|null $scenario_id
      * @param DateTimeImmutable $dateFrom
      * @param DateTimeImmutable $dateTo
      * @return array
      * @throws waDbException
      */
-    public function getDataForPeriod(int $company_id, DateTimeImmutable $dateFrom, DateTimeImmutable $dateTo): array
+    public function getDataForPeriod(?int $company_id, ?int $scenario_id, DateTimeImmutable $dateFrom, DateTimeImmutable $dateTo): array
     {
-        $grouping = new cashReportSankeyDataGrouping($dateFrom, $dateTo);
+        $where = [
+            'ct.is_archived = 0',
+            'ca.is_archived = 0',
+            'ca.is_imaginary != -1',
+            'ct.date >= s:date_from AND ct.date <= s:date_to',
+            'ct.category_id != s:transfer_id'
 
+        ];
+        if ($company_id) {
+            array_unshift($where, 'ca.company_id = i:company_id');
+        }
+        if ($scenario_id) {
+            array_unshift($where, 'ca.company_id = i:company_id');
+        } else {
+            array_unshift($where, 'ct.scenario_id IS NULL');
+        }
+
+        $_where = implode(' AND ', $where);
+        $grouping = new cashReportSankeyDataGrouping($dateFrom, $dateTo);
         $currencies = $this->model->query("
             SELECT ca.currency
             FROM cash_transaction ct
             JOIN cash_account ca on ca.id = ct.account_id
-            WHERE ".($company_id ? 'ca.company_id = i:company_id AND ' : '')."ct.is_archived = 0
-            AND ca.is_archived = 0
-            AND ca.is_imaginary != -1
-            AND ct.date >= s:date_from
-            AND ct.date <= s:date_to
-            AND ct.category_id != s:transfer_id
+            WHERE $_where
             GROUP BY ca.currency
         ", [
             'company_id' => $company_id,
+            'scenario_id' => $scenario_id,
             'date_from' => $dateFrom->format('Y-m-d'),
             'date_to' => $dateTo->format('Y-m-d'),
             'transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,
@@ -47,15 +61,11 @@ final class cashReportStreamService
             FROM cash_transaction ct
             JOIN cash_account ca on ca.id = ct.account_id
             JOIN cash_category cc on cc.id = ct.category_id
-            WHERE ".($company_id ? 'ca.company_id = i:company_id AND ' : '')."ct.is_archived = 0
-            AND ca.is_archived = 0
-            AND ca.is_imaginary != -1
-            AND ct.date >= s:date_from
-            AND ct.date <= s:date_to
-            AND ct.category_id != s:transfer_id
+            WHERE $_where
             GROUP BY ct.category_id
         ", [
             'company_id' => $company_id,
+            'scenario_id' => $scenario_id,
             'date_from' => $dateFrom->format('Y-m-d'),
             'date_to' => $dateTo->format('Y-m-d'),
             'transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,
@@ -65,15 +75,11 @@ final class cashReportStreamService
             SELECT ca.currency, {$grouping->getSqlGroupBy()} date, ct.category_id, SUM(ABS(ct.amount)) amount
             FROM cash_transaction ct
             JOIN cash_account ca on ca.id = ct.account_id
-            WHERE ".($company_id ? 'ca.company_id = i:company_id AND ' : '')."ct.is_archived = 0
-            AND ca.is_archived = 0
-            AND ca.is_imaginary != -1
-            AND ct.date >= s:date_from
-            AND ct.date <= s:date_to
-            AND ct.category_id != s:transfer_id
+            WHERE $_where
             GROUP BY ca.currency, {$grouping->getSqlGroupBy()}, ct.category_id
         ", [
             'company_id' => $company_id,
+            'scenario_id' => $scenario_id,
             'date_from' => $dateFrom->format('Y-m-d'),
             'date_to' => $dateTo->format('Y-m-d'),
             'transfer_id' => cashCategoryFactory::TRANSFER_CATEGORY_ID,

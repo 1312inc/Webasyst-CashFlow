@@ -1,21 +1,32 @@
 <style>
 
-    .c-premium-appicon { position: relative; z-index: 10; height: 9rem; background: url('{$wa_url}wa-apps/cash/img/cash.png') no-repeat center / 8rem; }
-    .c-premium-feature { border-radius: 0.75rem; background: var(--background-color-blank); margin-bottom: 1.5rem; padding: 1.5rem 2rem; }
+    .c-premium-appicon { position: relative; z-index: 10; height: 13rem; background: url('{$wa_url}wa-apps/cash/img/cash.png') no-repeat center / 12rem; }
+    .c-premium-feature { border-radius: 0.75rem; background: var(--background-color-blank); margin-bottom: 1.5rem; padding: 1.5rem; }
     .c-premium-feature.halfwidth { width: 40%; margin-bottom: 0; padding-bottom: 0.5rem; }
     .c-premium-feature.halfwidth h3 { fonc-size: 1.25rem; }
+    .c-premium-feature img { max-width: 300px; margin-right: 1.25rem; }
     .c-app-inline-badge { max-height: 50px; width: auto; margin-bottom: 0.5rem; }
 
     @media screen and (max-width: 760px) {
         .c-premium-feature.halfwidth { width: 100%; }
+        .c-premium-feature img { max-width: 100%; margin-right: 0; margin-bottom: 1.25rem; }
     }
 
 </style>
 
 {$_is_premium = cashHelper::isPremium()}
+{$_has_license = cashHelper::hasLicense()}
+{$_license_expires = cashHelper::licenseExpirationDate()}
 {$_is_cloud = cashHelper::isCloud()}
 {$_premium_pricing = cashHelper::getPremiumPricing()}
-{$_upgrade_url = '[`https://www.webasyst.com/my/buy/upgrade-to-premium/cash/`]'|cat:'?domain='|cat:str_replace('http://','',str_replace('https://','',$wa->domainUrl()))}
+
+{if $_is_cloud}
+    {$_upgrade_url = '[`https://www.webasyst.com/my/hosting/`]'}
+{elseif $_has_license && (!$_license_expires || $_license_expires >= date('Y-m-d'))}
+    {$_upgrade_url = '[`https://www.webasyst.com/my/buy/upgrade-to-premium/cash/`]'|cat:'?domain='|cat:str_replace('http://','',str_replace('https://','',$wa->domainUrl()))}
+{else}
+    {$_upgrade_url = '[`https://www.webasyst.com/store/app/cash/`]'}
+{/if}
 
 {capture "getpremiumbutton"}
 {if !$_is_premium}
@@ -24,9 +35,13 @@
     <h4>
         {if !empty($_premium_pricing.compare_price)}<strike class="gray">{$_premium_pricing.compare_price}</strike>{/if}
         {if $_is_cloud}
-            [`All inclusive in the cloud`]
+            [`Upgrade to the premium plan`]
         {else}
-            {$_premium_pricing.price}
+            {if $_has_license && !$_license_expires}
+                {$_premium_pricing.upgrade}
+            {else}
+                {$_premium_pricing.price}
+            {/if}
         {/if}
     </h4>
     <p class="width-60 width-100-mobile custom-mx-auto small">
@@ -36,9 +51,18 @@
         {else}
             [`Per-server license for the entire company. Unlimited users, all the premium features, and free updates forever.`]
         {/if}
-        {if !$_is_cloud && date('Y-m-d') <= '2026-08-31'}
+        {if !$_is_cloud && date('Y-m-d') <= '2028-08-31'}
             <br><br>
-            [`Promocode`] <code><b>SUMMER26</b></code> <strong class="text-red">-15% / {date('Y.m')}</strong>
+            [`Promocode`] <code class="badge squared yellow text-black"><b>{if $_has_license && !$_license_expires}43CGGN755S{else}BIGCASH{/if}</b></code> <strong class="text-red">-15% / {date('Y.m')}</strong>
+            <br>
+            <strong class="text-red">
+                {if $_has_license && !$_license_expires}
+                    [`extra promocode for the basic license owners`]
+                {else}
+                    [`welcome promocode for new users`]
+                {/if}
+            </strong>
+
         {/if}
     </p>
 </figure>
@@ -47,26 +71,31 @@
 
 {function name="_render_feature" _p=[] _is_premium_license=false _halfwidth=false _is_free_feature=false}
 <div class="card c-premium-feature{if $_halfwidth} halfwidth{/if}">
-    <div class="flexbox space-12 wrap-mobile">
+    <div class="flexbox wrap-mobile">
+        {if !empty($_p.image) && $wa->locale() == 'ru_RU'}<img src="{$wa_app_static_url}img/upgrade/ru/{$_p.image}" alt="{$_p.title}" />{/if}
         <div class="wide">
-            <h3 class="custom-mb-8{if !empty($_p.grayedout)} gray{/if}">
-                {if !$_is_free_feature && empty($_p.grayedout)}<i class="fas fa-star text-yellow small custom-mr-2" style="position: relative: top: -4px;"></i>{/if}
-                {$_p.title}
-            </h3>
-        </div>
-        <div>
-            {if empty($_p.eta)}
-                <span class="nowrap badge purple"><i class="fas fa-check"></i> {if !$_is_free_feature}[`Available now`]{/if}</span>
-            {elseif trim($_p.eta)}
-                <span class="nowrap badge {$_p.eta_class|default:'light-gray'}"><i class="fas fa-clock"></i> {$_p.eta}</span>
-            {/if}
+            <div class="flexbox space-12 wrap-mobile">
+                <div class="wide">
+                    <h3 class="custom-mb-8{if !empty($_p.grayedout)} gray{/if}">
+                        {if !$_is_free_feature && empty($_p.grayedout)}<i class="fas fa-star text-yellow small custom-mr-2" style="position: relative: top: -4px;"></i>{/if}
+                        {$_p.title}
+                    </h3>
+                </div>
+                <div class="custom-pt-4">
+                    {if empty($_p.eta)}
+                        <span class="nowrap badge purple"><i class="fas fa-check"></i> {if !$_is_free_feature}[`Premium`]{/if}</span>
+                    {elseif trim($_p.eta)}
+                        <span class="nowrap badge {$_p.eta_class|default:'light-gray'}"><i class="fas fa-clock"></i> {$_p.eta}</span>
+                    {/if}
+                </div>
+            </div>
+            <p class="small custom-mt-12{if $_is_premium} hidden{/if}">{if !empty($_p.body)}{$_p.body}{/if}</p>
         </div>
     </div>
-    <div class="small custom-mc-16{if $_is_premium} hidden{/if}">{if !empty($_p.body)}{$_p.body}{/if}</div>
 </div>
 {/function}
 
-<div class="article">
+<div class="article wide">
 
     <main class="article-body">
 
@@ -78,29 +107,39 @@
 
             {$_premium_stuff[] = [
               'title' => '[`Goals & budgets`]',
-              'body' => '[`Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast).<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>.`]'
-            ]}
-
-            {$_premium_stuff[] = [
-              'title' => '[`Teammate accounts`]',
-              'body' => '[`Assign accounts to specific users on your team. Know whom is accountable for and how much.`]'
-            ]}
-
-            {$_premium_stuff[] = [
-              'title' => '[`Automation / bots`]',
-              'body' => '[`Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>`]'
-            ]}
-
-            {$_premium_stuff[] = [
-              'title' => '[`Multiple companies`]',
-              'body' => '[`Split accounting across different entities such as LLCs, personal, etc.`]'
+              'body' => '[`Easily set goals/budgets as <code>category &rarr; timeframe &rarr; amount</code>, and the app will hint you how in <code>%</code> it is going above or below the trajectory. Goals work as an extra layer in addition to the planned flow (forecast) and gather the entire plan-fact analysis in a unified budget table.<br><br> Few examples: <code>Sales &rarr; June &rarr; $15K</code>, <code>Marketing budget &rarr; (every month) &rarr; $8K</code>.`]',
+              'image' => 'gauge.jpg'
             ]}
 
             {$_premium_stuff[] = [
               'title' => '[`Financial scenarios`]',
-              'body' => '[`Exclude individual transactions from the primary cash flow scenario, and include them into specific scenarios such as <em>Optimistic, Pessimistic, Gonna take a loan, What if there is a fire, What if it works out</em>, or any custom scenario.`]',
-              'eta_class' => 'yellow',
-              'eta' => '[`Arriving`]'
+              'body' => '[`Make up different projections <a href="https://support.webasyst.com/48969/cash-flow-scenarios/" target=_blank>with scenarios</a>.`]'|cat:' <br><br>[`Exclude individual transactions from the primary cash flow scenario, and include them into specific scenarios such as <em>Optimistic, Pessimistic, Gonna take a loan, What if there is a fire, What if it works out</em>, or any custom scenario.`]',
+              'image' => 'scenarios.jpg'
+            ]}
+
+            {$_premium_stuff[] = [
+              'title' => '[`Multiple companies`]',
+              'body' => '[`Split accounting across different entities such as LLCs, personal, etc. Each company has its own bundle of accounts which makes cash flow forecasts and analytics more versatile.`]',
+              'image' => 'companies.jpg'
+            ]}
+
+            {$_premium_stuff[] = [
+              'title' => '[`Automation / bots`]',
+              'body' => '[`Define rules <code>event &rarr; action</code> that work as bots listening to actions across the Cash Flow app and other Webasyst apps and automate transactions flow by adding/adjusting/deleting transactions as pre-configured.<br><br> Example: <code>New credit from APPLE on BANK_ACCOUNT</code> &rarr; <code>Create 2 transactions SALES +30% & COMMISSION -30% on APP_PROJECT_ACCOUNT</code>`]',
+              'image' => 'bot.jpg'
+            ]}
+
+            {$_premium_stuff[] = [
+              'title' => '[`Teammate accounts`]',
+              'body' => '[`Assign accounts to specific users on your team. Know whom is accountable for and how much.`]',
+              'image' => 'subconto.jpg'
+            ]}
+
+            {$_premium_stuff[] = [
+              'title' => '[`Passcode lock`]',
+              'body' => '[`Secure access to your data with an additional password that will be required for you and your teammates to launch the app.`]',
+              'eta_class' => 'light-gray',
+              'eta' => '[`Later`]'
             ]}
 
             {$_premium_stuff[] = [
@@ -161,12 +200,12 @@
 
             {else}
 
-                <h1 class="top-padded align-center width-70 custom-mx-auto custom-mb-24 width-100-mobile">
+                <h1 class="top-padded align-center width-50 custom-mx-auto custom-mb-24 width-100-mobile">
                     [`Bigger money needs to be better accounted`]
                 </h1>
 
-                <p class="small align-center custom-mb-24 width-90 custom-mx-auto">
-                    [`Early launch offer gets you the best premium upgrade conditions possible.`]
+                <p class="small align-center custom-mb-24 width-80 custom-mx-auto">
+                    [`Upgrade to the premium version and get the best accounting tools the app has to offer.`]
                     <br>
                     <a class="bold" href="[`https://www.webasyst.com/store/app/cash/`]" target="_blank">[`https://www.webasyst.com/store/app/cash/`]</a>
                     {* <br>
@@ -174,8 +213,9 @@
                 </p>
 
             {/if}
+            {$smarty.capture.getpremiumbutton}
 
-            <div class="flexbox wrap-mobile middle space-12" style="justify-content: center;">
+            <div class="flexbox wrap-mobile middle space-12 custom-mb-24" style="justify-content: center;">
 
                 <a href="https://apps.apple.com/{if $wa->locale() == 'ru_RU'}ru{else}us{/if}/app/webasyst-cash-flow/id6450029747" target="_blank">
                     <img src="{$wa_app_static_url}img/badge-appstore{if $wa->locale() == 'ru_RU'}-ru{/if}.png" class="c-app-inline-badge" alt="App Store">
@@ -191,13 +231,9 @@
 
             </div>
 
-
-            {$smarty.capture.getpremiumbutton}
-
             {foreach $_premium_stuff as $_p}
                 {_render_feature _p=$_p _is_premium_license=$_is_premium}
             {/foreach}
-            <p class="align-center gray small">[`All scheduled features will be delivered as free updates via Installer.`]</p>
 
             {$smarty.capture.getpremiumbutton}
 

@@ -1,46 +1,21 @@
 <template>
-  <div class="companies-table-wrap custom-px-24 custom-ml-4 custom-px-12-mobile">
-    <div class="flexbox middle space-12 custom-mb-16">
-      <input
-        v-model="newName"
-        class="bold"
-        type="text"
-        :placeholder="$t('addCompany')"
-        :disabled="isBusy"
-        @keyup.enter="onCreate"
-      >
-      <button
-        class="button green"
-        :disabled="isBusy || !newName.trim()"
-        @click="onCreate"
-      >
-        {{ $t('add') }}
-      </button>
-    </div>
-
-    <div
-      v-if="!isLoading && localCompanies.length"
-      class="hint"
+  <div class="settings-table-wrap custom-px-24 custom-ml-4 custom-px-12-mobile">
+    <p
+      v-if="!isLoading"
+      class="small"
     >
       {{ $t('companyAccountsHint') }}
-    </div>
+    </p>
 
     <table
-      v-if="!isLoading && localCompanies.length"
-      class="bigdata companies-table"
+      v-if="!isLoading"
+      class="bigdata settings-table"
       :class="{ loading: isLoading }"
     >
-      <thead>
-        <tr>
-          <th class="handle-cell" />
-          <th>{{ $t('companyName') }}</th>
-          <th class="actions-cell" />
-        </tr>
-      </thead>
       <draggable
         :list="localCompanies"
         tag="tbody"
-        handle=".company-sort-handle"
+        handle=".sort-handle"
         ghost-class="ghost"
         :disabled="isBusy || editingId !== null"
         @end="onSortEnd"
@@ -51,7 +26,7 @@
           :class="{ 'is-editing': editingId === company.id }"
         >
           <td class="handle-cell">
-            <span class="company-sort-handle">
+            <span class="sort-handle">
               <i class="fas fa-grip-vertical" />
             </span>
           </td>
@@ -69,9 +44,12 @@
             >
             <template v-else>
               <span
-                class="company-name"
+                class="row-name semibold"
                 @click="startEdit(company)"
-              >{{ company.name }}</span>
+              >
+                <i class="fas fa-university custom-mr-8 text-light-gray"></i>
+                {{ company.name }}
+              </span>
               <div
                 v-if="accountsByCompanyId(company.id).length"
                 class="company-accounts flexbox wrap"
@@ -104,10 +82,18 @@
                 v-if="editingId !== company.id"
                 class="button light-gray small"
                 :disabled="isBusy"
+                @click="onView(company)"
+              >
+                {{ $t('viewScenario') }}
+              </button>
+              <button
+                v-if="editingId !== company.id"
+                class="button light-gray small"
+                :disabled="isBusy"
                 :title="$t('update')"
                 @click="startEdit(company)"
               >
-                <i class="fas fa-pencil-alt" />
+                <i class="fas fa-pencil-alt text-blue" />
               </button>
               <button
                 class="button light-gray small"
@@ -115,19 +101,47 @@
                 :title="$t('delete')"
                 @click="onDelete(company)"
               >
-                <i class="fas fa-trash-alt" />
+                <i class="fas fa-trash-alt text-red" />
               </button>
             </div>
           </td>
         </tr>
       </draggable>
+      <tbody>
+        <tr>
+          <td class="handle-cell">
+            <span class="add-handle">
+              <i class="fas fa-plus" />
+            </span>
+          </td>
+          <td>
+            <input
+              v-model="newName"
+              class="bold full-width"
+              type="text"
+              :placeholder="$t('addCompany')"
+              :disabled="isBusy"
+              @keyup.enter="onCreate"
+            >
+          </td>
+          <td class="actions-cell">
+            <button
+              class="button small"
+              :disabled="isBusy || !newName.trim()"
+              @click="onCreate"
+            >
+              {{ $t('add') }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
     </table>
 
     <p
-      v-if="!isLoading && !localCompanies.length"
-      class="gray custom-mt-16"
+      v-if="!isLoading"
+      class="small"
     >
-      {{ $t('noCompanies') }}
+      {{ $t('companyAccountsOneMoreHint') }}
     </p>
   </div>
 </template>
@@ -135,11 +149,14 @@
 <script setup>
 import { ref, computed, watch, nextTick, onMounted, getCurrentInstance } from 'vue'
 import draggable from 'vuedraggable'
+import { useRouter } from 'vue-router/composables'
 import { useStore } from '@/composables/useStore'
 import { i18n } from '@/plugins/locale'
+import { companyContextService } from '@/services/companyContext'
 import currencyIcons from '@/utils/currencyIcons'
 
 const store = useStore()
+const router = useRouter()
 const { proxy } = getCurrentInstance()
 
 const newName = ref('')
@@ -232,6 +249,12 @@ const onCreate = async () => {
   }
 }
 
+const onView = (company) => {
+  if (isBusy.value) return
+  companyContextService.companyId = company.id
+  window.location.href = router.resolve({ name: 'Home' }).href
+}
+
 const onDelete = async (company) => {
   if (isBusy.value) return
   if (!confirm(i18n.t('deleteWarning.company'))) return
@@ -274,34 +297,11 @@ onMounted(async () => {
 })
 </script>
 
+<style src="@/assets/styles/settings-table.css"></style>
+
 <style scoped>
-.companies-table-wrap {
-  max-width: 800px;
-}
-
-.companies-table .handle-cell {
-  width: 2rem;
-}
-
-.companies-table .actions-cell {
-  width: 6rem;
-  text-align: right;
-}
-
-.company-sort-handle {
-  cursor: grab;
-  color: var(--gray);
-  user-select: none;
-  display: inline-flex;
-  padding: 0.25rem;
-}
-
-.company-sort-handle:active {
-  cursor: grabbing;
-}
-
-.company-name {
-  cursor: pointer;
+.settings-table .actions-cell {
+  width: auto;
 }
 
 .company-accounts {
@@ -325,13 +325,5 @@ onMounted(async () => {
   flex-shrink: 0;
   object-fit: cover;
   font-size: 0.7em;
-}
-
-.companies-table tbody tr.ghost {
-  opacity: 0.4;
-}
-
-.companies-table tbody tr.is-editing {
-  background: var(--background-color-editable, rgba(0, 0, 0, 0.03));
 }
 </style>

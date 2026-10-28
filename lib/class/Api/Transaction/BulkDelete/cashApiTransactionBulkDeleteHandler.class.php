@@ -8,7 +8,8 @@ class cashApiTransactionBulkDeleteHandler implements cashApiHandlerInterface
     /**
      * @param cashApiTransactionBulkDeleteRequest $request
      *
-     * @return bool
+     * @param $request
+     * @return array
      * @throws kmwaForbiddenException
      * @throws waException
      */
@@ -17,7 +18,7 @@ class cashApiTransactionBulkDeleteHandler implements cashApiHandlerInterface
         /** @var cashTransaction[] $transactions */
         $transactions = cash()->getEntityRepository(cashTransaction::class)->findById($request->ids);
         if (!$transactions) {
-            return true;
+            return [];
         }
 
         $saver = new cashTransactionSaver();
@@ -30,6 +31,6 @@ class cashApiTransactionBulkDeleteHandler implements cashApiHandlerInterface
             $saver->addToPersist($transaction);
         }
 
-        return $saver->persistTransactions();
+        return array_map(function ($t) {return (int) $t->getId();}, $saver->persistTransactions());
     }
 }

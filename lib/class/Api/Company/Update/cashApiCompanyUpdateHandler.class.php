@@ -25,7 +25,7 @@ class cashApiCompanyUpdateHandler implements cashApiHandlerInterface
         if ($request->getName()) {
             $company['name'] = $request->getName();
         }
-        if ($request->getSort()) {
+        if ($request->getSort() >= 0) {
             $company['sort'] = $request->getSort();
         }
         if (!$model->updateById($request->getId(), $company)) {

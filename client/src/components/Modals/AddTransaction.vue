@@ -162,6 +162,7 @@
                   value-prop-name="id"
                   :row-modificator="$_rowModificatorMixin_rowModificator_category"
                   :max-height="200"
+                  typeahead
                   class="width-100"
                 />
               </div>
@@ -196,6 +197,7 @@
                   :row-modificator="$_rowModificatorMixin_rowModificator_account"
                   :is-right="transactionType !== 'transfer'"
                   :max-height="200"
+                  typeahead
                   class="width-100"
                 />
               </div>
@@ -305,14 +307,41 @@
             <!-- End Contractor section -->
 
             <!-- Start Desc section -->
-            <div class="custom-mb-16">
+            <div
+              class="custom-mb-16"
+              style="position: relative"
+            >
               <textarea
+                ref="descriptionInput"
                 v-model="model.description"
                 class="width-100"
                 rows="3"
                 style="resize: none; height: auto"
                 :placeholder="$t('desc')"
+                @input="onDescriptionInput"
+                @keydown.up="onDescriptionKeyUp"
+                @keydown.down="onDescriptionKeyDown"
+                @keydown.enter="onDescriptionEnter"
+                @keydown.esc="resetDescriptionSearch"
+                @blur="resetDescriptionSearch"
               />
+              <ul
+                v-if="descriptionSuggestions.length"
+                :style="descriptionMenuStyle()"
+                class="c-autocomplete-menu"
+              >
+                <li
+                  v-for="(item, i) in descriptionSuggestions"
+                  :key="item"
+                  :class="{ active: i === descriptionMenuIndex }"
+                  class="c-autocomplete-menu__item"
+                  @mousedown.prevent="selectDescription(item)"
+                >
+                  <div class="small custom-py-8 custom-px-12">
+                    {{ item }}
+                  </div>
+                </li>
+              </ul>
               <div
                 v-if="isModeUpdate"
                 class="custom-mt-8"
@@ -545,7 +574,61 @@
                 </div>
               </div>
             </TransitionCollapseHeight>
-          <!-- End endRepeat Date section -->
+            <!-- End endRepeat Date section -->
+
+            <div
+              v-if="showScenarioField"
+              class="custom-mt-16"
+            >
+              <DropdownWaFloating>
+                <template #toggler>
+                  <button
+                    class="c-dropdown-toggle-custom button small"
+                    :class="{ 'light-gray': !selectedScenario }"
+                    :style="selectedScenario ? { backgroundColor: selectedScenario.color, color: '#fff' } : null"
+                  >
+                    <span class="icon">
+                      <i class="fas fa-code-branch" />
+                    </span>
+                    {{ selectedScenario ? selectedScenario.name : $t('defaultScenario') }}
+                  </button>
+                </template>
+                <template #default="{ close }">
+                  <ul class="menu">
+                    <li :class="{ selected: !model.scenario_id }">
+                      <a @click.prevent="selectScenario(null, close)">
+                        <span class="icon">
+                          <i class="fas fa-code-branch" />
+                        </span>
+                        <span>{{ $t('defaultScenario') }}</span>
+                      </a>
+                    </li>
+                    <li
+                      v-for="scenario in scenarios"
+                      :key="scenario.id"
+                      :class="{ selected: scenario.id === model.scenario_id }"
+                    >
+                      <a @click.prevent="selectScenario(scenario.id, close)">
+                        <span class="icon">
+                          <i
+                            class="fas fa-code-branch"
+                            :style="{ color: scenario.color }"
+                          />
+                        </span>
+                        <span>{{ scenario.name }}</span>
+                      </a>
+                    </li>
+                  </ul>
+                </template>
+              </DropdownWaFloating>
+              <div
+                v-if="showBasicScenarioDetachHint"
+                class="state-caution-hint custom-mt-8 custom-mb-0"
+              >
+                <i class="fas fa-exclamation-triangle fa-xs" />
+                {{ $t('basicScenarioDetachHint') }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -628,11 +711,14 @@ import InputCurrency from '@/components/Inputs/InputCurrency'
 import InputContractor from '@/components/Inputs/InputContractor'
 import DateField from '@/components/Inputs/InputDate'
 import DropdownWa from '@/components/Inputs/DropdownWa'
+import DropdownWaFloating from '@/components/Inputs/DropdownWaFloating'
 import TransitionCollapseHeight from '@/components/Transitions/TransitionCollapseHeight'
 import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 import entityPageMixin from '@/mixins/entityPageMixin'
 import api from '../../plugins/api'
+import { debounce } from '@/utils/debounce'
 import { appState } from '@/services/appState'
+import { scenarioContextService } from '@/services/scenarioContext'
 
 export default {
 
@@ -641,6 +727,7 @@ export default {
     InputContractor,
     DateField,
     DropdownWa,
+    DropdownWaFloating,
     TransitionCollapseHeight
   },
 
@@ -693,11 +780,16 @@ export default {
         transfer_account_id: null,
         transfer_incoming_amount: null,
         apply_to_all_in_future: false,
-        is_self_destruct_when_due: false
+        is_self_destruct_when_due: false,
+        scenario_id: null
       },
       custom_interval: 'month',
       controlsDisabled: false,
-      showContractorInput: false
+      showContractorInput: false,
+      descriptionSuggestions: [],
+      descriptionMenuIndex: null,
+      descriptionSearchGeneration: 0,
+      descriptionRequestId: 0
     }
   },
 
@@ -748,8 +840,25 @@ export default {
     ...mapGetters({
       getAccountById: 'account/getById',
       getCategoryById: 'category/getById',
-      getCategoryByType: 'category/getByType'
+      getCategoryByType: 'category/getByType',
+      scenarios: 'scenario/sortedScenarios'
     }),
+
+    showScenarioField () {
+      return this.$appState.isPremium && this.$permissions.isAdmin && this.scenarios.length
+    },
+
+    showBasicScenarioDetachHint () {
+      return this.isModeUpdate &&
+        this.model.id &&
+        !this.transaction.scenario_id &&
+        !!this.model.scenario_id
+    },
+
+    selectedScenario () {
+      if (!this.model.scenario_id) return null
+      return this.scenarios.find(scenario => scenario.id === this.model.scenario_id) || null
+    },
 
     accountsTransfer () {
       return this.accounts.filter(a => a.id !== this.model.account_id)
@@ -850,6 +959,25 @@ export default {
       this.model.amount = `${Math.abs(this.model.amount)}`
     }
 
+    if (!this.isModeUpdate) {
+      const scenarioId = scenarioContextService.scenarioId
+      if (scenarioId) {
+        this.model.scenario_id = scenarioId
+      }
+    }
+
+    if (this.$appState.isPremium && this.$permissions.isAdmin) {
+      this.$store.dispatch('scenario/getList').then(() => {
+        if (this.isModeUpdate) return
+        if (
+          this.model.scenario_id &&
+          !this.scenarios.some(scenario => scenario.id === this.model.scenario_id)
+        ) {
+          this.model.scenario_id = null
+        }
+      })
+    }
+
     this.transactionType =
       this.selectedCategory?.type || this.defaultCategoryType
 
@@ -887,6 +1015,11 @@ export default {
   },
 
   methods: {
+    selectScenario (id, close) {
+      this.model.scenario_id = id || null
+      close()
+    },
+
     async submit (event) {
       this.$v.$touch()
       if (this.$v.$invalid) return
@@ -894,6 +1027,11 @@ export default {
       this.controlsDisabled = true
 
       const model = { ...this.model }
+      if (!this.showScenarioField) {
+        delete model.scenario_id
+      } else if (!model.scenario_id) {
+        model.scenario_id = null
+      }
       if (model.repeating_interval === 'custom') {
         model.repeating_interval = this.custom_interval
       }
@@ -962,6 +1100,96 @@ export default {
 
     close () {
       this.$parent.$emit('close')
+    },
+
+    descriptionMenuStyle () {
+      const input = this.$refs.descriptionInput
+      if (!input) return {}
+      return {
+        top: `${input.offsetTop + input.offsetHeight + 1}px`,
+        width: `${input.offsetWidth}px`,
+        maxHeight: '240px',
+        overflowY: 'auto'
+      }
+    },
+
+    onDescriptionInput () {
+      this.fetchDescriptionSuggestions(this.descriptionSearchGeneration)
+    },
+
+    fetchDescriptionSuggestions: debounce(function (generation) {
+      if (generation !== this.descriptionSearchGeneration) return
+
+      const term = (this.model.description || '').trim()
+      if (!term) {
+        this.resetDescriptionSearch()
+        return
+      }
+
+      const requestId = ++this.descriptionRequestId
+      api.get('cash.transaction.getList', {
+        params: {
+          filter: `search/${term}`,
+          limit: 10
+        }
+      }).then(({ data }) => {
+        if (requestId !== this.descriptionRequestId || generation !== this.descriptionSearchGeneration) return
+
+        const counts = new Map()
+        ;(data.data || []).forEach(row => {
+          const description = (row.description || '').trim()
+          if (!description) return
+          counts.set(description, (counts.get(description) || 0) + 1)
+        })
+
+        const current = (this.model.description || '').trim()
+        this.descriptionSuggestions = [...counts.entries()]
+          .sort((a, b) => b[1] - a[1])
+          .map(([description]) => description)
+          .filter(description => description !== current)
+        this.descriptionMenuIndex = null
+      }).catch(() => {})
+    }, 400),
+
+    selectDescription (description) {
+      this.descriptionSearchGeneration += 1
+      this.model.description = description
+      this.resetDescriptionSearch()
+    },
+
+    resetDescriptionSearch () {
+      this.descriptionSuggestions = []
+      this.descriptionMenuIndex = null
+    },
+
+    onDescriptionKeyDown (event) {
+      if (!this.descriptionSuggestions.length) return
+      event.preventDefault()
+      if (this.descriptionMenuIndex === null) {
+        this.descriptionMenuIndex = 0
+      } else if (this.descriptionMenuIndex < this.descriptionSuggestions.length - 1) {
+        this.descriptionMenuIndex += 1
+      } else {
+        this.descriptionMenuIndex = null
+      }
+    },
+
+    onDescriptionKeyUp (event) {
+      if (!this.descriptionSuggestions.length) return
+      event.preventDefault()
+      if (this.descriptionMenuIndex === null) {
+        this.descriptionMenuIndex = this.descriptionSuggestions.length - 1
+      } else if (this.descriptionMenuIndex > 0) {
+        this.descriptionMenuIndex -= 1
+      } else {
+        this.descriptionMenuIndex = null
+      }
+    },
+
+    onDescriptionEnter (event) {
+      if (this.descriptionMenuIndex === null || !this.descriptionSuggestions.length) return
+      event.preventDefault()
+      this.selectDescription(this.descriptionSuggestions[this.descriptionMenuIndex])
     }
   }
 }

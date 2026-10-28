@@ -32,7 +32,8 @@ final class cashApiTransactionGetListHandler implements cashApiHandlerInterface
             $request->getLimit(),
             true,
             $request->getReverse(),
-            $request->getCompanyId()
+            $request->getCompanyId(),
+            $request->getScenarioId()
         );
 
         $transactionFilter = new cashTransactionFilterService();
@@ -61,7 +62,8 @@ final class cashApiTransactionGetListHandler implements cashApiHandlerInterface
                     '1970-01-01 00:00:00',
                     $endDate,
                     $filterDto->contact,
-                    [$filterDto->filter->getAccountId()]
+                    [$filterDto->filter->getAccountId()],
+                    $request->getScenarioId()
                 );
             $initialBalance = (float) ifset($initialBalance, $filterDto->filter->getAccountId(), 'summary', 0.0);
         }

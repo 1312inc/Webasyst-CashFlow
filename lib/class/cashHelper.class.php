@@ -60,7 +60,25 @@ final class cashHelper
      */
     public static function isPremium()
     {
-        return waLicensing::check(cashConfig::APP_ID)->isPremium();
+        return cashLicensing::check(cashConfig::APP_ID)->isPremium();
+    }
+
+    /**
+     * @return bool
+     * @throws waException
+     */
+    public static function hasLicense()
+    {
+        return cashLicensing::check(cashConfig::APP_ID)->hasLicense();
+    }
+
+    /**
+     * @return bool|string
+     * @throws waException
+     */
+    public static function licenseExpirationDate()
+    {
+        return cashLicensing::check(cashConfig::APP_ID)->licenseExpiration();
     }
 
     /**
@@ -76,21 +94,20 @@ final class cashHelper
      */
     public static function getPremiumPricing()
     {
-        // vofka says sorry for such a hard code
-        // we were young and needed the money
-
         if (wa()->getLocale() == 'ru_RU')
         {
             $pricing = array(
               'compare_price' => '24 999',
-              'price' => '6 999 <span class="ruble">₽</span>/год'
+              'price' => '7 199 <span class="ruble">₽</span>/год',
+              'upgrade' => '17 999 <span class="ruble">₽</span> / апгрейд навсегда'
             );
         }
         else
         {
             $pricing = array(
               'compare_price' => '$399',
-              'price' => '$115/yr'
+              'price' => '$119/yr',
+              'upgrade' => '$299 / lifetime upgrade'
             );
         }
 

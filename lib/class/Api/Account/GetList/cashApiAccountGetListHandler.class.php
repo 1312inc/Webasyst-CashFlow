@@ -14,6 +14,7 @@ class cashApiAccountGetListHandler implements cashApiHandlerInterface
     {
         $contact = wa()->getUser();
         $company_id = ($request ? $request->getCompanyId() : 0);
+        $scenario_id = ($request ? $request->getScenarioId() : null);
         if ($company_id && !$contact->isAdmin()) {
             return [];
         }
@@ -25,7 +26,8 @@ class cashApiAccountGetListHandler implements cashApiHandlerInterface
         $accountStats = (new cashCalculationService())->getAccountStatsForDates(
             $contact,
             new DateTime(),
-            new DateTime('1970-01-01')
+            new DateTime('1970-01-01'),
+            $scenario_id
         );
 
         $response = [];

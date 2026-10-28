@@ -71,52 +71,59 @@ class cashAccountModel extends cashModel
      * @param string     $endDate
      * @param waContact  $contact
      * @param array<int> $accounts
+     * @param int        $scenario_id
      *
      * @return array
      * @throws waException
      */
-    public function getStatDataForAccounts($startDate, $endDate, waContact $contact, array $accounts = []): array
+    public function getStatDataForAccounts($startDate, $endDate, waContact $contact, array $accounts = [], $scenario_id = null): array
     {
-        $accountFilterSql = '';
+        $where = [
+            'ct.date between s:startDate and s:endDate',
+            'ca.is_archived = 0'
+        ];
         if ($accounts) {
-            $accountFilterSql = ' and ca.id in (i:accounts)';
+            $where[] = 'ca.id in (i:accounts)';
         }
 
-        $accountTransactionRights = cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
+        $where[] = cash()->getContactRights()->getSqlForFilterTransactionsByAccount(
             $contact,
             $accounts
         );
+        if ($scenario_id) {
+            $where[] = '(ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id)';
+        } else {
+            $where[] = 'ct.scenario_id IS NULL';
+        }
         $accountRights = cash()->getContactRights()->getSqlForAccountJoinWithFullAccess($contact);
-//        $categoryRights = cash()->getContactRights()->getSqlForCategoryJoin($contact, 'ct', 'category_id');
 
-        $sql = <<<SQL
-select ca.id,
-       ca.currency,
-       ifnull(t.income, 0) income,
-       ifnull(t.expense, 0) expense,
-       ifnull(t.summary, 0) summary
-from cash_account ca
-         left join (
-    select ca.id                                id,
-           sum(if(ct.amount > 0, ct.amount, 0)) income,
-           sum(if(ct.amount < 0, ct.amount, 0)) expense,
-           sum(ct.amount)                       summary
-    from cash_account ca
-             left join cash_transaction ct on ct.account_id = ca.id and ct.is_archived = 0
-             left join cash_category cc on ct.category_id = cc.id
-    where ct.date between s:startDate and s:endDate
-          and ca.is_archived = 0
-          {$accountFilterSql}
-          and {$accountTransactionRights}
-    group by ca.id
-) t on ca.id = t.id 
-where ca.is_archived = 0
-    and {$accountRights}
-SQL;
-
-        return $this
-            ->query($sql, ['startDate' => $startDate, 'endDate' => $endDate, 'accounts' => $accounts])
-            ->fetchAll('id');
+        return $this->query("
+            select 
+                ca.id,
+                ca.currency,
+                ifnull(t.income, 0) income,
+                ifnull(t.expense, 0) expense,
+                ifnull(t.summary, 0) summary
+            from cash_account ca
+                left join (
+                    select ca.id id,
+                    sum(if(ct.amount > 0, ct.amount, 0)) income,
+                    sum(if(ct.amount < 0, ct.amount, 0)) expense,
+                    sum(ct.amount) summary
+                from cash_account ca
+                left join cash_transaction ct on ct.account_id = ca.id and ct.is_archived = 0
+                left join cash_category cc on ct.category_id = cc.id
+                where ".implode(' AND ', $where)."
+                group by ca.id
+            ) t on ca.id = t.id 
+            where ca.is_archived = 0
+            and {$accountRights}
+        ", [
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'accounts' => $accounts,
+            'scenario_id' => $scenario_id
+        ])->fetchAll('id');
     }
 
     /**

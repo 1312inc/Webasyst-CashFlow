@@ -1,11 +1,11 @@
 <script setup>
-const props = defineProps(['disableBottomMargin'])
+const props = defineProps(['disableBottomMargin', 'transparent'])
 </script>
 
 <template>
   <div
-    class="box blank rounded"
-    :class="{'custom-mb-24': !props.disableBottomMargin}"
+    class="box rounded"
+    :class="{'custom-mb-24': !props.disableBottomMargin, 'blank': !props.transparent}"
   >
     <slot />
   </div>

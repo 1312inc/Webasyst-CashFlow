@@ -190,27 +190,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.c-autocomplete-menu {
-  position: absolute;
-  background: var(--background-color-blank) !important;
-  box-shadow: 0 0.5rem 1rem -0.5rem var(--dialog-shadow-color);
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  z-index: 99;
-
-  &__item {
-    cursor: pointer;
-
-    &:focus,
-    &:hover,
-    &.active {
-      outline: none;
-      background-color: var(--accent-color);
-      color: white;
-    }
-  }
-}
-</style>

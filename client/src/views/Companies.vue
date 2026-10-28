@@ -1,27 +1,36 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <Forbidden v-if="!$appState.isPremium" />
-  <div v-else>
+  <div>
     <ChartHeader :show-controls="false">
       <template #title>
         <h1>{{ $t("companies") }}</h1>
       </template>
     </ChartHeader>
-    <CompaniesTable />
+    <div
+      v-if="!$appState.isPremium"
+      class="settings-table-wrap custom-px-24 custom-ml-4 custom-px-12-mobile"
+    >
+      <p class="small">
+        {{ $t("companyAccountsHint") }}
+      </p>
+      <div class="alert warning small">
+        <i class="fas fa-star small" />
+        {{ $t("planView.premiumAlert") }}
+      </div>
+    </div>
+    <CompaniesTable v-else />
   </div>
 </template>
 
 <script>
 import ChartHeader from '@/components/ChartHeader'
 import CompaniesTable from '@/components/CompaniesTable.vue'
-import Forbidden from '@/views/Forbidden.vue'
 import { appStateService } from '@/services/appState'
 
 export default {
   components: {
     ChartHeader,
-    CompaniesTable,
-    Forbidden
+    CompaniesTable
   },
 
   metaInfo () {

@@ -26,7 +26,7 @@ final class cashReportDdsHandler implements cashReportHandlerInterface
         $current_company_id = $params['company'] ?? 0;
         $companies = [['id' => 0, 'name' => _w('All companies')]] + cash()->getModel('cashCompany')->getAll('id');
         $currentPeriod = cashReportPeriod::createForYear($year);
-        $data = $reportService->getDataForTypeAndPeriod($current_company_id, $type, $currentPeriod);
+        $data = $reportService->getDataForTypeAndPeriod($current_company_id, null, $type, $currentPeriod);
         $chartData = $reportService->formatDataForPie($data, $type, $currentPeriod);
 
         $type = array_reduce($data, static function ($type, cashReportDdsStatDto $dto) {

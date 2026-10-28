@@ -242,4 +242,20 @@ final class cashTransactionRepeater
 
         return $date;
     }
+
+    /**
+     * Продление повторящихся "всю жизнь" операций после 3 лет
+     *
+     * @return void
+     */
+    public function cashProlongationRepeat()
+    {
+        try {
+            $end_date = new DateTime(date('Y-m-d'));
+            $end_date->modify('+2 year');
+            (new cashRepeatTransactionRepeater())->afterTransactionPagePreExecute(new cashEvent(cashEventStorage::TRANSACTION_PAGE_PREEXECUTE, $end_date));
+        } catch (Exception $e) {
+            cash()->getLogger()->error(_w('Не удалось продлить повторения'), $e);
+        }
+    }
 }

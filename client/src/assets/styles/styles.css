@@ -93,8 +93,8 @@ body.modal {
 
 .alert.c-cashgap-prediction-banner { border: none; padding: 1rem; margin: 1rem 0 0; }
 
-.c-button-add-income { background: #16d15f; }
-.c-button-add-expense { background: #f7623a; }
+.c-button-add-income { background: #06d35f; }
+.c-button-add-expense { background: #f3423a; }
 
 .c-list { margin-top: 0; }
 .c-list .c-item {
@@ -166,6 +166,102 @@ body.modal {
   border: 0;
 }
 
+.c-transactions-table-wrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.c-transactions-table {
+  width: 100%;
+  min-width: 64rem;
+  table-layout: fixed;
+}
+.c-transactions-table__col-check { width: 1.5625rem; }
+.c-transactions-table__col-date { width: 8.5rem; }
+.c-transactions-table__col-category,
+.c-transactions-table__col-contractor { width: 12rem; }
+.c-transactions-table__col-amount { width: 14rem; }
+.c-transactions-table__col-description { width: auto; }
+.c-transactions-table__col-account { width: 12rem; }
+.c-transactions-table__col-balance { width: 8.5rem; }
+.c-transactions-table__col-action { width: 3rem; }
+.c-transactions-table th,
+.c-transactions-table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+.c-transactions-table .c-transactions-table__desc {
+  min-width: 150px;
+}
+.c-transactions-table td.c-transactions-table__category {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.c-transactions-table td.c-transactions-table__category > .text-ellipsis {
+  min-width: 0;
+}
+.c-transactions-table td.c-transactions-table__category > .badge {
+  flex: none;
+  max-width: 50%;
+}
+.c-transactions-table .c-transactions-table__amount {
+  overflow: visible;
+  text-overflow: clip;
+}
+.c-transactions-table .c-transactions-table__check,
+.c-transactions-table .c-transactions-table__action {
+  text-overflow: clip;
+  user-select: none;
+}
+.c-transactions-table .c-transactions-table__check {
+  width: 1.5625rem;
+  min-width: 1.5625rem;
+  max-width: 1.5625rem;
+  padding-left: 0.5rem;
+  padding-right: 0;
+  box-sizing: border-box;
+}
+.c-transactions-table .c-transactions-table__action .desktop-only {
+  display: none;
+}
+.c-transactions-table__repeat {
+  color: var(--text-color);
+  opacity: 0.5;
+}
+.c-transactions-table td[data-copy] {
+  user-select: text;
+  cursor: text;
+}
+.c-transactions-table tbody tr {
+  cursor: pointer;
+}
+.c-transactions-table tbody tr:hover {
+  background: var(--background-color-table-row-hover);
+}
+.c-transactions-table tbody tr.c-item-overdue td {
+  background: var(--highlighted-overdue);
+}
+.c-transactions-table tbody tr.c-item-overdue:hover td {
+  background: var(--highlighted-overdue);
+}
+.c-transactions-table tbody tr.c-item-selected,
+.c-transactions-table tbody tr.c-item-selected td {
+  background: var(--accent-color);
+  color: var(--white) !important;
+}
+@media screen and (min-width: 760px) {
+  .c-transactions-table .c-item-checkbox {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .c-transactions-table tr:hover .c-item-checkbox,
+  .c-transactions-table tr.c-item-selected .c-item-checkbox {
+    opacity: 1;
+  }
+}
+
 .c-transaction-section .c-transaction-section__header {
   margin: 0;
 }
@@ -222,9 +318,7 @@ body.modal {
   }
 }
 
-.c-sticky-header-group {
-  background: var(--background-color-blank);
-}
+
 
 .c-sticky-header-group.vue-sticky-el.top-sticky {
   box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.1);
@@ -294,6 +388,10 @@ body.modal {
 
 .c-dropdown-toggle-custom {
   position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 2em;
 }
 
 .c-dropdown-toggle-custom:after {
@@ -309,4 +407,26 @@ body.modal {
   border-bottom: 0;
   border-left: 0.3em solid transparent;
   transform: translate(50%, -50%);
+}
+
+.c-autocomplete-menu {
+  position: absolute;
+  background: var(--background-color-blank) !important;
+  box-shadow: 0 0.5rem 1rem -0.5rem var(--dialog-shadow-color);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 99;
+}
+
+.c-autocomplete-menu__item {
+  cursor: pointer;
+}
+
+.c-autocomplete-menu__item:focus,
+.c-autocomplete-menu__item:hover,
+.c-autocomplete-menu__item.active {
+  outline: none;
+  background-color: var(--accent-color);
+  color: white;
 }

@@ -13,12 +13,15 @@ class cashDefaultLayout extends waLayout
         if (!cash()->getUser()->hasAccessToApp()) {
             throw new kmwaForbiddenException('No app access');
         }
-
+        $accounts_request = new cashApiAccountGetListRequest(
+            waRequest::cookie('cashCompanyId', 0, waRequest::TYPE_INT),
+            waRequest::cookie('cashScenarioId', 0, waRequest::TYPE_INT),
+        );
         $token = (new cashApiToken())->retrieveToken(cash()->getUser()->getContact());
         $apiSettings = (new cashApiSystemGetSettingsHandler())->handle(null);
         $currencies = (new cashApiSystemGetCurrenciesHandler())->handle(null);
         $categories = (new cashApiCategoryGetListHandler())->handle(null);
-        $accounts = (new cashApiAccountGetListHandler())->handle(null);
+        $accounts = (new cashApiAccountGetListHandler())->handle($accounts_request);
 
         $just_installed = wa('cash')->getSetting('just_installed');
         if ($just_installed) {

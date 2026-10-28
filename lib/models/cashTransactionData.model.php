@@ -26,6 +26,7 @@ class cashTransactionDataModel extends cashModel
                 ];
             }
         }
+        parent::deleteByField('transaction_id', array_keys($transaction_data));
 
         return ($insert_data ? parent::multipleInsert($insert_data) : true);
     }

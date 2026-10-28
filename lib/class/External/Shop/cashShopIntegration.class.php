@@ -111,16 +111,11 @@ final class cashShopIntegration
      */
     public function enableForecast(): bool
     {
-        cash()->getLogger()->debug('enable forecast', 'forecast');
-
         $this->deleteFutureForecastTransactions();
-        cash()->getLogger()->debug('delete future transaction', 'forecast');
 
         /** @var cashAccount $account */
         $account = cash()->getEntityRepository(cashAccount::class)->findById($this->settings->getAccountId());
         if (!$account) {
-            cash()->getLogger()->debug('no main account', 'forecast');
-
             return false;
         }
 
@@ -128,21 +123,13 @@ final class cashShopIntegration
             ? $this->getShopAvgAmount($account->getCurrency())
             : $this->settings->getManualForecast();
 
-        cash()->getLogger()->debug(sprintf('amount to plan %s', $amount), 'forecast');
-
         $category = cash()->getEntityRepository(cashCategory::class)->findById($this->settings->getCategoryIncomeId());
         if (!$category) {
-            cash()->getLogger()->debug('no income category', 'forecast');
-
             return false;
         }
 
         if ($amount) {
             $transaction = $this->getTransactionFactory()->createForecastTransaction($amount, $account, $category);
-
-            cash()->getLogger()->debug('repeating transaction', 'forecast');
-            cash()->getLogger()->debug($transaction, 'forecast');
-
             $saver = new cashRepeatingTransactionSaver();
             $repeatingSettings = new cashRepeatingTransactionSettingsDto();
             $repeatingSettings->end_type = cashRepeatingTransaction::REPEATING_END_NEVER;
@@ -151,10 +138,6 @@ final class cashShopIntegration
             $repeatingTransaction = $saver->saveFromTransaction($transaction, $repeatingSettings, true);
 
             (new cashTransactionRepeater())->repeat($repeatingTransaction->newTransaction, new DateTime());
-
-            cash()->getLogger()->debug('transaction repeated', 'forecast');
-
-            cash()->getLogger()->debug('transaction repeated', 'forecast');
         }
 
         return true;
@@ -169,12 +152,8 @@ final class cashShopIntegration
      */
     public function changeForecastType(): void
     {
-        cash()->getLogger()->debug('change forecast type', 'forecast');
-
         $transaction = $this->getForecastRepeatingTransaction();
         if (!$transaction instanceof cashRepeatingTransaction) {
-            cash()->getLogger()->debug('no forecast repeating transaction, enable forecast', 'forecast');
-
             $this->enableForecast();
         } else {
             $amount = $this->settings->isAutoForecast()
@@ -182,11 +161,7 @@ final class cashShopIntegration
                 : $this->settings->getManualForecast();
 
             if ($amount) {
-                cash()->getLogger()->debug(sprintf('amount to plan %s', $amount), 'forecast');
-
                 if ($amount == $transaction->getAmount()) {
-                    cash()->getLogger()->debug('amount not changed, skip update', 'forecast');
-
                     return;
                 }
 
@@ -200,8 +175,6 @@ final class cashShopIntegration
                 cash()->getEntityPersister()->update($transaction);
 
                 $this->updateShopTransactionsAfterDate(new DateTime(), $transaction);
-            } else {
-                cash()->getLogger()->debug('no amount to update', 'forecast');
             }
         }
     }
@@ -222,16 +195,6 @@ final class cashShopIntegration
      */
     public function calculateAvgBill($lastNDays = self::DAYS_FOR_AVG_BILL_CALCULATION, $storefront = ''): float
     {
-//        $sql = <<<SQL
-//select ifnull(sop.value, 'backend'),
-//       currency,
-//       sum(total) / count(total) bill
-//from shop_order
-//         left join shop_order_params sop on shop_order.id = sop.order_id and sop.name = 'storefront'
-//where paid_date > s:date
-//      %s
-//group by ifnull(sop.value, 'backend'), currency
-//SQL;
         $sql = <<<SQL
 select sum(total) / {$lastNDays} bill
 from shop_order
@@ -271,24 +234,16 @@ SQL;
     public function actualizeForecastTransaction(): void
     {
         if (!$this->settings->isEnabled()) {
-            cash()->getLogger()->debug('ss integration is off', 'forecast');
-
             return;
         }
 
         if (!$this->settings->isEnableForecast()) {
-            cash()->getLogger()->debug('ss forecast is off', 'forecast');
-
             return;
         }
 
         if (!$this->settings->isAutoForecast()) {
-            cash()->getLogger()->debug('ss forecast amount is manual', 'forecast');
-
             return;
         }
-
-        cash()->getLogger()->debug('actualize forecast amount', 'forecast');
 
         $this->changeForecastType();
     }
@@ -403,8 +358,6 @@ SQL;
                         ]
                     )
                 );
-
-                cash()->getLogger()->debug(sprintf('Transaction info added to order log: %s!', $message));
             }
 
             $this->settings->incTodayTransactionsCount();

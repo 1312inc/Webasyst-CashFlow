@@ -13,40 +13,50 @@ final class cashReportSankeyService
     }
 
     /**
-     * @param int $company_id
+     * @param int|null $company_id
+     * @param int|null $scenario_id
      * @param DateTimeImmutable $dateFrom
      * @param DateTimeImmutable $dateTo
      * @return array
      * @throws waDbException
      */
-    public function getDataForPeriod(int $company_id, DateTimeImmutable $dateFrom, DateTimeImmutable $dateTo): array
+    public function getDataForPeriod(?int $company_id, ?int $scenario_id, DateTimeImmutable $dateFrom, DateTimeImmutable $dateTo): array
     {
+        $where = [
+            'ct.is_archived = 0',
+            'ca.is_archived = 0',
+            'ca.is_imaginary > -1',
+            'ct.date >= s:date_from',
+            'ct.date <= s:date_to',
+        ];
+        if ($company_id) {
+            array_unshift($where, 'ca.company_id = i:company_id');
+        }
+        if ($scenario_id) {
+            array_unshift($where, 'ca.company_id = i:company_id');
+        } else {
+            array_unshift($where, 'ct.scenario_id IS NULL');
+        }
+
         $data = $this->model->query("
             (SELECT ca.currency, cc.name 'from', cc.id 'from_id', cc.category_parent_id 'category_parent_id', ca.name 'to', ca.id 'to_id', cc.color color, SUM(ABS(ct.amount)) value, 'income' direction
             FROM cash_transaction ct
             JOIN cash_category cc on ct.category_id = cc.id
             JOIN cash_account ca on ca.id = ct.account_id
-            WHERE ".($company_id ? 'ca.company_id = i:company_id AND ' : '')."ct.is_archived = 0
-            AND ca.is_archived = 0
-            AND ca.is_imaginary > -1
+            WHERE ".implode(' AND ', $where)."
             AND cc.type = s:category_type_income
-            AND ct.date >= s:date_from
-            AND ct.date <= s:date_to
             GROUP BY ct.category_id, ct.account_id)
             UNION ALL
             (SELECT ca.currency, ca.name 'from', ca.id 'from_id', cc.category_parent_id 'category_parent_id', cc.name 'to', cc.id 'to_id', cc.color color, SUM(ABS(ct.amount)) value, 'expense' direction
             FROM cash_transaction ct
             JOIN cash_category cc on ct.category_id = cc.id
             JOIN cash_account ca on ca.id = ct.account_id
-            WHERE ".($company_id ? 'ca.company_id = i:company_id AND ' : '')."ct.is_archived = 0
-            AND ca.is_archived = 0
-            AND ca.is_imaginary > -1
+            WHERE ".implode(' AND ', $where)."
             AND cc.type = s:category_type_expense
-            AND ct.date >= s:date_from
-            AND ct.date <= s:date_to
             GROUP BY ct.account_id, ct.category_id)
         ", [
             'company_id' => $company_id,
+            'scenario_id' => $scenario_id,
             'category_type_income' => cashCategory::TYPE_INCOME,
             'category_type_expense' => cashCategory::TYPE_EXPENSE,
             'date_from' => $dateFrom->format('Y-m-d'),

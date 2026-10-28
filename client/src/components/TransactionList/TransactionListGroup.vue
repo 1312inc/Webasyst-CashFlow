@@ -112,8 +112,67 @@
       </div>
 
       <div v-if="upcomingBlockOpened">
+        <div
+          v-if="isTableLayout && filteredTransactions.length"
+          class="c-transactions-table-wrap"
+        >
+          <table class="bigdata c-transactions-table">
+            <colgroup>
+              <col class="c-transactions-table__col-check">
+              <col class="c-transactions-table__col-date">
+              <col class="c-transactions-table__col-category">
+              <col class="c-transactions-table__col-description">
+              <col class="c-transactions-table__col-amount">
+              <col class="c-transactions-table__col-contractor">
+              <col class="c-transactions-table__col-account">
+              <col
+                v-if="showBalanceColumn"
+                class="c-transactions-table__col-balance"
+              >
+              <col class="c-transactions-table__col-action">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="c-transactions-table__check" />
+                <th>{{ $t('date') }}</th>
+                <th>{{ $t('category') }}</th>
+                <th class="c-transactions-table__desc">
+                  {{ $t('operationDescription') }}
+                </th>
+                <th class="align-right c-transactions-table__amount">
+                  {{ $t('amount') }}
+                </th>
+                <th>{{ $t('contractor') }}</th>
+                <th>{{ $t('account') }}</th>
+                <th
+                  v-if="showBalanceColumn"
+                  class="align-right"
+                  :title="$t('accountBalanceTransactionListHint')"
+                >
+                  {{ $t('balance') }}
+                </th>
+                <th class="c-transactions-table__action" />
+              </tr>
+            </thead>
+            <tbody>
+              <TransactionListGroupRow
+                v-for="(transaction, i) in filteredTransactions"
+                v-show="isShown(transaction)"
+                :key="transaction.id"
+                table-layout
+                :show-balance="showBalanceColumn"
+                :transaction="transaction"
+                :show-checker="isShowChecker"
+                :collapse-header-data="collapseHeaderData(transaction)"
+                :show-date="i === 0 ? true : filteredTransactions[i].date !== filteredTransactions[i - 1].date"
+                :visible-select-checkbox="visibleSelectCheckbox"
+                @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
+              />
+            </tbody>
+          </table>
+        </div>
         <ul
-          v-if="filteredTransactions.length"
+          v-else-if="filteredTransactions.length"
           class="c-list list"
           :class="{'c-list--compact': compactModeForFutureList}"
         >
@@ -129,31 +188,31 @@
             :visible-select-checkbox="visibleSelectCheckbox"
             @toggleCollapseHeader="handleCollapseHeaderClick(transaction)"
           />
-          <li
-            v-if="type === 'future' && $store.state.transaction.showFutureTransactionsMoreLink[featurePeriod]"
-            class="flexbox middle"
-          >
-            <button
-              class="button light-gray"
-              style="margin: 1rem auto;"
-              @click.prevent="() => $store.dispatch('transaction/fetchTransactionsFuture')"
-            >
-              <span
-                v-show="$store.state.transaction.loadingFuture"
-                class="custom-mr-8"
-              >
-                <i class="fas fa-spinner wa-animation-spin speed-1000" />
-              </span>
-              <span>{{ $t('showMore') }}</span>
-            </button>
-          </li>
         </ul>
+        <div
+          v-if="type === 'future' && filteredTransactions.length && $store.state.transaction.showFutureTransactionsMoreLink[featurePeriod]"
+          class="flexbox middle"
+        >
+          <button
+            class="button light-gray"
+            style="margin: 1rem auto;"
+            @click.prevent="() => $store.dispatch('transaction/fetchTransactionsFuture')"
+          >
+            <span
+              v-show="$store.state.transaction.loadingFuture"
+              class="custom-mr-8"
+            >
+              <i class="fas fa-spinner wa-animation-spin speed-1000" />
+            </span>
+            <span>{{ $t('showMore') }}</span>
+          </button>
+        </div>
         <SkeletonTransaction
-          v-else-if="(type === 'future' || type === 'tomorrow') && $store.state.transaction.loadingFuture && !$store.getters['transaction/getFutureTransactions'].length"
+          v-if="!filteredTransactions.length && (type === 'future' || type === 'tomorrow') && $store.state.transaction.loadingFuture && !$store.getters['transaction/getFutureTransactions'].length"
           :lines="1"
         />
         <div
-          v-else
+          v-else-if="!filteredTransactions.length"
           class="align-center small custom-py-24"
         >
           {{ $t("emptyList") }}
@@ -170,6 +229,7 @@ import TransactionListGroupUpcomingPeriod from './TransactionListGroupUpcomingPe
 import TransactionListGroupRow from './TransactionListGroupRow/TransactionListGroupRow'
 import AmountForGroup from '@/components/PeriodAmount/AmountForGroup'
 import SkeletonTransaction from './SkeletonTransaction'
+import { transactionsViewMode } from '@/utils/transactionsView'
 
 const listCompactMode = useStorage('list_compact_mode', true)
 
@@ -219,6 +279,17 @@ export default {
   computed: {
     compactModeForFutureList () {
       return this.type === 'future' && listCompactMode.value
+    },
+
+    isTableLayout () {
+      return this.$appState.isDesktop &&
+        !this.$isSpaMobileMode &&
+        transactionsViewMode.value === 'table' &&
+        !this.compactModeForFutureList
+    },
+
+    showBalanceColumn () {
+      return this.$route.name === 'Account'
     },
 
     isShowChecker () {
@@ -326,6 +397,7 @@ export default {
 
   methods: {
     isShown (transaction) {
+      if (this.isTableLayout) return true
       const key = `${transaction.category_id}|${transaction.date}|${transaction.external_source}`
       if (
         !this.сollapseGroups[key] ||
@@ -337,6 +409,7 @@ export default {
     },
 
     collapseHeaderData (transaction) {
+      if (this.isTableLayout) return null
       const key = `${transaction.category_id}|${transaction.date}|${transaction.external_source}`
       if (
         this.isShown(transaction) &&
@@ -390,7 +463,11 @@ export default {
   position: sticky;
   top: calc(4rem + 60px);
   z-index: 99;
-  background-color: var(--background-color-blank);
+  background: var(--background-color);
+}
+
+.blank .c-sticky-header-group {
+  background: var(--background-color-blank);
 }
 
 .no-sticky-controls .c-sticky-header-group {

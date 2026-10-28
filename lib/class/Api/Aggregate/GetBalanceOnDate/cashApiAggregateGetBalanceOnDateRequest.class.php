@@ -11,4 +11,9 @@ final class cashApiAggregateGetBalanceOnDateRequest
      * @var string
      */
     public $filter = '';
+
+    /**
+     * @var null|int
+     */
+    public $scenario_id;
 }

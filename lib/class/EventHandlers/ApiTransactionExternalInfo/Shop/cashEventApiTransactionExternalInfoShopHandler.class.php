@@ -20,7 +20,6 @@ class cashEventApiTransactionExternalInfoShopHandler implements cashEventApiTran
                 $data = $cashApiTransactionResponseDto->getData();
                 if (isset($data['external_data'])) {
                     $externalData = json_decode($data['external_data'], true);
-                    cash()->getLogger()->debug(print_r($data, 1));
                     $externalEntity = cashTransactionExternalEntityFactory::createFromSource(
                         'shop',
                         $externalData,

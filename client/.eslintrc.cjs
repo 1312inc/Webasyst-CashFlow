@@ -6,4 +6,7 @@ module.exports = {
     'eslint:recommended',
     'standard'
   ]
+  // rules: {
+  //   'vue/no-undef-properties': 'error'
+  // }
 }

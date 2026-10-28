@@ -8,17 +8,17 @@ class cashApiScenarioCreateRequest
     /**
      * @var string
      */
-    private $name = '';
+    protected $name = '';
 
     /**
      * @var string|null
      */
-    private $color;
+    protected $color;
 
     /**
      * @var int
      */
-    private $sort;
+    protected $sort;
 
     /**
      * @param $name

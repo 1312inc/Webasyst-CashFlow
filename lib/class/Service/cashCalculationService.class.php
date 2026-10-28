@@ -9,12 +9,13 @@ final class cashCalculationService
      * @param waContact     $contact
      * @param DateTime      $endDate
      * @param DateTime|null $startDate
+     * @param int|null      $scenario_id
      *
      * @return cashStatOnDateDto[]
      * @throws waException
      * @todo: cache?
      */
-    public function getAccountStatsForDates(waContact $contact, DateTime $endDate, DateTime $startDate): array
+    public function getAccountStatsForDates(waContact $contact, DateTime $endDate, DateTime $startDate, $scenario_id = null): array
     {
         /** @var cashAccountModel $model */
         $model = cash()->getModel(cashAccount::class);
@@ -22,7 +23,9 @@ final class cashCalculationService
         $data = $model->getStatDataForAccounts(
             $startDate->format('Y-m-d 00:00:00'),
             $endDate->format('Y-m-d H:i:s'),
-            $contact
+            $contact,
+            [],
+            $scenario_id
         );
 
         $dtos = [];

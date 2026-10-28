@@ -325,7 +325,12 @@ paths:
             type: string
         - in: query
           name: company_id
-          description: ID компании
+          description: ID компании. Фильтрует по группе счетов, связанных с компанией. Отсеевает все, что не относится к компании.
+          schema:
+            type: integer
+        - in: query
+          name: scenario_id
+          description: ID сценария. Добавляет к базовому сценарию также и данные указанного сценария N (условие scenario_id == null OR scenario_id == N).
           schema:
             type: integer
         - in: query
@@ -536,7 +541,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getTransactionsListResponse'
+                type: array
+                items:
+                  description: ID удаленных операций.
+                  type: integer
         400:
           description: Ошибка.
           content:
@@ -641,6 +649,12 @@ paths:
           description: ID компании
           schema:
             type: integer
+        - in: query
+          name: scenario_id
+          description: ID сценария
+          schema:
+            type: integer
+            default: null
       responses:
         200:
           description: Список счетов.
@@ -955,12 +969,12 @@ paths:
               - year
         - in: query
           name: company_id
-          description: ID компании
+          description: ID компании. Фильтрует по группе счетов, связанных с компанией. Отсеевает все, что не относится к компании.
           schema:
             type: integer
         - in: query
           name: scenario_id
-          description: ID сценария
+          description: ID сценария. Добавляет к базовому сценарию также и данные указанного сценария N (условие scenario_id == null OR scenario_id == N).
           schema:
             type: integer
       responses:
@@ -1049,6 +1063,11 @@ paths:
             + **currency/RUB**: операции с указанным 3-буквенным кодом валюты '*RUB*'
           schema:
             type: string
+        - in: query
+          name: scenario_id
+          description: ID сценария. Добавляет к базовому сценарию также и данные указанного сценария N (условие scenario_id == null OR scenario_id == N).
+          schema:
+            type: integer
       responses:
         200:
           description: Информация о балансе.
@@ -1107,7 +1126,12 @@ paths:
             minLength: 1
         - in: query
           name: company_id
-          description: ID компании
+          description: ID компании. Фильтрует по группе счетов, связанных с компанией. Отсеевает все, что не относится к компании.
+          schema:
+            type: integer
+        - in: query
+          name: scenario_id
+          description: ID сценария. Добавляет к базовому сценарию также и данные указанного сценария N (условие scenario_id == null OR scenario_id == N).
           schema:
             type: integer
         - in: query
@@ -1201,7 +1225,12 @@ paths:
             minLength: 1
         - in: query
           name: company_id
-          description: ID компании
+          description: ID компании. Фильтрует по группе счетов, связанных с компанией. Отсеевает все, что не относится к компании.
+          schema:
+            type: integer
+        - in: query
+          name: scenario_id
+          description: ID сценария. Добавляет к базовому сценарию также и данные указанного сценария N (условие scenario_id == null OR scenario_id == N).
           schema:
             type: integer
       responses:
@@ -1553,6 +1582,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         403:
           description: Доступ запрещен.
           content:
@@ -1586,6 +1621,12 @@ paths:
           description: Ответ в случаи удаления компании.
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
           content:
             application/json:
               schema:
@@ -1652,6 +1693,12 @@ paths:
                 $ref: '#/components/schemas/CompanyInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
           content:
             application/json:
               schema:
@@ -1800,6 +1847,12 @@ paths:
           schema:
             type: integer
             default: null
+        - in: query
+          name: scenario_id
+          description: ID сценария.
+          schema:
+            type: integer
+            default: null
       responses:
         200:
           description: Список планов (целей)
@@ -1869,6 +1922,10 @@ paths:
                 account_id:
                   type: integer
                   description: ID счета
+                scenario_id:
+                  type: integer
+                  description: ID сценария
+                  default: null
               required:
                 - category_id
                 - currency
@@ -1958,6 +2015,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         403:
           description: Доступ запрещен.
           content:
@@ -1995,6 +2058,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         403:
           description: Доступ запрещен.
           content:
@@ -2019,12 +2088,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScenarioList'
-        403:
-          description: Доступ запрещен.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
   /cash.scenario.update:
     post:
@@ -2066,6 +2129,12 @@ paths:
                 $ref: '#/components/schemas/ScenarioInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        402:
+          description: Необходима оплата (фича доступна только в премиум-версии).
           content:
             application/json:
               schema:
@@ -2705,7 +2774,13 @@ components:
     ScenarioList:
       type: array
       items:
-        $ref: '#/components/schemas/ScenarioInfo'
+        allOf:
+        - $ref: '#/components/schemas/ScenarioInfo'
+        - type: object
+          properties:
+            count_transaction:
+              type: integer
+              description: Количество операций сценария
 
     TransactionInfo:
       type: object
@@ -2810,6 +2885,10 @@ components:
         is_archived:
           type: boolean
           description: Признак удаленной операции
+        external_hash:
+          type: string
+          nullable: true
+          description: Hash в системе внешнего приложения
         external_source_info:
           nullable: true
           $ref: '#/components/schemas/TransactionExternalData'
@@ -2818,6 +2897,10 @@ components:
           nullable: true
           description: Идентификатор другого приложения
           example: "shop"
+        external_id:
+          type: integer
+          nullable: true
+          description: Идентификатор в системе внешнего приложения
         contractor_contact_id:
           type: integer
           nullable: true

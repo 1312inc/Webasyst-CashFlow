@@ -263,7 +263,7 @@ class cashContactRightsManager
 
         return in_array(
             (int) $categoryId,
-            $this->getContactAccess($contact)->getCategoriesIdsWithAccess(cashRightConfig::RIGHT_CAN_ACCESS_CATEGORY),
+            $this->getContactAccess($contact)->getCategoriesIdsWithAccess(cashRightConfig::CATEGORY_FULL_ACCESS),
             true
         );
     }

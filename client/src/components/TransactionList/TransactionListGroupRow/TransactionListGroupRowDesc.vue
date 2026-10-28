@@ -7,6 +7,16 @@
     >
       {{ categoryComputed }}
     </div>
+
+    <div
+      v-if="scenario"
+      :style="`backgroundColor:${scenario.color}`"
+      class="badge squared text-ellipsis nowrap custom-ml-4 small"
+    >
+      <i class="fas fa-code-branch" />
+      {{ scenario.name }}
+    </div>
+
     <!-- if collapsed transactions header -->
     <template v-if="collapseHeaderData && transaction.external_source_info">
       <span
@@ -73,6 +83,12 @@ export default {
           } / `
         : ''
       return `${parent}${this.category.name}`
+    },
+
+    scenario () {
+      const id = this.transaction?.scenario_id
+      if (!id) return null
+      return this.$store.getters['scenario/getById'](id) || null
     }
   }
 }

@@ -278,12 +278,6 @@ final class cashTransactionFilterService
             ');
     }
 
-    private function makeBaseSqlForScenarioFilter( cashTransactionFilterParamsDto $dto, cashSelectQueryParts $selectQueryParts)
-    {
-        $selectQueryParts->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
-            ->addParam('scenario_id', $dto->filter->getScenarioId());
-    }
-
     /**
      * @param cashTransactionFilterParamsDto $dto
      *
@@ -332,6 +326,16 @@ final class cashTransactionFilterService
                 ->addParam('company_id', $dto->company_id);
         }
 
+        if (null !== $dto->filter->getScenarioId()) {
+            $sqlParts->addAndWhere('ct.scenario_id = i:scenario_id')
+                ->addParam('scenario_id', $dto->filter->getScenarioId());
+        } elseif ($dto->scenario_id) {
+            $sqlParts->addAndWhere('ct.scenario_id IS NULL OR ct.scenario_id = i:scenario_id')
+                ->addParam('scenario_id', $dto->scenario_id);
+        } else {
+            $sqlParts->addAndWhere('ct.scenario_id IS NULL');
+        }
+
         if ($dto->start !== null && $dto->limit !== null) {
             $sqlParts->limit($dto->limit)
                 ->offset($dto->start);
@@ -367,9 +371,6 @@ final class cashTransactionFilterService
                 break;
             case null !== $dto->filter->getExternalId() && null !== $dto->filter->getExternalSource():
                 $this->makeBaseSqlForExternalFilter($dto, $sqlParts);
-                break;
-            case null !== $dto->filter->getScenarioId():
-                $this->makeBaseSqlForScenarioFilter($dto, $sqlParts);
                 break;
             default:
                 $this->makeImaginaryFilter($sqlParts, true);

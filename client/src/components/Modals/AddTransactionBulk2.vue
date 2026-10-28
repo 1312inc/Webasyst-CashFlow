@@ -105,6 +105,53 @@
           @click.prevent="data.push({ ...model })"
         >{{ $t("addmore") }}</a>
       </div>
+
+      <div
+        v-if="showScenarioField"
+        class="custom-mt-16"
+      >
+        <DropdownWaFloating>
+          <template #toggler>
+            <button
+              class="c-dropdown-toggle-custom button small"
+              :class="{ 'light-gray': !selectedScenario }"
+              :style="selectedScenario ? { backgroundColor: selectedScenario.color, color: '#fff' } : null"
+            >
+              <span class="icon">
+                <i class="fas fa-code-branch" />
+              </span>
+              {{ selectedScenario ? selectedScenario.name : $t('defaultScenario') }}
+            </button>
+          </template>
+          <template #default="{ close }">
+            <ul class="menu">
+              <li :class="{ selected: !model.scenario_id }">
+                <a @click.prevent="selectScenario(null, close)">
+                  <span class="icon">
+                    <i class="fas fa-code-branch" />
+                  </span>
+                  <span>{{ $t('defaultScenario') }}</span>
+                </a>
+              </li>
+              <li
+                v-for="scenario in scenarios"
+                :key="scenario.id"
+                :class="{ selected: scenario.id === model.scenario_id }"
+              >
+                <a @click.prevent="selectScenario(scenario.id, close)">
+                  <span class="icon">
+                    <i
+                      class="fas fa-code-branch"
+                      :style="{ color: scenario.color }"
+                    />
+                  </span>
+                  <span>{{ scenario.name }}</span>
+                </a>
+              </li>
+            </ul>
+          </template>
+        </DropdownWaFloating>
+      </div>
     </div>
     <div class="dialog-footer">
       <div class="flexbox">
@@ -129,10 +176,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { minLength, requiredIf } from 'vuelidate/dist/validators.min.js'
 import InputCurrency from '@/components/Inputs/InputCurrency'
 import DateField from '@/components/Inputs/InputDate'
 import DropdownWa from '@/components/Inputs/DropdownWa'
+import DropdownWaFloating from '@/components/Inputs/DropdownWaFloating'
 import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 import entityPageMixin from '@/mixins/entityPageMixin'
 
@@ -140,7 +189,8 @@ export default {
   components: {
     InputCurrency,
     DateField,
-    DropdownWa
+    DropdownWa,
+    DropdownWaFloating
   },
 
   mixins: [rowModificatorMixin, entityPageMixin],
@@ -154,7 +204,8 @@ export default {
         date: null,
         type: '',
         is_repeating: true,
-        repeating_interval: 'month'
+        repeating_interval: 'month',
+        scenario_id: null
       },
       data: [],
       controlsDisabled: true
@@ -181,8 +232,21 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      scenarios: 'scenario/sortedScenarios'
+    }),
+
     accounts () {
       return this.$store.state.account.accounts
+    },
+
+    showScenarioField () {
+      return this.$appState.isPremium && this.$permissions.isAdmin && this.scenarios.length
+    },
+
+    selectedScenario () {
+      if (!this.model.scenario_id) return null
+      return this.scenarios.find(scenario => scenario.id === this.model.scenario_id) || null
     }
   },
 
@@ -206,9 +270,18 @@ export default {
     }
 
     this.data = Array(5).fill(null).map(() => ({ ...this.model }))
+
+    if (this.$appState.isPremium && this.$permissions.isAdmin) {
+      this.$store.dispatch('scenario/getList')
+    }
   },
 
   methods: {
+    selectScenario (id, close) {
+      this.model.scenario_id = id || null
+      close()
+    },
+
     getCategoryType (id) {
       const category = this.$store.getters['category/getById'](id)
       return category ? category.type : ''
@@ -227,7 +300,17 @@ export default {
 
       if (!this.$v.$invalid) {
         this.controlsDisabled = true
-        const filteredRows = this.data.filter(r => r.amount)
+        const filteredRows = this.data.filter(r => r.amount).map(row => {
+          const next = { ...row }
+          if (!this.showScenarioField) {
+            delete next.scenario_id
+          } else if (!this.model.scenario_id) {
+            next.scenario_id = null
+          } else {
+            next.scenario_id = this.model.scenario_id
+          }
+          return next
+        })
 
         this.$store
           .dispatch('transactionBulk/bulkCreate', filteredRows)

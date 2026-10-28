@@ -13,6 +13,7 @@
           <div class="h2 custom-mb-0 text-ellipsis">
             {{ currentEntity.name || currentEntity.currency }}
           </div>
+
           <div
             v-if="currentEntity.currency"
             :class="{

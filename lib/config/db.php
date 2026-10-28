@@ -125,6 +125,7 @@ return array(
         'date' => array('date', 'null' => 0),
         'account_id' => array('int', 11, 'null' => 0),
         'category_id' => array('int', 11),
+        'scenario_id' => array('int', 11),
         'amount' => array('decimal', "18,4", 'null' => 0),
         'description' => array('text'),
         'create_datetime' => array('datetime', 'null' => 0),
@@ -144,7 +145,7 @@ return array(
     'cash_scenario' => array(
         'id' => array('bigint', 20, 'null' => 0, 'autoincrement' => 1),
         'name' => array('varchar', 32, 'null' => 0),
-        'color' => array('varchar', 6),
+        'color' => array('varchar', 7),
         'sort' => array('int', 11, 'null' => 0, 'default' => '0'),
         ':keys' => array(
             'PRIMARY' => 'id',
