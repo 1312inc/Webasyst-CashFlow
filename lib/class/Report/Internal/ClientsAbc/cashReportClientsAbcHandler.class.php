@@ -29,7 +29,7 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
         $companies = [['id' => 0, 'name' => _w('All companies')]] + cash()->getModel('cashCompany')->getAll('id');
 
         $reportService = new cashReportClientsAbcService();
-        $data = $reportService->getDataForPeriodAndCurrency($current_company_id, $from, $to, $params['currency']);
+        $data = $reportService->getDataForPeriodAndCurrency($current_company_id, null, $from, $to, $params['currency']);
 
         $a = $params['a'] ?? 80;
         $b = $params['b'] ?? 15;

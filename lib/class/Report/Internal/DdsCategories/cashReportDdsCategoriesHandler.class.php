@@ -19,7 +19,7 @@ final class cashReportDdsCategoriesHandler implements cashReportHandlerInterface
         $type = new cashReportDdsTypeDto(cashReportDdsService::TYPE_CATEGORY, _w('Categories'), true);
 
         $reportService = new cashReportDdsService();
-        $data = $reportService->getDataForTypeAndPeriod($current_company_id, $type, $currentPeriod);
+        $data = $reportService->getDataForTypeAndPeriod($current_company_id, null, $type, $currentPeriod);
         $chartData = $reportService->formatDataForPie($data, $type, $currentPeriod);
 
         $type = array_reduce($data, static function ($type, cashReportDdsStatDto $dto) {
