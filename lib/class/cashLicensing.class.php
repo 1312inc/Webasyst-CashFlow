@@ -5,21 +5,6 @@
  */
 class cashLicensing extends waLicensing
 {
-//<<<< NO COMMIT
-const ACCESS = true;
-protected function getLicense()
-{
-    return [
-        'status' => (int) self::ACCESS,
-        'options' => ['edition' => 'PREMIUM']
-    ];
-}
-public function isPremium()
-{
-    return self::ACCESS;
-}
-//NO COMMIT >>>>
-
     /**
      * @return bool|string
      */
