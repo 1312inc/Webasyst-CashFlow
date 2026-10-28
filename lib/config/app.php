@@ -1,8 +1,8 @@
 <?php
 return array (
   'name' => 'Cash Flow',
-  'icon' => 'img/cash.svg?v26',
-  'version' => '4.3.0',
+  'icon' => 'img/cash.svg',
+  'version' => '5.0.0',
   'vendor'  => '1021997',
   'rights'  => true,
   'sash_color' => '#16d15f',
