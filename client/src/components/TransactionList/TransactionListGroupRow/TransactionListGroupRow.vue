@@ -48,18 +48,22 @@
         :data-copy="categoryLabel"
         class="c-transactions-table__category semibold"
       >
-        <span
-          class="text-ellipsis"
-          :style="category && category.color ? `color: ${category.color}` : null"
-        >{{ categoryLabel }}</span>
-        <span
-          v-if="scenario"
-          class="badge squared text-ellipsis nowrap small"
-          :style="{ backgroundColor: scenario.color }"
-          :title="scenario.name"
-        >
-          <i class="fas fa-code-branch" />
-          {{ scenario.name }}
+        <span class="c-transactions-table__category-line">
+          <span
+            class="text-ellipsis"
+            :style="category && category.color ? `color: ${category.color}` : null"
+          >{{ categoryLabel }}</span>
+          <span
+            v-if="scenario"
+            class="badge squared nowrap small"
+            :style="{ backgroundColor: scenario.color }"
+            :title="scenario.name"
+          >
+            <span class="text-ellipsis">
+              <i class="fas fa-code-branch" />
+              {{ scenario.name }}
+            </span>
+          </span>
         </span>
       </td>
       <td
@@ -127,6 +131,7 @@
           v-show="transaction.is_onbadge && !archive"
           :transaction="transaction"
           :account="account"
+          :is-fixed="true"
           @processEdit="openModal(true)"
         />
       </td>

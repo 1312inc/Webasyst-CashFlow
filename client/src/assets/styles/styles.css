@@ -167,13 +167,37 @@ body.modal {
 }
 
 .c-transactions-table-wrap {
-  overflow-x: auto;
+  overflow-x: scroll;
   overflow-y: hidden;
+}
+.c-transactions-table-wrap::-webkit-scrollbar {
+  -webkit-appearance: none;
+  height: 0.625rem;
+}
+.c-transactions-table-wrap::-webkit-scrollbar:vertical {
+  width: 0;
+  height: 0;
+}
+.c-transactions-table-wrap::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 0.25rem;
+}
+.c-transactions-table-wrap:hover::-webkit-scrollbar-thumb {
+  background: var(--gray);
+}
+.c-transactions-table-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+.c-transactions-table-wrap:hover::-webkit-scrollbar-track {
+  background: var(--background-color);
 }
 .c-transactions-table {
   width: 100%;
-  min-width: 64rem;
+  min-width: calc(63.0625rem + 150px);
   table-layout: fixed;
+}
+.c-transactions-table--balance {
+  min-width: calc(71.5625rem + 150px);
 }
 .c-transactions-table__col-check { width: 1.5625rem; }
 .c-transactions-table__col-date { width: 8.5rem; }
@@ -191,20 +215,29 @@ body.modal {
   text-overflow: ellipsis;
   vertical-align: middle;
 }
-.c-transactions-table .c-transactions-table__desc {
-  min-width: 150px;
-}
-.c-transactions-table td.c-transactions-table__category {
-  display: flex;
-  align-items: center;
+.c-transactions-table__category-line {
+  display: inline-flex;
+  align-items: baseline;
+  max-width: 100%;
+  vertical-align: baseline;
   gap: 0.25rem;
 }
-.c-transactions-table td.c-transactions-table__category > .text-ellipsis {
+.c-transactions-table__category-line > .text-ellipsis {
   min-width: 0;
 }
-.c-transactions-table td.c-transactions-table__category > .badge {
+.c-transactions-table__category-line > .badge,
+.c-list .flexbox > .badge.squared {
+  min-width: 0;
+  overflow: hidden;
+}
+.c-transactions-table__category-line > .badge {
   flex: none;
   max-width: 50%;
+}
+.c-transactions-table__category-line > .badge > .text-ellipsis,
+.c-list .flexbox > .badge.squared > .text-ellipsis {
+  display: block;
+  color: inherit;
 }
 .c-transactions-table .c-transactions-table__amount {
   overflow: visible;
