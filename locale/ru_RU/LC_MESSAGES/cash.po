@@ -1872,3 +1872,30 @@ msgstr "Закройте доступ к приложению с помощью 
 
 msgid "Make up different projections <a href=\"https://support.webasyst.com/48969/cash-flow-scenarios/\" target=_blank>with scenarios</a>."
 msgstr "Моделируйте разные варианты развития событий <a href=\"https://support.webasyst.ru/48968/cash-flow-scenarios/\" target=_blank>с помощью сценариев</a>."
+
+msgid "Reporting for %s under the %s scenario."
+msgstr "Отчет компании %s по сценарию «%s»."
+
+msgid "Reporting for all companies under the %s scenario."
+msgstr "Отчет по всем компаниям по сценарию «%s»."
+
+msgid "Scenario not found"
+msgstr "Сценарий не найден"
+
+msgid "Scenario has not been updated"
+msgstr "Сценарий не был обновлен"
+
+msgid "Scenario has not been deleted yet"
+msgstr "Сценарий еще не удален"
+
+msgid "Scenario has not been saved"
+msgstr "Сценарий не был сохранен"
+
+msgid "No name"
+msgstr "Без названия"
+
+msgid "Basic scenario"
+msgstr "Базовый сценарий"
+
+msgid "Failed to prolongate the repeating transaction"
+msgstr "Ошибка пролонгации повторяющейся операции"

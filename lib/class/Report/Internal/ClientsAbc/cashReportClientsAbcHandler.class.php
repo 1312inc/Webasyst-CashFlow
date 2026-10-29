@@ -29,13 +29,13 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
         $scenario_id = $params['scenario_id'] ?? null;
         if ($company_id) {
             $company = cash()->getModel('cashCompany')->getById($company_id);
-            $company_name = ifset($company, 'name', _w('Без названия'));
+            $company_name = ifset($company, 'name', _w('No name'));
         }
         if ($scenario_id) {
             $scenario = cash()->getModel('cashScenario')->getById($scenario_id);
-            $scenario_name = ifset($scenario, 'name', _w('Без названия'));
+            $scenario_name = ifset($scenario, 'name', _w('No name'));
         } else {
-            $scenario_name = _w('Базовый сценарий');
+            $scenario_name = _w('Basic scenario');
         }
 
         $reportService = new cashReportClientsAbcService();

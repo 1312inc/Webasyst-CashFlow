@@ -19,9 +19,9 @@
     <h1 class="custom-mb-24">[`Categories`]</h1>
 
     {if isset ($company_name, $scenario_name)}
-    <p class="hint">{sprintf('[`Отчет компании %s со сценарием %s`]', $company_name|escape, $scenario_name|escape)}</p>
+    <p class="small">{sprintf('[`Reporting for %s under the %s scenario.`]', $company_name|escape, $scenario_name|escape)}</p>
     {else}
-    <p class="hint">{sprintf('[`Отчет всех компаний со сценарием %s`]', $scenario_name|escape)}</p>
+    <p class="small">{sprintf('[`Reporting for all companies under the %s scenario.`]', $scenario_name|escape)}</p>
     {/if}
 
     <div class="flexbox middle">
