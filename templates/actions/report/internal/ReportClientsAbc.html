@@ -3,31 +3,17 @@
 
     <h1>[`Clients ABC`]</h1>
 
+    {if isset ($company_name, $scenario_name)}
+    <p class="hint">{sprintf('[`Отчет компании %s со сценарием %s`]', $company_name|escape, $scenario_name|escape)}</p>
+    {else}
+    <p class="hint">{sprintf('[`Отчет всех компаний со сценарием %s`]', $scenario_name|escape)}</p>
+    {/if}
+
     <div class="flexbox">
         <form action="">
 
             <div class="fields">
                 <div class="custom-mb-16">
-                    {$company_view = cashHelper::isPremium() && count($companies) > 1}
-                    {if $company_view}
-                    <div class="field">
-                        <div class="name for-input">
-                            [`Company`]
-                        </div>
-                        <div class="value">
-                            <div class="wa-select solid">
-                                <select name="company">
-                                    {foreach $companies as $_company}
-                                    <option value="{$_company.id}"{if $_company.id == $current_company_id} selected{/if}>
-                                        {$_company.name|escape}
-                                    </option>
-                                    {/foreach}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    {/if}
-
                     <div class="field">
                         <div class="name for-input large">
                             [`Currency`]

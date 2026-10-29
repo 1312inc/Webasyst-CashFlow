@@ -25,11 +25,21 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
             $params['currency'] = $account->getCurrency();
         }
 
-        $current_company_id = $params['company'] ?? 0;
-        $companies = [['id' => 0, 'name' => _w('All companies')]] + cash()->getModel('cashCompany')->getAll('id');
+        $company_id = $params['company_id'] ?? null;
+        $scenario_id = $params['scenario_id'] ?? null;
+        if ($company_id) {
+            $company = cash()->getModel('cashCompany')->getById($company_id);
+            $company_name = ifset($company, 'name', _w('Без названия'));
+        }
+        if ($scenario_id) {
+            $scenario = cash()->getModel('cashScenario')->getById($scenario_id);
+            $scenario_name = ifset($scenario, 'name', _w('Без названия'));
+        } else {
+            $scenario_name = _w('Базовый сценарий');
+        }
 
         $reportService = new cashReportClientsAbcService();
-        $data = $reportService->getDataForPeriodAndCurrency($current_company_id, null, $from, $to, $params['currency']);
+        $data = $reportService->getDataForPeriodAndCurrency($company_id, $scenario_id, $from, $to, $params['currency']);
 
         $a = $params['a'] ?? 80;
         $b = $params['b'] ?? 15;
@@ -96,8 +106,8 @@ final class cashReportClientsAbcHandler implements cashReportHandlerInterface
         return wa()->getView()->renderTemplate(
             wa()->getAppPath('templates/actions/report/internal/ReportClientsAbc.html'),
             [
-                'companies' => $companies,
-                'current_company_id' => $current_company_id,
+                'company_name' => ifempty($company_name),
+                'scenario_name' => $scenario_name,
                 'tableData' => $tableData,
                 'a' => $a,
                 'b' => $b,

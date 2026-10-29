@@ -18,16 +18,27 @@ final class cashReportSankeyHandler implements cashReportHandlerInterface
             throw new cashValidateException('Invalid time interval');
         }
 
-        $current_company_id = $params['company'] ?? 0;
-        $companies = [['id' => 0, 'name' => _w('All companies')]] + cash()->getModel('cashCompany')->getAll('id');
+        $company_id = $params['company_id'] ?? null;
+        $scenario_id = $params['scenario_id'] ?? null;
+        if ($company_id) {
+            $company = cash()->getModel('cashCompany')->getById($company_id);
+            $company_name = ifset($company, 'name', _w('Без названия'));
+        }
+        if ($scenario_id) {
+            $scenario = cash()->getModel('cashScenario')->getById($scenario_id);
+            $scenario_name = ifset($scenario, 'name', _w('Без названия'));
+        } else {
+            $scenario_name = _w('Базовый сценарий');
+        }
+
         $reportService = new cashReportSankeyService();
-        $data = $reportService->getDataForPeriod($current_company_id, null, $dateFrom, $dateTo);
+        $data = $reportService->getDataForPeriod($company_id, $scenario_id, $dateFrom, $dateTo);
 
         return wa()->getView()->renderTemplate(
             wa()->getAppPath('templates/actions/report/internal/ReportSankey.html'),
             [
-                'companies' => $companies,
-                'current_company_id' => $current_company_id,
+                'company_name' => ifempty($company_name),
+                'scenario_name' => $scenario_name,
                 'from' => $dateFrom->format('Y-m-d'),
                 'to' => $dateTo->format('Y-m-d'),
                 'data' => json_encode($data, JSON_UNESCAPED_UNICODE),
