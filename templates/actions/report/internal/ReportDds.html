@@ -83,9 +83,9 @@
 
     <h1 class="custom-mb-24">[`Cash flow report`]</h1>
 
-    {if isset ($company_name, $scenario_name)}
+    {if isset($company_name, $scenario_name)}
     <p class="small">{sprintf('[`Reporting for %s under the %s scenario.`]', $company_name|escape, $scenario_name|escape)}</p>
-    {else}
+    {else if isset($scenario_name)}
     <p class="small">{sprintf('[`Reporting for all companies under the %s scenario.`]', $scenario_name|escape)}</p>
     {/if}
 

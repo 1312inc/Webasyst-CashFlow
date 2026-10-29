@@ -23,12 +23,11 @@ final class cashReportSankeyHandler implements cashReportHandlerInterface
         if ($company_id) {
             $company = cash()->getModel('cashCompany')->getById($company_id);
             $company_name = ifset($company, 'name', _w('No name'));
+            $scenario_name = _w('Basic scenario');
         }
         if ($scenario_id) {
             $scenario = cash()->getModel('cashScenario')->getById($scenario_id);
             $scenario_name = ifset($scenario, 'name', _w('No name'));
-        } else {
-            $scenario_name = _w('Basic scenario');
         }
 
         $reportService = new cashReportSankeyService();
@@ -38,7 +37,7 @@ final class cashReportSankeyHandler implements cashReportHandlerInterface
             wa()->getAppPath('templates/actions/report/internal/ReportSankey.html'),
             [
                 'company_name' => ifempty($company_name),
-                'scenario_name' => $scenario_name,
+                'scenario_name' => ifempty($scenario_name),
                 'from' => $dateFrom->format('Y-m-d'),
                 'to' => $dateTo->format('Y-m-d'),
                 'data' => json_encode($data, JSON_UNESCAPED_UNICODE),

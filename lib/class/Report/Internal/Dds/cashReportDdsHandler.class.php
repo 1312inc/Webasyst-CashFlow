@@ -28,12 +28,11 @@ final class cashReportDdsHandler implements cashReportHandlerInterface
         if ($company_id) {
             $company = cash()->getModel('cashCompany')->getById($company_id);
             $company_name = ifset($company, 'name', _w('No name'));
+            $scenario_name = _w('Basic scenario');
         }
         if ($scenario_id) {
             $scenario = cash()->getModel('cashScenario')->getById($scenario_id);
             $scenario_name = ifset($scenario, 'name', _w('No name'));
-        } else {
-            $scenario_name = _w('Basic scenario');
         }
 
         $currentPeriod = cashReportPeriod::createForYear($year);
@@ -60,7 +59,7 @@ final class cashReportDdsHandler implements cashReportHandlerInterface
                 'type' => $type,
                 'data' => $data,
                 'company_name' => ifempty($company_name),
-                'scenario_name' => $scenario_name,
+                'scenario_name' => ifempty($scenario_name),
                 'grouping' => $currentPeriod->getGrouping(),
                 'chartData' => json_encode($chartData, JSON_UNESCAPED_UNICODE),
                 'is_imaginary' => in_array(true, array_unique(array_column($data, 'is_imaginary')), true)
