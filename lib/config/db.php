@@ -72,6 +72,16 @@ return array(
             'PRIMARY' => 'id',
         ),
     ),
+    'cash_template' => array(
+        'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
+        'contact_id' => array('int', 11),
+        'name' => array('varchar', 64, 'null' => 0),
+        'content' => array('mediumtext', 'null' => 0),
+        'sort' => array('int', 11, 'null' => 0, 'default' => '0'),
+        ':keys' => array(
+            'PRIMARY' => 'id',
+        )
+    ),
     'cash_transaction_data' => array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
         'transaction_id' => array('bigint', 20, 'null' => 0),

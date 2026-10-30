@@ -16,7 +16,7 @@ import { permissions } from '../plugins/permissions'
 import { moment } from '@/plugins/numeralMoment.js'
 import { appStateService } from '@/services/appState'
 
-const SSR_MODE_PAGE_URL_ALIASES = ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins', '/upgrade', '/automation']
+const SSR_MODE_PAGE_URL_ALIASES = ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins', '/upgrade', '/automation', '/templates']
 
 Vue.use(VueRouter)
 
@@ -154,6 +154,10 @@ const routes = [
     meta: {
       requiresAdminRights: true
     }
+  },
+  {
+    path: '/templates',
+    alias: SSR_MODE_PAGE_URL_ALIASES
   },
   {
     path: '/report',
