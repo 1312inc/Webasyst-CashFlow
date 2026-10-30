@@ -28,16 +28,16 @@
       </router-link>
     </li>
     <li v-if="$permissions.isAdmin">
-      <router-link to="/templates">
+      <a :href="`${$helper.baseUrl}templates/`">
         <i class="fas fa-copy" />
         <span :class="{ 'opacity-50': !$appState.isPremium }">{{ $t("operationTemplates") }}</span>
         <span
-            v-if="!$appState.isPremium"
-            class="count small"
+          v-if="!$appState.isPremium"
+          class="count small"
         >
           <i class="fas fa-star text-yellow" />
         </span>
-      </router-link>
+      </a>
     </li>
     <li v-if="$permissions.isAdmin">
       <router-link to="/trash">
