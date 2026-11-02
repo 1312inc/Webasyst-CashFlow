@@ -16,8 +16,14 @@ class cashTemplateAction extends cashViewAction
 
     public function runAction($params = null)
     {
-        $this->view->assign([
+        $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
+        $categories = cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact();
+        $templates = (new cashTemplateModel())->getTemplates();
 
+        $this->view->assign([
+            'templates' => $templates,
+            'accounts' => $accounts,
+            'categories' => $categories
         ]);
     }
 }

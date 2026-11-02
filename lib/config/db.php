@@ -76,6 +76,7 @@ return array(
         'id' => array('int', 11, 'null' => 0, 'autoincrement' => 1),
         'contact_id' => array('int', 11),
         'name' => array('varchar', 64, 'null' => 0),
+        'type' => array('enum', "'income', 'expense', 'transfer'", 'null' => 0),
         'content' => array('mediumtext', 'null' => 0),
         'sort' => array('int', 11, 'null' => 0, 'default' => '0'),
         ':keys' => array(

@@ -10,6 +10,7 @@ try {
             `id` int NOT NULL AUTO_INCREMENT,
             `contact_id` INT(11) DEFAULT NULL,
             `name` varchar(64) NOT NULL,
+            `type` enum('income', 'expense', 'transfer') NOT NULL,
             `content` mediumtext NOT NULL,
             `sort` int NOT NULL DEFAULT '0',
             PRIMARY KEY (`id`)
