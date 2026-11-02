@@ -14,6 +14,7 @@ class cashStaticLayout extends waLayout
         $currencies = (new cashApiSystemGetCurrenciesHandler())->handle(null);
         $categories = (new cashApiCategoryGetListHandler())->handle(null);
         $accounts = (new cashApiAccountGetListHandler())->handle($accounts_request);
+        $templates = (new cashApiTemplateGetListHandler())->handle(null);
         $token = (new cashApiToken())->retrieveToken(cash()->getUser()->getContact());
         $apiSettings = (new cashApiSystemGetSettingsHandler())->handle(null);
 
@@ -32,6 +33,7 @@ class cashStaticLayout extends waLayout
                 'currencies' => json_encode($currencies, JSON_UNESCAPED_UNICODE),
                 'categories' => json_encode($categories, JSON_UNESCAPED_UNICODE),
                 'accounts' => json_encode($accounts, JSON_UNESCAPED_UNICODE),
+                'templates' => json_encode($templates, JSON_UNESCAPED_UNICODE),
                 'emptyFlow' => $just_installed,
                 'isPremium' => cashHelper::isPremium(),
             ]

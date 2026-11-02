@@ -2364,6 +2364,28 @@ paths:
         204:
           description: Успешное выполнение запроса.
 
+  /cash.template.getList:
+    get:
+      externalDocs:
+        description: cash.template.getList
+        url: https://developers.webasyst.ru/api/explorer/cash/cash.template.getList/
+      summary: Возвращает список доступных шаблонов
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+       200:
+         description: Список шаблонов.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/TemplateList'
+       402:
+         description: Необходима оплата (фича доступна только в премиум-версии).
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -2781,6 +2803,46 @@ components:
             count_transaction:
               type: integer
               description: Количество операций сценария
+
+    TemplateInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID шаблона
+        name:
+          type: string
+          description: Название шаблона
+        contact_id:
+          type: integer
+          nullable: true
+          description: ''
+        type:
+          type: string
+          description: ''
+          enum:
+            - income
+            - expense
+            - transfer
+        content:
+          type: array
+          description: Content data
+          items: 
+            type: object
+            properties: 
+              name:
+                type: string
+              value:
+                type: string
+                nullable: true
+        sort:
+          type: integer
+          description: Значение сортировки
+
+    TemplateList:
+      type: array
+      items:
+        $ref: '#/components/schemas/TemplateInfo'
 
     TransactionInfo:
       type: object

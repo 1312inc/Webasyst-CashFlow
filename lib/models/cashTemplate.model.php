@@ -7,6 +7,13 @@ class cashTemplateModel extends cashModel
 {
     protected $table = 'cash_template';
 
+    public function getAllForMe()
+    {
+        $templates = $this->where('contact_id = ? OR contact_id IS NULL', wa()->getUser()->getId())->order('sort, id DESC')->fetchAll();
+
+        return $this->contentDecode($templates);
+    }
+
     public function getTemplates($ids = null)
     {
         if (empty($ids)) {

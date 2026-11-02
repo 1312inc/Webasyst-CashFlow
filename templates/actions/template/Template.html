@@ -1,12 +1,13 @@
 {$_page_title = _w('Шаблоны операций')}
 {$is_premium = cashHelper::isPremium()}
+{$user_id = $wa->userId()}
 
 {function template_operation template=null}
     {$template_id = ifset($template, 'id', '%%TEMPLATE_ID%%')}
     <tr data-template-id="{$template_id}">
         <td class="valign-top c-template-sort-handle">
             <i class="fas fa-grip-vertical text-light-gray cursor-pointer template-sort-handle"></i>
-            <input type="hidden" name="data[{$template_id}][sort]" value="{$template.sort|default:'0'|escape}" class="js-sort-template">
+            <input type="hidden" name="data[{$template_id}][sort]" value="{ifset($template, 'sort', '0')}" class="js-sort-template">
         </td>
         <td class="valign-top">
             <input type="text" name="data[{$template_id}][name]" value="{ifset($template, 'name', '')|escape}">
@@ -71,7 +72,12 @@
                 </div>
             </div>
         </td>
-        <td></td>
+        <td class="valign-top nowrap">
+            <label>
+                <input type="checkbox" name="data[{$template_id}][contact_id]" value="{ifset($template, 'contact_id', $user_id)}"{if !empty($template['contact_id'])} checked{/if}>
+                [`Только я`]
+            </label>
+        </td>
         <td class="valign-top">
             <a href="javascript:void(0);" class="c-delete-template button nobutton rounded smaller text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
         </td>

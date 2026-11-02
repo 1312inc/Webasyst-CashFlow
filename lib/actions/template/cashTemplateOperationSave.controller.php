@@ -12,7 +12,6 @@ class cashTemplateOperationSaveController extends cashJsonController
 
         $templates_insert = [];
         $templates_update = [];
-        $contact_id = wa()->getUser()->getId();
         $categories = cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact();
         foreach ($data_templates as $_template_id => $_template) {
             /** @var cashCategory $category */
@@ -28,7 +27,7 @@ class cashTemplateOperationSaveController extends cashJsonController
                 $_template['amount'] = abs((float) $_template['amount']);
             }
             $_template += [
-                'contact_id' => $contact_id,
+                'contact_id' => null,
                 'type' => $type,
                 'sort' => 0
             ];

@@ -22,6 +22,7 @@ class cashDefaultLayout extends waLayout
         $currencies = (new cashApiSystemGetCurrenciesHandler())->handle(null);
         $categories = (new cashApiCategoryGetListHandler())->handle(null);
         $accounts = (new cashApiAccountGetListHandler())->handle($accounts_request);
+        $templates = (new cashApiTemplateGetListHandler())->handle(null);
 
         $just_installed = wa('cash')->getSetting('just_installed');
         if ($just_installed) {
@@ -48,6 +49,7 @@ class cashDefaultLayout extends waLayout
                 'currencies' => json_encode($currencies, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'categories' => json_encode($categories, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'accounts' => json_encode($accounts, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
+                'templates' => json_encode($templates, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'backend_layout_plugins' => $backendPlugins,
                 'emptyFlow' => $just_installed,
                 'isPremium' => cashHelper::isPremium(),

@@ -18,7 +18,7 @@ class cashTemplateAction extends cashViewAction
     {
         $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
         $categories = cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact();
-        $templates = (new cashTemplateModel())->getTemplates();
+        $templates = (new cashTemplateModel())->getAllForMe();
 
         $this->view->assign([
             'templates' => $templates,
