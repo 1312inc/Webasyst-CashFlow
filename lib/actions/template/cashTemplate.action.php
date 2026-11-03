@@ -18,12 +18,17 @@ class cashTemplateAction extends cashViewAction
     {
         $accounts = cash()->getEntityRepository(cashAccount::class)->findAllActiveForContact();
         $categories = cash()->getEntityRepository(cashCategory::class)->findAllActiveForContact();
-        $templates = (new cashTemplateModel())->getAllForMe();
+        $templates = (new cashTemplateModel())->getTemplates();
+
+        $users = waUser::getUsers('cash');
+        unset($users[wa()->getUser()->getId()]);
+        $users[''] = _w('Все пользователи');
 
         $this->view->assign([
             'templates' => $templates,
             'accounts' => $accounts,
-            'categories' => $categories
+            'categories' => $categories,
+            'users' => $users,
         ]);
     }
 }

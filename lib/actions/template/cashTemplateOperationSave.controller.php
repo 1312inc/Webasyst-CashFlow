@@ -26,8 +26,10 @@ class cashTemplateOperationSaveController extends cashJsonController
             } elseif ($type === cashCategory::TYPE_INCOME) {
                 $_template['amount'] = abs((float) $_template['amount']);
             }
+            if (empty($_template['contact_id'])) {
+                $_template['contact_id'] = null;
+            }
             $_template += [
-                'contact_id' => null,
                 'type' => $type,
                 'sort' => 0
             ];

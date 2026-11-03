@@ -12,6 +12,14 @@ class cashApiTemplateGetListResponse extends cashApiAbstractResponse
     {
         parent::__construct(200);
 
-        $this->response = $templates;
+        $this->response = $this->filterFields(
+            $templates,
+            ['id', 'contact_id', 'name', 'type', 'content', 'sort'],
+            [
+                'id' => 'int',
+                'contact_id' => 'int',
+                'sort' => 'int',
+            ]
+        );
     }
 }

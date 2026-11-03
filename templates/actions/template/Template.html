@@ -73,10 +73,11 @@
             </div>
         </td>
         <td class="valign-top nowrap">
-            <label>
-                <input type="checkbox" name="data[{$template_id}][contact_id]" value="{ifset($template, 'contact_id', $user_id)}"{if !empty($template['contact_id'])} checked{/if}>
-                [`Только я`]
-            </label>
+            <select name="data[{$template_id}][contact_id]">
+                {foreach $users as $_id => $_user_name}
+                <option value="{$_id}"{if empty($template['contact_id']) || isset($template['contact_id']) &&  $_id == $template['contact_id']} selected{/if}>{$_user_name|escape}</option>
+                {/foreach}
+            </select>
         </td>
         <td class="valign-top">
             <a href="javascript:void(0);" class="c-delete-template button nobutton rounded smaller text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
