@@ -67,7 +67,31 @@
                 <div class="field">
                     <div class="name">[`Contractor`]</div>
                     <div class="value">
-                        <input type="number" step="1" name="data[{$template_id}][contactor_contact_id]" value="{ifset($template, 'content', 'contactor_contact_id', '')}">
+                        <input type="text" class="js-contact-autocomplete-{$template_id}" value="{ifset($template, 'content', 'contractor_contact_name', '')}" name="data[{$template_id}][contractor_contact_name]" autocomplete="off">
+                        <input type="hidden" name="data[{$template_id}][contractor_contact_id]" value="{ifset($template, 'content', 'contractor_contact_id', '')}">
+                        <script>
+                            (function ($) {
+                                $('.js-contact-autocomplete-{$template_id}').waAutocomplete({
+                                    delay: 700,
+                                    autoFocus: true,
+                                    source: function (request, responseCallback) {
+                                        $.get('?module=templateSearchContact', { term: request.term }, function (data) {
+                                            let result = [];
+                                            if (data && data.data) {
+                                                result = data.data.map(_d => ({
+                                                    id: _d.id,
+                                                    value: _d. name
+                                                }));
+                                            }
+                                            responseCallback(result);
+                                        }, 'json');
+                                    },
+                                    select: function (event, ui) {
+                                        $('[name="data[{$template_id}][contractor_contact_id]"]').val(ui.item.id);
+                                    }
+                                });
+                            })(jQuery);
+                        </script>
                     </div>
                 </div>
             </div>
