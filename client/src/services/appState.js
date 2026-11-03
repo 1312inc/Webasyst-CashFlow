@@ -71,6 +71,10 @@ export const appStateService = {
     return state.currencies || []
   },
 
+  get templates () {
+    return state.templates || []
+  },
+
   get apiSettings () {
     return state.api_settings || {}
   },

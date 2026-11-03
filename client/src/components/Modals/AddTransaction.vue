@@ -746,6 +746,11 @@ export default {
       type: String
     },
 
+    defaults: {
+      type: Object,
+      default: null
+    },
+
     offOnbadge: {
       type: Boolean,
       default: false
@@ -957,6 +962,15 @@ export default {
         }
       }
       this.model.amount = `${Math.abs(this.model.amount)}`
+    }
+
+    if (!this.isModeUpdate && this.defaults) {
+      for (const [key, value] of Object.entries(this.defaults)) {
+        if (key in this.model) this.model[key] = value
+      }
+      if (this.defaults.contractor_contact_id) {
+        this.showContractorInput = true
+      }
     }
 
     if (!this.isModeUpdate) {

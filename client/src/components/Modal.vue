@@ -29,6 +29,10 @@ export default {
   mounted () {
     document.body.classList.add('modal')
     document.addEventListener('keyup', this.handler)
+    // Tippy dropdowns are portaled to body with a higher z-index than the dialog.
+    // Hide after the opening click has finished, otherwise the menu stays on top.
+    this.hideFloatingTooltips()
+    setTimeout(this.hideFloatingTooltips)
   },
 
   beforeDestroy () {
@@ -37,6 +41,10 @@ export default {
   },
 
   methods: {
+    hideFloatingTooltips () {
+      window.tippy?.hideAll?.()
+    },
+
     handler (evt) {
       if (evt.keyCode === 27) {
         this.$emit('close')

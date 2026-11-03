@@ -48,7 +48,31 @@
       class="desktop-and-tablet-only flexbox wrap space-12 middle"
     >
       <div v-show="currentType.type !== 'expense'">
+        <DropdownWaFloating v-if="incomeTemplates.length">
+          <template #toggler>
+            <button
+              class="button c-button-add-income nowrap"
+              @click="addTransaction('income')"
+            >
+              <i class="fas fa-plus" />
+              <span class="custom-ml-8">{{ $t("addIncome") }}</span>
+            </button>
+          </template>
+          <template #default="{ close }">
+            <ul class="menu">
+              <li
+                v-for="template in incomeTemplates"
+                :key="template.id"
+              >
+                <a @click.prevent="addTransactionFromTemplate(template, close)">
+                  <span>{{ getTemplateLabel(template) }}</span>
+                </a>
+              </li>
+            </ul>
+          </template>
+        </DropdownWaFloating>
         <button
+          v-else
           class="button c-button-add-income nowrap"
           @click="addTransaction('income')"
         >
@@ -57,7 +81,31 @@
         </button>
       </div>
       <div v-show="currentType.type !== 'income'">
+        <DropdownWaFloating v-if="expenseTemplates.length">
+          <template #toggler>
+            <button
+              class="button c-button-add-expense nowrap"
+              @click="addTransaction('expense')"
+            >
+              <i class="fas fa-minus" />
+              <span class="custom-ml-8">{{ $t("addExpense") }}</span>
+            </button>
+          </template>
+          <template #default="{ close }">
+            <ul class="menu">
+              <li
+                v-for="template in expenseTemplates"
+                :key="template.id"
+              >
+                <a @click.prevent="addTransactionFromTemplate(template, close)">
+                  <span>{{ getTemplateLabel(template) }}</span>
+                </a>
+              </li>
+            </ul>
+          </template>
+        </DropdownWaFloating>
         <button
+          v-else
           class="button c-button-add-expense nowrap"
           @click="addTransaction('expense')"
         >
@@ -72,7 +120,33 @@
           $store.state.account.accounts.length > 1
         "
       >
+        <DropdownWaFloating v-if="transferTemplates.length">
+          <template #toggler>
+            <button
+              class="button light-gray nowrap"
+              @click="addTransaction('transfer')"
+            >
+              <span>
+                <i class="fas fa-exchange-alt" />
+                <span class="desktop-only custom-ml-8">{{ $t("transfer") }}</span>
+              </span>
+            </button>
+          </template>
+          <template #default="{ close }">
+            <ul class="menu">
+              <li
+                v-for="template in transferTemplates"
+                :key="template.id"
+              >
+                <a @click.prevent="addTransactionFromTemplate(template, close)">
+                  <span>{{ getTemplateLabel(template) }}</span>
+                </a>
+              </li>
+            </ul>
+          </template>
+        </DropdownWaFloating>
         <button
+          v-else
           class="button light-gray nowrap"
           @click="addTransaction('transfer')"
         >
@@ -110,13 +184,20 @@
 import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import TransactionMove from '@/components/Modals/TransactionMove'
+import DropdownWaFloating from '@/components/Inputs/DropdownWaFloating'
 import { appStateService } from '../services/appState'
+import {
+  getTemplatesByType,
+  templateContentToDefaults,
+  getTemplateLabel
+} from '@/utils/operationTemplates'
 
 export default {
 
   components: {
     Modal,
-    TransactionMove
+    TransactionMove,
+    DropdownWaFloating
   },
 
   data () {
@@ -134,6 +215,18 @@ export default {
 
     checkedRows () {
       return this.$store.state.transactionBulk.selectedTransactionsIds
+    },
+
+    incomeTemplates () {
+      return getTemplatesByType('income')
+    },
+
+    expenseTemplates () {
+      return getTemplatesByType('expense')
+    },
+
+    transferTemplates () {
+      return getTemplatesByType('transfer')
     }
   },
 
@@ -161,9 +254,20 @@ export default {
   },
 
   methods: {
+    getTemplateLabel,
+
     addTransaction (type) {
       this.$eventBus.emit('openAddTransactionModal', {
         type,
+        ...(this.$route.name === 'Date' ? { defaultDate: this.$route.params.date } : {})
+      })
+    },
+
+    addTransactionFromTemplate (template, close) {
+      close?.()
+      this.$eventBus.emit('openAddTransactionModal', {
+        type: template.type,
+        defaults: templateContentToDefaults(template.content),
         ...(this.$route.name === 'Date' ? { defaultDate: this.$route.params.date } : {})
       })
     },

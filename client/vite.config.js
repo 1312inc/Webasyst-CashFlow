@@ -11,16 +11,18 @@ export default defineConfig(async ({ mode }) => {
   // eslint-disable-next-line no-undef
   const env = loadEnv(mode, process.cwd(), '')
 
-  let currencies,
-    accounts,
-    categories,
-    settings
+  let currencies
+  let accounts
+  let categories
+  let settings
+  let templates
 
   if (mode === 'development') {
     currencies = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.system.getCurrencies?access_token=${env.VITE_APP_API_TOKEN}`)).text()
     accounts = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.account.getList?access_token=${env.VITE_APP_API_TOKEN}`)).text()
     categories = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.category.getList?access_token=${env.VITE_APP_API_TOKEN}`)).text()
     settings = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.system.getSettings?access_token=${env.VITE_APP_API_TOKEN}`)).text()
+    templates = await (await fetch(`${env.VITE_APP_DEV_PROXY}/api.php/cash.template.getList?access_token=${env.VITE_APP_API_TOKEN}`)).text()
   }
 
   return {
@@ -33,7 +35,8 @@ export default defineConfig(async ({ mode }) => {
         currencies,
         categories,
         accounts,
-        settings
+        settings,
+        templates
       })
     ],
     css: {

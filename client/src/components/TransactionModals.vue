@@ -55,6 +55,7 @@ function onClick () {
         :transaction="addTransactionOpts.transaction"
         :default-date="addTransactionOpts.defaultDate"
         :default-category-type="addTransactionOpts.type ?? 'expense'"
+        :defaults="addTransactionOpts.defaults"
       />
     </Modal>
   </portal>
