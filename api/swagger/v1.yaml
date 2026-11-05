@@ -2552,6 +2552,10 @@ components:
         category_color:
           type: string
           description: HTML-обозначение цвета
+        category_glyph:
+          type: string
+          description: Иконка категории
+          nullable: true
         category_id:
           type: integer
           description: ID статьи
