@@ -232,9 +232,11 @@ final class cashTransactionFilterService
         }
 
         $selectQueryParts->addAndWhere('ct.external_source = s:external_source')
-            ->addAndWhere('ct.external_id = i:external_id')
-            ->addParam('external_id', $dto->filter->getExternalId())
             ->addParam('external_source', $dto->filter->getExternalSource());
+        if ($dto->filter->getExternalId()) {
+            $selectQueryParts->addAndWhere('ct.external_id = i:external_id');
+            $selectQueryParts->addParam('external_id', $dto->filter->getExternalId());
+        }
     }
 
     /**
@@ -369,7 +371,7 @@ final class cashTransactionFilterService
             case null !== $dto->filter->getTrash():
                 $this->makeBaseSqlForTrashFilter($dto, $sqlParts);
                 break;
-            case null !== $dto->filter->getExternalId() && null !== $dto->filter->getExternalSource():
+            case null !== $dto->filter->getExternalSource():
                 $this->makeBaseSqlForExternalFilter($dto, $sqlParts);
                 break;
             default:
