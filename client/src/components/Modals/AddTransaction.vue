@@ -265,6 +265,7 @@
                 <InputContractor
                   :default-request="`category_id/${model.category_id}`"
                   :default-contractor="model.contractor_contact_id ? { id: model.contractor_contact_id, ...model.contractor_contact } : null"
+                  :default-contractor-name="model.contractor_contact_name"
                   @newContractor="name => {
                     model.contractor = name;
                   }"
@@ -770,6 +771,7 @@ export default {
         contractor: null,
         contractor_contact: null,
         contractor_contact_id: null,
+        contractor_contact_name: null,
         description: '',
         external: {
           source: this.transaction?.external_source || (appState.shopscriptInstalled ? 'shop' : null),

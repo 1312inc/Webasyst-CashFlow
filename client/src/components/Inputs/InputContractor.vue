@@ -143,11 +143,22 @@
 import api from '@/plugins/api'
 import { debounce } from '@/utils/debounce'
 
+function isIdOnlyContractor (contractor) {
+  if (!contractor || typeof contractor !== 'object') return false
+  const keys = Object.keys(contractor)
+  return keys.length === 1 && keys[0] === 'id' && contractor.id != null && contractor.id !== ''
+}
+
 export default {
   props: {
     defaultContractor: {
       type: Object,
       default: null
+    },
+
+    defaultContractorName: {
+      type: String,
+      default: ''
     },
 
     createNewContractor: {
@@ -167,14 +178,24 @@ export default {
   },
 
   data () {
+    const initialContractor = isIdOnlyContractor(this.defaultContractor)
+      ? null
+      : this.defaultContractor
+        ? { ...this.defaultContractor, photo_url_absolute: this.defaultContractor.userpic }
+        : null
+
     return {
-      inputValue: this.defaultContractor?.name || '',
+      inputValue: initialContractor?.name || '',
       activeMenuIndex: null,
       isNewContractorMode: false,
-      selectedContractor: this.defaultContractor ? { ...this.defaultContractor, photo_url_absolute: this.defaultContractor.userpic } : null,
+      selectedContractor: initialContractor,
       response: []
       // isFetching: false
     }
+  },
+
+  created () {
+    this.resolveIdOnlyDefaultContractor()
   },
 
   watch: {
@@ -206,6 +227,30 @@ export default {
   // },
 
   methods: {
+    resolveIdOnlyDefaultContractor () {
+      if (!isIdOnlyContractor(this.defaultContractor)) return
+
+      const term = (this.defaultContractorName || '').trim()
+      const id = Number(this.defaultContractor.id)
+      if (!term || !Number.isFinite(id)) return
+
+      api
+        .get('cash.contact.search', {
+          params: {
+            term,
+            limit: 10
+          }
+        })
+        .then(({ data }) => {
+          if (this.inputValue || this.selectedContractor || this.isNewContractorMode) return
+
+          const contacts = Array.isArray(data) ? data : []
+          const match = contacts.find(contact => Number(contact.id) === id)
+          if (match) this.select(match)
+        })
+        .catch(() => {})
+    },
+
     onInput: debounce(function () {
       this.resetSearch()
       this.selectedContractor = null

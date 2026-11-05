@@ -1,7 +1,6 @@
 import { appStateService } from '@/services/appState'
 
 const NUMERIC_FIELDS = new Set(['account_id', 'category_id', 'transfer_account_id'])
-const CONTRACTOR_FIELDS = new Set(['contractor_contact_id', 'contactor_contact_id'])
 
 function getTemplates () {
   const templates = appStateService.templates
@@ -31,7 +30,7 @@ export function templateContentToDefaults (content) {
 
     const { name, value } = item
 
-    if (CONTRACTOR_FIELDS.has(name)) {
+    if (name === 'contractor_contact_id') {
       const id = toNumber(value)
       if (id) defaults.contractor_contact_id = id
       continue
