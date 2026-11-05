@@ -21,8 +21,12 @@ class cashTemplateAction extends cashViewAction
         $templates = (new cashTemplateModel())->getTemplates();
 
         $users = waUser::getUsers('cash');
+        $my_name = $users[wa()->getUser()->getId()];
         unset($users[wa()->getUser()->getId()]);
-        $users[''] = _w('Все пользователи');
+        $users = [
+            wa()->getUser()->getId() => $my_name.' ('._w('Я').')',
+            '' => _w('Все пользователи'),
+        ] + $users;
 
         $this->view->assign([
             'templates' => $templates,

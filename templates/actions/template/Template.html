@@ -98,8 +98,12 @@
         </td>
         <td class="valign-top nowrap">
             <select name="data[{$template_id}][contact_id]">
+                {$_count = 0}
                 {foreach $users as $_id => $_user_name}
-                <option value="{$_id}"{if empty($template['contact_id']) || isset($template['contact_id']) &&  $_id == $template['contact_id']} selected{/if}>{$_user_name|escape}</option>
+                {$_count = $_count+1}
+                {if $_count == 3}<optgroup label="[`Остальные пользователи`]">{/if}
+                <option value="{$_id}"{if empty($template['contact_id']) && empty($_id) || isset($template['contact_id']) && $_id == $template['contact_id']} selected{/if}>{$_user_name|escape}</option>
+                {if $_count == count($users)}</optgroup>{/if}
                 {/foreach}
             </select>
         </td>
