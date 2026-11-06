@@ -1899,3 +1899,36 @@ msgstr "Базовый сценарий"
 
 msgid "Failed to prolongate the repeating transaction"
 msgstr "Ошибка пролонгации повторяющейся операции"
+
+msgid "in the selected account currency"
+msgstr "в валюте выбранного счета"
+
+msgid "Teammates"
+msgstr "Сотрудники"
+
+msgid "Add template"
+msgstr "Создать шаблон"
+
+msgid "Name"
+msgstr "Название"
+
+msgid "Predefined fields"
+msgstr "Предзаполненные поля"
+
+msgid "Visibility"
+msgstr "Видимость"
+
+msgid "No templates have been created yet."
+msgstr "Здесь пока нет шаблонов."
+
+msgid "Template will be permanently deleted. Are you sure?"
+msgstr "Шаблон будет удален безвозвратно. Удаляем?"
+
+msgid "Templates"
+msgstr "Шаблоны"
+
+msgid "me"
+msgstr "я"
+
+msgid "All users"
+msgstr "Все сотрудники"

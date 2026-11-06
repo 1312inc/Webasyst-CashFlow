@@ -24,8 +24,8 @@ class cashTemplateAction extends cashViewAction
         $my_name = $users[wa()->getUser()->getId()];
         unset($users[wa()->getUser()->getId()]);
         $users = [
-            wa()->getUser()->getId() => $my_name.' ('._w('Я').')',
-            '' => _w('Все пользователи'),
+            wa()->getUser()->getId() => $my_name.' ('._w('me').')',
+            '' => _w('All users'),
         ] + $users;
 
         $this->view->assign([

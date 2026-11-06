@@ -1,4 +1,4 @@
-{$_page_title = _w('Шаблоны операций')}
+{$_page_title = _w('Templates')}
 {$is_premium = cashHelper::isPremium()}
 {$user_id = $wa->userId()}
 
@@ -6,17 +6,18 @@
     {$template_id = ifset($template, 'id', '%%TEMPLATE_ID%%')}
     <tr data-template-id="{$template_id}">
         <td class="valign-top c-template-sort-handle">
-            <i class="fas fa-grip-vertical text-light-gray cursor-pointer template-sort-handle"></i>
+            <i class="fas fa-grip-vertical text-light-gray cursor-pointer template-sort-handle custom-mt-8"></i>
             <input type="hidden" name="data[{$template_id}][sort]" value="{ifset($template, 'sort', '0')}" class="js-sort-template">
         </td>
         <td class="valign-top">
-            <input type="text" name="data[{$template_id}][name]" value="{ifset($template, 'name', '')|escape}">
+            <input type="text" name="data[{$template_id}][name]" class="bold" value="{ifset($template, 'name', '')|escape}">
         </td>
         <td>
             <div class="fields">
                 <div class="field">
-                    <div class="name">[`Счет`]</div>
+                    <div class="name for-input">[`Account`]</div>
                     <div class="value">
+                        <div class="wa-select">
                         <select name="data[{$template_id}][account_id]">
                             {if empty($template.id)}
                             <option value=""></option>
@@ -25,11 +26,20 @@
                             <option value="{$_account->getId()}"{if isset($template['content']['account_id']) && $_account->getId() == $template['content']['account_id']} selected{/if}>{$_account->getName()|escape}</option>
                             {/foreach}
                         </select>
+                        </div>
                     </div>
                 </div>
                 <div class="field">
-                    <div class="name">[`Статья`]</div>
+                    <div class="name for-input">[`Amount`]</div>
                     <div class="value">
+                        <input type="number" class="bold shorter" name="data[{$template_id}][amount]" value="{ifset($template, 'content', 'amount', '')}">
+                        <p class="hint">[`in the selected account currency`]</p>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="name for-input">[`Category`]</div>
+                    <div class="value">
+                        <div class="wa-select">
                         <select name="data[{$template_id}][category_id]">
                             {if empty($template.id)}
                             <option value=""></option>
@@ -50,24 +60,19 @@
                                 </optgroup>
                             {/foreach}
                         </select>
+                        </div>
                     </div>
                 </div>
                 <div class="field">
-                    <div class="name">[`Description`]</div>
+                    <div class="name for-input">[`Description`]</div>
                     <div class="value">
-                        <textarea name="data[{$template_id}][description]">{ifset($template, 'content', 'description', '')|escape}</textarea>
+                        <textarea name="data[{$template_id}][description]" class="width-100">{ifset($template, 'content', 'description', '')|escape}</textarea>
                     </div>
                 </div>
                 <div class="field">
-                    <div class="name">[`Amount`]</div>
+                    <div class="name for-input">[`Contractor`]</div>
                     <div class="value">
-                        <input type="number" step="0.01" name="data[{$template_id}][amount]" value="{ifset($template, 'content', 'amount', '')}">
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="name">[`Contractor`]</div>
-                    <div class="value">
-                        <input type="text" class="js-contact-autocomplete-{$template_id}" value="{ifset($template, 'content', 'contractor_contact_name', '')}" name="data[{$template_id}][contractor_contact_name]" autocomplete="off">
+                        <input type="text" class="js-contact-autocomplete-{$template_id} long" value="{ifset($template, 'content', 'contractor_contact_name', '')}" name="data[{$template_id}][contractor_contact_name]" autocomplete="off">
                         <input type="hidden" name="data[{$template_id}][contractor_contact_id]" value="{ifset($template, 'content', 'contractor_contact_id', '')}">
                         <script>
                             (function ($) {
@@ -97,18 +102,20 @@
             </div>
         </td>
         <td class="valign-top nowrap">
-            <select name="data[{$template_id}][contact_id]">
-                {$_count = 0}
-                {foreach $users as $_id => $_user_name}
-                {$_count = $_count+1}
-                {if $_count == 3}<optgroup label="[`Остальные пользователи`]">{/if}
-                <option value="{$_id}"{if empty($template['contact_id']) && empty($_id) || isset($template['contact_id']) && $_id == $template['contact_id']} selected{/if}>{$_user_name|escape}</option>
-                {if $_count == count($users)}</optgroup>{/if}
-                {/foreach}
-            </select>
+            <div class="wa-select">
+                <select name="data[{$template_id}][contact_id]">
+                    {$_count = 0}
+                    {foreach $users as $_id => $_user_name}
+                    {$_count = $_count+1}
+                    {if $_count == 3}<optgroup label="[`Teammates`]">{/if}
+                    <option value="{$_id}"{if empty($template['contact_id']) && empty($_id) || isset($template['contact_id']) && $_id == $template['contact_id']} selected{/if}>{$_user_name|escape}</option>
+                    {if $_count == count($users)}</optgroup>{/if}
+                    {/foreach}
+                </select>
+            </div>
         </td>
         <td class="valign-top">
-            <a href="javascript:void(0);" class="c-delete-template button nobutton rounded smaller text-red" title="[`Delete`]"><i class="fas fa-trash-alt small"></i></a>
+            <a href="javascript:void(0);" class="c-delete-template button nobutton rounded smaller text-red custom-mt-4" title="[`Delete`]"><i class="fas fa-trash-alt"></i></a>
         </td>
     </tr>
 {/function}
@@ -120,9 +127,9 @@
 
 <form method="post" action="?module=templateOperationSave" id="c-template-operation-form" autocomplete="off">
     <div class="c-template-operation-form box contentbox">
-        <h1>[`Шаблоны операций`]</h1>
+        <h1>[`Transaction templates`]</h1>
         <p class="small">
-            [`Описание. Для чего нужны шаблоны операций`]
+            [`Create templates with fixed parameters (such as category, account, amount, etc.) that speed up your work and reduce mistakes.`]
         </p>
 
         {if !$is_premium}
@@ -136,25 +143,25 @@
         <div class="fields" style="{if !$is_premium} opacity: 0.5;{/if}">
 
             <a href="#/template/add/" class="button small rounded light-gray" id="c-operation-add-template">
-                <i class="fas fa-copy text-brown custom-mr-4"></i>
-                [`Добавить шаблон`]
+                <i class="fas fa-copy text-blue custom-mr-4"></i>
+                [`Add template`]
             </a>
 
             <table id="c-template-operations">
                 <thead class="header">
-                <tr>
-                    <th class="min-width">SRT</th>
-                    <th>[`Название шаблона`]</th>
-                    <th>[`Данные шаблона`]</th>
-                    <th class="min-width">[`Видимость шаблона`]</th>
-                    <th class="min-width">DEL</th>
-                </tr>
+                    <tr>
+                        <th class="min-width"></th>
+                        <th>[`Name`]</th>
+                        <th>[`Predefined fields`]</th>
+                        <th class="min-width">[`Visibility`]</th>
+                        <th class="min-width"></th>
+                    </tr>
                 </thead>
                 <tbody>
                     {foreach $templates as $_template}
                         {template_operation template=$_template}
                     {foreachelse}
-                    <tr><td colspan="5" class="align-center js-empty-list">[`Шаблонов нет`]</td></tr>
+                    <tr><td colspan="5" class="align-center js-empty-list">[`No templates have been created yet.`]</td></tr>
                     {/foreach}
 
                     {capture 'new_template_operation'}
@@ -185,9 +192,9 @@
     let new_tempalete = {json_encode($smarty.capture.new_template_operation)};
     let $form = $('#c-template-operation-form');
     let locale = {
-        confirm: '[`Confirm`]',
+        confirm: '[`Delete`]',
         cancel: '[`Cancel`]',
-        confirmation_deletion: '[`Шаблон будет удален навсегда. Вы уверены?`]'
+        confirmation_deletion: '[`Template will be permanently deleted. Are you sure?`]'
     };
 
     // Add new template
