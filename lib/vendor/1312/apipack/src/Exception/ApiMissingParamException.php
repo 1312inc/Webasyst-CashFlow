@@ -6,7 +6,7 @@ use Throwable;
 
 class ApiMissingParamException extends ApiException
 {
-    public function __construct(string $param, Throwable $previous = null)
+    public function __construct(string $param, ?Throwable $previous = null)
     {
         parent::__construct(
             sprintf("Missing required param: '%s'", $param),

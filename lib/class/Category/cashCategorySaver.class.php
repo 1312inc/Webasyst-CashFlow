@@ -8,11 +8,11 @@ class cashCategorySaver extends cashEntitySaver
     /**
      * @param cashCategory                 $category
      * @param array                        $data
-     * @param cashTransactionSaveParamsDto $params
+     * @param cashTransactionSaveParamsDto|null $params
      *
      * @return bool|cashCategory
      */
-    public function saveFromArray($category, array $data, cashTransactionSaveParamsDto $params = null)
+    public function saveFromArray($category, array $data, ?cashTransactionSaveParamsDto $params = null)
     {
         if (!$this->validate($data)) {
             return false;

@@ -12,7 +12,7 @@ class cashAccountSaver extends cashEntitySaver
      *
      * @return bool
      */
-    public function saveFromArray($account, array $data, cashTransactionSaveParamsDto $params = null)
+    public function saveFromArray($account, array $data, ?cashTransactionSaveParamsDto $params = null)
     {
         if (!$this->validate($data)) {
             return false;
@@ -40,7 +40,7 @@ class cashAccountSaver extends cashEntitySaver
     public function saveFromApi(
         cashAccount $account,
         cashApiAccountCreateRequest $request,
-        cashTransactionSaveParamsDto $params = null
+        ?cashTransactionSaveParamsDto $params = null
     ): bool {
         try {
             $account->setDescription($request->getDescription())
