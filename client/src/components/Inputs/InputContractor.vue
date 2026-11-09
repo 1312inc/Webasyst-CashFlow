@@ -178,24 +178,22 @@ export default {
   },
 
   data () {
-    const initialContractor = isIdOnlyContractor(this.defaultContractor)
-      ? null
+    const idOnly = isIdOnlyContractor(this.defaultContractor)
+    const name = (this.defaultContractorName || '').trim()
+    const initialContractor = idOnly
+      ? { id: this.defaultContractor.id, name }
       : this.defaultContractor
         ? { ...this.defaultContractor, photo_url_absolute: this.defaultContractor.userpic }
         : null
 
     return {
-      inputValue: initialContractor?.name || '',
+      inputValue: idOnly ? name : (initialContractor?.name || ''),
       activeMenuIndex: null,
       isNewContractorMode: false,
       selectedContractor: initialContractor,
       response: []
       // isFetching: false
     }
-  },
-
-  created () {
-    this.resolveIdOnlyDefaultContractor()
   },
 
   watch: {
@@ -227,30 +225,6 @@ export default {
   // },
 
   methods: {
-    resolveIdOnlyDefaultContractor () {
-      if (!isIdOnlyContractor(this.defaultContractor)) return
-
-      const term = (this.defaultContractorName || '').trim()
-      const id = Number(this.defaultContractor.id)
-      if (!term || !Number.isFinite(id)) return
-
-      api
-        .get('cash.contact.search', {
-          params: {
-            term,
-            limit: 10
-          }
-        })
-        .then(({ data }) => {
-          if (this.inputValue || this.selectedContractor || this.isNewContractorMode) return
-
-          const contacts = Array.isArray(data) ? data : []
-          const match = contacts.find(contact => Number(contact.id) === id)
-          if (match) this.select(match)
-        })
-        .catch(() => {})
-    },
-
     onInput: debounce(function () {
       this.resetSearch()
       this.selectedContractor = null
