@@ -40,7 +40,7 @@ class cashLogger
      * @param Exception|null $exception
      * @param string         $file
      */
-    public function error($message, Exception $exception = null, $file = 'error')
+    public function error($message, ?Exception $exception = null, $file = 'error')
     {
         $this->log($message, $file);
         if ($exception instanceof Exception) {

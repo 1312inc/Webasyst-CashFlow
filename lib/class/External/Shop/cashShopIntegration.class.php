@@ -470,10 +470,10 @@ SQL;
 
     /**
      * @param DateTime|null $after
-     *
      * @return int
+     * @throws waException
      */
-    public function countOrdersToProcess(DateTime $after = null): int
+    public function countOrdersToProcess(?DateTime $after = null): int
     {
         if ($this->shopExists()) {
             return (int)(new shopOrderModel())
