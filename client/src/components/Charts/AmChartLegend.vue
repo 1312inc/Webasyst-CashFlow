@@ -9,10 +9,24 @@
       class="c-legend__item"
       :class="{ 'c-legend__item--column': isColumnStyle }"
     >
-      <div
-        class="c-legend__item__square"
-        :style="`background-color:${item.category_color}`"
-      />
+      <span
+        v-if="item.category_glyph"
+        class="c-legend__item__mark icon"
+      >
+        <i
+          :class="item.category_glyph"
+          :style="`color:${item.category_color};`"
+        />
+      </span>
+      <span
+        v-else
+        class="c-legend__item__mark icon"
+      >
+        <i
+          class="rounded"
+          :style="`background-color:${item.category_color};`"
+        />
+      </span>
       <div class="c-legend__item__label smaller">
         <div class="c-legend__item__label__title">
           {{ item.category_name }}
@@ -34,7 +48,7 @@
       v-if="totalAmountSelected && !hideTotalAmount"
       class="c-legend__item c-legend__item--column bordered-top custom-pt-12"
     >
-      <div class="c-legend__item__square" />
+      <span class="c-legend__item__mark icon" />
       <div class="c-legend__item__label smaller">
         <div class="c-legend__item__label__title">
           {{ $t('totalSelected') }}
@@ -103,12 +117,9 @@ export default {
       width: 80%;
     }
 
-    &__square {
-      width: 1rem;
-      height: 1rem;
+    &__mark {
       flex-grow: 0;
       flex-shrink: 0;
-      border-radius: 50%;
       margin-right: 0.4rem;
     }
     &__label {
