@@ -51,7 +51,7 @@ class cashDatetimeHelper
      * @param int           $monthCount
      * @param DateTime|null $relativeDate
      */
-    public static function addMonthToDate(DateTime $dateTime, $monthCount = 1, DateTime $relativeDate = null)
+    public static function addMonthToDate(DateTime $dateTime, $monthCount = 1, ?DateTime $relativeDate = null)
     {
         $nextDate = clone $dateTime;
         $dayOfMonth = $relativeDate ? $relativeDate->format('j') : $dateTime->format('j');
