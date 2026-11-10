@@ -7,6 +7,9 @@ class cashStaticLayout extends waLayout
 {
     public function execute()
     {
+        if (cashHelper::checkAccessCode() === false) {
+            $this->redirect(wa()->getAppUrl('cash').'auth');
+        }
         $accounts_request = new cashApiAccountGetListRequest(
             waRequest::cookie('cashCompanyId', 0, waRequest::TYPE_INT),
             waRequest::cookie('cashScenarioId', 0, waRequest::TYPE_INT),

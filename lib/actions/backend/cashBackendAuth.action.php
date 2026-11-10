@@ -1,0 +1,31 @@
+<?php
+
+class cashBackendAuthAction extends waViewAction
+{
+    /**
+     * @var array
+     */
+    private $errors = [];
+
+    public function execute()
+    {
+        if (waRequest::isXMLHttpRequest()) {
+            $access_code = waRequest::post('access_pass', null, waRequest::TYPE_STRING_TRIM);
+            if (!$access_code || !cashHelper::checkAccessCode($access_code)) {
+                $this->errors[] = _w('Access code invalid');
+            }
+
+            $this->getResponse()->addHeader('Content-type', 'application/json');
+            $this->getResponse()->sendHeaders();
+
+            if ($this->errors) {
+                echo waUtils::jsonEncode(['status' => 'fail', 'errors' => $this->errors]);
+            } else {
+                echo waUtils::jsonEncode(['status' => 'ok', 'data' => []]);
+            }
+            exit;
+        } elseif (cashHelper::checkAccessCode()) {
+            $this->redirect(wa()->getAppUrl('cash'));
+        }
+    }
+}

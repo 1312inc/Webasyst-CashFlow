@@ -10,5 +10,6 @@ return [
     'upgrade/?' => 'upgrade/',
     'automation/?' => 'automation/',
     'templates/?' => 'template/',
+    'auth/?' => 'backend/auth/',
     '*' => 'backend/',
 ];

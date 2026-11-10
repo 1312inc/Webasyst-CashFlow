@@ -10,6 +10,9 @@ class cashDefaultLayout extends waLayout
      */
     public function execute()
     {
+        if (cashHelper::checkAccessCode() === false) {
+            $this->redirect(wa()->getAppUrl('cash').'auth');
+        }
         if (!cash()->getUser()->hasAccessToApp()) {
             throw new kmwaForbiddenException('No app access');
         }
