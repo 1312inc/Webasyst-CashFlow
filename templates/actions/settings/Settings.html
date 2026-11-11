@@ -14,7 +14,107 @@
         {/if}
 
         <div class="fields" style="{if !$is_premium} opacity: 0.5;{/if}">
+            <div class="article">
+                <div class="article-body">
+                    <h4>[`Защита кодом-паролем `]</h4>
 
+                    <div class="fields">
+                        <div class="field">
+                            <div class="name">[`Статус защиты`]</div>
+                            <div class="value">
+                                {if $has_password}
+                                <span class="badge green"><i class="fas fa-lock"></i> [`Мастер-пароль установлен`]</span>
+                                {else}
+                                <span class="badge gray"><i class="fas fa-unlock"></i> [`Мастер-пароль не задан`]</span>
+                                {/if}
+                            </div>
+                        </div>
+
+                        {if $has_password}
+                        <div class="field">
+                            <div class="name">[`Текущий пароль`]</div>
+                            <div class="value">
+                                <input type="password" name="master[old_password]" autocomplete="off">
+                                <p class="hint">[`Введите действующий мастер-пароль, чтобы изменить или отключить его.`]</p>
+                            </div>
+                        </div>
+                        {/if}
+
+                        <div class="field js-new-password-fields">
+                            <div class="name">{if $has_password}[`Новый пароль`]{else}[`Задать пароль`]{/if}</div>
+                            <div class="value">
+                                <input type="password" name="master[new_password]" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="field js-new-password-fields">
+                            <div class="name">[`Повторите пароль`]</div>
+                            <div class="value">
+                                <input type="password" name="master[confirm_password]" autocomplete="off">
+                            </div>
+                        </div>
+
+                        {if $has_password}
+                        <div class="field">
+                            <div class="name"></div>
+                            <div class="value">
+                                <label>
+                                    <input type="checkbox" name="master[disable_password]" value="1" id="js-disable-password">
+                                    [`Отключить защиту паролем`]
+                                </label>
+                            </div>
+                        </div>
+                        {/if}
+
+                        {if $is_premium}
+                        <div class="field">
+                            <div class="value submit">
+                                {$wa->csrf()}
+                                <button type="submit" class="button green">[`Save`]</button>
+                                <span class="state-message c-settings-status" style="margin-left: 10px;"></span>
+                            </div>
+                        </div>
+                        {/if}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </form>
+
+<script>
+    (function ($) {
+        const $form = $('#c-settings-form');
+        const $status = $('.c-settings-status');
+
+        $('#js-disable-password').on('change', function() {
+            if ($(this).is(':checked')) {
+                $('.js-new-password-fields').slideUp(150).find('input').val('');
+            } else {
+                $('.js-new-password-fields').slideDown(150);
+            }
+        });
+
+        $form.on('change', function (event) {
+            event.preventDefault();
+            $(this).find('button:submit').removeClass('green').addClass('yellow');
+        });
+
+        $form.on('submit', function(e) {
+            e.preventDefault();
+            $status.removeClass('state-error state-success').html('<i class="fas fa-spinner fa-spin"></i>');
+
+            $.post($form.attr('action'), $form.serialize(), function (response) {
+                if (response.status === 'ok') {
+                    $status.addClass('state-success').text('[`Сохранено`]');
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 600);
+                } else {
+                    const err_text = response.errors ? response.errors.join(' ') : '[`Ошибка сохранения`]';
+                    $status.addClass('state-error').text(err_text);
+                }
+            }, 'json');
+        });
+    })(jQuery);
+</script>

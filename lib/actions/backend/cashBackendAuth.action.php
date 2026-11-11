@@ -10,7 +10,7 @@ class cashBackendAuthAction extends waViewAction
     public function execute()
     {
         if (waRequest::isXMLHttpRequest()) {
-            $access_code = waRequest::post('access_pass', null, waRequest::TYPE_STRING_TRIM);
+            $access_code = waRequest::post('access_pass', '', waRequest::TYPE_STRING);
             if (!$access_code || !cashHelper::checkAccessCode($access_code)) {
                 $this->errors[] = _w('Access code invalid');
             }

@@ -13,8 +13,10 @@ class cashSettingsAction extends cashViewAction
 
     public function runAction($params = null)
     {
-        $this->view->assign([
+        $has_password = (new waAppSettingsModel())->get('cash', 'access_code', false);
 
+        $this->view->assign([
+            'has_password' => !!$has_password
         ]);
     }
 }
