@@ -52,7 +52,7 @@ class cashTransactionPageFilterDto implements JsonSerializable
      * @throws kmwaNotFoundException
      * @throws waException
      */
-    public function __construct($filterType, $identifier = '', waContact $contact = null)
+    public function __construct($filterType, $identifier = '', ?waContact $contact = null)
     {
         $this->type = $filterType;
         if (!$contact) {

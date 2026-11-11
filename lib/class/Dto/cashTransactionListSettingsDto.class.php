@@ -48,7 +48,7 @@ class cashTransactionListSettingsDto implements JsonSerializable
      * @param cashTransactionPageFilterDto|null $filter
      * @param cashGraphPeriodVO|null            $forecastPeriod
      */
-    public function __construct(cashTransactionPageFilterDto $filter = null, cashGraphPeriodVO $forecastPeriod = null)
+    public function __construct(?cashTransactionPageFilterDto $filter = null, ?cashGraphPeriodVO $forecastPeriod = null)
     {
         if ($filter instanceof cashTransactionPageFilterDto) {
             $this->showOnHandsEndday = $filter->type === cashTransactionPageFilterDto::FILTER_ACCOUNT;/* && FORECAST_IS_SHOWN*/
