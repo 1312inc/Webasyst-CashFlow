@@ -1,0 +1,20 @@
+{$_page_title = _w('Settings')}
+{$is_premium = cashHelper::isPremium()}
+
+<form method="post" action="?module=settingsSave" id="c-settings-form" autocomplete="off">
+    <div class="c-settings-form box contentbox">
+        <h1>[`Settings`]</h1>
+
+        {if !$is_premium}
+        <div class="alert warning small">
+            <i class="fas fa-star small"></i>
+            [`Available only in the premium version.`]
+            <a href="{$wa_app_url}upgrade/" class="bold">[`See all premium features`] &rsaquo;</a>
+        </div>
+        {/if}
+
+        <div class="fields" style="{if !$is_premium} opacity: 0.5;{/if}">
+
+        </div>
+    </div>
+</form>

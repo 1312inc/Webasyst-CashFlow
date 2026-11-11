@@ -58,5 +58,11 @@
         <span class="count"><span class="badge purple small bold">%</span></span>
       </a>
     </li>
+    <li v-if="$permissions.isAdmin && $appState.isPremium">
+      <a :href="`${$helper.baseUrl}settings/`">
+        <i class="fas fa-cog" />
+        <span>{{ $t("settings") }}</span>
+      </a>
+    </li>
   </ul>
 </template>
