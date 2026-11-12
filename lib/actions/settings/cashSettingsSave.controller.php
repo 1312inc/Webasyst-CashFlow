@@ -33,7 +33,10 @@ class cashSettingsSaveController extends cashJsonController
             }
         } elseif (isset($data['old_password'], $data['new_password'], $data['confirm_password'])) {
             // update master-code
-            if ($data['new_password'] !== $data['confirm_password']) {
+            if (empty($data['new_password'])) {
+                $this->errors = [_w('Задайте новый пароль')];
+                return false;
+            } elseif ($data['new_password'] !== $data['confirm_password']) {
                 $this->errors = [_w('Введенные пароли не совпали')];
                 return false;
             }
