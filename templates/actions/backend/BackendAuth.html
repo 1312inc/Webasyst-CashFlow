@@ -12,32 +12,53 @@
 <body>
 <div id="wa">
     {$wa->header()}
-    <div id="wa-app">
-        <div class="block">
-            <h1>[`Страница авторизации`]</h1>
-        </div>
+    <div id="wa-app" class="flexbox vertical" style="min-height: calc(100vh - 4rem);">
+        <div class="wide"></div>
+        <form id="cash-auth-form" class="align-center">
+            <h3 class="custom-mb-24">[`Код доступа`]</h3>
+            <div class="state-with-inner-icon right" style="font-size: 1.6rem;">
+                <input type="password" name="access_pass" autofocus>
+                <button class="icon"><i class="fas fa-long-arrow-alt-right"></i></button>
+            </div>
+            <div class="state-error custom-mt-8" id="cash-auth-error"></div>
+        </form>
+        <div class="wide"></div>
     </div>
 </div>
 
 <script>
     $(document).ready(function () {
-        setTimeout(function() {
-            let access_pass = prompt('[`Где пароль Лебовски?`]');
-            if (access_pass) {
-                $.post('?module=backendAuth', { access_pass: access_pass }, function (data) {
-                    if (data.status === 'ok') {
-                        window.location.href = '{$wa_app_url}';
-                    } else {
-                        console.warn('ERROR', data);
-                        if (data.errors) {
-                            $('div.block').html(data.errors.join('. '));
-                        }
-                    }
-                });
-            } else {
-                $('div.block').html('[`Страшные проклятия!!! Код не введен`]');
+        var $form = $('#cash-auth-form');
+        var $error = $('#cash-auth-error');
+        var sending = false;
+
+        $form.on('submit', function (e) {
+            e.preventDefault();
+            if (sending) {
+                return;
             }
-        }, 200);
+
+            var access_pass = $.trim($form.find('[name="access_pass"]').val());
+            if (!access_pass) {
+                $error.text('[`Страшные проклятия!!! Код не введен`]');
+                return;
+            }
+
+            $error.text('');
+            sending = true;
+            $.post('?module=backendAuth', { access_pass: access_pass }, function (data) {
+                if (data.status === 'ok') {
+                    window.location.href = '{$wa_app_url}';
+                    return;
+                }
+                sending = false;
+                if (data.errors) {
+                    $error.text(data.errors.join('. '));
+                }
+            }).fail(function () {
+                sending = false;
+            });
+        });
     });
 </script>
 </body>
