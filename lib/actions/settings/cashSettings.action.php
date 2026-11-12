@@ -13,10 +13,11 @@ class cashSettingsAction extends cashViewAction
 
     public function runAction($params = null)
     {
-        $has_password = (new waAppSettingsModel())->get('cash', 'access_code', false);
+        $cash_settings = (new waAppSettingsModel())->get('cash');
 
         $this->view->assign([
-            'has_password' => !!$has_password
+            'has_password' => !!ifempty($cash_settings, 'access_code', false),
+            'email' => ifset($cash_settings, 'master_email', ''),
         ]);
     }
 }

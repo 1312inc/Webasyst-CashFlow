@@ -26,6 +26,7 @@ class cashSettingsSaveController extends cashJsonController
             $access_code = $settings_model->get('cash', 'access_code', null);
             if (password_verify($data['old_password'], $access_code)) {
                 $settings_model->del('cash', 'access_code');
+                $settings_model->del('cash', 'email');
             } else {
                 $this->errors = [_w('Введен неверный пароль')];
                 return false;
@@ -37,7 +38,11 @@ class cashSettingsSaveController extends cashJsonController
                 return false;
             }
             $access_code = $settings_model->get('cash', 'access_code', null);
-            if (password_verify($data['old_password'], $access_code)) {
+            if (empty($data['email'])) {
+                $this->errors = [_w('Email обязательный')];
+                return false;
+            } elseif (password_verify($data['old_password'], $access_code)) {
+                $settings_model->set('cash', 'master_email', $data['email']);
                 $settings_model->set('cash', 'access_code', password_hash($data['new_password'], PASSWORD_DEFAULT));
                 wa()->getStorage()->remove('master_access');
             } else {
@@ -49,7 +54,11 @@ class cashSettingsSaveController extends cashJsonController
             if ($data['new_password'] !== $data['confirm_password']) {
                 $this->errors = [_w('Введенные пароли не совпали')];
                 return false;
+            } elseif (empty($data['email'])) {
+                $this->errors = [_w('Email обязательный')];
+                return false;
             } elseif ($data['new_password'] !== '') {
+                $settings_model->set('cash', 'master_email', $data['email']);
                 $settings_model->set('cash', 'access_code', password_hash($data['new_password'], PASSWORD_DEFAULT));
             }
         }

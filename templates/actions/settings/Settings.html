@@ -66,6 +66,14 @@
                         </div>
                         {/if}
 
+                        <div class="field">
+                            <div class="name">[`Email`]</div>
+                            <div class="value">
+                                <input type="email" name="master[email]" value="{$email|default:''|escape}">
+                                <p class="hint">[`Email для контроля и восстановления`]</p>
+                            </div>
+                        </div>
+
                         {if $is_premium}
                         <div class="field">
                             <div class="value submit">

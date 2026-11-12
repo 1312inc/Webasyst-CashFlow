@@ -24,7 +24,7 @@ class cashBackendAuthAction extends waViewAction
                 echo waUtils::jsonEncode(['status' => 'ok', 'data' => []]);
             }
             exit;
-        } elseif (cashHelper::checkAccessCode()) {
+        } elseif (cashHelper::checkAccessCode() !== false) {
             $this->redirect(wa()->getAppUrl('cash'));
         }
     }
