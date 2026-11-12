@@ -24,10 +24,10 @@
                             <div class="value">
                                 {if $has_password}
                                 <span class="badge green"><i class="fas fa-lock"></i> [`Master password is ON`]</span>
-                                <p class="hint">[`The password is universal for all your teammates and required to access the app data.`]</p>
                                 {else}
                                 <span class="badge gray"><i class="fas fa-unlock"></i> [`Master password is OFF`]</span>
                                 {/if}
+                                <p class="hint">[`Master password is an additional layer of security and is universal for all your teammates. Every user with an access to the app will be required to enter a master password to open the app.`]</p>
                             </div>
                         </div>
 
@@ -42,7 +42,7 @@
                         {/if}
 
                         <div class="field js-new-password-fields">
-                            <div class="name for-input">{if $has_password}[`New password`]{else}[`Set password`]{/if}</div>
+                            <div class="name for-input">{if $has_password}[`New password`]{else}[`Set master password`]{/if}</div>
                             <div class="value">
                                 <input type="password" class="long" name="master[new_password]" autocomplete="off">
                             </div>
