@@ -16,41 +16,42 @@
         <div class="fields" style="{if !$is_premium} opacity: 0.5;{/if}">
             <div class="article">
                 <div class="article-body">
-                    <h4>[`Защита кодом-паролем `]</h4>
+                    <h3>[`Master password lock`]</h3>
 
                     <div class="fields">
                         <div class="field">
-                            <div class="name">[`Статус защиты`]</div>
+                            <div class="name">[`Status`]</div>
                             <div class="value">
                                 {if $has_password}
-                                <span class="badge green"><i class="fas fa-lock"></i> [`Мастер-пароль установлен`]</span>
+                                <span class="badge green"><i class="fas fa-lock"></i> [`Master password is ON`]</span>
+                                <p class="hint">[`The password is universal for all your teammates and required to access the app data.`]</p>
                                 {else}
-                                <span class="badge gray"><i class="fas fa-unlock"></i> [`Мастер-пароль не задан`]</span>
+                                <span class="badge gray"><i class="fas fa-unlock"></i> [`Master password is OFF`]</span>
                                 {/if}
                             </div>
                         </div>
 
                         {if $has_password}
                         <div class="field">
-                            <div class="name">[`Текущий пароль`]</div>
+                            <div class="name for-input">[`Current password`]</div>
                             <div class="value">
-                                <input type="password" name="master[old_password]" autocomplete="off">
-                                <p class="hint">[`Введите действующий мастер-пароль, чтобы изменить или отключить его.`]</p>
+                                <input type="password" class="long" name="master[old_password]" autocomplete="off">
+                                <p class="hint">[`Enter your existing master password to make any changes to the security settings.`]</p>
                             </div>
                         </div>
                         {/if}
 
                         <div class="field js-new-password-fields">
-                            <div class="name">{if $has_password}[`Новый пароль`]{else}[`Задать пароль`]{/if}</div>
+                            <div class="name for-input">{if $has_password}[`New password`]{else}[`Set password`]{/if}</div>
                             <div class="value">
-                                <input type="password" name="master[new_password]" autocomplete="off">
+                                <input type="password" class="long" name="master[new_password]" autocomplete="off">
                             </div>
                         </div>
 
                         <div class="field js-new-password-fields">
-                            <div class="name">[`Повторите пароль`]</div>
+                            <div class="name for-input">[`Confirm password`]</div>
                             <div class="value">
-                                <input type="password" name="master[confirm_password]" autocomplete="off">
+                                <input type="password" class="long" name="master[confirm_password]" autocomplete="off">
                             </div>
                         </div>
 
@@ -59,18 +60,25 @@
                             <div class="name"></div>
                             <div class="value">
                                 <label>
-                                    <input type="checkbox" name="master[disable_password]" value="1" id="js-disable-password">
-                                    [`Отключить защиту паролем`]
+                                    <span class="wa-checkbox">
+                                        <input type="checkbox" name="master[disable_password]" value="1" id="js-disable-password">
+                                        <span>
+                                            <span class="icon">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                        </span>
+                                        [`Disable master password`]
+                                    </span>
                                 </label>
                             </div>
                         </div>
                         {/if}
 
                         <div class="field">
-                            <div class="name">[`Email`]</div>
+                            <div class="name for-input">[`Recovery email`]</div>
                             <div class="value">
-                                <input type="email" name="master[email]" value="{$email|default:''|escape}">
-                                <p class="hint">[`Email для контроля и восстановления`]</p>
+                                <input type="email" class="long" name="master[email]" value="{$email|default:''|escape}">
+                                <p class="hint">[`<b>Behold here!</b> Make sure to enter a valid master email address for immediate alerts on access violation attempts and password recovery. Master password can only be restored via this recovery email.`]</p>
                             </div>
                         </div>
 
@@ -114,12 +122,12 @@
 
             $.post($form.attr('action'), $form.serialize(), function (response) {
                 if (response.status === 'ok') {
-                    $status.addClass('state-success').text('[`Сохранено`]');
+                    $status.addClass('state-success').text('[`Saved`]');
                     setTimeout(function () {
                         window.location.reload();
                     }, 600);
                 } else {
-                    const err_text = response.errors ? response.errors.join(' ') : '[`Ошибка сохранения`]';
+                    const err_text = response.errors ? response.errors.join(' ') : '[`Failed to save`]';
                     $status.addClass('state-error').text(err_text);
                 }
             }, 'json');

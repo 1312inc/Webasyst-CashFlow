@@ -15,12 +15,12 @@
     <div id="wa-app" class="flexbox vertical" style="min-height: calc(100vh - 4rem);">
         <div class="wide"></div>
         <form id="cash-auth-form" class="align-center">
-            <h3 class="custom-mb-24">[`Код доступа`]</h3>
+            <h3 class="custom-mb-24">[`Master password`]</h3>
             <div class="state-with-inner-icon right" style="font-size: 1.6rem;">
                 <input type="password" name="access_pass" autofocus>
-                <button class="icon"><i class="fas fa-long-arrow-alt-right"></i></button>
+                <button class="icon"><i class="fas fa-lock text-light-gray"></i></button>
             </div>
-            <div class="state-error custom-mt-8" id="cash-auth-error"></div>
+            <div class="state-error small custom-mt-16" id="cash-auth-error"></div>
         </form>
         <div class="wide"></div>
     </div>
@@ -40,7 +40,7 @@
 
             var access_pass = $.trim($form.find('[name="access_pass"]').val());
             if (!access_pass) {
-                $error.text('[`Страшные проклятия!!! Код не введен`]');
+                $error.text('[`Enter master password to open the app`]');
                 return;
             }
 
