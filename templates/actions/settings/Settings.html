@@ -31,24 +31,25 @@
                             </div>
                         </div>
 
-                        {if $has_password}
                         <div class="field">
                             <div class="name for-input">[`Current password`]</div>
                             <div class="value">
-                                <input type="password" class="long" name="master[old_password]" autocomplete="off">
+                                <input type="password" class="long" name="master[current_password]" autocomplete="off">
+                                {if $has_password}<a href="#" class="button nobutton js-change-password">[`Изменить пароль`]</a>{/if}
                                 <p class="hint">[`Enter your existing master password to make any changes to the security settings.`]</p>
                             </div>
                         </div>
-                        {/if}
 
-                        <div class="field js-new-password-fields">
+                        {if $has_password}
+                        <div class="field js-new-password-fields" style="display: none">
                             <div class="name for-input">{if $has_password}[`New password`]{else}[`Set master password`]{/if}</div>
                             <div class="value">
                                 <input type="password" class="long" name="master[new_password]" autocomplete="off">
                             </div>
                         </div>
+                        {/if}
 
-                        <div class="field js-new-password-fields">
+                        <div class="field js-new-password-fields"{if $has_password} style="display: none"{/if}>
                             <div class="name for-input">[`Confirm password`]</div>
                             <div class="value">
                                 <input type="password" class="long" name="master[confirm_password]" autocomplete="off">
@@ -102,9 +103,12 @@
     (function ($) {
         const $form = $('#c-settings-form');
         const $status = $('.c-settings-status');
+        let password_change = true;
 
-        $('#js-disable-password').on('change', function() {
-            if ($(this).is(':checked')) {
+        $('.js-change-password').on('click', function (event) {
+            event.preventDefault();
+            password_change = !password_change;
+            if (password_change) {
                 $('.js-new-password-fields').slideUp(150).find('input').val('');
             } else {
                 $('.js-new-password-fields').slideDown(150);
