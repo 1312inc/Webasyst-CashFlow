@@ -1,10 +1,8 @@
 {$_page_title = _w('Settings')}
 {$is_premium = cashHelper::isPremium()}
 
-<form method="post" action="?module=settingsSave" id="c-settings-form" autocomplete="off">
-    <div class="c-settings-form box contentbox">
-        <h1>[`Settings`]</h1>
-
+<div class="article">
+    <div class="article-body">
         {if !$is_premium}
         <div class="alert warning small">
             <i class="fas fa-star small"></i>
@@ -13,91 +11,89 @@
         </div>
         {/if}
 
-        <div class="fields" style="{if !$is_premium} opacity: 0.5;{/if}">
-            <div class="article">
-                <div class="article-body">
-                    <h3>[`Master password lock`]</h3>
-
-                    <div class="fields">
-                        <div class="field">
-                            <div class="name">[`Status`]</div>
-                            <div class="value">
-                                {if $has_password}
-                                <span class="badge green"><i class="fas fa-lock"></i> [`Master password is ON`]</span>
-                                {else}
-                                <span class="badge gray"><i class="fas fa-unlock"></i> [`Master password is OFF`]</span>
-                                {/if}
-                                <p class="hint">[`Master password is an additional layer of security and is universal for all your teammates. Every user with an access to the app will be required to enter a master password to open the app.`]</p>
-                            </div>
+        <form method="post" action="?module=settingsSave" id="c-settings-form" autocomplete="off">
+            <div class="fields"{if !$is_premium} style="opacity: 0.5;"{/if}>
+                <h1>[`Settings`]</h1>
+                <div class="fields-group">
+                    <h5 class="heading">[`Master password lock`]</h5>
+                    <div class="field">
+                        <div class="name">[`Status`]</div>
+                        <div class="value">
+                            {if $has_password}
+                            <span class="badge green"><i class="fas fa-lock"></i> [`Master password is ON`]</span>
+                            {else}
+                            <span class="badge gray"><i class="fas fa-unlock"></i> [`Master password is OFF`]</span>
+                            {/if}
+                            <p class="hint">[`Master password is an additional layer of security and is universal for all your teammates. Every user with an access to the app will be required to enter a master password to open the app.`]</p>
                         </div>
+                    </div>
 
-                        <div class="field">
-                            <div class="name for-input">[`Current password`]</div>
-                            <div class="value">
-                                <input type="password" class="long" name="master[current_password]" autocomplete="off">
-                                {if $has_password}<a href="#" class="button nobutton js-change-password">[`Изменить пароль`]</a>{/if}
-                                <p class="hint">[`Enter your existing master password to make any changes to the security settings.`]</p>
-                            </div>
+                    <div class="field">
+                        <div class="name for-input">[`Current password`]</div>
+                        <div class="value">
+                            <input type="password" class="long" name="master[current_password]" autocomplete="off">
+                            {if $has_password}<a href="#" class="button nobutton js-change-password">[`Изменить пароль`]</a>{/if}
+                            <p class="hint">[`Enter your existing master password to make any changes to the security settings.`]</p>
                         </div>
+                    </div>
 
-                        {if $has_password}
-                        <div class="field js-new-password-fields" style="display: none">
-                            <div class="name for-input">{if $has_password}[`New password`]{else}[`Set master password`]{/if}</div>
-                            <div class="value">
-                                <input type="password" class="long" name="master[new_password]" autocomplete="off">
-                            </div>
+                    {if $has_password}
+                    <div class="field js-new-password-fields" style="display: none">
+                        <div class="name for-input">{if $has_password}[`New password`]{else}[`Set master password`]{/if}</div>
+                        <div class="value">
+                            <input type="password" class="long" name="master[new_password]" autocomplete="off">
                         </div>
-                        {/if}
+                    </div>
+                    {/if}
 
-                        <div class="field js-new-password-fields"{if $has_password} style="display: none"{/if}>
-                            <div class="name for-input">[`Confirm password`]</div>
-                            <div class="value">
-                                <input type="password" class="long" name="master[confirm_password]" autocomplete="off">
-                            </div>
+                    <div class="field js-new-password-fields"{if $has_password} style="display: none"{/if}>
+                        <div class="name for-input">[`Confirm password`]</div>
+                        <div class="value">
+                            <input type="password" class="long" name="master[confirm_password]" autocomplete="off">
                         </div>
+                    </div>
 
-                        {if $has_password}
-                        <div class="field">
-                            <div class="name"></div>
-                            <div class="value">
-                                <label>
-                                    <span class="wa-checkbox">
-                                        <input type="checkbox" name="master[disable_password]" value="1" id="js-disable-password">
-                                        <span>
-                                            <span class="icon">
-                                                <i class="fas fa-check"></i>
-                                            </span>
+                    {if $has_password}
+                    <div class="field">
+                        <div class="name"></div>
+                        <div class="value">
+                            <label>
+                                <span class="wa-checkbox">
+                                    <input type="checkbox" name="master[disable_password]" value="1" id="js-disable-password">
+                                    <span>
+                                        <span class="icon">
+                                            <i class="fas fa-check"></i>
                                         </span>
-                                        [`Disable master password`]
                                     </span>
-                                </label>
-                            </div>
+                                    [`Disable master password`]
+                                </span>
+                            </label>
                         </div>
-                        {/if}
+                    </div>
+                    {/if}
 
-                        <div class="field">
-                            <div class="name for-input">[`Recovery email`]</div>
-                            <div class="value">
-                                <input type="email" class="long" name="master[email]" value="{$email|default:''|escape}">
-                                <p class="hint">[`<b>Behold here!</b> Make sure to enter a valid master email address for immediate alerts on access violation attempts and password recovery. Master password can only be restored via this recovery email.`]</p>
-                            </div>
+                    <div class="field">
+                        <div class="name for-input">[`Recovery email`]</div>
+                        <div class="value">
+                            <input type="email" class="long" name="master[email]" value="{$email|default:''|escape}">
+                            <p class="hint">[`<b>Behold here!</b> Make sure to enter a valid master email address for immediate alerts on access violation attempts and password recovery. Master password can only be restored via this recovery email.`]</p>
                         </div>
-
-                        {if $is_premium}
-                        <div class="field">
-                            <div class="value submit">
-                                {$wa->csrf()}
-                                <button type="submit" class="button green">[`Save`]</button>
-                                <span class="state-message c-settings-status" style="margin-left: 10px;"></span>
-                            </div>
-                        </div>
-                        {/if}
                     </div>
                 </div>
+
+                {if $is_premium}
+                <div class="field">
+                    <div class="value submit">
+                        {$wa->csrf()}
+                        <button type="submit" class="button green">[`Save`]</button>
+                        <span class="state-message c-settings-status" style="margin-left: 10px;"></span>
+                    </div>
+                </div>
+                {/if}
             </div>
-        </div>
+        </form>
     </div>
-</form>
+</div>
 
 <script>
     (function ($) {
