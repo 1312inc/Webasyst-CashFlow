@@ -28,6 +28,7 @@
                         </div>
                     </div>
 
+                    {if $has_password}
                     <div class="field">
                         <div class="name for-input">[`Current password`]</div>
                         <div class="value">
@@ -36,10 +37,18 @@
                             <p class="hint">[`Enter your existing master password to make any changes to the security settings.`]</p>
                         </div>
                     </div>
+                    {else}
+                    <div class="field">
+                        <div class="name for-input">[`Set master password`]</div>
+                        <div class="value">
+                            <input type="password" class="long" name="master[new_password]" autocomplete="off">
+                        </div>
+                    </div>
+                    {/if}
 
                     {if $has_password}
                     <div class="field js-new-password-fields" style="display: none">
-                        <div class="name for-input">{if $has_password}[`New password`]{else}[`Set master password`]{/if}</div>
+                        <div class="name for-input">[`New password`]</div>
                         <div class="value">
                             <input type="password" class="long" name="master[new_password]" autocomplete="off">
                         </div>
