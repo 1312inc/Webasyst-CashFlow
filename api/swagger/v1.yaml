@@ -37,6 +37,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.transaction.update:
     post:
@@ -62,6 +68,12 @@ paths:
                 $ref: '#/components/schemas/TransactionInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -130,6 +142,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.transaction.bulkComplete:
     post:
@@ -165,6 +183,12 @@ paths:
                 default: "ok"
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -207,6 +231,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.transaction.restore:
     post:
@@ -245,6 +275,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.transaction.bulkCreate:
     post:
@@ -275,6 +311,12 @@ paths:
                   $ref: '#/components/schemas/TransactionInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -370,6 +412,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.transaction.getShrinkList:
     get:
@@ -426,6 +474,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.transaction.getTodayCount:
     get:
@@ -473,6 +527,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.transaction.getUpNextList:
     get:
@@ -507,6 +567,12 @@ paths:
                       $ref: '#/components/schemas/TransactionInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -551,6 +617,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.transaction.delete:
     post:
@@ -589,6 +661,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         404:
           description: Не найдено.
           content:
@@ -622,6 +700,12 @@ paths:
                 $ref: '#/components/schemas/TransactionInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -668,6 +752,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.account.sort:
     post:
@@ -697,6 +787,12 @@ paths:
           description: Успешное выполнение запроса.
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -772,6 +868,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.account.delete:
     post:
@@ -800,6 +902,12 @@ paths:
           description: Успешное выполнение запроса.
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -885,6 +993,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         404:
           description: Не найдено.
           content:
@@ -923,6 +1037,12 @@ paths:
                 type: string
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -1032,6 +1152,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.aggregate.getBalanceOnDate:
     get:
@@ -1081,6 +1207,12 @@ paths:
                     - $ref: '#/components/schemas/BalanceEntryDate'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -1165,6 +1297,12 @@ paths:
                     - $ref: '#/components/schemas/aggregateGetBreakDownResponse'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -1286,6 +1424,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.category.getList:
     get:
@@ -1306,6 +1450,12 @@ paths:
                 $ref: '#/components/schemas/getCategoriesListResponse'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -1379,6 +1529,12 @@ paths:
                 $ref: '#/components/schemas/CategoryInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -1464,6 +1620,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         404:
           description: Не найдено.
           content:
@@ -1498,6 +1660,12 @@ paths:
           description: Успешное выполнение запроса.
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -1543,6 +1711,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.company.create:
     post:
@@ -1578,6 +1752,12 @@ paths:
                 $ref: '#/components/schemas/CompanyInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -1625,6 +1805,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         402:
           description: Необходима оплата (фича доступна только в премиум-версии).
           content:
@@ -1655,6 +1841,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CompanyList'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.company.update:
     post:
@@ -1693,6 +1885,12 @@ paths:
                 $ref: '#/components/schemas/CompanyInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -1766,6 +1964,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.contact.getList:
     get:
@@ -1804,6 +2008,12 @@ paths:
                 $ref: '#/components/schemas/contactListResponse'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -1884,6 +2094,12 @@ paths:
                     amount_fact:
                       type: number
                       nullable: true
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.plan.set:
     post:
@@ -1961,6 +2177,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         402:
           description: Необходима оплата (фича доступна только в премиум-версии).
           content:
@@ -2021,6 +2243,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         403:
           description: Доступ запрещен.
           content:
@@ -2058,6 +2286,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         402:
           description: Необходима оплата (фича доступна только в премиум-версии).
           content:
@@ -2088,6 +2322,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScenarioList'
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.scenario.update:
     post:
@@ -2129,6 +2369,12 @@ paths:
                 $ref: '#/components/schemas/ScenarioInfo'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -2222,9 +2468,14 @@ paths:
                     precision:
                       type: integer
                       description: Максимальное количество знаков после десятичного разделителя, допустимое в дробной записи сумм, выраженный данной валютой
-
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -2264,6 +2515,12 @@ paths:
                 $ref: '#/components/schemas/ExternalEntity'
         400:
           description: Ошибка.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Требуется авторизация.
           content:
             application/json:
               schema:
@@ -2349,6 +2606,12 @@ paths:
                             description: Массив ID доступных статей
                             items:
                               type: integer
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.system.poke:
     get:
@@ -2363,6 +2626,12 @@ paths:
       responses:
         204:
           description: Успешное выполнение запроса.
+        401:
+          description: Требуется авторизация.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /cash.template.getList:
     get:
@@ -2379,6 +2648,12 @@ paths:
            application/json:
              schema:
                $ref: '#/components/schemas/TemplateList'
+       401:
+         description: Требуется авторизация.
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/Error'
        402:
          description: Необходима оплата (фича доступна только в премиум-версии).
          content:

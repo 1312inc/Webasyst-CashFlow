@@ -5,6 +5,53 @@
  */
 final class cashHelper
 {
+    const ACCESS_LIFE = 300;  //seconds
+
+    /**
+     * @param $access_code
+     * @return bool|null
+     * @throws waException
+     */
+    public static function checkAccessCode($access_code = null)
+    {
+        if (!self::isPremium()) {
+            return null;
+        }
+
+        $app_settings_model = new waAppSettingsModel();
+        $master_code = $app_settings_model->get('cash', 'access_code', null);
+        if ($master_code === null) {
+            return null;
+        }
+
+        if (!empty($access_code)) {
+            if (password_verify($access_code, $master_code)) {
+                $data = [
+                    'access_life' => time(),
+                    'ip' => waRequest::getIp(),
+                    'user_agent' => waRequest::getUserAgent()
+                ];
+                wa()->getStorage()->set('master_access', $data);
+                return true;
+            }
+            return false;
+        }
+
+        if ($master_access = wa()->getStorage()->get('master_access')) {
+            if (
+                (time() - ifempty($master_access, 'access_life', 0)) > self::ACCESS_LIFE
+                || ifempty($master_access, 'ip', null) !== waRequest::getIp()
+                || ifempty($master_access, 'user_agent', null) !== waRequest::getUserAgent()
+            ) {
+                wa()->getStorage()->remove('master_access');
+                return false;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @return array
      * @throws waException

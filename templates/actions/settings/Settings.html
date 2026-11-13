@@ -1,0 +1,155 @@
+{$_page_title = _w('Settings')}
+{$is_premium = cashHelper::isPremium()}
+
+<div class="article">
+    <div class="article-body">
+        {if !$is_premium}
+        <div class="alert warning small">
+            <i class="fas fa-star small"></i>
+            [`Available only in the premium version.`]
+            <a href="{$wa_app_url}upgrade/" class="bold">[`See all premium features`] &rsaquo;</a>
+        </div>
+        {/if}
+
+        <form method="post" action="?module=settingsSave" id="c-settings-form" autocomplete="off">
+            <div class="fields"{if !$is_premium} style="opacity: 0.5;"{/if}>
+                <h1>[`Settings`]</h1>
+                <div class="fields-group">
+                    <h5 class="heading">[`Master password lock`]</h5>
+                    <div class="field">
+                        <div class="name">[`Status`]</div>
+                        <div class="value">
+                            {if $has_password}
+                            <span class="badge green"><i class="fas fa-lock"></i> [`Master password is ON`]</span>
+                            {else}
+                            <span class="badge gray"><i class="fas fa-unlock"></i> [`Master password is OFF`]</span>
+                            {/if}
+                            <p class="hint">[`Master password is an additional layer of security and is universal for all your teammates. Every user with an access to the app will be required to enter a master password to open the app.`]</p>
+                        </div>
+                    </div>
+
+                    {if $has_password}
+                    <div class="field">
+                        <div class="name for-input">[`Current password`]</div>
+                        <div class="value">
+                            <input type="password" class="long" name="master[current_password]" autocomplete="off">
+                            {if $has_password}<a href="#" class="button nobutton js-change-password">[`Change password`]</a>{/if}
+                            <p class="hint">[`Enter your existing master password to make any changes to the security settings.`]</p>
+                        </div>
+                    </div>
+                    {else}
+                    <div class="field">
+                        <div class="name for-input">[`Set master password`]</div>
+                        <div class="value">
+                            <input type="password" class="long" name="master[new_password]" autocomplete="off">
+                        </div>
+                    </div>
+                    {/if}
+
+                    {if $has_password}
+                    <div class="field js-new-password-fields" style="display: none">
+                        <div class="name for-input">[`New password`]</div>
+                        <div class="value">
+                            <input type="password" class="long" name="master[new_password]" autocomplete="off">
+                        </div>
+                    </div>
+                    {/if}
+
+                    <div class="field js-new-password-fields"{if $has_password} style="display: none"{/if}>
+                        <div class="name for-input">[`Confirm password`]</div>
+                        <div class="value">
+                            <input type="password" class="long" name="master[confirm_password]" autocomplete="off">
+                        </div>
+                    </div>
+
+                    {if $has_password}
+                    <div class="field">
+                        <div class="name"></div>
+                        <div class="value">
+                            <label>
+                                <span class="wa-checkbox">
+                                    <input type="checkbox" name="master[disable_password]" value="1" id="js-disable-password">
+                                    <span>
+                                        <span class="icon">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    </span>
+                                    [`Disable master password`]
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    {/if}
+
+                    <div class="field">
+                        <div class="name for-input">[`Recovery email`]</div>
+                        <div class="value">
+                            <input type="email" class="long" name="master[email]" value="{$email|default:''|escape}">
+                            <p class="hint">[`<b>Behold here!</b> Make sure to enter a valid master email address for immediate alerts on access violation attempts and password recovery. Master password can only be restored via this recovery email.`]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fields-group">
+                    <h5 class="heading">[`Большой взрыв`]</h5>
+                    <div class="field">
+                        <div class="name">[`Момент`]</div>
+                        <div class="value">
+                            <input type="date" name="bigbang[date]" value="{$big_bang_date|date_format:"Y-m-d"}">
+                        </div>
+                    </div>
+                </div>
+
+                {if $is_premium}
+                <div class="field">
+                    <div class="value submit">
+                        {$wa->csrf()}
+                        <button type="submit" class="button green">[`Save`]</button>
+                        <span class="state-message c-settings-status" style="margin-left: 10px;"></span>
+                    </div>
+                </div>
+                {/if}
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function ($) {
+        const $form = $('#c-settings-form');
+        const $status = $('.c-settings-status');
+        let password_change = true;
+
+        $('.js-change-password').on('click', function (event) {
+            event.preventDefault();
+            password_change = !password_change;
+            if (password_change) {
+                $('.js-new-password-fields').slideUp(150).find('input').val('');
+            } else {
+                $('.js-new-password-fields').slideDown(150);
+            }
+        });
+
+        $form.on('change', function (event) {
+            event.preventDefault();
+            $(this).find('button:submit').removeClass('green').addClass('yellow');
+        });
+
+        $form.on('submit', function(e) {
+            e.preventDefault();
+            $status.removeClass('state-error state-success').html('<i class="fas fa-spinner fa-spin"></i>');
+
+            $.post($form.attr('action'), $form.serialize(), function (response) {
+                if (response.status === 'ok') {
+                    $status.addClass('state-success').text('[`Saved`]');
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 600);
+                } else {
+                    const err_text = response.errors ? response.errors.join(' ') : '[`Failed to save`]';
+                    $status.addClass('state-error').text(err_text);
+                }
+            }, 'json');
+        });
+    })(jQuery);
+</script>

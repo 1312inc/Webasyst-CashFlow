@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{$wa->appName()} &mdash; {$wa->accountName()}</title>
+
+    {$wa->css()}
+    <script type="text/javascript" src="{$wa_url}wa-content/js/jquery/jquery-1.8.2.min.js"></script>
+    <script src="{$wa_url}wa-content/js/jquery-wa/wa.js?v={$wa->version(true)}"></script>
+
+</head>
+<body>
+<div id="wa">
+    {$wa->header()}
+    <div id="wa-app" class="flexbox vertical" style="min-height: calc(100vh - 4rem);">
+        <div class="wide"></div>
+        <form id="cash-auth-form" class="align-center">
+            <h3 class="custom-mb-24">[`Master password`]</h3>
+            <div class="state-with-inner-icon right" style="font-size: 1.6rem;">
+                <input type="password" name="access_pass" autofocus>
+                <button class="icon"><i class="fas fa-lock text-light-gray"></i></button>
+            </div>
+            <div class="state-error small custom-mt-16" id="cash-auth-error"></div>
+        </form>
+        <div class="wide"></div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var $form = $('#cash-auth-form');
+        var $error = $('#cash-auth-error');
+        var sending = false;
+
+        $form.on('submit', function (e) {
+            e.preventDefault();
+            if (sending) {
+                return;
+            }
+
+            var access_pass = $.trim($form.find('[name="access_pass"]').val());
+            if (!access_pass) {
+                $error.text('[`Enter master password to open the app`]');
+                return;
+            }
+
+            $error.text('');
+            sending = true;
+            $.post('?module=backendAuth', { access_pass: access_pass }, function (data) {
+                if (data.status === 'ok') {
+                    window.location.href = '{$wa_app_url}';
+                    return;
+                }
+                sending = false;
+                if (data.errors) {
+                    $error.text(data.errors.join('. '));
+                }
+            }).fail(function () {
+                sending = false;
+            });
+        });
+    });
+</script>
+</body>
+</html>

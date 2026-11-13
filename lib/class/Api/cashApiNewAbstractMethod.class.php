@@ -33,8 +33,10 @@ abstract class cashApiNewAbstractMethod extends waAPIMethod
     public function execute()
     {
         try {
+            if (cashHelper::checkAccessCode() === false) {
+                throw new ApiException('unauthorized', _w('Unauthorized'), 401);
+            }
             $handlerResult = $this->run();
-
             $this->response = $handlerResult->getResponseBody();
             $this->http_status_code = $handlerResult->getStatus();
             wa()->getResponse()->setStatus($this->http_status_code);

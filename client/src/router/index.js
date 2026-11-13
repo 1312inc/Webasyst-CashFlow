@@ -16,7 +16,7 @@ import { permissions } from '../plugins/permissions'
 import { moment } from '@/plugins/numeralMoment.js'
 import { appStateService } from '@/services/appState'
 
-const SSR_MODE_PAGE_URL_ALIASES = ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins', '/upgrade', '/automation', '/templates']
+const SSR_MODE_PAGE_URL_ALIASES = ['/report/*', '/import', '/import/new/*', '/shop/settings', '/plugins', '/upgrade', '/automation', '/templates', '/settings']
 
 Vue.use(VueRouter)
 
