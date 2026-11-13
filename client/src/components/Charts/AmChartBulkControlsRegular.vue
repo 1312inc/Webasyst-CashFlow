@@ -19,7 +19,7 @@
         v-if="openMove"
         @close="openMove = false"
       >
-        <TransactionMove />
+        <TransactionMove @close="openMove = false" />
       </Modal>
     </portal>
   </div>

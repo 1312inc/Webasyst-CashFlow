@@ -4,12 +4,12 @@
     appear
     :css="!disableTransition"
   >
-    <div class="dialog" :class="{ 'dialog--webview': nativeDialog }">
+    <div class="dialog" :class="{ 'dialog--webview': nativeDialog || fullViewport, 'dialog--full-viewport': fullViewport }">
       <div class="dialog-background" />
       <transition
         name="slide-fade"
         appear
-        :css="!disableTransition"
+        :css="!disableTransition && !fullViewport"
       >
         <slot />
       </transition>
@@ -24,6 +24,9 @@ export default {
   computed: {
     nativeDialog () {
       return appStateService.nativeDialog
+    },
+    fullViewport () {
+      return appStateService.nativeViewport
     }
   },
 
@@ -37,9 +40,19 @@ export default {
   mounted () {
     document.body.classList.add('modal')
     document.addEventListener('keyup', this.handler)
+    if (this.fullViewport && typeof ResizeObserver === 'function') {
+      const footer = this.$el.querySelector('.dialog-footer')
+      if (footer) {
+        const update = () => this.$el.style.setProperty('--cash-dialog-actions-height', `${footer.offsetHeight}px`)
+        this.footerResizeObserver = new ResizeObserver(update)
+        this.footerResizeObserver.observe(footer)
+        update()
+      }
+    }
   },
 
   beforeDestroy () {
+    this.footerResizeObserver?.disconnect()
     document.body.classList.remove('modal')
     document.removeEventListener('keyup', this.handler)
   },
@@ -113,6 +126,33 @@ export default {
         margin-top: 0;
         padding-block: 0.75rem;
       }
+    }
+  }
+
+  &.dialog--full-viewport {
+    &.dialog--webview:deep .dialog-body {
+      display: block;
+      height: 100%;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scroll-padding: calc(var(--cash-safe-top) + 12px) var(--cash-safe-right)
+        calc(var(--cash-visible-bottom) + var(--cash-dialog-actions-height, 0px) + 12px) var(--cash-safe-left);
+      padding: var(--cash-safe-top) var(--cash-safe-right)
+        calc(var(--cash-visible-bottom) + var(--cash-dialog-actions-height, 0px)) var(--cash-safe-left);
+    }
+
+    &.dialog--webview:deep .dialog-content {
+      overflow: visible;
+    }
+
+    &.dialog--webview:deep .dialog-footer {
+      position: fixed;
+      right: var(--cash-safe-right);
+      bottom: var(--cash-visible-bottom);
+      left: var(--cash-safe-left);
+      margin-top: 0;
+      background: var(--background-color-blank);
+      padding-block: 0.75rem;
     }
   }
 }

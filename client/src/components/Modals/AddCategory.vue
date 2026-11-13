@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="dialog-body"
-    style="overflow: initial;"
-  >
+  <div class="dialog-body" :style="dialogStyle">
     <div class="dialog-header">
       <div class="flexbox middle full-width custom-mb-12">
         <h2 class="custom-m-0">
@@ -182,6 +179,7 @@ import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 import DropdownWa from '@/components/Inputs/DropdownWa'
 import ColorPicker from '@/components/Inputs/ColorPicker'
 import FontAwsomeSelector from '../Inputs/FontAwsomeSelector.vue'
+import { appStateService } from '@/services/appState'
 export default {
 
   components: {
@@ -230,6 +228,10 @@ export default {
   },
 
   computed: {
+    dialogStyle () {
+      return appStateService.nativeViewport ? null : { overflow: 'initial' }
+    },
+
     parentsList () {
       return this.$store.getters['category/sortedCategories'].filter(
         c =>

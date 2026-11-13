@@ -8,6 +8,37 @@ const reference = ref(null)
 const tippyInstance = ref(null)
 const isInitialized = ref(false)
 const isWebView = appStateService.webView
+const nativeViewport = appStateService.nativeViewport
+
+function viewportPadding () {
+  const css = getComputedStyle(document.documentElement)
+  const inset = edge => Number.parseFloat(css.getPropertyValue(`--cash-host-${edge}`)) || 0
+  return {
+    top: inset('top') + 8,
+    right: inset('right') + 8,
+    bottom: Math.max(inset('bottom'), inset('keyboard')) + 8,
+    left: inset('left') + 8
+  }
+}
+
+function updatePlacement () {
+  const instance = tippyInstance.value
+  if (!instance || !nativeViewport) return
+  const padding = viewportPadding()
+  const viewport = window.visualViewport
+  const width = viewport?.width ?? window.innerWidth
+  const height = viewport ? Math.min(window.innerHeight - padding.bottom, viewport.height + viewport.offsetTop - 8) : window.innerHeight - padding.bottom
+  floating.value.style.setProperty('--cash-menu-width', `${Math.max(1, width - padding.left - padding.right)}px`)
+  floating.value.style.setProperty('--cash-menu-height', `${Math.max(1, height - padding.top)}px`)
+  instance.setProps({
+    popperOptions: {
+      modifiers: [
+        { name: 'flip', options: { padding } },
+        { name: 'preventOverflow', options: { padding, altAxis: true } }
+      ]
+    }
+  })
+}
 
 function hide () {
   tippyInstance.value?.hide()
@@ -42,9 +73,18 @@ onMounted(async () => {
       isInitialized.value = true
     }
   })
+  if (nativeViewport) {
+    updatePlacement()
+    document.addEventListener('cashflowviewportchange', updatePlacement)
+    window.visualViewport?.addEventListener('resize', updatePlacement)
+  }
 })
 
 onBeforeUnmount(() => {
+  if (nativeViewport) {
+    document.removeEventListener('cashflowviewportchange', updatePlacement)
+    window.visualViewport?.removeEventListener('resize', updatePlacement)
+  }
   tippyInstance.value?.destroy()
 })
 
@@ -62,10 +102,10 @@ onBeforeUnmount(() => {
       v-show="isInitialized"
       ref="floating"
       class="dropdown is-opened"
+      :class="{ 'dropdown--native-viewport': nativeViewport }"
     >
       <div
         class="dropdown-body"
-        style="min-width: 280px;"
       >
         <slot
           :close="hide"
@@ -106,9 +146,18 @@ button {
 }
 
 .dropdown-body {
+  min-width: 280px;
   position: relative;
   left: auto;
   top: auto;
+}
+
+.dropdown--native-viewport .dropdown-body {
+  min-width: min(280px, var(--cash-menu-width, 100vw));
+  max-width: var(--cash-menu-width, 100vw);
+  max-height: var(--cash-menu-height, 70vh);
+  overflow: auto;
+  overscroll-behavior: contain;
 }
 
 </style>

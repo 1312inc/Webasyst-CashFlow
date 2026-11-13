@@ -48,7 +48,10 @@ function onClick () {
       @close="open = false"
       @reOpen="reOpen"
     >
-      <TransactionMove v-if="addTransactionOpts.type === 'move'" />
+      <TransactionMove
+        v-if="addTransactionOpts.type === 'move'"
+        @close="open = false"
+      />
 
       <AddTransaction
         v-else

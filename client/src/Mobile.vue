@@ -4,14 +4,14 @@
     class="c-mobile-build"
     :class="{ 'c-multi-select-mode': $helper.hasSelectedTransactions() }"
   >
-    <div v-if="!$IsOnline.online">
+    <div v-if="!$IsOnline.online" class="c-mobile-offline">
       <span
         class="alert danger custom-mb-0"
         style="border-radius:0;"
       >{{ $t('offlineMessage') }}</span>
     </div>
     <div
-      class="content blank"
+      class="content blank c-mobile-content"
       style="display: flex; flex-direction: column; min-height: 100vh;"
     >
       <router-view />

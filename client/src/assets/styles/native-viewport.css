@@ -1,0 +1,58 @@
+html[data-cashflow-native-viewport] {
+  --cash-safe-top: max(env(safe-area-inset-top, 0px), var(--cash-host-top, 0px));
+  --cash-safe-right: max(env(safe-area-inset-right, 0px), var(--cash-host-right, 0px));
+  --cash-safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--cash-host-bottom, 0px));
+  --cash-safe-left: max(env(safe-area-inset-left, 0px), var(--cash-host-left, 0px));
+  --cash-visible-bottom: max(var(--cash-safe-bottom), var(--cash-host-keyboard, 0px));
+  scroll-padding: var(--cash-safe-top) var(--cash-safe-right) var(--cash-visible-bottom) var(--cash-safe-left);
+}
+
+[data-cashflow-native-viewport] .c-mobile-content {
+  box-sizing: border-box;
+  padding-top: var(--cash-safe-top);
+  padding-right: var(--cash-safe-right);
+  padding-bottom: var(--cash-visible-bottom);
+  padding-left: var(--cash-safe-left);
+}
+
+[data-cashflow-native-viewport] .c-mobile-offline {
+  margin: var(--cash-safe-top) var(--cash-safe-right) 0 var(--cash-safe-left);
+}
+
+[data-cashflow-native-viewport] .c-mobile-offline + .c-mobile-content {
+  padding-top: 0;
+}
+
+[data-cashflow-native-viewport] .c-mobile-build .box:has(.c-list--compact) {
+  overflow: visible;
+}
+
+[data-cashflow-native-viewport] .c-mobile-build .c-list--compact {
+  margin-right: calc(-1 * var(--cash-safe-right));
+  margin-left: calc(-1 * var(--cash-safe-left));
+  padding-right: var(--cash-safe-right);
+  padding-left: var(--cash-safe-left);
+  scroll-padding-inline: var(--cash-safe-left) var(--cash-safe-right);
+}
+
+[data-cashflow-native-viewport] .c-mobile-build .c-transaction-controls-sticky,
+[data-cashflow-native-viewport] .c-mobile-build .c-sticky-header-group {
+  top: var(--cash-safe-top);
+}
+
+[data-cashflow-native-viewport] .c-mobile-build.c-multi-select-mode .c-sticky-header-group {
+  top: calc(var(--cash-safe-top) + 60px);
+}
+
+[data-cashflow-native-viewport] .c-mobile-build .icg {
+  position: relative;
+  inset: auto;
+  height: max(260px, calc(100vh - var(--cash-safe-top) - var(--cash-visible-bottom)));
+  padding-inline: 8px;
+  box-sizing: border-box;
+}
+
+[data-cashflow-native-viewport] .c-mobile-build .icg-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+}

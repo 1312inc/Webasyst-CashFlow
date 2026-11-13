@@ -1,6 +1,6 @@
 <template>
   <div class="c-transaction-controls hide-scrollbar">
-    <div class="mobile-only">
+    <div :class="{ 'mobile-only': !appStateService.nativeViewport }">
       <div
         v-if="$helper.hasSelectedTransactions()"
         class="flexbox middle"
@@ -43,7 +43,7 @@
     </div>
 
     <div
-      v-if="currentType"
+      v-if="currentType && !appStateService.nativeViewport"
       ref="controlButtons"
       class="desktop-and-tablet-only flexbox wrap space-12 middle"
     >
@@ -100,7 +100,7 @@
         v-if="openMove"
         @close="openMove = false"
       >
-        <TransactionMove />
+        <TransactionMove @close="openMove = false" />
       </Modal>
     </portal>
   </div>
@@ -141,7 +141,7 @@ export default {
     // add pulsar effect on the button if first time navigate
     async '$route' (to) {
       await this.$nextTick()
-      const pulsarButton = this.$refs.controlButtons.querySelector('button')
+      const pulsarButton = this.$refs.controlButtons?.querySelector('button')
       if (pulsarButton) {
         pulsarButton.classList.remove('pulsar')
         if (to.params.isFirtsTimeNavigate) {

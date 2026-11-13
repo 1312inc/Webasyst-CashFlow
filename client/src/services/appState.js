@@ -27,6 +27,10 @@ export const appStateService = {
     return !!state.webView
   },
 
+  get nativeViewport () {
+    return state.webView === true && state.nativeViewport === true
+  },
+
   get nativeDialog () {
     return state.webView === true && state.nativeDialog === true
   },
