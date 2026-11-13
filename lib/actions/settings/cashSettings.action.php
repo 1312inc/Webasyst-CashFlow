@@ -16,8 +16,9 @@ class cashSettingsAction extends cashViewAction
         $cash_settings = (new waAppSettingsModel())->get('cash');
 
         $this->view->assign([
-            'has_password' => !!ifempty($cash_settings, 'access_code', false),
-            'email' => ifset($cash_settings, 'master_email', ''),
+            'has_password'  => !!ifempty($cash_settings, 'access_code', false),
+            'email'         => ifset($cash_settings, 'master_email', ''),
+            'big_bang_date' => ifset($cash_settings, 'big_bang_date', '')
         ]);
     }
 }
