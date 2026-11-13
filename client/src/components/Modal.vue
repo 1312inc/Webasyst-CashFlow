@@ -147,12 +147,23 @@ export default {
 
     &.dialog--webview:deep .dialog-footer {
       position: fixed;
-      right: var(--cash-safe-right);
+      right: 0;
       bottom: var(--cash-visible-bottom);
-      left: var(--cash-safe-left);
+      left: 0;
       margin-top: 0;
       background: var(--background-color-blank);
-      padding-block: 0.75rem;
+      padding: 0.75rem calc(1.5rem + var(--cash-safe-right))
+        0.75rem calc(1.5rem + var(--cash-safe-left));
+    }
+
+    // The keyboard and its accessory can show the WebView beneath them.
+    &.dialog--webview:deep .dialog-footer::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      inset-inline: 0;
+      height: var(--cash-visible-bottom);
+      background: inherit;
     }
   }
 }
