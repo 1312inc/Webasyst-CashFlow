@@ -4,7 +4,7 @@
     appear
     :css="!disableTransition"
   >
-    <div class="dialog">
+    <div class="dialog" :class="{ 'dialog--webview': nativeDialog }">
       <div class="dialog-background" />
       <transition
         name="slide-fade"
@@ -18,7 +18,15 @@
 </template>
 
 <script>
+import { appStateService } from '@/services/appState'
+
 export default {
+  computed: {
+    nativeDialog () {
+      return appStateService.nativeDialog
+    }
+  },
+
   props: {
     disableTransition: {
       type: Boolean,
@@ -67,5 +75,45 @@ export default {
     }
   }
 
+  &.dialog--webview {
+    overflow: hidden;
+
+    &:deep .dialog-body {
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: none;
+      max-height: none;
+      overflow: hidden;
+      border-radius: 0;
+      transform: none;
+    }
+
+    &:deep .dialog-header,
+    &:deep .dialog-footer {
+      flex-shrink: 0;
+    }
+
+    &:deep .dialog-content {
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: none;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scroll-padding-block: 12px;
+    }
+
+    @media (max-height: 420px) {
+      &:deep .dialog-header {
+        padding-block: 0.75rem;
+      }
+
+      &:deep .dialog-footer {
+        margin-top: 0;
+        padding-block: 0.75rem;
+      }
+    }
+  }
 }
 </style>
