@@ -21,48 +21,20 @@
           <div class="wide custom-mb-0 custom-mb-8-mobile">
             <div class="flexbox space-8 middle">
               <div class="larger black bold">
-                <div v-if="!isDefaultRange">
+                <div v-if="showCustomDates">
                   {{ dates }}
                 </div>
                 <div v-else>
                   {{ rangeDisplayLabel }}
                 </div>
               </div>
-
-              <DropdownWaFloating>
-                <template #toggler>
-                  <button class="circle light-gray">
-                    <span class="icon"><i class="fas fa-ellipsis-v" /></span>
-                  </button>
-                </template>
-                <ul class="menu custom-mb-0">
-                  <li>
-                    <a @click.prevent="setPeriod('from')"><span>{{ $t(rangeLabelFrom) }}</span></a>
-                  </li>
-                  <li>
-                    <a @click.prevent="setPeriod('to')"><span>{{ $t(rangeLabelTo) }}</span></a>
-                  </li>
-                </ul>
-                <hr class="custom-m-0">
-                <ul class="menu custom-mt-0">
-                  <li>
-                    <a @click.prevent="setLocalBreakdownPeriod(7)"><span>{{ $t("nextDays", { count: 7 }) }}</span></a>
-                  </li>
-                  <li>
-                    <a @click.prevent="setLocalBreakdownPeriod(30)"><span>{{ $t("nextDays", { count: 30 }) }}</span></a>
-                  </li>
-                  <li>
-                    <a @click.prevent="setLocalBreakdownPeriod(90)"><span>{{ $t("nextDays", { count: 90 }) }}</span></a>
-                  </li>
-                  <li>
-                    <a @click.prevent="setLocalBreakdownPeriod(180)"><span>{{ $t("nextDays", { count: 180 }) }}</span></a>
-                  </li>
-                </ul>
-              </DropdownWaFloating>
             </div>
           </div>
 
-          <div class="flexbox space-8 wrap-mobile">
+          <div
+            v-if="isPastMode"
+            class="flexbox space-8 wrap-mobile"
+          >
             <button
               class="button light-gray"
               @click="openModal = true"
@@ -86,7 +58,7 @@
           </Modal>
         </portal>
       </div>
-      <DetailsDashboardEmpty v-else-if="$appState.isDesktop" />
+      <DetailsDashboardEmpty v-else-if="isPastMode && $appState.isDesktop" />
     </template>
   </div>
 </template>
@@ -99,24 +71,7 @@ import DetailsDashboardItem from './DetailsDashboardItem.vue'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 import ExportButton from '@/components/Buttons/ExportButton'
 import { getIntervalFromLabel } from '@/utils/getDateFromLocalStorage'
-import {
-  clearLocalBreakdownToDays,
-  getLocalBreakdownToDays,
-  setLocalBreakdownToDays
-} from '@/utils/breakdownLocalPeriod'
-import DropdownWaFloating from '../Inputs/DropdownWaFloating.vue'
 import { defineAsyncComponent } from 'vue'
-
-const CURRENT_PERIOD_STORAGE_KEY = 'currentPeriod'
-
-function readCurrentPeriodFromStorage () {
-  try {
-    const v = localStorage.getItem(CURRENT_PERIOD_STORAGE_KEY)
-    return v === 'from' || v === 'to' ? v : 'to'
-  } catch (_) {
-    return 'to'
-  }
-}
 
 export default {
   components: {
@@ -124,20 +79,22 @@ export default {
     DetailsDashboardItem,
     UpdateDetailsInterval,
     ExportButton,
-    DetailsDashboardEmpty: defineAsyncComponent(() => import('@/components/ContentBlocks/DetailsDashboardEmpty.vue')),
-    DropdownWaFloating
+    DetailsDashboardEmpty: defineAsyncComponent(() => import('@/components/ContentBlocks/DetailsDashboardEmpty.vue'))
+  },
+
+  props: {
+    mode: {
+      type: String,
+      default: 'from',
+      validator: value => value === 'from' || value === 'to'
+    }
   },
 
   data () {
     return {
       data: [],
       openModal: false,
-      isFetching: false,
-      rangeLabelFrom: '',
-      rangeLabelTo: '',
-      dashboardCurrentPeriod: readCurrentPeriodFromStorage(),
-      suppressLocalBreakdownClear: false,
-      localBreakdownToDays: getLocalBreakdownToDays()
+      isFetching: false
     }
   },
 
@@ -145,8 +102,12 @@ export default {
     ...mapState('transaction', ['queryParams', 'detailsInterval', 'chartInterval']),
     ...mapGetters('transaction', ['isDetailsMode']),
 
-    isDefaultRange () {
-      return !this.isDetailsMode
+    isPastMode () {
+      return this.mode === 'from'
+    },
+
+    showCustomDates () {
+      return this.isPastMode && this.isDetailsMode
     },
 
     dates () {
@@ -166,48 +127,27 @@ export default {
       )
     },
 
-    currentPeriod: {
-      get () {
-        return this.dashboardCurrentPeriod
-      },
-      set (value) {
-        if (value !== 'from' && value !== 'to') return
-        this.dashboardCurrentPeriod = value
-        try {
-          localStorage.setItem(CURRENT_PERIOD_STORAGE_KEY, value)
-        } catch (_) {}
-      }
-    },
-
-    breakdownIntervalKey () {
-      const { from, to } = this.detailsInterval
-      return `${from}|${to}`
+    rangeDisplayLabel () {
+      const type = this.isPastMode ? 'from' : 'to'
+      const intervalBound = this.chartInterval[type]
+      return intervalBound ? this.$t(getIntervalFromLabel(type)) : ''
     },
 
     breakdownWatchKey () {
-      return `${this.breakdownIntervalKey}|${this.queryParams.filter}`
-    },
+      const today = this.$moment().format('YYYY-MM-DD')
+      const filter = this.queryParams.filter
 
-    rangeDisplayLabel () {
-      if (this.currentPeriod === 'from') {
-        return this.$t(this.rangeLabelFrom)
+      if (this.showCustomDates) {
+        return `custom|${this.detailsInterval.from}|${this.detailsInterval.to}|${filter}`
       }
-      if (this.localBreakdownToDays != null && this.isDefaultRange) {
-        return this.$t('nextDays', { count: this.localBreakdownToDays })
+      if (this.isPastMode) {
+        return `from|${this.chartInterval.from}|${today}|${filter}`
       }
-      return this.$t(this.rangeLabelTo)
+      return `to|${today}|${this.chartInterval.to}|${filter}`
     }
   },
 
   watch: {
-    breakdownIntervalKey (newKey, oldKey) {
-      if (this.suppressLocalBreakdownClear) return
-      if (oldKey != null && newKey !== oldKey) {
-        clearLocalBreakdownToDays()
-        this.localBreakdownToDays = null
-      }
-    },
-
     breakdownWatchKey: {
       handler () {
         this.fetchBreakDown()
@@ -218,25 +158,19 @@ export default {
 
   methods: {
     fetchBreakDown () {
-      this.rangeLabelFrom = getIntervalFromLabel('from')
-      this.rangeLabelTo = getIntervalFromLabel('to')
-      this.localBreakdownToDays = getLocalBreakdownToDays()
-
-      const currentDate = this.$moment().format('YYYY-MM-DD')
-      const localToDays = this.localBreakdownToDays
-
+      const today = this.$moment().format('YYYY-MM-DD')
       let from
       let to
 
-      if (!this.isDefaultRange) {
+      if (this.showCustomDates) {
         from = this.detailsInterval.from
         to = this.detailsInterval.to
-      } else if (localToDays != null) {
-        from = currentDate
-        to = this.$moment().add(localToDays, 'days').format('YYYY-MM-DD')
+      } else if (this.isPastMode) {
+        from = this.chartInterval.from
+        to = today
       } else {
-        from = this.currentPeriod === 'from' ? this.detailsInterval.from : currentDate
-        to = this.currentPeriod === 'to' ? this.detailsInterval.to : currentDate
+        from = today
+        to = this.chartInterval.to
       }
 
       this.isFetching = true
@@ -254,32 +188,6 @@ export default {
         .finally(() => {
           this.isFetching = false
         })
-    },
-
-    setPeriod (period) {
-      clearLocalBreakdownToDays()
-      this.localBreakdownToDays = null
-      this.currentPeriod = period
-      if (!this.isDefaultRange) {
-        this.$store.dispatch('transaction/resetDetailsInterval')
-      } else {
-        this.fetchBreakDown()
-      }
-    },
-
-    setLocalBreakdownPeriod (days) {
-      setLocalBreakdownToDays(days)
-      this.localBreakdownToDays = days
-      this.currentPeriod = 'to'
-      if (!this.isDefaultRange) {
-        this.suppressLocalBreakdownClear = true
-        this.$store.dispatch('transaction/resetDetailsInterval')
-        this.$nextTick(() => {
-          this.suppressLocalBreakdownClear = false
-        })
-        return
-      }
-      this.fetchBreakDown()
     }
 
   }

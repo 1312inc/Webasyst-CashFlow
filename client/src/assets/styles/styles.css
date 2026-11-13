@@ -411,6 +411,15 @@ body.modal {
   height: 100%;
 }
 
+.flexbox.c-details-modes {
+  flex-wrap: wrap;
+}
+
+.flexbox.c-details-modes > .wide {
+  flex: 1 1 40rem;
+  min-width: min(100%, 40rem);
+}
+
 .c-details-container__target__close {
   top: 1rem;
   right: 1rem;
