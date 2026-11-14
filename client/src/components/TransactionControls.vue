@@ -16,8 +16,8 @@
         </button>
         <button
           class="button red smallest nowrap"
-          :disabled="!checkedRows.length"
-          @click="bulkDelete"
+          :disabled="!checkedRows.length || $_transactionActionsMixin_removalPending"
+          @click="$_transactionActionsMixin_bulkDelete"
         >
           <i class="fas fa-trash-alt" /> {{ $t("delete") }} ({{
             checkedRows.length
@@ -110,6 +110,7 @@
 import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import TransactionMove from '@/components/Modals/TransactionMove'
+import transactionActionsMixin from '@/mixins/transactionActionsMixin'
 import { appStateService } from '../services/appState'
 
 export default {
@@ -118,6 +119,7 @@ export default {
     Modal,
     TransactionMove
   },
+  mixins: [transactionActionsMixin],
 
   data () {
     return {
@@ -166,12 +168,6 @@ export default {
         type,
         ...(this.$route.name === 'Date' ? { defaultDate: this.$route.params.date } : {})
       })
-    },
-
-    bulkDelete () {
-      if (confirm(this.$t('bulkDeleteWarning'))) {
-        this.$store.dispatch('transactionBulk/bulkDelete')
-      }
     },
 
     unselectAll () {

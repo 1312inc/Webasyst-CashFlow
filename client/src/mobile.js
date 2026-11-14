@@ -20,8 +20,8 @@ import './assets/styles/native-viewport.css'
 if (appStateService.nativeViewport) {
   const root = document.documentElement
   root.dataset.cashflowNativeViewport = ''
-  window.cashFlowSetViewport = ({ top, right, bottom, left, keyboard }) => {
-    const insets = { top, right, bottom, left, keyboard }
+  window.cashFlowSetViewport = ({ top, right, bottom, left, keyboard, 'content-left': contentLeft = left, 'content-right': contentRight = right }) => {
+    const insets = { top, right, bottom, left, keyboard, 'content-left': contentLeft, 'content-right': contentRight }
     for (const [edge, value] of Object.entries(insets)) {
       root.style.setProperty(`--cash-host-${edge}`, `${Math.max(0, value)}px`)
     }

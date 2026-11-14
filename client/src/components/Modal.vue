@@ -135,10 +135,10 @@ export default {
       height: 100%;
       overflow-y: auto;
       overscroll-behavior: contain;
-      scroll-padding: calc(var(--cash-safe-top) + 12px) var(--cash-safe-right)
-        calc(var(--cash-visible-bottom) + var(--cash-dialog-actions-height, 0px) + 12px) var(--cash-safe-left);
-      padding: var(--cash-safe-top) var(--cash-safe-right)
-        calc(var(--cash-visible-bottom) + var(--cash-dialog-actions-height, 0px)) var(--cash-safe-left);
+      scroll-padding: calc(var(--cash-safe-top) + 12px) var(--cash-content-right)
+        calc(var(--cash-visible-bottom) + var(--cash-dialog-actions-height, 0px) + 12px) var(--cash-content-left);
+      padding: var(--cash-safe-top) var(--cash-content-right)
+        calc(var(--cash-visible-bottom) + var(--cash-dialog-actions-height, 0px)) var(--cash-content-left);
     }
 
     &.dialog--webview:deep .dialog-content {
@@ -152,8 +152,8 @@ export default {
       left: 0;
       margin-top: 0;
       background: var(--background-color-blank);
-      padding: 0.75rem calc(1.5rem + var(--cash-safe-right))
-        0.75rem calc(1.5rem + var(--cash-safe-left));
+      padding: 0.75rem calc(1.5rem + var(--cash-content-right))
+        0.75rem calc(1.5rem + var(--cash-content-left));
     }
 
     // The keyboard and its accessory can show the WebView beneath them.

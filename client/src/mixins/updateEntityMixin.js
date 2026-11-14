@@ -1,4 +1,5 @@
 import { appStateService } from '@/services/appState'
+import { confirmDeletion } from '@/services/confirmDeletion'
 
 export default {
 
@@ -63,20 +64,18 @@ export default {
       }
     },
 
-    remove (entity) {
+    async remove (entity) {
       if (this.controlsDisabled) return
-      if (confirm(this.$t(`deleteWarning.${entity}`))) {
-        this.controlsDisabled = true
-        this.$store
-          .dispatch(`${entity}/delete`, this.model.id)
-          .then(result => {
-            if (result === false) return
-            this.close({ action: 'afterDelete', entity: { type: entity, name: this.model.name } })
-          })
-          .catch(() => {})
-          .finally(() => {
-            this.controlsDisabled = false
-          })
+      const { id, name } = this.model
+      this.controlsDisabled = true
+      try {
+        if (!await confirmDeletion(`deleteWarning.${entity}`) || this._isDestroyed || this.model.id !== id) return
+        const result = await this.$store.dispatch(`${entity}/delete`, id)
+        if (result !== false) this.close({ action: 'afterDelete', entity: { type: entity, name } })
+      } catch (_) {
+        // The API client displays the error.
+      } finally {
+        this.controlsDisabled = false
       }
     },
 

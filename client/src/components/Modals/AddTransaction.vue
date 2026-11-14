@@ -633,6 +633,7 @@ import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
 import entityPageMixin from '@/mixins/entityPageMixin'
 import api from '../../plugins/api'
 import { appState } from '@/services/appState'
+import { confirmDeletion } from '@/services/confirmDeletion'
 
 export default {
 
@@ -943,20 +944,16 @@ export default {
         })
     },
 
-    remove () {
-      if (confirm(this.$t('transactionDeleteWarning'))) {
-        this.controlsDisabled = true
-        this.$store
-          .dispatch('transaction/delete', {
-            id: this.model.id,
-            all_repeating: this.model.apply_to_all_in_future
-          })
-          .then(() => {
-            this.close()
-          })
-          .finally(() => {
-            this.controlsDisabled = false
-          })
+    async remove () {
+      if (this.controlsDisabled) return
+      const { id, apply_to_all_in_future: allRepeating } = this.model
+      this.controlsDisabled = true
+      try {
+        if (!await confirmDeletion('transactionDeleteWarning') || this._isDestroyed || this.model.id !== id) return
+        const result = await this.$store.dispatch('transaction/delete', { id, all_repeating: allRepeating })
+        if (result !== false) this.close()
+      } finally {
+        this.controlsDisabled = false
       }
     },
 

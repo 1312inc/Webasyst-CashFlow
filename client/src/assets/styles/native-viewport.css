@@ -4,19 +4,21 @@ html[data-cashflow-native-viewport] {
   --cash-safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--cash-host-bottom, 0px));
   --cash-safe-left: max(env(safe-area-inset-left, 0px), var(--cash-host-left, 0px));
   --cash-visible-bottom: max(var(--cash-safe-bottom), var(--cash-host-keyboard, 0px));
+  --cash-content-left: max(var(--cash-safe-left), var(--cash-host-content-left, 0px));
+  --cash-content-right: max(var(--cash-safe-right), var(--cash-host-content-right, 0px));
   scroll-padding: var(--cash-safe-top) var(--cash-safe-right) var(--cash-visible-bottom) var(--cash-safe-left);
 }
 
 [data-cashflow-native-viewport] .c-mobile-content {
   box-sizing: border-box;
   padding-top: var(--cash-safe-top);
-  padding-right: var(--cash-safe-right);
+  padding-right: var(--cash-content-right);
   padding-bottom: var(--cash-visible-bottom);
-  padding-left: var(--cash-safe-left);
+  padding-left: var(--cash-content-left);
 }
 
 [data-cashflow-native-viewport] .c-mobile-offline {
-  margin: var(--cash-safe-top) var(--cash-safe-right) 0 var(--cash-safe-left);
+  margin: var(--cash-safe-top) var(--cash-content-right) 0 var(--cash-content-left);
 }
 
 [data-cashflow-native-viewport] .c-mobile-offline + .c-mobile-content {
@@ -28,11 +30,12 @@ html[data-cashflow-native-viewport] {
 }
 
 [data-cashflow-native-viewport] .c-mobile-build .c-list--compact {
-  margin-right: calc(-1 * var(--cash-safe-right));
-  margin-left: calc(-1 * var(--cash-safe-left));
-  padding-right: var(--cash-safe-right);
-  padding-left: var(--cash-safe-left);
-  scroll-padding-inline: var(--cash-safe-left) var(--cash-safe-right);
+  margin-right: calc(-1 * var(--cash-content-right));
+  margin-left: calc(-1 * var(--cash-content-left));
+  padding-right: var(--cash-content-right);
+  padding-left: var(--cash-content-left);
+  scroll-padding-left: var(--cash-content-left);
+  scroll-padding-right: var(--cash-content-right);
 }
 
 [data-cashflow-native-viewport] .c-mobile-build .c-transaction-controls-sticky,
@@ -55,4 +58,29 @@ html[data-cashflow-native-viewport] {
 [data-cashflow-native-viewport] .c-mobile-build .icg-wrapper {
   flex: 1 1 auto;
   min-height: 0;
+}
+
+[data-cashflow-native-viewport] .icg-filter-group,
+[data-cashflow-native-viewport] .icg-controls {
+  flex-wrap: wrap;
+  row-gap: .5rem;
+  max-width: 100%;
+}
+
+[data-cashflow-native-viewport] .icg-month,
+[data-cashflow-native-viewport] .icg-filter,
+[data-cashflow-native-viewport] .icg-filter button {
+  min-width: 0;
+  max-width: 100%;
+}
+
+[data-cashflow-native-viewport] .icg-filter button {
+  display: flex;
+  align-items: center;
+}
+
+[data-cashflow-native-viewport] .icg-month,
+[data-cashflow-native-viewport] .icg-filter button strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

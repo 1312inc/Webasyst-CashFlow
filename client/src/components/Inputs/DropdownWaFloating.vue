@@ -15,9 +15,9 @@ function viewportPadding () {
   const inset = edge => Number.parseFloat(css.getPropertyValue(`--cash-host-${edge}`)) || 0
   return {
     top: inset('top') + 8,
-    right: inset('right') + 8,
+    right: Math.max(inset('right'), inset('content-right')) + 8,
     bottom: Math.max(inset('bottom'), inset('keyboard')) + 8,
-    left: inset('left') + 8
+    left: Math.max(inset('left'), inset('content-left')) + 8
   }
 }
 
