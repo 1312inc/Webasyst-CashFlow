@@ -47,6 +47,14 @@ html[data-cashflow-native-viewport] {
   top: calc(var(--cash-safe-top) + 60px);
 }
 
+html[data-cashflow-native-viewport]:has(.c-mobile-build .icg) {
+  overscroll-behavior-y: none;
+}
+
+[data-cashflow-native-viewport] .icg-day-slot {
+  cursor: pointer;
+}
+
 [data-cashflow-native-viewport] .c-mobile-build .icg {
   position: relative;
   inset: auto;
