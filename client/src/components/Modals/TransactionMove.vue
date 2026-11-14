@@ -1,14 +1,14 @@
 <template>
   <div
     class="dialog-body"
-    style="overflow: initial;"
+    :style="legacyOverflow"
   >
     <div class="dialog-header">
       <h2>{{ $t("moveTransactions", { count: ids.length }) }}</h2>
     </div>
     <div
       class="dialog-content"
-      style="overflow: initial;"
+      :style="legacyOverflow"
     >
       <div class="fields">
         <div class="field">
@@ -84,6 +84,13 @@
     </div>
 
     <div class="dialog-footer">
+      <p
+        v-if="saveFailed"
+        class="small text-red custom-mt-0"
+        role="alert"
+      >
+        {{ $t('error.http') }}
+      </p>
       <div class="flexbox">
         <div class="flexbox space-12 wide">
           <button
@@ -94,8 +101,9 @@
             {{ $t("updateTransactions", { count: ids.length }) }}
           </button>
           <button
+            :disabled="controlsDisabled"
             class="button light-gray"
-            @click="close"
+            @click="$emit('close')"
           >
             {{ $t("cancel") }}
           </button>
@@ -110,6 +118,7 @@ import { mapState } from 'vuex'
 import InputContractor from '@/components/Inputs/InputContractor'
 import DropdownWa from '@/components/Inputs/DropdownWa'
 import rowModificatorMixin from '@/mixins/rowModificatorMixin.js'
+import { appStateService } from '@/services/appState'
 export default {
   components: {
     InputContractor,
@@ -125,12 +134,16 @@ export default {
         category_id: 0,
         contractor_contact_id: null
       },
-      controlsDisabled: false
+      controlsDisabled: false,
+      saveFailed: false
     }
   },
 
   computed: {
     ...mapState('account', ['accounts']),
+    legacyOverflow () {
+      return appStateService.nativeViewport ? null : { overflow: 'initial' }
+    },
     ids () {
       return this.$store.state.transactionBulk.selectedTransactionsIds
     }
@@ -138,19 +151,18 @@ export default {
 
   methods: {
     submit () {
+      if (this.controlsDisabled) return
       this.controlsDisabled = true
+      this.saveFailed = false
       this.$store
         .dispatch('transactionBulk/bulkMove', { ids: this.ids, ...this.model })
-        .then(() => {
-          this.close()
+        .then(result => {
+          this.saveFailed = result === false
+          if (!this.saveFailed) this.$emit('close')
         })
         .finally(() => {
           this.controlsDisabled = false
         })
-    },
-
-    close () {
-      this.$parent.$emit('close')
     }
   }
 }

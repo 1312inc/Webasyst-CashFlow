@@ -1,6 +1,6 @@
 <template>
   <div class="c-transaction-controls hide-scrollbar">
-    <div class="mobile-only">
+    <div :class="{ 'mobile-only': !appStateService.nativeViewport }">
       <div
         v-if="$helper.hasSelectedTransactions()"
         class="flexbox middle"
@@ -16,8 +16,8 @@
         </button>
         <button
           class="button red smallest nowrap"
-          :disabled="!checkedRows.length"
-          @click="bulkDelete"
+          :disabled="!checkedRows.length || $_transactionActionsMixin_removalPending"
+          @click="$_transactionActionsMixin_bulkDelete"
         >
           <i class="fas fa-trash-alt" /> {{ $t("delete") }} ({{
             checkedRows.length
@@ -43,7 +43,7 @@
     </div>
 
     <div
-      v-if="currentType"
+      v-if="currentType && !appStateService.nativeViewport"
       ref="controlButtons"
       class="desktop-and-tablet-only flexbox wrap space-12 middle"
     >
@@ -174,7 +174,7 @@
         v-if="openMove"
         @close="openMove = false"
       >
-        <TransactionMove />
+        <TransactionMove @close="openMove = false" />
       </Modal>
     </portal>
   </div>
@@ -185,6 +185,7 @@ import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import TransactionMove from '@/components/Modals/TransactionMove'
 import DropdownWaFloating from '@/components/Inputs/DropdownWaFloating'
+import transactionActionsMixin from '@/mixins/transactionActionsMixin'
 import { appStateService } from '../services/appState'
 import {
   getTemplatesByType,
@@ -199,6 +200,7 @@ export default {
     TransactionMove,
     DropdownWaFloating
   },
+  mixins: [transactionActionsMixin],
 
   data () {
     return {
@@ -234,7 +236,7 @@ export default {
     // add pulsar effect on the button if first time navigate
     async '$route' (to) {
       await this.$nextTick()
-      const pulsarButton = this.$refs.controlButtons.querySelector('button')
+      const pulsarButton = this.$refs.controlButtons?.querySelector('button')
       if (pulsarButton) {
         pulsarButton.classList.remove('pulsar')
         if (to.params.isFirtsTimeNavigate) {
@@ -270,12 +272,6 @@ export default {
         defaults: templateContentToDefaults(template.content),
         ...(this.$route.name === 'Date' ? { defaultDate: this.$route.params.date } : {})
       })
-    },
-
-    bulkDelete () {
-      if (confirm(this.$t('bulkDeleteWarning'))) {
-        this.$store.dispatch('transactionBulk/bulkDelete')
-      }
     },
 
     unselectAll () {

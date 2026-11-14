@@ -7,7 +7,9 @@ export default {
 
   state: () => ({
     selectedTransactionsIds: [],
-    lastCheckboxIndex: -1
+    lastCheckboxIndex: -1,
+    removalPending: false,
+    restorePending: false
   }),
 
   getters: {
@@ -42,6 +44,14 @@ export default {
 
     setLastCheckboxIndex (state, index) {
       state.lastCheckboxIndex = index
+    },
+
+    setRemovalPending (state, pending) {
+      state.removalPending = pending
+    },
+
+    setRestorePending (state, pending) {
+      state.restorePending = pending
     }
   },
 
@@ -60,13 +70,12 @@ export default {
       }
     },
 
-    async bulkDelete ({ dispatch, state, commit }) {
-      const ids = state.selectedTransactionsIds
+    async bulkDelete ({ state, commit }, ids = [...state.selectedTransactionsIds]) {
       try {
         await api.post('cash.transaction.bulkDelete', { ids })
         // Remove transactions from the store
         commit('transaction/deleteTransaction', ids, { root: true })
-        commit('emptySelectedTransactionsIds')
+        commit('unselect', ids)
       } catch (_) {
         return false
       }
@@ -82,15 +91,20 @@ export default {
     },
 
     async restore ({ state, commit }) {
-      const ids = state.selectedTransactionsIds
-      await api.post('cash.transaction.restore', { ids })
-      commit('emptySelectedTransactionsIds')
+      if (state.removalPending || state.restorePending || !state.selectedTransactionsIds.length) return
+      const ids = [...state.selectedTransactionsIds]
+      commit('setRestorePending', true)
+      try {
+        await api.post('cash.transaction.restore', { ids })
+        commit('unselect', ids)
+      } finally {
+        commit('setRestorePending', false)
+      }
     },
 
-    async purge ({ state, commit }) {
-      const ids = state.selectedTransactionsIds
+    async purge ({ state, commit }, ids = [...state.selectedTransactionsIds]) {
       await api.post('cash.transaction.purge', { ids })
-      commit('emptySelectedTransactionsIds')
+      commit('unselect', ids)
     }
   }
 
