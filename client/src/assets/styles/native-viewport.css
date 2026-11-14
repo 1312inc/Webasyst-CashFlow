@@ -1,5 +1,6 @@
 html[data-cashflow-native-viewport] {
   --cash-safe-top: max(env(safe-area-inset-top, 0px), var(--cash-host-top, 0px));
+  --cash-sticky-top: var(--cash-host-sticky-top, var(--cash-safe-top));
   --cash-safe-right: max(env(safe-area-inset-right, 0px), var(--cash-host-right, 0px));
   --cash-safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--cash-host-bottom, 0px));
   --cash-safe-left: max(env(safe-area-inset-left, 0px), var(--cash-host-left, 0px));
@@ -40,11 +41,11 @@ html[data-cashflow-native-viewport] {
 
 [data-cashflow-native-viewport] .c-mobile-build .c-transaction-controls-sticky,
 [data-cashflow-native-viewport] .c-mobile-build .c-sticky-header-group {
-  top: var(--cash-safe-top);
+  top: var(--cash-sticky-top);
 }
 
 [data-cashflow-native-viewport] .c-mobile-build.c-multi-select-mode .c-sticky-header-group {
-  top: calc(var(--cash-safe-top) + 60px);
+  top: calc(var(--cash-sticky-top) + 60px);
 }
 
 html[data-cashflow-native-viewport]:has(.c-mobile-build .icg) {

@@ -20,15 +20,25 @@ import './assets/styles/native-viewport.css'
 if (appStateService.nativeViewport) {
   const root = document.documentElement
   root.dataset.cashflowNativeViewport = ''
-  window.cashFlowSetViewport = ({ top, right, bottom, left, keyboard, 'content-left': contentLeft = left, 'content-right': contentRight = right }) => {
-    const insets = { top, right, bottom, left, keyboard, 'content-left': contentLeft, 'content-right': contentRight }
+  window.cashFlowSetViewport = ({
+    top, right, bottom, left, keyboard,
+    'content-left': contentLeft = left,
+    'content-right': contentRight = right,
+    'sticky-top': stickyTop
+  }) => {
+    const insets = { top, right, bottom, left, keyboard, 'content-left': contentLeft, 'content-right': contentRight, 'sticky-top': stickyTop }
     for (const [edge, value] of Object.entries(insets)) {
-      root.style.setProperty(`--cash-host-${edge}`, `${Math.max(0, value)}px`)
+      const property = `--cash-host-${edge}`
+      if (Number.isFinite(value)) {
+        root.style.setProperty(property, `${Math.max(0, value)}px`)
+      } else {
+        root.style.removeProperty(property)
+      }
     }
     document.dispatchEvent(new Event('cashflowviewportchange'))
   }
 
-  function dismissKeyboard (target) {
+  const dismissKeyboard = target => {
     const interactive = 'input, textarea, select, [contenteditable], button, a, label, [role="button"], [role="menuitem"], .wa-select, .dropdown, .popup'
     if (target instanceof Element && target.closest(interactive)) return
     const field = document.activeElement
