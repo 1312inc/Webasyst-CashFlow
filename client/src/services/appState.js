@@ -35,6 +35,10 @@ export const appStateService = {
     return state.webView === true && state.nativeDialog === true
   },
 
+  get nativeCalendarAdd () {
+    return state.webView === true && state.nativeCalendarAdd === true
+  },
+
   get isDesktop () {
     return !state.webView
   },
