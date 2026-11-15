@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
 import { locale } from '@/plugins/locale'
 import { emitter } from '@/plugins/eventBus'
+import { appStateService } from '@/services/appState'
 import InfiniteCalendarGridDaySlotItem from './InfiniteCalendarGridDaySlotItem.vue'
 import InfiniteCalendarGridDaySlotItemSummary from './InfiniteCalendarGridDaySlotItemSummary.vue'
 import dayjs from 'dayjs'
@@ -119,15 +120,17 @@ function getMonthShort (date) {
   } catch (_e) { }
 }
 
-function onClick (e) {
-  const onPlus = e.target.closest('.icg-plus')
-  if (onPlus) {
-    emitter.emit('openAddTransactionModal', {
-      defaultDate: dayjs(props.date).format('YYYY-MM-DD')
-    })
+function onAdd () {
+  const defaultDate = dayjs(props.date).format('YYYY-MM-DD')
+  if (appStateService.nativeCalendarAdd) {
+    window.emitter.emit('createCalendarTransaction', defaultDate)
   } else {
-    router.push(`/date/${moment(props.date).format('YYYY-MM-DD')}/`)
+    emitter.emit('openAddTransactionModal', { defaultDate })
   }
+}
+
+function onClick () {
+  router.push(`/date/${moment(props.date).format('YYYY-MM-DD')}/`)
 }
 
 </script>
@@ -138,7 +141,11 @@ function onClick (e) {
     class="absolute align-right custom-p-8 icg-day-slot"
     @click="onClick"
   >
-    <button class="circle light-gray icg-plus">
+    <button
+      class="circle light-gray icg-plus"
+      type="button"
+      @click.stop="onAdd"
+    >
       <i class="fas fa-plus" />
     </button>
     <div class="icg-day">
