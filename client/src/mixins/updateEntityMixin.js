@@ -1,3 +1,6 @@
+import { appStateService } from '@/services/appState'
+import { confirmDeletion } from '@/services/confirmDeletion'
+
 export default {
 
   data () {
@@ -30,6 +33,7 @@ export default {
 
   methods: {
     submit (entity) {
+      if (this.controlsDisabled) return
       this.$v.$touch()
       if (!this.$v.$invalid) {
         this.controlsDisabled = true
@@ -44,9 +48,10 @@ export default {
 
         this.$store
           .dispatch(`${entity}/update`, params)
-          .then(() => {
-            // FIX: Reload page in case of changing type of category / #106.306
-            if (this.isModeUpdate && entity === 'category' && this.model.type !== this.editedItem.type) {
+          .then(result => {
+            if (result === false) return
+            // The host reloads its catalog after a WebView dialog closes.
+            if (!appStateService.nativeDialog && this.isModeUpdate && entity === 'category' && this.model.type !== this.editedItem.type) {
               location.reload()
               return
             }
@@ -59,18 +64,18 @@ export default {
       }
     },
 
-    remove (entity) {
-      if (confirm(this.$t(`deleteWarning.${entity}`))) {
-        this.controlsDisabled = true
-        this.$store
-          .dispatch(`${entity}/delete`, this.model.id)
-          .then(() => {
-            this.close({ action: 'afterDelete', entity: { type: entity, name: this.model.name } })
-          })
-          .catch(() => {})
-          .finally(() => {
-            this.controlsDisabled = false
-          })
+    async remove (entity) {
+      if (this.controlsDisabled) return
+      const { id, name } = this.model
+      this.controlsDisabled = true
+      try {
+        if (!await confirmDeletion(`deleteWarning.${entity}`) || this._isDestroyed || this.model.id !== id) return
+        const result = await this.$store.dispatch(`${entity}/delete`, id)
+        if (result !== false) this.close({ action: 'afterDelete', entity: { type: entity, name } })
+      } catch (_) {
+        // The API client displays the error.
+      } finally {
+        this.controlsDisabled = false
       }
     },
 
