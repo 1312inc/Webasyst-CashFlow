@@ -48,6 +48,18 @@ html[data-cashflow-native-viewport] {
   top: calc(var(--cash-sticky-top) + 60px);
 }
 
+@media screen and (min-width: 760px) {
+  .c-mobile-build[data-cashflow-native-multi-select="true"] .c-list .c-item .c-item-checkbox,
+  .c-mobile-build[data-cashflow-native-multi-select="true"] .c-transaction-section .c-sticky-header-group .c-item-checkbox {
+    opacity: 1;
+  }
+
+  .c-mobile-build[data-cashflow-native-multi-select="false"] .c-list .c-item .c-item-checkbox,
+  .c-mobile-build[data-cashflow-native-multi-select="false"] .c-transaction-section .c-sticky-header-group .c-item-checkbox {
+    visibility: hidden;
+  }
+}
+
 html[data-cashflow-native-viewport]:has(.c-mobile-build .icg) {
   overscroll-behavior-y: none;
 }
