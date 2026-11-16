@@ -94,7 +94,8 @@ export default {
     return {
       data: [],
       openModal: false,
-      isFetching: false
+      isFetching: true,
+      fetchId: 0
     }
   },
 
@@ -179,10 +180,12 @@ export default {
         to = this.chartInterval.to
         if (to < from) {
           this.data = []
+          this.isFetching = false
           return
         }
       }
 
+      const requestId = ++this.fetchId
       this.isFetching = true
       api
         .get('cash.aggregate.getBreakDown', {
@@ -193,9 +196,11 @@ export default {
           }
         })
         .then(({ data }) => {
+          if (requestId !== this.fetchId) return
           this.data = data
         })
         .finally(() => {
+          if (requestId !== this.fetchId) return
           this.isFetching = false
         })
     }
