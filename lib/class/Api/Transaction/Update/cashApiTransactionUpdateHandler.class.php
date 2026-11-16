@@ -53,7 +53,7 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
             $big_bang_date = (new DateTimeImmutable($big_bang_date))->setTime(0, 0);
             $date = $request->getDate()->setTime(0, 0);
             if ($date < $big_bang_date) {
-                throw new waAPIException('conflict', 'Conflict, big bang date', 409);
+                throw new waAPIException('conflict', 'Impossible to alter the past before the Big Bang date', 409);
             }
         }
 
