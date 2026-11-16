@@ -1,49 +1,21 @@
 import Vue from 'vue'
 
-const initialDarkMode =
-  document.documentElement.getAttribute('data-theme') === 'dark'
+const root = document.documentElement
 
-const DarkModeObserver = new Vue({
-  data () {
-    return {
-      darkMode: initialDarkMode
-    }
-  },
+const initialDarkMode = root.getAttribute('data-theme') === 'dark'
 
-  created () {
-    this.addDarkModeObserver()
-  },
-
-  beforeDestroy () {
-    if (this.darkModeObserver) {
-      this.darkModeObserver.disconnect()
-    }
-  },
-
-  methods: {
-    addDarkModeObserver () {
-      // listen Cash mode switch method
-      const targetNode = document.documentElement
-      if (targetNode) {
-        const config = { attributes: true }
-        const callback = mutationsList => {
-          for (const mutation of mutationsList) {
-            if (mutation.attributeName === 'data-theme') {
-              this.darkMode = targetNode.getAttribute('data-theme') === 'dark'
-            }
-          }
-        }
-        this.darkModeObserver = new MutationObserver(callback)
-        this.darkModeObserver.observe(targetNode, config)
-      }
-    }
-  }
+const darkModeObserver = Vue.observable({
+  darkMode: initialDarkMode
 })
 
-export { initialDarkMode }
+new MutationObserver(() => {
+  darkModeObserver.darkMode = root.getAttribute('data-theme') === 'dark'
+}).observe(root, { attributes: true, attributeFilter: ['data-theme'] })
+
+export { initialDarkMode, darkModeObserver }
 
 export default {
   install: Vue => {
-    Vue.prototype.$darkModeObserver = DarkModeObserver
+    Vue.prototype.$darkModeObserver = darkModeObserver
   }
 }

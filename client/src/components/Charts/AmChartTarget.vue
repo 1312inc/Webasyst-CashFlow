@@ -8,6 +8,7 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 // eslint-disable-next-line camelcase
 import am4themes_animated from '@amcharts/amcharts4/themes/animated'
 import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
+import { darkModeObserver } from '@/plugins/darkModeObserver'
 
 const props = defineProps({
   isPromoMode: {
@@ -194,6 +195,11 @@ function createChart () {
   hand.startWidth = 10
   hand.pin.disabled = true
   hand.value = 0
+  if (darkModeObserver.darkMode) {
+    hand.color = '#fff'
+  } else {
+    hand.color = '#000'
+  }
 
   const handAppearDuration = 900
   const handAppearEase = am4core.ease.cubicOut
