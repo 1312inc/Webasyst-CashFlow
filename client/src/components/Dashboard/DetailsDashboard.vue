@@ -133,17 +133,24 @@ export default {
       return intervalBound ? this.$t(getIntervalFromLabel(type)) : ''
     },
 
+    today () {
+      return this.$moment().format('YYYY-MM-DD')
+    },
+
+    tomorrow () {
+      return this.$moment().add(1, 'day').format('YYYY-MM-DD')
+    },
+
     breakdownWatchKey () {
-      const today = this.$moment().format('YYYY-MM-DD')
       const filter = this.queryParams.filter
 
       if (this.showCustomDates) {
         return `custom|${this.detailsInterval.from}|${this.detailsInterval.to}|${filter}`
       }
       if (this.isPastMode) {
-        return `from|${this.chartInterval.from}|${today}|${filter}`
+        return `from|${this.chartInterval.from}|${this.today}|${filter}`
       }
-      return `to|${today}|${this.chartInterval.to}|${filter}`
+      return `to|${this.tomorrow}|${this.chartInterval.to}|${filter}`
     }
   },
 
@@ -158,7 +165,6 @@ export default {
 
   methods: {
     fetchBreakDown () {
-      const today = this.$moment().format('YYYY-MM-DD')
       let from
       let to
 
@@ -167,10 +173,14 @@ export default {
         to = this.detailsInterval.to
       } else if (this.isPastMode) {
         from = this.chartInterval.from
-        to = today
+        to = this.today
       } else {
-        from = today
+        from = this.tomorrow
         to = this.chartInterval.to
+        if (to < from) {
+          this.data = []
+          return
+        }
       }
 
       this.isFetching = true
