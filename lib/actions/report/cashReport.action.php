@@ -49,6 +49,7 @@ class cashReportAction extends cashViewAction
         }
 
         if ($handler) {
+            $handlerParams = [];
             $reportParams = $reportParams ? explode('&', $reportParams) : [];
             if (cashHelper::isPremium()) {
                 $handlerParams = [
