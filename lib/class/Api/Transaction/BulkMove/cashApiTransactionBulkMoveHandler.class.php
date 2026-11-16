@@ -78,12 +78,26 @@ final class cashApiTransactionBulkMoveHandler implements cashApiHandlerInterface
             $updateData['contractor_contact_id'] = $newContractor->getId();
         }
 
+        $big_bang_date = null;
+        if (cashHelper::isPremium()) {
+            $big_bang_date = (new waAppSettingsModel())->get('cash', 'big_bang_date', null);
+            if ($big_bang_date) {
+                $big_bang_date = (new DateTimeImmutable($big_bang_date))->setTime(0, 0);
+            }
+        }
+
         $saver = new cashTransactionSaver();
         $params = new cashTransactionSaveParamsDto();
         $fields = cash()->getModel(cashTransaction::class)->getMetadata();
         foreach ($transactions as $transaction) {
             if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
                 throw new kmwaForbiddenException(_w('You are not allowed to edit this transaction'));
+            }
+            if ($big_bang_date) {
+                $date = (new DateTimeImmutable($transaction->getDate()))->setTime(0, 0);
+                if ($date < $big_bang_date) {
+                    continue;
+                }
             }
 
             $transactionData = cash()->getHydrator()->extract($transaction, [], $fields);

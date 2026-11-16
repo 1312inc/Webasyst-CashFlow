@@ -48,6 +48,15 @@ class cashApiTransactionUpdateHandler implements cashApiHandlerInterface
         ];
         $repeatingDto->apply_to_all_in_future = $request->isApplyToAllInFuture();
 
+        $big_bang_date = (new waAppSettingsModel())->get('cash', 'big_bang_date', null);
+        if (cashHelper::isPremium() && $big_bang_date) {
+            $big_bang_date = (new DateTimeImmutable($big_bang_date))->setTime(0, 0);
+            $date = $request->getDate()->setTime(0, 0);
+            if ($date < $big_bang_date) {
+                throw new waAPIException('conflict', 'Conflict, big bang date', 409);
+            }
+        }
+
         /** @var cashTransaction $transaction */
         $transaction = cash()->getEntityRepository(cashTransaction::class)->findById($request->getId());
         if (!$transaction) {

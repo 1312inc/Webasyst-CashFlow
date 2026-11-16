@@ -16,6 +16,14 @@ final class cashApiTransactionBulkCompleteHandler implements cashApiHandlerInter
             return true;
         }
 
+        $big_bang_date = null;
+        if (cashHelper::isPremium()) {
+            $big_bang_date = (new waAppSettingsModel())->get('cash', 'big_bang_date', null);
+            if ($big_bang_date) {
+                $big_bang_date = (new DateTimeImmutable($big_bang_date))->setTime(0, 0);
+            }
+        }
+
         $saver = new cashTransactionSaver();
         foreach ($transactions as $transaction) {
             if (!cash()->getContactRights()->canEditOrDeleteTransaction(wa()->getUser(), $transaction)) {
@@ -24,6 +32,13 @@ final class cashApiTransactionBulkCompleteHandler implements cashApiHandlerInter
                     $transaction->getId(),
                     $transaction->getDescription()
                 ));
+            }
+
+            if ($big_bang_date) {
+                $date = (new DateTimeImmutable($transaction->getDate()))->setTime(0, 0);
+                if ($date < $big_bang_date) {
+                    continue;
+                }
             }
 
             $transaction->setIsOnbadge(false)
