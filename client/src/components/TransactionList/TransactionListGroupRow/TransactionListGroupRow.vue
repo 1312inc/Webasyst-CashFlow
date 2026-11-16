@@ -345,6 +345,7 @@
             :transaction="transaction"
             :is-fixed="isCompactMode"
             :account="account"
+            @click.native.stop
             @processEdit="openModal(true)"
           />
         </transition>
