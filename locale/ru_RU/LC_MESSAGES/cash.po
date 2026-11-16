@@ -1975,8 +1975,8 @@ msgstr "Email для восстановления"
 msgid "<b>Behold here!</b> Make sure to enter a valid master email address for immediate alerts on access violation attempts and password recovery. Master password can only be restored via this recovery email."
 msgstr "<b>Важно!</b> Обязательно укажите действующий email‑адрес — на него будут приходить уведомления о попытках нарушения доступа и ссылка для восстановления пароля на случай, если вы его забыли. Восстановить мастер‑пароль можно только через этот email."
 
-msgid "If set, no one will be able to edit any transaction before the specified date."
-msgstr "Если настройка включена, никто не сможет редактировать операции, созданные до указанной даты."
+msgid "No one will be able to edit transactions before the specified date and rewrite the past"
+msgstr "Никто не сможет редактировать операции до указанной даты и переписать историю."
 
 msgid "Saved"
 msgstr "Сохранено"
