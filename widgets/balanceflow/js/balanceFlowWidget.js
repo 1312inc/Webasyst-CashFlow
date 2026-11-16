@@ -48,11 +48,13 @@ function fetchData ({ baseUrl, token }) {
  */
 function makeBallanceFlowWidget (options) {
 
-    const alertMessage = (message) => {
+    const alertMessage = (message, showIcon = true) => {
+        const chart = options.container.querySelector('.cash-widget-chart');
+        if (!chart) { return; }
         const $error = document.createElement("div");
+        chart.after($error);
         $error.innerHTML =
-            `<div class="align-center gray" style="position: absolute; top: 50%;left: 50%; transform: translateX(-50%) translateY(-50%);">${message}</div>`;
-        options.container.appendChild($error);
+            `<div class="align-center gray" style="margin-top: -30px;">${showIcon ? `<i class="fas fa-lock"></i>&nbsp;` : ''} ${message}</div>`;
     };
 
     const spinner = options.container.querySelector('.cash-widget-spinner');
