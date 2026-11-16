@@ -1,11 +1,9 @@
 import updateHeaderTodayCounter from '../utils/updateHeaderTodayCounter'
 
 const dispatchAll = (store) => {
-  return Promise.all([
-    store.dispatch('transaction/getTodayCount'),
-    store.dispatch('account/getList'),
-    store.dispatch('balanceFlow/getBalanceFlow')
-  ])
+  store.dispatch('transaction/getTodayCount')
+  store.dispatch('account/getList')
+  store.dispatch('balanceFlow/getBalanceFlow')
 }
 
 export default (store) => {
@@ -16,7 +14,8 @@ export default (store) => {
       case 'transaction/updateTransactions':
       case 'transaction/deleteTransaction':
       case 'transaction/createTransactions':
-        return dispatchAll(store)
+        dispatchAll(store)
+        break
       case 'transaction/updateTransactionProps':
         if ('is_onbadge' in payload.props) {
           store.dispatch('transaction/getTodayCount')
@@ -27,6 +26,7 @@ export default (store) => {
         break
       case 'transaction/setTodayCount':
         updateHeaderTodayCounter(payload)
+        break
     }
   })
 
@@ -52,10 +52,9 @@ export default (store) => {
         case 'transactionBulk/bulkMove':
         case 'transactionBulk/restore':
         case 'transactionBulk/purge':
-          return Promise.all([
-            store.dispatch('transaction/fetchTransactions'),
-            dispatchAll(store)
-          ])
+          store.dispatch('transaction/fetchTransactions')
+          dispatchAll(store)
+          break
       }
     }
   })

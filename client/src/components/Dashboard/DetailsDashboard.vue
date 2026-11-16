@@ -156,6 +156,25 @@ export default {
     }
   },
 
+  created () {
+    this.unsubscribeFromMutations = this.$store.subscribe(({ type }) => {
+      switch (type) {
+        case 'transaction/updateTransactions':
+        case 'transaction/deleteTransaction':
+        case 'transaction/createTransactions':
+          this.fetchBreakDown()
+      }
+    })
+
+    this.unsubscribeFromActions = this.$store.subscribeAction({
+      after: ({ type }) => {
+        if (type === 'transactionBulk/bulkMove') {
+          this.fetchBreakDown()
+        }
+      }
+    })
+  },
+
   watch: {
     dashboardData: {
       handler (item) {
@@ -173,6 +192,8 @@ export default {
   },
 
   beforeDestroy () {
+    this.unsubscribeFromMutations()
+    this.unsubscribeFromActions()
     clearBreakdownTotals(this.mode)
   },
 
