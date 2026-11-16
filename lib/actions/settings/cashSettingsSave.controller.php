@@ -102,6 +102,8 @@ class cashSettingsSaveController extends cashJsonController
         $big_bang_date = waRequest::post('bigbang', '', waRequest::TYPE_STRING_TRIM);
         if ($big_bang_date) {
             $this->settings_model->set('cash', 'big_bang_date', $big_bang_date);
+        } else {
+            $this->settings_model->del('cash', 'big_bang_date');
         }
 
         return true;
