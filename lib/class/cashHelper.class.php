@@ -182,4 +182,30 @@ final class cashHelper
 
         return $dt->format('Y-m-d\TH:i:s.u\Z');
     }
+
+    public static function sendEmail($email_to, $subject = '', $text = '')
+    {
+        $result = false;
+        if (empty($subject)) {
+            $subject = ifempty($subject, _w('Cash Flow alert'));
+        }
+
+        if ($email_to && $text) {
+            try {
+                $message = new waMailMessage($subject, $text);
+                $message->setFrom(wa()->getSetting('email', '', 'webasyst'));
+                $message->setTo($email_to);
+                $result = $message->send();
+                if (!$result) {
+                    cash()->getLogger()->log([_w('Email not sent'), $email_to, $subject, $text]);
+                }
+            } catch (Exception $ex) {
+                cash()->getLogger()->log([_w('Email not sent'), $ex->getMessage(), $email_to, $subject, $text], 'error');
+            }
+        } else {
+            cash()->getLogger()->log([_w('Email not sent'), _w('Email not sent: either recipient or email content are empty'), $subject]);
+        }
+
+        return $result;
+    }
 }
