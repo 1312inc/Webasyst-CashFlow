@@ -132,6 +132,7 @@
 <script>
 import ChartBar from '@/components/Charts/AmChartBar'
 import AmChartLegend from '@/components/Charts/AmChartLegend'
+import { breakdownTotals } from '@/utils/breakdownTotals'
 export default {
 
   components: {
@@ -168,11 +169,25 @@ export default {
     },
 
     maxAmount () {
-      return Math.max(
+      const localAmounts = [
         this.itemData.income.totalAmount,
         this.itemData.expense.totalAmount,
         this.itemData.profit.totalAmount
-      ) || 1
+      ]
+      const from = breakdownTotals.from
+      const to = breakdownTotals.to
+      const amounts = from && to
+        ? [
+            from.income,
+            from.expense,
+            from.profit,
+            to.income,
+            to.expense,
+            to.profit
+          ]
+        : localAmounts
+
+      return Math.max(...amounts) || 1
     }
   }
 }

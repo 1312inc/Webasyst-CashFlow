@@ -71,6 +71,7 @@ import DetailsDashboardItem from './DetailsDashboardItem.vue'
 import UpdateDetailsInterval from '@/components/Modals/UpdateDetailsInterval'
 import ExportButton from '@/components/Buttons/ExportButton'
 import { getIntervalFromLabel } from '@/utils/getDateFromLocalStorage'
+import { clearBreakdownTotals, setBreakdownTotals } from '@/utils/breakdownTotals'
 import { defineAsyncComponent } from 'vue'
 
 export default {
@@ -156,12 +157,23 @@ export default {
   },
 
   watch: {
+    dashboardData: {
+      handler (item) {
+        setBreakdownTotals(this.mode, item)
+      },
+      immediate: true
+    },
+
     breakdownWatchKey: {
       handler () {
         this.fetchBreakDown()
       },
       immediate: true
     }
+  },
+
+  beforeDestroy () {
+    clearBreakdownTotals(this.mode)
   },
 
   methods: {
