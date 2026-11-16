@@ -63,7 +63,7 @@
                     </div>
 
                     {if $has_password}
-                    <div class="field">
+                    <div class="field js-new-password-fields"{if $has_password} style="display: none"{/if}>
                         <div class="name"></div>
                         <div class="value">
                             <label>
@@ -90,12 +90,13 @@
                     </div>
                 </div>
 
-                <div class="fields-group">
-                    <h5 class="heading">[`Большой взрыв`]</h5>
+                <div class="fields-group blank custom-mt-0">
+                    <h5 class="heading">[`The Big Bang moment`]</h5>
                     <div class="field">
-                        <div class="name">[`Момент`]</div>
+                        <div class="name for-input">[`Date`]</div>
                         <div class="value">
                             <input type="date" name="bigbang[date]" value="{$big_bang_date|date_format:"Y-m-d"}">
+                            <p class="hint">[`If set, no one will be able to edit any transaction before the specified date.`]</p>
                         </div>
                     </div>
                 </div>
@@ -103,9 +104,11 @@
                 {if $is_premium}
                 <div class="field">
                     <div class="value submit">
-                        {$wa->csrf()}
-                        <button type="submit" class="button green">[`Save`]</button>
-                        <span class="state-message c-settings-status" style="margin-left: 10px;"></span>
+                        <div class="custom-ml-16">
+                            {$wa->csrf()}
+                            <button type="submit" class="button green">[`Save`]</button>
+                            <span class="state-message c-settings-status" style="margin-left: 10px;"></span>
+                        </div>
                     </div>
                 </div>
                 {/if}

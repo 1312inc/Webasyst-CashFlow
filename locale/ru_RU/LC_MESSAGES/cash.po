@@ -1355,10 +1355,10 @@ msgid "Create templates with fixed parameters (such as category, account, amount
 msgstr "Создавайте готовые шаблоны операций для быстрого добавления. Фиксируйте нужные параметры (статья, счет, сумма и т.д.), добавляйте новые операции быстрее и без ошибок."
 
 msgid "The Big Bang moment"
-msgstr "Закрытие периодов"
+msgstr "Момент «Большого взрыва»"
 
 msgid "Set a a specific date as a Big Bang moment and be sure that no can adjust anything before that date."
-msgstr "Устанавливайте «момент Большого взрыва» так, чтобы никто не мог переписать историю и редактировать архивные данные до заданной даты."
+msgstr "Фиксируйте дату, ранее которой никто и никогда не сможет переписывать историю и редактировать архивные операции."
 
 msgid "Account groups"
 msgstr "Группы счетов"
@@ -1932,3 +1932,78 @@ msgstr "я"
 
 msgid "All users"
 msgstr "Все сотрудники"
+
+msgid "Master password lock"
+msgstr "Мастер‑пароль"
+
+msgid "Status"
+msgstr "Статус"
+
+msgid "Master password is ON"
+msgstr "Мастер‑пароль включен"
+
+msgid "Master password is OFF"
+msgstr "Мастер‑пароль выключен"
+
+msgid "Master password is an additional layer of security and is universal for all your teammates. Every user with an access to the app will be required to enter a master password to open the app."
+msgstr "Мастер‑пароль — это дополнительный уровень защиты, единый для всех пользователей приложения. Каждый сотрудник, у которого есть доступ к приложению, должен будет ввести мастер‑пароль, чтобы открыть приложение."
+
+msgid "Current password"
+msgstr "Текущий пароль"
+
+msgid "Change password"
+msgstr "Изменить пароль"
+
+msgid "Enter your existing master password to make any changes to the security settings."
+msgstr "Введите текущий мастер‑пароль, чтобы внести изменения в настройки безопасности."
+
+msgid "Set master password"
+msgstr "Установить пароль"
+
+msgid "New password"
+msgstr "Новый пароль"
+
+msgid "Confirm password"
+msgstr "Подтвердите пароль"
+
+msgid "Disable master password"
+msgstr "Отключить мастер‑пароль"
+
+msgid "Recovery email"
+msgstr "Email для восстановления"
+
+msgid "<b>Behold here!</b> Make sure to enter a valid master email address for immediate alerts on access violation attempts and password recovery. Master password can only be restored via this recovery email."
+msgstr "<b>Важно!</b> Обязательно укажите действующий email‑адрес — на него будут приходить уведомления о попытках нарушения доступа и ссылка для восстановления пароля на случай, если вы его забыли. Восстановить мастер‑пароль можно только через этот email."
+
+msgid "If set, no one will be able to edit any transaction before the specified date."
+msgstr "Если настройка включена, никто не сможет редактировать операции, созданные до указанной даты."
+
+msgid "Saved"
+msgstr "Сохранено"
+
+msgid "Failed to save"
+msgstr "Не удалось сохранить"
+
+msgid "Master password"
+msgstr "Мастер‑пароль"
+
+msgid "Account groups, tags, projects"
+msgstr "Группы счетов, теги, проекты"
+
+msgid "Enter master password to open the app"
+msgstr "Введите мастер‑пароль, чтобы войти"
+
+msgid "Enter your existing password to confirm access"
+msgstr "Введите текущий пароль для подтверждения доступа"
+
+msgid "Invalid master password"
+msgstr "Неверный мастер‑пароль"
+
+msgid "Recovery email is required"
+msgstr "Нужно ввести email-адрес для восстановления"
+
+msgid "Passwords do not match"
+msgstr "Пароли не совпадают"
+
+msgid "Unauthorized"
+msgstr "Нет доступа"
