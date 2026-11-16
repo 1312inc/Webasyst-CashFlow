@@ -32,10 +32,10 @@ abstract class cashApiNewAbstractMethod extends waAPIMethod
 
     public function execute()
     {
+        if (cashHelper::checkAccessCode() === false) {
+            throw new waAPIException('invalid_master_code', _w('Unauthorized'), 401);
+        }
         try {
-            if (cashHelper::checkAccessCode() === false) {
-                throw new ApiException('invalid_master_code', _w('Unauthorized'), 401);
-            }
             $handlerResult = $this->run();
             $this->response = $handlerResult->getResponseBody();
             $this->http_status_code = $handlerResult->getStatus();
