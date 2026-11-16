@@ -3,6 +3,7 @@
     id="wa-app"
     class="c-mobile-build"
     :class="{ 'c-multi-select-mode': $helper.hasSelectedTransactions() }"
+    :data-cashflow-native-multi-select="$appState.webView ? String($helper.showMultiSelect()) : null"
   >
     <div v-if="!$IsOnline.online" class="c-mobile-offline">
       <span
