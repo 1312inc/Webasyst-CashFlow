@@ -65,6 +65,24 @@
                 :key="template.id"
               >
                 <a @click.prevent="addTransactionFromTemplate(template, close)">
+                  <span
+                    v-if="getTemplateCategory(template)?.glyph"
+                    class="icon"
+                  >
+                    <i
+                      :class="getTemplateCategory(template).glyph"
+                      :style="`color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
+                  <span
+                    v-else-if="getTemplateCategory(template)"
+                    class="icon"
+                  >
+                    <i
+                      class="rounded"
+                      :style="`background-color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
                   <span>{{ getTemplateLabel(template) }}</span>
                 </a>
               </li>
@@ -98,6 +116,24 @@
                 :key="template.id"
               >
                 <a @click.prevent="addTransactionFromTemplate(template, close)">
+                  <span
+                    v-if="getTemplateCategory(template)?.glyph"
+                    class="icon"
+                  >
+                    <i
+                      :class="getTemplateCategory(template).glyph"
+                      :style="`color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
+                  <span
+                    v-else-if="getTemplateCategory(template)"
+                    class="icon"
+                  >
+                    <i
+                      class="rounded"
+                      :style="`background-color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
                   <span>{{ getTemplateLabel(template) }}</span>
                 </a>
               </li>
@@ -139,6 +175,24 @@
                 :key="template.id"
               >
                 <a @click.prevent="addTransactionFromTemplate(template, close)">
+                  <span
+                    v-if="getTemplateCategory(template)?.glyph"
+                    class="icon"
+                  >
+                    <i
+                      :class="getTemplateCategory(template).glyph"
+                      :style="`color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
+                  <span
+                    v-else-if="getTemplateCategory(template)"
+                    class="icon"
+                  >
+                    <i
+                      class="rounded"
+                      :style="`background-color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
                   <span>{{ getTemplateLabel(template) }}</span>
                 </a>
               </li>
@@ -212,7 +266,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      currentType: 'getCurrentType'
+      currentType: 'getCurrentType',
+      getCategoryById: 'category/getById'
     }),
 
     checkedRows () {
@@ -257,6 +312,12 @@ export default {
 
   methods: {
     getTemplateLabel,
+
+    getTemplateCategory (template) {
+      const categoryId = templateContentToDefaults(template.content).category_id
+      if (categoryId == null) return null
+      return this.getCategoryById(categoryId) || null
+    },
 
     addTransaction (type) {
       this.$eventBus.emit('openAddTransactionModal', {
