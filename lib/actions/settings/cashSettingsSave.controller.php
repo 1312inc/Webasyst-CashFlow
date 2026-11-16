@@ -31,8 +31,15 @@ class cashSettingsSaveController extends cashJsonController
             }
             $access_code = $this->settings_model->get('cash', 'access_code', null);
             if (password_verify($data['current_password'], $access_code)) {
+                $email = $this->settings_model->get('cash', 'master_email', null);
                 $this->settings_model->del('cash', 'access_code');
                 $this->settings_model->del('cash', 'master_email');
+                $message = sprintf_wp(
+                    'Так, а вот тут стопэ! %s отключил мастер-пароль на приложение "Деньги". Будьте блительны.<br>IP: %s,<br>User agent: %s',
+                    cash()->getUser()->getName(),
+                    waRequest::getIp(),
+                    waRequest::getUserAgent(),
+                );
             } else {
                 $this->errors = [_w('Invalid master password')];
                 return false;
@@ -57,6 +64,15 @@ class cashSettingsSaveController extends cashJsonController
                         return false;
                     } elseif (password_verify($data['current_password'], $access_code)) {
                         $this->settings_model->set('cash', 'master_email', $data['email']);
+                        $email = $master_email;
+                        $message = sprintf_wp(
+                            '%s в приложении приложении "Деньги" поменял админский емаил с %s -> %s Смотрите в оба!.<br>IP: %s,<br>User agent: %s',
+                            cash()->getUser()->getName(),
+                            $master_email,
+                            $data['email'],
+                            waRequest::getIp(),
+                            waRequest::getUserAgent(),
+                        );
                     } else {
                         $this->errors = [_w('Invalid master password')];
                         return false;
@@ -74,6 +90,13 @@ class cashSettingsSaveController extends cashJsonController
                     } elseif (password_verify($data['current_password'], $access_code)) {
                         $this->settings_model->set('cash', 'access_code', password_hash($data['new_password'], PASSWORD_DEFAULT));
                         wa()->getStorage()->remove('master_access');
+                        $email = $master_email;
+                        $message = sprintf_wp(
+                            'А пароль-то новый! %s поменял мастер-пароль на приложение "Деньги".<br>IP: %s,<br>User agent: %s',
+                            cash()->getUser()->getName(),
+                            waRequest::getIp(),
+                            waRequest::getUserAgent(),
+                        );
                     } else {
                         $this->errors = [_w('Invalid master password')];
                         return false;
@@ -91,7 +114,19 @@ class cashSettingsSaveController extends cashJsonController
                 $this->settings_model->set('cash', 'master_email', $data['email']);
                 $this->settings_model->set('cash', 'access_code', password_hash($data['new_password'], PASSWORD_DEFAULT));
                 wa()->getStorage()->remove('master_access');
+                $email = $data['email'];
+                $message = sprintf_wp(
+                    'Теперь все в домике! %s установил мастер-пароль на приложение "Деньги".<br>IP: %s,<br>User agent: %s',
+                    cash()->getUser()->getName(),
+                    waRequest::getIp(),
+                    waRequest::getUserAgent(),
+                );
             }
+        }
+
+        if (!empty($message) && !empty($email)) {
+            $subject = _w('Система оповещения приложения "Деньги"');
+            cashHelper::sendEmail($email, $subject, $message);
         }
 
         return true;
