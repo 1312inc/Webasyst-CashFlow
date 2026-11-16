@@ -26,6 +26,15 @@ class cashApiTransactionDeleteHandler implements cashApiHandlerInterface
             throw new kmwaForbiddenException(_w('You can not delete this transaction'));
         }
 
+        $big_bang_date = (new waAppSettingsModel())->get('cash', 'big_bang_date', null);
+        if (cashHelper::isPremium() && $big_bang_date) {
+            $big_bang_date = (new DateTimeImmutable($big_bang_date))->setTime(0, 0);
+            $date = (new DateTimeImmutable($transaction->getDate()))->setTime(0, 0);
+            if ($date < $big_bang_date) {
+                throw new waAPIException('conflict', 'Conflict, big bang date', 409);
+            }
+        }
+
         $transaction->setIsArchived(true);
         if (!cash()->getEntityPersister()->update($transaction)) {
             throw new kmwaRuntimeException(_w('Error while deleting transaction'));

@@ -40,6 +40,15 @@ class cashApiTransactionCreateHandler implements cashApiHandlerInterface
             'ondate' => $request->getRepeatingEndOndate() ? $request->getRepeatingEndOndate()->format('Y-m-d') : '',
         ];
 
+        $big_bang_date = (new waAppSettingsModel())->get('cash', 'big_bang_date', null);
+        if (cashHelper::isPremium() && $big_bang_date) {
+            $big_bang_date = (new DateTimeImmutable($big_bang_date))->setTime(0, 0);
+            $date = $request->getDate()->setTime(0, 0);
+            if ($date < $big_bang_date) {
+                throw new waAPIException('conflict', 'Conflict, big bang date', 409);
+            }
+        }
+
         $factory = cash()->getEntityFactory(cashTransaction::class);
         $transaction = $factory->createNew();
 
