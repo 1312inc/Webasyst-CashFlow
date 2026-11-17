@@ -1363,8 +1363,8 @@ msgstr "Фиксируйте дату, ранее которой никто и �
 msgid "Account groups"
 msgstr "Группы счетов"
 
-msgid "Evaluating either we need this feature in the app. <b>Yes or no? <a href=\"%s\" target=\"_blank\">Vote here!</a></b>"
-msgstr "Пока думаем, нужно ли добавлять фичу. <b>Да или нет? <a href=\"%s\" target=\"_blank\">Голосуйте здесь!</a></b>"
+msgid "We welcome your feedback on new features to come! <b><a href=\"%s\" target=\"_blank\">Vote on the forums&nbsp;&rarr;</a></b>"
+msgstr "Принимаем пожелания, думаем, что еще нужно добавить. <b><a href=\"%s\" target=\"_blank\">Голосуйте на&nbsp;форуме&nbsp;&rarr;</a></b>"
 
 msgid "https://support.webasyst.com/forum/ideas/"
 msgstr "https://support.webasyst.ru/forum/48639/prilozhenie-dengi-pozhelaniya-po-premium-ficham-2026-/"
@@ -2031,3 +2031,6 @@ msgstr "Проход запрещен! <b>%s попытался, но не см�
 
 msgid "Master password required"
 msgstr "Нужно ввести мастер-пароль"
+
+msgid "Lock the past"
+msgstr "Блокировка прошлого"
