@@ -17,9 +17,10 @@ class cashBackendAuthAction extends waViewAction
                 $hash = md5($master_email).md5(waRequest::getIp().waRequest::getUserAgent().time());
                 $secret_link = wa()->getRootUrl(true).wa()->getConfig()->getBackendUrl().'/cash/?access_code_reset='.$hash;
                 $text = sprintf_wp(
-                    '%s из вашей команды пробовал проникнуть в "Деньги" на %s и запросил новый пароль. Перегенерить пароль можно тут: <a href="%s">Задать новый пароль</a><br>IP: %s, <br>User agent: %s',
+                    '%s tried to get into the Cash Flow app on %s but did not remember the master password and so initiated its reset. <b>Continue resetting your master password here</b>: <a href="%s"><b>%s</b></a> <br><br>If that wasn’t you, simply ignore this message. Your existing password is still active. <br><br>IP: %s, <br>User agent: %s',
                     wa()->getUser()->getName(),
                     wa()->accountName(),
+                    $secret_link,
                     $secret_link,
                     waRequest::getIp(),
                     waRequest::getUserAgent()
@@ -41,12 +42,12 @@ class cashBackendAuthAction extends waViewAction
                         cash()->getCache()->delete('cash_forgot_password_hash');
                     }
                 } else {
-                    $this->errors[] = _w('К сожалению время на смену пароля по этой ссылке истекло');
+                    $this->errors[] = _w('The link has expired');
                 }
             } elseif (!$access_code || !cashHelper::checkAccessCode($access_code)) {
                 $this->errors[] = _w('Invalid master password');
                 $text = sprintf_wp(
-                    'One shall not pass! <b>%s attemted and failed to enter the valid master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s',
+                    'One shall not pass! %s <b>attempted and failed to enter the valid master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s',
                     wa()->getUser()->getName(),
                     wa()->accountName(),
                     waRequest::getIp(),
@@ -78,8 +79,8 @@ class cashBackendAuthAction extends waViewAction
             'forgot_password' => !empty($reset_hash),
             'hash_expired' => $hash_expired ?? true,
             'locale' => [
-                'forgot_dialog_text' => sprintf_wp('Письмо со ссылкой на сброс пароля отправлено по адресу %s', "<div class='align-center bold h4'>$email</div>"),
-                'forgot_dialog_text_ext' => _w('Если нет доступа к почте, то сбросить пароль вы можете только имея доступ к БД на сервере. Дас ис фюр потребляйтен защитен.')
+                'forgot_dialog_text' => '<i class="fas fa-check-circle text-green"></i> ' . sprintf_wp('Check your email: %s', "<b>$email</b>"),
+                'forgot_dialog_text_ext' => _w('If you don’t have access to this email, the only way to reset the password is to contact your team’s IT person to do this for you via root access privileges. For security purposes, there are no workarounds.')
             ]
         ]);
     }

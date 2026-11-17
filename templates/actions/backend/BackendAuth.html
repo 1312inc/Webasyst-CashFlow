@@ -54,7 +54,7 @@
                 <button class="icon"><i class="fas fa-lock text-light-gray"></i></button>
             </div>
             <div class="state-error small custom-mt-16" id="cash-auth-error"></div>
-            <a href="#" class="button nobutton js-forgot-password">[`Forgot Password?`]</a>
+            <a href="#" class="button nobutton js-forgot-password">[`Forgot password?`]</a>
         </form>
         {/if}
         <div class="wide"></div>
@@ -139,9 +139,10 @@
         $('.js-forgot-password').on('click', function (e) {
             e.preventDefault();
             $.waDialog.confirm({
-                title: '<i class="fas fa-exclamation-triangle smaller state-error"></i> [`Сброс и восстановление пароля`]',
-                text: '[`Подтверждение сброса пароля`]',
-                success_button_title: '[`Сбросить`]',
+                title: '[`Reset master password`]',
+                text: '<i class="fas fa-exclamation-triangle text-yellow"></i> [`A link to reset the master password <b>will be sent to the recovery email</b> previously saved in the app settings.`]',
+                success_button_title: '[`Send the reset link`]',
+                success_button_class: 'warning',
                 cancel_button_title: '[`Cancel`]',
                 cancel_button_class: 'light-gray',
                 onSuccess: function () {
@@ -149,9 +150,9 @@
                         if (data.status === 'ok') {
                             $.waDialog.alert({
                                 title: '',
-                                text: {$locale.forgot_dialog_text|json_encode} + {$locale.forgot_dialog_text_ext|json_encode},
-                                button_title: '[`Ok`]',
-                                button_class: 'warning',
+                                text: {$locale.forgot_dialog_text|json_encode} + '<br><br>' + {$locale.forgot_dialog_text_ext|json_encode},
+                                button_title: '[`Ok, thanks`]',
+                                button_class: 'light-gray',
                             });
                             return;
                         }
