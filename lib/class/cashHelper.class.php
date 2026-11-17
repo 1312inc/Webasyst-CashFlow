@@ -192,6 +192,9 @@ final class cashHelper
 
         if ($email_to && $text) {
             try {
+                $old_error_reporting = error_reporting();
+                error_reporting($old_error_reporting & ~E_DEPRECATED);
+
                 $message = new waMailMessage($subject, $text);
                 $message->setFrom(wa()->getSetting('email', '', 'webasyst'));
                 $message->setTo($email_to);
@@ -201,6 +204,8 @@ final class cashHelper
                 }
             } catch (Exception $ex) {
                 cash()->getLogger()->log([_w('Email not sent'), $ex->getMessage(), $email_to, $subject, $text], 'error');
+            } finally {
+                error_reporting($old_error_reporting);
             }
         } else {
             cash()->getLogger()->log([_w('Email not sent'), _w('Email not sent: either recipient or email content are empty'), $subject]);
