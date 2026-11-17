@@ -2036,34 +2036,34 @@ msgid "Lock the past"
 msgstr "Блокировка прошлого"
 
 msgid "Forgot password?"
-msgstr ""
+msgstr "Забыли пароль?"
 
 msgid "Reset master password"
-msgstr ""
+msgstr "Сбросить мастер‑пароль"
 
 msgid "A link to reset the master password <b>will be sent to the recovery email</b> previously saved in the app settings."
-msgstr ""
+msgstr "Ссылка для сброса мастер‑пароля <b>будет отправлена на мастер-адрес электронной почты для восстановления</b>, который ранее был сохранен в настройках приложения."
 
 msgid "Send the reset link"
-msgstr ""
+msgstr "Отправить ссылку для сброса"
 
 msgid "Ok, thanks"
-msgstr ""
+msgstr "Ок, спасибо"
 
 msgid "Cash Flow: master password alert!"
-msgstr ""
+msgstr "Деньги: предупреждение о мастер‑пароле!"
 
 msgid "The link has expired"
-msgstr ""
+msgstr "Срок действия ссылки истек"
 
 msgid "If you don’t have access to this email, the only way to reset the password is to contact your team’s IT person to do this for you via root access privileges. For security purposes, there are no workarounds."
-msgstr ""
+msgstr "Если у вас нет доступа к этому адресу электронной почты, единственный способ сбросить пароль — обратиться к ИТ‑специалисту вашей команды, чтобы он сделал это на правах root‑доступа. В целях безопасности обходных вариантов не предусмотрено."
 
 msgid "%s tried to get into the Cash Flow app on %s but did not remember the master password and so initiated its reset. <b>Continue resetting your master password here</b>: <a href=\"%s\"><b>%s</b></a> <br><br>If that wasn’t you, simply ignore this message. Your existing password is still active. <br><br>IP: %s, <br>User agent: %s"
-msgstr ""
+msgstr "%s пытался войти в приложение «Деньги» на %s, но не вспомнил мастер‑пароль и поэтому инициировал его сброс. <b>Продолжите сброс мастер‑пароля здесь</b>: <a href=\"%s\"><b>%s</b></a> <br><br>Если это были не вы, просто проигнорируйте это сообщение. Ваш текущий пароль остался без изменений. <br><br>IP: %s, <br>User agent: %s"
 
 msgid "Check your email: %s"
-msgstr ""
+msgstr "Проверьте почту: %s"
 
 msgid "The link has expired. Please try resetting the password once again and act quickly."
-msgstr ""
+msgstr "Срок действия ссылки истек. Попробуйте еще раз и действуйте побыстрее!"
