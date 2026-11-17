@@ -2011,26 +2011,59 @@ msgstr "Нет доступа"
 msgid "Cash Flow: master password notification"
 msgstr "Деньги: уведомление о мастер-пароле"
 
-msgid "Behold! <b>%s disabled the master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s"
-msgstr "Внимание! <b>%s отключил мастер-пароль</b> для приложения «Деньги» на <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+msgid "Behold! %s <b>disabled the master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s"
+msgstr "Внимание! %s <b>отключил мастер-пароль</b> для приложения «Деньги» на %s. <br>IP: %s, <br>User agent: %s"
 
-msgid "Achtung! <b>%s changed the master password recovery email</b> for the Cash Flow app from %s to %s on <b>%s</b>. <br>IP: %s, <br>User agent: %s"
-msgstr "Ахтунг! <b>%s изменил адрес электронной почты для восстановления мастер-пароля</b> в приложении «Деньги» с %s на %s на <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+msgid "Achtung! %s <b>changed the master password recovery email</b> for the Cash Flow app from %s to %s on %s. <br>IP: %s, <br>User agent: %s"
+msgstr "Ахтунг! %s <b>изменил адрес электронной почты для восстановления мастер-пароля</b> в приложении «Деньги» с %s на %s на %s. <br>IP: %s, <br>User agent: %s"
 
-msgid "May I have your attention, please? <b>%s changed the master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s"
-msgstr "Обратите внимание! <b>%s изменил мастер-пароль</b> для приложения «Деньги» на <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+msgid "May I have your attention, please? %s <b>changed the master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s"
+msgstr "Обратите внимание! %s <b>изменил мастер-пароль</b> для приложения «Деньги» на %s. <br>IP: %s, <br>User agent: %s"
 
-msgid "Success! <b>%s enabled the master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s"
-msgstr "Это успех! <b>%s включил мастер-пароль</b> для приложения «Деньги» на <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+msgid "Success! %s <b>enabled the master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s"
+msgstr "Это успех! %s <b>включил мастер-пароль</b> для приложения «Деньги» на %s. <br>IP: %s, <br>User agent: %s"
 
 msgid "Cash Flow: master password fail alert!"
 msgstr "Деньги: неудачная попытка ввода мастер-пароля!"
 
-msgid "One shall not pass! <b>%s attemted and failed to enter the valid master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s"
-msgstr "Проход запрещен! <b>%s попытался, но не смог ввести правильный мастер-пароль</b> для приложения «Деньги» на <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+msgid "One shall not pass! %s <b>attempted and failed to enter the valid master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s"
+msgstr "Не теряем бдительность! %s <b>попытался, но не смог ввести правильный мастер-пароль</b> для приложения «Деньги» на %s. <br>IP: %s, <br>User agent: %s"
 
 msgid "Master password required"
 msgstr "Нужно ввести мастер-пароль"
 
 msgid "Lock the past"
 msgstr "Блокировка прошлого"
+
+msgid "Forgot password?"
+msgstr ""
+
+msgid "Reset master password"
+msgstr ""
+
+msgid "A link to reset the master password <b>will be sent to the recovery email</b> previously saved in the app settings."
+msgstr ""
+
+msgid "Send the reset link"
+msgstr ""
+
+msgid "Ok, thanks"
+msgstr ""
+
+msgid "Cash Flow: master password alert!"
+msgstr ""
+
+msgid "The link has expired"
+msgstr ""
+
+msgid "If you don’t have access to this email, the only way to reset the password is to contact your team’s IT person to do this for you via root access privileges. For security purposes, there are no workarounds."
+msgstr ""
+
+msgid "%s tried to get into the Cash Flow app on %s but did not remember the master password and so initiated its reset. <b>Continue resetting your master password here</b>: <a href=\"%s\"><b>%s</b></a> <br><br>If that wasn’t you, simply ignore this message. Your existing password is still active. <br><br>IP: %s, <br>User agent: %s"
+msgstr ""
+
+msgid "Check your email: %s"
+msgstr ""
+
+msgid "The link has expired. Please try resetting the password once again and act quickly."
+msgstr ""
