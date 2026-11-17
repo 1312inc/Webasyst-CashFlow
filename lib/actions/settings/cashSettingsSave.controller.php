@@ -35,8 +35,9 @@ class cashSettingsSaveController extends cashJsonController
                 $this->settings_model->del('cash', 'access_code');
                 $this->settings_model->del('cash', 'master_email');
                 $message = sprintf_wp(
-                    'Так, а вот тут стопэ! %s отключил мастер-пароль на приложение "Деньги". Будьте блительны.<br>IP: %s,<br>User agent: %s',
+                    'Behold! <b>%s disabled the master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s',
                     cash()->getUser()->getName(),
+                    wa()->accountName(),
                     waRequest::getIp(),
                     waRequest::getUserAgent(),
                 );
@@ -66,10 +67,11 @@ class cashSettingsSaveController extends cashJsonController
                         $this->settings_model->set('cash', 'master_email', $data['email']);
                         $email = $master_email;
                         $message = sprintf_wp(
-                            '%s в приложении приложении "Деньги" поменял админский емаил с %s -> %s Смотрите в оба!.<br>IP: %s,<br>User agent: %s',
+                            'Achtung! <b>%s changed the recovery email</b> for the Cash Flow app from %s to %s on <b>%s</b>. <br>IP: %s, <br>User agent: %s',
                             cash()->getUser()->getName(),
                             $master_email,
                             $data['email'],
+                            wa()->accountName(),
                             waRequest::getIp(),
                             waRequest::getUserAgent(),
                         );
@@ -92,8 +94,9 @@ class cashSettingsSaveController extends cashJsonController
                         wa()->getStorage()->remove('master_access');
                         $email = $master_email;
                         $message = sprintf_wp(
-                            'А пароль-то новый! %s поменял мастер-пароль на приложение "Деньги".<br>IP: %s,<br>User agent: %s',
+                            'May I have your attention, please? <b>%s changed the master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s',
                             cash()->getUser()->getName(),
+                            wa()->accountName(),
                             waRequest::getIp(),
                             waRequest::getUserAgent(),
                         );
@@ -116,8 +119,9 @@ class cashSettingsSaveController extends cashJsonController
                 wa()->getStorage()->remove('master_access');
                 $email = $data['email'];
                 $message = sprintf_wp(
-                    'Теперь все в домике! %s установил мастер-пароль на приложение "Деньги".<br>IP: %s,<br>User agent: %s',
+                    'Success! <b>%s enabled the master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s',
                     cash()->getUser()->getName(),
+                    wa()->accountName(),
                     waRequest::getIp(),
                     waRequest::getUserAgent(),
                 );
@@ -125,7 +129,7 @@ class cashSettingsSaveController extends cashJsonController
         }
 
         if (!empty($message) && !empty($email)) {
-            $subject = _w('Система оповещения приложения "Деньги"');
+            $subject = _w('Cash Flow: master password notification');
             cashHelper::sendEmail($email, $subject, $message);
         }
 

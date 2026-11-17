@@ -15,12 +15,13 @@ class cashBackendAuthAction extends waViewAction
                 $this->errors[] = _w('Invalid master password');
                 $master_code = (new waAppSettingsModel())->get('cash', 'master_email', null);
                 $text = sprintf_wp(
-                    'Ахтунг! Такой-то юзернейм %s пробовал проникнуть в "Деньги", но ввел неверный мастер-пароль<br>IP: %s,<br>User agent: %s',
+                    'One shall not pass! <b>%s attemted and failed to enter the valid master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s',
                     wa()->getUser()->getName(),
+                    wa()->accountName(),
                     waRequest::getIp(),
                     waRequest::getUserAgent()
                 );
-                cashHelper::sendEmail($master_code, _w('Система оповещения приложения "Деньги"'), $text);
+                cashHelper::sendEmail($master_code, _w('Cash Flow: master password alert!'), $text);
             }
 
             $this->getResponse()->addHeader('Content-type', 'application/json');
