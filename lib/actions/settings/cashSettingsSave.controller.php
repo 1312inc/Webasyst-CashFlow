@@ -67,7 +67,7 @@ class cashSettingsSaveController extends cashJsonController
                         $this->settings_model->set('cash', 'master_email', $data['email']);
                         $email = $master_email;
                         $message = sprintf_wp(
-                            'Achtung! <b>%s changed the recovery email</b> for the Cash Flow app from %s to %s on <b>%s</b>. <br>IP: %s, <br>User agent: %s',
+                            'Achtung! <b>%s changed the master password recovery email</b> for the Cash Flow app from %s to %s on <b>%s</b>. <br>IP: %s, <br>User agent: %s',
                             cash()->getUser()->getName(),
                             $master_email,
                             $data['email'],

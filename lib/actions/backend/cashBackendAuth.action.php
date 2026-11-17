@@ -21,7 +21,7 @@ class cashBackendAuthAction extends waViewAction
                     waRequest::getIp(),
                     waRequest::getUserAgent()
                 );
-                cashHelper::sendEmail($master_code, _w('Cash Flow: master password alert!'), $text);
+                cashHelper::sendEmail($master_code, _w('Cash Flow: master password fail alert!'), $text);
             }
 
             $this->getResponse()->addHeader('Content-type', 'application/json');

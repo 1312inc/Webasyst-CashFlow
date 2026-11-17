@@ -2007,3 +2007,24 @@ msgstr "Пароли не совпадают"
 
 msgid "Unauthorized"
 msgstr "Нет доступа"
+
+msgid "Cash Flow: master password notification"
+msgstr "Деньги: уведомление о мастер-пароле"
+
+msgid "Behold! <b>%s disabled the master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+msgstr "Внимание! <b>%s отключил мастер-пароль</b> для приложения «Деньги» на <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+
+msgid "Achtung! <b>%s changed the master password recovery email</b> for the Cash Flow app from %s to %s on <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+msgstr "Ахтунг! <b>%s изменил адрес электронной почты для восстановления мастер-пароля</b> в приложении «Деньги» с %s на %s на <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+
+msgid "May I have your attention, please? <b>%s changed the master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+msgstr "Обратите внимание! <b>%s изменил мастер-пароль</b> для приложения «Деньги» на <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+
+msgid "Success! <b>%s enabled the master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+msgstr "Это успех! <b>%s включил мастер-пароль</b> для приложения «Деньги» на <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+
+msgid "Cash Flow: master password fail alert!"
+msgstr "Деньги: неудачная попытка ввода мастер-пароля!"
+
+msgid "One shall not pass! <b>%s attemted and failed to enter the valid master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+msgstr "Проход запрещен! <b>%s попытался, но не смог ввести правильный мастер-пароль</b> для приложения «Деньги» на <b>%s</b>. <br>IP: %s, <br>User agent: %s"
