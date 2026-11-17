@@ -5,7 +5,7 @@
  */
 final class cashHelper
 {
-    const ACCESS_LIFE = 300;  //seconds
+    const ACCESS_LIFE = 3600;  //seconds
 
     /**
      * @param $access_code
