@@ -2028,3 +2028,6 @@ msgstr "Деньги: неудачная попытка ввода мастер-
 
 msgid "One shall not pass! <b>%s attemted and failed to enter the valid master password</b> for the Cash Flow app on <b>%s</b>. <br>IP: %s, <br>User agent: %s"
 msgstr "Проход запрещен! <b>%s попытался, но не смог ввести правильный мастер-пароль</b> для приложения «Деньги» на <b>%s</b>. <br>IP: %s, <br>User agent: %s"
+
+msgid "Master password required"
+msgstr "Нужно ввести мастер-пароль"

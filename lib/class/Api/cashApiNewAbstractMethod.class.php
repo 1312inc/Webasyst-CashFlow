@@ -33,7 +33,7 @@ abstract class cashApiNewAbstractMethod extends waAPIMethod
     public function execute()
     {
         if (cashHelper::checkAccessCode() === false) {
-            throw new waAPIException('invalid_master_code', _w('Unauthorized'), 401);
+            throw new waAPIException('invalid_master_code', _w('Master password required'), 401);
         }
         try {
             $handlerResult = $this->run();
