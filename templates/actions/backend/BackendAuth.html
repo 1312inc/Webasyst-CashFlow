@@ -14,6 +14,39 @@
     {$wa->header()}
     <div id="wa-app" class="flexbox vertical" style="min-height: calc(100vh - 4rem);">
         <div class="wide"></div>
+        {if $forgot_password}
+            {if $hash_expired}
+            <div class="align-center">
+                [`К сожалению время на смену пароля по этой ссылке истекло`]
+            </div>
+            {else}
+            <form id="cash-forgot-password-form" class="align-center">
+                <div class="fields vertical">
+                    <div class="field">
+                        <div class="name for-input">[`New password`]</div>
+                        <div class="value">
+                            <input type="password" class="long" name="new_password" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="name for-input">[`Confirm password`]</div>
+                        <div class="value">
+                            <input type="password" class="long" name="confirm_password" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="value submit">
+                            <div class="custom-ml-16">
+                                <button type="submit" class="button green" disabled>[`Confirm`]</button>
+                                <div class="state-error small custom-mt-16" id="cash-forgot-password-error"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            {/if}
+        {else}
         <form id="cash-auth-form" class="align-center">
             <h3 class="custom-mb-24">[`Master password`]</h3>
             <div class="state-with-inner-icon right" style="font-size: 1.6rem;">
@@ -21,13 +54,56 @@
                 <button class="icon"><i class="fas fa-lock text-light-gray"></i></button>
             </div>
             <div class="state-error small custom-mt-16" id="cash-auth-error"></div>
+            <a href="#" class="button nobutton js-forgot-password">[`Forgot Password?`]</a>
         </form>
+        {/if}
         <div class="wide"></div>
     </div>
 </div>
 
 <script>
     $(document).ready(function () {
+        {if $forgot_password}
+        let new_pass;
+        let confirm_pass;
+        let access_code_reset;
+        let $password_form = $('#cash-forgot-password-form');
+        let $password_error = $('#cash-forgot-password-error');
+
+        $password_form.on('change', '[name="new_password"], [name="confirm_password"]', function (e) {
+            if ($.trim($(this).val())) {
+                $password_form.find('[type="submit"]').prop('disabled', false);
+            } else {
+                $password_form.find('[type="submit"]').prop('disabled', true);
+            }
+        });
+
+        $password_form.on('submit', function (e) {
+            e.preventDefault();
+            $password_error.text('');
+
+            const url_params = new URLSearchParams(window.location.search);
+            access_code_reset = url_params.get('access_code_reset');
+            new_pass = $.trim($(this).find('[name="new_password"]').val());
+            confirm_pass = $.trim($(this).find('[name="confirm_password"]').val());
+            if (new_pass !== confirm_pass) {
+                $password_error.text('[`Passwords do not match`]');
+                return false;
+            }
+
+            $.post('?module=backendAuth', { new_pass: new_pass, confirm_pass: confirm_pass, access_code_reset: access_code_reset }, function (data) {
+                if (data.status === 'ok') {
+                    window.location.href = '{$wa_app_url}';
+                    return;
+                }
+                if (data.errors) {
+                    $password_error.text(data.errors.join('. '));
+                }
+            }).fail(function () {
+                sending = false;
+            });
+        });
+        {else}
         var $form = $('#cash-auth-form');
         var $error = $('#cash-auth-error');
         var sending = false;
@@ -59,6 +135,36 @@
                 sending = false;
             });
         });
+
+        $('.js-forgot-password').on('click', function (e) {
+            e.preventDefault();
+            $.waDialog.confirm({
+                title: '<i class="fas fa-exclamation-triangle smaller state-error"></i> [`Сброс и восстановление пароля`]',
+                text: '[`Подтверждение сброса пароля`]',
+                success_button_title: '[`Сбросить`]',
+                cancel_button_title: '[`Cancel`]',
+                cancel_button_class: 'light-gray',
+                onSuccess: function () {
+                    $.post('?module=backendAuth', { forgot_password: 1 }, function (data) {
+                        if (data.status === 'ok') {
+                            $.waDialog.alert({
+                                title: '',
+                                text: {$locale.forgot_dialog_text|json_encode} + {$locale.forgot_dialog_text_ext|json_encode},
+                                button_title: '[`Ok`]',
+                                button_class: 'warning',
+                            });
+                            return;
+                        }
+                        if (data.errors) {
+                            $error.text(data.errors.join('. '));
+                        }
+                    }).fail(function () {
+                        console.warn('Error forgot password');
+                    });
+                }
+            });
+        });
+        {/if}
     });
 </script>
 </body>

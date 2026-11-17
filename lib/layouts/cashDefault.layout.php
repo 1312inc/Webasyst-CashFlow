@@ -11,6 +11,9 @@ class cashDefaultLayout extends waLayout
     public function execute()
     {
         if (cashHelper::checkAccessCode() === false) {
+            if ($reset_hash = waRequest::get('access_code_reset', false)) {
+                $this->redirect(wa()->getAppUrl('cash').'auth/?access_code_reset='.$reset_hash);
+            }
             $this->redirect(wa()->getAppUrl('cash').'auth');
         }
         if (!cash()->getUser()->hasAccessToApp()) {
