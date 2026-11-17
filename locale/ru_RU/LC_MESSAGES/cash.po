@@ -2011,23 +2011,23 @@ msgstr "Нет доступа"
 msgid "Cash Flow: master password notification"
 msgstr "Деньги: уведомление о мастер-пароле"
 
-msgid "Behold! %s <b>disabled the master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s"
-msgstr "Внимание! %s <b>отключил мастер-пароль</b> для приложения «Деньги» на %s. <br>IP: %s, <br>User agent: %s"
+msgid "Behold! %s <b>disabled the master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s"
+msgstr "Внимание! %s <b>отключил мастер-пароль</b> для приложения «Деньги» на %s. <br><br>IP: %s, <br>User agent: %s"
 
-msgid "Achtung! %s <b>changed the master password recovery email</b> for the Cash Flow app from %s to %s on %s. <br>IP: %s, <br>User agent: %s"
-msgstr "Ахтунг! %s <b>изменил адрес электронной почты для восстановления мастер-пароля</b> в приложении «Деньги» с %s на %s на %s. <br>IP: %s, <br>User agent: %s"
+msgid "Achtung! %s <b>changed the master password recovery email</b> for the Cash Flow app from %s to %s on %s. <br><br>IP: %s, <br>User agent: %s"
+msgstr "Ахтунг! %s <b>изменил адрес электронной почты для восстановления мастер-пароля</b> в приложении «Деньги» с %s на %s на %s. <br><br>IP: %s, <br>User agent: %s"
 
-msgid "May I have your attention, please? %s <b>changed the master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s"
-msgstr "Обратите внимание! %s <b>изменил мастер-пароль</b> для приложения «Деньги» на %s. <br>IP: %s, <br>User agent: %s"
+msgid "May I have your attention, please? %s <b>changed the master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s"
+msgstr "Обратите внимание! %s <b>изменил мастер-пароль</b> для приложения «Деньги» на %s. <br><br>IP: %s, <br>User agent: %s"
 
-msgid "Success! %s <b>enabled the master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s"
-msgstr "Это успех! %s <b>включил мастер-пароль</b> для приложения «Деньги» на %s. <br>IP: %s, <br>User agent: %s"
+msgid "Success! %s <b>enabled the master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s"
+msgstr "Это успех! %s <b>включил мастер-пароль</b> для приложения «Деньги» на %s. <br><br>IP: %s, <br>User agent: %s"
 
 msgid "Cash Flow: master password fail alert!"
 msgstr "Деньги: неудачная попытка ввода мастер-пароля!"
 
-msgid "One shall not pass! %s <b>attempted and failed to enter the valid master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s"
-msgstr "Не теряем бдительность! %s <b>попытался, но не смог ввести правильный мастер-пароль</b> для приложения «Деньги» на %s. <br>IP: %s, <br>User agent: %s"
+msgid "One shall not pass! %s <b>attempted and failed to enter the valid master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s"
+msgstr "Не теряем бдительность! %s <b><strike>попался</strike> попытался, но не смог ввести правильный мастер-пароль</b> для приложения «Деньги» на %s. <br><br>IP: %s, <br>User agent: %s"
 
 msgid "Master password required"
 msgstr "Нужно ввести мастер-пароль"

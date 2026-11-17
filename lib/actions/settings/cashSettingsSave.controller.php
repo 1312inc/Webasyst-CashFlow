@@ -35,7 +35,7 @@ class cashSettingsSaveController extends cashJsonController
                 $this->settings_model->del('cash', 'access_code');
                 $this->settings_model->del('cash', 'master_email');
                 $message = sprintf_wp(
-                    'Behold! %s <b>disabled the master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s',
+                    'Behold! %s <b>disabled the master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s',
                     cash()->getUser()->getName(),
                     wa()->accountName(),
                     waRequest::getIp(),
@@ -67,7 +67,7 @@ class cashSettingsSaveController extends cashJsonController
                         $this->settings_model->set('cash', 'master_email', $data['email']);
                         $email = $master_email;
                         $message = sprintf_wp(
-                            'Achtung! %s <b>changed the master password recovery email</b> for the Cash Flow app from %s to %s on %s. <br>IP: %s, <br>User agent: %s',
+                            'Achtung! %s <b>changed the master password recovery email</b> for the Cash Flow app from %s to %s on %s. <br><br>IP: %s, <br>User agent: %s',
                             cash()->getUser()->getName(),
                             $master_email,
                             $data['email'],
@@ -94,7 +94,7 @@ class cashSettingsSaveController extends cashJsonController
                         wa()->getStorage()->remove('master_access');
                         $email = $master_email;
                         $message = sprintf_wp(
-                            'May I have your attention, please? %s <b>changed the master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s',
+                            'May I have your attention, please? %s <b>changed the master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s',
                             cash()->getUser()->getName(),
                             wa()->accountName(),
                             waRequest::getIp(),
@@ -119,7 +119,7 @@ class cashSettingsSaveController extends cashJsonController
                 wa()->getStorage()->remove('master_access');
                 $email = $data['email'];
                 $message = sprintf_wp(
-                    'Success! %s <b>enabled the master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s',
+                    'Success! %s <b>enabled the master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s',
                     cash()->getUser()->getName(),
                     wa()->accountName(),
                     waRequest::getIp(),

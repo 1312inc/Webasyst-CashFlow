@@ -47,7 +47,7 @@ class cashBackendAuthAction extends waViewAction
             } elseif (!$access_code || !cashHelper::checkAccessCode($access_code)) {
                 $this->errors[] = _w('Invalid master password');
                 $text = sprintf_wp(
-                    'One shall not pass! %s <b>attempted and failed to enter the valid master password</b> for the Cash Flow app on %s. <br>IP: %s, <br>User agent: %s',
+                    'One shall not pass! %s <b>attempted and failed to enter the valid master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s',
                     wa()->getUser()->getName(),
                     wa()->accountName(),
                     waRequest::getIp(),
