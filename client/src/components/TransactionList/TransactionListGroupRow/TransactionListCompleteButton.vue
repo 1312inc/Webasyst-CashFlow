@@ -1,7 +1,10 @@
 <template>
   <DropdownWaFloating>
     <template #toggler>
-      <button class="light-gray small nowrap rounded custom-m-0">
+      <button
+        class="light-gray small nowrap rounded custom-m-0"
+        :class="{ 'custom-p-0': isFixed }"
+      >
         <i class="fas fa-check-circle text-red" />
         <span
           v-if="!isFixed"

@@ -10,6 +10,12 @@ class cashDefaultLayout extends waLayout
      */
     public function execute()
     {
+        if (cashHelper::checkAccessCode() === false) {
+            if ($reset_hash = waRequest::get('access_code_reset', false)) {
+                $this->redirect(wa()->getAppUrl('cash').'auth/?access_code_reset='.$reset_hash);
+            }
+            $this->redirect(wa()->getAppUrl('cash').'auth');
+        }
         if (!cash()->getUser()->hasAccessToApp()) {
             throw new kmwaForbiddenException('No app access');
         }
@@ -22,6 +28,7 @@ class cashDefaultLayout extends waLayout
         $currencies = (new cashApiSystemGetCurrenciesHandler())->handle(null);
         $categories = (new cashApiCategoryGetListHandler())->handle(null);
         $accounts = (new cashApiAccountGetListHandler())->handle($accounts_request);
+        $templates = (new cashApiTemplateGetListHandler())->handle(null);
 
         $just_installed = wa('cash')->getSetting('just_installed');
         if ($just_installed) {
@@ -48,6 +55,7 @@ class cashDefaultLayout extends waLayout
                 'currencies' => json_encode($currencies, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'categories' => json_encode($categories, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'accounts' => json_encode($accounts, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
+                'templates' => json_encode($templates, JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_UNICODE),
                 'backend_layout_plugins' => $backendPlugins,
                 'emptyFlow' => $just_installed,
                 'isPremium' => cashHelper::isPremium(),

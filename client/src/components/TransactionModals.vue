@@ -48,13 +48,17 @@ function onClick () {
       @close="open = false"
       @reOpen="reOpen"
     >
-      <TransactionMove v-if="addTransactionOpts.type === 'move'" />
+      <TransactionMove
+        v-if="addTransactionOpts.type === 'move'"
+        @close="open = false"
+      />
 
       <AddTransaction
         v-else
         :transaction="addTransactionOpts.transaction"
         :default-date="addTransactionOpts.defaultDate"
         :default-category-type="addTransactionOpts.type ?? 'expense'"
+        :defaults="addTransactionOpts.defaults"
       />
     </Modal>
   </portal>

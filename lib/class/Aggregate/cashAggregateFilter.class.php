@@ -115,6 +115,8 @@ final class cashAggregateFilter
                 if (count($externalData) === 2) {
                     $self->externalSource = $externalData[0];
                     $self->external = (int) $externalData[1];
+                } elseif (count($externalData) === 1) {
+                    $self->externalSource = $externalData[0];
                 }
             } elseif (in_array($filter, [self::FILTER_ALL, self::FILTER_CALENDAR], true)) {
                 $self->$filter = true;

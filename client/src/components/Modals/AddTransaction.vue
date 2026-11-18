@@ -265,6 +265,7 @@
                 <InputContractor
                   :default-request="`category_id/${model.category_id}`"
                   :default-contractor="model.contractor_contact_id ? { id: model.contractor_contact_id, ...model.contractor_contact } : null"
+                  :default-contractor-name="model.contractor_contact_name"
                   @newContractor="name => {
                     model.contractor = name;
                   }"
@@ -719,6 +720,7 @@ import api from '../../plugins/api'
 import { debounce } from '@/utils/debounce'
 import { appState } from '@/services/appState'
 import { scenarioContextService } from '@/services/scenarioContext'
+import { confirmDeletion } from '@/services/confirmDeletion'
 
 export default {
 
@@ -746,6 +748,11 @@ export default {
       type: String
     },
 
+    defaults: {
+      type: Object,
+      default: null
+    },
+
     offOnbadge: {
       type: Boolean,
       default: false
@@ -765,6 +772,7 @@ export default {
         contractor: null,
         contractor_contact: null,
         contractor_contact_id: null,
+        contractor_contact_name: null,
         description: '',
         external: {
           source: this.transaction?.external_source || (appState.shopscriptInstalled ? 'shop' : null),
@@ -959,6 +967,15 @@ export default {
       this.model.amount = `${Math.abs(this.model.amount)}`
     }
 
+    if (!this.isModeUpdate && this.defaults) {
+      for (const [key, value] of Object.entries(this.defaults)) {
+        if (key in this.model) this.model[key] = value
+      }
+      if (this.defaults.contractor_contact_id) {
+        this.showContractorInput = true
+      }
+    }
+
     if (!this.isModeUpdate) {
       const scenarioId = scenarioContextService.scenarioId
       if (scenarioId) {
@@ -1081,20 +1098,16 @@ export default {
         })
     },
 
-    remove () {
-      if (confirm(this.$t('transactionDeleteWarning'))) {
-        this.controlsDisabled = true
-        this.$store
-          .dispatch('transaction/delete', {
-            id: this.model.id,
-            all_repeating: this.model.apply_to_all_in_future
-          })
-          .then(() => {
-            this.close()
-          })
-          .finally(() => {
-            this.controlsDisabled = false
-          })
+    async remove () {
+      if (this.controlsDisabled) return
+      const { id, apply_to_all_in_future: allRepeating } = this.model
+      this.controlsDisabled = true
+      try {
+        if (!await confirmDeletion('transactionDeleteWarning') || this._isDestroyed || this.model.id !== id) return
+        const result = await this.$store.dispatch('transaction/delete', { id, all_repeating: allRepeating })
+        if (result !== false) this.close()
+      } finally {
+        this.controlsDisabled = false
       }
     },
 

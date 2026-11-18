@@ -143,11 +143,22 @@
 import api from '@/plugins/api'
 import { debounce } from '@/utils/debounce'
 
+function isIdOnlyContractor (contractor) {
+  if (!contractor || typeof contractor !== 'object') return false
+  const keys = Object.keys(contractor)
+  return keys.length === 1 && keys[0] === 'id' && contractor.id != null && contractor.id !== ''
+}
+
 export default {
   props: {
     defaultContractor: {
       type: Object,
       default: null
+    },
+
+    defaultContractorName: {
+      type: String,
+      default: ''
     },
 
     createNewContractor: {
@@ -167,11 +178,19 @@ export default {
   },
 
   data () {
+    const idOnly = isIdOnlyContractor(this.defaultContractor)
+    const name = (this.defaultContractorName || '').trim()
+    const initialContractor = idOnly
+      ? { id: this.defaultContractor.id, name }
+      : this.defaultContractor
+        ? { ...this.defaultContractor, photo_url_absolute: this.defaultContractor.userpic }
+        : null
+
     return {
-      inputValue: this.defaultContractor?.name || '',
+      inputValue: idOnly ? name : (initialContractor?.name || ''),
       activeMenuIndex: null,
       isNewContractorMode: false,
-      selectedContractor: this.defaultContractor ? { ...this.defaultContractor, photo_url_absolute: this.defaultContractor.userpic } : null,
+      selectedContractor: initialContractor,
       response: []
       // isFetching: false
     }

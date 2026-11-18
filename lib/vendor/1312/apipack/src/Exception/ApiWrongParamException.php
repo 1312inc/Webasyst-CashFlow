@@ -6,7 +6,7 @@ use Throwable;
 
 class ApiWrongParamException extends ApiException
 {
-    public function __construct(string $param, string $description, Throwable $previous = null)
+    public function __construct(string $param, string $description, ?Throwable $previous = null)
     {
         parent::__construct(
             sprintf("Wrong param: '%s'", $param),

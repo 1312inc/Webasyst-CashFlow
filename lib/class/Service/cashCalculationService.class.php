@@ -55,7 +55,7 @@ final class cashCalculationService
         DateTime $onDate,
         waContact $contact,
         cashAbstractEntity $entity,
-        DateTime $startDate = null
+        ?DateTime $startDate = null
     ): array {
         if (!$startDate instanceof DateTime) {
             $startDate = new DateTime('1970-01-01 00:00:00');

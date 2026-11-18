@@ -174,11 +174,13 @@ final class cashAutomation
         }
 
         $transaction_ids = [];
-        if ($data[0] instanceof cashApiTransactionResponseDto) {
+        if (!empty($data[0]) && $data[0] instanceof cashApiTransactionResponseDto) {
             /** @var cashApiTransactionResponseDto $transaction_data */
             foreach ($data as $transaction_data) {
                 $transaction_ids[] = $transaction_data->id;
             }
+        } elseif (!empty($data['id'])) {
+            $transaction_ids = [$data['id']];
         } else {
             $transaction_ids = waUtils::toIntArray($data);
         }

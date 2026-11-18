@@ -49,8 +49,14 @@ class cashReportAction extends cashViewAction
         }
 
         if ($handler) {
-            $reportParams = $reportParams ? explode('&', $reportParams) : [];
             $handlerParams = [];
+            $reportParams = $reportParams ? explode('&', $reportParams) : [];
+            if (cashHelper::isPremium()) {
+                $handlerParams = [
+                    'company_id' => waRequest::cookie('cashCompanyId', null, waRequest::TYPE_INT),
+                    'scenario_id' => waRequest::cookie('cashScenarioId', null, waRequest::TYPE_INT),
+                ];
+            }
             foreach ($reportParams as $reportParam) {
                 $keyValue = explode('=', $reportParam);
                 $handlerParams[$keyValue[0]] = null;

@@ -176,14 +176,20 @@ watch(daysInCalendar, () => {
 <template>
   <div class="icg">
     <div class="icg-header">
-      <div class="flexbox middle space-16">
+      <div class="icg-filter-group flexbox middle space-16">
         <div class="icg-month nowrap">
           {{ activeMonth.toDate().toLocaleDateString(props.locale, { year: 'numeric', month: 'long' }).replace('г.', "") }}
         </div>
 
-        <DropdownWaFloating v-if="props.mode === 'summary'">
+        <DropdownWaFloating
+          v-if="props.mode === 'summary'"
+          class="icg-filter"
+        >
           <template #toggler>
-            <button class="button light-gray nowrap">
+            <button
+              class="button light-gray nowrap"
+              :aria-label="filterButtonLabel"
+            >
               <strong>{{ filterButtonLabel }}</strong>
               <span class="icon text-light-gray">
                 <i class="fas fa-chevron-down custom-mt-2 custom-ml-4 fa-xs" />

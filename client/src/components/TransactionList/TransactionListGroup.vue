@@ -116,7 +116,10 @@
           v-if="isTableLayout && filteredTransactions.length"
           class="c-transactions-table-wrap"
         >
-          <table class="bigdata c-transactions-table">
+          <table
+            class="bigdata c-transactions-table"
+            :class="{ 'c-transactions-table--balance': showBalanceColumn }"
+          >
             <colgroup>
               <col class="c-transactions-table__col-check">
               <col class="c-transactions-table__col-date">

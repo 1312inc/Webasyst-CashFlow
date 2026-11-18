@@ -11,10 +11,12 @@
     <div
       v-if="scenario"
       :style="`backgroundColor:${scenario.color}`"
-      class="badge squared text-ellipsis nowrap custom-ml-4 small"
+      class="badge squared nowrap custom-ml-4 small"
     >
-      <i class="fas fa-code-branch" />
-      {{ scenario.name }}
+      <span class="text-ellipsis">
+        <i class="fas fa-code-branch" />
+        {{ scenario.name }}
+      </span>
     </div>
 
     <!-- if collapsed transactions header -->

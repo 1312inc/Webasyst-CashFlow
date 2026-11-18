@@ -29,7 +29,7 @@ final class cashApiContactSearchRequest
         if ($limit > self::MAX_LIMIT) {
             throw new cashValidateException(sprintf('Max search limit is %d', self::MAX_LIMIT));
         }
-        $this->limit = $limit;
+        $this->limit = $limit ?? self::MAX_LIMIT;
         $this->term = (string) $term;
         $this->is_user = $is_user ?? null;
         $this->categoryId = empty($categoryId) ? null : $categoryId;

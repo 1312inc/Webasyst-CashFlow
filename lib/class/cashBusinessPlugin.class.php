@@ -125,13 +125,21 @@ abstract class cashBusinessPlugin extends waPlugin
                 }
                 if ($transaction_in_db) {
                     // UPDATE
-                    try {
-                        if ($transaction_model->updateById($transaction_in_db['id'], $add_transaction)) {
-                            $update_ids[] = $transaction_in_db['id'];
-                            $add_transaction['id'] = $transaction_in_db['id'];
+                    if (
+                        $transaction_in_db['account_id'] != $add_transaction['account_id']
+                        || $transaction_in_db['category_id'] != $add_transaction['category_id']
+                        || $transaction_in_db['amount'] != $add_transaction['amount']
+                        || $transaction_in_db['description'] != $add_transaction['description']
+                    ) {
+                        // По этим полям считаем что опрерация изменилась
+                        try {
+                            if ($transaction_model->updateById($transaction_in_db['id'], $add_transaction)) {
+                                $update_ids[] = $transaction_in_db['id'];
+                                $add_transaction['id'] = $transaction_in_db['id'];
+                            }
+                        } catch (Exception $e) {
+                            cash()->getLogger()->error('Error update business transaction', $e);
                         }
-                    } catch (Exception $e) {
-                        cash()->getLogger()->error('Error update business transaction', $e);
                     }
                 } else {
                     // INSERT

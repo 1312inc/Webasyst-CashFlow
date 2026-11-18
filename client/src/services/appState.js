@@ -27,6 +27,18 @@ export const appStateService = {
     return !!state.webView
   },
 
+  get nativeViewport () {
+    return state.webView === true && state.nativeViewport === true
+  },
+
+  get nativeDialog () {
+    return state.webView === true && state.nativeDialog === true
+  },
+
+  get nativeCalendarAdd () {
+    return state.webView === true && state.nativeCalendarAdd === true
+  },
+
   get isDesktop () {
     return !state.webView
   },
@@ -69,6 +81,10 @@ export const appStateService = {
 
   get currencies () {
     return state.currencies || []
+  },
+
+  get templates () {
+    return state.templates || []
   },
 
   get apiSettings () {

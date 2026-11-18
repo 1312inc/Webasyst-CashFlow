@@ -53,11 +53,11 @@ class cashCategoryModel extends cashModel
 
     /**
      * @param waContact|null $contact
-     *
+     * @param $type
      * @return array
      * @throws waException
      */
-    public function getAllActiveForContact(waContact $contact = null, $type = null): array
+    public function getAllActiveForContact(?waContact $contact = null, $type = null): array
     {
         if (!$contact) {
             $contact = wa()->getUser();

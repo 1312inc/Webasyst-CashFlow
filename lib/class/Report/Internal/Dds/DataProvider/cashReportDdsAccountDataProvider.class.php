@@ -39,7 +39,7 @@ final class cashReportDdsAccountDataProvider implements cashReportDdsDataProvide
             array_unshift($where, 'ca.company_id = i:company_id');
         }
         if ($scenario_id) {
-            array_unshift($where, 'ca.company_id = i:company_id');
+            array_unshift($where, 'ct.scenario_id = i:scenario_id');
         } else {
             array_unshift($where, 'ct.scenario_id IS NULL');
         }

@@ -1,6 +1,6 @@
 <template>
   <div class="c-transaction-controls hide-scrollbar">
-    <div class="mobile-only">
+    <div :class="{ 'mobile-only': !appStateService.nativeViewport }">
       <div
         v-if="$helper.hasSelectedTransactions()"
         class="flexbox middle"
@@ -16,8 +16,8 @@
         </button>
         <button
           class="button red smallest nowrap"
-          :disabled="!checkedRows.length"
-          @click="bulkDelete"
+          :disabled="!checkedRows.length || $_transactionActionsMixin_removalPending"
+          @click="$_transactionActionsMixin_bulkDelete"
         >
           <i class="fas fa-trash-alt" /> {{ $t("delete") }} ({{
             checkedRows.length
@@ -43,12 +43,54 @@
     </div>
 
     <div
-      v-if="currentType"
+      v-if="currentType && !appStateService.nativeViewport"
       ref="controlButtons"
       class="desktop-and-tablet-only flexbox wrap space-12 middle"
     >
       <div v-show="currentType.type !== 'expense'">
+        <DropdownWaFloating v-if="incomeTemplates.length">
+          <template #toggler>
+            <button
+              class="button c-button-add-income nowrap"
+              @click="addTransaction('income')"
+            >
+              <i class="fas fa-plus" />
+              <span class="custom-ml-8">{{ $t("addIncome") }}</span>
+            </button>
+          </template>
+          <template #default="{ close }">
+            <ul class="menu">
+              <li
+                v-for="template in incomeTemplates"
+                :key="template.id"
+              >
+                <a @click.prevent="addTransactionFromTemplate(template, close)">
+                  <span
+                    v-if="getTemplateCategory(template)?.glyph"
+                    class="icon"
+                  >
+                    <i
+                      :class="getTemplateCategory(template).glyph"
+                      :style="`color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
+                  <span
+                    v-else-if="getTemplateCategory(template)"
+                    class="icon"
+                  >
+                    <i
+                      class="rounded"
+                      :style="`background-color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
+                  <span>{{ getTemplateLabel(template) }}</span>
+                </a>
+              </li>
+            </ul>
+          </template>
+        </DropdownWaFloating>
         <button
+          v-else
           class="button c-button-add-income nowrap"
           @click="addTransaction('income')"
         >
@@ -57,7 +99,49 @@
         </button>
       </div>
       <div v-show="currentType.type !== 'income'">
+        <DropdownWaFloating v-if="expenseTemplates.length">
+          <template #toggler>
+            <button
+              class="button c-button-add-expense nowrap"
+              @click="addTransaction('expense')"
+            >
+              <i class="fas fa-minus" />
+              <span class="custom-ml-8">{{ $t("addExpense") }}</span>
+            </button>
+          </template>
+          <template #default="{ close }">
+            <ul class="menu">
+              <li
+                v-for="template in expenseTemplates"
+                :key="template.id"
+              >
+                <a @click.prevent="addTransactionFromTemplate(template, close)">
+                  <span
+                    v-if="getTemplateCategory(template)?.glyph"
+                    class="icon"
+                  >
+                    <i
+                      :class="getTemplateCategory(template).glyph"
+                      :style="`color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
+                  <span
+                    v-else-if="getTemplateCategory(template)"
+                    class="icon"
+                  >
+                    <i
+                      class="rounded"
+                      :style="`background-color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
+                  <span>{{ getTemplateLabel(template) }}</span>
+                </a>
+              </li>
+            </ul>
+          </template>
+        </DropdownWaFloating>
         <button
+          v-else
           class="button c-button-add-expense nowrap"
           @click="addTransaction('expense')"
         >
@@ -72,7 +156,51 @@
           $store.state.account.accounts.length > 1
         "
       >
+        <DropdownWaFloating v-if="transferTemplates.length">
+          <template #toggler>
+            <button
+              class="button light-gray nowrap"
+              @click="addTransaction('transfer')"
+            >
+              <span>
+                <i class="fas fa-exchange-alt" />
+                <span class="desktop-only custom-ml-8">{{ $t("transfer") }}</span>
+              </span>
+            </button>
+          </template>
+          <template #default="{ close }">
+            <ul class="menu">
+              <li
+                v-for="template in transferTemplates"
+                :key="template.id"
+              >
+                <a @click.prevent="addTransactionFromTemplate(template, close)">
+                  <span
+                    v-if="getTemplateCategory(template)?.glyph"
+                    class="icon"
+                  >
+                    <i
+                      :class="getTemplateCategory(template).glyph"
+                      :style="`color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
+                  <span
+                    v-else-if="getTemplateCategory(template)"
+                    class="icon"
+                  >
+                    <i
+                      class="rounded"
+                      :style="`background-color:${getTemplateCategory(template).color};`"
+                    />
+                  </span>
+                  <span>{{ getTemplateLabel(template) }}</span>
+                </a>
+              </li>
+            </ul>
+          </template>
+        </DropdownWaFloating>
         <button
+          v-else
           class="button light-gray nowrap"
           @click="addTransaction('transfer')"
         >
@@ -100,7 +228,7 @@
         v-if="openMove"
         @close="openMove = false"
       >
-        <TransactionMove />
+        <TransactionMove @close="openMove = false" />
       </Modal>
     </portal>
   </div>
@@ -110,14 +238,23 @@
 import { mapGetters } from 'vuex'
 import Modal from '@/components/Modal'
 import TransactionMove from '@/components/Modals/TransactionMove'
+import DropdownWaFloating from '@/components/Inputs/DropdownWaFloating'
+import transactionActionsMixin from '@/mixins/transactionActionsMixin'
 import { appStateService } from '../services/appState'
+import {
+  getTemplatesByType,
+  templateContentToDefaults,
+  getTemplateLabel
+} from '@/utils/operationTemplates'
 
 export default {
 
   components: {
     Modal,
-    TransactionMove
+    TransactionMove,
+    DropdownWaFloating
   },
+  mixins: [transactionActionsMixin],
 
   data () {
     return {
@@ -129,11 +266,24 @@ export default {
 
   computed: {
     ...mapGetters({
-      currentType: 'getCurrentType'
+      currentType: 'getCurrentType',
+      getCategoryById: 'category/getById'
     }),
 
     checkedRows () {
       return this.$store.state.transactionBulk.selectedTransactionsIds
+    },
+
+    incomeTemplates () {
+      return getTemplatesByType('income')
+    },
+
+    expenseTemplates () {
+      return getTemplatesByType('expense')
+    },
+
+    transferTemplates () {
+      return getTemplatesByType('transfer')
     }
   },
 
@@ -141,7 +291,7 @@ export default {
     // add pulsar effect on the button if first time navigate
     async '$route' (to) {
       await this.$nextTick()
-      const pulsarButton = this.$refs.controlButtons.querySelector('button')
+      const pulsarButton = this.$refs.controlButtons?.querySelector('button')
       if (pulsarButton) {
         pulsarButton.classList.remove('pulsar')
         if (to.params.isFirtsTimeNavigate) {
@@ -161,6 +311,14 @@ export default {
   },
 
   methods: {
+    getTemplateLabel,
+
+    getTemplateCategory (template) {
+      const categoryId = templateContentToDefaults(template.content).category_id
+      if (categoryId == null) return null
+      return this.getCategoryById(categoryId) || null
+    },
+
     addTransaction (type) {
       this.$eventBus.emit('openAddTransactionModal', {
         type,
@@ -168,10 +326,13 @@ export default {
       })
     },
 
-    bulkDelete () {
-      if (confirm(this.$t('bulkDeleteWarning'))) {
-        this.$store.dispatch('transactionBulk/bulkDelete')
-      }
+    addTransactionFromTemplate (template, close) {
+      close?.()
+      this.$eventBus.emit('openAddTransactionModal', {
+        type: template.type,
+        defaults: templateContentToDefaults(template.content),
+        ...(this.$route.name === 'Date' ? { defaultDate: this.$route.params.date } : {})
+      })
     },
 
     unselectAll () {

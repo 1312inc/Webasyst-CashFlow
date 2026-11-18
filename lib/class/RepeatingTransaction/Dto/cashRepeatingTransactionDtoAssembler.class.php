@@ -12,7 +12,7 @@ class cashRepeatingTransactionDtoAssembler
      * @return cashRepeatingTransactionDto
      * @throws waException
      */
-    public function createFromEntity(cashRepeatingTransaction $transaction, cashTransaction $sourceTransaction = null)
+    public function createFromEntity(cashRepeatingTransaction $transaction, ?cashTransaction $sourceTransaction = null)
     {
         /** @var cashAccountDto $accountDto */
         $accountDto = cashDtoFromEntityFactory::fromEntity(cashAccountDto::class, $transaction->getAccount());

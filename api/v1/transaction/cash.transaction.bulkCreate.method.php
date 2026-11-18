@@ -33,25 +33,20 @@ final class cashTransactionBulkCreateMethod extends cashApiNewAbstractMethod
             }
         }
 
-        try {
-            foreach ($requests as $request) {
+        foreach ($requests as $request) {
+            try {
                 if ($request->getTransferAccountId() && $request->getCategoryId() !== cashCategoryFactory::TRANSFER_CATEGORY_ID) {
-                    return new cashApiErrorResponse(
-                        'Transfer category may not be other than ' . cashCategoryFactory::TRANSFER_CATEGORY_ID
-                    );
-                }
-
-                if ($request->getCategoryId() == cashCategoryFactory::TRANSFER_CATEGORY_ID && !$request->getTransferAccountId()) {
+                    return new cashApiErrorResponse('Transfer category may not be other than ' . cashCategoryFactory::TRANSFER_CATEGORY_ID);
+                } elseif ($request->getCategoryId() == cashCategoryFactory::TRANSFER_CATEGORY_ID && !$request->getTransferAccountId()) {
                     return new cashApiErrorResponse('Missing transfer information');
                 }
 
                 $response = (new cashApiTransactionCreateHandler())->handle($request);
 
                 $responses = array_merge($responses, $response);
+            } catch (Exception $exception) {
+                cash()->getLogger()->error('Error on bulk transaction create', $exception);
             }
-        } catch (Exception $exception) {
-            $errors[] = $exception->getMessage();
-            cash()->getLogger()->error('Error on bulk transaction create', $exception);
         }
 
         cash()->getEventDispatcher()->dispatch(

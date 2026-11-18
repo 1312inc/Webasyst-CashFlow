@@ -92,7 +92,8 @@ export default {
               amount: transaction.amount,
               currency: account.currency,
               category_name: category.name,
-              category_color: category.color
+              category_color: category.color,
+              category_glyph: category.glyph || null
             }
           } else {
             acc[category.id].amount += transaction.amount

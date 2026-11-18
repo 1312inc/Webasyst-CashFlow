@@ -11,6 +11,7 @@
     <ButtonRound
       icon="fa-trash-alt"
       :tooltip="$t('delete')"
+      :disabled="$_transactionActionsMixin_removalPending"
       class="red"
       @click.native="$_transactionActionsMixin_bulkDelete"
     />
@@ -19,7 +20,7 @@
         v-if="openMove"
         @close="openMove = false"
       >
-        <TransactionMove />
+        <TransactionMove @close="openMove = false" />
       </Modal>
     </portal>
   </div>

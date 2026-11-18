@@ -4,6 +4,7 @@ import { i18n } from './locale'
 import { companyContextService } from '@/services/companyContext'
 import { scenarioContextService } from '@/services/scenarioContext'
 import { appStateService } from '@/services/appState'
+import { helpers } from './helpers'
 
 const baseApiUrl = appStateService.baseApiUrl
 const accessToken = appStateService.token
@@ -73,6 +74,10 @@ api.interceptors.response.use((response) => {
   return response
 }, (error) => {
   if (!error.response || error.response.status === 402) {
+    return Promise.reject(error)
+  }
+  if (error.response.status === 401 && error.response.data?.error === 'invalid_master_code') {
+    window.location.href = `${appStateService.baseUrl}auth/`
     return Promise.reject(error)
   }
   if (error.response.status === 500) {

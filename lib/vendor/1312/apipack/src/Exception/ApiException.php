@@ -12,7 +12,7 @@ class ApiException extends Exception
      */
     private $errorDescription;
 
-    public function __construct($error, $errorDescription = null, $code = null, Throwable $previous = null)
+    public function __construct($error, $errorDescription = null, $code = null, ?Throwable $previous = null)
     {
         $this->errorDescription = $errorDescription;
 

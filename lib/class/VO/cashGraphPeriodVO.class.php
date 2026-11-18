@@ -102,7 +102,7 @@ class cashGraphPeriodVO implements JsonSerializable
      * @return DateTime
      * @throws Exception
      */
-    public function getDate(DateTimeInterface $dateTime = null)
+    public function getDate(?DateTimeInterface $dateTime = null)
     {
         if (!$dateTime instanceof DateTimeInterface) {
             $calculated = new DateTime();
@@ -119,7 +119,7 @@ class cashGraphPeriodVO implements JsonSerializable
      * @return string
      * @throws Exception
      */
-    public function getDateAsString(DateTimeInterface $dateTime = null)
+    public function getDateAsString(?DateTimeInterface $dateTime = null)
     {
         return $this->getDate()->format('Y-m-d H:i:s');
     }

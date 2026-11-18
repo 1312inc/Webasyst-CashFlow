@@ -407,7 +407,7 @@ class cashTransaction extends cashAbstractEntity
      *
      * @return cashTransaction
      */
-    public function setCategory(cashCategory $category = null)
+    public function setCategory(?cashCategory $category = null)
     {
         if ($category) {
             $this->category = $category;
@@ -602,7 +602,7 @@ class cashTransaction extends cashAbstractEntity
      *
      * @return cashTransaction
      */
-    public function setLinkedTransaction(cashTransaction $linkedTransaction = null)
+    public function setLinkedTransaction(?cashTransaction $linkedTransaction = null)
     {
         $this->linkedTransaction = $linkedTransaction;
 

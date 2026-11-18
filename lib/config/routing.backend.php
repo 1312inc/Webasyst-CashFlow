@@ -9,5 +9,8 @@ return [
     'plugins/?' => 'plugins/',
     'upgrade/?' => 'upgrade/',
     'automation/?' => 'automation/',
+    'templates/?' => 'template/',
+    'auth/?' => 'backend/auth/',
+    'settings/?' => 'settings/',
     '*' => 'backend/',
 ];

@@ -255,7 +255,7 @@ final class cashTransactionRepeater
             $end_date->modify('+2 year');
             (new cashRepeatTransactionRepeater())->afterTransactionPagePreExecute(new cashEvent(cashEventStorage::TRANSACTION_PAGE_PREEXECUTE, $end_date));
         } catch (Exception $e) {
-            cash()->getLogger()->error(_w('Не удалось продлить повторения'), $e);
+            cash()->getLogger()->error(_w('Failed to prolongate the repeating transaction'), $e);
         }
     }
 }

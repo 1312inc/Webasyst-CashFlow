@@ -32,9 +32,11 @@ abstract class cashApiNewAbstractMethod extends waAPIMethod
 
     public function execute()
     {
+        if (cashHelper::checkAccessCode() === false) {
+            throw new waAPIException('invalid_master_code', _w('Master password required'), 401);
+        }
         try {
             $handlerResult = $this->run();
-
             $this->response = $handlerResult->getResponseBody();
             $this->http_status_code = $handlerResult->getStatus();
             wa()->getResponse()->setStatus($this->http_status_code);
@@ -52,31 +54,47 @@ abstract class cashApiNewAbstractMethod extends waAPIMethod
     abstract function run(): cashApiResponseInterface;
 
     /**
+     * @param string $name
+     * @param bool $required
+     * @param string|null $type
+     * @param $format
+     * @return array|DateTimeImmutable|float|int|string|null
+     * @throws ApiException
      * @throws ApiMissingParamException
      * @throws ApiWrongParamException
-     * @throws ApiException
      */
-    public function fromPost(string $name, bool $required = false, string $type = null, $format = null)
+    public function fromPost(string $name, bool $required = false, ?string $type = null, $format = null)
     {
         return $this->apiParamsFetcher->post($name, $required, $type, $format);
     }
 
     /**
+     * @param array $data
+     * @param string $name
+     * @param bool $required
+     * @param string|null $type
+     * @param $format
+     * @return array|DateTimeImmutable|float|int|string|null
+     * @throws ApiException
      * @throws ApiMissingParamException
      * @throws ApiWrongParamException
-     * @throws ApiException
      */
-    public function fromArray(array $data, string $name, bool $required = false, string $type = null, $format = null)
+    public function fromArray(array $data, string $name, bool $required = false, ?string $type = null, $format = null)
     {
         return $this->apiParamsFetcher->fromArray($data, $name, $required, $type, $format);
     }
 
     /**
-     * @throws ApiMissingParamException
+     * @param string $name
+     * @param bool $required
+     * @param string|null $type
+     * @param $format
+     * @return array|DateTimeImmutable|float|int|string|null
      * @throws ApiException
+     * @throws ApiMissingParamException
      * @throws ApiWrongParamException
      */
-    public function fromGet(string $name, bool $required = false, string $type = null, $format = null)
+    public function fromGet(string $name, bool $required = false, ?string $type = null, $format = null)
     {
         return $this->apiParamsFetcher->get($name, $required, $type, $format);
     }

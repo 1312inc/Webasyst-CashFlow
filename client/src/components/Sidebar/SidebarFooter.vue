@@ -28,6 +28,18 @@
       </router-link>
     </li>
     <li v-if="$permissions.isAdmin">
+      <a :href="`${$helper.baseUrl}templates/`">
+        <i class="fas fa-copy" />
+        <span :class="{ 'opacity-50': !$appState.isPremium }">{{ $t("operationTemplates") }}</span>
+        <span
+          v-if="!$appState.isPremium"
+          class="count small"
+        >
+          <i class="fas fa-star text-yellow" />
+        </span>
+      </a>
+    </li>
+    <li v-if="$permissions.isAdmin">
       <router-link to="/trash">
         <i class="fas fa-trash-alt" />
         <span>{{ $t("trash") }}</span>
@@ -44,6 +56,12 @@
         <i class="fas fa-star text-yellow" />
         <span>{{ $t("premium") }}</span>
         <span class="count"><span class="badge purple small bold">%</span></span>
+      </a>
+    </li>
+    <li v-if="$permissions.isAdmin && $appState.isPremium">
+      <a :href="`${$helper.baseUrl}settings/`">
+        <i class="fas fa-cog" />
+        <span>{{ $t("settings") }}</span>
       </a>
     </li>
   </ul>

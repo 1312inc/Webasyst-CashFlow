@@ -423,7 +423,7 @@ class cashGraphService
      * @return int
      * @throws Exception
      */
-    private function determineGroup(DateTimeInterface $startDate, DateTimeInterface $endDate = null): int
+    private function determineGroup(DateTimeInterface $startDate, ?DateTimeInterface $endDate = null): int
     {
         if (!$endDate) {
             $endDate = new DateTime();

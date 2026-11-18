@@ -35,7 +35,17 @@
     <TransactionControlsSticky />
     <template v-if="$route.meta.showChart">
       <AmChartContainer />
-      <DetailsDashboard />
+      <div class="c-details-modes flexbox space-24">
+        <div class="wide">
+          <DetailsDashboard mode="from" />
+        </div>
+        <div
+          v-if="showFutureBreakdown"
+          class="wide"
+        >
+          <DetailsDashboard mode="to" />
+        </div>
+      </div>
     </template>
     <div class="flexbox space-24">
       <div class="wide">
@@ -64,6 +74,8 @@ import TransactionControlsSticky from '../components/TransactionControlsSticky.v
 import api from '@/plugins/api'
 import { DEFAULT_FUTURE_PERIOD } from '../utils/constants'
 import { appStateService } from '@/services/appState'
+import { mapGetters, mapState } from 'vuex'
+import { getIntervalFromLabel } from '@/utils/getDateFromLocalStorage'
 
 export default {
 
@@ -99,8 +111,16 @@ export default {
   },
 
   computed: {
+    ...mapState('transaction', ['chartInterval']),
+    ...mapGetters('transaction', ['isDetailsMode']),
+
     entity () {
       return this.$store.state.entity.entity
+    },
+
+    showFutureBreakdown () {
+      if (this.isDetailsMode) return false
+      return Boolean(this.chartInterval.to) && getIntervalFromLabel('to') !== '0_M'
     }
   },
 

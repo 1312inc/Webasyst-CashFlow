@@ -21,6 +21,11 @@ final class cashApiAggregateGetBreakDownDataDto
     public $category_color;
 
     /**
+     * @var string
+     */
+    public $category_glyph;
+
+    /**
      * @var int
      */
     public $category_id;
@@ -43,6 +48,7 @@ final class cashApiAggregateGetBreakDownDataDto
         if ($category) {
             $this->category_name = $category->getName();
             $this->category_color = $category->getColor();
+            $this->category_glyph = $category->getGlyph();
             $this->category_id = $category->getId();
         }
     }

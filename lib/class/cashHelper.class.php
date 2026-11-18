@@ -5,6 +5,53 @@
  */
 final class cashHelper
 {
+    const ACCESS_LIFE = 3600;  //seconds
+
+    /**
+     * @param $access_code
+     * @return bool|null
+     * @throws waException
+     */
+    public static function checkAccessCode($access_code = null)
+    {
+        if (!self::isPremium()) {
+            return null;
+        }
+
+        $app_settings_model = new waAppSettingsModel();
+        $master_code = $app_settings_model->get('cash', 'access_code', null);
+        if ($master_code === null) {
+            return null;
+        }
+
+        if (!empty($access_code)) {
+            if (password_verify($access_code, $master_code)) {
+                $data = [
+                    'access_life' => time(),
+                    'ip' => waRequest::getIp(),
+                    'user_agent' => waRequest::getUserAgent()
+                ];
+                wa()->getStorage()->set('master_access', $data);
+                return true;
+            }
+            return false;
+        }
+
+        if ($master_access = wa()->getStorage()->get('master_access')) {
+            if (
+                (time() - ifempty($master_access, 'access_life', 0)) > self::ACCESS_LIFE
+                || ifempty($master_access, 'ip', null) !== waRequest::getIp()
+                || ifempty($master_access, 'user_agent', null) !== waRequest::getUserAgent()
+            ) {
+                wa()->getStorage()->remove('master_access');
+                return false;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @return array
      * @throws waException
@@ -134,5 +181,36 @@ final class cashHelper
         }
 
         return $dt->format('Y-m-d\TH:i:s.u\Z');
+    }
+
+    public static function sendEmail($email_to, $subject = '', $text = '')
+    {
+        $result = false;
+        if (empty($subject)) {
+            $subject = ifempty($subject, _w('Cash Flow alert'));
+        }
+
+        if ($email_to && $text) {
+            try {
+                $old_error_reporting = error_reporting();
+                error_reporting($old_error_reporting & ~E_DEPRECATED);
+
+                $message = new waMailMessage($subject, $text);
+                $message->setFrom(wa()->getSetting('email', '', 'webasyst'));
+                $message->setTo($email_to);
+                $result = $message->send();
+                if (!$result) {
+                    cash()->getLogger()->log([_w('Email not sent'), $email_to, $subject, $text]);
+                }
+            } catch (Exception $ex) {
+                cash()->getLogger()->log([_w('Email not sent'), $ex->getMessage(), $email_to, $subject, $text], 'error');
+            } finally {
+                error_reporting($old_error_reporting);
+            }
+        } else {
+            cash()->getLogger()->log([_w('Email not sent'), _w('Email not sent: either recipient or email content are empty'), $subject]);
+        }
+
+        return $result;
     }
 }

@@ -1355,16 +1355,16 @@ msgid "Create templates with fixed parameters (such as category, account, amount
 msgstr "Создавайте готовые шаблоны операций для быстрого добавления. Фиксируйте нужные параметры (статья, счет, сумма и т.д.), добавляйте новые операции быстрее и без ошибок."
 
 msgid "The Big Bang moment"
-msgstr "Закрытие периодов"
+msgstr "Момент «Большого взрыва»"
 
 msgid "Set a a specific date as a Big Bang moment and be sure that no can adjust anything before that date."
-msgstr "Устанавливайте «момент Большого взрыва» так, чтобы никто не мог переписать историю и редактировать архивные данные до заданной даты."
+msgstr "Фиксируйте дату, ранее которой никто и никогда не сможет переписывать историю и редактировать архивные операции."
 
 msgid "Account groups"
 msgstr "Группы счетов"
 
-msgid "Evaluating either we need this feature in the app. <b>Yes or no? <a href=\"%s\" target=\"_blank\">Vote here!</a></b>"
-msgstr "Пока думаем, нужно ли добавлять фичу. <b>Да или нет? <a href=\"%s\" target=\"_blank\">Голосуйте здесь!</a></b>"
+msgid "We welcome your feedback on new features to come! <b><a href=\"%s\" target=\"_blank\">Vote on the forums&nbsp;&rarr;</a></b>"
+msgstr "Принимаем пожелания, думаем, что еще нужно добавить. <b><a href=\"%s\" target=\"_blank\">Голосуйте на&nbsp;форуме&nbsp;&rarr;</a></b>"
 
 msgid "https://support.webasyst.com/forum/ideas/"
 msgstr "https://support.webasyst.ru/forum/48639/prilozhenie-dengi-pozhelaniya-po-premium-ficham-2026-/"
@@ -1872,3 +1872,198 @@ msgstr "Закройте доступ к приложению с помощью 
 
 msgid "Make up different projections <a href=\"https://support.webasyst.com/48969/cash-flow-scenarios/\" target=_blank>with scenarios</a>."
 msgstr "Моделируйте разные варианты развития событий <a href=\"https://support.webasyst.ru/48968/cash-flow-scenarios/\" target=_blank>с помощью сценариев</a>."
+
+msgid "Reporting for %s under the %s scenario."
+msgstr "Отчет компании %s по сценарию «%s»."
+
+msgid "Reporting for all companies under the %s scenario."
+msgstr "Отчет по всем компаниям по сценарию «%s»."
+
+msgid "Scenario not found"
+msgstr "Сценарий не найден"
+
+msgid "Scenario has not been updated"
+msgstr "Сценарий не был обновлен"
+
+msgid "Scenario has not been deleted yet"
+msgstr "Сценарий еще не удален"
+
+msgid "Scenario has not been saved"
+msgstr "Сценарий не был сохранен"
+
+msgid "No name"
+msgstr "Без названия"
+
+msgid "Basic scenario"
+msgstr "Базовый сценарий"
+
+msgid "Failed to prolongate the repeating transaction"
+msgstr "Ошибка пролонгации повторяющейся операции"
+
+msgid "in the selected account currency"
+msgstr "в валюте выбранного счета"
+
+msgid "Teammates"
+msgstr "Сотрудники"
+
+msgid "Add template"
+msgstr "Создать шаблон"
+
+msgid "Name"
+msgstr "Название"
+
+msgid "Predefined fields"
+msgstr "Предзаполненные поля"
+
+msgid "Visibility"
+msgstr "Видимость"
+
+msgid "No templates have been created yet."
+msgstr "Здесь пока нет шаблонов."
+
+msgid "Template will be permanently deleted. Are you sure?"
+msgstr "Шаблон будет удален безвозвратно. Удаляем?"
+
+msgid "Templates"
+msgstr "Шаблоны"
+
+msgid "me"
+msgstr "я"
+
+msgid "All users"
+msgstr "Все сотрудники"
+
+msgid "Master password lock"
+msgstr "Мастер‑пароль"
+
+msgid "Status"
+msgstr "Статус"
+
+msgid "Master password is ON"
+msgstr "Мастер‑пароль включен"
+
+msgid "Master password is OFF"
+msgstr "Мастер‑пароль выключен"
+
+msgid "Master password is an additional layer of security and is universal for all your teammates. Every user with an access to the app will be required to enter a master password to open the app."
+msgstr "Мастер‑пароль — это дополнительный уровень защиты, единый для всех пользователей приложения. Каждый сотрудник, у которого есть доступ к приложению, должен будет ввести мастер‑пароль, чтобы открыть приложение."
+
+msgid "Current password"
+msgstr "Текущий пароль"
+
+msgid "Change password"
+msgstr "Изменить пароль"
+
+msgid "Enter your existing master password to make any changes to the security settings."
+msgstr "Введите текущий мастер‑пароль, чтобы внести изменения в настройки безопасности."
+
+msgid "Set master password"
+msgstr "Установить пароль"
+
+msgid "New password"
+msgstr "Новый пароль"
+
+msgid "Confirm password"
+msgstr "Подтвердите пароль"
+
+msgid "Disable master password"
+msgstr "Отключить мастер‑пароль"
+
+msgid "Recovery email"
+msgstr "Email для восстановления"
+
+msgid "<b>Behold here!</b> Make sure to enter a valid master email address for immediate alerts on access violation attempts and password recovery. Master password can only be restored via this recovery email."
+msgstr "<b>Важно!</b> Обязательно укажите действующий email‑адрес — на него будут приходить уведомления о попытках нарушения доступа и ссылка для восстановления пароля на случай, если вы его забыли. Восстановить мастер‑пароль можно только через этот email."
+
+msgid "No one will be able to edit transactions before the specified date to rewrite the past."
+msgstr "Никто не сможет редактировать операции до указанной даты и переписывать историю."
+
+msgid "Saved"
+msgstr "Сохранено"
+
+msgid "Failed to save"
+msgstr "Не удалось сохранить"
+
+msgid "Master password"
+msgstr "Мастер‑пароль"
+
+msgid "Account groups, tags, projects"
+msgstr "Группы счетов, теги, проекты"
+
+msgid "Enter master password to open the app"
+msgstr "Введите мастер‑пароль, чтобы войти"
+
+msgid "Enter your existing password to confirm access"
+msgstr "Введите текущий пароль для подтверждения доступа"
+
+msgid "Invalid master password"
+msgstr "Неверный мастер‑пароль"
+
+msgid "Recovery email is required"
+msgstr "Нужно ввести email-адрес для восстановления"
+
+msgid "Passwords do not match"
+msgstr "Пароли не совпадают"
+
+msgid "Unauthorized"
+msgstr "Нет доступа"
+
+msgid "Cash Flow: master password notification"
+msgstr "Деньги: уведомление о мастер-пароле"
+
+msgid "Behold! %s <b>disabled the master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s"
+msgstr "Внимание! %s <b>отключил мастер-пароль</b> для приложения «Деньги» на %s. <br><br>IP: %s, <br>User agent: %s"
+
+msgid "Achtung! %s <b>changed the master password recovery email</b> for the Cash Flow app from %s to %s on %s. <br><br>IP: %s, <br>User agent: %s"
+msgstr "Ахтунг! %s <b>изменил адрес электронной почты для восстановления мастер-пароля</b> в приложении «Деньги» с %s на %s на %s. <br><br>IP: %s, <br>User agent: %s"
+
+msgid "May I have your attention, please? %s <b>changed the master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s"
+msgstr "Обратите внимание! %s <b>изменил мастер-пароль</b> для приложения «Деньги» на %s. <br><br>IP: %s, <br>User agent: %s"
+
+msgid "Success! %s <b>enabled the master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s"
+msgstr "Это успех! %s <b>включил мастер-пароль</b> для приложения «Деньги» на %s. <br><br>IP: %s, <br>User agent: %s"
+
+msgid "Cash Flow: master password fail alert!"
+msgstr "Деньги: неудачная попытка ввода мастер-пароля!"
+
+msgid "One shall not pass! %s <b>attempted and failed to enter the valid master password</b> for the Cash Flow app on %s. <br><br>IP: %s, <br>User agent: %s"
+msgstr "Не теряем бдительность! %s <b><strike>попался</strike> попытался, но не смог ввести правильный мастер-пароль</b> для приложения «Деньги» на %s. <br><br>IP: %s, <br>User agent: %s"
+
+msgid "Master password required"
+msgstr "Нужно ввести мастер-пароль"
+
+msgid "Lock the past"
+msgstr "Блокировка прошлого"
+
+msgid "Forgot password?"
+msgstr "Забыли пароль?"
+
+msgid "Reset master password"
+msgstr "Сбросить мастер‑пароль"
+
+msgid "A link to reset the master password <b>will be sent to the recovery email</b> previously saved in the app settings."
+msgstr "Ссылка для сброса мастер‑пароля <b>будет отправлена на мастер-адрес электронной почты для восстановления</b>, который ранее был сохранен в настройках приложения."
+
+msgid "Send the reset link"
+msgstr "Отправить ссылку для сброса"
+
+msgid "Ok, thanks"
+msgstr "Ок, спасибо"
+
+msgid "Cash Flow: master password alert!"
+msgstr "Деньги: предупреждение о мастер‑пароле!"
+
+msgid "The link has expired"
+msgstr "Срок действия ссылки истек"
+
+msgid "If you don’t have access to this email, the only way to reset the password is to contact your team’s IT person to do this for you via root access privileges. For security purposes, there are no workarounds."
+msgstr "Если у вас нет доступа к этому адресу электронной почты, единственный способ сбросить пароль — обратиться к ИТ‑специалисту вашей команды, чтобы он сделал это на правах root‑доступа. В целях безопасности обходных вариантов не предусмотрено."
+
+msgid "%s tried to get into the Cash Flow app on %s but did not remember the master password and so initiated its reset. <b>Continue resetting your master password here</b>: <a href=\"%s\"><b>%s</b></a> <br><br>If that wasn’t you, simply ignore this message. Your existing password is still active. <br><br>IP: %s, <br>User agent: %s"
+msgstr "%s пытался войти в приложение «Деньги» на %s, но не вспомнил мастер‑пароль и поэтому инициировал его сброс. <b>Продолжите сброс мастер‑пароля здесь</b>: <a href=\"%s\"><b>%s</b></a> <br><br>Если это были не вы, просто проигнорируйте это сообщение. Ваш текущий пароль остался без изменений. <br><br>IP: %s, <br>User agent: %s"
+
+msgid "Check your email: %s"
+msgstr "Проверьте почту: %s"
+
+msgid "The link has expired. Please try resetting the password once again and act quickly."
+msgstr "Срок действия ссылки истек. Попробуйте еще раз и действуйте побыстрее!"

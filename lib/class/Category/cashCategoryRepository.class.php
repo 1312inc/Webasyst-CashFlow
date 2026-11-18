@@ -16,7 +16,7 @@ class cashCategoryRepository extends cashBaseRepository
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllByTypeForContact($type, waContact $contact = null): array
+    public function findAllByTypeForContact($type, ?waContact $contact = null): array
     {
         if (!$contact) {
             $contact = wa()->getUser();
@@ -31,7 +31,7 @@ class cashCategoryRepository extends cashBaseRepository
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllActiveForContact(waContact $contact = null): array
+    public function findAllActiveForContact(?waContact $contact = null): array
     {
         if (!$contact) {
             $contact = wa()->getUser();
@@ -46,7 +46,7 @@ class cashCategoryRepository extends cashBaseRepository
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllIncomeForContact(waContact $contact = null): array
+    public function findAllIncomeForContact(?waContact $contact = null): array
     {
         if (!$contact) {
             $contact = wa()->getUser();
@@ -61,7 +61,7 @@ class cashCategoryRepository extends cashBaseRepository
      * @return cashCategory[]
      * @throws waException
      */
-    public function findAllExpenseForContact(waContact $contact = null): array
+    public function findAllExpenseForContact(?waContact $contact = null): array
     {
         if (!$contact) {
             $contact = wa()->getUser();
