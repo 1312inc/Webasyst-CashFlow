@@ -412,7 +412,13 @@ body.modal {
 }
 
 .flexbox.c-details-modes {
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+}
+
+@media screen and (max-width: 1700px) {
+  .flexbox.c-details-modes {
+    flex-wrap: wrap;
+  }
 }
 
 .flexbox.c-details-modes > .wide {
